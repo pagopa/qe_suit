@@ -1,0 +1,11 @@
+# valid descriptor
+META-INF/presentation/domains/valid-domain.json
+
+# valid but empty scopes (warning only)
+META-INF/presentation/domains/valid-domain-empty-scopes.json
+
+# invalid json
+META-INF/presentation/domains/invalid-json.json
+
+# missing file
+META-INF/presentation/domains/missing-domain.json

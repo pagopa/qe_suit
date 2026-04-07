@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "domainId": "payments",
+  "scopes": {
+    "API": {
+      "subtypesOf": "com.example.api.BaseApi",
+      "annotatedWith": "com.example.api.Api"
+    }
+  },
+  "constraints": []
+}

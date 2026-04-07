@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "domainId": "web",
+
+  "entities": {
+    "Page": "it.frontend.e2e.framework.web.domain.Page",
+    "Component": "it.frontend.e2e.framework.web.domain.Component",
+    "DomNode": "it.frontend.e2e.framework.web.domain.DomNode"
+  },
+
+  "scopes": {
+    "pages": { "subtypesOf": "it.frontend.e2e.framework.web.domain.Page" },
+    "components": { "subtypesOf": "it.frontend.e2e.framework.web.domain.Component" },
+    "domNodes": { "subtypesOf": "it.frontend.e2e.framework.web.domain.DomNode" }
+  },
+
+  "constraints": [
+    {
+      "id": "web-page-must-not-have-xpath-annotation",
+      "scope": "pages",
+      "mustNotHaveAnnotation": "it.frontend.e2e.framework.annotation.selector.XPath",
+      "severity": "ERROR",
+      "message": "Page must not have @XPath annotation, because it is not a Component. Use @Url annotation instead."
+    },
+    {
+      "id": "web-page-must-have-url-annotation",
+      "scope": "pages",
+      "mustHaveAnnotation": "it.frontend.e2e.framework.annotation.location.web.Url",
+      "severity": "ERROR",
+      "message": "Page must have @Url annotation, it is required to define the URL of the page."
+    },
+    {
+      "id": "web-component-must-not-have-url-annotation",
+      "scope": "domNodes",
+      "mustNotHaveAnnotation": "it.frontend.e2e.framework.annotation.location.web.Url",
+      "severity": "ERROR",
+      "message": "This domain element must not have @Url annotation, because it is not a Page."
+    }
+  ]
+}
