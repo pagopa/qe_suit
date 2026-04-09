@@ -13,10 +13,10 @@
         <relativePath/>
     </parent>
 
-    <groupId>it.pn.frontend.e2e</groupId>
-    <artifactId>pn-frontend-e2e</artifactId>
+    <groupId>it.pagopa</groupId>
+    <artifactId>qe-suite</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>pn-frontend-e2e</name>
+    <name>qe-suite</name>
 
     <properties>
         <java.version>17</java.version>
