@@ -1,7 +1,7 @@
-package it.pn.frontend.e2e.parameter_type;
+package it.pagopa.send.parameter_type;
 
 import io.cucumber.java.ParameterType;
-import it.pn.frontend.e2e.enums.User;
+import it.pagopa.send.enums.User;
 
 public class UserType {
 

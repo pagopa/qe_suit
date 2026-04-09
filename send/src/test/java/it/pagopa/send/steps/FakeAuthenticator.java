@@ -1,4 +1,4 @@
-package it.pn.frontend.e2e.steps;
+package it.pagopa.send.steps;
 
 import lombok.AllArgsConstructor;
 

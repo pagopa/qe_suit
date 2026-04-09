@@ -1,4 +1,4 @@
-package it.pn.frontend.e2e.model;
+package it.pagopa.send.model;
 
 import it.frontend.e2e.framework.core.capability.Capability;
 import it.frontend.e2e.framework.web.model.location.Url;

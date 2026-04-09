@@ -1,4 +1,4 @@
-package it.pn.frontend.e2e.enums;
+package it.pagopa.send.enums;
 
 import lombok.Getter;
 

@@ -1,10 +1,10 @@
-package it.pn.frontend.e2e.steps.login.component;
+package it.pagopa.send.steps.login.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pn.frontend.e2e.enums.User;
+import it.pagopa.send.enums.User;
 
 import java.util.Optional;
 

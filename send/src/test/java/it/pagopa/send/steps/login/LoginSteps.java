@@ -1,11 +1,11 @@
-package it.pn.frontend.e2e.steps.login;
+package it.pagopa.send.steps.login;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pn.frontend.e2e.enums.User;
-import it.pn.frontend.e2e.steps.login.page.DashboardPartySelectionPage;
-import it.pn.frontend.e2e.steps.login.page.OneIdPage;
+import it.pagopa.send.enums.User;
+import it.pagopa.send.steps.login.page.DashboardPartySelectionPage;
+import it.pagopa.send.steps.login.page.OneIdPage;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

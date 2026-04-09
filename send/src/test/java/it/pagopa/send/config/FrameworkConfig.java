@@ -1,4 +1,4 @@
-package it.pn.frontend.e2e.config;
+package it.pagopa.send.config;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;

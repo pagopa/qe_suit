@@ -1,4 +1,4 @@
-package it.pn.frontend.e2e.steps.login.page;
+package it.pagopa.send.steps.login.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
@@ -6,8 +6,8 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pn.frontend.e2e.enums.User;
-import it.pn.frontend.e2e.steps.login.component.OneIdLoginForm;
+import it.pagopa.send.enums.User;
+import it.pagopa.send.steps.login.component.OneIdLoginForm;
 
 
 @Url("${url.selfcare.notifiche.base}")

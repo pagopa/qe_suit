@@ -1,9 +1,9 @@
-package it.pn.frontend.e2e.parameter_type;
+package it.pagopa.send.parameter_type;
 
 import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pn.frontend.e2e.steps.login.page.OneIdPage;
-import it.pn.frontend.e2e.steps.mittenti.Dashboard;
+import it.pagopa.send.steps.login.page.OneIdPage;
+import it.pagopa.send.steps.mittenti.Dashboard;
 
 public class PageType {
 

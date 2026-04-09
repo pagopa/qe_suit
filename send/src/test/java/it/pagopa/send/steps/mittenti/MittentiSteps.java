@@ -1,13 +1,13 @@
-package it.pn.frontend.e2e.steps.mittenti;
+package it.pagopa.send.steps.mittenti;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pn.frontend.e2e.steps.FakeAuthenticator;
-import it.pn.frontend.e2e.steps.IAuthenticator;
-import it.pn.frontend.e2e.steps.login.component.OneTrustBanner;
+import it.pagopa.send.steps.FakeAuthenticator;
+import it.pagopa.send.steps.IAuthenticator;
+import it.pagopa.send.steps.login.component.OneTrustBanner;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 

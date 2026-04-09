@@ -1,4 +1,4 @@
-package it.pn.frontend.e2e;
+package it.pagopa.send;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
