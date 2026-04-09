@@ -14,11 +14,12 @@ import org.junit.jupiter.api.Assertions;
 @RequiredArgsConstructor
 public class MittentiSteps {
 
-    private final WebPresentationGateway uiGateway;
+    private final WebPresentationGateway browser;
+    private Page currentPage;
 
     @Given("l'utente è un {string} di {string}")
     public void login(String role, String pa) {
-        // Inizializzare un bean Auth
+        //Inizializzare un bean Auth
         //Auth auth = Auth.of(role,pa,fake);
         IAuthenticator auth = new FakeAuthenticator(role, pa);
         Assertions.assertTrue(auth.isAuthenticated());
@@ -26,17 +27,19 @@ public class MittentiSteps {
 
     @When("naviga alla pagina {page}")
     public void navigateTo(Class<? extends Page> page) {
-        Page p = uiGateway.bind(page);
-        p.navigateTo();
+        currentPage = browser.bind(page);
+        currentPage.navigateTo();
 
-        OneTrustBanner banner = uiGateway.bind(OneTrustBanner.class);
-        banner.accept();
+        try { OneTrustBanner banner = browser.bind(OneTrustBanner.class);
+            banner.accept();
+        } catch (Exception e) {
+            // banner non presente → ok
+        }
     }
 
     @Then("la pagina deve caricarsi correttamente")
     public void laPaginaDeveCaricarsiCorrettamente() {
-       Dashboard dashboardPage = uiGateway.bind(Dashboard.class);
-       dashboardPage.assertLoaded();
+       currentPage.assertLoaded();
     }
 
 }
