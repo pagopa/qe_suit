@@ -12,7 +12,7 @@ spring:
   config:
     activate:
       on-profile: test
-    import: optional:file:config/bearer-token-test.properties
+    import: optional:classpath:secrets/bearer-token-test.properties
 
 # ============================================================================
 # URLs Configuration
