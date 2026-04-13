@@ -1,0 +1,32 @@
+# ============================================================================
+# Test Profile Configuration
+# ============================================================================
+# Imports bearer tokens and test-specific settings for E2E tests
+# ============================================================================
+
+# ============================================================================
+# External Configuration Import
+# Loads bearer tokens for test environment from external properties file
+# ============================================================================
+spring:
+  config:
+    activate:
+      on-profile: test
+    import: optional:classpath:secrets/bearer-token-test.properties
+
+# ============================================================================
+# URLs Configuration
+# Base URLs and routes for test environment
+# ============================================================================
+url:
+  selfcare:
+    notifiche:
+      base: https://selfcare.test.notifichedigitali.it
+      dashboard: ${url.selfcare.notifiche.base}/dashboard
+
+# ============================================================================
+# Authentication Tokens
+# Bearer token for users
+# ============================================================================
+token:
+  mittente: ${pn.external.bearer-token.tokentestMittente}
