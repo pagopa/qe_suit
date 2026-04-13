@@ -6,7 +6,7 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import org.assertj.core.api.Assertions;
 
-@Url("${url.selfcare.notifiche.base}/app-status#selfCareToken=${token.mittente}")
+@Url("${url.notifiche.mittente.app-status}#selfCareToken=${token.mittente}")
 public interface PlatformStatus extends Page {
 
     @XPath("//*[@data-testid=\"titleBox\"]")
