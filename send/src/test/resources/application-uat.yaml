@@ -1,0 +1,41 @@
+# ============================================================================
+# Test Profile Configuration
+# ============================================================================
+# Imports bearer tokens and test-specific settings for E2E tests
+# ============================================================================
+
+# ============================================================================
+# External Configuration Import
+# Loads bearer tokens for test environment from external properties file
+# ============================================================================
+spring:
+  config:
+    activate:
+      on-profile: uat
+    import: optional:classpath:secrets/bearer-token-uat.properties
+
+# ============================================================================
+# URLs Configuration
+# Base URLs and routes for test environment
+# ============================================================================
+url:
+  notifiche:
+    cittadino:
+      base: https://cittadini.uat.notifichedigitali.it
+    persona-giuridica:
+      base: https://personegiuridiche.uat.notifichedigitali.it
+    mittente:
+      base: https://selfcare.uat.notifichedigitali.it
+      dashboard: ${url.notifiche.mittente.base}/dashboard
+      new-notification: ${url.notifiche.mittente.dashboard}/nuova-notifica
+      api-keys: ${url.notifiche.mittente.base}/api-keys
+      new-api-key: ${url.notifiche.mittente.api-keys}/nuova-api-key
+      app-status: ${url.notifiche.mittente.base}/app-status
+      statistics: ${url.notifiche.mittente.base}/statistiche
+
+# ============================================================================
+# Authentication Tokens
+# Bearer token for users
+# ============================================================================
+token:
+  mittente: ${pn.external.bearer-token.tokentestMittente}
