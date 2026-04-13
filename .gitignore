@@ -6,7 +6,7 @@
 target/
 
 # Maven Wrapper (tieni solo i file necessari)
-.mvn/wrapper/maven-wrapper.jar
+send/.mvn/wrapper/maven-wrapper.jar
 
 #######################################
 # Java
