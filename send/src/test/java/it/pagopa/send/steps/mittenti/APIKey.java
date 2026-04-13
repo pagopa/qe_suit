@@ -6,7 +6,7 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import org.assertj.core.api.Assertions;
 
-@Url("${url.selfcare.notifiche.base}/api-keys#selfCareToken=${token.mittente}")
+@Url("${url.notifiche.mittente.api-keys}#selfCareToken=${token.mittente}")
 public interface APIKey extends Page {
 
     @XPath("//*[@data-testid=\"titleBox\"]")
