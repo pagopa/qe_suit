@@ -10,7 +10,7 @@ import it.pagopa.send.enums.User;
 import it.pagopa.send.steps.login.component.OneIdLoginForm;
 
 
-@Url("${url.selfcare.notifiche.base}")
+@Url("${url.notifiche.mittente.base}")
 public interface OneIdPage extends Page {
 
     interface AuthArea extends Component {

@@ -19,10 +19,19 @@ spring:
 # Base URLs and routes for test environment
 # ============================================================================
 url:
-  selfcare:
-    notifiche:
+  notifiche:
+    cittadino:
+      base: https://cittadini.test.notifichedigitali.it
+    persona-giuridica:
+      base: https://personegiuridiche.test.notifichedigitali.it
+    mittente:
       base: https://selfcare.test.notifichedigitali.it
-      dashboard: ${url.selfcare.notifiche.base}/dashboard
+      dashboard: ${url.notifiche.mittente.base}/dashboard
+      new-notification: ${url.notifiche.mittente.dashboard}/nuova-notifica
+      api-keys: ${url.notifiche.mittente.base}/api-keys
+      new-api-key: ${url.notifiche.mittente.api-keys}/nuova-api-key
+      app-status: ${url.notifiche.mittente.base}/app-status
+      statistics: ${url.notifiche.mittente.base}/statistiche
 
 # ============================================================================
 # Authentication Tokens
