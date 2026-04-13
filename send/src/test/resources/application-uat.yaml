@@ -11,8 +11,8 @@
 spring:
   config:
     activate:
-      on-profile: test
-    import: optional:classpath:secrets/bearer-token-test.properties
+      on-profile: uat
+    import: optional:classpath:secrets/bearer-token-uat.properties
 
 # ============================================================================
 # URLs Configuration
@@ -21,11 +21,11 @@ spring:
 url:
   notifiche:
     cittadino:
-      base: https://cittadini.test.notifichedigitali.it
+      base: https://cittadini.uat.notifichedigitali.it
     persona-giuridica:
-      base: https://personegiuridiche.test.notifichedigitali.it
+      base: https://personegiuridiche.uat.notifichedigitali.it
     mittente:
-      base: https://selfcare.test.notifichedigitali.it
+      base: https://selfcare.uat.notifichedigitali.it
       dashboard: ${url.notifiche.mittente.base}/dashboard
       new-notification: ${url.notifiche.mittente.dashboard}/nuova-notifica
       api-keys: ${url.notifiche.mittente.base}/api-keys
