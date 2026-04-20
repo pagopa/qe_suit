@@ -5,10 +5,11 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.send.steps.login.page.OneIdPage;
 import it.pagopa.send.steps.mittenti.Dashboard;
 import it.pagopa.send.steps.mittenti.*;
+import it.pagopa.send.steps.supporto.BackstageProfilePage;
 
 public class PageType {
 
-    @ParameterType("LoginPage|Dashboard|APIKey|NewAPIKey|Statistics|PlatformStatus|NotificationDetails|CreateNotification")
+    @ParameterType("LoginPage|Dashboard|APIKey|NewAPIKey|Statistics|PlatformStatus|NotificationDetails|CreateNotification|BackstageProfile")
     public Class<? extends Page> page(String page) {
         return switch (page) {
             case "LoginPage" -> OneIdPage.class;
@@ -19,6 +20,7 @@ public class PageType {
             case "NewAPIKey" -> NewAPIKey.class;
             case "Statistics" -> Statistics.class;
             case "PlatformStatus" -> PlatformStatus.class;
+            case "BackstageProfile" -> BackstageProfilePage.class;
             default -> throw new IllegalArgumentException("Invalid page");
         };
     }
