@@ -34,7 +34,7 @@ public class CommonSteps {
     @When("l'utente accede alla {page} selezionando {string}")
     public void selectPa(Class<? extends Page> page, String comune) {
         Object pageInstance = switch (page.getSimpleName()) {
-            case "DashboardPartySelectionPage" -> uiGateway.bind(DashboardPartySelectionPage.class);
+            case "Dashboard" -> uiGateway.bind(DashboardPartySelectionPage.class);
             case "BackstageProfilePage" -> uiGateway.bind(BackstageProfilePage.class);
             default -> throw new IllegalArgumentException("Pagina non riconosciuta: " + page);
         };
