@@ -23,7 +23,7 @@ url:
     cittadino:
       base: https://cittadini.test.notifichedigitali.it
     persona-giuridica:
-      base: https://personegiuridiche.test.notifichedigitali.it
+      base: https://imprese.test.notifichedigitali.it
     mittente:
       base: https://selfcare.test.notifichedigitali.it
       dashboard: ${url.notifiche.mittente.base}/dashboard

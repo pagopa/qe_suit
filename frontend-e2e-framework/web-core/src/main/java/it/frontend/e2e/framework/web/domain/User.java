@@ -1,9 +1,10 @@
-package it.pagopa.send.enums;
+package it.frontend.e2e.framework.web.domain;
 
 import lombok.Getter;
 
 public enum User {
-    GROSSINI("grossini", "test", "Comune di Palermo");
+    GROSSINI("grossini", "test", "Comune di Palermo"),
+    PETRARCA("FrancescoPetrarca", "test", "Comune di Palermo");
 
     @Getter private final String username;
     @Getter private final String password;

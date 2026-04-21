@@ -3,21 +3,19 @@ package it.pagopa.send.steps.login.page;
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
-import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.frontend.e2e.framework.web.domain.SpidLoginPage;
 import it.frontend.e2e.framework.web.domain.User;
 import it.pagopa.send.steps.login.component.OneIdLoginForm;
 
-
-@Url("${url.notifiche.mittente.base}")
-public interface OneIdPage extends Page, SpidLoginPage {
+@Url("${url.notifiche.cittadino.base}")
+public interface PfLoginPage extends Page, SpidLoginPage {
 
     interface AuthArea extends Component {
-
+        // Dialog per la selezione del provider SPID, in questo caso fittizio per i test
         interface ProviderDialog extends Component {
-            @XPath("//*[@id=\"https://idp.uat.oneid.pagopa.it\"]")
+            @XPath("//*[@id=\"spid-select-xx_testenv2\"]")
             Clickable providerButton();
 
             default void selectFakeProvider() {
@@ -25,10 +23,7 @@ public interface OneIdPage extends Page, SpidLoginPage {
             }
         }
 
-        @XPath("//*[@id=\"root\"]/div/div[2]/div[1]/div/h3")
-        Readable<String> header();
-
-        @XPath("//*[@id=\"root\"]/div/div[2]/div[3]/div[1]")
+        @XPath("//*[@id=\"spidButton\"]")
         Clickable spidButton();
 
         ProviderDialog providerDialog();

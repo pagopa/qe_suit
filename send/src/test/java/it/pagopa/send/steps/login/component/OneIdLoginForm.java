@@ -4,7 +4,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.send.enums.User;
+import it.frontend.e2e.framework.web.domain.User;
 
 import java.util.Optional;
 
@@ -16,7 +16,7 @@ public interface OneIdLoginForm extends Component {
     @XPath("//*[@id=\"password\"]")
     Writable<String> password();
 
-    @XPath("//*[@id=\"login-form\"]/div[4]/button[1]")
+    @XPath("//*[@id=\"login-form\"]/div[4]/button[1]|/html/body/section/main/article/form/div[3]/button[1]")
     Clickable submit();
 
     @XPath("//*[@id=\"consent-form\"]")
