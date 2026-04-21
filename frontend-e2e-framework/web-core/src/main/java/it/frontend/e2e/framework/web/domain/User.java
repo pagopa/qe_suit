@@ -4,16 +4,16 @@ import lombok.Getter;
 
 public enum User {
     GROSSINI("grossini", "test", "Comune di Palermo"),
-    PETRARCA("FrancescoPetrarca", "test", "Comune di Palermo");
+    PETRARCA("FrancescoPetrarca", "test", "Le Epistolae srl");
 
     @Getter private final String username;
     @Getter private final String password;
-    @Getter private final String comune;
+    @Getter private final String organization;
 
-    User(String username, String password, String comune) {
+    User(String username, String password, String organization) {
         this.username = username;
         this.password = password;
-        this.comune = comune;
+        this.organization = organization;
     }
 
     public static User fromUsername(String username) {

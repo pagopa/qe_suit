@@ -3,8 +3,8 @@ package it.pagopa.send.steps.login;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.frontend.e2e.framework.web.domain.SpidLoginPage;
 import it.frontend.e2e.framework.web.domain.User;
+import it.pagopa.send.steps.login.page.AbstractOneIdPage;
 import it.pagopa.send.steps.login.page.DashboardPartySelectionPage;
 import it.pagopa.send.steps.login.page.OneIdPage;
 import it.pagopa.send.steps.login.page.PfLoginPage;
@@ -19,7 +19,7 @@ public class LoginSteps {
 //    @Given("l'utente {user} effettua l'accesso a SelfCare con autenticazione SPID")
     @Given("{userType} {user} effettua l'accesso a SelfCare con autenticazione SPID")
     public void spidAuth(String userType, User user) {
-        SpidLoginPage loginPage = switch (userType) {
+        AbstractOneIdPage loginPage = switch (userType) {
             case "PA" -> uiGateway.bind(OneIdPage.class);
             case "PG" -> uiGateway.bind(PgLoginPage.class);
             default -> uiGateway.bind(PfLoginPage.class);

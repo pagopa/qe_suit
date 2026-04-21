@@ -24,6 +24,11 @@ url:
       base: https://cittadini.test.notifichedigitali.it
     persona-giuridica:
       base: https://imprese.test.notifichedigitali.it
+      notifiche: ${url.notifiche.persona-giuridica.base}/notifiche
+      notifiche-delegato: ${url.notifiche.persona-giuridica.base}/notifiche-delegato
+      app-status: ${url.notifiche.persona-giuridica.base}/app-status
+      integrazione-api: ${url.notifiche.persona-giuridica.base}/integrazione-api
+      recapiti: ${url.notifiche.persona-giuridica.base}/recapiti
     mittente:
       base: https://selfcare.test.notifichedigitali.it
       dashboard: ${url.notifiche.mittente.base}/dashboard

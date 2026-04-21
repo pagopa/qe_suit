@@ -6,11 +6,11 @@ Feature: Navigazione portale SEND persone giuridiche
 
   Scenario Outline: [LOAD_PAGE] Verifica la raggiungibilità delle pagine
     Given la PG FrancescoPetrarca effettua l'accesso a SelfCare con autenticazione SPID
-    When l'utente accede alla dashboard selezionando "Comune di Palermo"
+    When naviga alla pagina <Pagina>
 
     Examples:
-#      | Pagina              |
-#      | Dashboard           |
+      | Pagina              |
+      | Dashboard           |
 #      | NotificationDetails |
 #      | CreateNotification  |
 #      | APIKey              |

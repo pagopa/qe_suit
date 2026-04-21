@@ -6,10 +6,10 @@ import it.frontend.e2e.framework.web.domain.Component;
 
 public interface OneIdPrivacyDialog extends Component {
 
-    @XPath("/div[2]/button[2]")
+    @XPath("/div[2]/button[2]|/html/body/section/main/article/form/div/button[1]")
     Clickable acceptButton();
 
-    @XPath("/div[2]/button[1]")
+    @XPath("/div[2]/button[1]|/html/body/section/main/article/form/div/button[2]")
     Clickable rejectButton();
 
     default void accept(){
