@@ -37,6 +37,8 @@ url:
       new-api-key: ${url.notifiche.mittente.api-keys}/nuova-api-key
       app-status: ${url.notifiche.mittente.base}/app-status
       statistics: ${url.notifiche.mittente.base}/statistiche
+    supporto:
+      base: https://uat.selfcare.pagopa.it
 
 # ============================================================================
 # Authentication Tokens
@@ -44,3 +46,4 @@ url:
 # ============================================================================
 token:
   mittente: ${pn.external.bearer-token.tokentestMittente}
+  supporto: ${pn.external.bearer-token.tokenSupporto}

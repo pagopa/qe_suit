@@ -58,17 +58,32 @@ public class XPathValidator {
     }
 
     private boolean isXPathNotation(String xpath) {
-        if (xpath.startsWith("/") || xpath.startsWith("./") || xpath.startsWith(".//")) {
+        if (xpath.startsWith("/") || xpath.startsWith("./") || xpath.startsWith(".//") || xpath.startsWith("//")) {
             return true;
         }
-
-        // Accetta espressioni tra parentesi solo se il contenuto inizia con un percorso XPath valido
-        if (xpath.startsWith("(") && xpath.endsWith(")")) {
-            String inner = xpath.substring(1, xpath.length() - 1).trim();
-            return inner.startsWith("/") || inner.startsWith("./") || inner.startsWith(".//");
+        // Gestione espressioni tra parentesi con eventuali predicati o funzioni dopo la chiusura
+        if (xpath.startsWith("(")) {
+            int closeIdx = findMatchingParenthesis(xpath, 0);
+            if (closeIdx > 0) {
+                String inner = xpath.substring(1, closeIdx).trim();
+                return isXPathNotation(inner);
+            }
         }
-
         return false;
+    }
+
+    // Trova la parentesi chiusa corrispondente alla prima aperta
+    private int findMatchingParenthesis(String s, int openIdx) {
+        int depth = 0;
+        for (int i = openIdx; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '(') depth++;
+            else if (c == ')') {
+                depth--;
+                if (depth == 0) return i;
+            }
+        }
+        return -1; // non trovata
     }
 
     private void ensureBalanced(String value, char open, char close, String message) {

@@ -83,7 +83,24 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void click(XPathSelector selector) {
-        findWebElement(selector).click();
+        long end = System.currentTimeMillis() + (DEFAULT_WAIT_TIMEOUT_SECONDS * 1000);
+        Throwable lastException = null;
+        while (System.currentTimeMillis() < end) {
+            try {
+                WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+                element.click();
+                return;
+            } catch (org.openqa.selenium.ElementClickInterceptedException e) {
+                lastException = e;
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Interrupted during click retry", ie);
+                }
+            }
+        }
+        throw new RuntimeException("Unable to click element after retries", lastException);
     }
 
     @Override
