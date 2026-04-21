@@ -12,15 +12,11 @@ public interface BackstageProfilePage extends Page {
     @XPath("//*[@id=\"search-institutions-autocomplete\"]")
     Writable<String> searchFor();
 
-    @XPath("//*[@id=\"search-institutions-autocomplete-option-0\"]")
+    @XPath("(//*[@role=\"option\"])[1]")
     Clickable breadcrumbs();
 
-    @XPath("//*[@id=\"root\"]/div/div[2]/div[2]/main/div/div[3]/div[3]/table/tbody/tr[2]/td[5]/button/span")
+    @XPath("(//table//tbody//button)[2]")
     Clickable portals();
-
-    @Override
-    default void assertLoaded() {
-    }
 
     default void selectComune(String comune) {
         searchFor().writeAndAssert(comune);
