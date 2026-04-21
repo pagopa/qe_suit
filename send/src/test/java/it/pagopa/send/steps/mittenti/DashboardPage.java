@@ -11,7 +11,7 @@ import org.assertj.core.api.Assertions;
 import java.util.Optional;
 
 @Url("${url.notifiche.mittente.dashboard}#selfCareToken=${token.mittente}")
-public interface Dashboard extends Page {
+public interface DashboardPage extends Page {
 
     @XPath("//*[@data-testid=\"titleBox\"]")
     Readable<String> header();
