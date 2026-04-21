@@ -7,7 +7,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import org.assertj.core.api.Assertions;
 
 @Url("${url.notifiche.mittente.new-notification}#selfCareToken=${token.mittente}")
-public interface CreateNotification extends Page {
+public interface CreateNotificationPage extends Page {
 
     @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> breadcrumbs();
