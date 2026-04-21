@@ -6,8 +6,8 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import org.assertj.core.api.Assertions;
 
-@Url("${url.notifiche.mittente.statistics}#selfCareToken=${token.mittente}")
-public interface Statistics extends Page {
+@Url("${url.notifiche.mittente.new-api-key}#selfCareToken=${token.mittente}")
+public interface NewAPIKeyPage extends Page {
 
     @XPath("//*[@data-testid=\"titleBox\"]")
     Readable<String> header();
@@ -16,7 +16,7 @@ public interface Statistics extends Page {
     default void assertLoaded() {
        header().readAndAssert((h) -> {
            Assertions.assertThat(h).isNotNull();
-           Assertions.assertThat(h.getText()).isIn("Statistiche", "Statistics");;
+           Assertions.assertThat(h.getText()).isIn("Genera una API Key", "Generate an API Key");
        });
     }
 }
