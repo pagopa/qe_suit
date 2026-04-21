@@ -4,7 +4,8 @@ import lombok.Getter;
 
 public enum User {
     GROSSINI("grossini", "test", "Comune di Palermo"),
-    PETRARCA("FrancescoPetrarca", "test", "Le Epistolae srl");
+    PETRARCA("FrancescoPetrarca", "test", "Le Epistolae srl"),
+    LUCREZIA("lucrezia", "password123", null);
 
     @Getter private final String username;
     @Getter private final String password;

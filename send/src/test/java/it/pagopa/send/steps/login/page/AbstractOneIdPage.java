@@ -8,6 +8,9 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.frontend.e2e.framework.web.domain.User;
 import it.pagopa.send.steps.login.component.OneIdLoginForm;
+import it.pagopa.send.steps.login.component.OneTrustBanner;
+
+import java.util.Optional;
 
 @Url("ciao")
 public interface AbstractOneIdPage extends Page {
@@ -33,6 +36,7 @@ public interface AbstractOneIdPage extends Page {
 
     AuthArea authArea();
     OneIdLoginForm loginForm();
+    Optional<OneTrustBanner> oneTrustBanner();
 
     default void loginWithSpid(User user) {
         authArea().spidButton().click();

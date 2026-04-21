@@ -22,6 +22,11 @@ url:
   notifiche:
     cittadino:
       base: https://cittadini.test.notifichedigitali.it
+      notifiche: ${url.notifiche.cittadino.base}/notifiche
+      recapiti: ${url.notifiche.cittadino.base}/recapiti
+      deleghe: ${url.notifiche.cittadino.base}/deleghe
+      add-deleghe: ${url.notifiche.cittadino.base}/deleghe/nuova
+      app-status: ${url.notifiche.cittadino.base}/app-status
     persona-giuridica:
       base: https://imprese.test.notifichedigitali.it
       notifiche: ${url.notifiche.persona-giuridica.base}/notifiche
@@ -29,6 +34,9 @@ url:
       app-status: ${url.notifiche.persona-giuridica.base}/app-status
       integrazione-api: ${url.notifiche.persona-giuridica.base}/integrazione-api
       recapiti: ${url.notifiche.persona-giuridica.base}/recapiti
+      deleghe-a-carico: ${url.notifiche.persona-giuridica.base}/deleghe/a-carico
+      delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati
+      add-delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati/nuova
     mittente:
       base: https://selfcare.test.notifichedigitali.it
       dashboard: ${url.notifiche.mittente.base}/dashboard

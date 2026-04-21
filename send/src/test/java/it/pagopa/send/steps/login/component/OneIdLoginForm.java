@@ -16,7 +16,9 @@ public interface OneIdLoginForm extends Component {
     @XPath("//*[@id=\"password\"]")
     Writable<String> password();
 
-    @XPath("//*[@id=\"login-form\"]/div[4]/button[1]|/html/body/section/main/article/form/div[3]/button[1]")
+    @XPath("//*[@id=\"login-form\"]/div[4]/button[1]|" +
+            "/html/body/section/main/article/form/div[3]/button[1]|" +
+            "//*[@id=\"formLogin\"]/button")
     Clickable submit();
 
     @XPath("//*[@id=\"consent-form\"]")
