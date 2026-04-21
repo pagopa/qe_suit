@@ -5,6 +5,7 @@ import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.send.Footer;
 import it.pagopa.send.Sidebar;
+import it.pagopa.send.steps.login.page.AbstractComunePickerPage;
 import it.pagopa.send.steps.login.page.DashboardPartySelectionPage;
 import it.pagopa.send.steps.supporto.BackstageProfilePage;
 import lombok.RequiredArgsConstructor;
@@ -33,16 +34,12 @@ public class CommonSteps {
 
     @When("l'utente accede alla {page} selezionando {string}")
     public void selectPa(Class<? extends Page> page, String comune) {
-        Object pageInstance = switch (page.getSimpleName()) {
+        AbstractComunePickerPage comunePickerPage = switch (page.getSimpleName()) {
             case "DashboardPage" -> uiGateway.bind(DashboardPartySelectionPage.class);
             case "BackstageProfilePage" -> uiGateway.bind(BackstageProfilePage.class);
             default -> throw new IllegalArgumentException("Pagina non riconosciuta: " + page);
         };
-        try {
-            pageInstance.getClass().getMethod("selectComune", String.class).invoke(pageInstance, comune);
-        } catch (Exception e) {
-            throw new RuntimeException("Errore nell'invocazione di selectComune su " + pageInstance.getClass().getSimpleName(), e);
-        }
+        comunePickerPage.selectComune(comune);
     }
 
 

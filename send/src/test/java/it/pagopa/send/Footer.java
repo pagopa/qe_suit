@@ -23,28 +23,28 @@ public interface Footer extends Component {
         Clickable languages();
 
         @XPath("//*[@id=\"lang-menu\"]/div[3]/ul/li[1]")
-        Clickable it_lang();
+        Clickable itLang();
 
         @XPath("//*[@id=\"lang-menu\"]/div[3]/ul/li[2]")
-        Clickable en_lang();
+        Clickable enLang();
 
         @XPath("//*[@id=\"lang-menu\"]/div[3]/ul/li[3]")
-        Clickable fr_lang();
+        Clickable frLang();
 
         @XPath("//*[@id=\"lang-menu\"]/div[3]/ul/li[4]")
-        Clickable de_lang();
+        Clickable deLang();
 
         @XPath("//*[@id=\"lang-menu\"]/div[3]/ul/li[5]")
-        Clickable sl_lang();
+        Clickable slLang();
 
         default void changeLanguage(String language) {
             languages().click();
             switch (language.toLowerCase()) {
-                case "italiano" -> it_lang().click();
-                case "inglese" -> en_lang().click();
-                case "francese" -> fr_lang().click();
-                case "tedesco" -> de_lang().click();
-                case "sloveno" -> sl_lang().click();
+                case "italiano" -> itLang().click();
+                case "inglese" -> enLang().click();
+                case "francese" -> frLang().click();
+                case "tedesco" -> deLang().click();
+                case "sloveno" -> slLang().click();
                 default -> throw new IllegalArgumentException("Unknown language: " + language);
             }
         }

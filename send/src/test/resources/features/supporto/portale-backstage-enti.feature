@@ -1,3 +1,4 @@
+@backstage
 Feature: Navigazione portale SEND Backstage
 
   Scenario: [BACKSTAGE_ENTI_1] Verifica la navigazione del portale Backstage per un utente di supporto
