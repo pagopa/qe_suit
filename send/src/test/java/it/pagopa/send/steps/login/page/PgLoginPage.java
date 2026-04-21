@@ -7,7 +7,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.frontend.e2e.framework.web.domain.User;
 
 @Url("${url.notifiche.persona-giuridica.base}")
-public interface PgLoginPage extends Page, AbstractOneIdPage {
+public interface PgLoginPage extends AbstractOneIdPage {
 
 
     @XPath("//*[@id=\"root\"]/div/div[2]/div[2]/div/div[2]/div/div/div/div/div/div[2]/div/div")

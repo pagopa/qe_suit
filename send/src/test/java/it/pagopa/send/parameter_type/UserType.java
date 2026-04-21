@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.web.domain.User;
 
 public class UserType {
 
-    @ParameterType("Grossini|FrancescoPetrarca")
+    @ParameterType("Grossini|FrancescoPetrarca|Lucrezia")
     public User user(String username) {
        return User.fromUsername(username);
     }

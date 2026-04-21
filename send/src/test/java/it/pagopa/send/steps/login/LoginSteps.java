@@ -16,7 +16,6 @@ public class LoginSteps {
 
     private final WebPresentationGateway uiGateway;
 
-//    @Given("l'utente {user} effettua l'accesso a SelfCare con autenticazione SPID")
     @Given("{userType} {user} effettua l'accesso a SelfCare con autenticazione SPID")
     public void spidAuth(String userType, User user) {
         AbstractOneIdPage loginPage = switch (userType) {
