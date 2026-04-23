@@ -6,8 +6,6 @@ import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.User;
 
-import java.util.Optional;
-
 public interface OneIdLoginForm extends Component {
 
     @XPath("//*[@id=\"username\"]")
@@ -24,15 +22,12 @@ public interface OneIdLoginForm extends Component {
     @XPath("//*[@id=\"consent-form\"]")
     OneIdPrivacyDialog oneIdPrivacyDialog();
 
-    Optional<OneTrustBanner> oneTrustBanner();
-
     default void loginWith(User user) {
         this.username().writeAndAssert(user.getUsername());
         this.password().writeAndAssert(user.getPassword());
         this.submit().click();
 
         oneIdPrivacyDialog().accept();
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
     }
 }
 
