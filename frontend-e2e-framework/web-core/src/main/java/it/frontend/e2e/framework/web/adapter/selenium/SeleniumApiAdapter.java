@@ -7,7 +7,9 @@ import it.frontend.e2e.framework.web.model.location.Url;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.core.model.selector.XPathSelector;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -18,10 +20,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
-    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 10;
+    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 5;
     private final WebDriver driver;
 
     public SeleniumApiAdapter(BrowserSettings settings) {
@@ -83,24 +86,11 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void click(XPathSelector selector) {
-        long end = System.currentTimeMillis() + (DEFAULT_WAIT_TIMEOUT_SECONDS * 1000);
-        Throwable lastException = null;
-        while (System.currentTimeMillis() < end) {
-            try {
-                WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
-                element.click();
-                return;
-            } catch (org.openqa.selenium.ElementClickInterceptedException e) {
-                lastException = e;
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                    throw new RuntimeException("Interrupted during click retry", ie);
-                }
-            }
-        }
-        throw new RuntimeException("Unable to click element after retries", lastException);
+        withRetry(() -> {
+            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+            element.click();
+            return element;
+        });
     }
 
     @Override
@@ -111,8 +101,11 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void sendText(XPathSelector selector, String text) {
-        WebElement element = findWebElement(selector);
-        element.sendKeys(text);
+        withRetry(() -> {
+            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+            element.sendKeys(text);
+            return element;
+        });
     }
 
     @Override
@@ -123,7 +116,11 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void clear(XPathSelector selector) {
-        findWebElement(selector).clear();
+        withRetry(() -> {
+            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+            element.clear();
+            return element;
+        });
     }
 
     @Override
@@ -275,5 +272,24 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
         }
 
         return Map.of();
+    }
+
+    private WebElement withRetry(Supplier<WebElement> action) {
+            long end = System.currentTimeMillis() + (DEFAULT_WAIT_TIMEOUT_SECONDS * 1000);
+            Throwable lastException = null;
+            while (System.currentTimeMillis() < end) {
+                try {
+                    return action.get();
+                } catch (StaleElementReferenceException | ElementClickInterceptedException e) {
+                    lastException = e;
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        throw new RuntimeException("Interrupted during retry", ie);
+                    }
+                }
+            }
+            throw new RuntimeException("Action failed after retries", lastException);
     }
 }

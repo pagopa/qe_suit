@@ -1,19 +1,14 @@
 package it.pagopa.send.steps.login.page;
 
-import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.frontend.e2e.framework.web.domain.AbstractPage;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.frontend.e2e.framework.web.domain.Page;
 import it.frontend.e2e.framework.web.domain.User;
 import it.pagopa.send.steps.login.component.OneIdLoginForm;
-import it.pagopa.send.steps.login.component.OneTrustBanner;
 
-import java.util.Optional;
-
-@Url("ciao")
-public interface AbstractOneIdPage extends Page {
+public interface AbstractOneIdPage extends AbstractPage {
     interface AuthArea extends Component {
 
         interface ProviderDialog extends Component {
@@ -36,7 +31,6 @@ public interface AbstractOneIdPage extends Page {
 
     AuthArea authArea();
     OneIdLoginForm loginForm();
-    Optional<OneTrustBanner> oneTrustBanner();
 
     default void loginWithSpid(User user) {
         authArea().spidButton().click();
