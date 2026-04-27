@@ -8,7 +8,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import org.assertj.core.api.Assertions;
 
 @Url("${url.notifiche.mittente.dashboard}#selfCareToken=${token.mittente}")
-public interface NotificationDetails extends Page {
+public interface NotificationDetailsPage extends Page {
 
     @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> breadcrumbs();
@@ -18,7 +18,7 @@ public interface NotificationDetails extends Page {
 
     @Override
     default void assertLoaded() {
-        seeDetailsButton().click();
+//        seeDetailsButton().click();
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
             Assertions.assertThat(h.getText()).isIn("Dettaglio notifica", "Notification details");
