@@ -16,7 +16,7 @@ public interface DashboardPage extends Page {
     @XPath("//*[@data-testid=\"titleBox\"]")
     Readable<String> header();
 
-    @XPath("//*[@id=\"notificationsTable.body.row\"]/td[7]/button")
+    @XPath("//*[@id=\"notificationsTable.body.row\"]/td[7]/div/button")
     Clickable notificationDetails();
 
     Optional<OneTrustBanner> oneTrustBanner();

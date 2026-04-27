@@ -15,7 +15,7 @@ public interface BackstageProfilePage extends AbstractComunePickerPage {
     @XPath("(//*[@role=\"option\"])[1]")
     Clickable breadcrumbs();
 
-    @XPath("(//table//tbody//button)[2]")
+    @XPath("//*[@id='root']//table//tr[4]/td[5]//button")
     Clickable portals();
 
     @Override

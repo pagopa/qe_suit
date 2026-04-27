@@ -1,6 +1,7 @@
 package it.frontend.e2e.framework.core.utils;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
+
 import java.lang.reflect.Method;
 
 public class XPathResolver {

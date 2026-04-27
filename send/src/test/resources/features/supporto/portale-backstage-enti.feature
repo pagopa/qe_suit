@@ -14,3 +14,5 @@ Feature: Navigazione portale SEND Backstage
     When si passa alla sezione "Platform status" tramite la sidebar
     Then la pagina PlatformStatus è caricata con successo
     And la lingua della pagina viene impostata su "italiano"
+    Then viene effettutato il logout
+    And la pagina LogoutPage è caricata con successo
