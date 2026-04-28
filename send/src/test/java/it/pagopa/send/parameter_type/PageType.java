@@ -2,6 +2,7 @@ package it.pagopa.send.parameter_type;
 
 import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.send.steps.login.page.LogoutPage;
 import it.pagopa.send.steps.login.page.OneIdPage;
 import it.pagopa.send.steps.mittenti.APIKeyPage;
 import it.pagopa.send.steps.mittenti.CreateNotificationPage;
@@ -27,6 +28,7 @@ public class PageType {
 
     public enum PageEnum {
         LOGIN_PAGE("LoginPage", OneIdPage.class),
+        LOGOUT_PAGE("LogoutPage", LogoutPage.class),
         DASHBOARD("Dashboard", DashboardPage.class),
         NOTIFICATION_DETAILS("NotificationDetails", NotificationDetailsPage.class),
         CREATE_NOTIFICATION("CreateNotification", CreateNotificationPage.class),

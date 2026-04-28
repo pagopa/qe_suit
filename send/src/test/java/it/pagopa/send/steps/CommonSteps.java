@@ -1,9 +1,11 @@
 package it.pagopa.send.steps;
 
+import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.send.Footer;
+import it.pagopa.send.Header;
 import it.pagopa.send.Sidebar;
 import it.pagopa.send.steps.login.page.AbstractComunePickerPage;
 import it.pagopa.send.steps.login.page.DashboardPartySelectionPage;
@@ -42,5 +44,9 @@ public class CommonSteps {
         comunePickerPage.selectComune(comune);
     }
 
-
+    @And("viene effettutato il logout")
+    public void logout() {
+        Header footer = uiGateway.bind(Header.class);
+        footer.logout();
+    }
 }
