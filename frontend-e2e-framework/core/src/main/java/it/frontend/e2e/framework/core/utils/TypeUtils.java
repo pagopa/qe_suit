@@ -1,6 +1,10 @@
 package it.frontend.e2e.framework.core.utils;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
+import java.lang.reflect.WildcardType;
 import java.util.Optional;
 
 public class TypeUtils {

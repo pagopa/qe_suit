@@ -1,6 +1,10 @@
 package it.frontend.e2e.framework.annotation.selector;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Annotates a PresentationElement and specifies the selector to locate it.

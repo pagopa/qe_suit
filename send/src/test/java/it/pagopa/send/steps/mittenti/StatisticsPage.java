@@ -7,7 +7,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import org.assertj.core.api.Assertions;
 
 @Url("${url.notifiche.mittente.statistics}#selfCareToken=${token.mittente}")
-public interface Statistics extends Page {
+public interface StatisticsPage extends Page {
 
     @XPath("//*[@data-testid=\"titleBox\"]")
     Readable<String> header();

@@ -5,7 +5,9 @@ import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
 import it.frontend.e2e.framework.web.adapter.selenium.SeleniumApiAdapter;
 import it.frontend.e2e.framework.web.config.WebSuiteBuilder;
 import it.frontend.e2e.framework.web.model.location.Url;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -13,20 +15,18 @@ import org.springframework.core.env.Environment;
 import java.util.List;
 
 @TestConfiguration
+@ConfigurationProperties(prefix = "channel.web")
+@Getter
+@Setter
 public class FrameworkConfig {
 
-    @Value("${channel.web.browser:chrome}")
     private String browser;
-
-    @Value("${channel.web.headless:false}")
     private boolean headless;
-
-    @Value("${channel.web.arguments:}")
-    private List<String> browserArguments;
+    private List<String> arguments;
 
     @Bean
     public WebPresentationGateway webPresentationGateway(Environment environment) {
-        BrowserSettings settings = BrowserSettings.of(browser, headless, browserArguments);
+        BrowserSettings settings = BrowserSettings.of(browser, headless, arguments);
 
         return WebSuiteBuilder.builder()
                 .withAdapter(() -> new SeleniumApiAdapter(settings))

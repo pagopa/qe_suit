@@ -1,11 +1,11 @@
 package it.frontend.e2e.framework.web.adapter.selenium;
 
 import it.frontend.e2e.framework.core.assertion.AssertionAction;
+import it.frontend.e2e.framework.core.model.selector.XPathSelector;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
-import it.frontend.e2e.framework.web.model.location.Url;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
-import it.frontend.e2e.framework.core.model.selector.XPathSelector;
+import it.frontend.e2e.framework.web.model.location.Url;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -83,7 +83,24 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void click(XPathSelector selector) {
-        findWebElement(selector).click();
+        long end = System.currentTimeMillis() + (DEFAULT_WAIT_TIMEOUT_SECONDS * 1000);
+        Throwable lastException = null;
+        while (System.currentTimeMillis() < end) {
+            try {
+                WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+                element.click();
+                return;
+            } catch (org.openqa.selenium.ElementClickInterceptedException e) {
+                lastException = e;
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Interrupted during click retry", ie);
+                }
+            }
+        }
+        throw new RuntimeException("Unable to click element after retries", lastException);
     }
 
     @Override
