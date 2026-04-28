@@ -6,13 +6,15 @@ import it.frontend.e2e.framework.core.model.TestElement;
 import it.frontend.e2e.framework.core.model.TestLocation;
 import it.frontend.e2e.framework.core.model.TestSelector;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("AbstractCapabilityHandler")
 class AbstractCapabilityHandlerTest {
