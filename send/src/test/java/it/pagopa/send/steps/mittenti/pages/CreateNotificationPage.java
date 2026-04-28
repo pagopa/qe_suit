@@ -38,10 +38,6 @@ public interface CreateNotificationPage extends Page {
         @XPath(".//*[@id='group']")
         Clickable openGroupDropdown();
 
-        // Continue button
-        @XPath(".//*[@data-testid='step-submit']")
-        Clickable continueButton();
-
         default void fillFields(NotificationData data) {
             //selectLanguageItalian().click();
             subject().write(data.getSubject());
@@ -147,16 +143,9 @@ public interface CreateNotificationPage extends Page {
         @XPath(".//*[@id=\"file-input\"]")
         Uploadable attachment();
 
-        @XPath(".//*[@data-testid='step-submit']")
-        Clickable sendButton();
-
-        @XPath(".//*[@data-testid='previous-step']")
-        Clickable backButton();
-
         default void fillFields(NotificationData data) {
             documentTitle().write(data.getDocumentTitle());
             attachment().upload(data.getDocumentFilePath());
-            //sendButton().click();
         }
     }
 
