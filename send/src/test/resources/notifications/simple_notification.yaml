@@ -1,0 +1,22 @@
+# src/test/resources/data/simple_notification.yaml
+
+notification:
+  subject: "Test Notification Subject"
+  protocolNumber: "PROT-2026-{timestamp}"
+  taxonomyCode: "010101P"
+  group: "test-TA-FE-TEST"
+  language: "it"
+  physicalCommunicationType: "REGISTERED_LETTER_890"
+  paymentType: "NOTHING"
+
+recipient:
+  type: "PF"
+  taxId: "CLMCST42R12D969Z"
+  firstName: "Mario"
+  lastName: "Rossi"
+  addressLookup: "NATIONAL_REGISTRY"
+  pec: ""
+
+document:
+  title: "Test Notification Document"
+  filePath: "documents/test-attachment.pdf"
