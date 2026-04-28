@@ -1,4 +1,4 @@
-package it.pagopa.send.steps.mittenti;
+package it.pagopa.send.steps.mittenti.pages;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;

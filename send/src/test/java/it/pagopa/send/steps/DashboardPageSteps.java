@@ -2,7 +2,7 @@ package it.pagopa.send.steps;
 
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.send.steps.mittenti.DashboardPage;
+import it.pagopa.send.steps.mittenti.pages.DashboardPage;
 
 public class DashboardPageSteps {
     private final DashboardPage currentPage;

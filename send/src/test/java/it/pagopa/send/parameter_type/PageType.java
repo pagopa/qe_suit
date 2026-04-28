@@ -4,8 +4,7 @@ import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.send.steps.login.page.LogoutPage;
 import it.pagopa.send.steps.login.page.OneIdPage;
-import it.pagopa.send.steps.mittenti.DashboardPage;
-import it.pagopa.send.steps.mittenti.*;
+import it.pagopa.send.steps.mittenti.pages.*;
 import it.pagopa.send.steps.supporto.BackstageProfilePage;
 
 public class PageType {
