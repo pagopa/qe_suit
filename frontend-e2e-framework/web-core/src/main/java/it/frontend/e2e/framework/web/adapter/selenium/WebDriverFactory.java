@@ -50,18 +50,27 @@ public final class WebDriverFactory {
 
         options.addArguments("--disable-notifications");
         options.addArguments("--disable-save-password-bubble");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--remote-debugging-port=0");
+        options.addArguments("--no-first-run");
+        options.addArguments("--no-default-browser-check");
 
         if (settings.headless()) {
-            options.addArguments(CHROME_HEADLESS_ARG);
+            options.addArguments("--headless=new");
         }
+
         addExtraArguments(options, settings.arguments());
 
         try {
-            Path tempUserDataDir = Files.createTempDirectory("chrome-user-data-");
-            options.addArguments("--user-data-dir=" + tempUserDataDir.toAbsolutePath());
+            Path profileDir = Files.createTempDirectory("chrome-profile-");
+            Path cacheDir = Files.createTempDirectory("chrome-cache-");
+            options.addArguments("--user-data-dir=" + profileDir.toString());
+            options.addArguments("--disk-cache-dir=" + cacheDir.toString());
         } catch (Exception e) {
-            throw new RuntimeException("Unable to create temp user data dir for Chrome", e);
+            throw new RuntimeException("Unable to create temp dirs for Chrome", e);
         }
+
         return new ChromeDriver(options);
     }
 
