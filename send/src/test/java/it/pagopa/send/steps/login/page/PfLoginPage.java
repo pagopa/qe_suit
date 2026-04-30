@@ -8,11 +8,9 @@ import it.pagopa.send.steps.login.component.OneTrustBanner;
 @Url("${url.notifiche.cittadino.base}")
 public interface PfLoginPage extends AbstractOneIdPage, Page {
 
-    OneTrustBanner oneTrustBanner();
-
     @Override
     default void loginWithSpid(User user) {
-        oneTrustBanner().accept();
+        oneTrustBanner().ifPresent(OneTrustBanner::accept);
         authArea().spidButton().click();
         authArea().providerDialog().selectFakeProvider();
         loginForm().loginWith(user);

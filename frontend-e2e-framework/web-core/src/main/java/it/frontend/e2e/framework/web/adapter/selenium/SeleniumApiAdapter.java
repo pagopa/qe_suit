@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 
 public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
-    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 5;
+    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 10;
     private final WebDriver driver;
 
     public SeleniumApiAdapter(BrowserSettings settings) {
@@ -283,7 +283,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
                 } catch (StaleElementReferenceException | ElementClickInterceptedException e) {
                     lastException = e;
                     try {
-                        Thread.sleep(200);
+                        Thread.sleep(2000);
                     } catch (InterruptedException ie) {
                         Thread.currentThread().interrupt();
                         throw new RuntimeException("Interrupted during retry", ie);

@@ -5,6 +5,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.frontend.e2e.framework.web.domain.User;
+import it.pagopa.send.steps.login.component.OneTrustBanner;
 
 @Url("${url.notifiche.persona-giuridica.base}")
 public interface PgLoginPage extends AbstractOneIdPage, Page {
@@ -20,6 +21,7 @@ public interface PgLoginPage extends AbstractOneIdPage, Page {
 
     @Override
     default void loginWithSpid(User user) {
+        oneTrustBanner().ifPresent(OneTrustBanner::accept);
         authArea().spidButton().click();
         authArea().providerDialog().selectFakeProvider();
         loginForm().loginWith(user);
