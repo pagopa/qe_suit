@@ -1,8 +1,6 @@
 package it.pagopa.send.factory;
 
 import it.pagopa.send.model.NotificationData;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
@@ -65,6 +63,27 @@ public class NotificationFactory {
             throw new RuntimeException(
                     "Cannot load notification template: " + templateName, e);
         }
+    }
+
+    public NotificationData loadWithOverrides(
+            String templateName, 
+            Map<String, String> overrides) {
+        
+        NotificationData notification = load(templateName);
+        
+        overrides.forEach((key, value) -> {
+            switch(key) {
+                case "pec":
+                    notification.setPec((String) value);
+                    break;
+                case "subject":
+                    notification.setSubject((String) value);
+                    break;
+                // ...
+            }
+        });
+        
+        return notification;
     }
 
     private static String resolve(Object value) {

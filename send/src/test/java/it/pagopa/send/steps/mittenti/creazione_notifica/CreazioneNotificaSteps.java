@@ -1,5 +1,8 @@
 package it.pagopa.send.steps.mittenti.creazione_notifica;
 
+import java.util.Map;
+import java.util.Optional;
+
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
@@ -11,10 +14,10 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class CreazioneNotificaSteps {
-    private final NotificationContext context;
+    private final NotificationContext context;    
     private final NotificationFactory notificationFactory;
     private final WebPresentationGateway browser;
-
+   
     @When("crea e invia una notifica di tipo {string}")
     public void createsAndSendsNotification(String tipoNotifica) {
         // Load template
@@ -38,6 +41,21 @@ public class CreazioneNotificaSteps {
 
         page.compileDocumentazione(notification);
         page.continueButton().click();
+    }
+
+    @When("crea e invia una notifica di tipo {string} con i seguenti override:")
+    public void createsAndSendsNotificationWithOverrides(
+            String tipoNotifica, 
+            Map<String, String> overrides) {
+        
+        NotificationData notification = notificationFactory.loadWithOverrides(
+            tipoNotifica, 
+            overrides
+        );
+        
+        context.setNotifica(notification);
+        // ... resto
+        System.out.println("Debug notification: " + notification);
     }
 
     @Then("la notifica è stata inviata con successo")
