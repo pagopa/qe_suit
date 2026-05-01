@@ -8,8 +8,10 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.send.steps.login.component.OneTrustBanner;
 import org.assertj.core.api.Assertions;
+import it.pagopa.send.steps.mittenti.components.NotificationRow;
 import it.pagopa.send.steps.mittenti.components.SearchFiltersComponent;
 
+import java.util.List;
 import java.util.Optional;
 
 @Url("${url.notifiche.mittente.dashboard}#selfCareToken=${token.mittente}")
@@ -29,6 +31,8 @@ public interface DashboardPage extends Page {
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div[2]/div[2]")
     SearchFiltersComponent filters();
+
+    List<NotificationRow> rows();
 
     Optional<OneTrustBanner> oneTrustBanner();
 
