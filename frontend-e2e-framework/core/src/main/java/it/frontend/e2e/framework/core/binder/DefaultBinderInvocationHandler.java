@@ -15,6 +15,7 @@ import it.frontend.e2e.framework.core.utils.XPathResolver;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
 
 public class DefaultBinderInvocationHandler implements InvocationHandler {
 
@@ -50,6 +51,7 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
         try {
             if (method.isDefault()) return handleDefaultMethod(proxy, method, args);
             if (TypeUtils.isOptionalReturn(method)) return WrapperBinder.bindOptional(this, method, args);
+            if (TypeUtils.isListReturn(method)) return handleList(method, args);
 
             Class<?> rt = method.getReturnType();
             if (isBindableType(rt)) return bindRecursive(method, rt, shouldSuppressExceptionForOptionalWrapper);
@@ -89,6 +91,11 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
                 new Class<?>[]{returnType},
                 new DefaultBinderInvocationHandler(this.dispatcher, new BindContext(scope), optionalBestEffort)
         );
+    }
+
+    protected List<?> handleList(Method method, Object[] args) {
+        throw new UnsupportedOperationException(
+                "List<Component> binding not supported in this context. Use WebBinderInvocationHandler.");
     }
 
     public boolean isBindableType(Class<?> type) {

@@ -5,11 +5,24 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
+import java.util.List;
 import java.util.Optional;
 
 public class TypeUtils {
     public static boolean isOptionalReturn(Method method) {
         return Optional.class.equals(method.getReturnType());
+    }
+
+    public static boolean isListReturn(Method method) {
+        return List.class.equals(method.getReturnType());
+    }
+
+    public static Type extractListType(Method method) {
+        Type generic = method.getGenericReturnType();
+        if (!(generic instanceof ParameterizedType pt)) {
+            throw new IllegalStateException("List senza tipo parametrico: " + method);
+        }
+        return pt.getActualTypeArguments()[0];
     }
 
     public static Type extractOptionalType(Method method) {
