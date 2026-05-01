@@ -12,7 +12,7 @@ public interface BackstageProfilePage extends AbstractComunePickerPage {
     @XPath("//*[@id=\"search-institutions-autocomplete\"]")
     Writable<String> searchFor();
 
-    @XPath("(//*[@role=\"option\"])[1]")
+    @XPath("//*[@role=\"option\"][1]")
     Clickable breadcrumbs();
 
     @XPath("//*[@id='root']//table//tr[4]/td[5]//button")
