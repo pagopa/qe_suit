@@ -8,12 +8,15 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.send.steps.FakeAuthenticator;
 import it.pagopa.send.steps.IAuthenticator;
 import it.pagopa.send.steps.login.component.OneTrustBanner;
+import it.pagopa.send.steps.login.page.ReserverdAreaPage;
+import it.pagopa.send.steps.mittenti.creazione_notifica.NotificationContext;
+import it.pagopa.send.steps.mittenti.pages.DashboardPage;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 
 @RequiredArgsConstructor
 public class MittentiSteps {
-
+    private final NotificationContext context; 
     private final WebPresentationGateway browser;
     private Page currentPage;
 
@@ -30,10 +33,10 @@ public class MittentiSteps {
         currentPage = browser.bind(page);
         currentPage.navigateTo();
 
-        try { OneTrustBanner banner = browser.bind(OneTrustBanner.class);
-            banner.accept();
+        try {
+            browser.bind(OneTrustBanner.class).accept();
         } catch (Exception e) {
-            // banner non presente → ok
+            //log.debug("OneTrust banner not found - continuing");
         }
     }
 
@@ -42,4 +45,20 @@ public class MittentiSteps {
        currentPage.assertLoaded();
     }
 
+    @When("l'utente clicca su Crea Notifica")
+    public void creaNotifica() {
+        DashboardPage dashboardPage = browser.bind(DashboardPage.class);
+        dashboardPage.assertLoaded();
+        dashboardPage.clickCreaNotifica();
+    }
+
+    @When("filtra per {word} con valore {string}")
+    public void filterBy(String tipoFiltro, String valore) {
+
+        DashboardPage dashboardPage = browser.bind(DashboardPage.class);
+        dashboardPage.removeFiltersIfPresent();
+        dashboardPage.waitUntilReady();
+        dashboardPage.filters().filterBy(tipoFiltro, valore);
+        dashboardPage.assertLoaded();
+    }
 }
