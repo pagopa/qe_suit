@@ -1,5 +1,7 @@
 package it.pagopa.send.steps.login.component;
 
+import java.util.Optional;
+
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.domain.Component;
@@ -8,13 +10,13 @@ import it.frontend.e2e.framework.web.domain.Component;
 public interface OneTrustBanner extends Component {
 
     @XPath(".//*[@id=\"onetrust-accept-btn-handler\"]")
-    Clickable acceptButton();
+    Optional<Clickable> acceptButton();
 
     @XPath(".//*[@id=\"onetrust-reject-all-handler\"]")
     Clickable rejectButton();
 
     default void accept(){
-        acceptButton().click();
+        acceptButton().ifPresent(Clickable::click);
     }
 
     default void reject(){
