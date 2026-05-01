@@ -1,7 +1,9 @@
 package it.pagopa.send.model;
 
 import lombok.Data;
+import lombok.ToString;
 
+@ToString
 @Data
 public class NotificationData {
     private String subject;

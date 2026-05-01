@@ -1,3 +1,4 @@
+@login
 Feature: Login pagoPA demo
 
 Scenario: Login pagoPA mittente
