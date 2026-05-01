@@ -10,6 +10,8 @@ import lombok.Data;
 @Data 
 public class NotificationContext {
     private NotificationData notifica;
+    private String iun;
+    private String recipientTaxCode;
 
     public NotificationContext() {
         // Empty constructor for Cucumber DI
