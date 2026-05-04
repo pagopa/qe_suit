@@ -1,4 +1,4 @@
-package it.pagopa.send;
+package it.pagopa.interop;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
