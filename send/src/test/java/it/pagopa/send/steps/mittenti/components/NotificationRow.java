@@ -13,4 +13,10 @@ public interface NotificationRow extends Component {
 
     @XPath("./td[2]")
     Readable<WebPresentationElement> recipient();
+
+    @XPath("./td[1]")
+    Readable<WebPresentationElement> date();
+
+    @XPath("./td[6]")
+    Readable<WebPresentationElement> status();
 }

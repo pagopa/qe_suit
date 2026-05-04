@@ -12,6 +12,9 @@ public class NotificationContext {
     private NotificationData notifica;
     private String iun;
     private String recipientTaxCode;
+    private String fromDate;
+    private String toDate;
+    private String status;
 
     public NotificationContext() {
         // Empty constructor for Cucumber DI
