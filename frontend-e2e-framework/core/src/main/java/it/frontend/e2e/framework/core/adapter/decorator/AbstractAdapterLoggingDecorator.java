@@ -145,6 +145,12 @@ public abstract class AbstractAdapterLoggingDecorator<
     }
 
     @Override
+    public void sendFile(S selector, String text) {
+        logger.logAction(selector.toString(), "SEND_FILE", "Text: " + text);
+        wrappedAdapter.sendFile(selector, text);
+    }
+
+    @Override
     public void sendTextAndAssert(S selector, String text, AssertionAction<E> assertion) {
         logger.logAction(selector.toString(), "SEND_TEXT_AND_ASSERT", "Text: " + text);
         wrappedAdapter.sendTextAndAssert(selector, text, assertion);
