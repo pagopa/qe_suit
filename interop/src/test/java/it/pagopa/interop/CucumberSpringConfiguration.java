@@ -1,4 +1,4 @@
-package it.pagopa.send;
+package it.pagopa.interop;
 
 import io.cucumber.spring.CucumberContextConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
