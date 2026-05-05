@@ -13,7 +13,7 @@ public interface ReserverdAreaPage extends Page {
     @XPath("//*[@id=\"root\"]/div/div[1]/nav/div/div/div/div[1]/div/div/p")
     Readable<String> header();
 
-    @XPath("//*[@id=\"forward_prod-pn\"]")
+    @XPath("//*[@id=\"forward_prod-pn-test\"]")
     Clickable accediSendButton();
 
     default void accediToSend() {

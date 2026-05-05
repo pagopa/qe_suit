@@ -6,9 +6,9 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
+import org.assertj.core.api.Assertions;
 import it.pagopa.send.enums.User;
 import it.pagopa.send.steps.login.component.OneIdLoginForm;
-
 
 @Url("${url.notifiche.mittente.base}")
 public interface OneIdPage extends Page {
@@ -40,5 +40,14 @@ public interface OneIdPage extends Page {
         authArea().spidButton().click();
         authArea().providerDialog().selectFakeProvider();
         loginForm().loginWith(user);
+    }
+
+    @Override
+    default void assertLoaded() {
+        authArea().header().readAndAssert(h -> {
+            Assertions.assertThat(h).isNotNull();
+            Assertions.assertThat(h.getText())
+                      .isIn("Log in to the Reserved Area", "Log in to the Reserved Area");
+        });
     }
 }
