@@ -31,6 +31,7 @@ public class CommonSteps {
     @When("la pagina {page} è caricata con successo")
     public void assertPageLoaded(Class<? extends Page> page) {
         Page pageInstance = uiGateway.bind(page);
+        pageInstance.waitUntilReady();
         pageInstance.assertLoaded();
     }
 

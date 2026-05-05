@@ -6,7 +6,7 @@ import it.frontend.e2e.framework.web.domain.Component;
 
 public interface Header extends Component {
 
-    @XPath("//*[@id=\"root\"]/div[1]/header/div[1]/div/div/div/button")
+    @XPath("//*[@id=\"root\"]/div[1]/header/div[1]/div/div/div/button[last()]")
     Clickable logoutButton();
 
     interface LogoutOverlay extends Component {
