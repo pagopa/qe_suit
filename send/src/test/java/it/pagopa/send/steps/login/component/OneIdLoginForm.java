@@ -19,7 +19,6 @@ public interface OneIdLoginForm extends Component {
             "//*[@id=\"formLogin\"]/button")
     Clickable submit();
 
-    @XPath("//*[@id=\"consent-form\"]")
     OneIdPrivacyDialog oneIdPrivacyDialog();
 
     default void loginWith(User user) {
