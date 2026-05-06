@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 
 public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
-    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 60;
+    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 200;
     private final WebDriver driver;
 
     public SeleniumApiAdapter(BrowserSettings settings) {
