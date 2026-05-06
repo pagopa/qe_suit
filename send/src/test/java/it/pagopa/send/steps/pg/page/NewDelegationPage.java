@@ -16,7 +16,7 @@ public interface NewDelegationPage extends Page {
     default void assertLoaded() {
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("Add an authority");
+            Assertions.assertThat(h.getText()).isIn("Add an authority", "Aggiungi una delega");
         });
     }
 }
