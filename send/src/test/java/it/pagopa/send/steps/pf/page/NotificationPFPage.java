@@ -16,7 +16,7 @@ public interface NotificationPFPage extends Page {
     default void assertLoaded() {
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("Your notifications");
+            Assertions.assertThat(h.getText()).isIn("Your notifications", "Le tue notifiche");
         });
     }
 }
