@@ -16,7 +16,7 @@ public interface AppStatusPFPage extends Page {
     default void assertLoaded() {
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("Platform status");
+            Assertions.assertThat(h.getText()).isIn("Platform status", "Stato della piattaforma");
         });
     }
 }
