@@ -16,7 +16,7 @@ public interface DelegationsPFPage extends Page {
     default void assertLoaded() {
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("Delegates");
+            Assertions.assertThat(h.getText()).isIn("Delegates", "Deleghe");
         });
     }
 }
