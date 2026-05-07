@@ -24,7 +24,8 @@ import java.util.function.Supplier;
 
 public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
-    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 200;
+    private static final long RETRY_WAIT_TIMEOUT_SECONDS = 60;
+    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 60;
     private final WebDriver driver;
 
     public SeleniumApiAdapter(BrowserSettings settings) {
@@ -50,7 +51,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public Optional<WebPresentationElement> findElement(XPathSelector selector) {
         try {
-            WebElement webElement = findWebElement(selector);
+            WebElement webElement = withRetry(() -> findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS));
             return Optional.of(toPresentationElement(selector, webElement));
         } catch (Exception e) {
             return Optional.empty();
@@ -86,11 +87,8 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void click(XPathSelector selector) {
-        withRetry(() -> {
-            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
-            element.click();
-            return element;
-        });
+        WebElement element = withRetry(() -> findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS));
+        element.click();
     }
 
     @Override
@@ -101,11 +99,8 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void sendText(XPathSelector selector, String text) {
-        withRetry(() -> {
-            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
-            element.sendKeys(text);
-            return element;
-        });
+        WebElement element = withRetry(() -> findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS));
+        element.sendKeys(text);
     }
 
     @Override
@@ -116,11 +111,8 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void clear(XPathSelector selector) {
-        withRetry(() -> {
-            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
-            element.clear();
-            return element;
-        });
+        WebElement element = withRetry(() -> findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS));
+        element.clear();
     }
 
     @Override
@@ -150,7 +142,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public Optional<String> getText(XPathSelector selector) {
         try {
-            WebElement element = findWebElement(selector);
+            WebElement element = withRetry(() -> findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS));
             return Optional.of(resolveElementText(element));
         } catch (Exception e) {
             return Optional.empty();
@@ -275,7 +267,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     }
 
     private WebElement withRetry(Supplier<WebElement> action) {
-            long end = System.currentTimeMillis() + (DEFAULT_WAIT_TIMEOUT_SECONDS * 1000);
+            long end = System.currentTimeMillis() + (RETRY_WAIT_TIMEOUT_SECONDS * 1000);
             Throwable lastException = null;
             while (System.currentTimeMillis() < end) {
                 try {
