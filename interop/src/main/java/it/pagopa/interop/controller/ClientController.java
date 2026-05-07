@@ -19,7 +19,7 @@ public class ClientController {
     private final CurrentUserContext currentUserContext;
     private final ClientService clientService;
 
-    @Given("un client {clientType} creato da {tenant}, associato alla {purposeCreated}, in cui è presente l'admin e una coppia di chiavi crittografiche")
+    @Given("un client {clientType} creato da {tenant}, associato alla {currentPurpose}, in cui è presente l'admin e una coppia di chiavi crittografiche")
     public void setupClient(InteropClientType clientType, Tenant consumer, Purpose purpose) {
         User consumerAdmin = User.getTenantAdmin(consumer);
         currentUserContext.set(consumerAdmin, consumer);
