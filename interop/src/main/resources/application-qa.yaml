@@ -30,3 +30,11 @@ url:
       statistics: ${url.notifiche.mittente.base}/statistiche
     supporto:
       base: https://uat.selfcare.pagopa.it
+
+# ============================================================================
+# Client Assertion Configuration
+# Audience and other parameters for client assertion generation
+# ============================================================================
+client-assertion:
+  jwt:
+    audience: auth.qa.interop.pagopa.it/client-assertion
