@@ -5,9 +5,11 @@ import it.pagopa.interop.domain.enums.Tenant;
 import it.pagopa.interop.domain.enums.User;
 import it.pagopa.interop.domain.model.Agreement;
 import it.pagopa.interop.domain.model.Eservice;
+import it.pagopa.interop.domain.model.Purpose;
 import it.pagopa.interop.domain.services.agreement.AgreementService;
 import it.pagopa.interop.domain.services.eservice.EserviceService;
 import it.pagopa.interop.domain.services.purpose.PurposeService;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import it.pagopa.interop.infrastructure.client.auth.context.user.CurrentUserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +29,9 @@ public class EserviceController {
 
        currentUserContext.set(User.getTenantAdmin(consumer), consumer);
        Agreement draftAgreement = agreementService.createEserviceAgreement(publishedEservice);
-       Agreement activeAgreement = agreementService.publishAgreement(draftAgreement);
+       agreementService.publishAgreement(draftAgreement);
 
-       //TODO: finalità
+       purposeService.createEservicePurposeWithState(publishedEservice, PurposeVersionState.ACTIVE);
     }
 
     public Eservice createDraftEservice(Tenant producer) {

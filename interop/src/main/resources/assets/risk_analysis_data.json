@@ -1,0 +1,30 @@
+{
+  "Privato/GSP": {
+    "completed": {
+      "purpose": ["INSTITUTIONAL"],
+      "institutionalPurpose": ["prova prova prova"],
+      "usesPersonalData": ["NO"],
+      "usesThirdPartyPersonalData": ["NO"]
+    },
+    "uncompleted": {
+      "purpose": ["INSTITUTIONAL"],
+      "usesPersonalData": ["NO"],
+      "usesThirdPartyPersonalData": ["NO"]
+    }
+  },
+  "PA": {
+    "completed": {
+      "institutionalPurpose": ["prova prova prova"],
+      "isRequestOnBehalfOfThirdParties": ["NO"],
+      "purpose": ["INSTITUTIONAL"],
+      "usesPersonalData": ["NO"],
+      "usesThirdPartyPersonalData": ["NO"]
+    },
+    "uncompleted": {
+      "institutionalPurpose": ["prova prova prova"],
+      "isRequestOnBehalfOfThirdParties": ["NO"],
+      "usesPersonalData": ["NO"],
+      "usesThirdPartyPersonalData": ["NO"]
+    }
+  }
+}
