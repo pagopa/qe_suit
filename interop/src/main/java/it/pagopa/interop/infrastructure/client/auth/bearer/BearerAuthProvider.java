@@ -1,7 +1,9 @@
-package it.pagopa.interop.infrastructure.client.auth;
+package it.pagopa.interop.infrastructure.client.auth.bearer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.interop.infrastructure.client.auth.context.user.CurrentUser;
+import it.pagopa.interop.infrastructure.client.auth.context.user.CurrentUserContext;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.cache.annotation.Cacheable;
@@ -27,15 +29,17 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class SessionTokenProvider {
+public class BearerAuthProvider {
 
     private final ObjectMapper objectMapper;
     private final KmsClient kmsClient;
-    private final SessionTokenProperties properties;
+    private final BearerTokenProperties properties;
+    private final CurrentUserContext currentUserContext;
 
-    @Cacheable(cacheNames = "sessionToken", key = "'default'")
+    @Cacheable(cacheNames = "sessionToken", key = "@bearerAuthProvider.cacheKey()")
     public String getToken() {
         try {
+            CurrentUser user = currentUserContext.getUser();
             long now = Instant.now().getEpochSecond();
             long exp = now + properties.durationSec();
 
@@ -51,10 +55,11 @@ public class SessionTokenProvider {
 
             Map<String, Object> payload = new HashMap<>();
             payload.put("iss", properties.issuer());
-            payload.put("uid", properties.uid());
-            payload.put("organizationId", properties.organizationId());
-            payload.put("selfcareId", properties.selfcareId());
-            payload.put("user-roles", properties.userRole());
+            payload.put("aud", properties.audience());
+            payload.put("uid", user.uid());
+            payload.put("organizationId", user.organizationId());
+            payload.put("selfcareId", user.selfcareId());
+            payload.put("user-roles", user.userRole());
             payload.put("iat", now);
             payload.put("nbf", now);
             payload.put("exp", exp);
@@ -79,6 +84,11 @@ public class SessionTokenProvider {
         } catch (Exception e) {
             throw new IllegalStateException("Unable to generate session token", e);
         }
+    }
+
+    public String cacheKey() {
+        CurrentUser u = currentUserContext.getUser();
+        return String.join("|", u.uid(), u.organizationId(), u.selfcareId(), u.userRole());
     }
 
     @SuppressWarnings("unchecked")
