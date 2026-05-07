@@ -20,14 +20,14 @@ public enum User {
     private final String password;
     private final Tenant[] tenants;
 
-    public User getTenantAdmin(Tenant tenant) {
-        return this.getTenantUser(tenant, ADMIN);
+    public static User getTenantAdmin(Tenant tenant) {
+        return getTenantUser(tenant, ADMIN);
     }
 
-    public User getTenantUser(Tenant tenant, UserRole role) {
+    public static User getTenantUser(Tenant tenant, UserRole role) {
         return Arrays.stream(User.values()).filter(user -> user.getRole() == role)
                 .filter(user -> Arrays.asList(user.getTenants()).contains(tenant))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException(String.format("No %s found for role %s", this.name(), role)));
+                .orElseThrow(() -> new IllegalArgumentException(String.format("No user found in tenant %s for role %s", tenant.name(), role.name())));
     }
 }
