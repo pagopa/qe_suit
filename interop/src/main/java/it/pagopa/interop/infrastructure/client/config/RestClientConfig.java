@@ -1,6 +1,7 @@
 package it.pagopa.interop.infrastructure.client.config;
 
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
+import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.infrastructure.client.auth.bearer.BearerAuthProvider;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,5 +22,10 @@ public class RestClientConfig {
     @Bean
     public EservicesApi eserviceClient(ApiClient apiClient) {
         return new EservicesApi(apiClient);
+    }
+
+    @Bean
+    public AgreementsApi agreementsApi(ApiClient apiClient) {
+        return new AgreementsApi(apiClient);
     }
 }

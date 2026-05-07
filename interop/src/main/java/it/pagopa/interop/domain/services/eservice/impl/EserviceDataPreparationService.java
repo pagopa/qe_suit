@@ -44,9 +44,30 @@ public class EserviceDataPreparationService implements EserviceService {
     }
 
     @Override
+    public Eservice publishEservice(Eservice eservice) {
+        UUID eserviceId = eservice.getId();
+        UUID descriptorId = eservice.getLastDescriptorId();
+        eservicesApi.publishDescriptor(eserviceId, descriptorId);
+
+        Eservice publishedEservice = PollingUtils.pollUntil(
+                () -> new Eservice(eservicesApi.getCatalogEServiceDescriptor(eserviceId, descriptorId)),
+                resp -> resp.getEservice().getDescriptors().stream()
+                                    .filter(d -> Objects.equals(d.getId(), descriptorId))
+                                    .findFirst()
+                                    .map(CompactDescriptor::getState)
+                                    .orElse(null) == EServiceDescriptorState.PUBLISHED,
+                Duration.ofSeconds(15),
+                Duration.ofSeconds(2)
+        );
+
+        context.upsert(publishedEservice);
+        return publishedEservice;
+    }
+
+    @Override
     public Eservice getEservice(UUID eserviceId, UUID descriptorId) {
-        CatalogEServiceDescriptor descriptor = PollingUtils.pollUntil(
-                () -> eservicesApi.getCatalogEServiceDescriptor(eserviceId, descriptorId),
+        Eservice eservice = PollingUtils.pollUntil(
+                () -> new Eservice(eservicesApi.getCatalogEServiceDescriptor(eserviceId, descriptorId)),
                 resp -> {
                     if (resp == null || !Objects.equals(eserviceId, resp.getId())) return false;
 
@@ -58,9 +79,7 @@ public class EserviceDataPreparationService implements EserviceService {
                 Duration.ofSeconds(2)
         );
 
-        Eservice eservice = new Eservice(descriptor);
         context.upsert(eservice);
-
         return eservice;
     }
 
