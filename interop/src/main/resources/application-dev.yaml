@@ -14,6 +14,22 @@ spring:
 # URLs Configuration
 # Base URLs and routes for test environment
 # ============================================================================
+interop:
+  auth:
+    bearer:
+      well-known-url: https://dev.interop.pagopa.it/.well-known/jwks.json
+      issuer: dev.interop.pagopa.it
+      audience: dev.interop.pagopa.it/ui
+      duration-sec: 14400
+    client-assertion:
+      audience: auth.dev.interop.pagopa.it/client-assertion
+      grant_type: client_credentials
+      assertion_type: urn:ietf:params:oauth:client-assertion-type:jwt-bearer
+  api:
+    base-url:
+      bff: https://selfcare.dev.interop.pagopa.it/1.0/backend-for-frontend
+
+
 url:
   notifiche:
     cittadino:
@@ -28,12 +44,3 @@ url:
       new-api-key: ${url.notifiche.mittente.api-keys}/nuova-api-key
       app-status: ${url.notifiche.mittente.base}/app-status
       statistics: ${url.notifiche.mittente.base}/statistiche
-
-
-# ============================================================================
-# Client Assertion Configuration
-# Audience and other parameters for client assertion generation
-# ============================================================================
-client-assertion:
-  jwt:
-    audience: auth.dev.interop.pagopa.it/client-assertion
