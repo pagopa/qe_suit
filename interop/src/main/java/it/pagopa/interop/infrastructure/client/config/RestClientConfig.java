@@ -2,6 +2,7 @@ package it.pagopa.interop.infrastructure.client.config;
 
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
+import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.infrastructure.client.auth.bearer.BearerAuthProvider;
@@ -33,5 +34,10 @@ public class RestClientConfig {
     @Bean
     public PurposesApi purposesApi(ApiClient apiClient) {
         return new PurposesApi(apiClient);
+    }
+
+    @Bean
+    public ClientsApi clientsApi(ApiClient apiClient) {
+        return new ClientsApi(apiClient);
     }
 }
