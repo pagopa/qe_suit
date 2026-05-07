@@ -28,3 +28,12 @@ url:
       new-api-key: ${url.notifiche.mittente.api-keys}/nuova-api-key
       app-status: ${url.notifiche.mittente.base}/app-status
       statistics: ${url.notifiche.mittente.base}/statistiche
+
+
+# ============================================================================
+# Client Assertion Configuration
+# Audience and other parameters for client assertion generation
+# ============================================================================
+client-assertion:
+  jwt:
+    audience: auth.dev.interop.pagopa.it/client-assertion
