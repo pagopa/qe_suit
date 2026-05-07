@@ -2,6 +2,8 @@ package it.pagopa.interop.infrastructure.client.auth.bearer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.interop.domain.enums.Tenant;
+import it.pagopa.interop.domain.enums.User;
 import it.pagopa.interop.infrastructure.client.auth.context.user.CurrentUser;
 import it.pagopa.interop.infrastructure.client.auth.context.user.CurrentUserContext;
 import lombok.RequiredArgsConstructor;
@@ -39,7 +41,9 @@ public class BearerAuthProvider {
     @Cacheable(cacheNames = "sessionToken", key = "@bearerAuthProvider.cacheKey()")
     public String getToken() {
         try {
-            CurrentUser user = currentUserContext.getUser();
+            User user = currentUserContext.getUser();
+            Tenant tenant = currentUserContext.getTenant();
+
             long now = Instant.now().getEpochSecond();
             long exp = now + properties.durationSec();
 
@@ -56,10 +60,10 @@ public class BearerAuthProvider {
             Map<String, Object> payload = new HashMap<>();
             payload.put("iss", properties.issuer());
             payload.put("aud", properties.audience());
-            payload.put("uid", user.uid());
-            payload.put("organizationId", user.organizationId());
-            payload.put("selfcareId", user.selfcareId());
-            payload.put("user-roles", user.userRole());
+            payload.put("uid", user.getUserId().toString());
+            payload.put("organizationId", tenant.getOrganizationId().toString());
+            payload.put("selfcareId", tenant.getSelfcareId().toString());
+            payload.put("user-roles", user.getRole().name());
             payload.put("iat", now);
             payload.put("nbf", now);
             payload.put("exp", exp);
@@ -87,8 +91,10 @@ public class BearerAuthProvider {
     }
 
     public String cacheKey() {
-        CurrentUser u = currentUserContext.getUser();
-        return String.join("|", u.uid(), u.organizationId(), u.selfcareId(), u.userRole());
+        User u = currentUserContext.getUser();
+        Tenant t = currentUserContext.getTenant();
+
+        return String.join("|", u.getUserId().toString(), t.getOrganizationId().toString(), t.getSelfcareId().toString(), u.getRole().name());
     }
 
     @SuppressWarnings("unchecked")
