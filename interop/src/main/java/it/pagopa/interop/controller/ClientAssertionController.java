@@ -1,9 +1,9 @@
 package it.pagopa.interop.controller;
 
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.domain.dto.Client;
-import it.pagopa.interop.domain.dto.ClientAssertion;
-import it.pagopa.interop.domain.dto.Purpose;
+import it.pagopa.interop.domain.model.Client;
+import it.pagopa.interop.domain.model.ClientAssertion;
+import it.pagopa.interop.domain.model.Purpose;
 import it.pagopa.interop.domain.enums.User;
 
 public class ClientAssertionController {

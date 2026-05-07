@@ -1,9 +1,9 @@
 package it.pagopa.interop.domain.services.purpose;
 
-import it.pagopa.interop.domain.dto.Client;
-import it.pagopa.interop.domain.dto.Eservice;
-import it.pagopa.interop.domain.dto.Purpose;
-import it.pagopa.interop.domain.dto.requests.PurposeCreationRequest;
+import it.pagopa.interop.domain.model.Client;
+import it.pagopa.interop.domain.model.Eservice;
+import it.pagopa.interop.domain.model.Purpose;
+import it.pagopa.interop.domain.model.requests.PurposeCreationRequest;
 
 
 public interface PurposeService {
