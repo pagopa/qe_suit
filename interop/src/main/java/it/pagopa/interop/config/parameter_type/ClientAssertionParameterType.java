@@ -1,7 +1,7 @@
 package it.pagopa.interop.config.parameter_type;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.domain.dto.ClientAssertion;
+import it.pagopa.interop.domain.model.ClientAssertion;
 
 public class ClientAssertionParameterType {
     @ParameterType("client assertion|client assertion creata")
