@@ -51,8 +51,11 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public Optional<WebPresentationElement> findElement(XPathSelector selector) {
         try {
-            WebElement webElement = withRetry(() -> findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS));
-            return Optional.of(toPresentationElement(selector, webElement));
+            WebPresentationElement webPresentationElement = withRetry(() -> {
+                WebElement webElement = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+                return toPresentationElement(selector, webElement);
+            });
+            return Optional.of(webPresentationElement);
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -87,8 +90,11 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void click(XPathSelector selector) {
-        WebElement element = withRetry(() -> findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS));
-        element.click();
+        withRetry(() -> {
+            WebElement element = findClickableWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+            element.click();
+            return element;
+        });
     }
 
     @Override
@@ -99,8 +105,11 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void sendText(XPathSelector selector, String text) {
-        WebElement element = withRetry(() -> findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS));
-        element.sendKeys(text);
+        withRetry(() -> {
+            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+            element.sendKeys(text);
+            return element;
+        });
     }
 
     @Override
@@ -111,8 +120,11 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void clear(XPathSelector selector) {
-        WebElement element = withRetry(() -> findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS));
-        element.clear();
+        withRetry(() -> {
+            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+            element.clear();
+            return element;
+        });
     }
 
     @Override
@@ -142,8 +154,11 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public Optional<String> getText(XPathSelector selector) {
         try {
-            WebElement element = withRetry(() -> findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS));
-            return Optional.of(resolveElementText(element));
+            String text = withRetry(() -> {
+                WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+                return resolveElementText(element);
+            });
+            return Optional.of(text);
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -194,6 +209,11 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     private WebElement findWebElement(XPathSelector selector, long timeoutSeconds) {
         return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
                 .until(ExpectedConditions.presenceOfElementLocated(toBy(selector)));
+    }
+
+    private WebElement findClickableWebElement(XPathSelector selector, long timeoutSeconds) {
+        return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
+                .until(ExpectedConditions.elementToBeClickable(toBy(selector)));
     }
 
     private List<WebElement> findWebElements(XPathSelector selector, long timeoutSeconds) {
@@ -266,10 +286,11 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
         return Map.of();
     }
 
-    private WebElement withRetry(Supplier<WebElement> action) {
+    private <T> T withRetry(Supplier<T> action) {
             long end = System.currentTimeMillis() + (RETRY_WAIT_TIMEOUT_SECONDS * 1000);
             Throwable lastException = null;
             while (System.currentTimeMillis() < end) {
+
                 try {
                     return action.get();
                 } catch (StaleElementReferenceException | ElementClickInterceptedException e) {
