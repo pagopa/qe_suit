@@ -1,0 +1,18 @@
+Feature: : Debugger Client Assertion Sync Bearer
+  Come Aderente in possesso di un client di tipo CONSUMER
+  Voglio validare la mia Client Assertion standard
+  Al fine di identificare errori strutturali, temporali o crittografici nelle tre fasi di validazione (Formale, Recupero Chiave, Firma)
+
+  Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_SUCCESS]
+  Dato un client CONSUMER valido, quando viene inviata una client assertion corretta allora tutte le fasi di validazione risultano PASSED
+    Given un eservice creato da "{string}" con una richiesta di fruizione e una finalità associate da "{string}"
+    And un client "{string}" creato da "{string}", associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
+    And una client assertion valida generata usando il client e la finalità
+    When "{string}" si trova alla pagina "DebugClientAssertion" del portale Interop
+    And "{string}" richiede la validazione della client assertion
+    Then i risultati della validazione sono:
+      | step                                 | result | errors |
+      | clientAssertionValidation            | PASSED | []     |
+      | publicKeyRetrieve                    | PASSED | []     |
+      | clientAssertionSignatureVerification | PASSED | []     |
+      | platformStatesVerification           | PASSED | []     |
