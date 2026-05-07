@@ -1,4 +1,4 @@
-package it.pagopa.interop.domain.service.client_assertion;
+package it.pagopa.interop.domain.services.client_assertion;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.JwtBuilder;
@@ -14,9 +14,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static it.pagopa.interop.domain.utils.JwtBuilderUtils.JwtClaimOverride;
-import static it.pagopa.interop.domain.utils.JwtBuilderUtils.applyOverrides;
-import static it.pagopa.interop.domain.utils.JwtUtils.calculateKidFromPublicKey;
+import static it.pagopa.interop.utils.JwtBuilderUtils.JwtClaimOverride;
+import static it.pagopa.interop.utils.JwtBuilderUtils.applyOverrides;
+import static it.pagopa.interop.utils.JwtUtils.calculateKidFromPublicKey;
 
 @Slf4j
 public class ClientAssertionService {
