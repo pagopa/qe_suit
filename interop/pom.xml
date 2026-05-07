@@ -24,6 +24,18 @@
         <jjwt.version>0.12.6</jjwt.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>bom</artifactId>
+                <version>2.25.53</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
 
         <!-- ========================= -->
@@ -65,7 +77,7 @@
         </dependency>
 
         <!-- ========================= -->
-        <!-- SPRING BOOT (TEST) -->
+        <!-- SPRING BOOT -->
         <!-- ========================= -->
 
         <dependency>
@@ -81,6 +93,7 @@
         <!-- ========================= -->
         <!-- JUNIT PLATFORM SUITE API (se ti serve la @Suite) -->
         <!-- ========================= -->
+
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite-api</artifactId>
@@ -94,6 +107,7 @@
         <!-- ========================= -->
         <!-- Lombok -->
         <!-- ========================= -->
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -103,6 +117,7 @@
         <!-- ========================= -->
         <!-- JWT -->
         <!-- ========================= -->
+
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -126,6 +141,7 @@
         <!-- ========================= -->
         <!-- Client Generation dependencies -->
         <!-- ========================= -->
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
@@ -153,6 +169,14 @@
             <version>3.0.2</version>
         </dependency>
 
+        <!-- ========================= -->
+        <!-- AWS KMS: Interop Bearer Auth Dependency -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>kms</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
