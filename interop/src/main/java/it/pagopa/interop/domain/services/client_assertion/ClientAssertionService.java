@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import it.pagopa.interop.domain.enums.InteropClientType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -19,13 +20,17 @@ import static it.pagopa.interop.utils.JwtBuilderUtils.applyOverrides;
 import static it.pagopa.interop.utils.JwtUtils.calculateKidFromPublicKey;
 
 @Slf4j
+@Component
 public class ClientAssertionService {
 
-    public final static String CLIENT_ASSERTION_TYPE = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
-    public final static String GRANT_TYPE = "client_credentials";
+    @Value("${interop.auth.client-assertion.audience}")
+    private String clientAssertionAudience;
 
-    @Value("${client-assertion.jwt.audience}")
-    private String clientAssertionJwtAudience;
+    @Value("${interop.auth.client-assertion.grant_type}")
+    private String clientAssertionGrantType;
+
+    @Value("${interop.auth.client-assertion.assertion_type}")
+    private String clientAssertionType;
 
     public record CreateClientAssertionRequest(InteropClientType clientType, String clientId, String purposeId,
                                                KeyPair keyPair, List<JwtClaimOverride> overrides) {
@@ -55,7 +60,7 @@ public class ClientAssertionService {
         JwtBuilder validJwt = Jwts.builder()
                 .issuer(clientId)
                 .subject(clientId)
-                .audience().add(this.clientAssertionJwtAudience).and()
+                .audience().add(this.clientAssertionAudience).and()
                 .id(UUID.randomUUID().toString())
                 .issuedAt(new Date())
                 .expiration(Date.from(Instant.now().plusSeconds(43200)))
