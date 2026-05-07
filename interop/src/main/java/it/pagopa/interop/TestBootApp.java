@@ -1,13 +1,13 @@
 package it.pagopa.interop;
 
-import it.pagopa.interop.infrastructure.client.auth.SessionTokenProperties;
+import it.pagopa.interop.infrastructure.client.auth.bearer.BearerTokenProperties;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan(basePackages = {"it.pagopa.interop"})
-@EnableConfigurationProperties(SessionTokenProperties.class)
+@EnableConfigurationProperties(BearerTokenProperties.class)
 public class TestBootApp {
 }
 
