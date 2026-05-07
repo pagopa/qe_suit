@@ -1,4 +1,4 @@
-package it.pagopa.interop.domain.utils;
+package it.pagopa.interop.utils;
 
 import io.jsonwebtoken.JwtBuilder;
 import java.util.List;

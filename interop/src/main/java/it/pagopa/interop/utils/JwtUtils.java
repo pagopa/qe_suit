@@ -1,4 +1,4 @@
-package it.pagopa.interop.domain.utils;
+package it.pagopa.interop.utils;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
