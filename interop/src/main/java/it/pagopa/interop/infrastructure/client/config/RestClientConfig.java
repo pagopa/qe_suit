@@ -1,23 +1,25 @@
 package it.pagopa.interop.infrastructure.client.config;
 
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
+import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
+import it.pagopa.interop.infrastructure.client.auth.bearer.BearerAuthProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class RestClientConfig {
 
-
     @Bean
-    public ApiClient bearerTokenApiClient() {
+    public ApiClient bearerTokenApiClient(BearerAuthProvider bearerAuthProvider, @Value("${interop.api.base-url.bff}") String basePath) {
         ApiClient apiClient = new ApiClient();
-        apiClient.setBearerToken(System.getenv("BEARER_TOKEN"));
+        apiClient.setBasePath(basePath);
+        apiClient.setBearerToken(bearerAuthProvider::getToken);
         return apiClient;
     }
 
     @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
+    public EservicesApi eserviceClient(ApiClient apiClient) {
+        return new EservicesApi(apiClient);
     }
 }
