@@ -9,5 +9,6 @@ public interface EserviceService {
     Eservice createEservice(EServiceSeed request);
     Eservice createEservice();
     Eservice createEservice(java.util.function.Consumer<EServiceSeed> overrides);
+    Eservice publishEservice(Eservice eservice);
     Eservice getEservice(UUID eserviceId, UUID descriptorId);
 }
