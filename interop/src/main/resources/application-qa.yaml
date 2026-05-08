@@ -23,6 +23,8 @@ interop:
       issuer: qa.interop.pagopa.it
       audience: qa.interop.pagopa.it/ui
       duration-sec: 14400
+    oauth:
+      server: https://auth.qa.interop.pagopa.it/token.oauth2
     client-assertion:
       audience: auth.qa.interop.pagopa.it/client-assertion
       grant_type: client_credentials
