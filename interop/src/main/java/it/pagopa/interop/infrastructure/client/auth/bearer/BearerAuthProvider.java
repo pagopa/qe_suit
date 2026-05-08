@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.domain.enums.Tenant;
 import it.pagopa.interop.domain.enums.User;
-import it.pagopa.interop.infrastructure.client.auth.context.user.CurrentUser;
 import it.pagopa.interop.infrastructure.client.auth.context.user.CurrentUserContext;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
@@ -23,11 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -43,6 +38,7 @@ public class BearerAuthProvider {
         try {
             User user = currentUserContext.getUser();
             Tenant tenant = currentUserContext.getTenant();
+            String role = user.getRole().name().toLowerCase();
 
             long now = Instant.now().getEpochSecond();
             long exp = now + properties.durationSec();
@@ -62,8 +58,20 @@ public class BearerAuthProvider {
             payload.put("aud", properties.audience());
             payload.put("uid", user.getUserId().toString());
             payload.put("organizationId", tenant.getOrganizationId().toString());
+            payload.put("externalId", Map.of(
+                    "origin", tenant.getExternalIdOrigin(),
+                    "value", tenant.getExternalIdValue()
+            ));
+            payload.put("organization", Map.of(
+                    "id", tenant.getOrganizationId().toString(),
+                    "name", tenant.getName(),
+                    "roles", List.of(Map.of(
+                            "partyRole", "MANAGER",
+                            "role", role
+                    ))
+            ));
             payload.put("selfcareId", tenant.getSelfcareId().toString());
-            payload.put("user-roles", user.getRole().name());
+            payload.put("user-roles", role);
             payload.put("iat", now);
             payload.put("nbf", now);
             payload.put("exp", exp);
@@ -94,14 +102,22 @@ public class BearerAuthProvider {
         User u = currentUserContext.getUser();
         Tenant t = currentUserContext.getTenant();
 
-        return String.join("|", u.getUserId().toString(), t.getOrganizationId().toString(), t.getSelfcareId().toString(), u.getRole().name());
+        return String.join("|",
+                u.getUserId().toString(),
+                t.getOrganizationId().toString(),
+                t.getSelfcareId().toString(),
+                u.getRole().name(),
+                t.getExternalIdOrigin(),
+                t.getExternalIdValue()
+        );
     }
 
     @SuppressWarnings("unchecked")
     private Map<String, String> fetchKidAlg(String url) throws IOException {
         StringBuilder response = getStringBuilder(url);
 
-        Map<String, Object> json = objectMapper.readValue(response.toString(), new TypeReference<>() {});
+        Map<String, Object> json = objectMapper.readValue(response.toString(), new TypeReference<>() {
+        });
         List<Map<String, Object>> keys = (List<Map<String, Object>>) json.get("keys");
         if (keys == null || keys.isEmpty()) {
             throw new IllegalStateException("No keys found in well-known response");
