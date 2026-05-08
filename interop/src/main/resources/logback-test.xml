@@ -53,10 +53,14 @@
     <!-- Logger per Selenium (ridotto) -->
     <logger name="org.openqa.selenium" level="WARN"/>
 
+    <!-- Logger HTTP outbound -->
+    <logger name="it.pagopa.interop.infrastructure.http" level="DEBUG"/>
+
     <!-- Root logger -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="TEST_FILE"/>
     </root>
+
 </configuration>
 

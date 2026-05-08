@@ -14,8 +14,18 @@ import org.springframework.context.annotation.Configuration;
 public class RestClientConfig {
 
     @Bean
-    public ApiClient bearerTokenApiClient(BearerAuthProvider bearerAuthProvider, @Value("${interop.api.base-url.bff}") String basePath) {
-        ApiClient apiClient = new ApiClient();
+    public org.springframework.web.client.RestClient bffRestClient() {
+        return org.springframework.web.client.RestClient.builder()
+                .requestFactory(it.pagopa.interop.infrastructure.http.interceptor.HttpLoggingInterceptor.bufferingFactory())
+                .requestInterceptor(new it.pagopa.interop.infrastructure.http.interceptor.HttpLoggingInterceptor())
+                .build();
+    }
+
+    @Bean
+    public ApiClient bearerTokenApiClient(BearerAuthProvider bearerAuthProvider,
+                                          @Value("${interop.api.base-url.bff}") String basePath,
+                                          org.springframework.web.client.RestClient bffRestClient) {
+        ApiClient apiClient = new ApiClient(bffRestClient);
         apiClient.setBasePath(basePath);
         apiClient.setBearerToken(bearerAuthProvider::getToken);
         return apiClient;
