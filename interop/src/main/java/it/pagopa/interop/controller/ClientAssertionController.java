@@ -4,22 +4,19 @@ import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingExcept
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.domain.enums.InteropClientType;
 import it.pagopa.interop.domain.model.Client;
 import it.pagopa.interop.domain.model.ClientAssertion;
 import it.pagopa.interop.domain.model.Purpose;
 import it.pagopa.interop.domain.enums.User;
-import it.pagopa.interop.domain.services.client_assertion.ClientAssertionService;
-import it.pagopa.interop.utils.KeyPairUtils;
+import it.pagopa.interop.domain.services.client_assertion.CreateClientAssertionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ClientAssertionController {
-    private final ClientAssertionService clientAssertionService;
+    private final CreateClientAssertionService clientAssertionService;
     private String currentClientAssertion;
 
     @Given("una client assertion valida generata usando il {currentClient} e la {currentPurpose}")
