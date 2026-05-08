@@ -114,7 +114,7 @@ public class PurposeDataPreparationService implements PurposeService {
                 .isFreeOfCharge(true)
                 .freeOfChargeReason("free of charge")
                 .dailyCalls(1)
-                .eserviceId(eservice.getId())
+                .eserviceId(eservice.getEserviceId())
                 .consumerId(consumerId)
                 .riskAnalysisForm(riskAnalysis.getForm());
     }
