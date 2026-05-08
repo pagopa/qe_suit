@@ -16,4 +16,8 @@ public class ClientAssertionContext extends AbstractContext<ClientAssertion> {
     public void addValidation(ClientAssertion clientAssertion, ClientAssertionValidationResult validation) {
         validationMap.put(clientAssertion, validation);
     }
+
+    public ClientAssertionValidationResult getValidation(ClientAssertion clientAssertion) {
+        return validationMap.get(clientAssertion);
+    }
 }
