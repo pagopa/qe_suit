@@ -11,6 +11,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -302,7 +303,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
                 try {
                     return action.get();
-                } catch (StaleElementReferenceException | ElementClickInterceptedException e) {
+                } catch (StaleElementReferenceException | ElementClickInterceptedException | TimeoutException e) {
                     lastException = e;
                     try {
                         Thread.sleep(2000);
