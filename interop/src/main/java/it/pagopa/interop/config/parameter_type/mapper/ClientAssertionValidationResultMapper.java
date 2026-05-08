@@ -40,10 +40,11 @@ public final class ClientAssertionValidationResultMapper {
             String result = row.get(resultIdx).trim();
             String errors = row.get(errorsIdx).trim();
 
-            boolean success = "PASSED".equalsIgnoreCase(result);
+            ClientAssertionValidationResult.Status status = parseStatus(result);
+            boolean success = status == ClientAssertionValidationResult.Status.PASSED;
             String errorCode = parseErrors(errors);
 
-            byStep.put(step, new ClientAssertionValidationResult.ValidationResult(success, errorCode));
+            byStep.put(step, new ClientAssertionValidationResult.ValidationResult(status, success, errorCode));
         }
 
         return new ClientAssertionValidationResult(
@@ -71,6 +72,16 @@ public final class ClientAssertionValidationResultMapper {
             throw new IllegalArgumentException("Step mancante nella DataTable: " + key);
         }
         return value;
+    }
+
+    private static ClientAssertionValidationResult.Status parseStatus(String raw) {
+        String value = normalize(raw);
+        return switch (value) {
+            case "passed" -> ClientAssertionValidationResult.Status.PASSED;
+            case "failed" -> ClientAssertionValidationResult.Status.FAILED;
+            case "skipped" -> ClientAssertionValidationResult.Status.SKIPPED;
+            default -> throw new IllegalArgumentException("Result non valido: " + raw);
+        };
     }
 
     private static String parseErrors(String raw) {

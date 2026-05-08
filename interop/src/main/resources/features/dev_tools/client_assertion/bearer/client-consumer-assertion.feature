@@ -5,6 +5,7 @@ Feature: : Debugger Client Assertion Sync Bearer
 
   Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_SUCCESS]
   Dato un client CONSUMER valido, quando viene inviata una client assertion corretta allora tutte le fasi di validazione risultano PASSED
+
     Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
     And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
     And una client assertion valida generata usando il client e la finalità
@@ -16,3 +17,21 @@ Feature: : Debugger Client Assertion Sync Bearer
       | publicKeyRetrieve                    | PASSED | []     |
       | clientAssertionSignatureVerification | PASSED | []     |
       | platformStatesVerification           | PASSED | []     |
+
+Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_INVALID_AUDIENCE]
+  Dato un client CONSUMER valido, quando la client assertion ha audience invalida
+  allora la validazione formale fallisce con invalidAudience
+
+  Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
+  And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
+  And una client assertion generata usando il client, la finalità e:
+    | claim | value            |
+    | aud   | invalid_audience |
+  When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
+  And l'utente richiede la validazione della client assertion associata al client
+  Then i risultati della validazione della client assertion sono:
+    | step                                 | result  | errors            |
+    | clientAssertionValidation            | FAILED  | [invalidAudience] |
+    | publicKeyRetrieve                    | SKIPPED | []                |
+    | clientAssertionSignatureVerification | SKIPPED | []                |
+    | platformStatesVerification           | SKIPPED | []                |
