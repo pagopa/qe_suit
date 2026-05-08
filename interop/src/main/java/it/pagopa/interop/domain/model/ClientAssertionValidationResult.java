@@ -11,18 +11,25 @@ import lombok.ToString;
 @AllArgsConstructor
 public class ClientAssertionValidationResult {
 
-    private ClientAssertionValidation clientAssertionValidation;
-    private PublicKeyValidation publicKeyRetrieve;
-    private SignatureValidation clientAssertionSignatureVerification;
-    private PlatformValidation platformStatesVerification;
+    public enum Status {
+        PASSED,
+        FAILED,
+        SKIPPED
+    }
+
+    private final ClientAssertionValidation clientAssertionValidation;
+    private final PublicKeyValidation publicKeyRetrieve;
+    private final SignatureValidation clientAssertionSignatureVerification;
+    private final PlatformValidation platformStatesVerification;
 
     @Getter
     @ToString
     @EqualsAndHashCode
     @AllArgsConstructor
     public static class ValidationResult {
-        private boolean success;
-        private String errorCode;
+        private final Status status;
+        private final boolean success;
+        private final String errorCode;
     }
 
     @Getter
@@ -30,7 +37,7 @@ public class ClientAssertionValidationResult {
     @EqualsAndHashCode(callSuper = true)
     public static class ClientAssertionValidation extends ValidationResult {
         public ClientAssertionValidation(ValidationResult result) {
-            super(result.isSuccess(), result.getErrorCode());
+            super(result.getStatus(), result.isSuccess(), result.getErrorCode());
         }
     }
 
@@ -39,7 +46,7 @@ public class ClientAssertionValidationResult {
     @EqualsAndHashCode(callSuper = true)
     public static class PublicKeyValidation extends ValidationResult {
         public PublicKeyValidation(ValidationResult result) {
-            super(result.isSuccess(), result.getErrorCode());
+            super(result.getStatus(), result.isSuccess(), result.getErrorCode());
         }
     }
 
@@ -48,7 +55,7 @@ public class ClientAssertionValidationResult {
     @EqualsAndHashCode(callSuper = true)
     public static class SignatureValidation extends ValidationResult {
         public SignatureValidation(ValidationResult result) {
-            super(result.isSuccess(), result.getErrorCode());
+            super(result.getStatus(), result.isSuccess(), result.getErrorCode());
         }
     }
 
@@ -57,7 +64,7 @@ public class ClientAssertionValidationResult {
     @EqualsAndHashCode(callSuper = true)
     public static class PlatformValidation extends ValidationResult {
         public PlatformValidation(ValidationResult result) {
-            super(result.isSuccess(), result.getErrorCode());
+            super(result.getStatus(), result.isSuccess(), result.getErrorCode());
         }
     }
 }
