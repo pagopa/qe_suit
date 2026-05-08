@@ -68,8 +68,8 @@ public class AgreementDataPreparationService implements AgreementService {
     }
 
     private AgreementPayload buildAgreementPayload(Eservice eservice, UUID delegationId) {
-        UUID eserviceId = eservice.getId();
-        UUID lastDescriptorId = eservice.getEservice().getDescriptors().get(eservice.getEservice().getDescriptors().size() - 1).getId();
+        UUID eserviceId = eservice.getEserviceId();
+        UUID lastDescriptorId = eservice.getLastDescriptorId();
 
         AgreementPayload request = new AgreementPayload();
         request.setEserviceId(eserviceId);
