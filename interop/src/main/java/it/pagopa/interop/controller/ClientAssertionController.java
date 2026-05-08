@@ -2,6 +2,8 @@ package it.pagopa.interop.controller;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.domain.enums.InteropClientType;
 import it.pagopa.interop.domain.model.Client;
 import it.pagopa.interop.domain.model.ClientAssertion;
@@ -25,12 +27,12 @@ public class ClientAssertionController {
         currentClientAssertion = clientAssertionService.createClientAssertion(client, purpose);
     }
 
-    @Given("{currentUser} richiede la validazione della {currentClientAssertion}")
+    @When("{currentUser} richiede la validazione della {currentClientAssertion}")
     public void validateClientAssertion(User currentUser, ClientAssertion clientAssertion){
 
     }
 
-    @Given("i risultati della validazione sono:")
+    @Then("i risultati della validazione sono:")
     public void checkValidationResult(){
 
     }
