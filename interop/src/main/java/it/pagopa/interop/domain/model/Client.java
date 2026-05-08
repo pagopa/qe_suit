@@ -32,4 +32,13 @@ public class Client extends AbstractModel {
             keyPairs.addAll(pairs);
         }
     }
+
+    public KeyPair getLastKeyPair() {
+        if (keyPairs.isEmpty()) return null;
+        KeyPair last = null;
+        for (KeyPair kp : keyPairs) {
+            last = kp;
+        }
+        return last;
+    }
 }
