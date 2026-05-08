@@ -10,11 +10,9 @@ Feature: : Debugger Client Assertion Sync Bearer
     And una client assertion valida generata usando il client e la finalità
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
     And l'utente richiede la validazione della client assertion associata al client
-    Then i risultati della validazione sono:
+    Then i risultati della validazione della client assertion sono:
       | step                                 | result | errors |
       | clientAssertionValidation            | PASSED | []     |
       | publicKeyRetrieve                    | PASSED | []     |
       | clientAssertionSignatureVerification | PASSED | []     |
       | platformStatesVerification           | PASSED | []     |
-
-
