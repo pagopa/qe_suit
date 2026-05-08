@@ -25,4 +25,11 @@ public class CurrentUserContext {
         if (currentTenant == null) throw new IllegalStateException("Current tenant is not set");
         return currentTenant;
     }
+
+    public boolean isLoggedIn(User user, Tenant tenant) {
+        return this.currentUser != null
+                && this.currentTenant != null
+                && this.currentUser == user
+                && this.currentTenant == tenant;
+    }
 }
