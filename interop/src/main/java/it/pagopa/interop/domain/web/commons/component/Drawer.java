@@ -1,0 +1,14 @@
+package it.pagopa.interop.domain.web.commons.component;
+
+import it.frontend.e2e.framework.annotation.selector.XPath;
+import it.frontend.e2e.framework.core.capability.core.Clickable;
+import it.frontend.e2e.framework.web.domain.Component;
+
+public interface Drawer extends Component {
+    @XPath(".//button[1]")
+    Clickable closeButton();
+
+    default void close(){
+        closeButton().click();
+    }
+}
