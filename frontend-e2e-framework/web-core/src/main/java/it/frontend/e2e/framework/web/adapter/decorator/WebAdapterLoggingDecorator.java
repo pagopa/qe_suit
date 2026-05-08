@@ -6,9 +6,32 @@ import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
 
-public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<XPathSelector, Url, WebPresentationElement> implements  IWebPresentationApiAdapter {
+import java.util.Optional;
+
+public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<XPathSelector, Url, WebPresentationElement> implements IWebPresentationApiAdapter {
+
+    private final IWebPresentationApiAdapter webAdapter;
 
     public WebAdapterLoggingDecorator(IWebPresentationApiAdapter wrappedAdapter) {
         super(wrappedAdapter);
+        this.webAdapter = wrappedAdapter;
+    }
+
+    @Override
+    public Optional<String> getCookieValue(String name) {
+        logger.logInfo("Get cookie value by name: " + name);
+        return webAdapter.getCookieValue(name);
+    }
+
+    @Override
+    public Optional<String> getLocalStorageItem(String key) {
+        logger.logInfo("Get localStorage item by key: " + key);
+        return webAdapter.getLocalStorageItem(key);
+    }
+
+    @Override
+    public Optional<String> getSessionStorageItem(String key) {
+        logger.logInfo("Get sessionStorage item by key: " + key);
+        return webAdapter.getSessionStorageItem(key);
     }
 }
