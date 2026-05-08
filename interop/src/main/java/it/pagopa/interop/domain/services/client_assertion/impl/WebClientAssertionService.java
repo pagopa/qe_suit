@@ -21,8 +21,7 @@ public class WebClientAssertionService implements ClientAssertionService {
         DebugClientAssertionPage debugClientAssertionPage = webPresentationGateway.bind(DebugClientAssertionPage.class);
         debugClientAssertionPage.setClientAssertion(clientAssertion.getClientAssertion());
         debugClientAssertionPage.setClientId(client.getId().toString());
-        debugClientAssertionPage.validate();
 
-        return null;
+        return debugClientAssertionPage.validate();
     }
 }
