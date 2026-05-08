@@ -13,4 +13,5 @@ public interface IWebPresentationApiAdapter
     Optional<String> getCookieValue(String name);
     Optional<String> getLocalStorageItem(String key);
     Optional<String> getSessionStorageItem(String key);
+    void setLocalStorageItem(String key, String value);
 }

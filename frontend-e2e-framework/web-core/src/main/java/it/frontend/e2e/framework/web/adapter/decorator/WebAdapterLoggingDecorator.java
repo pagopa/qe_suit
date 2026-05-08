@@ -34,4 +34,10 @@ public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<
         logger.logInfo("Get sessionStorage item by key: " + key);
         return webAdapter.getSessionStorageItem(key);
     }
+
+    @Override
+    public void setLocalStorageItem(String key, String value) {
+        logger.logInfo("Set localStorage item: " + key + " = " + value);
+        webAdapter.setLocalStorageItem(key, value);
+    }
 }

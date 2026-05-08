@@ -271,6 +271,27 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
         }
     }
 
+    @Override
+    public void setLocalStorageItem(String key, String value) {
+        if (key == null || key.isBlank()) {
+            throw new IllegalArgumentException("key cannot be null or blank");
+        }
+
+        if (!(driver instanceof JavascriptExecutor js)) {
+            throw new IllegalStateException("Driver does not support JavascriptExecutor");
+        }
+
+        try {
+            js.executeScript(
+                    "window.localStorage.setItem(arguments[0], arguments[1]);",
+                    key,
+                    value
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to set localStorage item for key: " + key, e);
+        }
+    }
+
     private WebElement findWebElement(XPathSelector selector, long timeoutSeconds) {
         return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
                 .until(ExpectedConditions.elementToBeClickable(toBy(selector)));
