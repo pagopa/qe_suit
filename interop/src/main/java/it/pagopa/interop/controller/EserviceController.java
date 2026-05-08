@@ -5,7 +5,6 @@ import it.pagopa.interop.domain.enums.Tenant;
 import it.pagopa.interop.domain.enums.User;
 import it.pagopa.interop.domain.model.Agreement;
 import it.pagopa.interop.domain.model.Eservice;
-import it.pagopa.interop.domain.model.Purpose;
 import it.pagopa.interop.domain.services.agreement.AgreementService;
 import it.pagopa.interop.domain.services.eservice.EserviceService;
 import it.pagopa.interop.domain.services.purpose.PurposeService;
@@ -24,14 +23,34 @@ public class EserviceController {
 
     @Given("un eservice creato da {tenant} con una richiesta di fruizione e una finalità associate da {tenant}")
     public void setupEservice(Tenant producer, Tenant consumer) {
-       Eservice draftEservice = createDraftEservice(producer);
-       Eservice publishedEservice = publishEservice(producer, draftEservice);
+        setupEserviceWithPurposeState(producer, consumer, PurposeVersionState.ACTIVE);
+    }
 
-       currentUserContext.set(User.getTenantAdmin(consumer), consumer);
-       Agreement draftAgreement = agreementService.createEserviceAgreement(publishedEservice);
-       Agreement activeAgreement = agreementService.submitAgreement(draftAgreement);
+    @Given("un eservice creato da {tenant} con una richiesta di fruizione e una finalità in stato {purposeState} associate da {tenant}")
+    public void setupEservice(Tenant producer, Tenant consumer, PurposeVersionState purposeState) {
+        setupEserviceWithPurposeState(producer, consumer, purposeState);
+    }
 
-       purposeService.createEservicePurposeWithState(publishedEservice, PurposeVersionState.ACTIVE);
+    public void setupEserviceWithPurposeState(Tenant producer, Tenant consumer, PurposeVersionState purposeState) {
+        Eservice publishedEservice = createAndPublishEservice(producer);
+        createAndSubmitAgreement(consumer, publishedEservice);
+        createPurpose(consumer, publishedEservice, purposeState);
+    }
+
+    public Eservice createAndPublishEservice(Tenant producer) {
+        Eservice draftEservice = createDraftEservice(producer);
+        return publishEservice(producer, draftEservice);
+    }
+
+    public Agreement createAndSubmitAgreement(Tenant consumer, Eservice publishedEservice) {
+        currentUserContext.set(User.getTenantAdmin(consumer), consumer);
+        Agreement draftAgreement = agreementService.createEserviceAgreement(publishedEservice);
+        return agreementService.submitAgreement(draftAgreement);
+    }
+
+    public void createPurpose(Tenant consumer, Eservice publishedEservice, PurposeVersionState purposeState) {
+        currentUserContext.set(User.getTenantAdmin(consumer), consumer);
+        purposeService.createEservicePurposeWithState(publishedEservice, purposeState);
     }
 
     public Eservice createDraftEservice(Tenant producer) {
