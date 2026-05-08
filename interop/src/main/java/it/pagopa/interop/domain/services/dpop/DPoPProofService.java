@@ -1,6 +1,7 @@
 package it.pagopa.interop.domain.services.dpop;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.interop.utils.JwtBuilderUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
@@ -11,10 +12,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Base64;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -44,6 +42,14 @@ public class DPoPProofService {
      */
     public String buildProofWithAth(KeyPair keyPair, HttpMethod method, String htu, String accessToken) {
         return buildProof(keyPair, method, htu, accessToken);
+    }
+
+    public String buildProofWithOverrides(KeyPair keyPair, List<JwtBuilderUtils.JwtClaimOverride> overrides) {
+        String baseProof = buildProof(keyPair);
+        if (overrides == null || overrides.isEmpty()) {
+            return baseProof;
+        }
+        return applyOverridesAndResign(baseProof, keyPair, overrides);
     }
 
     private String buildProof(KeyPair keyPair, HttpMethod method, String htu, String accessToken) {
@@ -116,6 +122,50 @@ public class DPoPProofService {
                 .digest(input.getBytes(java.nio.charset.StandardCharsets.UTF_8));
         return b64(hash);
     }
+
+    private String applyOverridesAndResign(String jwt, KeyPair keyPair, List<JwtBuilderUtils.JwtClaimOverride> overrides) {
+    try {
+        String[] parts = jwt.split("\\.");
+        if (parts.length != 3) throw new IllegalArgumentException("JWT malformato");
+
+        Map<String, Object> header = parseB64Json(parts[0]);
+        Map<String, Object> payload = parseB64Json(parts[1]);
+
+        for (JwtBuilderUtils.JwtClaimOverride override : overrides) {
+            String claim = override.claim();
+            String value = override.value();
+
+            if (claim.startsWith("header.")) {
+                String headerClaim = claim.substring("header.".length());
+                header.put(headerClaim, value);
+            } else if ("__remove".equals(claim)) {
+                payload.remove(value);
+            } else {
+                payload.put(claim, parseValue(value));
+            }
+        }
+
+        return sign(header, payload, keyPair.getPrivate());
+
+    } catch (Exception e) {
+        throw new IllegalStateException("Errore nell'applicazione degli override al DPoP proof", e);
+    }
+}
+
+@SuppressWarnings("unchecked")
+private Map<String, Object> parseB64Json(String b64) throws Exception {
+    byte[] decoded = Base64.getUrlDecoder().decode(b64);
+    return MAPPER.readValue(decoded, Map.class);
+}
+
+private Object parseValue(String value) {
+    if (value == null) return null;
+    try { return Long.parseLong(value); } catch (NumberFormatException ignored) {}
+    try { return Double.parseDouble(value); } catch (NumberFormatException ignored) {}
+    if ("true".equalsIgnoreCase(value)) return true;
+    if ("false".equalsIgnoreCase(value)) return false;
+    return value; // stringa
+}
 
     private static String b64(byte[] bytes) {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
