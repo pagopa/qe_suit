@@ -29,6 +29,7 @@ public class ClientController {
                 request -> request.setMembers(List.of(consumerAdmin.getUserId()))
         );
 
+        clientService.addPublicKey(client);
         clientService.addPurpose(client, purpose);
     }
 }
