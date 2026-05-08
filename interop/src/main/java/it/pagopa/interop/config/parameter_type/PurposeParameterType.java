@@ -3,6 +3,7 @@ package it.pagopa.interop.config.parameter_type;
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.domain.context.PurposeContext;
 import it.pagopa.interop.domain.model.Purpose;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,5 +14,10 @@ public class PurposeParameterType {
     @ParameterType("purpose|purpose creata|finalità|finalità creata")
     public Purpose currentPurpose(String token) {
         return purposeContext.getLast();
+    }
+
+    @ParameterType("SUSPENDED")
+    public PurposeVersionState purposeState(String name) {
+        return PurposeVersionState.fromValue(name);
     }
 }
