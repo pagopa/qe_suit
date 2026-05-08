@@ -29,6 +29,7 @@ public class BrowserNavigationController {
         }
 
         page.navigateTo();
+        page.assertLoaded();
     }
 
 
