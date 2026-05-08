@@ -45,7 +45,13 @@ public class PurposeDataPreparationService implements PurposeService {
             overrides.accept(seed);
         }
 
-        CreatedResource created = purposesApi.createPurpose(seed);
+        CreatedResource created = PollingUtils.pollUntil(
+                () -> purposesApi.createPurpose(seed),
+                resp -> resp != null && resp.getId() != null,
+                Duration.ofSeconds(20),
+                Duration.ofSeconds(2)
+        );
+
         return getPurpose(created.getId());
     }
 
