@@ -4,6 +4,7 @@ import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingExcept
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.domain.context.ClientAssertionContext;
 import it.pagopa.interop.domain.model.Client;
 import it.pagopa.interop.domain.model.ClientAssertion;
 import it.pagopa.interop.domain.model.Purpose;
@@ -17,11 +18,12 @@ import java.security.NoSuchAlgorithmException;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ClientAssertionController {
     private final CreateClientAssertionService clientAssertionService;
-    private String currentClientAssertion;
+    private final ClientAssertionContext clientAssertionContext;
 
     @Given("una client assertion valida generata usando il {currentClient} e la {currentPurpose}")
     public void createClientAssertion(Client client, Purpose purpose) throws NoSuchAlgorithmException, JsonProcessingException {
-        currentClientAssertion = clientAssertionService.createClientAssertion(client, purpose);
+        String clientAssertion = clientAssertionService.createClientAssertion(client, purpose);
+        clientAssertionContext.upsert(new ClientAssertion(clientAssertion));
     }
 
     @When("{currentUser} richiede la validazione della {currentClientAssertion}")
