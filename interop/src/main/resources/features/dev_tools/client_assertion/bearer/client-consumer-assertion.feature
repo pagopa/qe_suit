@@ -18,20 +18,100 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionSignatureVerification | PASSED | []     |
       | platformStatesVerification           | PASSED | []     |
 
-Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_INVALID_AUDIENCE]
+
+  Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_INVALID_AUDIENCE]
   Dato un client CONSUMER valido, quando la client assertion ha audience invalida
   allora la validazione formale fallisce con invalidAudience
 
-  Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
-  And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
-  And una client assertion generata usando il client, la finalità e:
-    | claim | value            |
-    | aud   | invalid_audience |
-  When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
-  And l'utente richiede la validazione della client assertion associata al client
-  Then i risultati della validazione della client assertion sono:
-    | step                                 | result  | errors            |
-    | clientAssertionValidation            | FAILED  | [invalidAudience] |
-    | publicKeyRetrieve                    | SKIPPED | []                |
-    | clientAssertionSignatureVerification | SKIPPED | []                |
-    | platformStatesVerification           | SKIPPED | []                |
+    Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
+    And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
+    And una client assertion generata usando il client, la finalità e:
+      | claim | value            |
+      | aud   | invalid_audience |
+    When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
+    And l'utente richiede la validazione della client assertion associata al client
+    Then i risultati della validazione della client assertion sono:
+      | step                                 | result  | errors            |
+      | clientAssertionValidation            | FAILED  | [invalidAudience] |
+      | publicKeyRetrieve                    | SKIPPED | []                |
+      | clientAssertionSignatureVerification | SKIPPED | []                |
+      | platformStatesVerification           | SKIPPED | []                |
+
+
+  Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_MISSING_REQUIRED_CLAIMS]
+  Dato un client CONSUMER valido, quando la client assertion non contiene claim obbligatori
+  allora la validazione formale fallisce con i rispettivi errori
+
+    Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
+    And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
+    And una client assertion generata usando il client, la finalità e:
+      | claim    | value |
+      | __remove | jti   |
+      | __remove | iat   |
+      | __remove | aud   |
+      | __remove | exp   |
+      | __remove | iss   |
+      | __remove | sub   |
+    When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
+    And l'utente richiede la validazione della client assertion associata al client
+    Then i risultati della validazione della client assertion creata sono:
+      | step                                 | result  | errors                                                                                          |
+      | clientAssertionValidation            | FAILED  | [jtiNotFound, issuedAtNotFound, audienceNotFound, expNotFound, issuerNotFound, subjectNotFound] |
+      | publicKeyRetrieve                    | SKIPPED | []                                                                                              |
+      | clientAssertionSignatureVerification | SKIPPED | []                                                                                              |
+      | platformStatesVerification           | SKIPPED | []                                                                                              |
+
+
+  Scenario: [CONSUMER_CLIENT_ASSERTION_PUBLIC_KEY_RETRIEVE_INVALID_KID_FORMAT]
+  Dato un client CONSUMER valido, quando il claim kid non è in formato valido
+  allora il recupero della chiave pubblica fallisce con invalidKidFormat
+
+    Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
+    And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
+    And una client assertion generata usando il client, la finalità e:
+      | claim      | value                  |
+      | header.kid | not-a-valid-kid-format |
+    When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
+    And l'utente richiede la validazione della client assertion associata al client
+    Then i risultati della validazione della client assertion sono:
+      | step                                 | result  | errors             |
+      | clientAssertionValidation            | PASSED  | []                 |
+      | publicKeyRetrieve                    | FAILED  | [invalidKidFormat] |
+      | clientAssertionSignatureVerification | SKIPPED | []                 |
+      | platformStatesVerification           | SKIPPED | []                 |
+
+
+  Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_EXPIRED_TOKEN]
+  Dato un client CONSUMER valido, quando la client assertion è scaduta
+  allora la verifica della firma fallisce con tokenExpiredError
+
+    Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
+    And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
+    And una client assertion generata usando il client, la finalità e:
+      | claim | value     |
+      | exp   | now-10800 |
+    When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
+    And l'utente richiede la validazione della client assertion associata al client
+    Then i risultati della validazione della client assertion sono:
+      | step                                 | result  | errors              |
+      | clientAssertionValidation            | PASSED  | []                  |
+      | publicKeyRetrieve                    | PASSED  | []                  |
+      | clientAssertionSignatureVerification | FAILED  | [tokenExpiredError] |
+      | platformStatesVerification           | SKIPPED | []                  |
+
+
+  Scenario: [CONSUMER_CLIENT_ASSERTION_PLATFORM_STATES_INVALID_PURPOSE_STATE]
+  Dato un client CONSUMER valido, quando la finalità associata è in stato non valido
+  allora la verifica degli stati fallisce con invalidPurposeState
+
+    Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità in stato SUSPENDED associate da PagoPA
+    And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
+    And una client assertion valida generata usando il client e la finalità
+    When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
+    And l'utente richiede la validazione della client assertion associata al client
+    Then i risultati della validazione della client assertion sono:
+      | step                                 | result | errors                |
+      | clientAssertionValidation            | PASSED | []                    |
+      | publicKeyRetrieve                    | PASSED | []                    |
+      | clientAssertionSignatureVerification | PASSED | []                    |
+      | platformStatesVerification           | FAILED | [invalidPurposeState] |
