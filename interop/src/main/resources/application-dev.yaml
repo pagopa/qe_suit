@@ -30,6 +30,8 @@ interop:
   api:
     base-url:
       bff: https://selfcare.dev.interop.pagopa.it/1.0/backend-for-frontend
+  web:
+    base-url: https://selfcare.dev.interop.pagopa.it/ui/it/t
 
 
 url:
