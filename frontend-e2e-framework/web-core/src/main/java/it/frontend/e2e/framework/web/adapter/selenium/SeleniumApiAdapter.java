@@ -6,6 +6,7 @@ import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.JavascriptExecutor;
@@ -22,10 +23,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@Slf4j
 public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
-    private static final long RETRY_WAIT_TIMEOUT_SECONDS = 60;
-    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 60;
+    private static final long RETRY_WAIT_TIMEOUT_SECONDS = 120;
+    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 30;
     private final WebDriver driver;
 
     public SeleniumApiAdapter(BrowserSettings settings) {
@@ -52,6 +54,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     public Optional<WebPresentationElement> findElement(XPathSelector selector) {
         try {
             WebPresentationElement webPresentationElement = withRetry(() -> {
+                log.info("Finding element with selector: {}", selector);
                 WebElement webElement = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
                 return toPresentationElement(selector, webElement);
             });
@@ -91,6 +94,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void click(XPathSelector selector) {
         withRetry(() -> {
+            log.info("Clicking element with selector: {}", selector);
             WebElement element = findClickableWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
             element.click();
             return element;
@@ -106,6 +110,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void sendText(XPathSelector selector, String text) {
         withRetry(() -> {
+            log.info("Sending text to element with selector: {}. Text: {}", selector, text);
             WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
             element.sendKeys(text);
             return element;
@@ -121,6 +126,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void clear(XPathSelector selector) {
         withRetry(() -> {
+            log.info("Clearing text of element with selector: {}", selector);
             WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
             element.clear();
             return element;
@@ -155,6 +161,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     public Optional<String> getText(XPathSelector selector) {
         try {
             String text = withRetry(() -> {
+                log.info("Getting text of element with selector: {}", selector);
                 WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
                 return resolveElementText(element);
             });
@@ -289,7 +296,9 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     private <T> T withRetry(Supplier<T> action) {
             long end = System.currentTimeMillis() + (RETRY_WAIT_TIMEOUT_SECONDS * 1000);
             Throwable lastException = null;
+            log.info("Starting action with retry mechanism. Will retry for up to {} seconds if StaleElementReferenceException or ElementClickInterceptedException occurs.", RETRY_WAIT_TIMEOUT_SECONDS);
             while (System.currentTimeMillis() < end) {
+                log.info("Attempting action. Time remaining for retries: {} seconds", (end - System.currentTimeMillis()) / 1000);
 
                 try {
                     return action.get();
@@ -303,6 +312,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
                     }
                 }
             }
+            log.info("Action failed after retries. No more attempts will be made.");
             throw new RuntimeException("Action failed after retries", lastException);
     }
 }
