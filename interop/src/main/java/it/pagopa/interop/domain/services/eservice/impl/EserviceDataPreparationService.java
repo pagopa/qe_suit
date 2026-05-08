@@ -46,11 +46,11 @@ public class EserviceDataPreparationService implements EserviceService {
     @Override
     public Eservice publishEservice(Eservice eservice) {
         UUID eserviceId = eservice.getEserviceId();
-        UUID descriptorId = eservice.getLastDescriptorId();
+        UUID descriptorId = eservice.getLastDraftDescriptorId();
         eservicesApi.publishDescriptor(eserviceId, descriptorId);
 
         Eservice publishedEservice = PollingUtils.pollUntil(
-                () -> new Eservice(eservicesApi.getCatalogEServiceDescriptor(eserviceId, descriptorId)),
+                () -> new Eservice(eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId)),
                 resp -> resp != null
                         && Objects.equals(descriptorId, resp.getId())
                         && resp.getState() == EServiceDescriptorState.PUBLISHED,
@@ -65,7 +65,7 @@ public class EserviceDataPreparationService implements EserviceService {
     @Override
     public Eservice getEservice(UUID eserviceId, UUID descriptorId) {
         Eservice eservice = PollingUtils.pollUntil(
-                () -> new Eservice(eservicesApi.getCatalogEServiceDescriptor(eserviceId, descriptorId)),
+                () -> new Eservice(eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId)),
                 resp -> resp != null
                         && Objects.equals(eserviceId, resp.getEservice().getId())
                         && Objects.equals(descriptorId, resp.getId()),

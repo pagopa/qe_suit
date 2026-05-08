@@ -1,7 +1,7 @@
 package it.pagopa.interop.domain.model;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 
@@ -12,7 +12,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class Eservice extends AbstractModel {
     @Delegate
-    private final CatalogEServiceDescriptor embeddedModel;
+    private final ProducerEServiceDescriptor embeddedModel;
 
     @Override
     public String getUniqueIdentifier() {
@@ -36,12 +36,16 @@ public class Eservice extends AbstractModel {
         return Objects.hash(super.hashCode(), descriptorIds(this));
     }
 
-    public UUID getLastDescriptorId(){
+    public UUID getLastDescriptorId() {
         List<UUID> descriptorIds = this.getEservice().getDescriptors()
                 .stream()
                 .map(CompactDescriptor::getId)
                 .toList();
         return descriptorIds.isEmpty() ? null : descriptorIds.get(descriptorIds.size() - 1);
+    }
+
+    public UUID getLastDraftDescriptorId() {
+        return this.getEservice().getDraftDescriptor().getId();
     }
 
     private static List<String> descriptorIds(Eservice e) {
