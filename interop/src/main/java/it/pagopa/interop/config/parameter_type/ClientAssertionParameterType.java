@@ -8,6 +8,7 @@ import it.pagopa.interop.domain.context.ClientAssertionContext;
 import it.pagopa.interop.domain.model.ClientAssertion;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.utils.JwtBuilderUtils;
+import it.pagopa.interop.utils.KeyPairUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,6 +22,11 @@ public class ClientAssertionParameterType {
     @ParameterType("client assertion|client assertion creata")
     public ClientAssertion currentClientAssertion(String token) {
         return clientAssertionContext.getLast();
+    }
+
+    @ParameterType("RSA|EC|ED25519")
+    public KeyPairUtils.KeyAlgorithm keyAlgorithm(String alg) {
+        return KeyPairUtils.KeyAlgorithm.valueOf(alg);
     }
 
     @DataTableType
