@@ -211,6 +211,66 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
         applyAssertion(current, assertion);
     }
 
+    @Override
+    public Optional<String> getCookieValue(String name) {
+        if (name == null || name.isBlank()) {
+            return Optional.empty();
+        }
+
+        try {
+            org.openqa.selenium.Cookie cookie = driver.manage().getCookieNamed(name);
+            return Optional.ofNullable(cookie)
+                    .map(org.openqa.selenium.Cookie::getValue)
+                    .filter(value -> !value.isBlank());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<String> getLocalStorageItem(String key) {
+        if (key == null || key.isBlank()) {
+            return Optional.empty();
+        }
+
+        if (!(driver instanceof JavascriptExecutor js)) {
+            return Optional.empty();
+        }
+
+        try {
+            Object value = js.executeScript(
+                    "return window.localStorage.getItem(arguments[0]);",
+                    key
+            );
+            return Optional.ofNullable((String) value)
+                    .filter(v -> !v.isBlank());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<String> getSessionStorageItem(String key) {
+        if (key == null || key.isBlank()) {
+            return Optional.empty();
+        }
+
+        if (!(driver instanceof JavascriptExecutor js)) {
+            return Optional.empty();
+        }
+
+        try {
+            Object value = js.executeScript(
+                    "return window.sessionStorage.getItem(arguments[0]);",
+                    key
+            );
+            return Optional.ofNullable((String) value)
+                    .filter(v -> !v.isBlank());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
     private WebElement findWebElement(XPathSelector selector, long timeoutSeconds) {
         return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
                 .until(ExpectedConditions.elementToBeClickable(toBy(selector)));
@@ -273,7 +333,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
                         " out[attrs[i].name] = attrs[i].value;" +
                         "}" +
                         "return out;",
-                element );
+                element);
 
         if (raw instanceof Map<?, ?> map) {
             Map<String, String> attributes = new LinkedHashMap<>();
