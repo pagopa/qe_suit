@@ -16,7 +16,7 @@ public interface AddressPage extends Page {
     default void assertLoaded() {
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("Contacts", "Contatti");
+            Assertions.assertThat(h.getText()).isIn("Contacts", "Recapiti");
         });
     }
 }
