@@ -2,12 +2,16 @@ package it.pagopa.interop.domain.services.eservice.impl;
 
 import it.pagopa.interop.domain.context.EserviceContext;
 import it.pagopa.interop.domain.model.Eservice;
+import it.pagopa.interop.domain.model.RiskAnalysis;
 import it.pagopa.interop.domain.services.eservice.EserviceService;
+import it.pagopa.interop.domain.services.risk_analysis.RiskAnalysisService;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.utils.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -20,6 +24,7 @@ import java.util.UUID;
 public class EserviceDataPreparationService implements EserviceService {
 
     private final EservicesApi eservicesApi;
+    private final RiskAnalysisService riskAnalysisService;
     private final EserviceContext context;
 
     @Override
@@ -47,19 +52,24 @@ public class EserviceDataPreparationService implements EserviceService {
     public Eservice publishEservice(Eservice eservice) {
         UUID eserviceId = eservice.getEserviceId();
         UUID descriptorId = eservice.getLastDraftDescriptorId();
+
+        ensureRiskAnalysisIfReceive(eservice);
+        prepareDraftDescriptorForPublication(eserviceId, descriptorId);
+        addInterfaceToDraftDescriptor(eserviceId, descriptorId);
+
         eservicesApi.publishDescriptor(eserviceId, descriptorId);
 
-        Eservice publishedEservice = PollingUtils.pollUntil(
+        Eservice published = PollingUtils.pollUntil(
                 () -> new Eservice(eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId)),
                 resp -> resp != null
                         && Objects.equals(descriptorId, resp.getId())
                         && resp.getState() == EServiceDescriptorState.PUBLISHED,
-                Duration.ofSeconds(15),
+                Duration.ofSeconds(20),
                 Duration.ofSeconds(2)
         );
 
-        context.upsert(publishedEservice);
-        return publishedEservice;
+        context.upsert(published);
+        return published;
     }
 
     @Override
@@ -88,4 +98,70 @@ public class EserviceDataPreparationService implements EserviceService {
                 .isConsumerDelegable(false)
                 .isClientAccessDelegable(false);
     }
+
+    private void prepareDraftDescriptorForPublication(UUID eserviceId, UUID descriptorId) {
+        DescriptorAttributesSeed attributes = new DescriptorAttributesSeed()
+                .certified(java.util.List.of())
+                .declared(java.util.List.of())
+                .verified(java.util.List.of());
+
+        UpdateEServiceDescriptorSeed seed = new UpdateEServiceDescriptorSeed()
+                .attributes(attributes)
+                .audience(java.util.List.of("pagopa.it"))
+                .dailyCallsPerConsumer(1)
+                .dailyCallsTotal(10)
+                .voucherLifespan(60)
+                .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
+
+        eservicesApi.updateDraftDescriptor(eserviceId, descriptorId, seed);
+    }
+
+    private void ensureRiskAnalysisIfReceive(Eservice eservice) {
+        if (eservice.getEservice().getMode() != EServiceMode.RECEIVE) return;
+
+        RiskAnalysis riskAnalysis = riskAnalysisService.createRiskAnalysis(true);
+        EServiceRiskAnalysisSeed raSeed = new EServiceRiskAnalysisSeed()
+                .name(riskAnalysis.getTitle())
+                .riskAnalysisForm(riskAnalysis.getForm());
+
+        eservicesApi.addRiskAnalysisToEService(eservice.getEserviceId(), raSeed);
+    }
+
+    private void addInterfaceToDraftDescriptor(UUID eserviceId, UUID descriptorId) {
+        // 1) assicura descriptor disponibile/stabile
+        PollingUtils.pollUntil(
+                () -> eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId),
+                resp -> resp != null && resp.getState() == EServiceDescriptorState.DRAFT,
+                Duration.ofSeconds(20),
+                Duration.ofSeconds(2)
+        );
+
+        ClassPathResource resource = new ClassPathResource("assets/origin-interface.yaml");
+        ResponseEntity<CreatedResource> createResponse = PollingUtils.pollUntil(
+                () -> eservicesApi.createEServiceDocumentWithHttpInfo(
+                        eserviceId,
+                        descriptorId,
+                        "INTERFACE",
+                        "Interfaccia",
+                        resource
+                ),
+                resp -> resp != null && resp.getStatusCode().is2xxSuccessful() && resp.getBody() != null,
+                Duration.ofSeconds(20),
+                Duration.ofSeconds(2)
+        );
+
+        CreatedResource created = createResponse.getBody();
+
+        // 3) verifica interfaccia presente
+        PollingUtils.pollUntil(
+                () -> eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId),
+                resp -> resp != null
+                        && resp.getInterface() != null
+                        && Objects.equals(resp.getInterface().getId(), created.getId()),
+                Duration.ofSeconds(20),
+                Duration.ofSeconds(2)
+        );
+    }
+
+
 }
