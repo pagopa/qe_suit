@@ -13,6 +13,6 @@ public class GettableImpl extends AbstractCapabilityImpl implements Gettable {
 
     @Override
     public Optional<WebPresentationElement> get() {
-        return Optional.empty();
+        return adapter.findElement(xPathSelector.get());
     }
 }
