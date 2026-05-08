@@ -49,17 +49,19 @@ public class ClientAssertionService {
 
     public String createClientAssertion(Client client, Purpose purpose, KeyPair keyPair, List<JwtClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
 
+        KeyPair kp = keyPair != null ? keyPair : client.getLastKeyPair();
+
         JwtBuilder clientAssertionBuilder = getValidClientAssertionBuilder(
                 InteropClientType.valueOf(client.getKind().name()),
                 client.getId().toString(),
                 purpose.getId().toString(),
-                keyPair != null ? keyPair : client.getLastKeyPair()
+                kp
         );
 
         if (!overrides.isEmpty())
             applyOverrides(clientAssertionBuilder, overrides);
 
-        String clientAssertion = clientAssertionBuilder.signWith(keyPair.getPrivate()).compact();
+        String clientAssertion = clientAssertionBuilder.signWith(kp.getPrivate()).compact();
         log.info("Client assertion: '{}'", clientAssertion);
 
         return clientAssertion;
