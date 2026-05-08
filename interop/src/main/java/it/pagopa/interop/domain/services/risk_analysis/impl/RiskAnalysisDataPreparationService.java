@@ -42,7 +42,7 @@ public class RiskAnalysisDataPreparationService implements RiskAnalysisService {
             throw new IllegalStateException("No risk analysis template for: " + templateKey);
         }
 
-        RiskAnalysisDataInitializer.RiskAnalysisAnswers answers = completed
+        java.util.Map<String, java.util.List<String>> answers = completed
                 ? template.completed()
                 : template.uncompleted();
 
@@ -50,7 +50,7 @@ public class RiskAnalysisDataPreparationService implements RiskAnalysisService {
 
         RiskAnalysisFormSeed seed = new RiskAnalysisFormSeed()
                 .version(config.getVersion())
-                .answers(answers.toMap());
+                .answers(answers);
 
         String title = "risk-analysis-" + UUID.randomUUID().toString().substring(0, 8);
         return new RiskAnalysis(title, seed);

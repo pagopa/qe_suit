@@ -27,24 +27,18 @@ public class RiskAnalysisDataInitializer {
         try {
             riskAnalysisData = objectMapper.readValue(
                     new ClassPathResource("assets/risk_analysis_data.json").getInputStream(),
-                    new TypeReference<>() {}
+                    new TypeReference<>() {
+                    }
             );
             log.info("Risk analysis data loaded successfully");
         } catch (Exception e) {
-            throw new IllegalStateException("Error loading risk_analysis_data.json", e);
+            throw new IllegalStateException("Error loading assets/risk_analysis_data.json", e);
         }
     }
 
     public record RiskAnalysisTemplate(
-            RiskAnalysisAnswers completed,
-            RiskAnalysisAnswers uncompleted
-    ) {}
-
-    public record RiskAnalysisAnswers(
-            Map<String, List<String>> answers
+            Map<String, List<String>> completed,
+            Map<String, List<String>> uncompleted
     ) {
-        public Map<String, List<String>> toMap() {
-            return answers;
-        }
     }
 }

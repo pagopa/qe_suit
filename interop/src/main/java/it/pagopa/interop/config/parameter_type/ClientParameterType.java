@@ -17,7 +17,7 @@ public class ClientParameterType {
     }
 
     @ParameterType("client|client creato")
-    public Client currentClient(){
+    public Client currentClient(String token){
         return clientContext.getLast();
     }
 

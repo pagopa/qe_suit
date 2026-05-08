@@ -11,7 +11,7 @@ import software.amazon.awssdk.services.kms.KmsClient;
 public class AwsConfig {
 
     @Bean
-    KmsClient kmsClient(@Value("${aws.region}") String awsRegion) {
+    KmsClient kmsClient(@Value("${interop.auth.aws.region}") String awsRegion) {
         return KmsClient.builder()
                 .region(Region.of(awsRegion))
                 .credentialsProvider(DefaultCredentialsProvider.create())
