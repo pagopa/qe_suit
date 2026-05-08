@@ -1,4 +1,4 @@
-package it.pagopa.interop.domain.pages.dev_tools;
+package it.pagopa.interop.domain.web.pages.dev_tools;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
