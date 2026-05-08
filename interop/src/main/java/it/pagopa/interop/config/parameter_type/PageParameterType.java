@@ -3,7 +3,7 @@ package it.pagopa.interop.config.parameter_type;
 import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.domain.pages.dev_tools.DebugClientAssertionPage;
+import it.pagopa.interop.domain.web.pages.dev_tools.DebugClientAssertionPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 

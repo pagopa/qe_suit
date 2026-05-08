@@ -1,4 +1,4 @@
-package it.pagopa.interop.config;
+package it.pagopa.interop.domain.web.config;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
@@ -18,7 +18,7 @@ import java.util.List;
 @ConfigurationProperties(prefix = "channel.web")
 @Getter
 @Setter
-public class FrameworkConfig {
+public class WebConfig {
 
     private String browser;
     private boolean headless;

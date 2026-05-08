@@ -1,4 +1,4 @@
-package it.pagopa.interop.domain.pages.dev_tools;
+package it.pagopa.interop.domain.web.pages.dev_tools;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
@@ -6,7 +6,8 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.domain.model.ClientAssertionValidation;
+import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
+import it.pagopa.interop.domain.web.pages.dev_tools.components.DebugResults;
 import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo/debug-voucher")
@@ -24,6 +25,9 @@ public interface DebugClientAssertionPage extends Page {
     @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[3]/div[2]/div/form/div/button[2]")
     Clickable submitButton();
 
+    @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[3]/div/div/div[1]/section[1]")
+    DebugResults debugResults();
+
     @Override
     default void assertLoaded() {
         pageTitle().readAndAssert(webElm ->
@@ -40,8 +44,9 @@ public interface DebugClientAssertionPage extends Page {
         clientIdInput().writeAndAssert(clientId);
     }
 
-    default ClientAssertionValidation validate(){
+    default ClientAssertionValidationResult validate(){
         submitButton().click();
-        return null;
+        debugResults().assertLoaded();
+        return debugResults().getValidationResults();
     }
 }
