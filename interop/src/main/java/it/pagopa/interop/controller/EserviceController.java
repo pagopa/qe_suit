@@ -29,7 +29,7 @@ public class EserviceController {
 
        currentUserContext.set(User.getTenantAdmin(consumer), consumer);
        Agreement draftAgreement = agreementService.createEserviceAgreement(publishedEservice);
-       agreementService.publishAgreement(draftAgreement);
+       Agreement activeAgreement = agreementService.submitAgreement(draftAgreement);
 
        purposeService.createEservicePurposeWithState(publishedEservice, PurposeVersionState.ACTIVE);
     }

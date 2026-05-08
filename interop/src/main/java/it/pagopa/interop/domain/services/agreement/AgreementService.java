@@ -9,5 +9,6 @@ public interface AgreementService {
     Agreement createEserviceAgreement(Eservice eservice);
     Agreement createEserviceAgreement(Eservice eservice, UUID delegationId);
     Agreement getAgreement(UUID agreementId);
+    Agreement submitAgreement(Agreement agreement);
     Agreement publishAgreement(Agreement agreement);
 }

@@ -7,9 +7,11 @@ import it.pagopa.interop.domain.services.agreement.AgreementService;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
 import it.pagopa.interop.utils.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -49,6 +51,28 @@ public class AgreementDataPreparationService implements AgreementService {
 
         context.upsert(agreement);
         return agreement;
+    }
+
+    @Override
+    public Agreement submitAgreement(Agreement agreement) {
+        ResponseEntity<it.pagopa.interop.generated.openapi.clients.bff.model.Agreement> submitted =
+                PollingUtils.pollUntil(
+                        () -> agreementsApi.submitAgreementWithHttpInfo(agreement.getId(), new AgreementSubmissionPayload()),
+                        resp -> {
+                            if (resp == null || !resp.getStatusCode().is2xxSuccessful() ||  resp.getBody() == null) return false;
+                            return resp.getBody().getState() == AgreementState.ACTIVE;
+                        },
+                        Duration.ofSeconds(20),
+                        Duration.ofSeconds(2)
+                );
+
+        if (submitted.getBody() == null) {
+            throw new IllegalStateException("submitAgreement returned 2xx but empty body for agreement " + agreement.getId());
+        }
+
+        Agreement result = new Agreement(submitted.getBody());
+        context.upsert(result);
+        return result;
     }
 
     @Override
