@@ -16,7 +16,11 @@ public class Eservice extends AbstractModel {
 
     @Override
     public String getUniqueIdentifier() {
-        return this.getId().toString();
+        return this.getEservice().getId().toString();
+    }
+
+    public UUID getEserviceId() {
+        return this.getEservice().getId();
     }
 
     @Override

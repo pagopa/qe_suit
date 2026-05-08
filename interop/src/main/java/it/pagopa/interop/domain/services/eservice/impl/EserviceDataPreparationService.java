@@ -45,17 +45,15 @@ public class EserviceDataPreparationService implements EserviceService {
 
     @Override
     public Eservice publishEservice(Eservice eservice) {
-        UUID eserviceId = eservice.getId();
+        UUID eserviceId = eservice.getEserviceId();
         UUID descriptorId = eservice.getLastDescriptorId();
         eservicesApi.publishDescriptor(eserviceId, descriptorId);
 
         Eservice publishedEservice = PollingUtils.pollUntil(
                 () -> new Eservice(eservicesApi.getCatalogEServiceDescriptor(eserviceId, descriptorId)),
-                resp -> resp.getEservice().getDescriptors().stream()
-                                    .filter(d -> Objects.equals(d.getId(), descriptorId))
-                                    .findFirst()
-                                    .map(CompactDescriptor::getState)
-                                    .orElse(null) == EServiceDescriptorState.PUBLISHED,
+                resp -> resp != null
+                        && Objects.equals(descriptorId, resp.getId())
+                        && resp.getState() == EServiceDescriptorState.PUBLISHED,
                 Duration.ofSeconds(15),
                 Duration.ofSeconds(2)
         );
@@ -68,13 +66,9 @@ public class EserviceDataPreparationService implements EserviceService {
     public Eservice getEservice(UUID eserviceId, UUID descriptorId) {
         Eservice eservice = PollingUtils.pollUntil(
                 () -> new Eservice(eservicesApi.getCatalogEServiceDescriptor(eserviceId, descriptorId)),
-                resp -> {
-                    if (resp == null || !Objects.equals(eserviceId, resp.getId())) return false;
-
-                    return resp.getEservice().getDescriptors().stream()
-                            .map(CompactDescriptor::getId)
-                            .anyMatch(id -> Objects.equals(descriptorId, id));
-                },
+                resp -> resp != null
+                        && Objects.equals(eserviceId, resp.getEservice().getId())
+                        && Objects.equals(descriptorId, resp.getId()),
                 Duration.ofSeconds(15),
                 Duration.ofSeconds(2)
         );
