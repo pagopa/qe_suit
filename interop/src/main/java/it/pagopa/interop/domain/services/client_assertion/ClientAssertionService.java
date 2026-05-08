@@ -4,6 +4,8 @@ import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingExcept
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import it.pagopa.interop.domain.enums.InteropClientType;
+import it.pagopa.interop.domain.model.Client;
+import it.pagopa.interop.domain.model.Purpose;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -32,23 +34,32 @@ public class ClientAssertionService {
     @Value("${interop.auth.client-assertion.assertion_type}")
     private String clientAssertionType;
 
-    public record CreateClientAssertionRequest(InteropClientType clientType, String clientId, String purposeId,
-                                               KeyPair keyPair, List<JwtClaimOverride> overrides) {
+
+    public String createClientAssertion(Client client, Purpose purpose, List<JwtClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
+        return createClientAssertion(client, purpose, null, overrides);
     }
 
-    public String createClientAssertion(CreateClientAssertionRequest clientAssertionRequest) throws NoSuchAlgorithmException, JsonProcessingException {
+    public String createClientAssertion(Client client, Purpose purpose) throws NoSuchAlgorithmException, JsonProcessingException {
+        return createClientAssertion(client, purpose, null, List.of());
+    }
+
+    public String createClientAssertion(Client client, Purpose purpose, KeyPair keyPair) throws NoSuchAlgorithmException, JsonProcessingException {
+        return createClientAssertion(client, purpose, keyPair, List.of());
+    }
+
+    public String createClientAssertion(Client client, Purpose purpose, KeyPair keyPair, List<JwtClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
 
         JwtBuilder clientAssertionBuilder = getValidClientAssertionBuilder(
-                clientAssertionRequest.clientType,
-                clientAssertionRequest.clientId,
-                clientAssertionRequest.purposeId,
-                clientAssertionRequest.keyPair
+                InteropClientType.valueOf(client.getKind().name()),
+                client.getId().toString(),
+                purpose.getId().toString(),
+                keyPair != null ? keyPair : client.getLastKeyPair()
         );
 
-        if (!clientAssertionRequest.overrides.isEmpty())
-            applyOverrides(clientAssertionBuilder, clientAssertionRequest.overrides);
+        if (!overrides.isEmpty())
+            applyOverrides(clientAssertionBuilder, overrides);
 
-        String clientAssertion = clientAssertionBuilder.signWith(clientAssertionRequest.keyPair.getPrivate()).compact();
+        String clientAssertion = clientAssertionBuilder.signWith(keyPair.getPrivate()).compact();
         log.info("Client assertion: '{}'", clientAssertion);
 
         return clientAssertion;
