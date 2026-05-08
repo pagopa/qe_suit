@@ -6,6 +6,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.interop.domain.model.ClientAssertionValidation;
 import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo/debug-voucher")
@@ -39,7 +40,8 @@ public interface DebugClientAssertionPage extends Page {
         clientIdInput().writeAndAssert(clientId);
     }
 
-    default void validate(){
+    default ClientAssertionValidation validate(){
         submitButton().click();
+        return null;
     }
 }
