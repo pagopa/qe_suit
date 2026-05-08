@@ -16,6 +16,8 @@ spring:
 # ============================================================================
 interop:
   auth:
+    aws:
+      region: eu-south-1
     bearer:
       well-known-url: https://dev.interop.pagopa.it/.well-known/jwks.json
       issuer: dev.interop.pagopa.it

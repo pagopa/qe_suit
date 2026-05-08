@@ -13,7 +13,7 @@ public class UserParameterType {
     private final CurrentUserContext currentUserContext;
 
     @ParameterType("l'utente|l'utente corrente")
-    public User currentUser() {
+    public User currentUser(String token) {
         return currentUserContext.getUser();
     }
 

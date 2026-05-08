@@ -11,7 +11,7 @@ public class PurposeParameterType {
     private final PurposeContext purposeContext;
 
     @ParameterType("purpose|purpose creata|finalità|finalità creata")
-    public Purpose currentPurpose() {
+    public Purpose currentPurpose(String token) {
         return purposeContext.getLast();
     }
 }
