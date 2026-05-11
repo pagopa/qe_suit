@@ -6,8 +6,8 @@ import it.pagopa.interop.domain.model.Eservice;
 import java.util.UUID;
 
 public interface AgreementService {
-    Agreement createEserviceAgreement(Eservice eservice);
-    Agreement createEserviceAgreement(Eservice eservice, UUID delegationId);
+    Agreement createAgreement(Eservice eservice);
+    Agreement createAgreement(Eservice eservice, UUID delegationId);
     Agreement getAgreement(UUID agreementId);
     Agreement submitAgreement(Agreement agreement);
     Agreement publishAgreement(Agreement agreement);

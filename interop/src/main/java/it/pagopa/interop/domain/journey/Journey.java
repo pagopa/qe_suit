@@ -60,7 +60,7 @@ public class Journey {
 
     public Journey addActiveAgreement() {
         setUserContext(consumerUser, consumerTenant);
-        var agreement = agreementService.createEserviceAgreement(eserviceContext.getLast());
+        var agreement = agreementService.createAgreement(eserviceContext.getLast());
         agreementService.submitAgreement(agreement);
         return this;
     }
