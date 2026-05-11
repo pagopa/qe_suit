@@ -21,15 +21,19 @@ public class DPoPProofController {
 
     @Given("una dpop proof valida generata con una chiave {keyAlgorithm}")
     public void createDPoPProof(KeyPairUtils.KeyAlgorithm keyAlgorithm) {
-        KeyPair keyPair = KeyPairUtils.generate(keyAlgorithm, 2048);
-        String proof = dpopProofService.buildProof(keyPair);
-        dpopProofContext.upsert(new DPoPProof(proof, keyPair));
+        createAndStoreDPoPProof(keyAlgorithm, null);
     }
 
     @And("una dpop proof generata con una chiave {keyAlgorithm} e:")
     public void createDPoPProofWithKeyTypeAndOverrides(KeyPairUtils.KeyAlgorithm keyAlgorithm, List<JwtBuilderUtils.JwtClaimOverride> overrides) {
+        createAndStoreDPoPProof(keyAlgorithm, overrides);
+    }
+
+    private void createAndStoreDPoPProof(KeyPairUtils.KeyAlgorithm keyAlgorithm, List<JwtBuilderUtils.JwtClaimOverride> overrides) {
         KeyPair keyPair = KeyPairUtils.generate(keyAlgorithm, 2048);
-        String proof = dpopProofService.buildProofWithOverrides(keyPair, overrides);
+        String proof = (overrides == null)
+                ? dpopProofService.buildProof(keyPair)
+                : dpopProofService.buildProofWithOverrides(keyPair, overrides);
         dpopProofContext.upsert(new DPoPProof(proof, keyPair));
     }
 }
