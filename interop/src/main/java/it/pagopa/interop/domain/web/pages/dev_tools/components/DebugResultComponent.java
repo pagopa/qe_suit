@@ -7,6 +7,9 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import org.assertj.core.api.Assertions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static it.pagopa.interop.domain.model.ClientAssertionValidationResult.Status.*;
 
 public interface DebugResultComponent extends Component {
@@ -73,16 +76,16 @@ public interface DebugResultComponent extends Component {
                     .isTrue();
 
             ClientAssertionValidationResult.Status status = PASSED;
-            String errorCode = null;
+            List<String> errorsCode = new ArrayList<>();
 
             if (isError) {
                 status = FAILED;
-                errorCode = drawer().errorCode().read();
+                errorsCode = drawer().errorCode().readAll();
             } else if (!isSuccess) {
                 status = SKIPPED;
             }
 
-            return new ClientAssertionValidationResult.ValidationResult(status, isSuccess, errorCode);
+            return new ClientAssertionValidationResult.ValidationResult(status, isSuccess, errorsCode);
         } finally {
             // chiude sempre il drawer, anche in caso di eccezione
             drawer().close();

@@ -30,6 +30,11 @@ public class DevToolsController {
     public void checkValidationResult(ClientAssertion clientAssertion, ClientAssertionValidationResult expected) {
         ClientAssertionValidationResult actual = clientAssertionContext.getValidation(clientAssertion);
 
+        //TODO: da eliminare i log di debug
+        System.out.println("EXPECTED errorsCode: " + expected.getClientAssertionValidation().getErrorsCode());
+        System.out.println("ACTUAL errorsCode:   " + actual.getClientAssertionValidation().getErrorsCode());
+
+
         assertThat(actual)
                 .as("Validation result for clientAssertion: %s", clientAssertion)
                 .isEqualTo(expected);

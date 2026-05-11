@@ -3,10 +3,7 @@ package it.pagopa.interop.config.parameter_type.mapper;
 import io.cucumber.datatable.DataTable;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public final class ClientAssertionValidationResultMapper {
 
@@ -42,9 +39,9 @@ public final class ClientAssertionValidationResultMapper {
 
             ClientAssertionValidationResult.Status status = parseStatus(result);
             boolean success = status == ClientAssertionValidationResult.Status.PASSED;
-            String errorCode = parseErrors(errors);
+            List<String> errorsCode = parseErrors(errors);
 
-            byStep.put(step, new ClientAssertionValidationResult.ValidationResult(status, success, errorCode));
+            byStep.put(step, new ClientAssertionValidationResult.ValidationResult(status, success, errorsCode));
         }
 
         return new ClientAssertionValidationResult(
@@ -84,16 +81,21 @@ public final class ClientAssertionValidationResultMapper {
         };
     }
 
-    private static String parseErrors(String raw) {
-        String value = raw == null ? "" : raw.trim();
-        if (value.isEmpty() || "[]".equals(value)) {
-            return null;
+    private static List<String> parseErrors(String raw) {
+        if (raw == null || raw.trim().isEmpty() || "[]".equals(raw.trim())) {
+            return List.of();
         }
+        String value = raw.trim();
         if (value.startsWith("[") && value.endsWith("]")) {
             String inner = value.substring(1, value.length() - 1).trim();
-            return inner.isEmpty() ? null : inner;
+            if (inner.isEmpty()) return List.of();
+            // Split per virgola e rimuovi eventuali spazi
+            return Arrays.stream(inner.split(","))
+                    .map(String::trim)
+                    .filter(s -> !s.isEmpty())
+                    .toList();
         }
-        return value;
+        return List.of(value);
     }
 
     private static String normalize(String value) {
