@@ -7,7 +7,7 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
-import it.pagopa.interop.domain.web.pages.dev_tools.components.DebugResults;
+import it.pagopa.interop.domain.web.pages.dev_tools.components.DebugResultComponent;
 import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo/debug-voucher")
@@ -26,7 +26,7 @@ public interface DebugClientAssertionPage extends Page {
     Clickable submitButton();
 
     @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[3]/div/div/div[1]/section[1]")
-    DebugResults debugResults();
+    DebugResultComponent debugResults();
 
     @Override
     default void assertLoaded() {

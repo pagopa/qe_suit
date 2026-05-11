@@ -7,7 +7,9 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import org.assertj.core.api.Assertions;
 
-public interface DebugResults extends Component {
+import static it.pagopa.interop.domain.model.ClientAssertionValidationResult.Status.*;
+
+public interface DebugResultComponent extends Component {
 
     @XPath(".//h2")
     Readable<String> title();
@@ -70,7 +72,7 @@ public interface DebugResults extends Component {
                 throw new IllegalStateException("Not implemented yet");
             }
 
-            return new ClientAssertionValidationResult.ValidationResult(isSuccess, errorCode);
+            return new ClientAssertionValidationResult.ValidationResult(PASSED, isSuccess, errorCode);
         } finally {
             // chiude sempre il drawer, anche in caso di eccezione
             drawer().close();
