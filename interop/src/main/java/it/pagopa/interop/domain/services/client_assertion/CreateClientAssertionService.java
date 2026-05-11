@@ -15,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static it.pagopa.interop.utils.JwtBuilderUtils.JwtClaimOverride;
@@ -34,21 +35,20 @@ public class CreateClientAssertionService {
     @Value("${interop.auth.client-assertion.assertion_type}")
     private String clientAssertionType;
 
-
-    public String createClientAssertion(Client client, Purpose purpose, List<JwtClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
-        return createClientAssertion(client, purpose, null, overrides);
+    public String createClientAssertion(Client client) throws NoSuchAlgorithmException, JsonProcessingException {
+        return createClientAssertion(client, null, null, List.of());
     }
 
     public String createClientAssertion(Client client, Purpose purpose) throws NoSuchAlgorithmException, JsonProcessingException {
         return createClientAssertion(client, purpose, null, List.of());
     }
 
-    public String createClientAssertion(Client client) throws NoSuchAlgorithmException, JsonProcessingException {
-        return createClientAssertion(client, null, null, List.of());
-    }
-
     public String createClientAssertion(Client client, List<JwtClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
         return createClientAssertion(client, null, null, overrides);
+    }
+
+    public String createClientAssertion(Client client, Purpose purpose, List<JwtClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
+        return createClientAssertion(client, purpose, null, overrides);
     }
 
     public String createClientAssertion(Client client, Purpose purpose, KeyPair keyPair) throws NoSuchAlgorithmException, JsonProcessingException {
@@ -56,29 +56,25 @@ public class CreateClientAssertionService {
     }
 
     public String createClientAssertion(Client client, Purpose purpose, KeyPair keyPair, List<JwtClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
+        KeyPair kp = Optional.ofNullable(keyPair).orElseGet(client::getLastKeyPair);
 
-        KeyPair kp = keyPair != null ? keyPair : client.getLastKeyPair();
+        JwtBuilder builder = buildJwt(client, purpose, kp);
 
-        JwtBuilder clientAssertionBuilder = getValidClientAssertionBuilder(
-                InteropClientType.valueOf(client.getKind().name()),
-                client.getId().toString(),
-                purpose != null ? purpose.getId().toString() : null,
-                kp
-        );
+        if (overrides != null && !overrides.isEmpty()) {
+            applyOverrides(builder, overrides);
+        }
 
-        if (!overrides.isEmpty())
-            applyOverrides(clientAssertionBuilder, overrides);
-
-        String clientAssertion = clientAssertionBuilder.signWith(kp.getPrivate()).compact();
+        String clientAssertion = builder.signWith(kp.getPrivate()).compact();
         log.info("Client assertion: '{}'", clientAssertion);
 
         return clientAssertion;
     }
 
-    private JwtBuilder getValidClientAssertionBuilder(InteropClientType clientType, String clientId, String purposeId, KeyPair keyPair) throws NoSuchAlgorithmException, JsonProcessingException {
+    private JwtBuilder buildJwt(Client client, Purpose purpose, KeyPair keyPair) throws NoSuchAlgorithmException, JsonProcessingException {
+        String clientId = client.getId().toString();
         String rawKid = calculateKidFromPublicKey(keyPair.getPublic());
 
-        JwtBuilder validJwt = Jwts.builder()
+        JwtBuilder jwt = Jwts.builder()
                 .issuer(clientId)
                 .subject(clientId)
                 .audience().add(this.clientAssertionAudience).and()
@@ -87,10 +83,10 @@ public class CreateClientAssertionService {
                 .expiration(Date.from(Instant.now().plusSeconds(43200)))
                 .header().add("kid", rawKid).and();
 
-        if (clientType.equals(InteropClientType.CONSUMER)) {
-            validJwt.claim("purposeId", purposeId);
+        if (InteropClientType.valueOf(client.getKind().name()) == InteropClientType.CONSUMER && purpose != null) {
+            jwt.claim("purposeId", purpose.getId().toString());
         }
 
-        return validJwt;
+        return jwt;
     }
 }
