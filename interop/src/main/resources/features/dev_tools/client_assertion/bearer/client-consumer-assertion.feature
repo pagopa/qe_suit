@@ -31,11 +31,11 @@ Feature: : Debugger Client Assertion Sync Bearer
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
     And l'utente richiede la validazione della client assertion associata al client
     Then i risultati della validazione della client assertion sono:
-      | step                                 | result  | errors            |
-      | clientAssertionValidation            | FAILED  | [invalidAudience] |
-      | publicKeyRetrieve                    | SKIPPED | []                |
-      | clientAssertionSignatureVerification | SKIPPED | []                |
-      | platformStatesVerification           | SKIPPED | []                |
+      | step                                 | result  | errors                                                   |
+      | clientAssertionValidation            | FAILED  | [Unexpected client assertion audience: invalid_audience] |
+      | publicKeyRetrieve                    | SKIPPED | []                                                       |
+      | clientAssertionSignatureVerification | SKIPPED | []                                                       |
+      | platformStatesVerification           | SKIPPED | []                                                       |
 
 
   Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_MISSING_REQUIRED_CLAIMS]
