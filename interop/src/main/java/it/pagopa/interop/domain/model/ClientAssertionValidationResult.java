@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter
 @ToString
 @EqualsAndHashCode
@@ -29,7 +31,7 @@ public class ClientAssertionValidationResult {
     public static class ValidationResult {
         private final Status status;
         private final boolean success;
-        private final String errorCode;
+        private final List<String> errorsCode;
     }
 
     @Getter
@@ -37,7 +39,7 @@ public class ClientAssertionValidationResult {
     @EqualsAndHashCode(callSuper = true)
     public static class ClientAssertionValidation extends ValidationResult {
         public ClientAssertionValidation(ValidationResult result) {
-            super(result.getStatus(), result.isSuccess(), result.getErrorCode());
+            super(result.getStatus(), result.isSuccess(), result.getErrorsCode());
         }
     }
 
@@ -46,7 +48,7 @@ public class ClientAssertionValidationResult {
     @EqualsAndHashCode(callSuper = true)
     public static class PublicKeyValidation extends ValidationResult {
         public PublicKeyValidation(ValidationResult result) {
-            super(result.getStatus(), result.isSuccess(), result.getErrorCode());
+            super(result.getStatus(), result.isSuccess(), result.getErrorsCode());
         }
     }
 
@@ -55,7 +57,7 @@ public class ClientAssertionValidationResult {
     @EqualsAndHashCode(callSuper = true)
     public static class SignatureValidation extends ValidationResult {
         public SignatureValidation(ValidationResult result) {
-            super(result.getStatus(), result.isSuccess(), result.getErrorCode());
+            super(result.getStatus(), result.isSuccess(), result.getErrorsCode());
         }
     }
 
@@ -64,7 +66,7 @@ public class ClientAssertionValidationResult {
     @EqualsAndHashCode(callSuper = true)
     public static class PlatformValidation extends ValidationResult {
         public PlatformValidation(ValidationResult result) {
-            super(result.getStatus(), result.isSuccess(), result.getErrorCode());
+            super(result.getStatus(), result.isSuccess(), result.getErrorsCode());
         }
     }
 }
