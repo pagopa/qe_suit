@@ -7,13 +7,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
 @Slf4j
-@Component
+@Service
 @RequiredArgsConstructor
 public class RiskAnalysisDataInitializer {
 

@@ -5,7 +5,7 @@ import it.pagopa.interop.utils.JwtBuilderUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -15,7 +15,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 
 @Slf4j
-@Component
+@Service
 public class DPoPProofService {
 
     @Value("${interop.auth.oauth.server}")

@@ -8,7 +8,7 @@ import it.pagopa.interop.domain.model.Client;
 import it.pagopa.interop.domain.model.Purpose;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
@@ -23,7 +23,7 @@ import static it.pagopa.interop.utils.JwtBuilderUtils.applyOverrides;
 import static it.pagopa.interop.utils.JwtUtils.calculateKidFromPublicKey;
 
 @Slf4j
-@Component
+@Service
 public class CreateClientAssertionService {
 
     @Value("${interop.auth.client-assertion.audience}")

@@ -6,9 +6,9 @@ import it.pagopa.interop.domain.services.browser.WebBrowserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BrowserService implements WebBrowserService {
 

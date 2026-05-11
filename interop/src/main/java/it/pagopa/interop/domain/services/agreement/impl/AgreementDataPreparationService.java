@@ -12,14 +12,14 @@ import it.pagopa.interop.utils.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-@Component
+@Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AgreementDataPreparationService implements AgreementService {
 

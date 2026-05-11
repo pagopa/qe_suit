@@ -14,7 +14,7 @@ import it.pagopa.interop.utils.KeyPairUtils;
 import it.pagopa.interop.utils.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.security.KeyPair;
 import java.time.Duration;
@@ -26,7 +26,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-@Component
+@Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ClientDataPreparationService implements ClientService {
 
