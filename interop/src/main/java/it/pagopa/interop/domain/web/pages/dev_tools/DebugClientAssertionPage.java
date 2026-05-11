@@ -30,8 +30,8 @@ public interface DebugClientAssertionPage extends Page {
 
     @Override
     default void assertLoaded() {
-        pageTitle().readAndAssert(webElm ->
-                Assertions.assertThat(webElm.getText()).isNotBlank()
+        pageTitle().readAndAssert(title ->
+                Assertions.assertThat(title).isNotBlank()
                         .containsIgnoringCase("Debug della client assertion")
         );
     }
