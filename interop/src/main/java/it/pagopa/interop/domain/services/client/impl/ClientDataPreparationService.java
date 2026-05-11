@@ -19,9 +19,12 @@ import org.springframework.stereotype.Component;
 import java.security.KeyPair;
 import java.time.Duration;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -38,9 +41,7 @@ public class ClientDataPreparationService implements ClientService {
     @Override
     public Client createClient(InteropClientType kind, Consumer<ClientSeed> overrides) {
         ClientSeed seed = buildDefaultSeed();
-        if (overrides != null) {
-            overrides.accept(seed);
-        }
+        Optional.ofNullable(overrides).ifPresent(o -> o.accept(seed));
 
         CreatedResource created = switch (kind) {
             case CONSUMER -> clientsApi.createConsumerClient(seed);
@@ -52,13 +53,10 @@ public class ClientDataPreparationService implements ClientService {
 
     @Override
     public Client getClient(UUID clientId) {
-        Client client = PollingUtils.pollUntil(
+        Client client = pollClient(
                 () -> new Client(clientsApi.getClient(clientId), new java.util.LinkedHashSet<>()),
-                resp -> resp != null && Objects.equals(clientId, resp.getId()),
-                Duration.ofSeconds(20),
-                Duration.ofSeconds(2)
+                c -> c != null && Objects.equals(clientId, c.getId())
         );
-
         context.upsert(client);
         return client;
     }
@@ -74,29 +72,19 @@ public class ClientDataPreparationService implements ClientService {
     }
 
     @Override
-    public Client addPurpose(Client client, Purpose purpose) {
-        PurposeAdditionDetailsSeed seed = new PurposeAdditionDetailsSeed().purposeId(purpose.getId());
-        clientsApi.addClientPurpose(client.getId(), seed);
-        return getClient(client.getId());
-    }
-
-    @Override
     public Client addPublicKey(Client client, KeyPair keyPair) {
         return addPublicKey(client, keyPair, null);
     }
 
     @Override
     public Client addPublicKey(Client client, KeyPair keyPair, Consumer<KeySeed> overrides) {
-        KeyPair effectiveKeyPair = keyPair != null ? keyPair : KeyPairUtils.generate(KeyPairUtils.KeyAlgorithm.RSA);
+        KeyPair effectiveKeyPair = Optional.ofNullable(keyPair).orElseGet(() -> KeyPairUtils.generate(KeyPairUtils.KeyAlgorithm.RSA));
         KeySeed seed = buildKeySeed(effectiveKeyPair);
-
-        if (overrides != null) {
-            overrides.accept(seed);
-        }
+        Optional.ofNullable(overrides).ifPresent(o -> o.accept(seed));
 
         clientsApi.createKey(client.getId(), seed);
 
-        PollingUtils.pollUntil(() -> clientsApi.getClientKeys(client.getId(), 0, 50, null), resp -> resp != null && resp.getKeys() != null && resp.getKeys().stream().anyMatch(k -> Objects.equals(k.getName(), seed.getName())), Duration.ofSeconds(20), Duration.ofSeconds(2));
+        pollClientKeys(client.getId(), seed.getName());
 
         client.addKeyPair(effectiveKeyPair);
         context.upsert(client);
@@ -104,24 +92,54 @@ public class ClientDataPreparationService implements ClientService {
         return getClient(client.getId());
     }
 
+    @Override
+    public Client addPurpose(Client client, Purpose purpose) {
+        PurposeAdditionDetailsSeed seed = new PurposeAdditionDetailsSeed().purposeId(purpose.getId());
+        clientsApi.addClientPurpose(client.getId(), seed);
+        return getClient(client.getId());
+    }
+
     private ClientSeed buildDefaultSeed() {
-        return new ClientSeed().name("client-" + ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)).description("Default client description").members(java.util.List.of());
+        return new ClientSeed()
+                .name("client-" + ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE))
+                .description("Default client description")
+                .members(java.util.List.of());
     }
 
     private KeySeed buildKeySeed(KeyPair keyPair) {
         String alg = resolveJwtAlg(keyPair);
-
-        return new KeySeed().name("key-" + ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE)).use(it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse.SIG).alg(alg).key(KeyPairUtils.toBase64Pem(keyPair.getPublic()));
+        return new KeySeed()
+                .name("key-" + ThreadLocalRandom.current().nextInt(0, Integer.MAX_VALUE))
+                .use(it.pagopa.interop.generated.openapi.clients.bff.model.KeyUse.SIG)
+                .alg(alg)
+                .key(KeyPairUtils.toBase64Pem(keyPair.getPublic()));
     }
 
     private String resolveJwtAlg(KeyPair keyPair) {
-        String keyAlg = keyPair.getPublic().getAlgorithm();
-
-        return switch (keyAlg) {
+        return switch (keyPair.getPublic().getAlgorithm()) {
             case "RSA" -> "RS256";
             case "EC" -> "ES256";
             case "Ed25519", "EdDSA" -> "EdDSA";
-            default -> throw new IllegalArgumentException("Unsupported key algorithm: " + keyAlg);
+            default ->
+                    throw new IllegalArgumentException("Unsupported key algorithm: " + keyPair.getPublic().getAlgorithm());
         };
+    }
+
+    private Client pollClient(Supplier<Client> supplier, Predicate<Client> predicate) {
+        return PollingUtils.pollUntil(
+                supplier,
+                predicate,
+                Duration.ofSeconds(20),
+                Duration.ofSeconds(2)
+        );
+    }
+
+    private void pollClientKeys(UUID clientId, String keyName) {
+        PollingUtils.pollUntil(
+                () -> clientsApi.getClientKeys(clientId, 0, 50, null),
+                resp -> resp != null && resp.getKeys() != null && resp.getKeys().stream().anyMatch(k -> Objects.equals(k.getName(), keyName)),
+                Duration.ofSeconds(20),
+                Duration.ofSeconds(2)
+        );
     }
 }
