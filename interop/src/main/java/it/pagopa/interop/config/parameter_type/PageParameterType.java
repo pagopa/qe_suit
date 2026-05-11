@@ -3,7 +3,8 @@ package it.pagopa.interop.config.parameter_type;
 import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.domain.web.pages.dev_tools.DebugClientAssertionPage;
+import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.DebugClientAssertionPage;
+import it.pagopa.interop.domain.web.pages.dev_tools.DevToolsPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,8 +16,10 @@ import java.util.Locale;
 public class PageParameterType {
     private static final String DEBUG_CLIENT_ASSERTION_PAGE_ALIAS =
             "DebugClientAssertion|Debug Client Assertion|Debug client assertion";
+    private static final String DEV_TOOLS_PAGE_ALIAS =
+            "DevTools|Dev Tools|Dev tools|Tool per lo sviluppo";
 
-    private static final String PAGE_TYPES = DEBUG_CLIENT_ASSERTION_PAGE_ALIAS;
+    private static final String PAGE_TYPES = DEBUG_CLIENT_ASSERTION_PAGE_ALIAS+"|"+DEV_TOOLS_PAGE_ALIAS;
 
     private final WebPresentationGateway webPresentationGateway;
 
@@ -26,6 +29,9 @@ public class PageParameterType {
 
         if (containsAlias(DEBUG_CLIENT_ASSERTION_PAGE_ALIAS, normalized)) {
             return webPresentationGateway.bind(DebugClientAssertionPage.class);
+        }
+        if (containsAlias(DEV_TOOLS_PAGE_ALIAS, normalized)) {
+            return webPresentationGateway.bind(DevToolsPage.class);
         }
 
         throw new IllegalArgumentException("Unsupported page alias: " + page);

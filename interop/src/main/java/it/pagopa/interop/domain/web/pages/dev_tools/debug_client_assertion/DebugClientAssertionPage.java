@@ -1,4 +1,4 @@
-package it.pagopa.interop.domain.web.pages.dev_tools;
+package it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
@@ -8,7 +8,7 @@ import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.domain.enums.InteropClientType;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
-import it.pagopa.interop.domain.web.pages.dev_tools.components.DebugResultComponent;
+import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.components.DebugResultComponent;
 import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo/debug-voucher")

@@ -7,7 +7,7 @@ import it.pagopa.interop.domain.model.ClientAssertion;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.domain.model.DPoPProof;
 import it.pagopa.interop.domain.services.client_assertion.DevToolsService;
-import it.pagopa.interop.domain.web.pages.dev_tools.DebugClientAssertionPage;
+import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.DebugClientAssertionPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
