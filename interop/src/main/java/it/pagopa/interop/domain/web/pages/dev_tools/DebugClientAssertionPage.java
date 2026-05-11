@@ -6,6 +6,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.interop.domain.enums.InteropClientType;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.domain.web.pages.dev_tools.components.DebugResultComponent;
 import org.assertj.core.api.Assertions;
@@ -44,9 +45,9 @@ public interface DebugClientAssertionPage extends Page {
         clientIdInput().writeAndAssert(clientId);
     }
 
-    default ClientAssertionValidationResult validate(){
+    default ClientAssertionValidationResult validate(InteropClientType clientType) {
         submitButton().click();
         debugResults().assertLoaded();
-        return debugResults().getValidationResults();
+        return debugResults().getValidationResults(clientType);
     }
 }
