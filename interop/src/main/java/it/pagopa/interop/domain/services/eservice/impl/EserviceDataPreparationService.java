@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
-
+import java.util.function.Consumer;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -39,10 +39,9 @@ public class EserviceDataPreparationService implements EserviceService {
     }
 
     @Override
-    public Eservice createEservice(java.util.function.Consumer<EServiceSeed> overrides) {
+    public Eservice createEservice(Consumer<EServiceSeed> overrides) {
         EServiceSeed seed = buildDefaultRequest();
         if (overrides != null) {
-            // override solo dei campi che servono
             overrides.accept(seed);
         }
         return createEservice(seed);
@@ -59,13 +58,12 @@ public class EserviceDataPreparationService implements EserviceService {
 
         eservicesApi.publishDescriptor(eserviceId, descriptorId);
 
-        Eservice published = PollingUtils.pollUntil(
+        Eservice published = pollEservice(
                 () -> new Eservice(eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId)),
                 resp -> resp != null
                         && Objects.equals(descriptorId, resp.getId())
                         && resp.getState() == EServiceDescriptorState.PUBLISHED,
-                Duration.ofSeconds(20),
-                Duration.ofSeconds(2)
+                Duration.ofSeconds(20)
         );
 
         context.upsert(published);
@@ -74,13 +72,12 @@ public class EserviceDataPreparationService implements EserviceService {
 
     @Override
     public Eservice getEservice(UUID eserviceId, UUID descriptorId) {
-        Eservice eservice = PollingUtils.pollUntil(
+        Eservice eservice = pollEservice(
                 () -> new Eservice(eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId)),
                 resp -> resp != null
                         && Objects.equals(eserviceId, resp.getEservice().getId())
                         && Objects.equals(descriptorId, resp.getId()),
-                Duration.ofSeconds(15),
-                Duration.ofSeconds(2)
+                Duration.ofSeconds(15)
         );
 
         context.upsert(eservice);
@@ -129,15 +126,14 @@ public class EserviceDataPreparationService implements EserviceService {
 
     private void addInterfaceToDraftDescriptor(UUID eserviceId, UUID descriptorId) {
         // 1) assicura descriptor disponibile/stabile
-        PollingUtils.pollUntil(
+        pollEservice(
                 () -> eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId),
                 resp -> resp != null && resp.getState() == EServiceDescriptorState.DRAFT,
-                Duration.ofSeconds(20),
-                Duration.ofSeconds(2)
+                Duration.ofSeconds(20)
         );
 
         ClassPathResource resource = new ClassPathResource("assets/origin-interface.yaml");
-        ResponseEntity<CreatedResource> createResponse = PollingUtils.pollUntil(
+        ResponseEntity<CreatedResource> createResponse = pollResponse(
                 () -> eservicesApi.createEServiceDocumentWithHttpInfo(
                         eserviceId,
                         descriptorId,
@@ -146,22 +142,36 @@ public class EserviceDataPreparationService implements EserviceService {
                         resource
                 ),
                 resp -> resp != null && resp.getStatusCode().is2xxSuccessful() && resp.getBody() != null,
-                Duration.ofSeconds(20),
-                Duration.ofSeconds(2)
+                Duration.ofSeconds(20)
         );
 
         CreatedResource created = createResponse.getBody();
 
         // 3) verifica interfaccia presente
-        PollingUtils.pollUntil(
+        pollEservice(
                 () -> eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId),
                 resp -> resp != null
                         && resp.getInterface() != null
                         && Objects.equals(resp.getInterface().getId(), created.getId()),
-                Duration.ofSeconds(20),
+                Duration.ofSeconds(20)
+        );
+    }
+
+    private <T> T pollEservice(java.util.function.Supplier<T> supplier, java.util.function.Predicate<T> predicate, Duration timeout) {
+        return PollingUtils.pollUntil(
+                supplier,
+                predicate,
+                timeout,
                 Duration.ofSeconds(2)
         );
     }
 
-
+    private <T> T pollResponse(java.util.function.Supplier<T> supplier, java.util.function.Predicate<T> predicate, Duration timeout) {
+        return PollingUtils.pollUntil(
+                supplier,
+                predicate,
+                timeout,
+                Duration.ofSeconds(2)
+        );
+    }
 }
