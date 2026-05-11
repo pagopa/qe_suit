@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Component
@@ -32,31 +33,35 @@ public class RiskAnalysisDataPreparationService implements RiskAnalysisService {
     @Override
     public RiskAnalysis createRiskAnalysis(boolean completed) {
         Tenant currentTenant = currentUserContext.getTenant();
-        TenantKind tenantKind = TenantKind.fromValue(currentTenant.getTenantType().name());
-
         String templateKey = resolveTemplateKey(currentTenant);
 
         RiskAnalysisDataInitializer.RiskAnalysisTemplate template = initializer
                 .getRiskAnalysisData().get(templateKey);
+
         if (template == null) {
             throw new IllegalStateException("No risk analysis template for: " + templateKey);
         }
 
-        java.util.Map<String, java.util.List<String>> answers = completed
+        Map<String, java.util.List<String>> answers = completed
                 ? template.completed()
                 : template.uncompleted();
 
-        RiskAnalysisFormConfig config = purposesApi.retrieveLatestRiskAnalysisConfiguration(tenantKind);
-
-        RiskAnalysisFormSeed seed = new RiskAnalysisFormSeed()
-                .version(config.getVersion())
-                .answers(answers);
+        RiskAnalysisFormSeed seed = buildRiskAnalysisFormSeed(currentTenant, answers);
 
         String title = "risk-analysis-" + UUID.randomUUID().toString().substring(0, 8);
         return new RiskAnalysis(title, seed);
     }
 
+    private RiskAnalysisFormSeed buildRiskAnalysisFormSeed(Tenant tenant, Map<String, java.util.List<String>> answers) {
+        TenantKind tenantKind = TenantKind.fromValue(tenant.getTenantType().name());
+        RiskAnalysisFormConfig config = purposesApi.retrieveLatestRiskAnalysisConfiguration(tenantKind);
+
+        return new RiskAnalysisFormSeed()
+                .version(config.getVersion())
+                .answers(answers);
+    }
+
     private String resolveTemplateKey(Tenant tenant) {
-        return tenant.getTenantType().equals(TenantType.PA) ? "PA" : "Privato/GSP";
+        return tenant.getTenantType() == TenantType.PA ? "PA" : "Privato/GSP";
     }
 }
