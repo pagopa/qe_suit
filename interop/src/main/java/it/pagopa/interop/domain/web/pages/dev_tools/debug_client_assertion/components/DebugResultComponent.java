@@ -1,4 +1,4 @@
-package it.pagopa.interop.domain.web.pages.dev_tools.components;
+package it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.components;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;

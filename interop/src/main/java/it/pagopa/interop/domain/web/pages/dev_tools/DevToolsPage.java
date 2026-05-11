@@ -2,9 +2,9 @@ package it.pagopa.interop.domain.web.pages.dev_tools;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.interop.domain.web.pages.dev_tools.components.DebugClientAssertionSection;
 import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo")
@@ -13,8 +13,11 @@ public interface DevToolsPage extends Page {
     @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[2]/div/div/h1")
     Readable<String> pageTitle();
 
-    @XPath("//a[contains(@class,'MuiButton-root') and contains(normalize-space(.), 'Effettua il debug')]")
-    Clickable debugClientAssertionButton();
+    @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[2]/div/div/p")
+    Readable<String> pageSubtitle();
+
+    @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[3]/div/div[2]/section")
+    DebugClientAssertionSection debugClientAssertionSection();
 
     @Override
     default void assertLoaded() {
@@ -22,5 +25,9 @@ public interface DevToolsPage extends Page {
                 Assertions.assertThat(title).isNotBlank()
                         .containsIgnoringCase("Tool per lo sviluppo")
         );
+
+        pageSubtitle().readAndAssert("Una sezione che contiene alcuni strumenti utili a supporto dello sviluppo.");
+
+        debugClientAssertionSection().assertLoaded();
     }
 }
