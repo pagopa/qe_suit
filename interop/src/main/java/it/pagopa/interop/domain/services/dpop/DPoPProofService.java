@@ -23,23 +23,14 @@ public class DPoPProofService {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    /**
-     * Proof standard: POST sull'URL di token di default.
-     */
     public String buildProof(KeyPair keyPair) {
-        return buildProof(keyPair, HttpMethod.POST, defaultHtu);
+        return buildProof(keyPair, HttpMethod.POST, defaultHtu, null);
     }
 
-    /**
-     * Proof con metodo e HTU custom.
-     */
     public String buildProof(KeyPair keyPair, HttpMethod method, String htu) {
         return buildProof(keyPair, method, htu, null);
     }
 
-    /**
-     * Proof con ath (binding all'access token).
-     */
     public String buildProofWithAth(KeyPair keyPair, HttpMethod method, String htu, String accessToken) {
         return buildProof(keyPair, method, htu, accessToken);
     }
@@ -56,26 +47,33 @@ public class DPoPProofService {
         try {
             long now = System.currentTimeMillis() / 1000;
 
-            Map<String, Object> header = new LinkedHashMap<>();
-            header.put("typ", "dpop+jwt");
-            header.put("alg", resolveAlg(keyPair.getPublic()));
-            header.put("jwk", buildJwk(keyPair.getPublic()));
-
-            Map<String, Object> payload = new LinkedHashMap<>();
-            payload.put("jti", UUID.randomUUID().toString());
-            payload.put("htm", method.name());
-            payload.put("htu", htu);
-            payload.put("iat", now);
-
-            if (accessToken != null) {
-                payload.put("ath", sha256Base64Url(accessToken));
-            }
+            Map<String, Object> header = buildHeader(keyPair.getPublic());
+            Map<String, Object> payload = buildPayload(method, htu, now, accessToken);
 
             return sign(header, payload, keyPair.getPrivate());
-
         } catch (Exception e) {
             throw new IllegalStateException("Errore nella creazione del DPoP proof", e);
         }
+    }
+
+    private Map<String, Object> buildHeader(PublicKey publicKey) {
+        Map<String, Object> header = new LinkedHashMap<>();
+        header.put("typ", "dpop+jwt");
+        header.put("alg", resolveAlg(publicKey));
+        header.put("jwk", buildJwk(publicKey));
+        return header;
+    }
+
+    private Map<String, Object> buildPayload(HttpMethod method, String htu, long now, String accessToken) {
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("jti", UUID.randomUUID().toString());
+        payload.put("htm", method.name());
+        payload.put("htu", htu);
+        payload.put("iat", now);
+        if (accessToken != null) {
+            payload.put("ath", sha256Base64Url(accessToken));
+        }
+        return payload;
     }
 
     private Map<String, Object> buildJwk(PublicKey publicKey) {
@@ -117,55 +115,65 @@ public class DPoPProofService {
         return signingInput + "." + b64(sig.sign());
     }
 
-    private String sha256Base64Url(String input) throws Exception {
-        byte[] hash = java.security.MessageDigest.getInstance("SHA-256")
-                .digest(input.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-        return b64(hash);
+    private String sha256Base64Url(String input) {
+        try {
+            byte[] hash = java.security.MessageDigest.getInstance("SHA-256")
+                    .digest(input.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+            return b64(hash);
+        } catch (Exception e) {
+            throw new IllegalStateException("Errore nel calcolo SHA-256", e);
+        }
     }
 
     private String applyOverridesAndResign(String jwt, KeyPair keyPair, List<JwtBuilderUtils.JwtClaimOverride> overrides) {
-    try {
-        String[] parts = jwt.split("\\.");
-        if (parts.length != 3) throw new IllegalArgumentException("JWT malformato");
+        try {
+            String[] parts = jwt.split("\\.");
+            if (parts.length != 3) throw new IllegalArgumentException("JWT malformato");
 
-        Map<String, Object> header = parseB64Json(parts[0]);
-        Map<String, Object> payload = parseB64Json(parts[1]);
+            Map<String, Object> header = parseB64Json(parts[0]);
+            Map<String, Object> payload = parseB64Json(parts[1]);
 
-        for (JwtBuilderUtils.JwtClaimOverride override : overrides) {
-            String claim = override.claim();
-            String value = override.value();
+            for (JwtBuilderUtils.JwtClaimOverride override : overrides) {
+                String claim = override.claim();
+                String value = override.value();
 
-            if (claim.startsWith("header.")) {
-                String headerClaim = claim.substring("header.".length());
-                header.put(headerClaim, value);
-            } else if ("__remove".equals(claim)) {
-                payload.remove(value);
-            } else {
-                payload.put(claim, parseValue(value));
+                if (claim.startsWith("header.")) {
+                    String headerClaim = claim.substring("header.".length());
+                    header.put(headerClaim, value);
+                } else if ("__remove".equals(claim)) {
+                    payload.remove(value);
+                } else {
+                    payload.put(claim, parseValue(value));
+                }
             }
+
+            return sign(header, payload, keyPair.getPrivate());
+
+        } catch (Exception e) {
+            throw new IllegalStateException("Errore nell'applicazione degli override al DPoP proof", e);
         }
-
-        return sign(header, payload, keyPair.getPrivate());
-
-    } catch (Exception e) {
-        throw new IllegalStateException("Errore nell'applicazione degli override al DPoP proof", e);
     }
-}
 
-@SuppressWarnings("unchecked")
-private Map<String, Object> parseB64Json(String b64) throws Exception {
-    byte[] decoded = Base64.getUrlDecoder().decode(b64);
-    return MAPPER.readValue(decoded, Map.class);
-}
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> parseB64Json(String b64) throws Exception {
+        byte[] decoded = Base64.getUrlDecoder().decode(b64);
+        return MAPPER.readValue(decoded, Map.class);
+    }
 
-private Object parseValue(String value) {
-    if (value == null) return null;
-    try { return Long.parseLong(value); } catch (NumberFormatException ignored) {}
-    try { return Double.parseDouble(value); } catch (NumberFormatException ignored) {}
-    if ("true".equalsIgnoreCase(value)) return true;
-    if ("false".equalsIgnoreCase(value)) return false;
-    return value; // stringa
-}
+    private Object parseValue(String value) {
+        if (value == null) return null;
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException ignored) {
+        }
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException ignored) {
+        }
+        if ("true".equalsIgnoreCase(value)) return true;
+        if ("false".equalsIgnoreCase(value)) return false;
+        return value;
+    }
 
     private static String b64(byte[] bytes) {
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
