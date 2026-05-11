@@ -25,7 +25,7 @@ public class AgreementDataPreparationService implements AgreementService {
     private final AgreementContext context;
 
     @Override
-    public Agreement createEserviceAgreement(Eservice eservice) {
+    public Agreement createAgreement(Eservice eservice) {
         AgreementPayload request = buildAgreementPayload(eservice, null);
         UUID agreementId = agreementsApi.createAgreement(request).getId();
 
@@ -33,7 +33,7 @@ public class AgreementDataPreparationService implements AgreementService {
     }
 
     @Override
-    public Agreement createEserviceAgreement(Eservice eservice, UUID delegationId) {
+    public Agreement createAgreement(Eservice eservice, UUID delegationId) {
         AgreementPayload request = buildAgreementPayload(eservice, delegationId);
         UUID agreementId = agreementsApi.createAgreement(request).getId();
 
