@@ -13,23 +13,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+import static it.pagopa.interop.domain.enums.InteropClientType.API;
+import static it.pagopa.interop.domain.enums.InteropClientType.CONSUMER;
+
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ClientController {
 
     private final CurrentUserContext currentUserContext;
     private final ClientService clientService;
 
-    @Given("un client {clientType} creato da {tenant}, associato alla {currentPurpose}, in cui è presente l'admin e una coppia di chiavi crittografiche")
-    public void setupClient(InteropClientType clientType, Tenant consumer, Purpose purpose) {
-        User consumerAdmin = User.getTenantAdmin(consumer);
-        currentUserContext.set(consumerAdmin, consumer);
+    @Given("un client CONSUMER creato da {tenant}, associato alla {currentPurpose}, in cui è presente l'admin e una coppia di chiavi crittografiche")
+    public void setupConsumerClient(Tenant consumer, Purpose purpose) {
+        Client client = createClientWithAdmin(CONSUMER, consumer);
+        clientService.addPurpose(client, purpose);
+    }
+
+    @Given("un client API creato da {tenant} in cui è presente l'admin e una coppia di chiavi crittografiche")
+    public void setupApiClient(Tenant consumer) {
+        createClientWithAdmin(API, consumer);
+    }
+
+    private Client createClientWithAdmin(InteropClientType type, Tenant tenant) {
+        User admin = User.getTenantAdmin(tenant);
+        currentUserContext.set(admin, tenant);
 
         Client client = clientService.createClient(
-                clientType,
-                request -> request.setMembers(List.of(consumerAdmin.getUserId()))
+                type,
+                request -> request.setMembers(List.of(admin.getUserId()))
         );
-
         clientService.addPublicKey(client);
-        clientService.addPurpose(client, purpose);
+        return client;
     }
 }

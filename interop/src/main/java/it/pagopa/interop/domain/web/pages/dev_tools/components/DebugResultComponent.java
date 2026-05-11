@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
+import it.pagopa.interop.domain.enums.InteropClientType;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import org.assertj.core.api.Assertions;
 
@@ -40,7 +41,8 @@ public interface DebugResultComponent extends Component {
         );
     }
 
-    default ClientAssertionValidationResult getValidationResults() {
+    default ClientAssertionValidationResult getValidationResults(InteropClientType clientType) {
+
         var clientAssertionValidation = new ClientAssertionValidationResult.ClientAssertionValidation(
                 readValidationStep(clientAssertionValidationResultButton())
         );
@@ -53,8 +55,9 @@ public interface DebugResultComponent extends Component {
                 readValidationStep(signatureValidationResultButton())
         );
 
-        var platformValidation = new ClientAssertionValidationResult.PlatformValidation(
-                readValidationStep(platformValidationResultButton()));
+       var platformValidation =  clientType == InteropClientType.CONSUMER
+               ? new ClientAssertionValidationResult.PlatformValidation(readValidationStep(platformValidationResultButton()))
+               : null;
 
         return new ClientAssertionValidationResult(
                 clientAssertionValidation,

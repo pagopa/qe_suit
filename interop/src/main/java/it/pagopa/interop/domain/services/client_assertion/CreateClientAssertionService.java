@@ -43,6 +43,14 @@ public class CreateClientAssertionService {
         return createClientAssertion(client, purpose, null, List.of());
     }
 
+    public String createClientAssertion(Client client) throws NoSuchAlgorithmException, JsonProcessingException {
+        return createClientAssertion(client, null, null, List.of());
+    }
+
+    public String createClientAssertion(Client client, List<JwtClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
+        return createClientAssertion(client, null, null, overrides);
+    }
+
     public String createClientAssertion(Client client, Purpose purpose, KeyPair keyPair) throws NoSuchAlgorithmException, JsonProcessingException {
         return createClientAssertion(client, purpose, keyPair, List.of());
     }
@@ -54,7 +62,7 @@ public class CreateClientAssertionService {
         JwtBuilder clientAssertionBuilder = getValidClientAssertionBuilder(
                 InteropClientType.valueOf(client.getKind().name()),
                 client.getId().toString(),
-                purpose.getId().toString(),
+                purpose != null ? purpose.getId().toString() : null,
                 kp
         );
 

@@ -1,7 +1,7 @@
 Feature: : Debugger Client Assertion Sync Bearer
   Come Aderente in possesso di un client di tipo CONSUMER
   Voglio validare la mia Client Assertion standard
-  Al fine di identificare errori strutturali, temporali o crittografici nelle tre fasi di validazione (Formale, Recupero Chiave, Firma)
+  Al fine di identificare errori strutturali, temporali o crittografici nelle quattro fasi di validazione (Formale, Recupero Chiave, Firma, Stato Piattaforma)
 
   Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_SUCCESS]
   Dato un client CONSUMER valido, quando viene inviata una client assertion corretta allora tutte le fasi di validazione risultano PASSED
@@ -17,6 +17,7 @@ Feature: : Debugger Client Assertion Sync Bearer
       | publicKeyRetrieve                    | PASSED | []     |
       | clientAssertionSignatureVerification | PASSED | []     |
       | platformStatesVerification           | PASSED | []     |
+
 
   # Bug: https://pagopa.atlassian.net/browse/PIN-10056
   Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_INVALID_AUDIENCE]

@@ -21,6 +21,12 @@ public class EserviceController {
     private final CurrentUserContext currentUserContext;
     private final PurposeService purposeService;
 
+    @Given("un eservice creato da {tenant} con una richiesta di fruizione associata da {tenant}")
+    public void setupEsericeAndAgreement(Tenant producer, Tenant consumer) {
+        Eservice publishedEservice = createAndPublishEservice(producer);
+        createAndSubmitAgreement(consumer, publishedEservice);
+    }
+
     @Given("un eservice creato da {tenant} con una richiesta di fruizione e una finalità associate da {tenant}")
     public void setupEservice(Tenant producer, Tenant consumer) {
         setupEserviceWithPurposeState(producer, consumer, PurposeVersionState.ACTIVE);

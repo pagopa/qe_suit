@@ -57,9 +57,11 @@ public final class ClientAssertionValidationResultMapper {
                 new ClientAssertionValidationResult.SignatureValidation(
                         require(byStep, "clientAssertionSignatureVerification")
                 ),
-                new ClientAssertionValidationResult.PlatformValidation(
+                byStep.containsKey("platformStatesVerification")
+                        ? new ClientAssertionValidationResult.PlatformValidation(
                         require(byStep, "platformStatesVerification")
                 )
+                        : null
         );
     }
 

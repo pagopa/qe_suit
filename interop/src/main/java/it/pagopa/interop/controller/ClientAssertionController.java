@@ -18,7 +18,6 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ClientAssertionController {
     private final CreateClientAssertionService clientAssertionService;
-    private final WebDevToolsService webClientAssertionService;
     private final ClientAssertionContext clientAssertionContext;
 
     @Given("una client assertion valida generata usando il {currentClient} e la {currentPurpose}")
@@ -30,6 +29,18 @@ public class ClientAssertionController {
     @Given("una client assertion generata usando il {currentClient}, la {currentPurpose} e:")
     public void createClientAssertion(Client client, Purpose purpose, List<JwtBuilderUtils.JwtClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
         String clientAssertion = clientAssertionService.createClientAssertion(client, purpose, overrides);
+        clientAssertionContext.upsert(new ClientAssertion(clientAssertion));
+    }
+
+    @Given("una client assertion valida generata usando il {currentClient}")
+    public void createClientAssertion(Client client) throws NoSuchAlgorithmException, JsonProcessingException {
+        String clientAssertion = clientAssertionService.createClientAssertion(client);
+        clientAssertionContext.upsert(new ClientAssertion(clientAssertion));
+    }
+
+    @Given("una client assertion generata usando il {currentClient} e:")
+    public void createClientAssertion(Client client, List<JwtBuilderUtils.JwtClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
+        String clientAssertion = clientAssertionService.createClientAssertion(client, overrides);
         clientAssertionContext.upsert(new ClientAssertion(clientAssertion));
     }
 }
