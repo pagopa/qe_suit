@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 
 public interface PurposeService {
     Purpose createEservicePurpose(Eservice eservice);
-    Purpose associatePurposeToClient(Purpose purpose, Client client);
     Purpose createEservicePurpose(Eservice eservice, Consumer<PurposeSeed> overrides);
     Purpose createEservicePurposeWithState(Eservice eservice, PurposeVersionState targetState);
     Purpose createEservicePurposeWithState(Eservice eservice, PurposeVersionState targetState, Consumer<PurposeSeed> overrides);
