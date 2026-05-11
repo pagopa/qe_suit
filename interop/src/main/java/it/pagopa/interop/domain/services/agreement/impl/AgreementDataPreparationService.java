@@ -15,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -26,29 +28,22 @@ public class AgreementDataPreparationService implements AgreementService {
 
     @Override
     public Agreement createAgreement(Eservice eservice) {
-        AgreementPayload request = buildAgreementPayload(eservice, null);
-        UUID agreementId = agreementsApi.createAgreement(request).getId();
-
-        return getAgreement(agreementId);
+        return createAgreement(eservice, null);
     }
 
     @Override
     public Agreement createAgreement(Eservice eservice, UUID delegationId) {
-        AgreementPayload request = buildAgreementPayload(eservice, delegationId);
+        AgreementPayload request = buildAgreementPayload(eservice, Optional.ofNullable(delegationId));
         UUID agreementId = agreementsApi.createAgreement(request).getId();
-
         return getAgreement(agreementId);
     }
 
     @Override
     public Agreement getAgreement(UUID agreementId) {
-        Agreement agreement = PollingUtils.pollUntil(
+        Agreement agreement = pollAgreement(
                 () -> new Agreement(agreementsApi.getAgreementById(agreementId)),
-                resp -> resp.getId().equals(agreementId),
-                Duration.ofSeconds(15),
-                Duration.ofSeconds(1)
+                a -> a.getId().equals(agreementId)
         );
-
         context.upsert(agreement);
         return agreement;
     }
@@ -58,10 +53,8 @@ public class AgreementDataPreparationService implements AgreementService {
         ResponseEntity<it.pagopa.interop.generated.openapi.clients.bff.model.Agreement> submitted =
                 PollingUtils.pollUntil(
                         () -> agreementsApi.submitAgreementWithHttpInfo(agreement.getId(), new AgreementSubmissionPayload()),
-                        resp -> {
-                            if (resp == null || !resp.getStatusCode().is2xxSuccessful() ||  resp.getBody() == null) return false;
-                            return resp.getBody().getState() == AgreementState.ACTIVE;
-                        },
+                        resp -> resp != null && resp.getStatusCode().is2xxSuccessful() && resp.getBody() != null
+                                && resp.getBody().getState() == AgreementState.ACTIVE,
                         Duration.ofSeconds(20),
                         Duration.ofSeconds(2)
                 );
@@ -80,26 +73,28 @@ public class AgreementDataPreparationService implements AgreementService {
         UUID agreementId = agreement.getId();
         agreementsApi.activateAgreement(agreementId, null);
 
-        Agreement activatedAgreement = PollingUtils.pollUntil(
+        Agreement activatedAgreement = pollAgreement(
                 () -> new Agreement(agreementsApi.getAgreementById(agreementId)),
-                resp -> resp.getId().equals(agreementId) && resp.getState() == AgreementState.ACTIVE,
-                Duration.ofSeconds(15),
-                Duration.ofSeconds(1)
+                a -> a.getId().equals(agreementId) && a.getState() == AgreementState.ACTIVE
         );
-
         context.upsert(activatedAgreement);
         return activatedAgreement;
     }
 
-    private AgreementPayload buildAgreementPayload(Eservice eservice, UUID delegationId) {
-        UUID eserviceId = eservice.getEserviceId();
-        UUID lastDescriptorId = eservice.getLastDescriptorId();
+    private Agreement pollAgreement(Supplier<Agreement> supplier, java.util.function.Predicate<Agreement> predicate) {
+        return PollingUtils.pollUntil(
+                supplier,
+                predicate,
+                Duration.ofSeconds(15),
+                Duration.ofSeconds(1)
+        );
+    }
 
+    private AgreementPayload buildAgreementPayload(Eservice eservice, Optional<UUID> delegationId) {
         AgreementPayload request = new AgreementPayload();
-        request.setEserviceId(eserviceId);
-        request.setDescriptorId(lastDescriptorId);
-        request.setDelegationId(delegationId);
-
+        request.setEserviceId(eservice.getEserviceId());
+        request.setDescriptorId(eservice.getLastDescriptorId());
+        request.setDelegationId(delegationId.orElse(null));
         return request;
     }
 }
