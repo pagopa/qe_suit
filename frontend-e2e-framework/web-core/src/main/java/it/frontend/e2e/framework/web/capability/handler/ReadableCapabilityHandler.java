@@ -5,9 +5,9 @@ import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.capability.impl.ReadableImpl;
 
-public class ReadableCapabilityHandler extends AbstractCapabilityHandler<Readable> {
+public class ReadableCapabilityHandler<T> extends AbstractCapabilityHandler<Readable<T>> {
 
-    public ReadableCapabilityHandler(IWebPresentationApiAdapter adapter) {
-        super(new ReadableImpl(adapter));
+    public ReadableCapabilityHandler(IWebPresentationApiAdapter adapter, Class<T> type) {
+        super(new ReadableImpl<>(adapter, type));
     }
 }
