@@ -30,8 +30,8 @@ public interface DebugResultComponent extends Component {
 
     @Override
     default void assertLoaded() {
-        title().readAndAssert(we ->
-                Assertions.assertThat(we.getText())
+        title().readAndAssert(title ->
+                Assertions.assertThat(title)
                         .isNotBlank()
                         .containsIgnoringCase("Esito del debug")
         );
@@ -65,14 +65,24 @@ public interface DebugResultComponent extends Component {
         button.click();
         try {
             boolean isSuccess = drawer().result().isSuccess();
+            boolean isError = drawer().result().isError();
+            boolean isSkipped = drawer().result().isWarning();
+
+            Assertions.assertThat(isSuccess|isError|isSkipped)
+                    .as("Faild to retrive validation status")
+                    .isTrue();
+
+            ClientAssertionValidationResult.Status status = PASSED;
             String errorCode = null;
 
-            if (!isSuccess) {
-                //TODO: impleemntare gestione errore
-                throw new IllegalStateException("Not implemented yet");
+            if (isError) {
+                status = FAILED;
+                errorCode = drawer().errorCode().read();
+            } else if (!isSuccess) {
+                status = SKIPPED;
             }
 
-            return new ClientAssertionValidationResult.ValidationResult(PASSED, isSuccess, errorCode);
+            return new ClientAssertionValidationResult.ValidationResult(status, isSuccess, errorCode);
         } finally {
             // chiude sempre il drawer, anche in caso di eccezione
             drawer().close();
