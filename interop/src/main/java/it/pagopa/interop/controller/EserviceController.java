@@ -3,71 +3,42 @@ package it.pagopa.interop.controller;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.domain.enums.Tenant;
 import it.pagopa.interop.domain.enums.User;
-import it.pagopa.interop.domain.model.Agreement;
-import it.pagopa.interop.domain.model.Eservice;
-import it.pagopa.interop.domain.services.agreement.AgreementService;
-import it.pagopa.interop.domain.services.eservice.EserviceService;
-import it.pagopa.interop.domain.services.purpose.PurposeService;
+import it.pagopa.interop.domain.journey.Journey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.infrastructure.client.auth.context.user.CurrentUserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EserviceController {
 
-    private final EserviceService service;
-    private final AgreementService agreementService;
-    private final CurrentUserContext currentUserContext;
-    private final PurposeService purposeService;
+    private final Journey journey;
 
     @Given("un eservice creato da {tenant} con una richiesta di fruizione associata da {tenant}")
     public void setupEsericeAndAgreement(Tenant producer, Tenant consumer) {
-        Eservice publishedEservice = createAndPublishEservice(producer);
-        createAndSubmitAgreement(consumer, publishedEservice);
+        journey
+            .withProducer(producer, User.getTenantAdmin(producer))
+            .publishEservice()
+            .withConsumer(consumer, User.getTenantAdmin(consumer))
+            .addActiveAgreement();
     }
 
     @Given("un eservice creato da {tenant} con una richiesta di fruizione e una finalità associate da {tenant}")
     public void setupEservice(Tenant producer, Tenant consumer) {
-        setupEserviceWithPurposeState(producer, consumer, PurposeVersionState.ACTIVE);
+        journey
+            .withProducer(producer, User.getTenantAdmin(producer))
+            .publishEservice()
+            .withConsumer(consumer, User.getTenantAdmin(consumer))
+            .addActiveAgreement()
+            .addPurposeInState(PurposeVersionState.ACTIVE);
     }
 
     @Given("un eservice creato da {tenant} con una richiesta di fruizione e una finalità in stato {purposeState} provenienti da {tenant}")
     public void setupEservice(Tenant producer, PurposeVersionState purposeState, Tenant consumer) {
-        setupEserviceWithPurposeState(producer, consumer, purposeState);
-    }
-
-    public void setupEserviceWithPurposeState(Tenant producer, Tenant consumer, PurposeVersionState purposeState) {
-        Eservice publishedEservice = createAndPublishEservice(producer);
-        createAndSubmitAgreement(consumer, publishedEservice);
-        createPurpose(consumer, publishedEservice, purposeState);
-    }
-
-    public Eservice createAndPublishEservice(Tenant producer) {
-        Eservice draftEservice = createDraftEservice(producer);
-        return publishEservice(producer, draftEservice);
-    }
-
-    public Agreement createAndSubmitAgreement(Tenant consumer, Eservice publishedEservice) {
-        currentUserContext.set(User.getTenantAdmin(consumer), consumer);
-        Agreement draftAgreement = agreementService.createEserviceAgreement(publishedEservice);
-        return agreementService.submitAgreement(draftAgreement);
-    }
-
-    public void createPurpose(Tenant consumer, Eservice publishedEservice, PurposeVersionState purposeState) {
-        currentUserContext.set(User.getTenantAdmin(consumer), consumer);
-        purposeService.createEservicePurposeWithState(publishedEservice, purposeState);
-    }
-
-    public Eservice createDraftEservice(Tenant producer) {
-        User producerAdmin = User.getTenantAdmin(producer);
-        currentUserContext.set(producerAdmin, producer);
-        return service.createEservice();
-    }
-
-    public Eservice publishEservice(Tenant producer, Eservice draftEservice) {
-        User producerAdmin = User.getTenantAdmin(producer);
-        currentUserContext.set(producerAdmin, producer);
-        return service.publishEservice(draftEservice);
+        journey
+            .withProducer(producer, User.getTenantAdmin(producer))
+            .publishEservice()
+            .withConsumer(consumer, User.getTenantAdmin(consumer))
+            .addActiveAgreement()
+            .addPurposeInState(purposeState);
     }
 }
