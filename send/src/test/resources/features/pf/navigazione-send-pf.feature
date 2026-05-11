@@ -6,6 +6,7 @@ Feature: Navigazione portale SEND persone fisiche
 
   Scenario: [PF_LOAD_PAGE] Lato Persona Fisica - Verifica la raggiungibilità delle pagine
     Given l'utente Lucrezia effettua l'accesso a SelfCare con autenticazione SPID
+    And se presente, viene saltata la configurazione del prodotto SEND
     Then la pagina NotificationPF è caricata con successo
     When naviga alla pagina AddressPF
     Then la pagina deve caricarsi correttamente
