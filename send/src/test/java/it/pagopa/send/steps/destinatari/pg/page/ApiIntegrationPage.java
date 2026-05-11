@@ -1,4 +1,4 @@
-package it.pagopa.send.steps.pg.page;
+package it.pagopa.send.steps.destinatari.pg.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
@@ -6,18 +6,17 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import org.assertj.core.api.Assertions;
 
-@Url("${url.notifiche.persona-giuridica.delegati}")
-public interface OrganizationAuthorizedRepresentativesPage extends Page {
+@Url("${url.notifiche.persona-giuridica.integrazione-api}")
+public interface ApiIntegrationPage extends Page {
 
-    @XPath("//*[@id=\"simple-tabpanel--1\"]/div/div/div[1]/h6")
+    @XPath("//*[@id=\"item\"]")
     Readable<String> breadcrumbs();
 
     @Override
     default void assertLoaded() {
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("Authorised representatives of the company",
-                    "Delegati dall'impresa");
+            Assertions.assertThat(h.getText()).isIn("Integrazione API");
         });
     }
 }

@@ -1,4 +1,4 @@
-package it.pagopa.send.steps.pf.page;
+package it.pagopa.send.steps.destinatari.pf.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
