@@ -12,12 +12,12 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
 import it.pagopa.interop.infrastructure.client.auth.context.user.CurrentUserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.UUID;
 
-@Component
+@Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class RiskAnalysisDataPreparationService implements RiskAnalysisService {
 

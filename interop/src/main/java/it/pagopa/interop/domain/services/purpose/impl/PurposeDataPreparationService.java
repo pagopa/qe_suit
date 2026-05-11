@@ -1,7 +1,6 @@
 package it.pagopa.interop.domain.services.purpose.impl;
 
 import it.pagopa.interop.domain.context.PurposeContext;
-import it.pagopa.interop.domain.model.Client;
 import it.pagopa.interop.domain.model.Eservice;
 import it.pagopa.interop.domain.model.Purpose;
 import it.pagopa.interop.domain.model.RiskAnalysis;
@@ -16,7 +15,7 @@ import it.pagopa.interop.infrastructure.client.auth.context.user.CurrentUserCont
 import it.pagopa.interop.utils.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -26,7 +25,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-@Component
+@Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class PurposeDataPreparationService implements PurposeService {
 

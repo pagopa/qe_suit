@@ -6,13 +6,13 @@ import it.pagopa.interop.domain.model.Client;
 import it.pagopa.interop.domain.model.ClientAssertion;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.domain.model.DPoPProof;
-import it.pagopa.interop.domain.web.pages.dev_tools.DebugClientAssertionPage;
 import it.pagopa.interop.domain.services.client_assertion.DevToolsService;
+import it.pagopa.interop.domain.web.pages.dev_tools.DebugClientAssertionPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebDevToolsService implements DevToolsService {
 
@@ -31,17 +31,17 @@ public class WebDevToolsService implements DevToolsService {
 
     @Override
     public ClientAssertionValidationResult validate(String clientAssertion, InteropClientType clientType, String client, String proof) {
-        return internalValidate(clientAssertion,clientType,  client, proof);
+        return internalValidate(clientAssertion, clientType, client, proof);
     }
 
 
     private ClientAssertionValidationResult internalValidate(String clientAssertion, InteropClientType clientType, String clientId, String dPoPProof) {
         DebugClientAssertionPage debugClientAssertionPage = webPresentationGateway.bind(DebugClientAssertionPage.class);
 
-        if(clientAssertion != null)
+        if (clientAssertion != null)
             debugClientAssertionPage.setClientAssertion(clientAssertion);
 
-        if(clientId != null)
+        if (clientId != null)
             debugClientAssertionPage.setClientId(clientId);
 
         //TODO: dpop proof
