@@ -16,6 +16,6 @@ public interface DebugDrawer extends Drawer {
 
     Chip result();
 
-    @XPath(".//ul/li[1]//p")
+    @XPath(".//ul/li//p")
     Readable<String> errorCode();
 }

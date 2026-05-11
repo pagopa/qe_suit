@@ -26,8 +26,8 @@ public class EserviceController {
         setupEserviceWithPurposeState(producer, consumer, PurposeVersionState.ACTIVE);
     }
 
-    @Given("un eservice creato da {tenant} con una richiesta di fruizione e una finalità in stato {purposeState} associate da {tenant}")
-    public void setupEservice(Tenant producer, Tenant consumer, PurposeVersionState purposeState) {
+    @Given("un eservice creato da {tenant} con una richiesta di fruizione e una finalità in stato {purposeState} provenienti da {tenant}")
+    public void setupEservice(Tenant producer, PurposeVersionState purposeState, Tenant consumer) {
         setupEserviceWithPurposeState(producer, consumer, purposeState);
     }
 

@@ -18,6 +18,7 @@ import java.util.Map;
 public class ClientAssertionParameterType {
 
     private final ClientAssertionContext clientAssertionContext;
+    private final ClientAssertionValidationResultMapper clientAssertionValidationResultMapper;
 
     @ParameterType("client assertion|client assertion creata")
     public ClientAssertion currentClientAssertion(String token) {
@@ -30,8 +31,8 @@ public class ClientAssertionParameterType {
     }
 
     @DataTableType
-    public static ClientAssertionValidationResult fromDataTable(DataTable dataTable) {
-        return ClientAssertionValidationResultMapper.fromDataTable(dataTable);
+    public ClientAssertionValidationResult fromDataTable(DataTable dataTable) {
+        return clientAssertionValidationResultMapper.fromDataTable(dataTable);
     }
 
     @DataTableType

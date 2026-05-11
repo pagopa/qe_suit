@@ -2,15 +2,18 @@ package it.pagopa.interop.config.parameter_type.mapper;
 
 import io.cucumber.datatable.DataTable;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public final class ClientAssertionValidationResultMapper {
+    private final DataTableContextMapper dataTableContextMapper;
 
-    private ClientAssertionValidationResultMapper() {
-    }
-
-    public static ClientAssertionValidationResult fromDataTable(DataTable dataTable) {
+    public ClientAssertionValidationResult fromDataTable(DataTable dataTable) {
         List<List<String>> rows = dataTable.cells();
         if (rows == null || rows.size() < 2) {
             throw new IllegalArgumentException("DataTable vuota o senza righe dati");
@@ -39,7 +42,7 @@ public final class ClientAssertionValidationResultMapper {
 
             ClientAssertionValidationResult.Status status = parseStatus(result);
             boolean success = status == ClientAssertionValidationResult.Status.PASSED;
-            List<String> errorsCode = parseErrors(errors);
+            List<String> errorsCode = this.parseErrors(errors);
 
             byStep.put(step, new ClientAssertionValidationResult.ValidationResult(status, success, errorsCode));
         }
@@ -81,7 +84,7 @@ public final class ClientAssertionValidationResultMapper {
         };
     }
 
-    private static List<String> parseErrors(String raw) {
+    private List<String> parseErrors(String raw) {
         if (raw == null || raw.trim().isEmpty() || "[]".equals(raw.trim())) {
             return List.of();
         }
@@ -89,13 +92,15 @@ public final class ClientAssertionValidationResultMapper {
         if (value.startsWith("[") && value.endsWith("]")) {
             String inner = value.substring(1, value.length() - 1).trim();
             if (inner.isEmpty()) return List.of();
-            // Split per virgola e rimuovi eventuali spazi
+            // Split per virgola, risolvi ogni errore tramite dataTableContextMapper
             return Arrays.stream(inner.split(","))
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
+                    .map(dataTableContextMapper::resolve)
                     .toList();
         }
-        return List.of(value);
+        // Risolvi anche il caso singolo
+        return List.of(dataTableContextMapper.resolve(value));
     }
 
     private static String normalize(String value) {

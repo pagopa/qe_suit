@@ -71,16 +71,30 @@ public interface DebugResultComponent extends Component {
             boolean isError = drawer().result().isError();
             boolean isSkipped = drawer().result().isWarning();
 
-            Assertions.assertThat(isSuccess|isError|isSkipped)
+            Assertions.assertThat(isSuccess | isError | isSkipped)
                     .as("Faild to retrive validation status")
                     .isTrue();
 
             ClientAssertionValidationResult.Status status = PASSED;
-            List<String> errorsCode = new ArrayList<>();
+            final List<String> errorsCode = new ArrayList<>();
 
             if (isError) {
                 status = FAILED;
-                errorsCode = drawer().errorCode().readAll();
+                errorsCode.addAll(drawer().errorCode().readAll());
+
+                drawer().result().text().readAndAssert(resultText -> {
+                    Assertions.assertThat(resultText)
+                            .as("Il testo del risultato non deve essere vuoto")
+                            .isNotBlank();
+
+                    String expected = errorsCode.size() == 1
+                            ? "1 errore"
+                            : String.format("%d errori", errorsCode.size());
+
+                    Assertions.assertThat(resultText)
+                            .as("Il testo del risultato deve contenere il conteggio errori atteso")
+                            .containsIgnoringCase(expected);
+                });
             } else if (!isSuccess) {
                 status = SKIPPED;
             }

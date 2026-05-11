@@ -18,7 +18,7 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionSignatureVerification | PASSED | []     |
       | platformStatesVerification           | PASSED | []     |
 
-
+  # Bug: https://pagopa.atlassian.net/browse/PIN-10056
   Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_INVALID_AUDIENCE]
   Dato un client CONSUMER valido, quando la client assertion ha audience invalida
   allora la validazione formale fallisce con invalidAudience
@@ -37,7 +37,7 @@ Feature: : Debugger Client Assertion Sync Bearer
       | clientAssertionSignatureVerification | SKIPPED | []                                                       |
       | platformStatesVerification           | SKIPPED | []                                                       |
 
-
+  # Bug: https://pagopa.atlassian.net/browse/PIN-10056
   Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_MISSING_REQUIRED_CLAIMS]
   Dato un client CONSUMER valido, quando la client assertion non contiene claim obbligatori
   allora la validazione formale fallisce con i rispettivi errori
@@ -55,11 +55,11 @@ Feature: : Debugger Client Assertion Sync Bearer
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
     And l'utente richiede la validazione della client assertion associata al client
     Then i risultati della validazione della client assertion creata sono:
-      | step                                 | result  | errors                                                                                          |
-      | clientAssertionValidation            | FAILED  | [jtiNotFound, issuedAtNotFound, audienceNotFound, expNotFound, issuerNotFound, subjectNotFound] |
-      | publicKeyRetrieve                    | SKIPPED | []                                                                                              |
-      | clientAssertionSignatureVerification | SKIPPED | []                                                                                              |
-      | platformStatesVerification           | SKIPPED | []                                                                                              |
+      | step                                 | result  | errors                                                                                                                                                                                                                         |
+      | clientAssertionValidation            | FAILED  | [JTI not found in client assertion, IAT not found in client assertion, EXP not found in client assertion, Issuer not found in client assertion, Subject not found in client assertion, Audience not found in client assertion] |
+      | publicKeyRetrieve                    | SKIPPED | []                                                                                                                                                                                                                             |
+      | clientAssertionSignatureVerification | SKIPPED | []                                                                                                                                                                                                                             |
+      | platformStatesVerification           | SKIPPED | []                                                                                                                                                                                                                             |
 
 
   Scenario: [CONSUMER_CLIENT_ASSERTION_PUBLIC_KEY_RETRIEVE_INVALID_KID_FORMAT]
@@ -74,11 +74,11 @@ Feature: : Debugger Client Assertion Sync Bearer
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
     And l'utente richiede la validazione della client assertion associata al client
     Then i risultati della validazione della client assertion sono:
-      | step                                 | result  | errors             |
-      | clientAssertionValidation            | PASSED  | []                 |
-      | publicKeyRetrieve                    | FAILED  | [invalidKidFormat] |
-      | clientAssertionSignatureVerification | SKIPPED | []                 |
-      | platformStatesVerification           | SKIPPED | []                 |
+      | step                                 | result  | errors                                                                                |
+      | clientAssertionValidation            | PASSED  | []                                                                                    |
+      | publicKeyRetrieve                    | FAILED  | [Public key with kid not-a-valid-kid-format not found for client $retrieve(clientId)] |
+      | clientAssertionSignatureVerification | SKIPPED | []                                                                                    |
+      | platformStatesVerification           | SKIPPED | []                                                                                    |
 
 
   Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_EXPIRED_TOKEN]
@@ -93,25 +93,25 @@ Feature: : Debugger Client Assertion Sync Bearer
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
     And l'utente richiede la validazione della client assertion associata al client
     Then i risultati della validazione della client assertion sono:
-      | step                                 | result  | errors              |
-      | clientAssertionValidation            | PASSED  | []                  |
-      | publicKeyRetrieve                    | PASSED  | []                  |
-      | clientAssertionSignatureVerification | FAILED  | [tokenExpiredError] |
-      | platformStatesVerification           | SKIPPED | []                  |
+      | step                                 | result  | errors                                                   |
+      | clientAssertionValidation            | PASSED  | []                                                       |
+      | publicKeyRetrieve                    | PASSED  | []                                                       |
+      | clientAssertionSignatureVerification | FAILED  | [Token expired in client assertion signature validation] |
+      | platformStatesVerification           | SKIPPED | []                                                       |
 
 
   Scenario: [CONSUMER_CLIENT_ASSERTION_PLATFORM_STATES_INVALID_PURPOSE_STATE]
   Dato un client CONSUMER valido, quando la finalità associata è in stato non valido
   allora la verifica degli stati fallisce con invalidPurposeState
 
-    Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità in stato SUSPENDED associate da PagoPA
+    Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità in stato SUSPENDED provenienti da PagoPA
     And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
     And una client assertion valida generata usando il client e la finalità
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
     And l'utente richiede la validazione della client assertion associata al client
     Then i risultati della validazione della client assertion sono:
-      | step                                 | result | errors                |
-      | clientAssertionValidation            | PASSED | []                    |
-      | publicKeyRetrieve                    | PASSED | []                    |
-      | clientAssertionSignatureVerification | PASSED | []                    |
-      | platformStatesVerification           | FAILED | [invalidPurposeState] |
+      | step                                 | result | errors                       |
+      | clientAssertionValidation            | PASSED | []                           |
+      | publicKeyRetrieve                    | PASSED | []                           |
+      | clientAssertionSignatureVerification | PASSED | []                           |
+      | platformStatesVerification           | FAILED | [Purpose state is: INACTIVE] |
