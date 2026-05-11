@@ -43,7 +43,8 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
             return switch (method.getName()) {
                 case "equals" -> proxy == args[0];
                 case "hashCode" -> System.identityHashCode(proxy);
-                case "toString" -> proxy.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(proxy));
+                case "toString" ->
+                        proxy.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(proxy));
                 default -> throw new UnsupportedOperationException("Object method not supported: " + method.getName());
             };
         }
@@ -72,14 +73,22 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
         return new DefaultBinderInvocationHandler(this.dispatcher, bindContext, shouldSuppressExceptionForOptionalWrapper);
     }
 
-    public <T> T resolveCapabilityMethod(Method method, Object[] args, BindContext bindContext ) {
+    public <T> T resolveCapabilityMethod(Method method, Object[] args, BindContext bindContext) {
         logger.logDebug("Dispatching capability method: " + method.getName() + " | " + bindContext.toString());
         return dispatcher.dispatch(method, args, bindContext.getScope());
     }
 
     public Object bindRecursive(Method method, Class<?> returnType, boolean optionalBestEffort) {
         String childSel = XPathResolver.resolve(method, returnType);
-        String fullSel = XPathResolver.compose(ctx.getScope().selector(), childSel);
+        String fullSel;
+        logger.logInfo("childSel: " + childSel + " | isAbsolute: " + XPathResolver.isAbsolute(childSel));
+
+        if (XPathResolver.isAbsolute(childSel)) {
+            fullSel = childSel;
+        } else {
+            fullSel = XPathResolver.compose(ctx.getScope().selector(), childSel);
+        }
+
         CapabilityScope scope = new CapabilityScope(fullSel, ctx.getScope().location());
         logger.logInfo("Binding recursive element: " + returnType.getSimpleName() +
                 " | From: " + method.getDeclaringClass().getSimpleName() +
@@ -95,9 +104,15 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
         return DomainElement.class.isAssignableFrom(type) || Capability.class.isAssignableFrom(type);
     }
 
-    /** Getters  */
+    /**
+     * Getters
+     */
 
-    public BindContext getCtx() { return ctx; }
+    public BindContext getCtx() {
+        return ctx;
+    }
 
-    public ILogger getLogger() { return logger; }
+    public ILogger getLogger() {
+        return logger;
+    }
 }
