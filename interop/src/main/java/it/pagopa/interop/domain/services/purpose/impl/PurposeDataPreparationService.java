@@ -23,6 +23,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -45,11 +47,10 @@ public class PurposeDataPreparationService implements PurposeService {
             overrides.accept(seed);
         }
 
-        CreatedResource created = PollingUtils.pollUntil(
+        CreatedResource created = poll(
                 () -> purposesApi.createPurpose(seed),
                 resp -> resp != null && resp.getId() != null,
-                Duration.ofSeconds(20),
-                Duration.ofSeconds(2)
+                Duration.ofSeconds(20)
         );
 
         return getPurpose(created.getId());
@@ -91,18 +92,11 @@ public class PurposeDataPreparationService implements PurposeService {
     }
 
     @Override
-    public Purpose associatePurposeToClient(Purpose purpose, Client client) {
-        // Step successivo: bind purpose-client quando allinei endpoint/modello
-        return purpose;
-    }
-
-    @Override
     public Purpose getPurpose(UUID purposeId) {
-        Purpose purpose = PollingUtils.pollUntil(
+        Purpose purpose = poll(
                 () -> new Purpose(purposesApi.getPurpose(purposeId)),
                 resp -> resp != null && Objects.equals(purposeId, resp.getId()),
-                Duration.ofSeconds(20),
-                Duration.ofSeconds(2)
+                Duration.ofSeconds(20)
         );
 
         context.upsert(purpose);
@@ -127,17 +121,16 @@ public class PurposeDataPreparationService implements PurposeService {
 
     private UUID waitCurrentVersion(UUID purposeId) {
         it.pagopa.interop.generated.openapi.clients.bff.model.Purpose bffPurpose =
-                PollingUtils.pollUntil(
+                poll(
                         () -> purposesApi.getPurpose(purposeId),
                         resp -> resp != null && resp.getCurrentVersion() != null,
-                        Duration.ofSeconds(20),
-                        Duration.ofSeconds(2)
+                        Duration.ofSeconds(20)
                 );
         return bffPurpose.getCurrentVersion().getId();
     }
 
     private void waitVersionInState(UUID purposeId, PurposeVersionState expectedState) {
-        PollingUtils.pollUntil(
+        poll(
                 () -> purposesApi.getPurpose(purposeId),
                 resp -> expectedState == Optional.ofNullable(resp.getCurrentVersion())
                         .map(PurposeVersion::getState)
@@ -145,8 +138,7 @@ public class PurposeDataPreparationService implements PurposeService {
                         || expectedState == Optional.ofNullable(resp.getWaitingForApprovalVersion())
                         .map(PurposeVersion::getState)
                         .orElse(null),
-                Duration.ofSeconds(20),
-                Duration.ofSeconds(2)
+                Duration.ofSeconds(20)
         );
     }
 
@@ -160,5 +152,14 @@ public class PurposeDataPreparationService implements PurposeService {
 
     private void archiveVersion(UUID purposeId, UUID versionId) {
         purposesApi.archivePurposeVersion(purposeId, versionId);
+    }
+
+    private <T> T poll(Supplier<T> supplier, Predicate<T> predicate, Duration timeout) {
+        return PollingUtils.pollUntil(
+                supplier,
+                predicate,
+                timeout,
+                Duration.ofSeconds(2)
+        );
     }
 }
