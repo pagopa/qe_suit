@@ -8,11 +8,13 @@ import it.pagopa.interop.domain.services.dpop.DPoPProofService;
 import it.pagopa.interop.utils.JwtBuilderUtils;
 import it.pagopa.interop.utils.KeyPairUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.security.KeyPair;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class DPoPProofController {
 
@@ -34,6 +36,8 @@ public class DPoPProofController {
         String proof = (overrides == null)
                 ? dpopProofService.buildProof(keyPair)
                 : dpopProofService.buildProofWithOverrides(keyPair, overrides);
+
+        log.info("Generated DPoP proof: {}", proof);
         dpopProofContext.upsert(new DPoPProof(proof, keyPair));
     }
 }
