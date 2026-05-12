@@ -7,8 +7,8 @@ import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.domain.model.DPoPProof;
 
 public interface DevToolsService {
-    ClientAssertionValidationResult validate(ClientAssertion clientAssertion, Client client);
-    ClientAssertionValidationResult validate(ClientAssertion clientAssertion, Client client, DPoPProof proof);
-    ClientAssertionValidationResult validate(String clientAssertion, InteropClientType clientType, String clientId, String dPoPProof);
-    void submitForm(String clientAssertion, String clientId, String dPoPProof);
+    ClientAssertionValidationResult performValidation(ClientAssertion clientAssertion, Client client);
+    ClientAssertionValidationResult performValidation(ClientAssertion clientAssertion, Client client, DPoPProof proof);
+    ClientAssertionValidationResult performValidation(String clientAssertion, InteropClientType clientType, String clientId, String dPoPProof);
+    void submitValidationRequest(String clientAssertion, String clientId, String dPoPProof);
 }

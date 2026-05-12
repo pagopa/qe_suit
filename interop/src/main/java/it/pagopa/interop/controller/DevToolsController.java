@@ -27,13 +27,13 @@ public class DevToolsController {
 
     @When("l'utente richiede la validazione della {currentClientAssertion} associata al {currentClient}")
     public void validateClientAssertion(ClientAssertion clientAssertion, Client client) {
-        ClientAssertionValidationResult result = webClientAssertionService.validate(clientAssertion, client);
+        ClientAssertionValidationResult result = webClientAssertionService.performValidation(clientAssertion, client);
         clientAssertionContext.addValidation(clientAssertion, result);
     }
 
     @When("l'utente richiede la validazione della {currentClientAssertion} e della {currentDpopProof} associate al {currentClient}")
     public void validateClientAssertion(ClientAssertion clientAssertion, DPoPProof dPoPProof, Client client) {
-        ClientAssertionValidationResult result = webClientAssertionService.validate(clientAssertion, client, dPoPProof);
+        ClientAssertionValidationResult result = webClientAssertionService.performValidation(clientAssertion, client, dPoPProof);
         clientAssertionContext.addValidation(clientAssertion, result);
     }
 
@@ -49,7 +49,7 @@ public class DevToolsController {
         String resolvedDpopProof = rawDpopProof != null ? dataTableMapper.resolve(rawDpopProof) : null;
         String resolvedCliendId = rawCliendId != null ? dataTableMapper.resolve(rawCliendId) : null;
 
-        webClientAssertionService.submitForm(resolvedClientAssertion, resolvedCliendId, resolvedDpopProof);
+        webClientAssertionService.submitValidationRequest(resolvedClientAssertion, resolvedCliendId, resolvedDpopProof);
     }
 
     @Then("i risultati della validazione della {currentClientAssertion} sono:")

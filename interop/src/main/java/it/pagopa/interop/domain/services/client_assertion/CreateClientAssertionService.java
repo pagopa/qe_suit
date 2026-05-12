@@ -29,12 +29,6 @@ public class CreateClientAssertionService {
     @Value("${interop.auth.client-assertion.audience}")
     private String clientAssertionAudience;
 
-    @Value("${interop.auth.client-assertion.grant_type}")
-    private String clientAssertionGrantType;
-
-    @Value("${interop.auth.client-assertion.assertion_type}")
-    private String clientAssertionType;
-
     public String createClientAssertion(Client client) throws NoSuchAlgorithmException, JsonProcessingException {
         return createClientAssertion(client, null, null, List.of());
     }

@@ -6,8 +6,7 @@ Feature: Debugger Client Assertion Page
 
   ***
   OBIETTIVI DEL TEST FRONTEND:
-  1. Verificare che il flusso utente (caricamento dei componenti, input, invio) sia funzionale e fluido.
-  2. Verificare il corretto comportamento dei componenti grafici (es. text field, messaggi di errore) in risposta ai diversi input dell'utente.
+  1. Verificare il corretto comportamento dei componenti grafici (es. text field, messaggi di errore) in risposta ai diversi input dell'utente.
   ***
 
   Scenario: [DEBUG_CLIENT_ASSERTION_REQUIRED_INPUTS_VALIDATION]
