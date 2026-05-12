@@ -11,10 +11,14 @@ public class WebSuiteContext extends SuiteContext {
         Objects.requireNonNull(configuration, "configuration must not be null");
 
         synchronized (WebSuiteContext.class) {
-            if (WebSuiteContext.configuration != null) {
+            // Usa il getter per verificare se già inizializzato
+            try {
+                SuiteContext.getConfiguration();
                 throw new IllegalStateException("WebSuiteContext is already initialized");
+            } catch (IllegalStateException e) {
+                // Ok, non inizializzato
             }
-            SuiteContext.configuration = configuration;
+            SuiteContext.setConfiguration(configuration);
         }
     }
 
@@ -24,7 +28,7 @@ public class WebSuiteContext extends SuiteContext {
 
     public static void reset() {
         synchronized (WebSuiteContext.class) {
-            SuiteContext.configuration = null;
+            SuiteContext.reset();
         }
     }
 }
