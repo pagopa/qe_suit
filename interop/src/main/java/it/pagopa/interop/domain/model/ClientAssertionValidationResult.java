@@ -79,4 +79,16 @@ public class ClientAssertionValidationResult {
             super(result.getStatus(), result.isSuccess(), result.getErrorsCode());
         }
     }
+
+    public boolean isAllPassed(){
+        boolean isPassed = true;
+
+        if(clientAssertionValidation != null) isPassed &= clientAssertionValidation.isSuccess();
+        if(publicKeyRetrieve != null) isPassed &= publicKeyRetrieve.isSuccess();
+        if(clientAssertionSignatureVerification != null) isPassed &= clientAssertionSignatureVerification.isSuccess();
+        if(platformStatesVerification != null) isPassed &= platformStatesVerification.isSuccess();
+        if(dpopValidation != null) isPassed &= dpopValidation.isSuccess();
+
+        return isPassed;
+    }
 }
