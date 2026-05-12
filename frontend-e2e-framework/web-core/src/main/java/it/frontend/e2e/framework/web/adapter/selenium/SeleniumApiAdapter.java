@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.core.assertion.AssertionAction;
 import it.frontend.e2e.framework.core.model.selector.XPathSelector;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
+import it.frontend.e2e.framework.web.config.WebSuiteContext;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
 import org.openqa.selenium.By;
@@ -289,6 +290,18 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
             );
         } catch (Exception e) {
             throw new RuntimeException("Unable to set localStorage item for key: " + key, e);
+        }
+    }
+
+    @Override
+    public void close() {
+        try {
+            if (driver != null) {
+                driver.quit();
+            }
+        } finally {
+            // Reset del contesto dopo la chiusura del browser
+            WebSuiteContext.reset();
         }
     }
 
