@@ -1,4 +1,5 @@
-Feature: Debugger Client Assertion Page
+@debug-client-assertion-page-ui-behavior
+Feature: Debugger Client Assertion Page (Frontend)
 
   Come Aderente iscritto alla piattaforma Interop
   Voglio accedere alla pagina di Debugger Client Assertion del portale
