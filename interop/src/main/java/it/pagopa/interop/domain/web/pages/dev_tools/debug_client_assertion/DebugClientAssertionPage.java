@@ -14,6 +14,7 @@ import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.compo
 import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.components.DebugResultComponent;
 import lombok.experimental.Delegate;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo/debug-voucher")
 public interface DebugClientAssertionPage extends Page {
@@ -22,6 +23,9 @@ public interface DebugClientAssertionPage extends Page {
 
     @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[2]/div/div/h1")
     Readable<String> pageTitle();
+
+    @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[2]/div/div/h1/following-sibling::p[1]")
+    Readable<String> subtitle();
 
     @XPath("//*[@id=\"clientAssertion\"]")
     TextField clientAssertionInput();
@@ -43,10 +47,11 @@ public interface DebugClientAssertionPage extends Page {
 
     @Override
     default void assertLoaded() {
-        pageTitle().readAndAssert(title ->
-                Assertions.assertThat(title).isNotBlank()
-                        .containsIgnoringCase("Debug della client assertion")
-        );
+        SoftAssertions.assertSoftly(softly -> {
+            pageTitle().readAndAssert("Debug della client assertion");
+            subtitle().readAndAssert("Se non riesci ad ottenere un voucher e non sai perché, puoi effettuare il debugging con questo simulatore e capire i possibili errori.");
+            softly.assertThat(getClientAssertionHelpText()).isEqualTo("La client assertion è un token JWT composto da una stringa che inizia per “ey”. Copiala senza aggiungere spazi.");
+        });
     }
 
     default void setClientAssertion(String clientAssertion) {
