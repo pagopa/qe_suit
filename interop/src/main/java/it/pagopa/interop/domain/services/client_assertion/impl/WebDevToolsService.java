@@ -39,7 +39,7 @@ public class WebDevToolsService implements DevToolsService {
     public ClientAssertionValidationResult performValidation(String clientAssertion, InteropClientType clientType, String clientId, String proof) {
         return performValidationInternal(clientAssertion, clientType, clientId, proof);
     }
-    
+
     @Override
     public void submitValidationRequest(String clientAssertion, String clientId, String dPoPProof) {
         if (clientAssertion != null) debugPage.setClientAssertion(clientAssertion);
@@ -49,45 +49,58 @@ public class WebDevToolsService implements DevToolsService {
         debugPage.submitForm();
     }
 
+    public String getClientAssertionInputErrorMessage(){
+        return debugPage.getClientAssertionErrorMessage();
+    }
+
     private ClientAssertionValidationResult performValidationInternal(String clientAssertion, InteropClientType clientType, String clientId, String dPoPProof) {
+
+        // 1. Popola la form e la sottomette
         submitValidationRequest(clientAssertion, clientId, dPoPProof);
 
-        // Verifico il corretto caricamento della request in interfaccia e la correttezza dei dati mostrati prima di procedere con la lettura dei risultati di validazione
-        debugPage.requestContent().assertLoaded();
+        // 2. Verifica coerenza Input (Echo)
+        verifyRequestEcho(clientAssertion, clientId, dPoPProof);
+
+        // 3. Costruisce il risultato della validazione
+        ClientAssertionValidationResult result = buildValidationResult(clientType, dPoPProof != null);
+
+        // 4. Verifica che il risultato calcolato sia coerente con il banner di riepilogo
+        boolean isAllPassed = result.isAllPassed();
+        //TODO: da implementare
+
+        return result;
+    }
+
+    private void verifyRequestEcho(String clientAssertion, String clientId, String dPoPProof) {
         var request = debugPage.requestContent();
-        
+        request.assertLoaded();
+
         request.verifyVoucherType(dPoPProof != null ? "DPoP" : "Bearer");
         request.verifyClientId(clientId);
         request.verifyClientAssertion(clientAssertion);
         request.verifyDpopProof(dPoPProof);
         request.verifyClientAssertionType(clientAssertionType);
         request.verifyGrantType(clientAssertionGrantType);
-        
-        // Recupero i risultati di validazione dalla pagina e li trasformo in un oggetto ClientAssertionValidationResult
-        debugPage.debugResults().assertLoaded();
-        var results = debugPage.debugResults();
+    }
 
-        var clientAssertionValidation = results.getClientAssertionValidation();
-        var publicKeyValidation = results.getPublicKeyValidation();
-        var signatureValidation = results.getSignatureValidation();
+    private ClientAssertionValidationResult buildValidationResult(InteropClientType clientType, boolean isDpop) {
+        var results = debugPage.debugResults();
+        results.assertLoaded();
+
+        var caValidation = results.getClientAssertionValidation();
+        var pkValidation = results.getPublicKeyValidation();
+        var sigValidation = results.getSignatureValidation();
 
         // Come indicato da https://pagopa.atlassian.net/browse/PIN-10056 si intende validare lo stato della piattaforma solo quando:
         // - Il client è tipo CONSUMER
         // - La fase di client assertion è PASSED
-        ClientAssertionValidationResult.PlatformValidation platformValidation = null;
-        if (clientType == InteropClientType.CONSUMER && clientAssertionValidation.isSuccess())
-            platformValidation = results.getPlatformValidation();
+        var platform = shouldValidatePlatform(clientType, caValidation) ? results.getPlatformValidation() : null;
+        var dpop = isDpop ? results.getDPoPValidation() : null;
 
-        ClientAssertionValidationResult.DPoPValidation dPoPValidation = null;
-        if (dPoPProof != null)
-            dPoPValidation = results.getDPoPValidation();
+        return new ClientAssertionValidationResult(caValidation, pkValidation, sigValidation, platform, dpop);
+    }
 
-        return new ClientAssertionValidationResult(
-                clientAssertionValidation,
-                publicKeyValidation,
-                signatureValidation,
-                platformValidation,
-                dPoPValidation
-        );
+    private boolean shouldValidatePlatform(InteropClientType type, ClientAssertionValidationResult.ValidationResult caStep) {
+        return type == InteropClientType.CONSUMER && caStep.isSuccess();
     }
 }
