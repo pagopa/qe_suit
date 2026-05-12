@@ -10,7 +10,6 @@ import it.pagopa.interop.domain.model.ClientAssertion;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.domain.model.DPoPProof;
 import it.pagopa.interop.domain.services.client_assertion.impl.WebDevToolsService;
-import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.DebugClientAssertionPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,7 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class DevToolsController {
     private final WebDevToolsService webClientAssertionService;
-    private final DebugClientAssertionPage debugClientAssertionPage;
     private final ClientAssertionContext clientAssertionContext;
     private final DataTableMapper dataTableMapper;
 
@@ -62,7 +60,7 @@ public class DevToolsController {
 
     @Then("il text field Client assertion viene evidenziato come errore e viene mostrato il messaggio di validazione {string}")
     public void assertClientAssertionInput(String errorMessage) {
-        String actualErrorMessage = debugClientAssertionPage.getClientAssertionErrorMessage();
+        String actualErrorMessage = webClientAssertionService.getClientAssertionInputErrorMessage();
 
         assertThat(actualErrorMessage)
                 .as("Messaggio di errore visualizzato nel campo Client Assertion")
