@@ -1,4 +1,5 @@
-Feature: : Debugger Client Assertion Sync Bearer (Frontend)
+@debug-client-assertion-page-ui-flow
+Feature: Debugger Client Assertion Sync Bearer (Frontend)
 
   Come Aderente in possesso di un client di tipo CONSUMER
   Voglio validare la mia Client Assertion standard
