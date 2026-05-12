@@ -5,6 +5,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
+import it.pagopa.interop.domain.web.commons.component.Button;
 import org.assertj.core.api.Assertions;
 
 import java.util.ArrayList;
@@ -18,19 +19,19 @@ public interface DebugResultComponent extends Component {
     Readable<String> title();
 
     @XPath(".//button[span[contains(normalize-space(text()), 'Validazione della client assertion')]]")
-    Clickable clientAssertionValidationResultButton();
+    Button clientAssertionValidationResultButton();
 
     @XPath(".//button[span[contains(normalize-space(text()), 'Recupero della chiave pubblica depositata su PDND Interoperabilità')]]")
-    Clickable publicKetValidationResultButton();
+    Button publicKetValidationResultButton();
 
     @XPath(".//button[span[contains(normalize-space(text()), 'Verifica della firma della client assertion')]]")
-    Clickable signatureValidationResultButton();
+    Button signatureValidationResultButton();
 
     @XPath(".//button[span[contains(normalize-space(text()), 'Verifica degli stati')]]")
-    Clickable platformValidationResultButton();
+    Button platformValidationResultButton();
 
     @XPath(".//button[span[contains(normalize-space(text()), 'Validazione DPoP proof')]]")
-    Clickable dpopProofValidationResultButton();
+    Button dpopProofValidationResultButton();
 
     DebugDrawer drawer();
 

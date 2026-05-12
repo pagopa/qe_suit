@@ -8,6 +8,7 @@ import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.domain.enums.InteropClientType;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
+import it.pagopa.interop.domain.web.commons.component.Button;
 import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.components.DebugResultComponent;
 import lombok.experimental.Delegate;
 import org.assertj.core.api.Assertions;
@@ -28,7 +29,7 @@ public interface DebugClientAssertionPage extends Page {
     Writable<String> clientIdInput();
 
     @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[3]/div[2]/div/form/div/button[2]")
-    Clickable submitButton();
+    Button submitButton();
 
     @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[3]/div/div/div[1]/section[1]")
     DebugResultComponent debugResults();
