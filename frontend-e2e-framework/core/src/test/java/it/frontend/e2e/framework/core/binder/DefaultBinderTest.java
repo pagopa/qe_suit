@@ -9,6 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -92,6 +93,11 @@ class DefaultBinderTest {
 
         @Override
         public Optional<TestElement> get() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<List<TestElement>> getAll() {
             return Optional.empty();
         }
     }
