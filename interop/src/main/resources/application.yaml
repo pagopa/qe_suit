@@ -22,4 +22,5 @@ channel:
 # ============================================================================
 logging:
   level:
-    E2E-Framework: DEBUG
+    suit: DEBUG
+
