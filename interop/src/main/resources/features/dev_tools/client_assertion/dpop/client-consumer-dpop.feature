@@ -1,4 +1,4 @@
-Feature: : Debugger Client Assertion Sync Bearer And DPoP
+Feature: Debugger Client Assertion Sync Bearer And DPoP
   Come Aderente in possesso di un client di tipo CONSUMER
   Voglio validare la mia Client Assertion standard e la mia DPoP proof
   Al fine di identificare errori strutturali, temporali o crittografici nelle cinque fasi di validazione (Formale, Recupero Chiave, Firma, Stato Piattaforma, DPoP)
@@ -12,12 +12,13 @@ Feature: : Debugger Client Assertion Sync Bearer And DPoP
     And una client assertion valida generata usando il client e la finalità
     And una dpop proof valida generata con una chiave RSA
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
-    And l'utente richiede la validazione della client assertion associata al client
+    And l'utente richiede la validazione della client assertion e della dpop proof associate al client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result | errors |
       | clientAssertionValidation            | PASSED | []     |
       | publicKeyRetrieve                    | PASSED | []     |
       | clientAssertionSignatureVerification | PASSED | []     |
       | platformStatesVerification           | PASSED | []     |
+      | dpopProofValidation                  | PASSED | []     |
 
 

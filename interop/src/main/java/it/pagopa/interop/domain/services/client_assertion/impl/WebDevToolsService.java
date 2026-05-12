@@ -34,18 +34,41 @@ public class WebDevToolsService implements DevToolsService {
         return internalValidate(clientAssertion, clientType, client, proof);
     }
 
-
     private ClientAssertionValidationResult internalValidate(String clientAssertion, InteropClientType clientType, String clientId, String dPoPProof) {
-        DebugClientAssertionPage debugClientAssertionPage = webPresentationGateway.bind(DebugClientAssertionPage.class);
+        DebugClientAssertionPage debugPage = webPresentationGateway.bind(DebugClientAssertionPage.class);
 
-        if (clientAssertion != null)
-            debugClientAssertionPage.setClientAssertion(clientAssertion);
+        if (clientAssertion != null) debugPage.setClientAssertion(clientAssertion);
+        if (clientId != null) debugPage.setClientId(clientId);
+        if (dPoPProof != null) debugPage.setDpopProof(dPoPProof);
 
-        if (clientId != null)
-            debugClientAssertionPage.setClientId(clientId);
+        debugPage.submitForm();
 
-        //TODO: dpop proof
+        var results = debugPage.debugResults();
 
-        return debugClientAssertionPage.validate(clientType);
+        var clientAssertionValidation = results.getClientAssertionValidation();
+        var publicKeyValidation = results.getPublicKeyValidation();
+        var signatureValidation = results.getSignatureValidation();
+
+        // Come indicato da https://pagopa.atlassian.net/browse/PIN-10056 si intende validare lo stato della piattaforma solo quando:
+        // - Il client è tipo CONSUMER
+        // - La fase di client assertion è PASSED
+        ClientAssertionValidationResult.PlatformValidation platformValidation = null;
+        if (clientType == InteropClientType.CONSUMER && clientAssertionValidation.isSuccess())
+            platformValidation = results.getPlatformValidation();
+
+
+        // DPoP validation solo se presente la proof
+        ClientAssertionValidationResult.DPoPValidation dPoPValidation = null;
+        if (dPoPProof != null)
+            dPoPValidation = results.getDPoPValidation();
+
+
+        return new ClientAssertionValidationResult(
+                clientAssertionValidation,
+                publicKeyValidation,
+                signatureValidation,
+                platformValidation,
+                dPoPValidation
+        );
     }
 }

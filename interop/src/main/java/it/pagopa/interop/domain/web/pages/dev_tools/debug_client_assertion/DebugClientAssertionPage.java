@@ -9,6 +9,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.domain.enums.InteropClientType;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.components.DebugResultComponent;
+import lombok.experimental.Delegate;
 import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo/debug-voucher")
@@ -19,6 +20,9 @@ public interface DebugClientAssertionPage extends Page {
 
     @XPath("//*[@id=\"clientAssertion\"]")
     Writable<String> clientAssertionInput();
+
+    @XPath("//*[@id=\"dpopProof\"]")
+    Writable<String> dpopProofInput();
 
     @XPath("//*[@id=\"clientId\"]")
     Writable<String> clientIdInput();
@@ -45,9 +49,12 @@ public interface DebugClientAssertionPage extends Page {
         clientIdInput().writeAndAssert(clientId);
     }
 
-    default ClientAssertionValidationResult validate(InteropClientType clientType) {
+    default void setDpopProof(String dpopProof) {
+        dpopProofInput().writeAndAssert(dpopProof);
+    }
+
+    default void submitForm() {
         submitButton().click();
         debugResults().assertLoaded();
-        return debugResults().getValidationResults(clientType);
     }
 }

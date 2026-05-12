@@ -23,6 +23,7 @@ public class ClientAssertionValidationResult {
     private final PublicKeyValidation publicKeyRetrieve;
     private final SignatureValidation clientAssertionSignatureVerification;
     private final PlatformValidation platformStatesVerification;
+    private final DPoPValidation dpopValidation;
 
     @Getter
     @ToString
@@ -66,6 +67,15 @@ public class ClientAssertionValidationResult {
     @EqualsAndHashCode(callSuper = true)
     public static class PlatformValidation extends ValidationResult {
         public PlatformValidation(ValidationResult result) {
+            super(result.getStatus(), result.isSuccess(), result.getErrorsCode());
+        }
+    }
+
+    @Getter
+    @ToString
+    @EqualsAndHashCode(callSuper = true)
+    public static class DPoPValidation extends ValidationResult {
+        public DPoPValidation(ValidationResult result) {
             super(result.getStatus(), result.isSuccess(), result.getErrorsCode());
         }
     }
