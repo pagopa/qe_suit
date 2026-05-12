@@ -9,24 +9,27 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.domain.enums.InteropClientType;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.domain.web.commons.component.Button;
+import it.pagopa.interop.domain.web.commons.component.TextField;
 import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.components.DebugResultComponent;
 import lombok.experimental.Delegate;
 import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo/debug-voucher")
 public interface DebugClientAssertionPage extends Page {
+    String CLIENT_ASSERTION_INPUT_ERROR_ID = "clientAssertion-error";
+    String CLIENT_ASSERTION_INPUT_HELPER_TEXT_ID = "clientAssertion-infoLabel";
 
     @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[2]/div/div/h1")
     Readable<String> pageTitle();
 
     @XPath("//*[@id=\"clientAssertion\"]")
-    Writable<String> clientAssertionInput();
+    TextField clientAssertionInput();
 
     @XPath("//*[@id=\"dpopProof\"]")
-    Writable<String> dpopProofInput();
+    TextField dpopProofInput();
 
     @XPath("//*[@id=\"clientId\"]")
-    Writable<String> clientIdInput();
+    TextField clientIdInput();
 
     @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[3]/div[2]/div/form/div/button[2]")
     Button submitButton();
@@ -46,6 +49,10 @@ public interface DebugClientAssertionPage extends Page {
         clientAssertionInput().writeAndAssert(clientAssertion);
     }
 
+    default String getClientAssertionErrorMessage() {
+        return clientAssertionInput().getErrorMessage(CLIENT_ASSERTION_INPUT_ERROR_ID);
+    }
+
     default void setClientId(String clientId) {
         clientIdInput().writeAndAssert(clientId);
     }
@@ -56,6 +63,5 @@ public interface DebugClientAssertionPage extends Page {
 
     default void submitForm() {
         submitButton().click();
-        debugResults().assertLoaded();
     }
 }
