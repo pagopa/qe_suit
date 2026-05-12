@@ -70,4 +70,7 @@ public interface IPresentationApiAdapter<
             }
         });
     }
+
+    // Gestione del channel (web, mobile...)
+    void close();
 }

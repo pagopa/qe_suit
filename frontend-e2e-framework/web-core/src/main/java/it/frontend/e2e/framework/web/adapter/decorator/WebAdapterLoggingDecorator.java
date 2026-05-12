@@ -40,4 +40,10 @@ public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<
         logger.logInfo("Set localStorage item: " + key + " = " + value);
         webAdapter.setLocalStorageItem(key, value);
     }
+
+    @Override
+    public void close() {
+        logger.logInfo("Closing Browser");
+        webAdapter.close();
+    }
 }
