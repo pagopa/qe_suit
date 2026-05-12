@@ -9,5 +9,6 @@ import it.pagopa.interop.domain.model.DPoPProof;
 public interface DevToolsService {
     ClientAssertionValidationResult validate(ClientAssertion clientAssertion, Client client);
     ClientAssertionValidationResult validate(ClientAssertion clientAssertion, Client client, DPoPProof proof);
-    ClientAssertionValidationResult validate(String clientAssertion, InteropClientType clientType, String client, String proof);
+    ClientAssertionValidationResult validate(String clientAssertion, InteropClientType clientType, String clientId, String dPoPProof);
+    void submitForm(String clientAssertion, String clientId, String dPoPProof);
 }
