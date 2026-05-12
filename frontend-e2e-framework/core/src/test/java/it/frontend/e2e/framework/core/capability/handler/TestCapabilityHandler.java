@@ -34,6 +34,11 @@ public class TestCapabilityHandler extends AbstractCapabilityHandler<TestCapabil
             public Optional<TestElement> get() {
                 return Optional.empty();
             }
+
+            @Override
+            public Optional<List<TestElement>> getAll() {
+                return Optional.empty();
+            }
         };
     }
 

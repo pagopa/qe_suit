@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,6 +48,11 @@ class AbstractCapabilityHandlerTest {
             public void anotherAction() {}
             @Override
             public Optional<TestElement> get() { return Optional.empty(); }
+
+            @Override
+            public Optional<List<TestElement>> getAll() {
+                return Optional.empty();
+            }
         };
     }
 
@@ -56,6 +62,11 @@ class AbstractCapabilityHandlerTest {
             public void differentAction() {}
             @Override
             public Optional<TestElement> get() { return Optional.empty(); }
+
+            @Override
+            public Optional<List<TestElement>> getAll() {
+                return Optional.empty();
+            }
         };
     }
 
@@ -69,6 +80,11 @@ class AbstractCapabilityHandlerTest {
             public void extendedAction() {}
             @Override
             public Optional<TestElement> get() { return Optional.empty(); }
+
+            @Override
+            public Optional<List<TestElement>> getAll() {
+                return Optional.empty();
+            }
         };
     }
 
@@ -78,6 +94,11 @@ class AbstractCapabilityHandlerTest {
             public void unrelatedAction() {}
             @Override
             public Optional<TestElement> get() { return Optional.empty(); }
+
+            @Override
+            public Optional<List<TestElement>> getAll() {
+                return Optional.empty();
+            }
         };
     }
 
