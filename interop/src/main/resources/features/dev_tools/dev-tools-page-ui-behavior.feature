@@ -1,3 +1,4 @@
+@dev-tools-page-ui-behavior
 Feature: Dev Tools Page
 
   Come Aderente iscritto alla piattaforma Interop
