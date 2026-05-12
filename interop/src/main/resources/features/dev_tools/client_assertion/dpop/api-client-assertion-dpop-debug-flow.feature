@@ -1,6 +1,7 @@
+@debug-client-assertion-page-ui-flow
 Feature: Debugger Client Assertion Sync Bearer And DPoP (Frontend)
 
-  Come Aderente in possesso di un client di tipo CONSUMER
+  Come Aderente in possesso di un client di tipo API
   Voglio validare la mia Client Assertion standard e la mia DPoP proof
   Al fine di identificare errori strutturali, temporali o crittografici nelle cinque fasi di validazione (Formale, Recupero Chiave, Firma, Stato Piattaforma, DPoP)
 
@@ -14,13 +15,13 @@ Feature: Debugger Client Assertion Sync Bearer And DPoP (Frontend)
   ma alla conferma che il componente di UI reagisca correttamente ai diversi stati (PASSED, FAILED, SKIPPED).
   ***
 
-  Scenario: [DPOP_CONSUMER_CLIENT_ASSERTION_VALIDATION_SUCCESS]
-  Dato un client CONSUMER valido ed una DPoP proof valida, quando viene inviata una client assertion corretta
+  Scenario: [DPOP_API_CLIENT_ASSERTION_VALIDATION_SUCCESS]
+  Dato un client API valido ed una DPoP proof valida, quando viene inviata una client assertion corretta
   allora tutte le fasi di validazione risultano PASSED.
 
-    Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
-    And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
-    And una client assertion valida generata usando il client e la finalità
+    Given un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
+    And un client API creato da PagoPA in cui è presente l'admin e una coppia di chiavi crittografiche
+    And una client assertion valida generata usando il client creato
     And una dpop proof valida generata con una chiave RSA
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
     And l'utente richiede la validazione della client assertion e della dpop proof associate al client
@@ -34,13 +35,13 @@ Feature: Debugger Client Assertion Sync Bearer And DPoP (Frontend)
 
 
   # Bug: https://pagopa.atlassian.net/browse/PIN-10056
-  Scenario: [DPOP_CONSUMER_CLIENT_ASSERTION_VALIDATION_INVALID_AUDIENCE]
-  Dato un client CONSUMER valido ed una DPoP Proof valida, quando la client assertion ha audience invalida
+  Scenario: [DPOP_API_CLIENT_ASSERTION_VALIDATION_INVALID_AUDIENCE]
+  Dato un client API valido ed una DPoP Proof valida, quando la client assertion ha audience invalida
   allora la validazione formale fallisce con invalidAudience e la DPoP Proof viene validata correttamente
 
-    Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
-    And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
-    And una client assertion generata usando il client, la finalità e:
+    Given un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
+    And un client API creato da PagoPA in cui è presente l'admin e una coppia di chiavi crittografiche
+    And una client assertion generata usando il client e:
       | claim | value            |
       | aud   | invalid_audience |
     And una dpop proof valida generata con una chiave RSA
@@ -55,13 +56,13 @@ Feature: Debugger Client Assertion Sync Bearer And DPoP (Frontend)
       | dpopProofValidation                  | PASSED  | []                                                       |
 
 
-  Scenario Outline: [DPOP_CONSUMER_CLIENT_ASSERTION_VALIDATION_MISSING_REQUIRED_CLAIMS]
-  Dato un client CONSUMER valido ed una client assertion valida, quando la DPoP Proof presenta un claim obbligatorio mancante
+  Scenario Outline: [DPOP_API_CLIENT_ASSERTION_VALIDATION_MISSING_REQUIRED_CLAIMS]
+  Dato un client API valido ed una client assertion valida, quando la DPoP Proof presenta un claim obbligatorio mancante
   allora la validazione formale fallisce con il rispettivo messaggio di errore
 
-    Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
-    And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
-    And una client assertion valida generata usando il client e la finalità
+    Given un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
+    And un client API creato da PagoPA in cui è presente l'admin e una coppia di chiavi crittografiche
+    And una client assertion valida generata usando il client creato
     And una dpop proof generata con una chiave RSA e:
       | claim    | value           |
       | __remove | <claimToRemove> |
