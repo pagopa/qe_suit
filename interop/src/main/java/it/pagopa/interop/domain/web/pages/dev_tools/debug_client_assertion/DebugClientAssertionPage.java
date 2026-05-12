@@ -2,18 +2,12 @@ package it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
-import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.domain.enums.InteropClientType;
-import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.domain.web.commons.component.Button;
 import it.pagopa.interop.domain.web.commons.component.TextField;
 import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.components.DebugRequestContentComponent;
 import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.components.DebugResultComponent;
-import lombok.experimental.Delegate;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo/debug-voucher")
@@ -50,7 +44,8 @@ public interface DebugClientAssertionPage extends Page {
         SoftAssertions.assertSoftly(softly -> {
             pageTitle().readAndAssert("Debug della client assertion");
             subtitle().readAndAssert("Se non riesci ad ottenere un voucher e non sai perché, puoi effettuare il debugging con questo simulatore e capire i possibili errori.");
-            softly.assertThat(getClientAssertionHelpText()).isEqualTo("La client assertion è un token JWT composto da una stringa che inizia per “ey”. Copiala senza aggiungere spazi.");
+            softly.assertThat(getClientAssertionHelpText())
+                    .isEqualTo("La client assertion è un token JWT composto da una stringa che inizia per \"ey\". Copiala senza aggiungere spazi.");
         });
     }
 
