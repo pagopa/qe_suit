@@ -1,7 +1,19 @@
-Feature: : Debugger Client Assertion Sync Bearer
+@debug-client-assertion-page-ui-flow
+Feature: Debugger Client Assertion Sync Bearer (Frontend)
+
   Come Aderente in possesso di un client di tipo API
   Voglio validare la mia Client Assertion standard
   Al fine di identificare errori strutturali, temporali o crittografici nelle tre fasi di validazione (Formale, Recupero Chiave, Firma)
+
+  ***
+  OBIETTIVI DEL TEST FRONTEND:
+  1. Verificare che il flusso utente (caricamento dei componenti, input, invio) sia funzionale e fluido.
+  2. Verificare il corretto comportamento dei componenti grafici (es. text field, messaggi di errore) in risposta ai diversi input dell'utente.
+  3. Validare il mapping tra le risposte API (BE) e i componenti grafici della pagina (Step di validazione).
+  4. Verificare, per induzione, la corretta renderizzazione dei messaggi di errore:
+  non si mira alla copertura esaustiva di ogni casistica di business (demandata ai test BE),
+  ma alla conferma che il componente di UI reagisca correttamente ai diversi stati (PASSED, FAILED, SKIPPED).
+  ***
 
   Scenario: [API_CLIENT_ASSERTION_VALIDATION_SUCCESS]
   Dato un client API valido, quando viene inviata una client assertion corretta allora tutte le fasi di validazione risultano PASSED
