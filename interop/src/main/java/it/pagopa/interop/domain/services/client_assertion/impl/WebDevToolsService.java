@@ -1,6 +1,5 @@
 package it.pagopa.interop.domain.services.client_assertion.impl;
 
-import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.interop.domain.enums.InteropClientType;
 import it.pagopa.interop.domain.model.Client;
 import it.pagopa.interop.domain.model.ClientAssertion;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebDevToolsService implements DevToolsService {
 
-    private final WebPresentationGateway webPresentationGateway;
+    private final DebugClientAssertionPage debugPage;
 
 
     @Override
@@ -30,19 +29,23 @@ public class WebDevToolsService implements DevToolsService {
     }
 
     @Override
-    public ClientAssertionValidationResult validate(String clientAssertion, InteropClientType clientType, String client, String proof) {
-        return internalValidate(clientAssertion, clientType, client, proof);
+    public ClientAssertionValidationResult validate(String clientAssertion, InteropClientType clientType, String clientId, String proof) {
+        return internalValidate(clientAssertion, clientType, clientId, proof);
     }
 
-    private ClientAssertionValidationResult internalValidate(String clientAssertion, InteropClientType clientType, String clientId, String dPoPProof) {
-        DebugClientAssertionPage debugPage = webPresentationGateway.bind(DebugClientAssertionPage.class);
-
+    @Override
+    public void submitForm(String clientAssertion, String clientId, String dPoPProof) {
         if (clientAssertion != null) debugPage.setClientAssertion(clientAssertion);
         if (clientId != null) debugPage.setClientId(clientId);
         if (dPoPProof != null) debugPage.setDpopProof(dPoPProof);
 
         debugPage.submitForm();
+    }
 
+    private ClientAssertionValidationResult internalValidate(String clientAssertion, InteropClientType clientType, String clientId, String dPoPProof) {
+        submitForm(clientAssertion, clientId, dPoPProof);
+
+        debugPage.debugResults().assertLoaded();
         var results = debugPage.debugResults();
 
         var clientAssertionValidation = results.getClientAssertionValidation();

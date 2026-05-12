@@ -5,6 +5,7 @@ import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
 import it.frontend.e2e.framework.web.adapter.selenium.SeleniumApiAdapter;
 import it.frontend.e2e.framework.web.config.WebSuiteBuilder;
 import it.frontend.e2e.framework.web.model.location.Url;
+import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.DebugClientAssertionPage;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -36,5 +37,10 @@ public class WebConfig {
                     return Url.of(resolvedUrl);
                 })
                 .build();
+    }
+
+    @Bean
+    public DebugClientAssertionPage debugClientAssertionPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(DebugClientAssertionPage.class);
     }
 }
