@@ -1,5 +1,6 @@
 package it.pagopa.interop.domain.web.config;
 
+import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
 import it.frontend.e2e.framework.web.adapter.selenium.SeleniumApiAdapter;
@@ -26,6 +27,7 @@ public class WebConfig {
     private List<String> arguments;
 
     @Bean
+    @ScenarioScope
     public WebPresentationGateway webPresentationGateway(Environment environment) {
         BrowserSettings settings = BrowserSettings.of(browser, headless, arguments);
 
@@ -40,6 +42,7 @@ public class WebConfig {
     }
 
     @Bean
+    @ScenarioScope
     public DebugClientAssertionPage debugClientAssertionPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(DebugClientAssertionPage.class);
     }
