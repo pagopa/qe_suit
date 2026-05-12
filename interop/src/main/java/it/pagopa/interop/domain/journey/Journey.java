@@ -1,5 +1,6 @@
 package it.pagopa.interop.domain.journey;
 
+import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.domain.context.EserviceContext;
 import it.pagopa.interop.domain.enums.Tenant;
 import it.pagopa.interop.domain.enums.User;
@@ -12,11 +13,12 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState
 import it.pagopa.interop.infrastructure.client.auth.context.user.CurrentUserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.function.Consumer;
 
-@Component
+@Service
+@ScenarioScope
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class Journey {
 
@@ -32,12 +34,13 @@ public class Journey {
     private Tenant consumerTenant;
     private User consumerUser;
 
-    public Journey publishEservice(){
-        publishEservice(es -> {});
+    public Journey publishEservice() {
+        publishEservice(es -> {
+        });
         return this;
     }
 
-    public Journey publishEservice(Consumer<EServiceSeed> eservice){
+    public Journey publishEservice(Consumer<EServiceSeed> eservice) {
         setUserContext(producerUser, producerTenant);
         var draftEservice = eserviceService.createEservice(eservice);
         eserviceService.publishEservice(draftEservice);
@@ -52,10 +55,10 @@ public class Journey {
     }
 
     public Journey withConsumer(Tenant tenant, User user) {
-       setUserContext(user, tenant);
-       this.consumerTenant = tenant;
-       this.consumerUser = user;
-       return this;
+        setUserContext(user, tenant);
+        this.consumerTenant = tenant;
+        this.consumerUser = user;
+        return this;
     }
 
     public Journey addActiveAgreement() {
@@ -66,7 +69,8 @@ public class Journey {
     }
 
     public Journey addPurposeInState(PurposeVersionState state) {
-        addPurposeInState(state, purpose -> {});
+        addPurposeInState(state, purpose -> {
+        });
         return this;
     }
 
