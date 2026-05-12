@@ -2,18 +2,21 @@
 <configuration>
     <property name="LOG_DIR" value="target/logs"/>
 
-    <!-- Console Appender -->
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} %replace(%X{scenario} ){'^$', ''}: %msg%n"/>
+
+    <springProperty scope="context" name="suitLogLevel" source="logging.level.suit" defaultValue="INFO"/>
+
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} : %msg%n</pattern>
+            <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
-    <!-- File Appender per il framework -->
     <appender name="FRAMEWORK_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/framework.log</file>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %msg%n</pattern>
+            <pattern>${LOG_PATTERN}</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_DIR}/framework.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
@@ -22,11 +25,10 @@
         </rollingPolicy>
     </appender>
 
-    <!-- File Appender per i test Cucumber -->
     <appender name="TEST_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_DIR}/e2e-tests.log</file>
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>${LOG_PATTERN}</pattern>
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_DIR}/e2e-tests.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
@@ -35,32 +37,28 @@
         </rollingPolicy>
     </appender>
 
-    <!-- Logger del framework (senza timestamp duplicato perché già nel pattern) -->
-    <logger name="FRAMEWORK" level="INFO" additivity="false">
+    <logger name="it.frontend.e2e.framework" level="${suitLogLevel}" additivity="false">
         <appender-ref ref="FRAMEWORK_FILE"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <!-- Logger per Cucumber e test -->
-    <logger name="it.pn.frontend.e2e" level="INFO" additivity="false">
+    <logger name="it.pagopa.interop" level="${suitLogLevel}" additivity="false">
         <appender-ref ref="TEST_FILE"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <!-- Logger per Spring (ridotto per non avere troppo rumore) -->
+    <logger name="it.pagopa.interop.infrastructure.http" level="DEBUG" additivity="false">
+        <appender-ref ref="TEST_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
     <logger name="org.springframework" level="WARN"/>
-
-    <!-- Logger per Selenium (ridotto) -->
     <logger name="org.openqa.selenium" level="WARN"/>
+    <logger name="io.cucumber" level="INFO"/>
 
-    <!-- Logger HTTP outbound -->
-    <logger name="it.pagopa.interop.infrastructure.http" level="DEBUG"/>
-
-    <!-- Root logger -->
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="TEST_FILE"/>
     </root>
 
 </configuration>
-
