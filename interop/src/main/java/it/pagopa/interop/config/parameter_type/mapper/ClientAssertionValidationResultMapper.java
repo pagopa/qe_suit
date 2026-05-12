@@ -60,8 +60,11 @@ public final class ClientAssertionValidationResultMapper {
                 byStep.containsKey("platformStatesVerification")
                         ? new ClientAssertionValidationResult.PlatformValidation(
                         require(byStep, "platformStatesVerification")
-                )
-                        : null
+                ) : null,
+                byStep.containsKey("dpopProofValidation")
+                        ? new ClientAssertionValidationResult.DPoPValidation(
+                        require(byStep, "dpopProofValidation")
+                ) : null
         );
     }
 

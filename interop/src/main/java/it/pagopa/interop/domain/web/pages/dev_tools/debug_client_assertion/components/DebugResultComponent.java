@@ -4,7 +4,6 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.domain.enums.InteropClientType;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import org.assertj.core.api.Assertions;
 
@@ -18,17 +17,20 @@ public interface DebugResultComponent extends Component {
     @XPath(".//h2")
     Readable<String> title();
 
-    @XPath(".//button[1]")
+    @XPath(".//button[span[contains(normalize-space(text()), 'Validazione della client assertion')]]")
     Clickable clientAssertionValidationResultButton();
 
-    @XPath(".//button[2]")
+    @XPath(".//button[span[contains(normalize-space(text()), 'Recupero della chiave pubblica depositata su PDND Interoperabilità')]]")
     Clickable publicKetValidationResultButton();
 
-    @XPath(".//button[3]")
+    @XPath(".//button[span[contains(normalize-space(text()), 'Verifica della firma della client assertion')]]")
     Clickable signatureValidationResultButton();
 
-    @XPath(".//button[4]")
+    @XPath(".//button[span[contains(normalize-space(text()), 'Verifica degli stati')]]")
     Clickable platformValidationResultButton();
+
+    @XPath(".//button[span[contains(normalize-space(text()), 'Validazione DPoP proof')]]")
+    Clickable dpopProofValidationResultButton();
 
     DebugDrawer drawer();
 
@@ -41,29 +43,33 @@ public interface DebugResultComponent extends Component {
         );
     }
 
-    default ClientAssertionValidationResult getValidationResults(InteropClientType clientType) {
-
-        var clientAssertionValidation = new ClientAssertionValidationResult.ClientAssertionValidation(
+    default ClientAssertionValidationResult.ClientAssertionValidation getClientAssertionValidation() {
+        return new ClientAssertionValidationResult.ClientAssertionValidation(
                 readValidationStep(clientAssertionValidationResultButton())
         );
+    }
 
-        var publicKeyValidation = new ClientAssertionValidationResult.PublicKeyValidation(
+    default ClientAssertionValidationResult.PublicKeyValidation getPublicKeyValidation() {
+        return new ClientAssertionValidationResult.PublicKeyValidation(
                 readValidationStep(publicKetValidationResultButton())
         );
+    }
 
-        var signatureValidation = new ClientAssertionValidationResult.SignatureValidation(
+    default ClientAssertionValidationResult.SignatureValidation getSignatureValidation() {
+        return new ClientAssertionValidationResult.SignatureValidation(
                 readValidationStep(signatureValidationResultButton())
         );
+    }
 
-       var platformValidation =  clientType == InteropClientType.CONSUMER
-               ? new ClientAssertionValidationResult.PlatformValidation(readValidationStep(platformValidationResultButton()))
-               : null;
+    default ClientAssertionValidationResult.PlatformValidation getPlatformValidation() {
+        return new ClientAssertionValidationResult.PlatformValidation(
+                readValidationStep(platformValidationResultButton())
+        );
+    }
 
-        return new ClientAssertionValidationResult(
-                clientAssertionValidation,
-                publicKeyValidation,
-                signatureValidation,
-                platformValidation
+    default ClientAssertionValidationResult.DPoPValidation getDPoPValidation() {
+        return new ClientAssertionValidationResult.DPoPValidation(
+                readValidationStep(dpopProofValidationResultButton())
         );
     }
 

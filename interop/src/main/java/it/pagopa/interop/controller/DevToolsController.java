@@ -6,6 +6,7 @@ import it.pagopa.interop.domain.context.ClientAssertionContext;
 import it.pagopa.interop.domain.model.Client;
 import it.pagopa.interop.domain.model.ClientAssertion;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
+import it.pagopa.interop.domain.model.DPoPProof;
 import it.pagopa.interop.domain.services.client_assertion.impl.WebDevToolsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,12 @@ public class DevToolsController {
     @When("l'utente richiede la validazione della {currentClientAssertion} associata al {currentClient}")
     public void validateClientAssertion(ClientAssertion clientAssertion, Client client) {
         ClientAssertionValidationResult result = webClientAssertionService.validate(clientAssertion, client);
+        clientAssertionContext.addValidation(clientAssertion, result);
+    }
+
+    @When("l'utente richiede la validazione della {currentClientAssertion} e della {currentDpopProof} associate al {currentClient}")
+    public void validateClientAssertion(ClientAssertion clientAssertion, DPoPProof dPoPProof, Client client) {
+        ClientAssertionValidationResult result = webClientAssertionService.validate(clientAssertion, client, dPoPProof);
         clientAssertionContext.addValidation(clientAssertion, result);
     }
 
