@@ -47,6 +47,11 @@
         <appender-ref ref="CONSOLE"/>
     </logger>
 
+    <logger name="E2E-Framework" level="${suitLogLevel}" additivity="false">
+        <appender-ref ref="FRAMEWORK_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
     <logger name="it.pagopa.interop.infrastructure.http" level="DEBUG" additivity="false">
         <appender-ref ref="TEST_FILE"/>
         <appender-ref ref="CONSOLE"/>
