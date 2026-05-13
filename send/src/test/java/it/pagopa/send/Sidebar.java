@@ -21,10 +21,7 @@ public interface Sidebar extends Component {
     @XPath("//*[@id=\"side-item-Platform status\"]")
     Clickable platformStatus();
 
-    Optional<OneTrustBanner> oneTrustBanner();
-
     default void goToSection(String section) {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
         switch (section) {
             case "Notifications" -> notifications().click();
             case "API Key" -> apiKeys().click();
