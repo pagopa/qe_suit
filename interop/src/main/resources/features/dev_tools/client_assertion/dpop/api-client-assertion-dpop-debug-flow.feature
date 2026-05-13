@@ -30,7 +30,6 @@ Feature: Debugger Client Assertion Sync Bearer And DPoP (Frontend)
       | clientAssertionValidation            | PASSED | []     |
       | publicKeyRetrieve                    | PASSED | []     |
       | clientAssertionSignatureVerification | PASSED | []     |
-      | platformStatesVerification           | PASSED | []     |
       | dpopProofValidation                  | PASSED | []     |
 
 
@@ -52,7 +51,6 @@ Feature: Debugger Client Assertion Sync Bearer And DPoP (Frontend)
       | clientAssertionValidation            | FAILED  | [Unexpected client assertion audience: invalid_audience] |
       | publicKeyRetrieve                    | SKIPPED | []                                                       |
       | clientAssertionSignatureVerification | SKIPPED | []                                                       |
-      | platformStatesVerification           | SKIPPED | []                                                       |
       | dpopProofValidation                  | PASSED  | []                                                       |
 
 
@@ -73,7 +71,6 @@ Feature: Debugger Client Assertion Sync Bearer And DPoP (Frontend)
       | clientAssertionValidation            | PASSED | []                |
       | publicKeyRetrieve                    | PASSED | []                |
       | clientAssertionSignatureVerification | PASSED | []                |
-      | platformStatesVerification           | PASSED | []                |
       | dpopProofValidation                  | FAILED | [<expectedError>] |
 
     Examples:
