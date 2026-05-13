@@ -65,8 +65,8 @@ public class WebDevToolsService implements DevToolsService {
         ClientAssertionValidationResult result = buildValidationResult(clientType, dPoPProof != null);
 
         // 4. Verifica che il risultato calcolato sia coerente con il banner di riepilogo
-        boolean isAllPassed = result.isAllPassed();
-        //TODO: da implementare
+        if(debugPage.resultAlert().isSuccess() != result.isAllPassed())
+            throw new IllegalStateException("Il risultato complessivo della validazione non è coerente con lo stato del banner di riepilogo");
 
         return result;
     }
