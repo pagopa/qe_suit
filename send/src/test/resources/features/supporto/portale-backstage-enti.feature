@@ -7,8 +7,8 @@ Feature: Navigazione portale SEND Backstage
     Then la pagina Dashboard è caricata con successo
     And viene aperto il dettaglio di una notifica
     Then la pagina NotificationDetails è caricata con successo
-#    When si passa alla sezione "API Key" tramite la sidebar
-#    Then come utente di supporto non posso visualizzare le API Keys
+    When si passa alla sezione "API Key" tramite la sidebar
+    Then come utente di supporto non posso visualizzare le API Keys
     When si passa alla sezione "Statistics" tramite la sidebar
     Then la pagina Statistics è caricata con successo
     When si passa alla sezione "Platform status" tramite la sidebar

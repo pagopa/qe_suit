@@ -28,7 +28,7 @@ import java.util.function.Supplier;
 public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     private static final long RETRY_WAIT_TIMEOUT_SECONDS = 60;
-    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 20;
+    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 10;
     private final WebDriver driver;
 
     public SeleniumApiAdapter(BrowserSettings settings) {
@@ -96,7 +96,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     public void click(XPathSelector selector) {
         withRetry(() -> {
             log.info("Clicking element with selector: {}", selector);
-            WebElement element = findClickableWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
             element.click();
             return element;
         });
