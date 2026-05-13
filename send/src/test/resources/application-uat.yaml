@@ -22,8 +22,21 @@ url:
   notifiche:
     cittadino:
       base: https://cittadini.uat.notifichedigitali.it
+      notifiche: ${url.notifiche.cittadino.base}/notifiche
+      recapiti: ${url.notifiche.cittadino.base}/recapiti
+      deleghe: ${url.notifiche.cittadino.base}/deleghe
+      add-deleghe: ${url.notifiche.cittadino.base}/deleghe/nuova
+      app-status: ${url.notifiche.cittadino.base}/app-status
     persona-giuridica:
-      base: https://personegiuridiche.uat.notifichedigitali.it
+      base: https://imprese.uat.notifichedigitali.it
+      notifiche: ${url.notifiche.persona-giuridica.base}/notifiche
+      notifiche-delegato: ${url.notifiche.persona-giuridica.base}/notifiche-delegato
+      app-status: ${url.notifiche.persona-giuridica.base}/app-status
+      integrazione-api: ${url.notifiche.persona-giuridica.base}/integrazione-api
+      recapiti: ${url.notifiche.persona-giuridica.base}/recapiti
+      deleghe-a-carico: ${url.notifiche.persona-giuridica.base}/deleghe/a-carico
+      delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati
+      add-delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati/nuova
     mittente:
       base: https://selfcare.uat.notifichedigitali.it
       dashboard: ${url.notifiche.mittente.base}/dashboard
@@ -32,10 +45,22 @@ url:
       new-api-key: ${url.notifiche.mittente.api-keys}/nuova-api-key
       app-status: ${url.notifiche.mittente.base}/app-status
       statistics: ${url.notifiche.mittente.base}/statistiche
+    supporto:
+      base: https://uat.selfcare.pagopa.it
 
-# ============================================================================
+# Selettori XPath da properties
+selectors:
+  login:
+    pg:
+      reserved-area-env-selector: '//*[@id="root"]/div/div[2]/div[2]/main/div/div[3]/div[2]/div[7]/div/div/div/div[3]/button'
+  supporto:
+    portal: '//*[@id="root"]/div/div[2]/div[2]/main/div/div[3]/div[3]/table/tbody/tr[3]/td[5]/button'
+
+
+
 # Authentication Tokens
 # Bearer token for users
 # ============================================================================
 token:
   mittente: ${pn.external.bearer-token.tokentestMittente}
+  supporto: ${pn.external.bearer-token.tokenSupporto}

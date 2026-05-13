@@ -1,4 +1,3 @@
-@loadPage
 Feature: Navigazione portale SEND Mittenti
   In qualità di un utente di una PA
   voglio navigare il portare SEND Mittenti
