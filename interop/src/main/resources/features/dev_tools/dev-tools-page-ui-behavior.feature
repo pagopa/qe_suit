@@ -11,6 +11,7 @@ Feature: Dev Tools Page
   2. Verificare il corretto comportamento dei componenti grafici (es. text field, messaggi di errore) in risposta ai diversi input dell'utente.
   ***
 
+  #Bug: https://pagopa.atlassian.net/browse/PIN-10061
   Scenario: [DEV_TOOLS_PAGE_ACCESS_SUCCESS]
   Dato un utente abilitato alla piattaforma, quando si accede alla sezione Tool per lo sviluppo del portale Interop,
   allora è possibile accedere alle pagine Export analisi del rischio, Debug Client Assertion e Simulatore ottenimento di un voucher
