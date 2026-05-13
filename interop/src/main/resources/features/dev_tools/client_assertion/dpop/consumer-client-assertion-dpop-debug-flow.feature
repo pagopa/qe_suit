@@ -34,7 +34,7 @@ Feature: Debugger Client Assertion Sync Bearer And DPoP (Frontend)
       | dpopProofValidation                  | PASSED | []     |
 
 
-  # Bug: https://pagopa.atlassian.net/browse/PIN-10056
+  # Vista la segnalazione rigettata (https://pagopa.atlassian.net/browse/PIN-10056) lo step platformStatesVerification viene commentato
   Scenario: [DPOP_CONSUMER_CLIENT_ASSERTION_VALIDATION_INVALID_AUDIENCE]
   Dato un client CONSUMER valido ed una DPoP Proof valida, quando la client assertion ha audience invalida
   allora la validazione formale fallisce con invalidAudience e la DPoP Proof viene validata correttamente
@@ -52,7 +52,7 @@ Feature: Debugger Client Assertion Sync Bearer And DPoP (Frontend)
       | clientAssertionValidation            | FAILED  | [Unexpected client assertion audience: invalid_audience] |
       | publicKeyRetrieve                    | SKIPPED | []                                                       |
       | clientAssertionSignatureVerification | SKIPPED | []                                                       |
-      | platformStatesVerification           | SKIPPED | []                                                       |
+      #| platformStatesVerification           | SKIPPED | []                                                       |
       | dpopProofValidation                  | PASSED  | []                                                       |
 
 
