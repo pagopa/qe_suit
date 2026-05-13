@@ -44,7 +44,7 @@ public class CommonSteps {
         comunePickerPage.selectComune(comune);
     }
 
-    @And("viene effettutato il logout")
+    @And("viene effettuato il logout")
     public void logout() {
         Header footer = uiGateway.bind(Header.class);
         footer.logout();

@@ -62,8 +62,10 @@ class SeleniumApiAdapterTest {
         WebDriver driver = mock(WebDriver.class, withSettings().extraInterfaces(JavascriptExecutor.class));
         WebElement webElement = mock(WebElement.class);
         when(driver.findElement(any(By.class))).thenReturn(webElement);
+        when(webElement.isDisplayed()).thenReturn(true);
+        when(webElement.isEnabled()).thenReturn(true);
 
-        SeleniumApiAdapter adapter = new SeleniumApiAdapter(driver);
+        SeleniumApiAdapter adapter = new SeleniumApiAdapter(driver, 1);
         XPathSelector selector = XPathSelector.of("//input[@id='username']");
 
         adapter.click(selector);
