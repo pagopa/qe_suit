@@ -31,7 +31,7 @@ Feature: Debugger Client Assertion Sync Bearer (Frontend)
       | platformStatesVerification           | PASSED | []     |
 
 
-  # Bug: https://pagopa.atlassian.net/browse/PIN-10056
+  # Vista la segnalazione rigettata (https://pagopa.atlassian.net/browse/PIN-10056) lo step platformStatesVerification viene commentato
   Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_INVALID_AUDIENCE]
   Dato un client CONSUMER valido, quando la client assertion ha audience invalida
   allora la validazione formale fallisce con invalidAudience
@@ -48,9 +48,9 @@ Feature: Debugger Client Assertion Sync Bearer (Frontend)
       | clientAssertionValidation            | FAILED  | [Unexpected client assertion audience: invalid_audience] |
       | publicKeyRetrieve                    | SKIPPED | []                                                       |
       | clientAssertionSignatureVerification | SKIPPED | []                                                       |
-      | platformStatesVerification           | SKIPPED | []                                                       |
+      #| platformStatesVerification           | SKIPPED | []                                                       |
 
-  # Bug: https://pagopa.atlassian.net/browse/PIN-10056
+  # Vista la segnalazione rigettata (https://pagopa.atlassian.net/browse/PIN-10056) lo step platformStatesVerification viene commentato
   Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_MISSING_REQUIRED_CLAIMS]
   Dato un client CONSUMER valido, quando la client assertion non contiene claim obbligatori
   allora la validazione formale fallisce con i rispettivi errori
@@ -72,9 +72,10 @@ Feature: Debugger Client Assertion Sync Bearer (Frontend)
       | clientAssertionValidation            | FAILED  | [JTI not found in client assertion, IAT not found in client assertion, EXP not found in client assertion, Issuer not found in client assertion, Subject not found in client assertion, Audience not found in client assertion] |
       | publicKeyRetrieve                    | SKIPPED | []                                                                                                                                                                                                                             |
       | clientAssertionSignatureVerification | SKIPPED | []                                                                                                                                                                                                                             |
-      | platformStatesVerification           | SKIPPED | []                                                                                                                                                                                                                             |
+      #| platformStatesVerification           | SKIPPED | []                                                                                                                                                                                                                             |
 
 
+  # Vista la segnalazione rigettata (https://pagopa.atlassian.net/browse/PIN-10056) lo step platformStatesVerification viene commentato
   Scenario: [CONSUMER_CLIENT_ASSERTION_PUBLIC_KEY_RETRIEVE_INVALID_KID_FORMAT]
   Dato un client CONSUMER valido, quando il claim kid non è in formato valido
   allora il recupero della chiave pubblica fallisce con invalidKidFormat
@@ -91,7 +92,7 @@ Feature: Debugger Client Assertion Sync Bearer (Frontend)
       | clientAssertionValidation            | PASSED  | []                                                                                    |
       | publicKeyRetrieve                    | FAILED  | [Public key with kid not-a-valid-kid-format not found for client $retrieve(clientId)] |
       | clientAssertionSignatureVerification | SKIPPED | []                                                                                    |
-      | platformStatesVerification           | SKIPPED | []                                                                                    |
+      #| platformStatesVerification           | SKIPPED | []                                                                                    |
 
 
   Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_EXPIRED_TOKEN]
