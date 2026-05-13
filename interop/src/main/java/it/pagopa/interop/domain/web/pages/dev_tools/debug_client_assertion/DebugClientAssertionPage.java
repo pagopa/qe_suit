@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.interop.domain.web.commons.component.Alert;
 import it.pagopa.interop.domain.web.commons.component.Button;
 import it.pagopa.interop.domain.web.commons.component.TextField;
 import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.components.DebugRequestContentComponent;
@@ -32,6 +33,8 @@ public interface DebugClientAssertionPage extends Page {
 
     @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[3]/div[2]/div/form/div/button[2]")
     Button submitButton();
+
+    Alert resultAlert();
 
     @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[3]/div/div/div[1]/section[1]")
     DebugResultComponent debugResults();
