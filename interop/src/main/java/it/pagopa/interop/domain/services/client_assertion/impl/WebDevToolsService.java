@@ -94,13 +94,13 @@ public class WebDevToolsService implements DevToolsService {
         // Come indicato da https://pagopa.atlassian.net/browse/PIN-10056 si intende validare lo stato della piattaforma solo quando:
         // - Il client è tipo CONSUMER
         // - La fase di client assertion è PASSED
-        var platform = shouldValidatePlatform(clientType, caValidation) ? results.getPlatformValidation() : null;
+        var platform = shouldValidatePlatform(clientType, caValidation, pkValidation) ? results.getPlatformValidation() : null;
         var dpop = isDpop ? results.getDPoPValidation() : null;
 
         return new ClientAssertionValidationResult(caValidation, pkValidation, sigValidation, platform, dpop);
     }
 
-    private boolean shouldValidatePlatform(InteropClientType type, ClientAssertionValidationResult.ValidationResult caStep) {
-        return type == InteropClientType.CONSUMER && caStep.isSuccess();
+    private boolean shouldValidatePlatform(InteropClientType type, ClientAssertionValidationResult.ValidationResult caStep, ClientAssertionValidationResult.PublicKeyValidation pkStep) {
+        return type == InteropClientType.CONSUMER && caStep.isSuccess() && pkStep.isSuccess();
     }
 }
