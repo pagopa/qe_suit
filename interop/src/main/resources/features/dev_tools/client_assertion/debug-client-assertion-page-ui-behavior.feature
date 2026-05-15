@@ -19,3 +19,14 @@ Feature: Debugger Client Assertion Page (Frontend)
     When l'utente invia la form della debug client assertion inserendo:
       | clientAssertion | $blank() |
     Then il text field Client assertion viene evidenziato come errore e viene mostrato il messaggio di validazione "Campo richiesto"
+
+  Scenario: [DEBUG_CLIENT_ASSERTION_CLIENT_ID_INPUT_VALIDATION]
+  Dato un utente abilitato alla piattaforma, quando si accede alla sezione Tool per lo sviluppo del portale Interop e si accede alla pagina Debug Client Assertion,
+  quando si tenta di validare una client assertion con un valore per il campo 'client id' diverso da un UUID valido
+  allora compare uno snackbar con un messaggio di errore di elaborazione della richiesta
+
+    Given l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
+    When l'utente invia la form della debug client assertion inserendo:
+      | clientAssertion | client assertion  |
+      | clientId        | invalid client id |
+    Then viene mostrata la snackbar con un messaggio di errore contenente "C’è stato un errore nell’elaborazione della richiesta. Per favore, riprova in seguito!"
