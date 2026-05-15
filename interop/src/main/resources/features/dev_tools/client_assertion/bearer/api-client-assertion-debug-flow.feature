@@ -101,10 +101,10 @@ Feature: Debugger Client Assertion Sync Bearer (Frontend)
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
     And l'utente richiede la validazione della client assertion associata al client
     Then i risultati della validazione della client assertion sono:
-      | step                                 | result  | errors                                                                                |
-      | clientAssertionValidation            | PASSED  | []                                                                                    |
-      | publicKeyRetrieve                    | FAILED  | [Public key with kid not-a-valid-kid-format not found for client $retrieve(clientId)] |
-      | clientAssertionSignatureVerification | SKIPPED | []                                                                                    |
+      | step                                 | result  | errors                      |
+      | clientAssertionValidation            | FAILED  | [Unexpected format for kid] |
+      | publicKeyRetrieve                    | SKIPPED | []                          |
+      | clientAssertionSignatureVerification | SKIPPED | []                          |
 
 
   Scenario: [API_CLIENT_ASSERTION_VALIDATION_EXPIRED_TOKEN]
