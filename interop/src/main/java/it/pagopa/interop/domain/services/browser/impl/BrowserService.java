@@ -3,6 +3,7 @@ package it.pagopa.interop.domain.services.browser.impl;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.interop.domain.services.browser.WebBrowserService;
+import it.pagopa.interop.domain.web.commons.component.Snackbar;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,5 +37,15 @@ public class BrowserService implements WebBrowserService {
             webPresentationGateway.navigateTo(Url.of(baseUrl));
             webPresentationGateway.setLocalStorageItem("token", token);
         }
+    }
+
+    @Override
+    public String getSnackbarErrorMessage(){
+        Snackbar snackbar = webPresentationGateway.bind(Snackbar.class);
+
+        if(!snackbar.alert().isError())
+            throw new IllegalStateException("Snackbar non in stato di errore, impossibile leggere il messaggio");
+
+        return snackbar.alert().message().read();
     }
 }
