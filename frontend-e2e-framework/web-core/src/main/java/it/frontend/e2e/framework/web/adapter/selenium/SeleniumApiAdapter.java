@@ -214,11 +214,6 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
                 .until(ExpectedConditions.presenceOfElementLocated(toBy(selector)));
     }
 
-    private WebElement findClickableWebElement(XPathSelector selector, long timeoutSeconds) {
-        return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
-                .until(ExpectedConditions.elementToBeClickable(toBy(selector)));
-    }
-
     private List<WebElement> findWebElements(XPathSelector selector, long timeoutSeconds) {
         return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
                 .until(ExpectedConditions.presenceOfAllElementsLocatedBy(toBy(selector)));
@@ -292,7 +287,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     private <T> T withRetry(Supplier<T> action) {
             long end = System.currentTimeMillis() + (RETRY_WAIT_TIMEOUT_SECONDS * 1000);
             Throwable lastException = null;
-            log.info("Starting action with retry mechanism. Will retry for up to {} seconds if StaleElementReferenceException or ElementClickInterceptedException occurs.", RETRY_WAIT_TIMEOUT_SECONDS);
+            log.info("Starting action with retry mechanism. Will retry for up to {} seconds if exception occurs.", RETRY_WAIT_TIMEOUT_SECONDS);
             while (System.currentTimeMillis() < end) {
                 log.info("Attempting action. Time remaining for retries: {} seconds", (end - System.currentTimeMillis()) / 1000);
 

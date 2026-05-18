@@ -1,7 +1,7 @@
 @loadPage
 Feature: Navigazione portale SEND persone fisiche
   In qualità di un utente di una PF
-  voglio navigare il portare SEND Persona Fisica
+  voglio navigare il portale SEND Persona Fisica
   così posso verificare che ogni pagina sia raggiungibile
 
   Scenario: [PF_LOAD_PAGE] Lato Persona Fisica - Verifica la raggiungibilità delle pagine

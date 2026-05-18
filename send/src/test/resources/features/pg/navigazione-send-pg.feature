@@ -1,7 +1,7 @@
 @loadPage
 Feature: Navigazione portale SEND persone giuridiche
   In qualità di un utente di una PG
-  voglio navigare il portare SEND Persona Giuridica
+  voglio navigare il portale SEND Persona Giuridica
   così posso verificare che ogni pagina sia raggiungibile
 
   Scenario: [PG_LOAD_PAGE] Lato Persona Giuridica - Verifica la raggiungibilità delle pagine
