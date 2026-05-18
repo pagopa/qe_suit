@@ -1,22 +1,21 @@
-package it.pagopa.send.steps.login.page;
+package it.pagopa.send.steps.login.pages;
 
-import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.frontend.e2e.framework.web.domain.AbstractPage;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.send.enums.User;
+import it.frontend.e2e.framework.web.domain.User;
 import it.pagopa.send.steps.login.component.OneIdLoginForm;
+import it.pagopa.send.steps.login.component.OneTrustBanner;
 
+import java.util.Optional;
 
-@Url("${url.notifiche.mittente.base}")
-public interface OneIdPage extends Page {
-
+public interface AbstractOneIdPage extends AbstractPage {
     interface AuthArea extends Component {
 
         interface ProviderDialog extends Component {
-            @XPath("//*[@id=\"https://idp.uat.oneid.pagopa.it\"]")
+            @XPath("//*[@id=\"https://idp.uat.oneid.pagopa.it\"]|//*[@id=\"xx_testenv2\"]|//*[@id=\"spid-select-xx_testenv2\"]")
             Clickable providerButton();
 
             default void selectFakeProvider() {
@@ -27,16 +26,18 @@ public interface OneIdPage extends Page {
         @XPath("//*[@id=\"root\"]/div/div[2]/div[1]/div/h3")
         Readable<String> header();
 
-        @XPath("//*[@id=\"root\"]/div/div[2]/div[3]/div[1]")
+        @XPath("//*[@id=\"spidButton\"]")
         Clickable spidButton();
 
-        ProviderDialog providerDialog();
+        AuthArea.ProviderDialog providerDialog();
     }
 
     AuthArea authArea();
     OneIdLoginForm loginForm();
+    Optional<OneTrustBanner> oneTrustBanner();
 
     default void loginWithSpid(User user) {
+        oneTrustBanner().ifPresent(OneTrustBanner::accept);
         authArea().spidButton().click();
         authArea().providerDialog().selectFakeProvider();
         loginForm().loginWith(user);

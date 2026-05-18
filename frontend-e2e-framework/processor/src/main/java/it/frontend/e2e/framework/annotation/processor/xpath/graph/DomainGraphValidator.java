@@ -53,6 +53,10 @@ public class DomainGraphValidator {
             }
 
             for (ExecutableElement method : typeInspector.childMethodsOf(type)) {
+                if (hasPropertyAnnotation(method)) {
+                    continue;
+                }
+
                 try {
                     if (ruleEvaluator.hasValidMethodAnnotation(method, hasTypeAnnotation)) {
                         continue;
@@ -82,6 +86,16 @@ public class DomainGraphValidator {
         } finally {
             visiting.remove(type);
         }
+    }
+
+    private boolean hasPropertyAnnotation(ExecutableElement method) {
+        for (var mirror : method.getAnnotationMirrors()) {
+            String annotationName = mirror.getAnnotationType().toString();
+            if (annotationName.equals("it.frontend.e2e.framework.annotation.selector.Property")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean fail(TypeElement type, ExecutableElement method, String reason) {
