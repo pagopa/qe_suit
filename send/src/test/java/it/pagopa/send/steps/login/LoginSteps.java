@@ -5,12 +5,12 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.User;
-import it.pagopa.send.steps.destinatari.page.ConfigureAddressSendPage;
-import it.pagopa.send.steps.login.page.AbstractOneIdPage;
-import it.pagopa.send.steps.login.page.DashboardPartySelectionPage;
-import it.pagopa.send.steps.login.page.OneIdPage;
-import it.pagopa.send.steps.login.page.PfLoginPage;
-import it.pagopa.send.steps.login.page.PgLoginPage;
+import it.pagopa.send.steps.destinatari.pages.ConfigureAddressSendPage;
+import it.pagopa.send.steps.login.pages.AbstractOneIdPage;
+import it.pagopa.send.steps.login.pages.DashboardPartySelectionPage;
+import it.pagopa.send.steps.login.pages.OneIdPage;
+import it.pagopa.send.steps.login.pages.PfLoginPage;
+import it.pagopa.send.steps.login.pages.PgLoginPage;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

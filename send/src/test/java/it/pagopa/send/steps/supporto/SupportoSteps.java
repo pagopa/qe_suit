@@ -2,7 +2,7 @@ package it.pagopa.send.steps.supporto;
 
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.send.steps.mittenti.APIKeyPage;
+import it.pagopa.send.steps.mittenti.pages.APIKeyPage;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
