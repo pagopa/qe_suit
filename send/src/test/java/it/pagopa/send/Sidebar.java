@@ -3,9 +3,6 @@ package it.pagopa.send;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.send.steps.login.component.OneTrustBanner;
-
-import java.util.Optional;
 
 public interface Sidebar extends Component {
 

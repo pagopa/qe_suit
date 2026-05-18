@@ -40,6 +40,7 @@ public class LoginSteps {
         try {
             ConfigureAddressSendPage configureAddressSendPage = uiGateway.bind(ConfigureAddressSendPage.class);
             configureAddressSendPage.assertLoaded();
+            configureAddressSendPage.clickSkipConfigButton();
         } catch (RuntimeException e) {
             // Se la pagina non è caricata, significa che non è presente, quindi si può procedere
         }

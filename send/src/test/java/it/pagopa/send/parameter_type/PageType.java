@@ -66,7 +66,7 @@ public class PageType {
                     return page.pageClass;
                 }
             }
-            return null;
+            throw new IllegalArgumentException("Unknown page: " + name);
         }
     }
 

@@ -55,7 +55,6 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     public Optional<WebPresentationElement> findElement(XPathSelector selector) {
         try {
             WebPresentationElement webPresentationElement = withRetry(() -> {
-                log.info("Finding element with selector: {}", selector);
                 WebElement webElement = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
                 return toPresentationElement(selector, webElement);
             });
@@ -95,7 +94,6 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void click(XPathSelector selector) {
         withRetry(() -> {
-            log.info("Clicking element with selector: {}", selector);
             WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
             element.click();
             return element;
@@ -111,7 +109,6 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void sendText(XPathSelector selector, String text) {
         withRetry(() -> {
-            log.info("Sending text to element with selector: {}. Text: {}", selector, text);
             WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
             element.sendKeys(text);
             return element;
@@ -127,7 +124,6 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void clear(XPathSelector selector) {
         withRetry(() -> {
-            log.info("Clearing text of element with selector: {}", selector);
             WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
             element.clear();
             return element;
@@ -162,7 +158,6 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     public Optional<String> getText(XPathSelector selector) {
         try {
             String text = withRetry(() -> {
-                log.info("Getting text of element with selector: {}", selector);
                 WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
                 return resolveElementText(element);
             });
