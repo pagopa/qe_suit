@@ -34,20 +34,21 @@ class SeleniumApiAdapterTest {
     @DisplayName("findElement mappa testo, tag, attributi HTML e location")
     void shouldMapWebElementToPresentationElement() {
         WebDriver driver = mock(WebDriver.class, withSettings().extraInterfaces(JavascriptExecutor.class));
+        WebElement loginButton = mock(WebElement.class);
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        WebElement webElement = mock(WebElement.class);
 
-        when(driver.findElement(any(By.class))).thenReturn(webElement);
+        when(driver.findElement(any(By.class))).thenReturn(loginButton);
         when(driver.getCurrentUrl()).thenReturn("https://example.test/login");
-        when(webElement.getText()).thenReturn("Accedi");
-        when(webElement.getTagName()).thenReturn("button");
-        when(js.executeScript(anyString(), eq(webElement))).thenReturn(Map.of("id", "login-btn", "class", "primary"));
+        when(loginButton.isDisplayed()).thenReturn(true);
+        when(loginButton.isEnabled()).thenReturn(true);
+        when(loginButton.getText()).thenReturn("Accedi");
+        when(loginButton.getTagName()).thenReturn("button");
+        when(js.executeScript(anyString(), eq(loginButton))).thenReturn(Map.of("id", "login-btn", "class", "primary"));
 
         SeleniumApiAdapter adapter = new SeleniumApiAdapter(driver);
         XPathSelector selector = XPathSelector.of("//button[@id='login-btn']");
 
         Optional<WebPresentationElement> found = adapter.findElement(selector);
-
         assertTrue(found.isPresent());
         assertEquals("Accedi", found.get().getText());
         assertEquals("button", found.get().getTag());
@@ -61,6 +62,8 @@ class SeleniumApiAdapterTest {
     void shouldDelegateInteractionMethodsToWebElement() {
         WebDriver driver = mock(WebDriver.class, withSettings().extraInterfaces(JavascriptExecutor.class));
         WebElement webElement = mock(WebElement.class);
+        when(webElement.isDisplayed()).thenReturn(true);
+        when(webElement.isEnabled()).thenReturn(true);
         when(driver.findElement(any(By.class))).thenReturn(webElement);
         when(webElement.isDisplayed()).thenReturn(true);
         when(webElement.isEnabled()).thenReturn(true);
@@ -82,6 +85,8 @@ class SeleniumApiAdapterTest {
     void shouldApplyAssertionOnText() {
         WebDriver driver = mock(WebDriver.class, withSettings().extraInterfaces(JavascriptExecutor.class));
         WebElement webElement = mock(WebElement.class);
+        when(webElement.isDisplayed()).thenReturn(true);
+        when(webElement.isEnabled()).thenReturn(true);
         when(driver.findElement(any(By.class))).thenReturn(webElement);
         when(webElement.getText()).thenReturn("Codice OTP");
 
