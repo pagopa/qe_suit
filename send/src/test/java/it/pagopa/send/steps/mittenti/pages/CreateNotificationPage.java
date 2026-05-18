@@ -156,7 +156,7 @@ public interface CreateNotificationPage extends Page {
     default void assertLoaded() {
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("Nuova notifica", "New notification");
+            Assertions.assertThat(h).isIn("Nuova notifica", "New notification");
         });
     }
 

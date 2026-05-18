@@ -16,7 +16,7 @@ public interface LogoutPage extends Page {
     default void assertLoaded() {
         header().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("You have been logged out", "Notifications", "Sei stato disconnesso");
+            Assertions.assertThat(h).isIn("You have been logged out", "Notifications", "Sei stato disconnesso");
         });
     }
 }

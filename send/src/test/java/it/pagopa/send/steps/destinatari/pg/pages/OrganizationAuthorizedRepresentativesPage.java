@@ -16,7 +16,7 @@ public interface OrganizationAuthorizedRepresentativesPage extends Page {
     default void assertLoaded() {
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("Authorised representatives of the company",
+            Assertions.assertThat(h).isIn("Authorised representatives of the company",
                     "Delegati dall'impresa");
         });
     }

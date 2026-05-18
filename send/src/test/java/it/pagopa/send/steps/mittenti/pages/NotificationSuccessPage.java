@@ -18,8 +18,8 @@ public interface NotificationSuccessPage extends Page {
 
     @Override
     default void assertLoaded() {
-        successTitle().readAndAssert(element ->
-                Assertions.assertThat(element.getText())
+        successTitle().readAndAssert(text ->
+                Assertions.assertThat(text)
                         .isIn(
                                 "Notification has been created",
                                 "La notifica è stata creata"

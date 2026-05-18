@@ -25,7 +25,7 @@ public interface DashboardPage extends Page {
     default void assertLoaded() {
        header().readAndAssert((h) -> {
            Assertions.assertThat(h).isNotNull();
-           Assertions.assertThat(h.getText()).isIn("Notifiche", "Notifications");
+           Assertions.assertThat(h).isIn("Notifiche", "Notifications");
        });
        oneTrustBanner().ifPresent(OneTrustBanner::accept);
     }

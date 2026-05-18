@@ -38,7 +38,7 @@ public interface ConfigureAddressSendPage extends Page {
     default void assertLoaded() {
         header().readAndAssert((h) -> {
             assertThat(h).isNotNull();
-            assertThat(h.getText()).isIn("Configure SEND", "Configura SEND");
+            assertThat(h).isIn("Configure SEND", "Configura SEND");
         });
     }
 }

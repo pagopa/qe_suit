@@ -16,7 +16,7 @@ public interface DelegatedNotificationPage extends Page {
     default void assertLoaded() {
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("Notifications delegated to Le Epistolae srl",
+            Assertions.assertThat(h).isIn("Notifications delegated to Le Epistolae srl",
                     "Notifiche delegate a Le Epistolae srl");
         });
     }

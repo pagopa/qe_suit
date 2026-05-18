@@ -21,7 +21,7 @@ public interface NotificationDetailsPage extends Page {
 //        seeDetailsButton().click();
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("Dettaglio notifica", "Notification details");
+            Assertions.assertThat(h).isIn("Dettaglio notifica", "Notification details");
         });
     }
 
