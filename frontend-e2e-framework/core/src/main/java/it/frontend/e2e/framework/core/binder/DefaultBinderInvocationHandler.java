@@ -8,6 +8,7 @@ import it.frontend.e2e.framework.core.logging.ILogger;
 import it.frontend.e2e.framework.core.logging.Slf4jLogger;
 import it.frontend.e2e.framework.core.model.DomainElement;
 import it.frontend.e2e.framework.core.utils.FallbackUtils;
+import it.frontend.e2e.framework.core.utils.PropertyResolver;
 import it.frontend.e2e.framework.core.utils.TypeUtils;
 import it.frontend.e2e.framework.core.utils.WrapperBinder;
 import it.frontend.e2e.framework.core.utils.XPathResolver;
@@ -78,7 +79,13 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
     }
 
     public Object bindRecursive(Method method, Class<?> returnType, boolean optionalBestEffort) {
-        String childSel = XPathResolver.resolve(method, returnType);
+        // Prova PRIMA @Property (se presente, la property risolve l'XPath)
+        String childSel = PropertyResolver.resolve(method, returnType);
+
+        // Se non trovato da @Property, utilizza @XPath
+        if (childSel.isEmpty()) {
+            childSel = XPathResolver.resolve(method, returnType);
+        }
         String fullSel = XPathResolver.compose(ctx.getScope().selector(), childSel);
         CapabilityScope scope = new CapabilityScope(fullSel, ctx.getScope().location());
         logger.logInfo("Binding recursive element: " + returnType.getSimpleName() +

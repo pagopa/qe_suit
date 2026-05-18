@@ -23,7 +23,7 @@ class WebCapabilityHandlerFactoryTest {
     void shouldReturnDefaultFactoriesInExpectedOrder() {
         List<IWebCapabilityHandlerSupplier> defaults = WebCapabilityHandlerFactory.defaults();
 
-        assertEquals(5, defaults.size());
+        assertEquals(6, defaults.size());
 
         IWebPresentationApiAdapter adapter = mock(IWebPresentationApiAdapter.class);
         List<ICapabilityHandler> handlers = defaults.stream()
