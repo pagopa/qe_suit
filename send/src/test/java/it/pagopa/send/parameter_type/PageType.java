@@ -2,28 +2,28 @@ package it.pagopa.send.parameter_type;
 
 import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.send.steps.destinatari.page.ConfigureAddressSendPage;
-import it.pagopa.send.steps.login.page.LogoutPage;
-import it.pagopa.send.steps.login.page.OneIdPage;
-import it.pagopa.send.steps.mittenti.APIKeyPage;
-import it.pagopa.send.steps.mittenti.CreateNotificationPage;
-import it.pagopa.send.steps.mittenti.DashboardPage;
-import it.pagopa.send.steps.mittenti.NewAPIKeyPage;
-import it.pagopa.send.steps.mittenti.NotificationDetailsPage;
-import it.pagopa.send.steps.mittenti.PlatformStatusPage;
-import it.pagopa.send.steps.mittenti.StatisticsPage;
-import it.pagopa.send.steps.destinatari.pf.page.AddressPFPage;
-import it.pagopa.send.steps.destinatari.pf.page.AppStatusPFPage;
-import it.pagopa.send.steps.destinatari.pf.page.DelegationsPFPage;
-import it.pagopa.send.steps.destinatari.pf.page.NotificationPFPage;
-import it.pagopa.send.steps.destinatari.pg.page.AddressPage;
-import it.pagopa.send.steps.destinatari.pg.page.ApiIntegrationPage;
-import it.pagopa.send.steps.destinatari.pg.page.DelegatedNotificationPage;
-import it.pagopa.send.steps.destinatari.pg.page.NewDelegationPage;
-import it.pagopa.send.steps.destinatari.pg.page.NotificationPage;
-import it.pagopa.send.steps.destinatari.pg.page.OrganizationAuthorizedRepresentativesPage;
-import it.pagopa.send.steps.destinatari.pg.page.OrganizationDelegationsPage;
-import it.pagopa.send.steps.supporto.BackstageProfilePage;
+import it.pagopa.send.steps.destinatari.pages.ConfigureAddressSendPage;
+import it.pagopa.send.steps.login.pages.LogoutPage;
+import it.pagopa.send.steps.login.pages.OneIdPage;
+import it.pagopa.send.steps.mittenti.pages.APIKeyPage;
+import it.pagopa.send.steps.mittenti.pages.CreateNotificationPage;
+import it.pagopa.send.steps.mittenti.pages.DashboardPage;
+import it.pagopa.send.steps.mittenti.pages.NewAPIKeyPage;
+import it.pagopa.send.steps.mittenti.pages.NotificationDetailsPage;
+import it.pagopa.send.steps.mittenti.pages.PlatformStatusPage;
+import it.pagopa.send.steps.mittenti.pages.StatisticsPage;
+import it.pagopa.send.steps.destinatari.pf.pages.AddressPFPage;
+import it.pagopa.send.steps.destinatari.pf.pages.AppStatusPFPage;
+import it.pagopa.send.steps.destinatari.pf.pages.DelegationsPFPage;
+import it.pagopa.send.steps.destinatari.pf.pages.NotificationPFPage;
+import it.pagopa.send.steps.destinatari.pg.pages.AddressPage;
+import it.pagopa.send.steps.destinatari.pg.pages.ApiIntegrationPage;
+import it.pagopa.send.steps.destinatari.pg.pages.DelegatedNotificationPage;
+import it.pagopa.send.steps.destinatari.pg.pages.NewDelegationPage;
+import it.pagopa.send.steps.destinatari.pg.pages.NotificationPage;
+import it.pagopa.send.steps.destinatari.pg.pages.OrganizationAuthorizedRepresentativesPage;
+import it.pagopa.send.steps.destinatari.pg.pages.OrganizationDelegationsPage;
+import it.pagopa.send.steps.supporto.pages.BackstageProfilePage;
 
 public class PageType {
 
@@ -45,7 +45,7 @@ public class PageType {
         NOTIFICATIONS("Notifications", NotificationPage.class),
         ORGANIZATION_AUTHORIZED_REPRESENTATIVES("OrganizationAuthorizedRepresentatives", OrganizationAuthorizedRepresentativesPage.class),
         ORGANIZATION_DELEGATIONS("OrganizationDelegations", OrganizationDelegationsPage.class),
-        PLATFORM_STATUS_PAGE_PG("PlatformStatusPagePG", it.pagopa.send.steps.destinatari.pg.page.PlatformStatusPage.class),
+        PLATFORM_STATUS_PAGE_PG("PlatformStatusPagePG", it.pagopa.send.steps.destinatari.pg.pages.PlatformStatusPage.class),
         ADDRESS_PF("AddressPF", AddressPFPage.class),
         APP_STATUS_PF("AppStatusPF", AppStatusPFPage.class),
         DELEGATIONS_PF("DelegationsPF", DelegationsPFPage.class),

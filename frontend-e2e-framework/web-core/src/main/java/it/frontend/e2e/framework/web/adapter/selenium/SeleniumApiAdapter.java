@@ -122,6 +122,15 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     }
 
     @Override
+    public void sendFile(XPathSelector selector, String absolutePath) {
+        // file inputs: presenceOfElementLocated, no scroll, no focus, just sendKeys.
+        // è necessario l'uso esplicito di presenceOfElementLocated pertanto il metodo centralizzato findWebElement non è adatto
+        WebElement element = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_WAIT_TIMEOUT_SECONDS))
+                .until(ExpectedConditions.presenceOfElementLocated(toBy(selector)));
+        element.sendKeys(absolutePath);
+    }
+
+    @Override
     public void clear(XPathSelector selector) {
         withRetry(() -> {
             WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
@@ -211,7 +220,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     private WebElement findWebElement(XPathSelector selector, long timeoutSeconds) {
         return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
-                .until(ExpectedConditions.presenceOfElementLocated(toBy(selector)));
+                .until(ExpectedConditions.elementToBeClickable(toBy(selector)));
     }
 
     private List<WebElement> findWebElements(XPathSelector selector, long timeoutSeconds) {

@@ -25,6 +25,7 @@ public interface IPresentationApiAdapter<
     void clickAndAssert(S selector, AssertionAction<E> assertion);
     void sendText(S selector, String text);
     void sendTextAndAssert(S selector, String text, AssertionAction<E> assertion);
+    void sendFile(S selector, String absolutePath);
     void clear(S selector);
     void clearAndAssert(S selector, AssertionAction<E> assertion);
 
