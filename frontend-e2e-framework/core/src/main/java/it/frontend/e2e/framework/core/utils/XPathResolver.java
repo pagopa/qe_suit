@@ -27,7 +27,7 @@ public class XPathResolver {
     if (xpath == null) return false;
     String trimmed = xpath.trim();
     // Considera assoluti quelli che iniziano con '/' o '//'
-    return trimmed.startsWith("/") || trimmed.startsWith("//");
+    return trimmed.startsWith("/") || trimmed.startsWith("//") || trimmed.startsWith("(//") || trimmed.startsWith("(/");
 }
 }
 

@@ -6,16 +6,16 @@ import it.frontend.e2e.framework.web.domain.Component;
 
 public interface Sidebar extends Component {
 
-    @XPath("//*[@id=\"side-item-Notifications\"]")
+    @XPath("(//ul/div/div/span)[1]")
     Clickable notifications();
 
-    @XPath("//*[@id=\"side-item-API Key\"]")
+    @XPath("(//ul/div/div/span)[2]")
     Clickable apiKeys();
 
-    @XPath("//*[@id=\"side-item-Statistics\"]")
+    @XPath("(//ul/div/div/span)[3]")
     Clickable statistics();
 
-    @XPath("//*[@id=\"side-item-Platform status\"]")
+    @XPath("(//ul/div/div/span)[4]")
     Clickable platformStatus();
 
     default void goToSection(String section) {
