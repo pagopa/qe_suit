@@ -12,7 +12,7 @@ public interface Sidebar extends Component {
     @XPath("//*[@id=\"side-item-API Key\"]")
     Clickable apiKeys();
 
-    @XPath("//*[@id=\"menu-item(statistics)\"]/span")
+    @XPath("//*[@id=\"side-item-Statistics\"]")
     Clickable statistics();
 
     @XPath("//*[@id=\"side-item-Platform status\"]")
