@@ -227,6 +227,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <useModulePath>false</useModulePath>
+                    <testClassesDirectory>${project.build.outputDirectory}</testClassesDirectory>
+                    <includes>
+                        <include>**/suite/**</include>
+                    </includes>
                 </configuration>
             </plugin>
 
