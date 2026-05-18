@@ -17,7 +17,7 @@ public interface PgLoginPage extends AbstractOneIdPage, Page {
     @XPath("//*[@id=\"root\"]/div/div[2]/div[2]/div/div[3]/div/button")
     Clickable pgLoginButton();
 
-    @Property("selectors.login.pg.reserved-area-env-selector")
+    @Property("selettore.login.pg.area-riservata-selettore-env")
     Clickable reservedAreaEnvSelector();
 
     @Override
