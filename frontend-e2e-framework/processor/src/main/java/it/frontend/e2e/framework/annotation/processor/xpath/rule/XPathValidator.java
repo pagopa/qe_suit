@@ -58,7 +58,7 @@ public class XPathValidator {
     }
 
     private boolean isXPathNotation(String xpath) {
-        if (xpath.startsWith("/") || xpath.startsWith("./") || xpath.startsWith(".//") || xpath.startsWith("//")) {
+        if (xpath.startsWith("/") || xpath.startsWith("./") || xpath.startsWith(".//") || xpath.startsWith("//") || xpath.startsWith("${")) {
             return true;
         }
         // Gestione espressioni tra parentesi con eventuali predicati o funzioni dopo la chiusura
