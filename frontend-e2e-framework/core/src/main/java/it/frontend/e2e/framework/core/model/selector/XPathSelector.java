@@ -1,6 +1,7 @@
 package it.frontend.e2e.framework.core.model.selector;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 public class XPathSelector implements Selector {
@@ -66,6 +67,6 @@ public class XPathSelector implements Selector {
 
     @Override
     public String toString() {
-        return String.format("XPathSelector{selector='%s'}", selector);
+        return selector;
     }
 }

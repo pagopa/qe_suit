@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.capability.core.Gettable;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 
+import java.util.List;
 import java.util.Optional;
 
 public class GettableImpl extends AbstractCapabilityImpl implements Gettable {
@@ -13,6 +14,11 @@ public class GettableImpl extends AbstractCapabilityImpl implements Gettable {
 
     @Override
     public Optional<WebPresentationElement> get() {
-        return Optional.empty();
+        return adapter.findElement(xPathSelector.get());
+    }
+
+    @Override
+    public Optional<List<WebPresentationElement>> getAll() {
+        return adapter.findElements(xPathSelector.get());
     }
 }

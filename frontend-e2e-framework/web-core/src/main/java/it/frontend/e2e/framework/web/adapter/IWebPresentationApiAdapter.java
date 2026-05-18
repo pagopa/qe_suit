@@ -5,6 +5,13 @@ import it.frontend.e2e.framework.core.model.selector.XPathSelector;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
 
-public interface IWebPresentationApiAdapter extends IPresentationApiAdapter<XPathSelector, Url, WebPresentationElement> {
+import java.util.Optional;
 
+public interface IWebPresentationApiAdapter
+        extends IPresentationApiAdapter<XPathSelector, Url, WebPresentationElement> {
+
+    Optional<String> getCookieValue(String name);
+    Optional<String> getLocalStorageItem(String key);
+    Optional<String> getSessionStorageItem(String key);
+    void setLocalStorageItem(String key, String value);
 }

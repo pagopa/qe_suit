@@ -2,13 +2,25 @@ package it.frontend.e2e.framework.core.config;
 
 public class SuiteContext {
     @SuppressWarnings("rawtypes")
-    protected static volatile SuiteConfiguration configuration;
+    private static final ThreadLocal<SuiteConfiguration> configuration = new ThreadLocal<>();
+
+    public SuiteContext() {}
 
     @SuppressWarnings("rawtypes")
     public static SuiteConfiguration getConfiguration() {
-        if (configuration == null) {
+        SuiteConfiguration config = configuration.get();
+        if (config == null) {
             throw new IllegalStateException("SuiteContext is not initialized");
         }
-        return configuration;
+        return config;
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static void setConfiguration(SuiteConfiguration config) {
+        configuration.set(config);
+    }
+
+    public static void reset() {
+        configuration.remove();
     }
 }

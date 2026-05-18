@@ -9,7 +9,7 @@
 },
 
 "scopes": {
-"pages": { "subtypesOf": "it.frontend.e2e.framework.web.domain.Page" },
+"it.pagopa.interop.config.pages": { "subtypesOf": "it.frontend.e2e.framework.web.domain.Page" },
 "components": { "subtypesOf": "it.frontend.e2e.framework.web.domain.Component" },
 "domNodes": { "subtypesOf": "it.frontend.e2e.framework.web.domain.DomNode" }
 },
@@ -17,7 +17,7 @@
 "constraints": [
 {
 "id": "web-page-must-have-pageinfo",
-"scope": "pages",
+"scope": "it.pagopa.interop.config.pages",
 "mustHaveAnnotation": "it.frontend.e2e.framework.web.annotation.PageInfo",
 "severity": "ERROR",
 "message": "Ogni @Page deve avere @PageInfo"
