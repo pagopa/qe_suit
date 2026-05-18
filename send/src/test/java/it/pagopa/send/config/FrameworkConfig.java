@@ -1,6 +1,6 @@
 package it.pagopa.send.config;
 
-import it.frontend.e2e.framework.core.utils.PropertyResolver;
+import it.frontend.e2e.framework.core.model.selector.XPathSelector;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
 import it.frontend.e2e.framework.web.adapter.selenium.SeleniumApiAdapter;
@@ -27,7 +27,6 @@ public class FrameworkConfig {
 
     @Bean
     public WebPresentationGateway webPresentationGateway(Environment environment) {
-        PropertyResolver.setProvider(propertyKey -> environment.getProperty(propertyKey));
         BrowserSettings settings = BrowserSettings.of(browser, headless, arguments);
 
         return WebSuiteBuilder.builder()
@@ -37,6 +36,7 @@ public class FrameworkConfig {
                     String resolvedUrl = environment.resolvePlaceholders(location);
                     return Url.of(resolvedUrl);
                 })
+                .withSelectorResolver(xpath -> XPathSelector.of(environment.resolvePlaceholders(xpath)))
                 .build();
     }
 }

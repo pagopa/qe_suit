@@ -4,11 +4,11 @@ import it.frontend.e2e.framework.core.binder.context.BindContext;
 import it.frontend.e2e.framework.core.capability.Capability;
 import it.frontend.e2e.framework.core.capability.context.CapabilityScope;
 import it.frontend.e2e.framework.core.capability.dispatcher.ICapabilityDispatcher;
+import it.frontend.e2e.framework.core.config.SuiteContext;
 import it.frontend.e2e.framework.core.logging.ILogger;
 import it.frontend.e2e.framework.core.logging.Slf4jLogger;
 import it.frontend.e2e.framework.core.model.DomainElement;
 import it.frontend.e2e.framework.core.utils.FallbackUtils;
-import it.frontend.e2e.framework.core.utils.PropertyResolver;
 import it.frontend.e2e.framework.core.utils.TypeUtils;
 import it.frontend.e2e.framework.core.utils.WrapperBinder;
 import it.frontend.e2e.framework.core.utils.XPathResolver;
@@ -79,13 +79,20 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
     }
 
     public Object bindRecursive(Method method, Class<?> returnType, boolean optionalBestEffort) {
-        String childSel = PropertyResolver.resolve(method, returnType);
+        //SuiteContext.getConfiguration().getSelectorResolver().resolve(XPathResolver.resolve(method, returnType));
+        String childSel = XPathResolver.resolve(method, returnType);
 
-        // Se non trovato da @Property, utilizza @XPath
-        if (childSel.isEmpty()) {
-            childSel = XPathResolver.resolve(method, returnType);
+        if(childSel.startsWith("${")) {
+            childSel = SuiteContext.getConfiguration().getSelectorResolver().resolve(XPathResolver.resolve(method, returnType)).toString();
         }
-        
+
+        //String childSel = SuiteContext.getConfiguration().getSelectorResolver().resolve(XPathResolver.resolve(method, returnType)).toString();
+
+//        // Se non trovato da @Property, utilizza @XPath
+//        if (childSel.isEmpty()) {
+//            childSel = XPathResolver.resolve(method, returnType);
+//        }
+//
         String fullSel;
         logger.logInfo("childSel: " + childSel + " | isAbsolute: " + XPathResolver.isAbsolute(childSel));
 
