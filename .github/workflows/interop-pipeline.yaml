@@ -1,4 +1,4 @@
-name: [INTEROP] QA workflow
+name: INTEROP - QA workflow
 
 on:
   schedule:

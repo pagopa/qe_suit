@@ -1,4 +1,4 @@
-name: [SEND] QA workflow
+name: SEND - QA workflow
 
 on:
   schedule:
