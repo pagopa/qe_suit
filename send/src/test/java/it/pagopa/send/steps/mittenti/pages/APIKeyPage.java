@@ -19,14 +19,14 @@ public interface APIKeyPage extends Page {
     default void assertLoaded() {
        header().readAndAssert((h) -> {
            Assertions.assertThat(h).isNotNull();
-           Assertions.assertThat(h.getText()).isIn("API Key", "API Key");
+           Assertions.assertThat(h).isIn("API Key", "API Key");
        });
     }
 
     default void assertSupportCannotSeeApiKey() {
         supportHeader().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("You do not have the necessary authorizations to access this page",
+            Assertions.assertThat(h).isIn("You do not have the necessary authorizations to access this page",
                     "Non hai le autorizzazioni necessarie per accedere a questa pagina");
         });
     }

@@ -16,7 +16,7 @@ public interface OrganizationDelegationsPage extends Page {
     default void assertLoaded() {
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("Authorities held by the company",
+            Assertions.assertThat(h).isIn("Authorities held by the company",
                     "Deleghe a carico dell'impresa");
         });
     }

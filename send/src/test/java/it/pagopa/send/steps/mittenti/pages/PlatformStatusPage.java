@@ -16,7 +16,7 @@ public interface PlatformStatusPage extends Page {
     default void assertLoaded() {
        header().readAndAssert((h) -> {
            Assertions.assertThat(h).isNotNull();
-           Assertions.assertThat(h.getText()).isIn("Stato della piattaforma", "Platform status");
+           Assertions.assertThat(h).isIn("Stato della piattaforma", "Platform status");
        });
     }
 }

@@ -22,7 +22,7 @@ public interface NotificationPage extends Page {
         oneTrustBanner().ifPresent(OneTrustBanner::accept);
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("Notifications of Le Epistolae srl", "Notifiche di Le Epistolae srl");
+            Assertions.assertThat(h).isIn("Notifications of Le Epistolae srl", "Notifiche di Le Epistolae srl");
         });
     }
 }

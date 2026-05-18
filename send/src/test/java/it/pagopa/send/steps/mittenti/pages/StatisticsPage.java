@@ -16,7 +16,7 @@ public interface StatisticsPage extends Page {
     default void assertLoaded() {
        header().readAndAssert((h) -> {
            Assertions.assertThat(h).isNotNull();
-           Assertions.assertThat(h.getText()).isIn("Statistiche", "Statistics");;
+           Assertions.assertThat(h).isIn("Statistiche", "Statistics");;
        });
     }
 }

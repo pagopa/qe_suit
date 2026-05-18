@@ -16,7 +16,7 @@ public interface NewAPIKeyPage extends Page {
     default void assertLoaded() {
        header().readAndAssert((h) -> {
            Assertions.assertThat(h).isNotNull();
-           Assertions.assertThat(h.getText()).isIn("Genera una API Key", "Generate an API Key");
+           Assertions.assertThat(h).isIn("Genera una API Key", "Generate an API Key");
        });
     }
 }

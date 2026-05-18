@@ -1,7 +1,6 @@
 package it.pagopa.send.steps.login.pages;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
-import it.frontend.e2e.framework.annotation.selector.Property;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.domain.Page;
@@ -17,7 +16,7 @@ public interface PgLoginPage extends AbstractOneIdPage, Page {
     @XPath("//*[@id=\"root\"]/div/div[2]/div[2]/div/div[3]/div/button")
     Clickable pgLoginButton();
 
-    @Property("selettore.login.pg.area-riservata-selettore-env")
+    @XPath("${selettore.login.pg.area-riservata-selettore-env}")
     Clickable reservedAreaEnvSelector();
 
     @Override

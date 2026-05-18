@@ -16,7 +16,7 @@ public interface ApiIntegrationPage extends Page {
     default void assertLoaded() {
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("Integrazione API");
+            Assertions.assertThat(h).isIn("Integrazione API");
         });
     }
 }
