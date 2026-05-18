@@ -41,7 +41,7 @@ class WebSuiteBuilderTest {
         WebSuiteConfiguration configuration = WebSuiteContext.getConfiguration();
 
         List<ICapabilityHandler> handlers = configuration.getCapabilityHandlers();
-        assertEquals(5, handlers.size());
+        assertEquals(6, handlers.size());
         assertInstanceOf(ClickableCapabilityHandler.class, handlers.get(0));
         assertInstanceOf(GettableCapabilityHandler.class, handlers.get(1));
         assertInstanceOf(WritableCapabilityHandler.class, handlers.get(2));
