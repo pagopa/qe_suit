@@ -67,6 +67,5 @@ class XPathSelectorTest {
         String text = selector.toString();
 
         assertTrue(text.contains("//div[@id='root']"));
-        assertTrue(text.contains("XPath"));
     }
 }

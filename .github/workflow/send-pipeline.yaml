@@ -1,0 +1,96 @@
+name: [SEND] QA workflow
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+      timezone: "Europe/Rome"
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to run tests against'
+        required: true
+        default: test
+        type: choice
+        options:
+          - dev
+          - test
+          - uat
+          - hotfix
+      javaTestSuite:
+        description: 'Choose which Java test suite to run'
+        required: false
+        default: NrtStandardSuite
+        type: string
+      branchName:
+        description: 'Provide the branch name for qe_suit to clone'
+        required: false
+        default: main
+        type: string
+
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+
+jobs:
+  run_tests:
+    name: Run Java Selenium Tests
+    runs-on: ubuntu-22.04
+    env:
+      ENVIRONMENT: ${{ github.event_name == 'schedule' && 'qa' || inputs.environment }}
+      JAVA_TEST_SUITE: ${{ github.event_name == 'schedule' && 'NrtStandardSuite' || inputs.javaTestSuite }}
+      BRANCH_NAME: ${{ github.event_name == 'schedule' && 'main' || inputs.branchName }}
+
+    steps:
+      - name: Set up Maven
+        uses: s4u/setup-maven-action@6d44c18d67d9e1549907b8815efa5e4dada1801b
+        with:
+          java-version: 17
+          maven-version: 3.9.8
+
+      - name: Install Chrome Browser
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          google-chrome --version
+
+      - name: Setup ChromeDriver
+        uses: nanasess/setup-chromedriver@master
+
+      - name: Clone qe_suit repository
+        run: |
+          git clone --depth 1 --branch ${{ env.BRANCH_NAME }} https://github.com/pagopa/qe_suit.git
+
+      - name: Build frontend-e2e-framework
+        run: |
+          cd ./qe_suit/frontend-e2e-framework
+          mvn clean install
+
+      - name: Run Selenium Tests
+        run: |
+          cd ./qe_suit/interop
+          
+          if [[ "${{ env.ENVIRONMENT }}" == "dev" ]]; then
+            SPRING_PROFILE="-Dspring.profiles.active=dev"
+          else
+            SPRING_PROFILE="-Dspring.profiles.active=qa"
+          fi
+          
+          mvn test $SPRING_PROFILE -Dtest=${{ env.JAVA_TEST_SUITE }}
+
+      - name: Upload Test Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: ./qe_suit/interop/qa-tests.log
+
+      - name: Upload Cucumber Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cucumber-report
+          path: ./qe_suit/interop/target/cucumber-report*
+          retention-days: 10

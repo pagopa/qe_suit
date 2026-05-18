@@ -22,5 +22,12 @@ public class XPathResolver {
         if (parent.endsWith("/")) return parent + child;
         return parent + "/" + child;
     }
+
+    public static boolean isAbsolute(String xpath) {
+    if (xpath == null) return false;
+    String trimmed = xpath.trim();
+    // Considera assoluti quelli che iniziano con '/' o '//'
+    return trimmed.startsWith("/") || trimmed.startsWith("//") || trimmed.startsWith("(//") || trimmed.startsWith("(/");
+}
 }
 

@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.core.assertion.AssertionAction;
 import it.frontend.e2e.framework.core.model.selector.XPathSelector;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
+import it.frontend.e2e.framework.web.config.WebSuiteContext;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ import java.util.function.Supplier;
 @Slf4j
 public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
-    private static final long RETRY_WAIT_TIMEOUT_SECONDS = 60;
+    private static final long RETRY_WAIT_TIMEOUT_SECONDS = 30;
     private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 10;
     private final WebDriver driver;
 
@@ -218,6 +219,99 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
         applyAssertion(current, assertion);
     }
 
+    @Override
+    public Optional<String> getCookieValue(String name) {
+        if (name == null || name.isBlank()) {
+            return Optional.empty();
+        }
+
+        try {
+            org.openqa.selenium.Cookie cookie = driver.manage().getCookieNamed(name);
+            return Optional.ofNullable(cookie)
+                    .map(org.openqa.selenium.Cookie::getValue)
+                    .filter(value -> !value.isBlank());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<String> getLocalStorageItem(String key) {
+        if (key == null || key.isBlank()) {
+            return Optional.empty();
+        }
+
+        if (!(driver instanceof JavascriptExecutor js)) {
+            return Optional.empty();
+        }
+
+        try {
+            Object value = js.executeScript(
+                    "return window.localStorage.getItem(arguments[0]);",
+                    key
+            );
+            return Optional.ofNullable((String) value)
+                    .filter(v -> !v.isBlank());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<String> getSessionStorageItem(String key) {
+        if (key == null || key.isBlank()) {
+            return Optional.empty();
+        }
+
+        if (!(driver instanceof JavascriptExecutor js)) {
+            return Optional.empty();
+        }
+
+        try {
+            Object value = js.executeScript(
+                    "return window.sessionStorage.getItem(arguments[0]);",
+                    key
+            );
+            return Optional.ofNullable((String) value)
+                    .filter(v -> !v.isBlank());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public void setLocalStorageItem(String key, String value) {
+        if (key == null || key.isBlank()) {
+            throw new IllegalArgumentException("key cannot be null or blank");
+        }
+
+        if (!(driver instanceof JavascriptExecutor js)) {
+            throw new IllegalStateException("Driver does not support JavascriptExecutor");
+        }
+
+        try {
+            js.executeScript(
+                    "window.localStorage.setItem(arguments[0], arguments[1]);",
+                    key,
+                    value
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to set localStorage item for key: " + key, e);
+        }
+    }
+
+    @Override
+    public void close() {
+        try {
+            if (driver != null) {
+                driver.quit();
+            }
+        } finally {
+            // Reset del contesto dopo la chiusura del browser
+            WebSuiteContext.reset();
+        }
+    }
+
     private WebElement findWebElement(XPathSelector selector, long timeoutSeconds) {
         return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
                 .until(ExpectedConditions.elementToBeClickable(toBy(selector)));
@@ -280,7 +374,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
                         " out[attrs[i].name] = attrs[i].value;" +
                         "}" +
                         "return out;",
-                element );
+                element);
 
         if (raw instanceof Map<?, ?> map) {
             Map<String, String> attributes = new LinkedHashMap<>();

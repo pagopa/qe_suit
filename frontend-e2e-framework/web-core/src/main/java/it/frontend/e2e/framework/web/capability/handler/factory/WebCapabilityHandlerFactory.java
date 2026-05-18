@@ -6,14 +6,14 @@ import java.util.List;
 
 public class WebCapabilityHandlerFactory  {
 
-    public static List<IWebCapabilityHandlerSupplier> defaults() {
-        return List.of(
-                ClickableCapabilityHandler::new,
-                GettableCapabilityHandler::new,
-                WritableCapabilityHandler::new,
-                ReadableCapabilityHandler::new,
-                LocatableCapabilityHanlder::new,
-                UploadableCapabilityHandler::new
-        );
-    }
+   public static List<IWebCapabilityHandlerSupplier> defaults() {
+    return List.of(
+            ClickableCapabilityHandler::new,
+            GettableCapabilityHandler::new,
+            WritableCapabilityHandler::new,
+            adapter -> new ReadableCapabilityHandler<>(adapter, String.class),
+            LocatableCapabilityHanlder::new,
+            UploadableCapabilityHandler::new
+    );
+}
 }
