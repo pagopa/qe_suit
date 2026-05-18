@@ -20,7 +20,7 @@ public interface BackstageProfilePage extends AbstractComunePickerPage, Page {
     @XPath("(//*[@role=\"option\"])[1]")
     Clickable breadcrumbs();
 
-    @Property("selectors.supporto.area-riservata-selettore-env")
+    @Property("selettore.supporto.area-riservata-selettore-env")
     Clickable portals();
 
     Optional<OneTrustBanner> oneTrustBanner();

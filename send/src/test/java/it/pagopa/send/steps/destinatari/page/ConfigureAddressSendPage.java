@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public interface ConfigureAddressSendPage extends Page {
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div[2]/button")
-    Clickable skiConfigButton();
+    Clickable skipConfigButton();
 
     @XPath(".//h1")
     Readable<String> header();
@@ -29,8 +29,8 @@ public interface ConfigureAddressSendPage extends Page {
     @XPath("/html/body/div[3]/div[3]/div")
     SkipConfigDialog skipConfigDialog();
 
-    default void clickSkiConfigButton() {
-        skiConfigButton().click();
+    default void clickSkipConfigButton() {
+        skipConfigButton().click();
         skipConfigDialog().confirmSkipButton().click();
     }
 
