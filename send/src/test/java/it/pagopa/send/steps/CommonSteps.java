@@ -7,9 +7,9 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.send.Footer;
 import it.pagopa.send.Header;
 import it.pagopa.send.Sidebar;
-import it.pagopa.send.steps.login.page.AbstractComunePickerPage;
-import it.pagopa.send.steps.login.page.DashboardPartySelectionPage;
-import it.pagopa.send.steps.supporto.BackstageProfilePage;
+import it.pagopa.send.steps.login.pages.AbstractComunePickerPage;
+import it.pagopa.send.steps.login.pages.DashboardPartySelectionPage;
+import it.pagopa.send.steps.supporto.pages.BackstageProfilePage;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -44,7 +44,7 @@ public class CommonSteps {
         comunePickerPage.selectComune(comune);
     }
 
-    @And("viene effettutato il logout")
+    @And("viene effettuato il logout")
     public void logout() {
         Header footer = uiGateway.bind(Header.class);
         footer.logout();
