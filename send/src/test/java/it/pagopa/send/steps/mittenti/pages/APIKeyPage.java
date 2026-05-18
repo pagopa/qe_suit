@@ -26,7 +26,8 @@ public interface APIKeyPage extends Page {
     default void assertSupportCannotSeeApiKey() {
         supportHeader().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h.getText()).isIn("You do not have the necessary authorizations to access this page");
+            Assertions.assertThat(h.getText()).isIn("You do not have the necessary authorizations to access this page",
+                    "Non hai le autorizzazioni necessarie per accedere a questa pagina");
         });
     }
 }

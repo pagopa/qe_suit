@@ -8,6 +8,7 @@ import it.frontend.e2e.framework.core.logging.ILogger;
 import it.frontend.e2e.framework.core.logging.Slf4jLogger;
 import it.frontend.e2e.framework.core.model.DomainElement;
 import it.frontend.e2e.framework.core.utils.FallbackUtils;
+import it.frontend.e2e.framework.core.utils.PropertyResolver;
 import it.frontend.e2e.framework.core.utils.TypeUtils;
 import it.frontend.e2e.framework.core.utils.WrapperBinder;
 import it.frontend.e2e.framework.core.utils.XPathResolver;
@@ -43,8 +44,7 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
             return switch (method.getName()) {
                 case "equals" -> proxy == args[0];
                 case "hashCode" -> System.identityHashCode(proxy);
-                case "toString" ->
-                        proxy.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(proxy));
+                case "toString" -> proxy.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(proxy));
                 default -> throw new UnsupportedOperationException("Object method not supported: " + method.getName());
             };
         }
@@ -73,13 +73,19 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
         return new DefaultBinderInvocationHandler(this.dispatcher, bindContext, shouldSuppressExceptionForOptionalWrapper);
     }
 
-    public <T> T resolveCapabilityMethod(Method method, Object[] args, BindContext bindContext) {
+    public <T> T resolveCapabilityMethod(Method method, Object[] args, BindContext bindContext ) {
         logger.logDebug("Dispatching capability method: " + method.getName() + " | " + bindContext.toString());
         return dispatcher.dispatch(method, args, bindContext.getScope());
     }
 
     public Object bindRecursive(Method method, Class<?> returnType, boolean optionalBestEffort) {
-        String childSel = XPathResolver.resolve(method, returnType);
+        String childSel = PropertyResolver.resolve(method, returnType);
+
+        // Se non trovato da @Property, utilizza @XPath
+        if (childSel.isEmpty()) {
+            childSel = XPathResolver.resolve(method, returnType);
+        }
+        
         String fullSel;
         logger.logInfo("childSel: " + childSel + " | isAbsolute: " + XPathResolver.isAbsolute(childSel));
 
@@ -104,15 +110,9 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
         return DomainElement.class.isAssignableFrom(type) || Capability.class.isAssignableFrom(type);
     }
 
-    /**
-     * Getters
-     */
+    /** Getters  */
 
-    public BindContext getCtx() {
-        return ctx;
-    }
+    public BindContext getCtx() { return ctx; }
 
-    public ILogger getLogger() {
-        return logger;
-    }
+    public ILogger getLogger() { return logger; }
 }

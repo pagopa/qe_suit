@@ -4,9 +4,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.send.enums.User;
-
-import java.util.Optional;
+import it.frontend.e2e.framework.web.domain.User;
 
 public interface OneIdLoginForm extends Component {
 
@@ -16,13 +14,12 @@ public interface OneIdLoginForm extends Component {
     @XPath("//*[@id=\"password\"]")
     Writable<String> password();
 
-    @XPath("//*[@id=\"login-form\"]/div[4]/button[1]")
+    @XPath("//*[@id=\"login-form\"]/div[4]/button[1]|" +
+            "/html/body/section/main/article/form/div[3]/button[1]|" +
+            "//*[@id=\"formLogin\"]/button")
     Clickable submit();
 
-    @XPath("//*[@id=\"consent-form\"]")
     OneIdPrivacyDialog oneIdPrivacyDialog();
-
-    Optional<OneTrustBanner> oneTrustBanner();
 
     default void loginWith(User user) {
         this.username().writeAndAssert(user.getUsername());
@@ -30,7 +27,6 @@ public interface OneIdLoginForm extends Component {
         this.submit().click();
 
         oneIdPrivacyDialog().accept();
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
     }
 }
 
