@@ -49,12 +49,12 @@ url:
       base: https://uat.selfcare.pagopa.it
 
 # Selettori XPath da properties
-selectors:
+selettore:
   login:
     pg:
-      reserved-area-env-selector: '//*[@id=\"root\"]/div/div[2]/div[2]/main/div/div[3]/div[2]/div[8]/div/div/div/div[3]/button'
+      area-riservata-selettore-env: '//*[@id="root"]/div/div[2]/div[2]/main/div/div[3]/div[2]/div[8]/div/div/div/div[3]/button'
   supporto:
-    portal: '//*[@id="root"]//table//tr[4]/td[5]//button'
+    area-riservata-selettore-env: '//*[@id="root"]//table//tr[4]/td[5]//button'
 
 
 # ============================================================================
