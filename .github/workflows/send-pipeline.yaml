@@ -71,14 +71,7 @@ jobs:
       - name: Run Selenium Tests
         run: |
           cd ./qe_suit/send
-          
-          if [[ "${{ env.ENVIRONMENT }}" == "dev" ]]; then
-            SPRING_PROFILE="-Dspring.profiles.active=dev"
-          else
-            SPRING_PROFILE="-Dspring.profiles.active=qa"
-          fi
-          
-          mvn test $SPRING_PROFILE -Dtest=${{ env.JAVA_TEST_SUITE }}
+          mvn test -Dspring.profiles.active=${{ env.ENVIRONMENT }} -Dtest=${{ env.JAVA_TEST_SUITE }}
 
       - name: Upload Test Logs
         if: always()
