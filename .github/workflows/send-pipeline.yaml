@@ -70,7 +70,7 @@ jobs:
 
       - name: Run Selenium Tests
         run: |
-          cd ./qe_suit/interop
+          cd ./qe_suit/send
           
           if [[ "${{ env.ENVIRONMENT }}" == "dev" ]]; then
             SPRING_PROFILE="-Dspring.profiles.active=dev"
@@ -85,12 +85,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-logs
-          path: ./qe_suit/interop/qa-tests.log
+          path: ./qe_suit/send/qa-tests.log
 
       - name: Upload Cucumber Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cucumber-report
-          path: ./qe_suit/interop/target/cucumber-report*
+          path: ./qe_suit/send/target/cucumber-report*
           retention-days: 10
