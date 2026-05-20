@@ -32,4 +32,9 @@ public class CurrentUserContext {
                 && this.currentUser == user
                 && this.currentTenant == tenant;
     }
+
+    public void logout() {
+        this.currentUser = null;
+        this.currentTenant = null;
+    }
 }
