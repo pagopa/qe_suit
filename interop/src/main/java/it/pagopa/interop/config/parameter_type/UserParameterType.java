@@ -3,7 +3,7 @@ package it.pagopa.interop.config.parameter_type;
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.domain.enums.User;
 import it.pagopa.interop.domain.enums.UserRole;
-import it.pagopa.interop.infrastructure.client.auth.context.user.CurrentUserContext;
+import it.pagopa.interop.domain.context.CurrentUserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
