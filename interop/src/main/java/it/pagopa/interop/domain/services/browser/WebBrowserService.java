@@ -7,6 +7,7 @@ public interface WebBrowserService {
     boolean hasSessionToken();
     void setSessionToken(String token);
     void login(User user, Tenant tenant);
+    void logout();
     boolean isLoggedIn(User user, Tenant tenant);
     String getSnackbarErrorMessage();
 }
