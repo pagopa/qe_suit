@@ -6,6 +6,7 @@ import it.pagopa.interop.domain.context.BrowserContext;
 import it.pagopa.interop.domain.enums.Tenant;
 import it.pagopa.interop.domain.enums.User;
 import it.pagopa.interop.domain.services.browser.WebBrowserService;
+import it.pagopa.interop.domain.web.commons.component.Header;
 import it.pagopa.interop.domain.web.commons.component.Snackbar;
 import it.pagopa.interop.domain.web.commons.page.login.LoginPage;
 import lombok.RequiredArgsConstructor;
@@ -48,9 +49,19 @@ public class BrowserService implements WebBrowserService {
     @Override
     public void login(User user, Tenant tenant) {
         if (isLoggedIn(user, tenant)) return;
+        else logout();
+
         loginPage.navigateTo();
         loginPage.login(user, tenant);
         browserContext.set(user, tenant);
+    }
+
+    @Override
+    public void logout() {
+        if (!hasSessionToken()) return;
+        Header header = webPresentationGateway.bind(Header.class);
+        header.logout();
+        browserContext.logout();
     }
 
     @Override
