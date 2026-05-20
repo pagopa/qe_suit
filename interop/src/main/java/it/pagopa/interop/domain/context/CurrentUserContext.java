@@ -1,4 +1,4 @@
-package it.pagopa.interop.infrastructure.client.auth.context.user;
+package it.pagopa.interop.domain.context;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.domain.enums.Tenant;
