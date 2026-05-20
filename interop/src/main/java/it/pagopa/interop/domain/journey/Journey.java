@@ -10,7 +10,7 @@ import it.pagopa.interop.domain.services.purpose.PurposeService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.infrastructure.client.auth.context.user.CurrentUserContext;
+import it.pagopa.interop.domain.context.CurrentUserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
