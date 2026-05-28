@@ -3,7 +3,7 @@ package it.pagopa.interop.web.pages.login;
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.web.commons.component.Button;
+import it.pagopa.interop.web.component.Button;
 
 @Url("https://uat.selfcare.pagopa.it/dashboard")
 public interface DashboardPage extends Page {
