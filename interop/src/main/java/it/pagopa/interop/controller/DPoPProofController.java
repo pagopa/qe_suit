@@ -4,7 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.domain.context.DPoPProofContext;
 import it.pagopa.interop.domain.model.DPoPProof;
-import it.pagopa.interop.services.dpop.DPoPProofService;
+import it.pagopa.interop.service.dpop.DPoPProofService;
 import it.pagopa.interop.utils.JwtBuilderUtils;
 import it.pagopa.interop.utils.KeyPairUtils;
 import lombok.RequiredArgsConstructor;
