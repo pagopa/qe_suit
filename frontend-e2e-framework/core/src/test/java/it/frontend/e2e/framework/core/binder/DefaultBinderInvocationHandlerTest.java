@@ -677,6 +677,6 @@ class DefaultBinderInvocationHandlerTest {
     }
 
     private static CapabilityScope scope(String selector) {
-        return new CapabilityScope(selector, "");
+        return new CapabilityScope(selector, "", false);
     }
 }

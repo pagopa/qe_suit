@@ -29,7 +29,7 @@ public class WebBinderInvocationHandler extends DefaultBinderInvocationHandler {
 
         // Cambio pagina: il return type e una Page, quindi il nuovo contesto deve puntare alla nuova URL.
         if (Page.class.isAssignableFrom(returnType)) {
-            return new WebBinderContext(new CapabilityScope(bindContext.getScope().selector(), resolveUrl(returnType)));
+            return new WebBinderContext(new CapabilityScope(bindContext.getScope().selector(), resolveUrl(returnType), false));
         }
 
         return bindContext;

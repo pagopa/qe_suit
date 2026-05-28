@@ -44,7 +44,7 @@ public class DefaultBinder implements IBinder {
     private BindContext buildBindContext(Class<?> type) {
         String rootXPath = resolveTypeXPath(type);
         String location = resolveTypeLocation(type);
-        CapabilityScope scope = new CapabilityScope(rootXPath, location);
+        CapabilityScope scope = new CapabilityScope(rootXPath, location, false);
 
         return new BindContext(scope);
     }
