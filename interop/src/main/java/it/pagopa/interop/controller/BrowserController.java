@@ -33,6 +33,7 @@ public class BrowserController {
 
         if (!currentUserContext.isLoggedIn(user, tenant) || !webBrowserService.hasSessionToken()) {
             currentUserContext.set(user, tenant);
+            browserContext.set(user, tenant);
 
             String sessionToken = bearerAuthProvider.getToken();
 
@@ -51,7 +52,6 @@ public class BrowserController {
         page.assertLoaded();
 
         browserContext.setCurrentPage(page);
-        browserContext.set(user, tenant);
     }
 
     @Then("viene mostrata la snackbar con un messaggio di errore contenente {string}")
