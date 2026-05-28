@@ -3,7 +3,7 @@ package it.pagopa.interop.web.pages.dev_tools.components;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.web.commons.component.Button;
+import it.pagopa.interop.web.component.Button;
 import org.assertj.core.api.SoftAssertions;
 
 public interface DebugClientAssertionSection extends Component {

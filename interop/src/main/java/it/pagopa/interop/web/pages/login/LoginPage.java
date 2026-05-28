@@ -6,7 +6,7 @@ import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.domain.enums.Tenant;
 import it.pagopa.interop.domain.enums.User;
-import it.pagopa.interop.web.commons.component.Button;
+import it.pagopa.interop.web.component.Button;
 import it.pagopa.interop.web.pages.login.component.LoginForm;
 import it.pagopa.interop.web.pages.login.component.OneTrustBanner;
 import it.pagopa.interop.web.pages.login.component.PrivacyDialog;
