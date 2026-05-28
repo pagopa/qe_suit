@@ -6,7 +6,7 @@ import it.pagopa.interop.domain.context.ClientAssertionContext;
 import it.pagopa.interop.domain.model.Client;
 import it.pagopa.interop.domain.model.ClientAssertion;
 import it.pagopa.interop.domain.model.Purpose;
-import it.pagopa.interop.services.client_assertion.CreateClientAssertionService;
+import it.pagopa.interop.service.client_assertion.CreateClientAssertionService;
 import it.pagopa.interop.utils.JwtBuilderUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
