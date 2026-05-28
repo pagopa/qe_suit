@@ -8,11 +8,16 @@ import it.pagopa.interop.domain.enums.User;
 import it.pagopa.interop.domain.services.browser.WebBrowserService;
 import it.pagopa.interop.domain.web.commons.component.Header;
 import it.pagopa.interop.domain.web.commons.component.Snackbar;
-import it.pagopa.interop.domain.web.commons.page.login.LoginPage;
+import it.pagopa.interop.domain.web.pages.catalog.EServiceCatalogPage;
+import it.pagopa.interop.domain.web.pages.login.DashboardPage;
+import it.pagopa.interop.domain.web.pages.login.LoginPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+
+import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -20,7 +25,10 @@ public class BrowserService implements WebBrowserService {
 
     private final WebPresentationGateway webPresentationGateway;
     private final LoginPage loginPage;
+    private final DashboardPage dashboardPage;
+    private final EServiceCatalogPage eServiceCatalogPage;
     private final BrowserContext browserContext;
+    private final Environment environment;
 
     @Value("${interop.web.base-url}")
     private String baseUrl;
@@ -51,8 +59,14 @@ public class BrowserService implements WebBrowserService {
         if (isLoggedIn(user, tenant)) return;
         else logout();
 
+        String profiloAttivo = Arrays.stream(environment.getActiveProfiles())
+                .findFirst()
+                .orElse("qa");
+
         loginPage.navigateTo();
         loginPage.login(user, tenant);
+        dashboardPage.openInterop(profiloAttivo);
+        eServiceCatalogPage.assertLoaded();
         browserContext.set(user, tenant);
     }
 
