@@ -4,6 +4,7 @@ import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.web.pages.dev_tools.DevToolsPage;
 import it.pagopa.interop.web.pages.dev_tools.debug_client_assertion.DebugClientAssertionPage;
+import it.pagopa.interop.web.pages.eservice_creation.EServiceCreationPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,15 +18,19 @@ public class PageParameterType {
             "DebugClientAssertion|Debug Client Assertion|Debug client assertion";
     private static final String DEV_TOOLS_PAGE_ALIAS =
             "DevTools|Dev Tools|Dev tools|Tool per lo sviluppo";
+    private static final String ESERVICE_CREATION_PAGE_ALIAS =
+            "EServiceCreation|EserviceCreation|Creazione eservice|Creazione EService";
 
-    private static final String PAGE_TYPES = DEBUG_CLIENT_ASSERTION_PAGE_ALIAS + "|" + DEV_TOOLS_PAGE_ALIAS;
+    private static final String PAGE_TYPES = DEBUG_CLIENT_ASSERTION_PAGE_ALIAS + "|" + DEV_TOOLS_PAGE_ALIAS + "|" + ESERVICE_CREATION_PAGE_ALIAS;
 
     private final DebugClientAssertionPage debugClientAssertionPage;
     private final DevToolsPage devToolsPage;
+    private final EServiceCreationPage eServiceCreationPage;
 
     @ParameterType(PAGE_TYPES)
     public Page page(String page) {
         String normalized = normalize(page);
+
 
         if (containsAlias(DEBUG_CLIENT_ASSERTION_PAGE_ALIAS, normalized)) {
             return debugClientAssertionPage;
@@ -33,6 +38,8 @@ public class PageParameterType {
         if (containsAlias(DEV_TOOLS_PAGE_ALIAS, normalized)) {
             return devToolsPage;
         }
+        if (containsAlias(ESERVICE_CREATION_PAGE_ALIAS, normalized))
+            return eServiceCreationPage;
 
         throw new IllegalArgumentException("Unsupported page alias: " + page);
     }
