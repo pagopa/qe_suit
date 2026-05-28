@@ -3,7 +3,7 @@ package it.pagopa.interop.controller;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.domain.enums.Tenant;
 import it.pagopa.interop.domain.enums.User;
-import it.pagopa.interop.domain.journey.Journey;
+import it.pagopa.interop.domain.services.journey.Journey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
