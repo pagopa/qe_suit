@@ -1,8 +1,11 @@
 package it.pagopa.interop.domain.context;
 
 import io.cucumber.spring.ScenarioScope;
+import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.domain.enums.Tenant;
 import it.pagopa.interop.domain.enums.User;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -10,6 +13,9 @@ import org.springframework.stereotype.Component;
 public class BrowserContext {
     private User currentUser;
     private Tenant currentTenant;
+
+    @Getter @Setter
+    private Page currentPage;
 
     public void set(User user, Tenant tenant) {
         this.currentUser = user;
