@@ -6,7 +6,7 @@ import it.pagopa.interop.domain.enums.Tenant;
 import it.pagopa.interop.domain.enums.User;
 import it.pagopa.interop.domain.model.Client;
 import it.pagopa.interop.domain.model.Purpose;
-import it.pagopa.interop.domain.services.client.ClientService;
+import it.pagopa.interop.services.client.ClientService;
 import it.pagopa.interop.domain.context.CurrentUserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

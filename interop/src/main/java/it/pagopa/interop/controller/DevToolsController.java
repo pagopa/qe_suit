@@ -9,7 +9,7 @@ import it.pagopa.interop.domain.model.Client;
 import it.pagopa.interop.domain.model.ClientAssertion;
 import it.pagopa.interop.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.domain.model.DPoPProof;
-import it.pagopa.interop.domain.services.client_assertion.impl.WebDevToolsService;
+import it.pagopa.interop.services.client_assertion.impl.WebDevToolsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 

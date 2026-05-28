@@ -8,7 +8,7 @@ import it.pagopa.interop.domain.context.CurrentUserContext;
 import it.pagopa.interop.domain.enums.Tenant;
 import it.pagopa.interop.domain.enums.User;
 import it.pagopa.interop.domain.enums.UserRole;
-import it.pagopa.interop.domain.services.browser.WebBrowserService;
+import it.pagopa.interop.services.browser.WebBrowserService;
 import it.pagopa.interop.domain.web.pages.catalog.EServiceCatalogPage;
 import it.pagopa.interop.infrastructure.client.auth.bearer.BearerAuthProvider;
 import lombok.RequiredArgsConstructor;
