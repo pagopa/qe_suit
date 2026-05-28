@@ -1,10 +1,12 @@
 package it.pagopa.interop.controller;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.domain.enums.Tenant;
 import it.pagopa.interop.domain.enums.User;
-import it.pagopa.interop.service.journey.Journey;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.service.eservice.EServiceWebService;
+import it.pagopa.interop.service.journey.Journey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,33 +14,39 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EserviceController {
 
     private final Journey journey;
+    private final EServiceWebService eServiceWebService;
 
     @Given("un eservice creato da {tenant} con una richiesta di fruizione associata da {tenant}")
     public void setupEsericeAndAgreement(Tenant producer, Tenant consumer) {
         journey
-            .withProducer(producer, User.getTenantAdmin(producer))
-            .publishEservice()
-            .withConsumer(consumer, User.getTenantAdmin(consumer))
-            .addActiveAgreement();
+                .withProducer(producer, User.getTenantAdmin(producer))
+                .publishEservice()
+                .withConsumer(consumer, User.getTenantAdmin(consumer))
+                .addActiveAgreement();
     }
 
     @Given("un eservice creato da {tenant} con una richiesta di fruizione e una finalità associate da {tenant}")
     public void setupEservice(Tenant producer, Tenant consumer) {
         journey
-            .withProducer(producer, User.getTenantAdmin(producer))
-            .publishEservice()
-            .withConsumer(consumer, User.getTenantAdmin(consumer))
-            .addActiveAgreement()
-            .addPurposeInState(PurposeVersionState.ACTIVE);
+                .withProducer(producer, User.getTenantAdmin(producer))
+                .publishEservice()
+                .withConsumer(consumer, User.getTenantAdmin(consumer))
+                .addActiveAgreement()
+                .addPurposeInState(PurposeVersionState.ACTIVE);
     }
 
     @Given("un eservice creato da {tenant} con una richiesta di fruizione e una finalità in stato {purposeState} provenienti da {tenant}")
     public void setupEservice(Tenant producer, PurposeVersionState purposeState, Tenant consumer) {
         journey
-            .withProducer(producer, User.getTenantAdmin(producer))
-            .publishEservice()
-            .withConsumer(consumer, User.getTenantAdmin(consumer))
-            .addActiveAgreement()
-            .addPurposeInState(purposeState);
+                .withProducer(producer, User.getTenantAdmin(producer))
+                .publishEservice()
+                .withConsumer(consumer, User.getTenantAdmin(consumer))
+                .addActiveAgreement()
+                .addPurposeInState(purposeState);
+    }
+
+    @When("l'utente compila il form di creazione dell'eService con dati validi e invia la richiesta")
+    public void lUtenteCompilaIlFormDiCreazioneDellEServiceConDatiValidiEInviaLaRichiesta() {
+        eServiceWebService.createEservice();
     }
 }
