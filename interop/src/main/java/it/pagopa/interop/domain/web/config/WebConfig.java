@@ -6,7 +6,9 @@ import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
 import it.frontend.e2e.framework.web.adapter.selenium.SeleniumApiAdapter;
 import it.frontend.e2e.framework.web.config.WebSuiteBuilder;
 import it.frontend.e2e.framework.web.model.location.Url;
-import it.pagopa.interop.domain.web.commons.page.login.LoginPage;
+import it.pagopa.interop.domain.web.pages.catalog.EServiceCatalogPage;
+import it.pagopa.interop.domain.web.pages.login.DashboardPage;
+import it.pagopa.interop.domain.web.pages.login.LoginPage;
 import it.pagopa.interop.domain.web.pages.dev_tools.DevToolsPage;
 import it.pagopa.interop.domain.web.pages.dev_tools.debug_client_assertion.DebugClientAssertionPage;
 import lombok.Getter;
@@ -47,6 +49,18 @@ public class WebConfig {
     @ScenarioScope
     public LoginPage loginPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(LoginPage.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public DashboardPage dashboardPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(DashboardPage.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public EServiceCatalogPage eServiceCatalogPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(EServiceCatalogPage.class);
     }
 
     @Bean

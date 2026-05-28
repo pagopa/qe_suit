@@ -1,4 +1,4 @@
-package it.pagopa.interop.domain.web.commons.page.login.component;
+package it.pagopa.interop.domain.web.pages.login.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;
