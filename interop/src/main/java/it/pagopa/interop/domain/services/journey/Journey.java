@@ -1,4 +1,4 @@
-package it.pagopa.interop.domain.journey;
+package it.pagopa.interop.domain.services.journey;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.domain.context.EserviceContext;
