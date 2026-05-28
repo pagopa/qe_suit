@@ -28,8 +28,8 @@ import java.util.function.Supplier;
 @Slf4j
 public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
-    private static final long RETRY_WAIT_TIMEOUT_SECONDS = 3;
-    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 7;
+    private static final long RETRY_WAIT_TIMEOUT_SECONDS = 60;
+    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 10;
     private final WebDriver driver;
 
     public SeleniumApiAdapter(BrowserSettings settings) {
