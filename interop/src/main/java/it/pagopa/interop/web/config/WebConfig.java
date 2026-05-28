@@ -7,6 +7,7 @@ import it.frontend.e2e.framework.web.adapter.selenium.SeleniumApiAdapter;
 import it.frontend.e2e.framework.web.config.WebSuiteBuilder;
 import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.interop.web.pages.catalog.EServiceCatalogPage;
+import it.pagopa.interop.web.pages.eservice_creation.EServiceCreationPage;
 import it.pagopa.interop.web.pages.login.DashboardPage;
 import it.pagopa.interop.web.pages.login.LoginPage;
 import it.pagopa.interop.web.pages.dev_tools.DevToolsPage;
@@ -61,6 +62,12 @@ public class WebConfig {
     @ScenarioScope
     public EServiceCatalogPage eServiceCatalogPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(EServiceCatalogPage.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public EServiceCreationPage eServiceCreationPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(EServiceCreationPage.class);
     }
 
     @Bean
