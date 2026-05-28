@@ -1,12 +1,11 @@
-package it.pagopa.interop.web.commons.component;
+package it.pagopa.interop.web.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.capability.core.Gettable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 
 @XPath("//div[contains(@class, 'MuiAlert-root')]")
-public interface Alert extends Component, Gettable {
+public interface Alert extends Component {
 
     String[] ERROR_CLASSES = {"MuiAlert-standardError", "MuiAlert-outlinedError"};
     String[] SUCCESS_CLASSES = {"MuiAlert-standardSuccess", "MuiAlert-outlinedSuccess"};
