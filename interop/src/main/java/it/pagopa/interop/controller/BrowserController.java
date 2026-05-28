@@ -51,6 +51,7 @@ public class BrowserController {
         page.assertLoaded();
 
         browserContext.setCurrentPage(page);
+        browserContext.set(user, tenant);
     }
 
     @Then("viene mostrata la snackbar con un messaggio di errore contenente {string}")
