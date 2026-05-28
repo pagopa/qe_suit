@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface TestCapability extends Gettable<TestSelector, TestLocation, TestElement> {
     void action();
-    List<?> getList();
+    List<? extends TestElement> getList();
     Optional<?> getOptional();
 }

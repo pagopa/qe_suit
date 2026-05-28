@@ -5,6 +5,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
+import java.util.List;
 import java.util.Optional;
 
 public class TypeUtils {
@@ -38,6 +39,28 @@ public class TypeUtils {
             return null;
         }
         return null;
+    }
+
+    public static boolean isListReturn(Method method) {
+        return List.class.isAssignableFrom(method.getReturnType());
+    }
+
+    public static Class<?> getListGenericType(Method method) {
+        Type genericReturnType = method.getGenericReturnType();
+
+        if (!(genericReturnType instanceof ParameterizedType parameterizedType)) {
+            throw new IllegalStateException("List return type must be parameterized: " + method);
+        }
+
+        Type typeArg = parameterizedType.getActualTypeArguments()[0];
+
+        Class<?> resolved = resolveClass(typeArg);
+
+        if (resolved != null) {
+            return resolved;
+        }
+
+        throw new IllegalStateException("Unsupported List generic type: " + typeArg);
     }
 }
 

@@ -10,7 +10,7 @@ public class BindContext {
     }
 
     public static BindContext root() {
-        return new BindContext(new CapabilityScope("", ""));
+        return new BindContext(new CapabilityScope("", "", false));
     }
 
     public CapabilityScope getScope() {

@@ -18,7 +18,7 @@ public class WebBinderContext extends BindContext {
     }
 
     public static WebBinderContext root(String url) {
-        CapabilityScope scope = new CapabilityScope("", url);
+        CapabilityScope scope = new CapabilityScope("", url, false);
         return new WebBinderContext(scope);
     }
 
