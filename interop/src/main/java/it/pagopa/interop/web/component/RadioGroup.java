@@ -2,13 +2,18 @@ package it.pagopa.interop.web.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;
+import it.frontend.e2e.framework.web.model.WebPresentationElement;
 
 import java.util.List;
 
 @XPath(".//div[contains(@class, 'MuiRadioGroup-root')]")
 public interface RadioGroup extends Component {
+    String ERROR_CLASS = "Mui-error";
 
     List<RadioButton> radioButtons();
+
+    @XPath(".//following::span[contains(@class, 'MuiFormHelperText-root')]")
+    FormHelperText helperText();
 
     default void select(String value) {
         radioButtons().stream()
@@ -31,6 +36,15 @@ public interface RadioGroup extends Component {
                 .map(RadioButton::isDisabled)
                 .reduce(Boolean::logicalAnd)
                 .orElseThrow(() -> new IllegalStateException("No radio buttons found"));
+    }
+
+    default String getErrorMessage() {
+        return helperText().getAll()
+                .orElse(List.of()).stream()
+                .filter(we -> we.getClasses().contains(ERROR_CLASS))
+                .findFirst()
+                .map(WebPresentationElement::getText)
+                .orElse("");
     }
 
 }
