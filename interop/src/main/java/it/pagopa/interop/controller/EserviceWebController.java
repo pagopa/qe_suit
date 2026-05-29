@@ -18,13 +18,10 @@ public class EserviceWebController {
         eServiceWebService.publishEServiceWithDefault();
     }
 
-    @When("l'utente invia la form dello step Dati Generali con:")
-    public void fillGeneralInformationWithoutRequired(EServiceSeed eserviceSeed) {
+    @When("l'utente compila la form Dati Generali con i valori di default ma specificando:")
+    public void fillGeneralInformationWithOverrides(EServiceSeed eserviceSeed) {
         eServiceWebService.fillGeneralInformationAndSave(targetStep -> {
             org.springframework.beans.BeanUtils.copyProperties(eserviceSeed, targetStep.eservice());
-
-            targetStep.eservice().name("");
-            targetStep.eservice().description("");
         });
     }
 
