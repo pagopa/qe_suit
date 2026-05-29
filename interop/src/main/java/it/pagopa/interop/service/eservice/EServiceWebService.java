@@ -1,16 +1,20 @@
 package it.pagopa.interop.service.eservice;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
+import it.frontend.e2e.framework.web.WebPresentationGateway;
+import it.pagopa.interop.domain.context.EserviceContext;
+import it.pagopa.interop.domain.model.Eservice;
+import it.pagopa.interop.service.browser.WebBrowserService;
+import it.pagopa.interop.service.eservice.impl.EserviceDataPreparationService;
+import it.pagopa.interop.utils.web.EServiceUrlUtils;
 import it.pagopa.interop.web.pages.eservice_creation.EServiceCreationPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.function.Consumer;
 
 import static it.pagopa.interop.web.pages.eservice_creation.component.AdditionalInformationStepComponent.AdditionalInformationStepSeed;
+import static it.pagopa.interop.web.pages.eservice_creation.component.GeneralInformationStepComponent.GeneralInformationStepSeed;
 import static it.pagopa.interop.web.pages.eservice_creation.component.TechnicalSpecificationStepComponent.TechnicalSpecificationStepSeed;
 
 @Service
@@ -18,27 +22,80 @@ import static it.pagopa.interop.web.pages.eservice_creation.component.TechnicalS
 public class EServiceWebService {
 
     private final EServiceCreationPage creationPage;
+    private final WebBrowserService webBrowserService;
+    private final WebPresentationGateway webPresentationGateway;
+    private final EserviceContext eserviceContext;
+    private final EserviceDataPreparationService eserviceDataPreparationService;
 
-    public void createEservice() {
+    public record EServiceCreationRequest(
+            GeneralInformationStepSeed generalInformationStepSeed,
+            TechnicalSpecificationStepSeed technicalSpecificationStepSeed,
+            AdditionalInformationStepSeed additionalInformationStepSeed
+    ) {
+        public static EServiceCreationRequest buildDefault() {
+            return new EServiceCreationRequest(
+                    GeneralInformationStepSeed.buildDefault(),
+                    TechnicalSpecificationStepSeed.buildDefault(),
+                    AdditionalInformationStepSeed.buildDefault()
+            );
+        }
+    }
+
+    public Eservice publishEServiceWithDefault() {
         creationPage
-                .fillGeneralInformation(doDefaultRequest())
+                .fillGeneralInformationAndSave(GeneralInformationStepSeed.buildDefault())
                 .skipThresholdAndAttribute()
-                .fillTechnicalSpecification(TechnicalSpecificationStepSeed.buildDefault())
-                .fillAdditionalInformation(AdditionalInformationStepSeed.buildDefault())
+                .fillTechnicalSpecificationAndSave(TechnicalSpecificationStepSeed.buildDefault())
+                .fillAdditionalInformationAndGoToSummary(AdditionalInformationStepSeed.buildDefault())
                 .publish();
+
+        return getEservice();
     }
 
+    public Eservice fillGeneralInformationAndSave(Consumer<GeneralInformationStepSeed> customizer) {
+        GeneralInformationStepSeed seed = GeneralInformationStepSeed.buildDefault();
+        customizer.accept(seed);
 
-    private EServiceSeed doDefaultRequest() {
-        String randomSuffix = UUID.randomUUID().toString().substring(0, 8);
-
-        return new EServiceSeed()
-                .name("Test eService " + randomSuffix)
-                .description("Test eService description")
-                .asyncExchange(false)
-                .personalData(false)
-                .technology(EServiceTechnology.REST)
-                .mode(EServiceMode.DELIVER);
+        creationPage.fillGeneralInformationAndSave(seed);
+        return getEservice();
     }
 
+    public Eservice fillTechnicalSpecificationAndSave(Consumer<TechnicalSpecificationStepSeed> customizer) {
+        TechnicalSpecificationStepSeed seed = TechnicalSpecificationStepSeed.buildDefault();
+        customizer.accept(seed);
+
+        creationPage.fillTechnicalSpecificationAndSave(seed);
+        return getEservice();
+    }
+
+    public Eservice fillAdditionalInformationAndGoToSummary(Consumer<AdditionalInformationStepSeed> customizer) {
+        AdditionalInformationStepSeed seed = AdditionalInformationStepSeed.buildDefault();
+        customizer.accept(seed);
+
+        creationPage.fillAdditionalInformationAndGoToSummary(seed);
+        return getEservice();
+    }
+
+    public String getNameTextFieldError() {
+        return creationPage.generalInformationStep().getNameErrorText();
+    }
+
+    public String getDescriptionTextFieldError() {
+        return creationPage.generalInformationStep().getDescriptionErrorText();
+    }
+
+    private Eservice getEservice() {
+        try {
+            String currentUrl = webPresentationGateway.getLocation().getUrl();
+            EServiceUrlUtils.EServiceData eserviceData = EServiceUrlUtils.extractData(currentUrl);
+
+            return eserviceDataPreparationService.getEservice(eserviceData.eserviceId(), eserviceData.descriptorId());
+        } catch (IllegalStateException e) {
+            try {
+                return eserviceContext.getLast();
+            } catch (Exception contextException) {
+                return null;
+            }
+        }
+    }
 }
