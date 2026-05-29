@@ -44,7 +44,6 @@ public interface EServiceCreationPage extends Page {
 
     default EServiceCreationPage fillGeneralInformationAndSave(GeneralInformationStepSeed seed) {
         generalInformationStep().fillGeneralInformation(seed);
-        DelayUtils.waitForSeconds(WAIT_TIME);
         return this;
     }
 
