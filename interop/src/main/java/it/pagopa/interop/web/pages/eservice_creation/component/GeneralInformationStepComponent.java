@@ -61,7 +61,7 @@ public interface GeneralInformationStepComponent extends Component {
         setAsyncExchange(isAsync);
         setTechnology(seed.eservice.getTechnology());
         if(!isAsync) setMode(seed.eservice.getMode());
-        setProcessingPersonalData(Boolean.TRUE.equals(seed.eservice.getPersonalData()));
+        if(seed.eservice.getPersonalData() != null) setProcessingPersonalData(Boolean.TRUE.equals(seed.eservice.getPersonalData()));
     }
 
     default GeneralInformationStepComponent setName(String eserviceName) {
