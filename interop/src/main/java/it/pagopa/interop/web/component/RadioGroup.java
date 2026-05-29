@@ -10,7 +10,7 @@ public interface RadioGroup extends Component {
 
     List<RadioButton> radioButtons();
 
-    default void select(String value){
+    default void select(String value) {
         radioButtons().stream()
                 .filter(radioButton -> radioButton.getLabel().equals(value))
                 .findFirst()
@@ -18,12 +18,19 @@ public interface RadioGroup extends Component {
                 .select();
     }
 
-    default void selectLike(String value){
+    default void selectLike(String value) {
         radioButtons().stream()
                 .filter(radioButton -> radioButton.getLabel().toLowerCase().contains(value.toLowerCase()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Radio button with value " + value + " not found"))
                 .select();
+    }
+
+    default boolean isDisabled() {
+        return radioButtons().stream()
+                .map(RadioButton::isDisabled)
+                .reduce(Boolean::logicalAnd)
+                .orElseThrow(() -> new IllegalStateException("No radio buttons found"));
     }
 
 }
