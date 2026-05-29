@@ -1,11 +1,9 @@
 package it.pagopa.interop.controller;
 
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
 import it.pagopa.interop.domain.enums.Tenant;
 import it.pagopa.interop.domain.enums.User;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.service.eservice.EServiceWebService;
 import it.pagopa.interop.service.journey.Journey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EserviceController {
 
     private final Journey journey;
-    private final EServiceWebService eServiceWebService;
 
     @Given("un eservice creato da {tenant} con una richiesta di fruizione associata da {tenant}")
     public void setupEsericeAndAgreement(Tenant producer, Tenant consumer) {
@@ -43,10 +40,5 @@ public class EserviceController {
                 .withConsumer(consumer, User.getTenantAdmin(consumer))
                 .addActiveAgreement()
                 .addPurposeInState(purposeState);
-    }
-
-    @When("l'utente compila il form di creazione dell'eService con dati validi e invia la richiesta")
-    public void createEservice() {
-        eServiceWebService.createEservice();
     }
 }
