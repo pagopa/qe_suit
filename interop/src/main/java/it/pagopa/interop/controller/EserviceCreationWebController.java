@@ -65,6 +65,7 @@ public class EserviceCreationWebController {
     public void assertAlert(String type, String message) {
         Alert alert = switch (type) {
             case "keychain" -> eServiceWebService.getAyncKeychainWarningAlert();
+            case "SOAP","soap" -> eServiceWebService.getAsyncSoapWarningAlert();
             default -> throw new IllegalArgumentException("Tipo di alert non riconosciuto: " + type);
         };
 
