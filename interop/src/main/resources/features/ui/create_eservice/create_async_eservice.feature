@@ -7,6 +7,8 @@ Feature:
 
   Scenario: [CREATE_ASYNC_ESERVICE_REQUIRED_FIELDS_VALIDATION]
     Given l'utente admin del Comune di Milano si trova alla pagina Creazione EService del portale Interop
-    When l'utente invia la form dello step Dati Generali senza compilare i campi obbligatori
+    When l'utente compila la form Dati Generali con i valori di default ma specificando:
+      | name     | description | technology | asyncExchange |
+      | $blank() | $blank()    | REST       | true          |
     Then la creazione non prosegue ed il campo Nome dello step Dati Generali è evidenziato come errore mostrando il messaggio "Campo richiesto"
     And la creazione non prosegue ed il campo Descrizione dello step Dati Generali è evidenziato come errore mostrando il messaggio "Campo richiesto"
