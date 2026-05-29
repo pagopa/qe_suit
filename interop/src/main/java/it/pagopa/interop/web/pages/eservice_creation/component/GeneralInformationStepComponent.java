@@ -9,6 +9,8 @@ import it.pagopa.interop.web.component.RadioGroup;
 import it.pagopa.interop.web.component.TextField;
 import org.assertj.core.api.SoftAssertions;
 
+import java.util.UUID;
+
 public interface GeneralInformationStepComponent extends Component {
 
     @XPath(".//*[@id=\"name\"]")
@@ -29,13 +31,28 @@ public interface GeneralInformationStepComponent extends Component {
     @XPath(".//*[@id=\"root\"]/div/main/div/div/div[3]/form/section/div[2]/div[5]/div")
     RadioGroup personalData();
 
-    default void fillGeneralInformation(EServiceSeed eservice) {
-        setName(eservice.getName());
-        setDescription(eservice.getDescription());
-        setAsyncExchange(Boolean.TRUE.equals(eservice.getAsyncExchange()));
-        setTechnology(eservice.getTechnology());
-        setMode(eservice.getMode());
-        setProcessingPersonalData(Boolean.TRUE.equals(eservice.getPersonalData()));
+    record GeneralInformationStepSeed(EServiceSeed eservice) {
+
+        public static GeneralInformationStepSeed buildDefault() {
+            return new GeneralInformationStepSeed(
+                    new EServiceSeed()
+                            .name("Test eService " + UUID.randomUUID().toString().substring(0, 8))
+                            .description("Test eService description")
+                            .asyncExchange(false)
+                            .personalData(false)
+                            .technology(EServiceTechnology.REST)
+                            .mode(EServiceMode.DELIVER)
+            );
+        }
+    }
+
+    default void fillGeneralInformation(GeneralInformationStepSeed seed) {
+        setName(seed.eservice.getName());
+        setDescription(seed.eservice.getDescription());
+        setAsyncExchange(Boolean.TRUE.equals(seed.eservice.getAsyncExchange()));
+        setTechnology(seed.eservice.getTechnology());
+        setMode(seed.eservice.getMode());
+        setProcessingPersonalData(Boolean.TRUE.equals(seed.eservice.getPersonalData()));
     }
 
     default GeneralInformationStepComponent setName(String eserviceName) {
@@ -45,6 +62,18 @@ public interface GeneralInformationStepComponent extends Component {
 
     default String getNameHelperText() {
         return name().getHelperText("name-infoLabel");
+    }
+
+    default String getNameErrorText() {
+        return name().getErrorMessage("name-error");
+    }
+
+    default String getDescriptionHelperText() {
+        return description().getHelperText("description-infoLabel");
+    }
+
+    default String getDescriptionErrorText() {
+        return description().getErrorMessage("description-error");
     }
 
     default GeneralInformationStepComponent setDescription(String eserviceDescription) {
@@ -82,6 +111,9 @@ public interface GeneralInformationStepComponent extends Component {
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(getNameHelperText())
                     .isEqualTo("Min 5 caratteri, max 60 caratteri");
+
+            softly.assertThat(getDescriptionHelperText())
+                    .isEqualTo("Descrivi quali dati il fruitore deve fornire e quali dati l’e-service restituisce. Min 10 caratteri, max 400 caratteri");
         });
     }
 }
