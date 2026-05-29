@@ -3,6 +3,7 @@ package it.pagopa.interop.service.eservice;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.interop.domain.context.EserviceContext;
 import it.pagopa.interop.domain.model.Eservice;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.service.browser.WebBrowserService;
 import it.pagopa.interop.service.eservice.impl.EserviceDataPreparationService;
 import it.pagopa.interop.utils.web.EServiceUrlUtils;
@@ -94,7 +95,7 @@ public class EServiceWebService {
             try {
                 return eserviceContext.getLast();
             } catch (Exception contextException) {
-                return null;
+                return new Eservice(new ProducerEServiceDescriptor());
             }
         }
     }
