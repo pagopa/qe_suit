@@ -7,6 +7,7 @@ import it.frontend.e2e.framework.web.domain.Component;
 @XPath(".//label[.//input[@type='radio']]")
 public interface RadioButton extends Component {
     String MUI_ACTIVE_CLASS = "Mui-checked";
+    String MUI_DISABLED_CLASS = "Mui-disabled";
 
     @XPath(".//span[contains(@class, 'MuiRadio-root')]")
     Button radio();
@@ -17,6 +18,12 @@ public interface RadioButton extends Component {
     default boolean isSelected() {
         return radio().get()
                 .map(element -> element.getClasses().contains(MUI_ACTIVE_CLASS))
+                .orElseThrow(() -> new IllegalStateException("Radio button not found"));
+    }
+
+    default boolean isDisabled() {
+        return radio().get()
+                .map(element -> element.getClasses().contains(MUI_DISABLED_CLASS))
                 .orElseThrow(() -> new IllegalStateException("Radio button not found"));
     }
 
