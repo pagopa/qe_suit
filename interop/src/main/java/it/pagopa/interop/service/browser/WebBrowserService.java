@@ -5,6 +5,7 @@ import it.pagopa.interop.domain.enums.User;
 
 public interface WebBrowserService {
     boolean hasSessionToken();
+    boolean hasError();
     void setSessionToken(String token);
     void login(User user, Tenant tenant);
     void logout();
