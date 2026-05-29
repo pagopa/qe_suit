@@ -4,13 +4,14 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.utils.DelayUtils;
 import it.pagopa.interop.web.component.Button;
 import it.pagopa.interop.web.pages.eservice_creation.component.AdditionalInformationStepComponent;
 import it.pagopa.interop.web.pages.eservice_creation.component.GeneralInformationStepComponent;
 import it.pagopa.interop.web.pages.eservice_creation.component.TechnicalSpecificationStepComponent;
 
+
+import static it.pagopa.interop.web.pages.eservice_creation.component.GeneralInformationStepComponent.GeneralInformationStepSeed;
 import static it.pagopa.interop.web.pages.eservice_creation.component.AdditionalInformationStepComponent.AdditionalInformationStepSeed;
 import static it.pagopa.interop.web.pages.eservice_creation.component.TechnicalSpecificationStepComponent.TechnicalSpecificationStepSeed;
 
@@ -41,14 +42,14 @@ public interface EServiceCreationPage extends Page {
 
     AdditionalInformationStepComponent additionalInformationStep();
 
-    default EServiceCreationPage fillGeneralInformation(EServiceSeed seed) {
+    default EServiceCreationPage fillGeneralInformationAndSave(GeneralInformationStepSeed seed) {
         generalInformationStep().fillGeneralInformation(seed);
         saveDraftButton().click();
         DelayUtils.waitForSeconds(WAIT_TIME);
         return this;
     }
 
-    default EServiceCreationPage fillTechnicalSpecification(TechnicalSpecificationStepSeed seed) {
+    default EServiceCreationPage fillTechnicalSpecificationAndSave(TechnicalSpecificationStepSeed seed) {
         technicalSpecificationStep().assertLoaded();
         technicalSpecificationStep().fillTechnicalSpecification(seed);
         DelayUtils.waitForSeconds(WAIT_TIME);
@@ -56,7 +57,7 @@ public interface EServiceCreationPage extends Page {
         return this;
     }
 
-    default EServiceCreationPage fillAdditionalInformation(AdditionalInformationStepSeed seed) {
+    default EServiceCreationPage fillAdditionalInformationAndGoToSummary(AdditionalInformationStepSeed seed) {
         additionalInformationStep().assertLoaded();
         additionalInformationStep().fillAdditionalInformation(seed);
         DelayUtils.waitForSeconds(WAIT_TIME);
@@ -79,6 +80,12 @@ public interface EServiceCreationPage extends Page {
     default EServiceCreationPage skipAdditionalInformation() {
         additionalInformationStep().assertLoaded();
         summeryButton().click();
+        return this;
+    }
+
+    default EServiceCreationPage skipGeneralInformation() {
+        generalInformationStep().assertLoaded();
+        saveDraftButton().click();
         return this;
     }
 
