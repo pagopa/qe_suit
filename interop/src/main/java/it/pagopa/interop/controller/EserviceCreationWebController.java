@@ -6,6 +6,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.service.eservice.EServiceWebService;
 import it.pagopa.interop.web.component.Alert;
+import it.pagopa.interop.web.pages.eservice_creation.EServiceCreationPage;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.SoftAssertions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class EserviceCreationWebController {
 
     private final EServiceWebService eServiceWebService;
+    private final EServiceCreationPage eServiceCreationPage;
 
     @When("l'utente compila il form di creazione dell'eService con dati validi e invia la richiesta")
     public void createEservice() {
@@ -46,6 +48,15 @@ public class EserviceCreationWebController {
     @When("la creazione non prosegue ed il campo Descrizione dello step Dati Generali è evidenziato come errore mostrando il messaggio {string}")
     public void assertDescriptionTextFieldError(String errorMessage) {
         String actualErrorMessage = eServiceWebService.getDescriptionTextFieldError();
+
+        assertThat(actualErrorMessage)
+                .as("Messaggio di errore visualizzato nel campo Client Assertion")
+                .isEqualTo(errorMessage);
+    }
+
+    @When("la creazione non prosegue ed il radio group 'L’e-service eroga dati personali?' è evidenziato come errore mostrando il messaggio {string}")
+    public void assertPersonalDataRadioGroupError(String errorMessage) {
+        String actualErrorMessage = eServiceCreationPage.generalInformationStep().personalData().getErrorMessage();
 
         assertThat(actualErrorMessage)
                 .as("Messaggio di errore visualizzato nel campo Client Assertion")
