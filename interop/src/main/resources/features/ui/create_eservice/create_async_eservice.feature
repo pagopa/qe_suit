@@ -10,11 +10,12 @@ Feature:
   Scenario: [CREATE_ASYNC_ESERVICE_COMPONENT_VALIDATION_1]
     Given l'utente admin del Comune di Milano si trova alla pagina Creazione EService del portale Interop
     When l'utente compila lo step 'Informazioni generali' con i valori di default ma specificando:
-      | name     | description | technology | asyncExchange |
-      | $blank() | $blank()    | REST       | true          |
+      | name     | description | technology | asyncExchange | personalData |
+      | $blank() | $blank()    | REST       | true          |              |
     And l'utente clicca sul button 'Salva bozza e prosegui'
     Then la creazione non prosegue ed il campo Nome dello step Dati Generali è evidenziato come errore mostrando il messaggio "Campo richiesto"
     And la creazione non prosegue ed il campo Descrizione dello step Dati Generali è evidenziato come errore mostrando il messaggio "Campo richiesto"
+    And la creazione non prosegue ed il radio group 'L’e-service eroga dati personali?' è evidenziato come errore mostrando il messaggio "Campo richiesto"
 
   Scenario Outline: [CREATE_ASYNC_ESERVICE_COMPONENT_VALIDATION_2]
     Given l'utente admin del Comune di Milano si trova alla pagina Creazione EService del portale Interop
