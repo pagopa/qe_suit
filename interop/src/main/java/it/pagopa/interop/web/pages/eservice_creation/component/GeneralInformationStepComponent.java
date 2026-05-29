@@ -47,11 +47,13 @@ public interface GeneralInformationStepComponent extends Component {
     }
 
     default void fillGeneralInformation(GeneralInformationStepSeed seed) {
+        boolean isAsync = Boolean.TRUE.equals(seed.eservice.getAsyncExchange());
+
         setName(seed.eservice.getName());
         setDescription(seed.eservice.getDescription());
-        setAsyncExchange(Boolean.TRUE.equals(seed.eservice.getAsyncExchange()));
+        setAsyncExchange(isAsync);
         setTechnology(seed.eservice.getTechnology());
-        setMode(seed.eservice.getMode());
+        if(!isAsync) setMode(seed.eservice.getMode());
         setProcessingPersonalData(Boolean.TRUE.equals(seed.eservice.getPersonalData()));
     }
 
