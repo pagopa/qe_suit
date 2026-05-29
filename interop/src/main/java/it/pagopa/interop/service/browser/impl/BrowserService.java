@@ -92,4 +92,10 @@ public class BrowserService implements WebBrowserService {
 
         return snackbar.alert().message().read();
     }
+
+    @Override
+    public boolean hasError(){
+        Snackbar snackbar = webPresentationGateway.bind(Snackbar.class);
+        return snackbar.alert().isError();
+    }
 }
