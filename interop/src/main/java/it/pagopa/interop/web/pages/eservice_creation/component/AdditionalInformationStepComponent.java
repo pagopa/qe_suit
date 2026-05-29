@@ -12,50 +12,33 @@ import java.io.IOException;
 
 public interface AdditionalInformationStepComponent extends Component {
 
-    @XPath(".//button[contains(., 'Carica il file')]/..//input[@type='file']")
-    Uploadable apiInterfaceAttachment();
+    @XPath(".//*[@id=\"description\"]")
+    TextField versionDescription();
 
-    @XPath(".//button[contains(., 'Salva documento')]")
-    Button saveAttachmentButton();
-
-    @XPath("//*[@id=\"audience\"]")
-    TextField audience();
-
-    record TechnicalSpecificationStepSeed(String aud, String interfaceAttachmentPath) {
-        public static TechnicalSpecificationStepSeed buildDefault() {
-            try {
-                return new TechnicalSpecificationStepSeed("quality-assurance", new ClassPathResource("assets/origin-interface.yaml").getFilePath().toAbsolutePath().toString());
-            } catch(IOException e){
-                return new TechnicalSpecificationStepSeed("quality-assurance", null);
-            }
+    record AdditionalInformationStepSeed(String versionDescription){
+        public static AdditionalInformationStepSeed buildDefault(){
+            return new AdditionalInformationStepSeed("Test version description");
         }
     }
 
-    default void fillTechnicalSpecification(TechnicalSpecificationStepSeed seed) {
-        setAudience(seed.aud);
-        uploadApiInterface(seed.interfaceAttachmentPath);
+    default void fillAdditionalInformation(AdditionalInformationStepSeed generalInformationStepSeed) {
+        setVersionDescription(generalInformationStepSeed.versionDescription);
     }
 
-    default AdditionalInformationStepComponent uploadApiInterface(String interfacePath) {
-        apiInterfaceAttachment().upload(interfacePath);
-        saveAttachmentButton().click();
+    default AdditionalInformationStepComponent setVersionDescription(String description) {
+        versionDescription().writeAndAssert(description);
         return this;
     }
 
-    default AdditionalInformationStepComponent setAudience(String aud) {
-        audience().writeAndAssert(aud);
-        return this;
-    }
-
-    default String getAudienceHelperText() {
-        return audience().getHelperText("audience-infoLabel");
+    default String getVersionDescriptionHelperText() {
+        return versionDescription().getHelperText("description-infoLabel");
     }
 
     @Override
     default void assertLoaded() {
         SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(getAudienceHelperText())
-                    .isEqualTo("L’audience rappresenta la tua risorsa di destinazione. Per tutte le informazioni, consulta la guida");
+            softly.assertThat(getVersionDescriptionHelperText())
+                    .isEqualTo("Se è una nuova versione, indica cosa è cambiato rispetto alla precedente");
         });
     }
 }
