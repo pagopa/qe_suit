@@ -1,15 +1,19 @@
 package it.pagopa.interop.controller;
 
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.service.eservice.EServiceWebService;
+import it.pagopa.interop.web.component.Alert;
 import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.SoftAssertions;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EserviceWebController {
+public class EserviceCreationWebController {
 
     private final EServiceWebService eServiceWebService;
 
@@ -18,11 +22,16 @@ public class EserviceWebController {
         eServiceWebService.publishEServiceWithDefault();
     }
 
-    @When("l'utente compila la form Dati Generali con i valori di default ma specificando:")
+    @When("l'utente compila lo step 'Informazioni generali' con i valori di default ma specificando:")
     public void fillGeneralInformationWithOverrides(EServiceSeed eserviceSeed) {
         eServiceWebService.fillGeneralInformationAndSave(targetStep -> {
             org.springframework.beans.BeanUtils.copyProperties(eserviceSeed, targetStep.eservice());
         });
+    }
+
+    @When("l'utente clicca sul button 'Salva bozza e prosegui'")
+    public void saveDraft() {
+        eServiceWebService.saveDraft();
     }
 
     @When("la creazione non prosegue ed il campo Nome dello step Dati Generali è evidenziato come errore mostrando il messaggio {string}")
@@ -41,5 +50,32 @@ public class EserviceWebController {
         assertThat(actualErrorMessage)
                 .as("Messaggio di errore visualizzato nel campo Client Assertion")
                 .isEqualTo(errorMessage);
+    }
+
+    @Then("il radio group 'L'e-service eroga o riceve dati?' è disabilitato")
+    public void asserModeRadioGroup() {
+        boolean isDisabled = eServiceWebService.isModeRadioGroupDisabled();
+
+        assertThat(isDisabled)
+                .as("Stato del radio group 'L'e-service eroga o riceve dati?'")
+                .isTrue();
+    }
+
+    @And("viene mostrato l'alert relativo al {string} in stile warning {string}")
+    public void assertAlert(String type, String message) {
+        Alert alert = switch (type) {
+            case "keychain" -> eServiceWebService.getAyncKeychainWarningAlert();
+            default -> throw new IllegalArgumentException("Tipo di alert non riconosciuto: " + type);
+        };
+
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(alert.isWarning())
+                    .as("L'alert è di tipo warning")
+                    .isTrue();
+
+            softly.assertThat(alert.message().read())
+                    .as("Il messaggio dell'alert")
+                    .isEqualTo(message);
+        });
     }
 }
