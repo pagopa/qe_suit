@@ -44,7 +44,6 @@ public interface EServiceCreationPage extends Page {
 
     default EServiceCreationPage fillGeneralInformationAndSave(GeneralInformationStepSeed seed) {
         generalInformationStep().fillGeneralInformation(seed);
-        saveDraftButton().click();
         DelayUtils.waitForSeconds(WAIT_TIME);
         return this;
     }
@@ -53,7 +52,6 @@ public interface EServiceCreationPage extends Page {
         technicalSpecificationStep().assertLoaded();
         technicalSpecificationStep().fillTechnicalSpecification(seed);
         DelayUtils.waitForSeconds(WAIT_TIME);
-        saveDraftButton().click();
         return this;
     }
 
@@ -61,7 +59,6 @@ public interface EServiceCreationPage extends Page {
         additionalInformationStep().assertLoaded();
         additionalInformationStep().fillAdditionalInformation(seed);
         DelayUtils.waitForSeconds(WAIT_TIME);
-        summeryButton().click();
         return this;
     }
 
@@ -85,6 +82,11 @@ public interface EServiceCreationPage extends Page {
 
     default EServiceCreationPage skipGeneralInformation() {
         generalInformationStep().assertLoaded();
+        saveDraftButton().click();
+        return this;
+    }
+
+    default EServiceCreationPage saveDraft(){
         saveDraftButton().click();
         return this;
     }
