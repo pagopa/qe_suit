@@ -5,6 +5,7 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
+import it.pagopa.interop.web.component.Alert;
 import it.pagopa.interop.web.component.RadioGroup;
 import it.pagopa.interop.web.component.TextField;
 import org.assertj.core.api.SoftAssertions;
@@ -19,17 +20,20 @@ public interface GeneralInformationStepComponent extends Component {
     @XPath(".//*[@id=\"description\"]")
     TextField description();
 
-    @XPath(".//*[@id=\"root\"]/div/main/div/div/div[3]/form/section/div[2]/div[2]/div")
+    @XPath(".//div[contains(@class, 'MuiRadioGroup-root') and .//*[text()='Sincrono (standard)'] and .//*[text()='Asincrono / massivo (in differita)']]")
     RadioGroup asyncExchange();
 
-    @XPath(".//*[@id=\"root\"]/div/main/div/div/div[3]/form/section/div[2]/div[3]/div")
+    @XPath(".//div[contains(@class, 'MuiRadioGroup-root') and .//*[text()='REST'] and .//*[text()='SOAP']]")
     RadioGroup technology();
 
-    @XPath(".//*[@id=\"root\"]/div/main/div/div/div[3]/form/section/div[2]/div[4]/div")
+    @XPath(".//div[contains(@class, 'MuiRadioGroup-root') and .//*[text()='Eroga'] and .//*[text()='Riceve']]")
     RadioGroup mode();
 
-    @XPath(".//*[@id=\"root\"]/div/main/div/div/div[3]/form/section/div[2]/div[5]/div")
+    @XPath(".//div[contains(@class, 'MuiRadioGroup-root') and .//*[text()='Eroga dati personali'] and .//*[text()='Non eroga dati personali']]")
     RadioGroup personalData();
+
+    @XPath(".//*[@id=\"root\"]/div/main/div/div/div[3]/form/section/div[2]/div[3]")
+    Alert keychainAlert();
 
     record GeneralInformationStepSeed(EServiceSeed eservice) {
 
