@@ -1,6 +1,7 @@
 package it.pagopa.interop.controller;
 
 import io.cucumber.java.en.When;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.service.eservice.EServiceWebService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,13 @@ public class EserviceWebController {
         eServiceWebService.publishEServiceWithDefault();
     }
 
-    @When("l'utente invia la form dello step Dati Generali senza compilare i campi obbligatori")
-    public void fillGeneralInformationWithoutRequired() {
-        eServiceWebService.fillGeneralInformationAndSave((seed) ->{
-            seed.eservice().name("");
-            seed.eservice().description("");
+    @When("l'utente invia la form dello step Dati Generali con:")
+    public void fillGeneralInformationWithoutRequired(EServiceSeed eserviceSeed) {
+        eServiceWebService.fillGeneralInformationAndSave(targetStep -> {
+            org.springframework.beans.BeanUtils.copyProperties(eserviceSeed, targetStep.eservice());
+
+            targetStep.eservice().name("");
+            targetStep.eservice().description("");
         });
     }
 
