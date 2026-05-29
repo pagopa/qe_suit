@@ -1,7 +1,5 @@
 package it.pagopa.interop.service.eservice;
 
-import static it.pagopa.interop.web.pages.eservice_creation.component.TechnicalSpecificationStepComponent.TechnicalSpecificationStepSeed;
-
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
@@ -11,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+
+import static it.pagopa.interop.web.pages.eservice_creation.component.AdditionalInformationStepComponent.AdditionalInformationStepSeed;
+import static it.pagopa.interop.web.pages.eservice_creation.component.TechnicalSpecificationStepComponent.TechnicalSpecificationStepSeed;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -22,7 +23,9 @@ public class EServiceWebService {
         creationPage
                 .fillGeneralInformation(doDefaultRequest())
                 .skipThresholdAndAttribute()
-                .fillTechnicalSpecification(TechnicalSpecificationStepSeed.buildDefault());
+                .fillTechnicalSpecification(TechnicalSpecificationStepSeed.buildDefault())
+                .fillAdditionalInformation(AdditionalInformationStepSeed.buildDefault())
+                .publish();
     }
 
 
