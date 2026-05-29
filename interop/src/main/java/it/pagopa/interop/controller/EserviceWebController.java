@@ -25,7 +25,7 @@ public class EserviceWebController {
         });
     }
 
-    @When("il campo Nome dello step Dati Generali è evidenziato come errore e viene mostrato il messaggio di validazione {string}")
+    @When("la creazione non prosegue ed il campo Nome dello step Dati Generali è evidenziato come errore mostrando il messaggio {string}")
     public void assertNameTextFieldError(String errorMessage) {
         String actualErrorMessage = eServiceWebService.getNameTextFieldError();
 
@@ -34,7 +34,7 @@ public class EserviceWebController {
                 .isEqualTo(errorMessage);
     }
 
-    @When("il campo Descrizione dello step Dati Generali è evidenziato come errore e viene mostrato il messaggio di validazione {string}")
+    @When("la creazione non prosegue ed il campo Descrizione dello step Dati Generali è evidenziato come errore mostrando il messaggio {string}")
     public void assertDescriptionTextFieldError(String errorMessage) {
         String actualErrorMessage = eServiceWebService.getDescriptionTextFieldError();
 
