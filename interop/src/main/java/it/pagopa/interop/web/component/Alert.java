@@ -9,6 +9,7 @@ public interface Alert extends Component {
 
     String[] ERROR_CLASSES = {"MuiAlert-standardError", "MuiAlert-outlinedError"};
     String[] SUCCESS_CLASSES = {"MuiAlert-standardSuccess", "MuiAlert-outlinedSuccess"};
+    String[] WARNING_CLASSES = {"MuiAlert-standardWarning", "MuiAlert-outlinedWarning"};
 
     @XPath(".//div[contains(@class, 'MuiAlert-message')]/div[1]")
     Readable<String> title();
@@ -25,6 +26,12 @@ public interface Alert extends Component {
     default boolean isSuccess() {
         return get()
                 .map(we -> java.util.Arrays.stream(SUCCESS_CLASSES).anyMatch(cls -> we.getClasses().contains(cls)))
+                .orElse(false);
+    }
+
+    default boolean isWarning() {
+        return get()
+                .map(we -> java.util.Arrays.stream(WARNING_CLASSES).anyMatch(cls -> we.getClasses().contains(cls)))
                 .orElse(false);
     }
 }
