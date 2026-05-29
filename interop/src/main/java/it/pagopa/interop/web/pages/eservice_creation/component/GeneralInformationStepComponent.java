@@ -32,6 +32,9 @@ public interface GeneralInformationStepComponent extends Component {
     @XPath(".//div[contains(@class, 'MuiRadioGroup-root') and .//*[text()='Eroga dati personali'] and .//*[text()='Non eroga dati personali']]")
     RadioGroup personalData();
 
+    @XPath(".//div[contains(@class, 'MuiAlert-root') and contains(., 'SOAP non permette di abilitare il download a blocchi')]")
+    Alert soapAsyncAlert();
+
     @XPath(".//*[@id=\"root\"]/div/main/div/div/div[3]/form/section/div[2]/div[3]")
     Alert keychainAlert();
 
