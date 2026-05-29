@@ -93,6 +93,10 @@ public class EServiceWebService {
         return creationPage.generalInformationStep().keychainAlert();
     }
 
+    public Alert getAsyncSoapWarningAlert(){
+        return creationPage.generalInformationStep().soapAsyncAlert();
+    }
+
     public boolean isModeRadioGroupDisabled() {
         return creationPage.generalInformationStep().mode().isDisabled();
     }
