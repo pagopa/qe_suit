@@ -38,37 +38,43 @@ public interface GeneralInformationStepComponent extends Component {
         setProcessingPersonalData(Boolean.TRUE.equals(eservice.getPersonalData()));
     }
 
-    default void setName(String eserviceName) {
+    default GeneralInformationStepComponent setName(String eserviceName) {
         name().writeAndAssert(eserviceName);
+        return this;
     }
 
     default String getNameHelperText() {
         return name().getHelperText("name-infoLabel");
     }
 
-    default void setDescription(String eserviceDescription) {
+    default GeneralInformationStepComponent setDescription(String eserviceDescription) {
         description().writeAndAssert(eserviceDescription);
+        return this;
     }
 
-    default void setAsyncExchange(boolean isAsync) {
+    default GeneralInformationStepComponent setAsyncExchange(boolean isAsync) {
         if (isAsync) asyncExchange().selectLike("Asincrono");
         else asyncExchange().selectLike("Sincrono");
+        return this;
     }
 
-    default void setTechnology(EServiceTechnology eserviceTechnology) {
+    default GeneralInformationStepComponent setTechnology(EServiceTechnology eserviceTechnology) {
         technology().selectLike(eserviceTechnology.getValue());
+        return this;
     }
 
-    default void setMode(EServiceMode eserviceMode) {
+    default GeneralInformationStepComponent setMode(EServiceMode eserviceMode) {
         switch (eserviceMode) {
             case DELIVER -> mode().selectLike("Eroga");
             case RECEIVE -> mode().selectLike("Riceve");
         }
+        return this;
     }
 
-    default void setProcessingPersonalData(boolean processingPersonalData) {
+    default GeneralInformationStepComponent setProcessingPersonalData(boolean processingPersonalData) {
         if (processingPersonalData) personalData().selectLike("Eroga");
         else personalData().selectLike("Non eroga");
+        return this;
     }
 
     @Override
