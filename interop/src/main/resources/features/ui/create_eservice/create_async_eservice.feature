@@ -16,17 +16,39 @@ Feature:
     Then la creazione non prosegue ed il campo Nome dello step Dati Generali è evidenziato come errore mostrando il messaggio "Campo richiesto"
     And la creazione non prosegue ed il campo Descrizione dello step Dati Generali è evidenziato come errore mostrando il messaggio "Campo richiesto"
 
-  Scenario: [CREATE_ASYNC_ESERVICE_COMPONENT_VALIDATION_2]
+  Scenario Outline: [CREATE_ASYNC_ESERVICE_COMPONENT_VALIDATION_2]
     Given l'utente admin del Comune di Milano si trova alla pagina Creazione EService del portale Interop
     When l'utente compila lo step 'Informazioni generali' con i valori di default ma specificando:
-      | technology | asyncExchange |
-      | REST       | true          |
+      | technology   | asyncExchange |
+      | <technology> | true          |
     Then il radio group 'L'e-service eroga o riceve dati?' è disabilitato
 
-  Scenario: [CREATE_ASYNC_ESERVICE_COMPONENT_VALIDATION_3]
+    Examples:
+      | technology |
+      | REST       |
+      | SOAP       |
+
+  Scenario Outline: [CREATE_ASYNC_ESERVICE_COMPONENT_VALIDATION_3]
     Given l'utente api del Comune di Milano si trova alla pagina Creazione EService del portale Interop
     When l'utente compila lo step 'Informazioni generali' con i valori di default ma specificando:
-      | technology | asyncExchange |
-      | REST       | true          |
+      | technology   | asyncExchange |
+      | <technology> | true          |
     Then il radio group 'L'e-service eroga o riceve dati?' è disabilitato
     And viene mostrato l'alert relativo al "keychain" in stile warning "Per gli scambi asincroni è necessario collegare un portachiavi all’e-service. Solo chi ha il ruolo di amministratore può farlo: chiedi di collegarlo prima o dopo la pubblicazione per abilitare lo scambio dei dati."
+
+    Examples:
+      | technology |
+      | REST       |
+      | SOAP       |
+
+  Scenario Outline: [CREATE_ASYNC_ESERVICE_COMPONENT_VALIDATION_4]
+    Given l'utente <userRole> del Comune di Milano si trova alla pagina Creazione EService del portale Interop
+    When l'utente compila lo step 'Informazioni generali' con i valori di default ma specificando:
+      | technology | asyncExchange |
+      | SOAP       | true          |
+    And viene mostrato l'alert relativo al "SOAP" in stile warning "La tecnologia SOAP non permette di abilitare il download a blocchi durante lo scambio asincrono dei dati."
+
+    Examples:
+      | userRole |
+      | admin    |
+      | api      |
