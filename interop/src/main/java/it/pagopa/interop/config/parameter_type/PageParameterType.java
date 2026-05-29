@@ -19,7 +19,7 @@ public class PageParameterType {
     private static final String DEV_TOOLS_PAGE_ALIAS =
             "DevTools|Dev Tools|Dev tools|Tool per lo sviluppo";
     private static final String ESERVICE_CREATION_PAGE_ALIAS =
-            "EServiceCreation|EserviceCreation|Creazione eservice|Creazione EService";
+            "EServiceCreation|EserviceCreation|Creazione eservice|Creazione EService|Creazione Eservice";
 
     private static final String PAGE_TYPES = DEBUG_CLIENT_ASSERTION_PAGE_ALIAS + "|" + DEV_TOOLS_PAGE_ALIAS + "|" + ESERVICE_CREATION_PAGE_ALIAS;
 

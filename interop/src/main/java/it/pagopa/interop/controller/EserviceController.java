@@ -46,7 +46,7 @@ public class EserviceController {
     }
 
     @When("l'utente compila il form di creazione dell'eService con dati validi e invia la richiesta")
-    public void lUtenteCompilaIlFormDiCreazioneDellEServiceConDatiValidiEInviaLaRichiesta() {
+    public void createEservice() {
         eServiceWebService.createEservice();
     }
 }
