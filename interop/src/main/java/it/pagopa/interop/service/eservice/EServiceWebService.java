@@ -4,9 +4,9 @@ import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.interop.domain.context.EserviceContext;
 import it.pagopa.interop.domain.model.Eservice;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
-import it.pagopa.interop.service.browser.WebBrowserService;
 import it.pagopa.interop.service.eservice.impl.EserviceDataPreparationService;
 import it.pagopa.interop.utils.web.EServiceUrlUtils;
+import it.pagopa.interop.web.component.Alert;
 import it.pagopa.interop.web.pages.eservice_creation.EServiceCreationPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,6 @@ import static it.pagopa.interop.web.pages.eservice_creation.component.TechnicalS
 public class EServiceWebService {
 
     private final EServiceCreationPage creationPage;
-    private final WebBrowserService webBrowserService;
     private final WebPresentationGateway webPresentationGateway;
     private final EserviceContext eserviceContext;
     private final EserviceDataPreparationService eserviceDataPreparationService;
@@ -45,35 +44,40 @@ public class EServiceWebService {
     public Eservice publishEServiceWithDefault() {
         creationPage
                 .fillGeneralInformationAndSave(GeneralInformationStepSeed.buildDefault())
+                .saveDraft()
                 .skipThresholdAndAttribute()
                 .fillTechnicalSpecificationAndSave(TechnicalSpecificationStepSeed.buildDefault())
+                .saveDraft()
                 .fillAdditionalInformationAndGoToSummary(AdditionalInformationStepSeed.buildDefault())
                 .publish();
 
         return getEservice();
     }
 
-    public Eservice fillGeneralInformationAndSave(Consumer<GeneralInformationStepSeed> customizer) {
+    public void fillGeneralInformationAndSave(Consumer<GeneralInformationStepSeed> customizer) {
         GeneralInformationStepSeed seed = GeneralInformationStepSeed.buildDefault();
         customizer.accept(seed);
 
         creationPage.fillGeneralInformationAndSave(seed);
-        return getEservice();
+        getEservice();
     }
 
-    public Eservice fillTechnicalSpecificationAndSave(Consumer<TechnicalSpecificationStepSeed> customizer) {
+    public void fillTechnicalSpecificationAndSave(Consumer<TechnicalSpecificationStepSeed> customizer) {
         TechnicalSpecificationStepSeed seed = TechnicalSpecificationStepSeed.buildDefault();
         customizer.accept(seed);
 
         creationPage.fillTechnicalSpecificationAndSave(seed);
-        return getEservice();
     }
 
-    public Eservice fillAdditionalInformationAndGoToSummary(Consumer<AdditionalInformationStepSeed> customizer) {
+    public void fillAdditionalInformationAndGoToSummary(Consumer<AdditionalInformationStepSeed> customizer) {
         AdditionalInformationStepSeed seed = AdditionalInformationStepSeed.buildDefault();
         customizer.accept(seed);
 
         creationPage.fillAdditionalInformationAndGoToSummary(seed);
+    }
+
+    public Eservice saveDraft() {
+        creationPage.saveDraft();
         return getEservice();
     }
 
@@ -83,6 +87,14 @@ public class EServiceWebService {
 
     public String getDescriptionTextFieldError() {
         return creationPage.generalInformationStep().getDescriptionErrorText();
+    }
+
+    public Alert getAyncKeychainWarningAlert(){
+        return creationPage.generalInformationStep().keychainAlert();
+    }
+
+    public boolean isModeRadioGroupDisabled() {
+        return creationPage.generalInformationStep().mode().isDisabled();
     }
 
     private Eservice getEservice() {
