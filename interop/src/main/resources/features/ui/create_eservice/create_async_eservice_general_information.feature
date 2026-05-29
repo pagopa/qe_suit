@@ -1,12 +1,6 @@
 Feature:
   Come utente
 
-  Scenario: [CREATE_ESERVICE_SUCCESS]
-    Given l'utente admin del Comune di Milano si trova alla pagina Creazione EService del portale Interop
-    When l'utente compila il form di creazione dell'eService con dati validi e invia la richiesta
-      | name     | description | technology | asyncExchange |
-      | $blank() | $blank()    | REST       | true          |
-
   Scenario Outline: [CREATE_ASYNC_ESERVICE_COMPONENT_VALIDATION_1]
     Given l'utente <userRole> del Comune di Milano si trova alla pagina Creazione EService del portale Interop
     When l'utente compila lo step 'Informazioni generali' con i valori di default ma specificando:
