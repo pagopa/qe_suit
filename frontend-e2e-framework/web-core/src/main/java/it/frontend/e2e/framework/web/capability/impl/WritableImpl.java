@@ -25,4 +25,29 @@ public class WritableImpl<T> extends AbstractCapabilityImpl implements Writable<
     public void writeAndAssert(T value, AssertionAction<WebPresentationElement> assertionAction) {
         adapter.sendTextAndAssert(xPathSelector.get(), value != null ? value.toString() : "", assertionAction);
     }
+
+    @Override
+    public void clean() {
+        adapter.clear(xPathSelector.get());
+    }
+
+    @Override
+    public void cleanAndAssert() {
+        adapter.clearAndAssert(xPathSelector.get());
+    }
+
+    @Override
+    public void cleanAndWrite(T value) {
+        adapter.clearAndSendText(xPathSelector.get(), value != null ? value.toString() : "");
+    }
+
+    @Override
+    public void cleanAndWriteAndAssert(T value, AssertionAction<WebPresentationElement> assertionAction) {
+        adapter.clearAndSendTextAndAssert(xPathSelector.get(), value != null ? value.toString() : "", assertionAction);
+    }
+
+    @Override
+    public void cleanAndWriteAndAssert(T value) {
+        adapter.clearAndSendTextAndAssert(xPathSelector.get(), value != null ? value.toString() : "");
+    }
 }
