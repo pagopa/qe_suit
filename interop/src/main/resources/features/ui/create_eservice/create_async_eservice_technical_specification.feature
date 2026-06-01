@@ -6,4 +6,5 @@ Feature:
     And compila lo step 'Informazioni generali' con i valori di default
     And clicca sul button 'Salva bozza e prosegui'
     And si trova allo step Specifiche tecniche
-
+    When cancella i valori da tutti gli input delle specifiche tecniche
+    And clicca sul button 'Salva bozza e prosegui'
