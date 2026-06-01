@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.ui.domain.component.Button;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.AdditionalInfoStep;
+import it.pagopa.interop.ui.domain.page.eservice_creation.step.AdditionalDataStep;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStep;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.ThresholdAndAttributeStep;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecStep;
@@ -31,7 +31,7 @@ public interface EServiceCreationPage extends Page {
 
     TechnicalSpecStep technicalSpecificationStep();
 
-    AdditionalInfoStep additionalInformationStep();
+    AdditionalDataStep additionalInformationStep();
 
     @Override
     default void assertLoaded() {

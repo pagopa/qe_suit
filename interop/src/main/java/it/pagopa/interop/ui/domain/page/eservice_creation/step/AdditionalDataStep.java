@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.interop.ui.domain.component.TextField;
 import org.assertj.core.api.SoftAssertions;
 
-public interface AdditionalInfoStep extends Component {
+public interface AdditionalDataStep extends Component {
 
     @XPath(".//*[@id=\"description\"]")
     TextField versionDescription();
@@ -20,7 +20,7 @@ public interface AdditionalInfoStep extends Component {
         setVersionDescription(generalInformationStepSeed.versionDescription);
     }
 
-    default AdditionalInfoStep setVersionDescription(String description) {
+    default AdditionalDataStep setVersionDescription(String description) {
         versionDescription().writeAndAssert(description);
         return this;
     }
