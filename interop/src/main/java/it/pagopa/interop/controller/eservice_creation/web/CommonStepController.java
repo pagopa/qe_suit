@@ -1,4 +1,4 @@
-package it.pagopa.interop.controller.eservice_creation;
+package it.pagopa.interop.controller.eservice_creation.web;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.web.pages.eservice_creation.EServiceCreationPage;
@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class CreationStepperWebController {
+public class CommonStepController {
 
     private final EServiceCreationPage eServiceCreationPage;
 

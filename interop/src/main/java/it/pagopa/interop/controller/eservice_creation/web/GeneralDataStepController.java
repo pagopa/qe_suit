@@ -1,4 +1,4 @@
-package it.pagopa.interop.controller.eservice_creation;
+package it.pagopa.interop.controller.eservice_creation.web;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class GeneralDataWebController {
+public class GeneralDataStepController {
 
     private final EServiceWebService eServiceWebService;
 
