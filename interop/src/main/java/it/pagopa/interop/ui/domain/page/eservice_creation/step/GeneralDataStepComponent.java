@@ -35,6 +35,31 @@ public interface GeneralDataStepComponent extends Component {
     @XPath(".//*[@id=\"root\"]/div/main/div/div/div[3]/form/section/div[2]/div[3]")
     Alert keychainAlert();
 
+
+    default EServiceTechnology getTechnology() {
+        String val = technology().getSelected();
+        return (val != null && !val.isBlank()) ? EServiceTechnology.fromValue(val) : null;
+    }
+
+    default Boolean getAsyncExchange() {
+        String val = asyncExchange().getSelected();
+        return (val != null && !val.isBlank()) ? val.contains("Asincrono") : null;
+    }
+
+    default EServiceMode getMode() {
+        String val = mode().getSelected();
+        if (val == null || val.isBlank()) return null;
+        if (val.contains("Eroga")) return EServiceMode.DELIVER;
+        if (val.contains("Riceve")) return EServiceMode.RECEIVE;
+        return null;
+    }
+
+    default Boolean getPersonalData() {
+        String val = personalData().getSelected();
+        if (val == null || val.isBlank()) return null;
+        return val.contains("Eroga") && !val.contains("Non eroga");
+    }
+
     default GeneralDataStepComponent setName(String eserviceName) {
         name().writeAndAssert(eserviceName);
         return this;
@@ -59,6 +84,7 @@ public interface GeneralDataStepComponent extends Component {
     }
 
     default GeneralDataStepComponent setMode(EServiceMode eserviceMode) {
+        if (eserviceMode == null) return this;
         switch (eserviceMode) {
             case DELIVER -> mode().selectLike("Eroga");
             case RECEIVE -> mode().selectLike("Riceve");

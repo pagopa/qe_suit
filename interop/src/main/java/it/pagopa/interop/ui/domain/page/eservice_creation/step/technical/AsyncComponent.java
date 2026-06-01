@@ -38,15 +38,6 @@ public interface AsyncComponent extends Component {
 
     InterfaceComponent callbackInterface();
 
-    default void fillAsyncProperties(AsyncExchangeProperties asyncExchangeProperties, String callbackInterfacePath) {
-        responseTime().cleanAndWriteAndAssert(asyncExchangeProperties.getResponseTime().toString());
-        resourceAvailableTime().cleanAndWriteAndAssert(asyncExchangeProperties.getResourceAvailableTime().toString());
-        maxResultSet().cleanAndWriteAndAssert(asyncExchangeProperties.getMaxResultSet().toString());
-        confirmation().setChecked(asyncExchangeProperties.getConfirmation());
-        bulk().setChecked(asyncExchangeProperties.getBulk());
-
-        callbackInterface().uploadApiInterface(callbackInterfacePath);
-    }
 
     default String getResponseTimeInputHelperText(){
         return responseTime().getHelperText("asyncExchangeProperties.responseTime-infoLabel");

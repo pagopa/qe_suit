@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class GeneralDataStepController {
+public class GeneralDataCreationController {
 
     private final GeneralDataService generalDataService;
 

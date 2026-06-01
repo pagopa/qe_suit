@@ -1,15 +1,14 @@
-package it.pagopa.interop.ui.domain.request.eservice_creation;
+package it.pagopa.interop.ui.domain.model.eservice_creation;
 
-import it.pagopa.interop.ui.domain.request.UiRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
 
 import java.util.UUID;
 
-public record GeneralDataStepSeed(EServiceSeed eservice) implements UiRequest {
-    public static GeneralDataStepSeed buildDefault() {
-        return new GeneralDataStepSeed(
+public record GeneralDataSpecModel(EServiceSeed eservice) {
+    public static GeneralDataSpecModel buildDefault() {
+        return new GeneralDataSpecModel(
                 new EServiceSeed()
                         .name("Test eService " + UUID.randomUUID().toString().substring(0, 8))
                         .description("Test eService description")
