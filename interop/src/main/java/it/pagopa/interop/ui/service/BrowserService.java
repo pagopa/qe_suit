@@ -5,7 +5,6 @@ import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.interop.ui.domain.context.BrowserContext;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
-import it.pagopa.interop.service.browser.WebBrowserService;
 import it.pagopa.interop.ui.domain.component.Header;
 import it.pagopa.interop.ui.domain.component.Snackbar;
 import it.pagopa.interop.ui.domain.page.catalog.EServiceCatalogPage;
@@ -21,7 +20,7 @@ import java.util.Arrays;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class BrowserService implements WebBrowserService {
+public class BrowserService {
 
     private final WebPresentationGateway webPresentationGateway;
     private final LoginPage loginPage;
@@ -33,7 +32,6 @@ public class BrowserService implements WebBrowserService {
     @Value("${interop.web.base-url}")
     private String baseUrl;
 
-    @Override
     public boolean hasSessionToken() {
         try {
             return webPresentationGateway.getLocalStorageItem("token").isPresent();
@@ -43,7 +41,6 @@ public class BrowserService implements WebBrowserService {
         }
     }
 
-    @Override
     public void setSessionToken(String token) {
         try {
             webPresentationGateway.setLocalStorageItem("token", token);
@@ -54,7 +51,6 @@ public class BrowserService implements WebBrowserService {
         }
     }
 
-    @Override
     public void login(User user, Tenant tenant) {
         if (isLoggedIn(user, tenant)) return;
         else logout();
@@ -70,7 +66,6 @@ public class BrowserService implements WebBrowserService {
         browserContext.set(user, tenant);
     }
 
-    @Override
     public void logout() {
         if (!hasSessionToken()) return;
         Header header = webPresentationGateway.bind(Header.class);
@@ -78,12 +73,10 @@ public class BrowserService implements WebBrowserService {
         browserContext.logout();
     }
 
-    @Override
     public boolean isLoggedIn(User user, Tenant tenant) {
         return browserContext.isLoggedIn(user, tenant);
     }
 
-    @Override
     public String getSnackbarErrorMessage() {
         Snackbar snackbar = webPresentationGateway.bind(Snackbar.class);
 
@@ -93,7 +86,6 @@ public class BrowserService implements WebBrowserService {
         return snackbar.alert().message().read();
     }
 
-    @Override
     public boolean hasError(){
         Snackbar snackbar = webPresentationGateway.bind(Snackbar.class);
         return snackbar.alert().isError();

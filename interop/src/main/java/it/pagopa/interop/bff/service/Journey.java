@@ -4,9 +4,6 @@ import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.domain.context.EserviceContext;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
-import it.pagopa.interop.service.agreement.AgreementService;
-import it.pagopa.interop.service.eservice.EserviceService;
-import it.pagopa.interop.service.purpose.PurposeService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
@@ -22,9 +19,9 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class Journey {
 
-    private final EserviceService eserviceService;
-    private final AgreementService agreementService;
-    private final PurposeService purposeService;
+    private final EserviceDataPreparationService eserviceService;
+    private final AgreementDataPreparationService agreementService;
+    private final PurposeDataPreparationService purposeService;
 
     private final CurrentUserContext userContext;
     private final EserviceContext eserviceContext;

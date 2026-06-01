@@ -8,9 +8,9 @@ import it.pagopa.interop.common.domain.context.CurrentUserContext;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
 import it.pagopa.interop.common.domain.enums.UserRole;
-import it.pagopa.interop.service.browser.WebBrowserService;
 import it.pagopa.interop.ui.domain.page.catalog.EServiceCatalogPage;
 import it.pagopa.interop.bff.infrastructure.client.auth.bearer.BearerAuthProvider;
+import it.pagopa.interop.ui.service.BrowserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,7 +22,7 @@ public class BrowserController {
     private final BrowserContext browserContext;
     private final CurrentUserContext currentUserContext;
 
-    private final WebBrowserService webBrowserService;
+    private final BrowserService webBrowserService;
     private final EServiceCatalogPage eServiceCatalogPage;
     private final BearerAuthProvider bearerAuthProvider;
 

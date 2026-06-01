@@ -3,7 +3,6 @@ package it.pagopa.interop.bff.service.risk_analysis;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.TenantType;
 import it.pagopa.interop.common.domain.model.RiskAnalysis;
-import it.pagopa.interop.service.risk_analysis.RiskAnalysisService;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
@@ -18,18 +17,16 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class RiskAnalysisDataPreparationService implements RiskAnalysisService {
+public class RiskAnalysisDataPreparationService {
 
     private final PurposesApi purposesApi;
     private final CurrentUserContext currentUserContext;
     private final RiskAnalysisDataInitializer initializer;
 
-    @Override
     public RiskAnalysis createRiskAnalysis() {
         return createRiskAnalysis(true);
     }
 
-    @Override
     public RiskAnalysis createRiskAnalysis(boolean completed) {
         Tenant currentTenant = currentUserContext.getTenant();
         String templateKey = resolveTemplateKey(currentTenant);
