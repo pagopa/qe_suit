@@ -1,22 +1,24 @@
 package it.pagopa.interop.ui.service.eservice_creation;
 
-import it.pagopa.interop.ui.domain.request.eservice_creation.GeneralDataStepSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
-import it.pagopa.interop.ui.service.template.UiService;
 import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStepComponent;
-import lombok.RequiredArgsConstructor;
+import it.pagopa.interop.ui.domain.request.eservice_creation.GeneralDataStepSeed;
+import it.pagopa.interop.ui.service.template.UiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class GeneralDataService implements UiService<GeneralDataStepSeed, GeneralDataStepComponent, ProducerEServiceDetails> {
 
-    private final EServiceCreationPage creationPage;
-    private final GeneralDataStepComponent generalDataStepComponent = creationPage.generalDataStep();
+    private final GeneralDataStepComponent generalDataStepComponent;
+
+    @Autowired
+    public GeneralDataService(EServiceCreationPage creationPage) {
+        this.generalDataStepComponent = creationPage.generalDataStep();
+    }
 
     @Override
     public GeneralDataStepSeed doDefaultRequest() {
@@ -35,7 +37,7 @@ public class GeneralDataService implements UiService<GeneralDataStepSeed, Genera
                 .setPersonalData(seed.eservice().getPersonalData());
 
         // Se l'eservice è async il campo MODE in interfaccia è disabilitato
-        if(hasAsyncExchange && seed.eservice().getMode() != null)
+        if (hasAsyncExchange && seed.eservice().getMode() != null)
             throw new IllegalStateException("Cannot set MODE for an async eService, but got: " + seed.eservice().getMode());
 
         generalDataStepComponent.setMode(seed.eservice().getMode());

@@ -26,27 +26,6 @@ public class EServiceWebService {
     private final EserviceContext eserviceContext;
     private final EserviceDataPreparationService eserviceDataPreparationService;
 
-    public Eservice publishEServiceWithDefault() {
-        creationPage
-                .fillGeneralInformation(GeneralDataStepSeed.buildDefault())
-                .saveDraft()
-                .skipThresholdAndAttribute()
-                .fillTechnicalSpecification(TechnicalSpecificationStepSeed.buildDefault())
-                .saveDraft()
-                .fillAdditionalInformation(AdditionalInformationStepSeed.buildDefault())
-                .publish();
-
-        return getEservice();
-    }
-
-    public void fillGeneralInformation(Consumer<GeneralDataStepSeed> customizer) {
-        GeneralDataStepSeed seed = GeneralDataStepSeed.buildDefault();
-        customizer.accept(seed);
-
-        creationPage.fillGeneralInformation(seed);
-        getEservice();
-    }
-
     public void fillTechnicalSpecification(Consumer<TechnicalSpecificationStepSeed> customizer) {
         TechnicalSpecificationStepSeed seed = TechnicalSpecificationStepSeed.buildDefault();
         customizer.accept(seed);

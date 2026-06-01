@@ -4,26 +4,31 @@ import io.cucumber.java.ParameterType;
 import it.pagopa.interop.ui.domain.component.Alert;
 import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStepComponent;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+
 public class GeneralDataParameterType {
-    private final EServiceCreationPage eServiceCreationPage;
-    private final GeneralDataStepComponent generalInformationStep = eServiceCreationPage.generalDataStep();
+
+    private final GeneralDataStepComponent generalInformationStep;
+
+    @Autowired
+    public GeneralDataParameterType(EServiceCreationPage eServiceCreationPage) {
+        this.generalInformationStep = eServiceCreationPage.generalDataStep(); // 2. Ora puoi usarla in sicurezza!
+    }
 
     @ParameterType("Nome|Descrizione|L’e-service eroga dati personali\\?")
-    public String generalInformationErrorMessage(String fieldName){
+    public String generalInformationErrorMessage(String fieldName) {
         return switch (fieldName) {
             case "Nome" -> generalInformationStep.getNameErrorText();
             case "Descrizione" -> generalInformationStep.getDescriptionErrorText();
             case "L’e-service eroga dati personali?" -> generalInformationStep.personalData().getErrorMessage();
-            default -> throw new IllegalArgumentException("Campo non riconosciuto nello step Dati Generali: " + fieldName);
+            default ->
+                    throw new IllegalArgumentException("Campo non riconosciuto nello step Dati Generali: " + fieldName);
         };
     }
 
     @ParameterType("L'e-service eroga o riceve dati\\?")
-    public Boolean generalInformationRadioGroup(String radioGroupName){
+    public Boolean generalInformationRadioGroup(String radioGroupName) {
         return switch (radioGroupName) {
             case "L'e-service eroga o riceve dati?" -> generalInformationStep.mode().isDisabled();
             default -> throw new IllegalArgumentException("Radio group non riconosciuto: " + radioGroupName);
@@ -31,7 +36,7 @@ public class GeneralDataParameterType {
     }
 
     @ParameterType("keychain|Keychain|soap|Soap|SOAP")
-    public Alert generalInformationAlert(String alertType){
+    public Alert generalInformationAlert(String alertType) {
         return switch (alertType.toLowerCase()) {
             case "keychain" -> generalInformationStep.keychainAlert();
             case "soap" -> generalInformationStep.soapAsyncAlert();
