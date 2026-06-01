@@ -9,7 +9,7 @@ import it.pagopa.interop.ui.domain.component.RadioGroup;
 import it.pagopa.interop.ui.domain.component.TextField;
 import org.assertj.core.api.SoftAssertions;
 
-public interface GeneralDataStepComponent extends Component {
+public interface GeneralDataStep extends Component {
 
     @XPath(".//*[@id=\"name\"]")
     TextField name();
@@ -60,17 +60,17 @@ public interface GeneralDataStepComponent extends Component {
         return val.contains("Eroga") && !val.contains("Non eroga");
     }
 
-    default GeneralDataStepComponent setName(String eserviceName) {
+    default GeneralDataStep setName(String eserviceName) {
         name().writeAndAssert(eserviceName);
         return this;
     }
 
-    default GeneralDataStepComponent setDescription(String eserviceDescription) {
+    default GeneralDataStep setDescription(String eserviceDescription) {
         description().writeAndAssert(eserviceDescription);
         return this;
     }
 
-    default GeneralDataStepComponent setAsyncExchange(Boolean isAsync) {
+    default GeneralDataStep setAsyncExchange(Boolean isAsync) {
         if(isAsync == null) return this;
 
         if (isAsync) asyncExchange().selectLike("Asincrono");
@@ -78,12 +78,12 @@ public interface GeneralDataStepComponent extends Component {
         return this;
     }
 
-    default GeneralDataStepComponent setTechnology(EServiceTechnology eserviceTechnology) {
+    default GeneralDataStep setTechnology(EServiceTechnology eserviceTechnology) {
         technology().selectLike(eserviceTechnology.getValue());
         return this;
     }
 
-    default GeneralDataStepComponent setMode(EServiceMode eserviceMode) {
+    default GeneralDataStep setMode(EServiceMode eserviceMode) {
         if (eserviceMode == null) return this;
         switch (eserviceMode) {
             case DELIVER -> mode().selectLike("Eroga");
@@ -92,7 +92,7 @@ public interface GeneralDataStepComponent extends Component {
         return this;
     }
 
-    default GeneralDataStepComponent setPersonalData(Boolean processingPersonalData) {
+    default GeneralDataStep setPersonalData(Boolean processingPersonalData) {
         if(processingPersonalData == null) return this;
 
         if (processingPersonalData) personalData().selectLike("Eroga");

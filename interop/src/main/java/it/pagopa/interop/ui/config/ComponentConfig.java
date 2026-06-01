@@ -2,9 +2,9 @@ package it.pagopa.interop.ui.config;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStepComponent;
+import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStep;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.ThresholdAndAttributeStep;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecificationStepComponent;
+import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecStep;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -17,7 +17,7 @@ public class ComponentConfig {
 
     @Bean
     @ScenarioScope
-    public GeneralDataStepComponent generalDataStepComponent(EServiceCreationPage creationPage) {
+    public GeneralDataStep generalDataStepComponent(EServiceCreationPage creationPage) {
         return creationPage.generalDataStep();
     }
 
@@ -29,7 +29,7 @@ public class ComponentConfig {
 
     @Bean
     @ScenarioScope
-    public TechnicalSpecificationStepComponent technicalDataStepComponent(EServiceCreationPage creationPage) {
+    public TechnicalSpecStep technicalDataStepComponent(EServiceCreationPage creationPage) {
         return creationPage.technicalSpecificationStep();
     }
 

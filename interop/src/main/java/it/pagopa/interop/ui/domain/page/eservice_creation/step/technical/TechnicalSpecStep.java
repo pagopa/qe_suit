@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.interop.ui.domain.component.InterfaceComponent;
 import org.assertj.core.api.SoftAssertions;
 
-public interface TechnicalSpecificationStepComponent extends Component {
+public interface TechnicalSpecStep extends Component {
 
     @XPath("//section[.//h2[text()='Interfaccia']]")
     InterfaceComponent interfaceComponent();
