@@ -2,7 +2,7 @@ package it.pagopa.interop.ui.service.eservice_creation;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.ui.domain.model.eservice_creation.GeneralDataSpecModel;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStepComponent;
+import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStep;
 import it.pagopa.interop.ui.service.template.UiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class GeneralDataService implements UiService<GeneralDataSpecModel, GeneralDataStepComponent> {
+public class GeneralDataService implements UiService<GeneralDataSpecModel, GeneralDataStep> {
 
-    private final GeneralDataStepComponent generalDataStepComponent;
+    private final GeneralDataStep generalDataStepComponent;
 
     @Override
     public GeneralDataSpecModel doDefaultModel() {
@@ -38,12 +38,12 @@ public class GeneralDataService implements UiService<GeneralDataSpecModel, Gener
     }
 
     @Override
-    public GeneralDataStepComponent getComponent() {
+    public GeneralDataStep getComponent() {
         return generalDataStepComponent;
     }
 
     @Override
-    public GeneralDataSpecModel mapToModel(GeneralDataStepComponent component) {
+    public GeneralDataSpecModel mapToModel(GeneralDataStep component) {
         EServiceSeed seed =
                 new EServiceSeed()
                         .name(component.name().read())

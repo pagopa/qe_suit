@@ -3,13 +3,13 @@ package it.pagopa.interop.ui.config.parameter_type.eservice_creation;
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.ui.domain.component.Alert;
 import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStepComponent;
+import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStep;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class GeneralDataParameterType {
 
-    private final GeneralDataStepComponent generalInformationStep;
+    private final GeneralDataStep generalInformationStep;
 
     @Autowired
     public GeneralDataParameterType(EServiceCreationPage eServiceCreationPage) {

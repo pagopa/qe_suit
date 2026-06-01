@@ -1,18 +1,17 @@
 package it.pagopa.interop.ui.controller.eservice_creation;
 
-import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.ui.domain.model.eservice_creation.TechnicalSpecModel;
 import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecificationStepComponent;
+import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecStep;
 import it.pagopa.interop.ui.service.eservice_creation.TechnicalDataService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TechnicalDataCreationController {
 
-    private final TechnicalSpecificationStepComponent technicalSpecificationStep;
+    private final TechnicalSpecStep technicalSpecificationStep;
     private final TechnicalDataService technicalDataService;
 
     public TechnicalDataCreationController(EServiceCreationPage eServiceCreationPage, TechnicalDataService technicalDataService) {

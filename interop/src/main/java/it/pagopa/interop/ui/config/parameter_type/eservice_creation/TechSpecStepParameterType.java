@@ -1,14 +1,14 @@
 package it.pagopa.interop.ui.config.parameter_type.eservice_creation;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecificationStepComponent;
+import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecStep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TechSpecStepParameterType {
 
-    private final TechnicalSpecificationStepComponent technicalSpecificationStep;
+    private final TechnicalSpecStep technicalSpecificationStep;
 
     @ParameterType("Durata validità|Audience|Tempo massimo di risposta|Numero massimo di risultati per risposta|Durata di disponibilità del dato")
     public String techSpecErrorMessage(String inputName) {
