@@ -1,0 +1,58 @@
+package it.pagopa.interop.controller.eservice_creation;
+
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.service.eservice.EServiceWebService;
+import it.pagopa.interop.web.component.Alert;
+import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.SoftAssertions;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+public class GeneralDataWebController {
+
+    private final EServiceWebService eServiceWebService;
+
+    @When("l'utente compila lo step 'Informazioni generali' con i valori di default ma specificando:")
+    public void fillGeneralInformationWithOverrides(EServiceSeed eserviceSeed) {
+        eServiceWebService.fillGeneralInformation(targetStep ->
+                org.springframework.beans.BeanUtils.copyProperties(eserviceSeed, targetStep.eservice()));
+    }
+
+    @When("l'utente compila lo step 'Informazioni generali' con i valori di default")
+    public void fillGeneralInformation() {
+        eServiceWebService.fillGeneralInformation(targetStep -> {
+        });
+    }
+
+    @When("la creazione non prosegue ed il campo {generalInformationErrorMessage} dello step Dati Generali è evidenziato come errore mostrando il messaggio {string}")
+    public void assertFieldError(String actualErrorMessage, String expectedErrorMessage) {
+        assertThat(actualErrorMessage)
+                .as("Il messaggio di errore deve essere: " + expectedErrorMessage)
+                .isEqualTo(expectedErrorMessage);
+    }
+
+    @Then("il radio group {generalInformationRadioGroup} è disabilitato")
+    public void assertRadioGroupDisabled(Boolean isDisabled) {
+        assertThat(isDisabled)
+                .as("Il radio group deve essere disabilitato")
+                .isTrue();
+    }
+
+    @And("viene mostrato l'alert relativo al {generalInformationAlert} in stile warning {string}")
+    public void assertAlert(Alert alert, String message) {
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(alert.isWarning())
+                    .as("L'alert è di tipo warning")
+                    .isTrue();
+
+            softly.assertThat(alert.message().read())
+                    .as("Il messaggio dell'alert")
+                    .isEqualTo(message);
+        });
+    }
+}

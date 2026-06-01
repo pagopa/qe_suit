@@ -42,19 +42,19 @@ public interface EServiceCreationPage extends Page {
 
     AdditionalInformationStepComponent additionalInformationStep();
 
-    default EServiceCreationPage fillGeneralInformationAndSave(GeneralInformationStepSeed seed) {
+    default EServiceCreationPage fillGeneralInformation(GeneralInformationStepSeed seed) {
         generalInformationStep().fillGeneralInformation(seed);
         return this;
     }
 
-    default EServiceCreationPage fillTechnicalSpecificationAndSave(TechnicalSpecificationStepSeed seed) {
+    default EServiceCreationPage fillTechnicalSpecification(TechnicalSpecificationStepSeed seed) {
         technicalSpecificationStep().assertLoaded();
         technicalSpecificationStep().fillTechnicalSpecification(seed);
         DelayUtils.waitForSeconds(WAIT_TIME);
         return this;
     }
 
-    default EServiceCreationPage fillAdditionalInformationAndGoToSummary(AdditionalInformationStepSeed seed) {
+    default EServiceCreationPage fillAdditionalInformation(AdditionalInformationStepSeed seed) {
         additionalInformationStep().assertLoaded();
         additionalInformationStep().fillAdditionalInformation(seed);
         DelayUtils.waitForSeconds(WAIT_TIME);

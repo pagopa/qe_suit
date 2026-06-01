@@ -9,7 +9,7 @@ Feature:
     And l'utente clicca sul button 'Salva bozza e prosegui'
     Then la creazione non prosegue ed il campo Nome dello step Dati Generali è evidenziato come errore mostrando il messaggio "Campo richiesto"
     And la creazione non prosegue ed il campo Descrizione dello step Dati Generali è evidenziato come errore mostrando il messaggio "Campo richiesto"
-    And la creazione non prosegue ed il radio group 'L’e-service eroga dati personali?' è evidenziato come errore mostrando il messaggio "Campo richiesto"
+    And la creazione non prosegue ed il campo L’e-service eroga dati personali? dello step Dati Generali è evidenziato come errore mostrando il messaggio "Campo richiesto"
 
     Examples:
       | userRole | technology |
@@ -21,7 +21,7 @@ Feature:
     When l'utente compila lo step 'Informazioni generali' con i valori di default ma specificando:
       | technology   | asyncExchange |
       | <technology> | true          |
-    Then il radio group 'L'e-service eroga o riceve dati?' è disabilitato
+    Then il radio group L'e-service eroga o riceve dati? è disabilitato
 
     Examples:
       | userRole | technology |
@@ -33,7 +33,7 @@ Feature:
     When l'utente compila lo step 'Informazioni generali' con i valori di default ma specificando:
       | technology   | asyncExchange |
       | <technology> | true          |
-    And viene mostrato l'alert relativo al "keychain" in stile warning "Per gli scambi asincroni è necessario collegare un portachiavi all’e-service. Solo chi ha il ruolo di amministratore può farlo: chiedi di collegarlo prima o dopo la pubblicazione per abilitare lo scambio dei dati."
+    And viene mostrato l'alert relativo al keychain in stile warning "Per gli scambi asincroni è necessario collegare un portachiavi all’e-service. Solo chi ha il ruolo di amministratore può farlo: chiedi di collegarlo prima o dopo la pubblicazione per abilitare lo scambio dei dati."
 
     Examples:
       | technology |
@@ -45,7 +45,7 @@ Feature:
     When l'utente compila lo step 'Informazioni generali' con i valori di default ma specificando:
       | technology | asyncExchange |
       | SOAP       | true          |
-    And viene mostrato l'alert relativo al "SOAP" in stile warning "La tecnologia SOAP non permette di abilitare il download a blocchi durante lo scambio asincrono dei dati."
+    And viene mostrato l'alert relativo al SOAP in stile warning "La tecnologia SOAP non permette di abilitare il download a blocchi durante lo scambio asincrono dei dati."
 
     Examples:
       | userRole |

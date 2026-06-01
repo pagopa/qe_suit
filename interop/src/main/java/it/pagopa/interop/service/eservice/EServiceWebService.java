@@ -43,42 +43,37 @@ public class EServiceWebService {
 
     public Eservice publishEServiceWithDefault() {
         creationPage
-                .fillGeneralInformationAndSave(GeneralInformationStepSeed.buildDefault())
+                .fillGeneralInformation(GeneralInformationStepSeed.buildDefault())
                 .saveDraft()
                 .skipThresholdAndAttribute()
-                .fillTechnicalSpecificationAndSave(TechnicalSpecificationStepSeed.buildDefault())
+                .fillTechnicalSpecification(TechnicalSpecificationStepSeed.buildDefault())
                 .saveDraft()
-                .fillAdditionalInformationAndGoToSummary(AdditionalInformationStepSeed.buildDefault())
+                .fillAdditionalInformation(AdditionalInformationStepSeed.buildDefault())
                 .publish();
 
         return getEservice();
     }
 
-    public void fillGeneralInformationAndSave(Consumer<GeneralInformationStepSeed> customizer) {
+    public void fillGeneralInformation(Consumer<GeneralInformationStepSeed> customizer) {
         GeneralInformationStepSeed seed = GeneralInformationStepSeed.buildDefault();
         customizer.accept(seed);
 
-        creationPage.fillGeneralInformationAndSave(seed);
+        creationPage.fillGeneralInformation(seed);
         getEservice();
     }
 
-    public void fillTechnicalSpecificationAndSave(Consumer<TechnicalSpecificationStepSeed> customizer) {
+    public void fillTechnicalSpecification(Consumer<TechnicalSpecificationStepSeed> customizer) {
         TechnicalSpecificationStepSeed seed = TechnicalSpecificationStepSeed.buildDefault();
         customizer.accept(seed);
 
-        creationPage.fillTechnicalSpecificationAndSave(seed);
+        creationPage.fillTechnicalSpecification(seed);
     }
 
-    public void fillAdditionalInformationAndGoToSummary(Consumer<AdditionalInformationStepSeed> customizer) {
+    public void fillAdditionalInformation(Consumer<AdditionalInformationStepSeed> customizer) {
         AdditionalInformationStepSeed seed = AdditionalInformationStepSeed.buildDefault();
         customizer.accept(seed);
 
-        creationPage.fillAdditionalInformationAndGoToSummary(seed);
-    }
-
-    public Eservice saveDraft() {
-        creationPage.saveDraft();
-        return getEservice();
+        creationPage.fillAdditionalInformation(seed);
     }
 
     public String getNameTextFieldError() {
