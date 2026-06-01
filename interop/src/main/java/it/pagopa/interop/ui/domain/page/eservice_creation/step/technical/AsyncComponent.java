@@ -44,7 +44,7 @@ public interface AsyncComponent extends Component {
     }
 
     default String getResponseTimeInputErrorText(){
-        return responseTime().getHelperText("asyncExchangeProperties.responseTime-error");
+        return responseTime().getErrorMessage("asyncExchangeProperties.responseTime-error");
     }
 
     default String getResourceAvailableTimeInputHelperText(){
@@ -52,7 +52,7 @@ public interface AsyncComponent extends Component {
     }
 
     default String getResourceAvailableTimeInputErrorText(){
-        return resourceAvailableTime().getHelperText("asyncExchangeProperties.resourceAvailableTime-error");
+        return resourceAvailableTime().getErrorMessage("asyncExchangeProperties.resourceAvailableTime-error");
     }
 
     default String getMaxResultSetInputHelperText(){
@@ -60,7 +60,7 @@ public interface AsyncComponent extends Component {
     }
 
     default String getMaxResultSetInputErrorText(){
-        return maxResultSet().getHelperText("asyncExchangeProperties.maxResultSet-error");
+        return maxResultSet().getErrorMessage("asyncExchangeProperties.maxResultSet-error");
     }
 
     default String getConfirmationInputHelperText(){

@@ -12,8 +12,20 @@ public interface VoucherComponent extends Component {
     @XPath("//*[@id=\"audience\"]")
     TextField audience();
 
+    default String getVoucherLifespanHelperText(){
+        return voucherLifespan().getHelperText("voucherLifespan-infoLabel");
+    }
+
+    default String getVoucherLifespanErrorText() {
+        return voucherLifespan().getErrorMessage("voucherLifespan-error");
+    }
+
     default String getAudienceHelperText() {
         return audience().getHelperText("audience-infoLabel");
+    }
+
+    default String getAudienceErrorText() {
+        return audience().getErrorMessage("audience-error");
     }
 
     @Override
@@ -21,6 +33,9 @@ public interface VoucherComponent extends Component {
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(getAudienceHelperText())
                     .isEqualTo("L’audience rappresenta la tua risorsa di destinazione. Per tutte le informazioni, consulta la guida");
+
+            softly.assertThat(getVoucherLifespanHelperText())
+                    .isEqualTo("Valore massimo: 1440 minuti (24 ore)");
         });
     }
 }

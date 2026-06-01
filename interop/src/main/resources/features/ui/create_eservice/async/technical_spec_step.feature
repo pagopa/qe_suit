@@ -12,3 +12,8 @@ Feature:
     And si trova allo step Specifiche tecniche
     When cancella i valori da tutti gli input delle specifiche tecniche
     And clicca sul button 'Salva bozza e prosegui'
+    Then la creazione non prosegue ed il campo Durata validità dello step Specifiche tecniche è evidenziato come errore mostrando il messaggio "Campo richiesto"
+    And la creazione non prosegue ed il campo Audience dello step Specifiche tecniche è evidenziato come errore mostrando il messaggio "Campo richiesto"
+    And la creazione non prosegue ed il campo Tempo massimo di risposta dello step Specifiche tecniche è evidenziato come errore mostrando il messaggio "Campo richiesto"
+    And la creazione non prosegue ed il campo Numero massimo di risultati per risposta dello step Specifiche tecniche è evidenziato come errore mostrando il messaggio "Campo richiesto"
+    And la creazione non prosegue ed il campo Durata di disponibilità del dato dello step Specifiche tecniche è evidenziato come errore mostrando il messaggio "Campo richiesto"

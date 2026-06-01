@@ -1,10 +1,14 @@
 package it.pagopa.interop.ui.controller.eservice_creation;
 
+import io.cucumber.java.ParameterType;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.ui.domain.model.eservice_creation.TechnicalSpecModel;
 import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecificationStepComponent;
 import it.pagopa.interop.ui.service.eservice_creation.TechnicalDataService;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TechnicalDataCreationController {
 
@@ -16,8 +20,30 @@ public class TechnicalDataCreationController {
         this.technicalDataService = technicalDataService;
     }
 
+    @ParameterType("Durata validità|Audience|Tempo massimo di risposta|Numero massimo di risultati per risposta|Durata di disponibilità del dato")
+    public String techSpecErrorMessage(String inputName) {
+        return switch (inputName.toLowerCase()) {
+            case "audience" -> technicalSpecificationStep.voucherComponent().getAudienceErrorText();
+            case "durata validità" -> technicalSpecificationStep.voucherComponent().getVoucherLifespanErrorText();
+            case "tempo massimo di risposta" ->
+                    technicalSpecificationStep.asyncComponent().getResponseTimeInputErrorText();
+            case "numero massimo di risultati per risposta" ->
+                    technicalSpecificationStep.asyncComponent().getMaxResultSetInputErrorText();
+            case "durata di disponibilità del dato" ->
+                    technicalSpecificationStep.asyncComponent().getResourceAvailableTimeInputErrorText();
+            default -> throw new IllegalArgumentException("Input name not recognized: " + inputName);
+        };
+    }
+
     @When("cancella i valori da tutti gli input delle specifiche tecniche")
     public void cleanInput() {
         technicalDataService.fill(TechnicalSpecModel.buildEmpty());
+    }
+
+    @Then("la creazione non prosegue ed il campo {techSpecErrorMessage} dello step Specifiche tecniche è evidenziato come errore mostrando il messaggio {string}")
+    public void assertFieldError(String actualErrorMessage, String expectedErrorMessage) {
+        assertThat(actualErrorMessage)
+                .as("Il messaggio di errore deve essere: " + expectedErrorMessage)
+                .isEqualTo(expectedErrorMessage);
     }
 }
