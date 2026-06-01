@@ -46,4 +46,11 @@ public class TechnicalDataCreationController {
                 .as("Il messaggio di errore deve essere: " + expectedErrorMessage)
                 .isEqualTo(expectedErrorMessage);
     }
+
+    @Then("la checkbox {techSpecCheckbox} è disabilitata")
+    public void checkboxIsDisabled(Boolean isDisabled) {
+        assertThat(isDisabled)
+                .as("La checkbox deve essere disabilitata")
+                .isTrue();
+    }
 }
