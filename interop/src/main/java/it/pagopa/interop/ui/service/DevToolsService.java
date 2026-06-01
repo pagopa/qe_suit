@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class WebDevToolsService {
+public class DevToolsService {
 
     @Value("${interop.auth.client-assertion.grant_type}")
     private String clientAssertionGrantType;
