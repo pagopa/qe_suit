@@ -28,13 +28,6 @@ public class GeneralDataCreationController {
         generalDataService.fill();
     }
 
-    @When("la creazione non prosegue ed il campo {generalInformationErrorMessage} dello step Dati Generali è evidenziato come errore mostrando il messaggio {string}")
-    public void assertFieldError(String actualErrorMessage, String expectedErrorMessage) {
-        assertThat(actualErrorMessage)
-                .as("Il messaggio di errore deve essere: " + expectedErrorMessage)
-                .isEqualTo(expectedErrorMessage);
-    }
-
     @Then("il radio group {generalInformationRadioGroup} è disabilitato")
     public void assertRadioGroupDisabled(Boolean isDisabled) {
         assertThat(isDisabled)
