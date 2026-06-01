@@ -12,6 +12,7 @@ import java.util.List;
 public interface Checkbox extends Component, Clickable {
     String ERROR_CLASS = "Mui-error";
     String CHECKED_CLASS = "Mui-checked";
+    String DISABLED_CLASS = "Mui-disabled";
 
     @XPath(".//following::span[contains(@class, 'MuiFormControlLabel-label')]")
     Readable<String> description();
@@ -56,6 +57,14 @@ public interface Checkbox extends Component, Clickable {
     default boolean isChecked() {
         return this.get()
                 .map(we -> we.getClasses().contains(CHECKED_CLASS))
+                .orElseThrow(() -> new java.util.NoSuchElementException(
+                        "Impossibile verificare lo stato checked: l'elemento UI non è presente nella pagina."
+                ));
+    }
+
+    default boolean isDisabled() {
+        return this.get()
+                .map(we -> we.getClasses().contains(DISABLED_CLASS))
                 .orElseThrow(() -> new java.util.NoSuchElementException(
                         "Impossibile verificare lo stato checked: l'elemento UI non è presente nella pagina."
                 ));
