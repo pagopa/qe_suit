@@ -55,7 +55,6 @@ public class TechnicalDataService implements UiService<TechnicalSpecModel, Techn
         var voucherComp = component.voucherComponent();
         var asyncComp = component.asyncComponent();
 
-        // Leggiamo i dati reali dallo schermo
         String aud = voucherComp != null ? voucherComp.audience().read() : null;
         String lifespan = voucherComp != null ? voucherComp.voucherLifespan().read() : null;
 
@@ -68,8 +67,7 @@ public class TechnicalDataService implements UiService<TechnicalSpecModel, Techn
                     .bulk(asyncComp.bulk().isChecked())
                     .confirmation(asyncComp.confirmation().isChecked());
         }
-
-        // I path reali non esistono sulla UI, quindi in lettura pura nascono null
+        
         return new TechnicalSpecModel(aud, lifespan, null, asyncProps, null);
     }
 }
