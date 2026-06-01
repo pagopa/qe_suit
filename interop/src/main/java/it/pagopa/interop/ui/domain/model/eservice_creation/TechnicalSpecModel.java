@@ -33,6 +33,10 @@ public record TechnicalSpecModel(
         }
     }
 
+    public static TechnicalSpecModel buildEmpty() {
+        return new TechnicalSpecModel(null, null, null, new AsyncExchangeProperties(), null);
+    }
+
     public String getInterfaceFileName() {
         return interfaceAttachmentPath != null ? Paths.get(interfaceAttachmentPath).getFileName().toString() : null;
     }

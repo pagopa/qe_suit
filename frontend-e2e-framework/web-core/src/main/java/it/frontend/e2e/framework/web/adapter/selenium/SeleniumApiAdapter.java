@@ -8,13 +8,7 @@ import it.frontend.e2e.framework.web.config.WebSuiteContext;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementClickInterceptedException;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -135,7 +129,35 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     public void clear(XPathSelector selector) {
         withRetry(() -> {
             WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
-            element.clear();
+
+            // 1. Gestione Cross-Platform: Rileva se gira su Mac (COMMAND) o Windows/Linux (CONTROL)
+            boolean isMac = System.getProperty("os.name").toLowerCase().contains("mac");
+            org.openqa.selenium.Keys modifier = isMac ? org.openqa.selenium.Keys.COMMAND : org.openqa.selenium.Keys.CONTROL;
+
+            // 2. STRATEGIA A: Tenta il "Seleziona tutto e Cancella" nativo
+            new org.openqa.selenium.interactions.Actions(driver)
+                    .click(element)
+                    .keyDown(modifier)
+                    .sendKeys("a")
+                    .keyUp(modifier)
+                    .sendKeys(org.openqa.selenium.Keys.BACK_SPACE)
+                    .perform();
+
+            // 3. STRATEGIA B (Fallback di robustezza): Se il Ctrl+A/Cmd+A è stato ignorato dal browser
+            // (tipico di Material-UI e dei campi type="number"), eliminiamo il valore a ritroso.
+            String currentValue = element.getAttribute("value");
+            if (currentValue != null && !currentValue.isEmpty()) {
+                // Mandiamo il cursore alla fine del testo per sicurezza
+                element.sendKeys(org.openqa.selenium.Keys.END);
+
+                // Premiamo BACK_SPACE tante volte quanti sono i caratteri rimasti.
+                // Questo costringe lo Stato di React ad accorgersi dell'evento di input!
+                int length = currentValue.length();
+                for (int i = 0; i < length; i++) {
+                    element.sendKeys(org.openqa.selenium.Keys.BACK_SPACE);
+                }
+            }
+
             return element;
         });
     }
@@ -388,25 +410,25 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     }
 
     private <T> T withRetry(Supplier<T> action) {
-            long end = System.currentTimeMillis() + (RETRY_WAIT_TIMEOUT_SECONDS * 1000);
-            Throwable lastException = null;
-            log.info("Starting action with retry mechanism. Will retry for up to {} seconds if exception occurs.", RETRY_WAIT_TIMEOUT_SECONDS);
-            while (System.currentTimeMillis() < end) {
-                log.info("Attempting action. Time remaining for retries: {} seconds", (end - System.currentTimeMillis()) / 1000);
+        long end = System.currentTimeMillis() + (RETRY_WAIT_TIMEOUT_SECONDS * 1000);
+        Throwable lastException = null;
+        log.info("Starting action with retry mechanism. Will retry for up to {} seconds if exception occurs.", RETRY_WAIT_TIMEOUT_SECONDS);
+        while (System.currentTimeMillis() < end) {
+            log.info("Attempting action. Time remaining for retries: {} seconds", (end - System.currentTimeMillis()) / 1000);
 
+            try {
+                return action.get();
+            } catch (StaleElementReferenceException | ElementClickInterceptedException | TimeoutException e) {
+                lastException = e;
                 try {
-                    return action.get();
-                } catch (StaleElementReferenceException | ElementClickInterceptedException | TimeoutException e) {
-                    lastException = e;
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                        throw new RuntimeException("Interrupted during retry", ie);
-                    }
+                    Thread.sleep(500);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Interrupted during retry", ie);
                 }
             }
-            log.info("Action failed after retries. No more attempts will be made.");
-            throw new RuntimeException("Action failed after retries", lastException);
+        }
+        log.info("Action failed after retries. No more attempts will be made.");
+        throw new RuntimeException("Action failed after retries", lastException);
     }
 }

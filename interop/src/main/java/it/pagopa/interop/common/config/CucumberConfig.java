@@ -1,25 +1,39 @@
 package it.pagopa.interop.common.config;
 
-import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.DefaultDataTableEntryTransformer;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class CucumberConfig {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    // Il ThreadLocal custodisce le chiavi esplicite del test corrente
+    private static final ThreadLocal<Set<String>> CURRENT_GHERKIN_KEYS = new ThreadLocal<>();
+
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
 
     @DefaultDataTableEntryTransformer
     public Object transform(Map<String, String> entry, Type toValueType) {
-        // 1. Creiamo una copia mutabile della mappa (Cucumber potrebbe passarla come immutabile)
         Map<String, String> modifiableEntry = new HashMap<>(entry);
 
-        //TODO: da sostituire con l'integrazione di uno strategy
-        // 2. Se il valore è esattamente "$blank()", lo trasformiamo in una vera stringa vuota ""
+        // Salviamo le chiavi VALIDE scritte nell'hinterland del file .feature
+        CURRENT_GHERKIN_KEYS.set(entry.keySet());
+
         modifiableEntry.replaceAll((key, value) -> "$blank()".equals(value) ? "" : value);
 
-        // 3. Jackson fa lo zapping finale sull'oggetto
         return objectMapper.convertValue(modifiableEntry, objectMapper.constructType(toValueType));
+    }
+
+    public static Set<String> getCurrentGherkinKeys() {
+        return CURRENT_GHERKIN_KEYS.get();
+    }
+
+    public static void clearGherkinKeys() {
+        CURRENT_GHERKIN_KEYS.remove();
     }
 }

@@ -2,21 +2,17 @@ package it.pagopa.interop.ui.service.eservice_creation;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.ui.domain.model.eservice_creation.GeneralDataSpecModel;
-import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStepComponent;
 import it.pagopa.interop.ui.service.template.UiService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class GeneralDataService implements UiService<GeneralDataSpecModel, GeneralDataStepComponent> {
 
     private final GeneralDataStepComponent generalDataStepComponent;
-
-    @Autowired
-    public GeneralDataService(EServiceCreationPage creationPage) {
-        this.generalDataStepComponent = creationPage.generalDataStep();
-    }
 
     @Override
     public GeneralDataSpecModel doDefaultModel() {
@@ -25,7 +21,7 @@ public class GeneralDataService implements UiService<GeneralDataSpecModel, Gener
 
     @Override
     public void doFill(GeneralDataSpecModel model) {
-        boolean hasAsyncExchange = model.eservice().getAsyncExchange() != null;
+        boolean hasAsyncExchange = Boolean.TRUE.equals(model.eservice().getAsyncExchange());
 
         generalDataStepComponent
                 .setName(model.eservice().getName())

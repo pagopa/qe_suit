@@ -4,6 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.ui.domain.model.eservice_creation.GeneralDataSpecModel;
 import it.pagopa.interop.ui.service.eservice_creation.GeneralDataService;
 import it.pagopa.interop.ui.domain.component.Alert;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,7 @@ public class GeneralDataCreationController {
 
     @When("compila lo step 'Informazioni generali' con i valori di default ma specificando:")
     public void fillGeneralInformationWithOverrides(EServiceSeed eserviceSeed) {
-        generalDataService.fill(targetStep ->
-                org.springframework.beans.BeanUtils.copyProperties(eserviceSeed, targetStep.eservice()));
+        generalDataService.fillWithOverrides(new GeneralDataSpecModel(eserviceSeed));
     }
 
     @When("compila lo step 'Informazioni generali' con i valori di default")

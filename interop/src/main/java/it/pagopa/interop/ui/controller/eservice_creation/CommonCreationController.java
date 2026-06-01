@@ -19,6 +19,6 @@ public class CommonCreationController {
 
     @When("clicca sul button 'Salva bozza e prosegui'")
     public void saveDraft() {
-        eServiceCreationPage.saveDraftButton().click();;
+        eServiceCreationPage.saveDraftButton().click();
     }
 }

@@ -36,4 +36,20 @@ public interface TextField extends Component, Writable<String>, Readable<String>
                 .map(WebPresentationElement::getText)
                 .orElse("");
     }
+
+    default void fill(String value) {
+        if (value == null || value.isEmpty()) {
+            cleanAndAssert();
+        } else {
+            cleanAndWriteAndAssert(value);
+        }
+    }
+
+    default void fill(Object value) {
+        if (value != null) {
+            cleanAndWriteAndAssert(value.toString());
+        }  else {
+            cleanAndAssert();
+        }
+    }
 }
