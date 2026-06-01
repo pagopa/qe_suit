@@ -1,20 +1,17 @@
 package it.pagopa.interop.ui.controller;
 
-import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.ui.domain.context.BrowserContext;
+import it.pagopa.interop.bff.infrastructure.client.auth.bearer.BearerAuthProvider;
 import it.pagopa.interop.common.domain.context.CurrentUserContext;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
 import it.pagopa.interop.common.domain.enums.UserRole;
+import it.pagopa.interop.ui.domain.context.BrowserContext;
 import it.pagopa.interop.ui.domain.page.catalog.EServiceCatalogPage;
-import it.pagopa.interop.bff.infrastructure.client.auth.bearer.BearerAuthProvider;
 import it.pagopa.interop.ui.service.BrowserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BrowserController {
@@ -54,14 +51,5 @@ public class BrowserController {
         page.assertLoaded();
 
         browserContext.setCurrentPage(page);
-    }
-
-    @Then("viene mostrata la snackbar con un messaggio di errore contenente {string}")
-    public void assertSnackbar(String errorMessage) {
-        String actualErrorMessage = webBrowserService.getSnackbarErrorMessage();
-
-        assertThat(actualErrorMessage)
-                .as("Messaggio di errore visualizzato nella snackbar")
-                .contains(errorMessage);
     }
 }
