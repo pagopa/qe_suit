@@ -6,7 +6,6 @@ import it.pagopa.interop.domain.model.Eservice;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import it.pagopa.interop.service.eservice.impl.EserviceDataPreparationService;
 import it.pagopa.interop.utils.web.EServiceUrlUtils;
-import it.pagopa.interop.web.component.Alert;
 import it.pagopa.interop.web.pages.eservice_creation.EServiceCreationPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
