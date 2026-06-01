@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class CommonStepController {
+public class CommonCreationController {
 
     private final EServiceCreationPage eServiceCreationPage;
 
@@ -19,6 +19,6 @@ public class CommonStepController {
 
     @When("clicca sul button 'Salva bozza e prosegui'")
     public void saveDraft() {
-        eServiceCreationPage.saveDraft();
+        eServiceCreationPage.saveDraftButton().click();;
     }
 }

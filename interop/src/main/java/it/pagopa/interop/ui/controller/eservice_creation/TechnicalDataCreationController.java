@@ -4,11 +4,11 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecificationStepComponent;
 
-public class TechnicalDataStepController {
+public class TechnicalDataCreationController {
 
     private final TechnicalSpecificationStepComponent technicalSpecificationStep;
 
-    public TechnicalDataStepController(EServiceCreationPage eServiceCreationPage) {
+    public TechnicalDataCreationController(EServiceCreationPage eServiceCreationPage) {
         technicalSpecificationStep = eServiceCreationPage.technicalSpecificationStep();
     }
 

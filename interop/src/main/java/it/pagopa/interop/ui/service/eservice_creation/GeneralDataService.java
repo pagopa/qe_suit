@@ -1,17 +1,15 @@
 package it.pagopa.interop.ui.service.eservice_creation;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
+import it.pagopa.interop.ui.domain.model.eservice_creation.GeneralDataSpecModel;
 import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStepComponent;
-import it.pagopa.interop.ui.domain.request.eservice_creation.GeneralDataStepSeed;
 import it.pagopa.interop.ui.service.template.UiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GeneralDataService implements UiService<GeneralDataStepSeed, GeneralDataStepComponent, ProducerEServiceDetails> {
+public class GeneralDataService implements UiService<GeneralDataSpecModel, GeneralDataStepComponent> {
 
     private final GeneralDataStepComponent generalDataStepComponent;
 
@@ -21,26 +19,26 @@ public class GeneralDataService implements UiService<GeneralDataStepSeed, Genera
     }
 
     @Override
-    public GeneralDataStepSeed doDefaultRequest() {
-        return GeneralDataStepSeed.buildDefault();
+    public GeneralDataSpecModel doDefaultModel() {
+        return GeneralDataSpecModel.buildDefault();
     }
 
     @Override
-    public void doFill(GeneralDataStepSeed seed) {
-        boolean hasAsyncExchange = seed.eservice().getAsyncExchange() != null;
+    public void doFill(GeneralDataSpecModel model) {
+        boolean hasAsyncExchange = model.eservice().getAsyncExchange() != null;
 
         generalDataStepComponent
-                .setName(seed.eservice().getName())
-                .setDescription(seed.eservice().getDescription())
-                .setAsyncExchange(seed.eservice().getAsyncExchange())
-                .setTechnology(seed.eservice().getTechnology())
-                .setPersonalData(seed.eservice().getPersonalData());
+                .setName(model.eservice().getName())
+                .setDescription(model.eservice().getDescription())
+                .setAsyncExchange(model.eservice().getAsyncExchange())
+                .setTechnology(model.eservice().getTechnology())
+                .setPersonalData(model.eservice().getPersonalData());
 
         // Se l'eservice è async il campo MODE in interfaccia è disabilitato
-        if (hasAsyncExchange && seed.eservice().getMode() != null)
-            throw new IllegalStateException("Cannot set MODE for an async eService, but got: " + seed.eservice().getMode());
+        if (hasAsyncExchange && model.eservice().getMode() != null)
+            throw new IllegalStateException("Cannot set MODE for an async eService, but got: " + model.eservice().getMode());
 
-        generalDataStepComponent.setMode(seed.eservice().getMode());
+        generalDataStepComponent.setMode(model.eservice().getMode());
     }
 
     @Override
@@ -49,48 +47,17 @@ public class GeneralDataService implements UiService<GeneralDataStepSeed, Genera
     }
 
     @Override
-    public ProducerEServiceDetails mapToModel(GeneralDataStepComponent generalDataForm) {
-        ProducerEServiceDetails details = new ProducerEServiceDetails();
+    public GeneralDataSpecModel mapToModel(GeneralDataStepComponent component) {
+        EServiceSeed seed =
+                new EServiceSeed()
+                        .name(component.name().read())
+                        .description(component.description().read())
+                        .technology(component.getTechnology())
+                        .asyncExchange(component.getAsyncExchange())
+                        .mode(component.getMode())
+                        .personalData(component.getPersonalData());
 
-        // 1. Campi di testo semplici
-        details.setName(generalDataForm.name().read());
-        details.setDescription(generalDataForm.description().read());
-
-        // 2. Mapping della Technology (REST / SOAP)
-        String selectedTech = generalDataForm.technology().getSelected();
-        if (selectedTech != null) {
-            details.setTechnology(EServiceTechnology.fromValue(selectedTech));
-        }
-
-        // 3. Mapping del Mode (Eroga -> DELIVER, Riceve -> RECEIVE)
-        String selectedMode = generalDataForm.mode().getSelected();
-        if (selectedMode != null) {
-            if (selectedMode.contains("Eroga")) {
-                details.setMode(EServiceMode.DELIVER);
-            } else if (selectedMode.contains("Riceve")) {
-                details.setMode(EServiceMode.RECEIVE);
-            }
-        }
-
-        // 4. Mapping dell'AsyncExchange (Asincrono -> true, Sincrono -> false)
-        String selectedAsync = generalDataForm.asyncExchange().getSelected();
-        if (selectedAsync != null) {
-            details.setAsyncExchange(selectedAsync.contains("Asincrono"));
-        }
-
-        // 5. Mapping dei PersonalData (Eroga -> true, Non eroga -> false)
-        String selectedPersonalData = generalDataForm.personalData().getSelected();
-        if (selectedPersonalData != null) {
-            if (selectedPersonalData.contains("Non eroga")) {
-                details.setPersonalData(false);
-            } else if (selectedPersonalData.contains("Eroga")) {
-                details.setPersonalData(true);
-            }
-        }
-
-        // Nota: I campi id, riskAnalysis, o i vari flag di delega
-        // non sono presenti in questo step della UI, quindi vengono lasciati ignorati/null.
-
-        return details;
+        return new GeneralDataSpecModel(seed);
     }
+
 }
