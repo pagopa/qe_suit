@@ -1,4 +1,5 @@
 package it.pagopa.interop.controller.eservice_creation.web;
 
-public class TechincalDataStepController {
+public class TechnicalDataStepController {
+
 }
