@@ -1,12 +1,13 @@
 package it.pagopa.interop.bff.controller;
 
 import io.cucumber.java.en.Given;
+import it.pagopa.interop.bff.service.ClientDataPreparationService;
 import it.pagopa.interop.common.domain.enums.InteropClientType;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
 import it.pagopa.interop.common.domain.model.Client;
 import it.pagopa.interop.common.domain.model.Purpose;
-import it.pagopa.interop.service.client.ClientService;
+
 import it.pagopa.interop.common.domain.context.CurrentUserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ import static it.pagopa.interop.common.domain.enums.InteropClientType.CONSUMER;
 public class ClientController {
 
     private final CurrentUserContext currentUserContext;
-    private final ClientService clientService;
+    private final ClientDataPreparationService clientService;
 
     @Given("un client CONSUMER creato da {tenant}, associato alla {currentPurpose}, in cui è presente l'admin e una coppia di chiavi crittografiche")
     public void setupConsumerClient(Tenant consumer, Purpose purpose) {
