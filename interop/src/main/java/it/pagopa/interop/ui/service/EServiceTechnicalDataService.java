@@ -1,7 +1,7 @@
-package it.pagopa.interop.ui.service.eservice_creation;
+package it.pagopa.interop.ui.service;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties;
-import it.pagopa.interop.ui.domain.model.eservice_creation.TechnicalSpecModel;
+import it.pagopa.interop.ui.domain.model.EServiceTechnicalModel;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecStep;
 import it.pagopa.interop.ui.service.template.UiService;
 import lombok.RequiredArgsConstructor;
@@ -14,17 +14,17 @@ import static it.pagopa.interop.common.utils.TypeUtils.safeParseInt;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class TechnicalDataService implements UiService<TechnicalSpecModel, TechnicalSpecStep> {
+public class EServiceTechnicalDataService implements UiService<EServiceTechnicalModel, TechnicalSpecStep> {
 
     private final TechnicalSpecStep techStepComponent;
 
     @Override
-    public TechnicalSpecModel doDefaultModel() {
-        return TechnicalSpecModel.buildDefault();
+    public EServiceTechnicalModel doDefaultModel() {
+        return EServiceTechnicalModel.buildDefault();
     }
 
     @Override
-    public void doFill(TechnicalSpecModel model) {
+    public void doFill(EServiceTechnicalModel model) {
         var voucherComponent = techStepComponent.voucherComponent();
         var interfaceComponent = techStepComponent.interfaceComponent();
 
@@ -61,7 +61,7 @@ public class TechnicalDataService implements UiService<TechnicalSpecModel, Techn
     }
 
     @Override
-    public TechnicalSpecModel mapToModel(TechnicalSpecStep component) {
+    public EServiceTechnicalModel mapToModel(TechnicalSpecStep component) {
         var voucherComp = component.voucherComponent();
         var asyncComp = component.asyncComponent();
 
@@ -78,6 +78,6 @@ public class TechnicalDataService implements UiService<TechnicalSpecModel, Techn
                     .confirmation(asyncComp.confirmation().isChecked());
         }
 
-        return new TechnicalSpecModel(aud, lifespan, null, asyncProps, null);
+        return new EServiceTechnicalModel(aud, lifespan, null, asyncProps, null);
     }
 }

@@ -1,4 +1,4 @@
-package it.pagopa.interop.ui.domain.model.eservice_creation;
+package it.pagopa.interop.ui.domain.model;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties;
 import org.springframework.core.io.ClassPathResource;
@@ -6,17 +6,17 @@ import org.springframework.core.io.ClassPathResource;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-public record TechnicalSpecModel(
+public record EServiceTechnicalModel(
         String aud,
         String voucherLifespan,
         String interfaceAttachmentPath,
         AsyncExchangeProperties asyncExchangeProperties,
         String callbackInterfaceAttachmentPath
 ) {
-    public static TechnicalSpecModel buildDefault() {
+    public static EServiceTechnicalModel buildDefault() {
         try {
             String defaultPath = new ClassPathResource("assets/origin-interface.yaml").getFilePath().toAbsolutePath().toString();
-            return new TechnicalSpecModel(
+            return new EServiceTechnicalModel(
                     "quality-assurance",
                     "1",
                     defaultPath,
@@ -33,8 +33,8 @@ public record TechnicalSpecModel(
         }
     }
 
-    public static TechnicalSpecModel buildEmpty() {
-        return new TechnicalSpecModel(null, null, null, new AsyncExchangeProperties(), null);
+    public static EServiceTechnicalModel buildEmpty() {
+        return new EServiceTechnicalModel(null, null, null, new AsyncExchangeProperties(), null);
     }
 
     public String getInterfaceFileName() {
