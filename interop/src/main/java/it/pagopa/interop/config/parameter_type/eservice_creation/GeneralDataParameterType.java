@@ -2,13 +2,15 @@ package it.pagopa.interop.config.parameter_type.eservice_creation;
 
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.web.component.Alert;
-import it.pagopa.interop.web.pages.eservice_creation.component.GeneralInformationStepComponent;
+import it.pagopa.interop.web.pages.eservice_creation.EServiceCreationPage;
+import it.pagopa.interop.web.pages.eservice_creation.step.GeneralInformationStepComponent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class GeneralDataParameterType {
-    private final GeneralInformationStepComponent generalInformationStep;
+    private final EServiceCreationPage eServiceCreationPage;
+    private final GeneralInformationStepComponent generalInformationStep = eServiceCreationPage.generalInformationStep();
 
     @ParameterType("Nome|Descrizione|L’e-service eroga dati personali\\?")
     public String generalInformationErrorMessage(String fieldName){

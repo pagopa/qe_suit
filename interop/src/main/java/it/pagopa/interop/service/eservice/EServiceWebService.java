@@ -14,9 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.function.Consumer;
 
-import static it.pagopa.interop.web.pages.eservice_creation.component.AdditionalInformationStepComponent.AdditionalInformationStepSeed;
-import static it.pagopa.interop.web.pages.eservice_creation.component.GeneralInformationStepComponent.GeneralInformationStepSeed;
-import static it.pagopa.interop.web.pages.eservice_creation.component.TechnicalSpecificationStepComponent.TechnicalSpecificationStepSeed;
+import static it.pagopa.interop.web.pages.eservice_creation.step.AdditionalInformationStepComponent.AdditionalInformationStepSeed;
+import static it.pagopa.interop.web.pages.eservice_creation.step.GeneralInformationStepComponent.GeneralInformationStepSeed;
+import static it.pagopa.interop.web.pages.eservice_creation.step.technical.TechnicalSpecificationStepComponent.TechnicalSpecificationStepSeed;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -26,20 +26,6 @@ public class EServiceWebService {
     private final WebPresentationGateway webPresentationGateway;
     private final EserviceContext eserviceContext;
     private final EserviceDataPreparationService eserviceDataPreparationService;
-
-    public record EServiceCreationRequest(
-            GeneralInformationStepSeed generalInformationStepSeed,
-            TechnicalSpecificationStepSeed technicalSpecificationStepSeed,
-            AdditionalInformationStepSeed additionalInformationStepSeed
-    ) {
-        public static EServiceCreationRequest buildDefault() {
-            return new EServiceCreationRequest(
-                    GeneralInformationStepSeed.buildDefault(),
-                    TechnicalSpecificationStepSeed.buildDefault(),
-                    AdditionalInformationStepSeed.buildDefault()
-            );
-        }
-    }
 
     public Eservice publishEServiceWithDefault() {
         creationPage
@@ -74,26 +60,6 @@ public class EServiceWebService {
         customizer.accept(seed);
 
         creationPage.fillAdditionalInformation(seed);
-    }
-
-    public String getNameTextFieldError() {
-        return creationPage.generalInformationStep().getNameErrorText();
-    }
-
-    public String getDescriptionTextFieldError() {
-        return creationPage.generalInformationStep().getDescriptionErrorText();
-    }
-
-    public Alert getAyncKeychainWarningAlert(){
-        return creationPage.generalInformationStep().keychainAlert();
-    }
-
-    public Alert getAsyncSoapWarningAlert(){
-        return creationPage.generalInformationStep().soapAsyncAlert();
-    }
-
-    public boolean isModeRadioGroupDisabled() {
-        return creationPage.generalInformationStep().mode().isDisabled();
     }
 
     private Eservice getEservice() {
