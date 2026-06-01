@@ -9,7 +9,7 @@ import it.pagopa.interop.common.domain.model.Client;
 import it.pagopa.interop.common.domain.model.ClientAssertion;
 import it.pagopa.interop.common.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.common.domain.model.DPoPProof;
-import it.pagopa.interop.ui.service.WebDevToolsService;
+import it.pagopa.interop.ui.service.DevToolsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class DevToolsController {
-    private final WebDevToolsService webClientAssertionService;
+    private final DevToolsService webClientAssertionService;
     private final ClientAssertionContext clientAssertionContext;
     private final DataTableMapper dataTableMapper;
 
