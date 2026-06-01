@@ -2,19 +2,19 @@ package it.pagopa.interop.ui.controller;
 
 import io.cucumber.java.en.When;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.ui.domain.model.eservice_creation.GeneralDataSpecModel;
-import it.pagopa.interop.ui.domain.model.eservice_creation.TechnicalSpecModel;
+import it.pagopa.interop.ui.domain.model.EServiceGeneralDataModel;
+import it.pagopa.interop.ui.domain.model.EServiceTechnicalModel;
 import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
-import it.pagopa.interop.ui.service.eservice_creation.GeneralDataService;
-import it.pagopa.interop.ui.service.eservice_creation.TechnicalDataService;
+import it.pagopa.interop.ui.service.EServiceGeneralDataService;
+import it.pagopa.interop.ui.service.EServiceTechnicalDataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EServiceCreationController {
 
-    private final GeneralDataService generalDataService;
-    private final TechnicalDataService technicalDataService;
+    private final EServiceGeneralDataService EServiceGeneralDataService;
+    private final EServiceTechnicalDataService EServiceTechnicalDataService;
     private final EServiceCreationPage eServiceCreationPage;
 
     @When("clicca sul button 'Salva bozza e prosegui'")
@@ -24,17 +24,17 @@ public class EServiceCreationController {
 
     @When("compila lo step 'Informazioni generali' con i valori di default ma specificando:")
     public void fillGeneralInformationWithOverrides(EServiceSeed eserviceSeed) {
-        generalDataService.fillWithOverrides(new GeneralDataSpecModel(eserviceSeed));
+        EServiceGeneralDataService.fillWithOverrides(new EServiceGeneralDataModel(eserviceSeed));
     }
 
     @When("compila lo step 'Informazioni generali' con i valori di default")
     public void fillGeneralInformation() {
-        generalDataService.fill();
+        EServiceGeneralDataService.fill();
     }
 
     @When("cancella i valori da tutti gli input delle specifiche tecniche")
     public void cleanInput() {
-        technicalDataService.fill(TechnicalSpecModel.buildEmpty());
+        EServiceTechnicalDataService.fill(EServiceTechnicalModel.buildEmpty());
     }
 
 }
