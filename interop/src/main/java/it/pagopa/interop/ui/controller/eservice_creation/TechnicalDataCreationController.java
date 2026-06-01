@@ -19,13 +19,6 @@ public class TechnicalDataCreationController {
         technicalDataService.fill(TechnicalSpecModel.buildEmpty());
     }
 
-    @Then("la creazione non prosegue ed il campo {techSpecErrorMessage} dello step Specifiche tecniche è evidenziato come errore mostrando il messaggio {string}")
-    public void assertFieldError(String actualErrorMessage, String expectedErrorMessage) {
-        assertThat(actualErrorMessage)
-                .as("Il messaggio di errore deve essere: " + expectedErrorMessage)
-                .isEqualTo(expectedErrorMessage);
-    }
-
     @Then("la checkbox {techSpecCheckbox} è disabilitata")
     public void checkboxIsDisabled(Boolean isDisabled) {
         assertThat(isDisabled)
