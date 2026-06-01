@@ -4,7 +4,6 @@ import it.pagopa.interop.common.domain.context.ClientContext;
 import it.pagopa.interop.common.domain.enums.InteropClientType;
 import it.pagopa.interop.common.domain.model.Client;
 import it.pagopa.interop.common.domain.model.Purpose;
-import it.pagopa.interop.service.client.ClientService;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
@@ -28,17 +27,15 @@ import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ClientDataPreparationService implements ClientService {
+public class ClientDataPreparationService {
 
     private final ClientsApi clientsApi;
     private final ClientContext context;
 
-    @Override
     public Client createClient(InteropClientType kind) {
         return createClient(kind, null);
     }
 
-    @Override
     public Client createClient(InteropClientType kind, Consumer<ClientSeed> overrides) {
         ClientSeed seed = buildDefaultSeed();
         Optional.ofNullable(overrides).ifPresent(o -> o.accept(seed));
@@ -51,7 +48,6 @@ public class ClientDataPreparationService implements ClientService {
         return getClient(created.getId());
     }
 
-    @Override
     public Client getClient(UUID clientId) {
         Client client = pollClient(
                 () -> new Client(clientsApi.getClient(clientId), new java.util.LinkedHashSet<>()),
@@ -61,22 +57,18 @@ public class ClientDataPreparationService implements ClientService {
         return client;
     }
 
-    @Override
     public Client addPublicKey(Client client) {
         return addPublicKey(client, null, null);
     }
 
-    @Override
     public Client addPublicKey(Client client, Consumer<KeySeed> overrides) {
         return addPublicKey(client, null, overrides);
     }
 
-    @Override
     public Client addPublicKey(Client client, KeyPair keyPair) {
         return addPublicKey(client, keyPair, null);
     }
 
-    @Override
     public Client addPublicKey(Client client, KeyPair keyPair, Consumer<KeySeed> overrides) {
         KeyPair effectiveKeyPair = Optional.ofNullable(keyPair).orElseGet(() -> KeyPairUtils.generate(KeyPairUtils.KeyAlgorithm.RSA));
         KeySeed seed = buildKeySeed(effectiveKeyPair);
@@ -92,7 +84,6 @@ public class ClientDataPreparationService implements ClientService {
         return getClient(client.getId());
     }
 
-    @Override
     public Client addPurpose(Client client, Purpose purpose) {
         PurposeAdditionDetailsSeed seed = new PurposeAdditionDetailsSeed().purposeId(purpose.getId());
         clientsApi.addClientPurpose(client.getId(), seed);
