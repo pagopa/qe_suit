@@ -26,10 +26,10 @@ public class BrowserController {
     private final EServiceCatalogPage eServiceCatalogPage;
     private final BearerAuthProvider bearerAuthProvider;
 
-    @When("l'utente {userRole} di {tenant} si trova alla pagina {page} del portale Interop")
-    @When("l'utente {userRole} del {tenant} si trova alla pagina {page} del portale Interop")
-    @When("l'utente {userRole} di {tenant} si trova alla pagina {page} del portale Interop e verifica che tutti gli elementi siano visibili")
-    @When("l'utente {userRole} del {tenant} si trova alla pagina {page} del portale Interop e verifica che tutti gli elementi siano visibili")
+    @When("un {userRole} di {tenant} si trova alla pagina {page} del portale Interop")
+    @When("un {userRole} del {tenant} si trova alla pagina {page} del portale Interop")
+    @When("un utente {userRole} di {tenant} si trova alla pagina {page} del portale Interop")
+    @When("un utente {userRole} del {tenant} si trova alla pagina {page} del portale Interop")
     public void navigateToPage(UserRole userRole, Tenant tenant, Page page) {
         User user = User.getTenantUser(tenant, userRole);
 

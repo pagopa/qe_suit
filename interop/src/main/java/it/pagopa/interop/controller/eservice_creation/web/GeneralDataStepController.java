@@ -17,13 +17,13 @@ public class GeneralDataStepController {
 
     private final EServiceWebService eServiceWebService;
 
-    @When("l'utente compila lo step 'Informazioni generali' con i valori di default ma specificando:")
+    @When("compila lo step 'Informazioni generali' con i valori di default ma specificando:")
     public void fillGeneralInformationWithOverrides(EServiceSeed eserviceSeed) {
         eServiceWebService.fillGeneralInformation(targetStep ->
                 org.springframework.beans.BeanUtils.copyProperties(eserviceSeed, targetStep.eservice()));
     }
 
-    @When("l'utente compila lo step 'Informazioni generali' con i valori di default")
+    @When("compila lo step 'Informazioni generali' con i valori di default")
     public void fillGeneralInformation() {
         eServiceWebService.fillGeneralInformation(targetStep -> {
         });
