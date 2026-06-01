@@ -1,10 +1,9 @@
 package it.pagopa.interop.bff.service;
 
+import it.pagopa.interop.bff.service.risk_analysis.RiskAnalysisDataPreparationService;
 import it.pagopa.interop.common.domain.context.EserviceContext;
 import it.pagopa.interop.common.domain.model.Eservice;
 import it.pagopa.interop.common.domain.model.RiskAnalysis;
-import it.pagopa.interop.service.eservice.EserviceService;
-import it.pagopa.interop.service.risk_analysis.RiskAnalysisService;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.common.utils.PollingUtils;
@@ -21,24 +20,22 @@ import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EserviceDataPreparationService implements EserviceService {
+public class EserviceDataPreparationService {
 
     private final EservicesApi eservicesApi;
-    private final RiskAnalysisService riskAnalysisService;
+    private final RiskAnalysisDataPreparationService riskAnalysisService;
     private final EserviceContext context;
 
-    @Override
+    
     public Eservice createEservice(EServiceSeed request) {
         CreatedEServiceDescriptor createdEservice = eservicesApi.createEService(request);
         return getEservice(createdEservice.getId(), createdEservice.getDescriptorId());
     }
 
-    @Override
     public Eservice createEservice() {
         return createEservice(buildDefaultRequest());
     }
-
-    @Override
+    
     public Eservice createEservice(Consumer<EServiceSeed> overrides) {
         EServiceSeed seed = buildDefaultRequest();
         if (overrides != null) {
@@ -46,8 +43,7 @@ public class EserviceDataPreparationService implements EserviceService {
         }
         return createEservice(seed);
     }
-
-    @Override
+    
     public Eservice publishEservice(Eservice eservice) {
         UUID eserviceId = eservice.getEserviceId();
         UUID descriptorId = eservice.getLastDraftDescriptorId();
@@ -69,8 +65,7 @@ public class EserviceDataPreparationService implements EserviceService {
         context.upsert(published);
         return published;
     }
-
-    @Override
+    
     public Eservice getEservice(UUID eserviceId, UUID descriptorId) {
         Eservice eservice = pollEservice(
                 () -> new Eservice(eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId)),

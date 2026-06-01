@@ -5,7 +5,6 @@ import it.pagopa.interop.common.domain.model.Client;
 import it.pagopa.interop.common.domain.model.ClientAssertion;
 import it.pagopa.interop.common.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.common.domain.model.DPoPProof;
-import it.pagopa.interop.service.client_assertion.DevToolsService;
 import it.pagopa.interop.ui.domain.page.dev_tools.debug_client_assertion.DebugClientAssertionPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class WebDevToolsService implements DevToolsService {
+public class WebDevToolsService {
 
     @Value("${interop.auth.client-assertion.grant_type}")
     private String clientAssertionGrantType;
@@ -24,23 +23,18 @@ public class WebDevToolsService implements DevToolsService {
 
     private final DebugClientAssertionPage debugPage;
 
-
-    @Override
     public ClientAssertionValidationResult performValidation(ClientAssertion clientAssertion, Client client) {
         return performValidationInternal(clientAssertion.getClientAssertion(), InteropClientType.valueOf(client.getKind().name()), client.getId().toString(), null);
     }
 
-    @Override
     public ClientAssertionValidationResult performValidation(ClientAssertion clientAssertion, Client client, DPoPProof proof) {
         return performValidationInternal(clientAssertion.getClientAssertion(), InteropClientType.valueOf(client.getKind().name()), client.getId().toString(), proof.getJwt());
     }
 
-    @Override
     public ClientAssertionValidationResult performValidation(String clientAssertion, InteropClientType clientType, String clientId, String proof) {
         return performValidationInternal(clientAssertion, clientType, clientId, proof);
     }
 
-    @Override
     public void submitValidationRequest(String clientAssertion, String clientId, String dPoPProof) {
         if (clientAssertion != null) debugPage.setClientAssertion(clientAssertion);
         if (clientId != null) debugPage.setClientId(clientId);

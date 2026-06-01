@@ -4,7 +4,6 @@ import it.pagopa.interop.common.domain.context.PurposeContext;
 import it.pagopa.interop.common.domain.model.Eservice;
 import it.pagopa.interop.common.domain.model.Purpose;
 import it.pagopa.interop.common.domain.model.RiskAnalysis;
-import it.pagopa.interop.service.purpose.PurposeService;
 import it.pagopa.interop.bff.service.risk_analysis.RiskAnalysisDataPreparationService;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
@@ -27,19 +26,17 @@ import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class PurposeDataPreparationService implements PurposeService {
+public class PurposeDataPreparationService {
 
     private final PurposesApi purposesApi;
     private final PurposeContext context;
     private final RiskAnalysisDataPreparationService riskAnalysisService;
     private final CurrentUserContext currentUserContext;
 
-    @Override
     public Purpose createEservicePurpose(Eservice eservice) {
         return createEservicePurpose(eservice, null);
     }
 
-    @Override
     public Purpose createEservicePurpose(Eservice eservice, Consumer<PurposeSeed> overrides) {
         PurposeSeed seed = buildDefaultPurposeSeed(eservice);
         if (overrides != null) {
@@ -55,12 +52,10 @@ public class PurposeDataPreparationService implements PurposeService {
         return getPurpose(created.getId());
     }
 
-    @Override
     public Purpose createEservicePurposeWithState(Eservice eservice, PurposeVersionState targetState) {
         return createEservicePurposeWithState(eservice, targetState, null);
     }
 
-    @Override
     public Purpose createEservicePurposeWithState(Eservice eservice, PurposeVersionState targetState, Consumer<PurposeSeed> overrides) {
         Purpose purpose = createEservicePurpose(eservice, overrides);
         UUID purposeId = purpose.getId();
@@ -89,8 +84,7 @@ public class PurposeDataPreparationService implements PurposeService {
 
         return getPurpose(purposeId);
     }
-
-    @Override
+    
     public Purpose getPurpose(UUID purposeId) {
         Purpose purpose = poll(
                 () -> new Purpose(purposesApi.getPurpose(purposeId)),

@@ -3,7 +3,6 @@ package it.pagopa.interop.bff.service;
 import it.pagopa.interop.common.domain.context.AgreementContext;
 import it.pagopa.interop.common.domain.model.Agreement;
 import it.pagopa.interop.common.domain.model.Eservice;
-import it.pagopa.interop.service.agreement.AgreementService;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
@@ -21,24 +20,21 @@ import java.util.function.Supplier;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class AgreementDataPreparationService implements AgreementService {
+public class AgreementDataPreparationService {
 
     private final AgreementsApi agreementsApi;
     private final AgreementContext context;
 
-    @Override
     public Agreement createAgreement(Eservice eservice) {
         return createAgreement(eservice, null);
     }
 
-    @Override
     public Agreement createAgreement(Eservice eservice, UUID delegationId) {
         AgreementPayload request = buildAgreementPayload(eservice, Optional.ofNullable(delegationId));
         UUID agreementId = agreementsApi.createAgreement(request).getId();
         return getAgreement(agreementId);
     }
 
-    @Override
     public Agreement getAgreement(UUID agreementId) {
         Agreement agreement = pollAgreement(
                 () -> new Agreement(agreementsApi.getAgreementById(agreementId)),
@@ -48,7 +44,6 @@ public class AgreementDataPreparationService implements AgreementService {
         return agreement;
     }
 
-    @Override
     public Agreement submitAgreement(Agreement agreement) {
         ResponseEntity<it.pagopa.interop.generated.openapi.clients.bff.model.Agreement> submitted =
                 PollingUtils.pollUntil(
@@ -68,7 +63,6 @@ public class AgreementDataPreparationService implements AgreementService {
         return result;
     }
 
-    @Override
     public Agreement publishAgreement(Agreement agreement) {
         UUID agreementId = agreement.getId();
         agreementsApi.activateAgreement(agreementId, null);
