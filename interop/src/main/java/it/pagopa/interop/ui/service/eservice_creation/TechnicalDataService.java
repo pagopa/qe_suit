@@ -2,19 +2,21 @@ package it.pagopa.interop.ui.service.eservice_creation;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties;
 import it.pagopa.interop.ui.domain.model.eservice_creation.TechnicalSpecModel;
-import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecificationStepComponent;
 import it.pagopa.interop.ui.service.template.UiService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
+import static it.pagopa.interop.common.utils.TypeUtils.safeParseInt;
+
 @Service
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TechnicalDataService implements UiService<TechnicalSpecModel, TechnicalSpecificationStepComponent> {
 
     private final TechnicalSpecificationStepComponent techStepComponent;
-
-    public TechnicalDataService(EServiceCreationPage creationPage) {
-        this.techStepComponent = creationPage.technicalSpecificationStep();
-    }
 
     @Override
     public TechnicalSpecModel doDefaultModel() {
@@ -26,23 +28,31 @@ public class TechnicalDataService implements UiService<TechnicalSpecModel, Techn
         var voucherComponent = techStepComponent.voucherComponent();
         var interfaceComponent = techStepComponent.interfaceComponent();
 
-        voucherComponent.audience().cleanAndWriteAndAssert(model.aud());
-        voucherComponent.voucherLifespan().cleanAndWriteAndAssert(model.voucherLifespan());
-        interfaceComponent.uploadApiInterface(model.interfaceAttachmentPath());
+        voucherComponent.audience().fill(model.aud());
+        voucherComponent.voucherLifespan().fill(model.voucherLifespan());
+
+        Optional.ofNullable(model.interfaceAttachmentPath())
+                .filter(path -> !path.isEmpty())
+                .ifPresent(interfaceComponent::uploadApiInterface);
 
         doFillAsyncProperties(model.asyncExchangeProperties(), model.callbackInterfaceAttachmentPath());
     }
 
     private void doFillAsyncProperties(AsyncExchangeProperties seed, String callbackInterfacePath) {
+        if (seed == null) return;
+
         var asyncComponent = techStepComponent.asyncComponent();
 
-        asyncComponent.responseTime().cleanAndWriteAndAssert(seed.getResponseTime().toString());
-        asyncComponent.resourceAvailableTime().cleanAndWriteAndAssert(seed.getResourceAvailableTime().toString());
-        asyncComponent.maxResultSet().cleanAndWriteAndAssert(seed.getMaxResultSet().toString());
-        asyncComponent.confirmation().setChecked(seed.getConfirmation());
-        asyncComponent.bulk().setChecked(seed.getBulk());
+        asyncComponent.responseTime().fill(seed.getResponseTime());
+        asyncComponent.resourceAvailableTime().fill(seed.getResourceAvailableTime());
+        asyncComponent.maxResultSet().fill(seed.getMaxResultSet());
 
-        asyncComponent.callbackInterface().uploadApiInterface(callbackInterfacePath);
+        asyncComponent.confirmation().setChecked(Boolean.TRUE.equals(seed.getConfirmation()));
+        asyncComponent.bulk().setChecked(Boolean.TRUE.equals(seed.getBulk()));
+
+        Optional.ofNullable(callbackInterfacePath)
+                .filter(path -> !path.isEmpty())
+                .ifPresent(asyncComponent.callbackInterface()::uploadApiInterface);
     }
 
     @Override
@@ -61,13 +71,13 @@ public class TechnicalDataService implements UiService<TechnicalSpecModel, Techn
         AsyncExchangeProperties asyncProps = null;
         if (asyncComp != null) {
             asyncProps = new AsyncExchangeProperties()
-                    .responseTime(Integer.parseInt(asyncComp.responseTime().read().trim()))
-                    .maxResultSet(Integer.parseInt(asyncComp.maxResultSet().read().trim()))
-                    .resourceAvailableTime(Integer.parseInt(asyncComp.resourceAvailableTime().read().trim()))
+                    .responseTime(safeParseInt(asyncComp.responseTime().read()))
+                    .maxResultSet(safeParseInt(asyncComp.maxResultSet().read()))
+                    .resourceAvailableTime(safeParseInt(asyncComp.resourceAvailableTime().read()))
                     .bulk(asyncComp.bulk().isChecked())
                     .confirmation(asyncComp.confirmation().isChecked());
         }
-        
+
         return new TechnicalSpecModel(aud, lifespan, null, asyncProps, null);
     }
 }

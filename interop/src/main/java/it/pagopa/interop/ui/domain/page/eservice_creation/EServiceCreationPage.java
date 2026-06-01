@@ -7,6 +7,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.ui.domain.component.Button;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.AdditionalInformationStepComponent;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStepComponent;
+import it.pagopa.interop.ui.domain.page.eservice_creation.step.ThresholdAndAttributeStep;
 import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecificationStepComponent;
 
 @Url("${interop.web.base-url}/erogazione/e-service/crea/")
@@ -19,12 +20,14 @@ public interface EServiceCreationPage extends Page {
     Button saveDraftButton();
 
     @XPath(".//button[contains(., 'Vai al riepilogo')]")
-    Button summeryButton();
+    Button summaryButton();
 
     @XPath(".//button[contains(., 'Pubblica')]")
     Button publishButton();
 
     GeneralDataStepComponent generalDataStep();
+
+    ThresholdAndAttributeStep thresholdAndAttributeStep();
 
     TechnicalSpecificationStepComponent technicalSpecificationStep();
 

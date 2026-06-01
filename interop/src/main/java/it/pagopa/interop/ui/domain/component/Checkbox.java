@@ -54,8 +54,10 @@ public interface Checkbox extends Component, Clickable {
     }
 
     default boolean isChecked() {
-        return helperText().getAll()
-                .map(list -> list.stream().anyMatch(we -> we.getClasses().contains(CHECKED_CLASS)))
-                .orElse(false);
+        return this.get()
+                .map(we -> we.getClasses().contains(CHECKED_CLASS))
+                .orElseThrow(() -> new java.util.NoSuchElementException(
+                        "Impossibile verificare lo stato checked: l'elemento UI non è presente nella pagina."
+                ));
     }
 }
