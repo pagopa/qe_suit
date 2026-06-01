@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.pages.eservice_creation.component;
+package it.pagopa.interop.web.pages.eservice_creation.step;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;

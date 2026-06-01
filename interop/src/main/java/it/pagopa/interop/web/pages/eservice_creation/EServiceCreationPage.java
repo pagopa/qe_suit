@@ -6,14 +6,14 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.utils.DelayUtils;
 import it.pagopa.interop.web.component.Button;
-import it.pagopa.interop.web.pages.eservice_creation.component.AdditionalInformationStepComponent;
-import it.pagopa.interop.web.pages.eservice_creation.component.GeneralInformationStepComponent;
-import it.pagopa.interop.web.pages.eservice_creation.component.TechnicalSpecificationStepComponent;
+import it.pagopa.interop.web.pages.eservice_creation.step.AdditionalInformationStepComponent;
+import it.pagopa.interop.web.pages.eservice_creation.step.GeneralInformationStepComponent;
+import it.pagopa.interop.web.pages.eservice_creation.step.technical.TechnicalSpecificationStepComponent;
 
 
-import static it.pagopa.interop.web.pages.eservice_creation.component.GeneralInformationStepComponent.GeneralInformationStepSeed;
-import static it.pagopa.interop.web.pages.eservice_creation.component.AdditionalInformationStepComponent.AdditionalInformationStepSeed;
-import static it.pagopa.interop.web.pages.eservice_creation.component.TechnicalSpecificationStepComponent.TechnicalSpecificationStepSeed;
+import static it.pagopa.interop.web.pages.eservice_creation.step.GeneralInformationStepComponent.GeneralInformationStepSeed;
+import static it.pagopa.interop.web.pages.eservice_creation.step.AdditionalInformationStepComponent.AdditionalInformationStepSeed;
+import static it.pagopa.interop.web.pages.eservice_creation.step.technical.TechnicalSpecificationStepComponent.TechnicalSpecificationStepSeed;
 
 @Url("${interop.web.base-url}/erogazione/e-service/crea/")
 public interface EServiceCreationPage extends Page {
