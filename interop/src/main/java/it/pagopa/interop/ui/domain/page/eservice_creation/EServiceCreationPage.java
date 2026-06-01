@@ -41,10 +41,6 @@ public interface EServiceCreationPage extends Page {
 
     AdditionalInformationStepComponent additionalInformationStep();
 
-    default EServiceCreationPage fillGeneralInformation(GeneralDataStepSeed seed) {
-        generalDataStep().fillGeneralInformation(seed);
-        return this;
-    }
 
     default EServiceCreationPage fillTechnicalSpecification(TechnicalSpecificationStepSeed seed) {
         technicalSpecificationStep().assertLoaded();
