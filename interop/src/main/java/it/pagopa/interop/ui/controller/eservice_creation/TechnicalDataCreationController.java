@@ -20,21 +20,6 @@ public class TechnicalDataCreationController {
         this.technicalDataService = technicalDataService;
     }
 
-    @ParameterType("Durata validità|Audience|Tempo massimo di risposta|Numero massimo di risultati per risposta|Durata di disponibilità del dato")
-    public String techSpecErrorMessage(String inputName) {
-        return switch (inputName.toLowerCase()) {
-            case "audience" -> technicalSpecificationStep.voucherComponent().getAudienceErrorText();
-            case "durata validità" -> technicalSpecificationStep.voucherComponent().getVoucherLifespanErrorText();
-            case "tempo massimo di risposta" ->
-                    technicalSpecificationStep.asyncComponent().getResponseTimeInputErrorText();
-            case "numero massimo di risultati per risposta" ->
-                    technicalSpecificationStep.asyncComponent().getMaxResultSetInputErrorText();
-            case "durata di disponibilità del dato" ->
-                    technicalSpecificationStep.asyncComponent().getResourceAvailableTimeInputErrorText();
-            default -> throw new IllegalArgumentException("Input name not recognized: " + inputName);
-        };
-    }
-
     @When("cancella i valori da tutti gli input delle specifiche tecniche")
     public void cleanInput() {
         technicalDataService.fill(TechnicalSpecModel.buildEmpty());
