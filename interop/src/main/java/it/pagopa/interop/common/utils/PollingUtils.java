@@ -90,22 +90,20 @@ public final class PollingUtils {
      * Esegue il polling specifico per le chiamate HTTP (ResponseEntity).
      * Verifica automaticamente che lo status sia 2xx e che il body sia presente prima di testare la condizione.
      */
-    public static <T> T pollUntilWithHttpInfo(
+    public static <T> ResponseEntity<T> pollUntilWithHttpInfo(
             Supplier<ResponseEntity<T>> supplier,
             BiPredicate<HttpStatusCode, T> responseCondition,
             Duration timeout,
             Duration interval
     ) {
-        // Riconduce il comportamento al pollUntil generico, spacchettando la ResponseEntity
-        ResponseEntity<T> finalResponse = pollUntil(
+
+        return pollUntil(
                 supplier,
                 response -> response != null
                         && responseCondition.test(response.getStatusCode(), response.getBody()),
                 timeout,
                 interval
         );
-
-        return finalResponse.getBody();
     }
 
     /**
@@ -118,7 +116,7 @@ public final class PollingUtils {
     /**
      * Overload per ResponseEntity con valori di default (10s timeout, 1s intervallo).
      */
-    public static <T> T pollUntilWithHttpInfo(Supplier<ResponseEntity<T>> supplier,  BiPredicate<HttpStatusCode, T> responseCondition) {
+    public static <T> ResponseEntity<T> pollUntilWithHttpInfo(Supplier<ResponseEntity<T>> supplier,  BiPredicate<HttpStatusCode, T> responseCondition) {
         return pollUntilWithHttpInfo(supplier, responseCondition, Duration.ofSeconds(10), Duration.ofSeconds(1));
     }
 }
