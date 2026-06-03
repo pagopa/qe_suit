@@ -7,13 +7,16 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.function.BiPredicate;
 
-public interface RestResourceCreator<Request, Entity> {
+public interface RestResourceCreator<Request, Entity> extends ContextHandler<Entity> {
 
     default Entity createAndAssert(Request request, BiPredicate<HttpStatusCode, Entity> predicate) {
-        return PollingUtils.pollUntilWithHttpInfo(
+        ResponseEntity<Entity> response = PollingUtils.pollUntilWithHttpInfo(
                 () -> doCreate(request),
                 predicate
         );
+
+        doUpdateHttpContext(response);
+        return response.getBody();
     }
 
     default Entity createAndAssert(RequestOverride<Request> overrides, BiPredicate<HttpStatusCode, Entity> predicate) {
