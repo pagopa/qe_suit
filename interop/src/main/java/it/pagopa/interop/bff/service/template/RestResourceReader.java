@@ -18,8 +18,12 @@ public interface RestResourceReader<Request, Entity> extends ContextHandler<Enti
         return entity;
     }
 
-    default Entity getResourceSuccessfully(Request request) {
+    default Entity getSuccessfully(Request request) {
         return getAndAssert(request, (statusCode, _response) -> statusCode.is2xxSuccessful());
+    }
+
+    default Entity tryGet(Request request) {
+        return getAndAssert(request, (statusCode, _response) -> true);
     }
 
     ResponseEntity<Entity> doRead(Request request);

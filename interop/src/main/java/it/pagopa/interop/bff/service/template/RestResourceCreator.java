@@ -22,17 +22,17 @@ public interface RestResourceCreator<Request, Entity> {
         return createAndAssert(request, predicate);
     }
 
-    default Entity createResourceSuccessfully(RequestOverride<Request> overrides) {
+    default Entity createSuccessfully(RequestOverride<Request> overrides) {
         Request request = doDefaultRequest();
         overrides.applyTo(request);
-        return createResourceSuccessfully(request);
+        return createSuccessfully(request);
     }
 
-    default Entity createResourceSuccessfully(Request request) {
+    default Entity createSuccessfully(Request request) {
         return createAndAssert(request, (statusCode, body) -> statusCode.is2xxSuccessful());
     }
 
-    default Entity createResource(Request request) {
+    default Entity tryCreate(Request request) {
         return createAndAssert(request, (statusCode, body) -> true);
     }
 
