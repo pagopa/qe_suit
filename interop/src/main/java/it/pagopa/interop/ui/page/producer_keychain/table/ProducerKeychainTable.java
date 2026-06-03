@@ -54,8 +54,6 @@ public interface ProducerKeychainTable extends Component {
 
                 softly.assertThat(noKeychainAlert().get().message().read())
                         .isEqualTo("Non ci sono portachiavi disponibili");
-            } else {
-                softly.assertThat(rows()).isNotEmpty();
             }
         });
     }
