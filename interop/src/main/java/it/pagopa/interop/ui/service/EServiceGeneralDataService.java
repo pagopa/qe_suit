@@ -2,7 +2,7 @@ package it.pagopa.interop.ui.service;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.ui.domain.model.EServiceGeneralDataModel;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStep;
+import it.pagopa.interop.ui.page.eservice_creation.step.GeneralDataStep;
 import it.pagopa.interop.ui.service.template.UiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

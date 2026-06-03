@@ -5,7 +5,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.ui.domain.component.Alert;
+import it.pagopa.interop.ui.component.Alert;
 import it.pagopa.interop.ui.service.BrowserService;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.SoftAssertions;

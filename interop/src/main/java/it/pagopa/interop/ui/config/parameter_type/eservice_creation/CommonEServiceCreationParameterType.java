@@ -2,9 +2,9 @@ package it.pagopa.interop.ui.config.parameter_type.eservice_creation;
 
 import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStep;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.ThresholdAndAttributeStep;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecStep;
+import it.pagopa.interop.ui.page.eservice_creation.step.GeneralDataStep;
+import it.pagopa.interop.ui.page.eservice_creation.step.ThresholdAndAttributeStep;
+import it.pagopa.interop.ui.page.eservice_creation.step.technical.TechnicalSpecStep;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 

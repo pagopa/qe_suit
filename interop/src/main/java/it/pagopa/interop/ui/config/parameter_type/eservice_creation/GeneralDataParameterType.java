@@ -1,9 +1,9 @@
 package it.pagopa.interop.ui.config.parameter_type.eservice_creation;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.ui.domain.component.Alert;
-import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStep;
+import it.pagopa.interop.ui.component.Alert;
+import it.pagopa.interop.ui.page.eservice_creation.EServiceCreationPage;
+import it.pagopa.interop.ui.page.eservice_creation.step.GeneralDataStep;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
