@@ -48,7 +48,7 @@ public interface ProducerKeychainTable extends Component {
             // Verifica condizionale del body della table
             if (rows().isEmpty()) {
                 softly.assertThat(noKeychainAlert().isPresent());
-                
+
                 softly.assertThat(noKeychainAlert().get().isInfo())
                         .isTrue();
 
