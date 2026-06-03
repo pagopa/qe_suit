@@ -1,10 +1,10 @@
 package it.pagopa.interop.ui.config;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.GeneralDataStep;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.ThresholdAndAttributeStep;
-import it.pagopa.interop.ui.domain.page.eservice_creation.step.technical.TechnicalSpecStep;
+import it.pagopa.interop.ui.page.eservice_creation.EServiceCreationPage;
+import it.pagopa.interop.ui.page.eservice_creation.step.GeneralDataStep;
+import it.pagopa.interop.ui.page.eservice_creation.step.ThresholdAndAttributeStep;
+import it.pagopa.interop.ui.page.eservice_creation.step.technical.TechnicalSpecStep;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.test.context.TestConfiguration;

@@ -4,7 +4,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.ui.domain.model.EServiceGeneralDataModel;
 import it.pagopa.interop.ui.domain.model.EServiceTechnicalModel;
-import it.pagopa.interop.ui.domain.page.eservice_creation.EServiceCreationPage;
+import it.pagopa.interop.ui.page.eservice_creation.EServiceCreationPage;
 import it.pagopa.interop.ui.service.EServiceGeneralDataService;
 import it.pagopa.interop.ui.service.EServiceTechnicalDataService;
 import lombok.RequiredArgsConstructor;

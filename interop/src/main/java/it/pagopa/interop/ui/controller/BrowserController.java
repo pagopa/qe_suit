@@ -8,7 +8,7 @@ import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
 import it.pagopa.interop.common.domain.enums.UserRole;
 import it.pagopa.interop.ui.domain.context.BrowserContext;
-import it.pagopa.interop.ui.domain.page.catalog.EServiceCatalogPage;
+import it.pagopa.interop.ui.page.catalog.EServiceCatalogPage;
 import it.pagopa.interop.ui.service.BrowserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
