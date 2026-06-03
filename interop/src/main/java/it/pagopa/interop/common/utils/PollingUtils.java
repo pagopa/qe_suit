@@ -1,23 +1,22 @@
 package it.pagopa.interop.common.utils;
 
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+
 import java.time.Duration;
+import java.time.Instant;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public class PollingUtils {
+public final class PollingUtils {
 
-    private PollingUtils() {}
+    private PollingUtils() {
+    }
 
     /**
      * Esegue polling su un supplier finché il predicate è soddisfatto o scade il timeout.
-     *
-     * @param supplier   fornisce il valore ad ogni tentativo
-     * @param condition  condizione di successo sul valore
-     * @param timeout    durata massima totale
-     * @param interval   attesa tra un tentativo e l'altro
-     * @param <T>        tipo del risultato
-     * @return il valore che ha soddisfatto la condizione
-     * @throws IllegalStateException se il timeout scade senza successo
+     * Mantiene traccia dell'ultimo errore per un debugging chiaro.
      */
     public static <T> T pollUntil(
             Supplier<T> supplier,
@@ -25,35 +24,101 @@ public class PollingUtils {
             Duration timeout,
             Duration interval
     ) {
-        long deadlineMs = System.currentTimeMillis() + timeout.toMillis();
+        Instant deadline = Instant.now().plus(timeout);
+        Throwable lastException = null;
 
-        while (System.currentTimeMillis() < deadlineMs) {
+        while (Instant.now().isBefore(deadline)) {
             try {
                 T result = supplier.get();
                 if (result != null && condition.test(result)) {
                     return result;
                 }
             } catch (Exception e) {
-                // tentativo fallito: riprova
+                // Cattura l'errore (es. 404 Not Found temporaneo) e lo salva per il timeout
+                lastException = e;
             }
 
             try {
                 Thread.sleep(interval.toMillis());
             } catch (InterruptedException ie) {
                 Thread.currentThread().interrupt();
-                throw new IllegalStateException("Polling interrupted", ie);
+                throw new IllegalStateException("Polling interrotto bruscamente", ie);
             }
         }
 
-        throw new IllegalStateException(
-                String.format("Polling timed out after %s", timeout)
-        );
+        // Timeout scaduto: lancia un'eccezione parlante includendo la causa reale
+        String errorMsg = String.format("Polling in timeout dopo %s secondi.", timeout.toSeconds());
+        if (lastException != null) {
+            throw new IllegalStateException(errorMsg + " Ultimo errore riscontrato: " + lastException.getMessage(), lastException);
+        } else {
+            throw new IllegalStateException(errorMsg + " La condizione non è mai stata soddisfatta.");
+        }
     }
 
     /**
-     * Overload con valori di default: timeout 10s, interval 1s.
+     * Overload standard: timeout 10s, intervallo 1s.
      */
     public static <T> T pollUntil(Supplier<T> supplier, Predicate<T> condition) {
         return pollUntil(supplier, condition, Duration.ofSeconds(10), Duration.ofSeconds(1));
+    }
+
+    /**
+     * Esegue il polling specifico per le chiamate HTTP (ResponseEntity).
+     * Verifica automaticamente che lo status sia 2xx e che il body sia presente prima di testare la condizione.
+     */
+    public static <T> T pollUntilWithHttpInfo(
+            Supplier<ResponseEntity<T>> supplier,
+            Predicate<T> bodyCondition,
+            Duration timeout,
+            Duration interval
+    ) {
+        // Riconduce il comportamento al pollUntil generico, spacchettando la ResponseEntity
+        ResponseEntity<T> finalResponse = pollUntil(
+                supplier,
+                response -> response != null
+                        && response.getStatusCode().is2xxSuccessful()
+                        && response.getBody() != null
+                        && bodyCondition.test(response.getBody()),
+                timeout,
+                interval
+        );
+
+        return finalResponse.getBody();
+    }
+
+    /**
+     * Esegue il polling specifico per le chiamate HTTP (ResponseEntity).
+     * Verifica automaticamente che lo status sia 2xx e che il body sia presente prima di testare la condizione.
+     */
+    public static <T> T pollUntilWithHttpInfo(
+            Supplier<ResponseEntity<T>> supplier,
+            BiPredicate<HttpStatusCode, T> responseCondition,
+            Duration timeout,
+            Duration interval
+    ) {
+        // Riconduce il comportamento al pollUntil generico, spacchettando la ResponseEntity
+        ResponseEntity<T> finalResponse = pollUntil(
+                supplier,
+                response -> response != null
+                        && responseCondition.test(response.getStatusCode(), response.getBody()),
+                timeout,
+                interval
+        );
+
+        return finalResponse.getBody();
+    }
+
+    /**
+     * Overload per ResponseEntity con valori di default (10s timeout, 1s intervallo).
+     */
+    public static <T> T pollUntilWithHttpInfo(Supplier<ResponseEntity<T>> supplier, Predicate<T> bodyCondition) {
+        return pollUntilWithHttpInfo(supplier, bodyCondition, Duration.ofSeconds(10), Duration.ofSeconds(1));
+    }
+
+    /**
+     * Overload per ResponseEntity con valori di default (10s timeout, 1s intervallo).
+     */
+    public static <T> T pollUntilWithHttpInfo(Supplier<ResponseEntity<T>> supplier,  BiPredicate<HttpStatusCode, T> responseCondition) {
+        return pollUntilWithHttpInfo(supplier, responseCondition, Duration.ofSeconds(10), Duration.ofSeconds(1));
     }
 }
