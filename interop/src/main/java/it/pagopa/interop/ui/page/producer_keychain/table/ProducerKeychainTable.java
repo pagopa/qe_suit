@@ -47,10 +47,12 @@ public interface ProducerKeychainTable extends Component {
 
             // Verifica condizionale del body della table
             if (rows().isEmpty()) {
-                softly.assertThat(noKeychainAlert().isInfo())
+                softly.assertThat(noKeychainAlert().isPresent());
+                
+                softly.assertThat(noKeychainAlert().get().isInfo())
                         .isTrue();
 
-                softly.assertThat(noKeychainAlert().message().read())
+                softly.assertThat(noKeychainAlert().get().message().read())
                         .isEqualTo("Non ci sono portachiavi disponibili");
             } else {
                 softly.assertThat(rows()).isNotEmpty();
