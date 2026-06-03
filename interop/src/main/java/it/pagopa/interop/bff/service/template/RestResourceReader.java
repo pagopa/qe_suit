@@ -9,13 +9,15 @@ import java.util.function.BiPredicate;
 public interface RestResourceReader<Request, Entity> extends ContextHandler<Entity> {
 
     default Entity getAndAssert(Request request, BiPredicate<HttpStatusCode, Entity> predicate) {
-        Entity entity = PollingUtils.pollUntilWithHttpInfo(
+        ResponseEntity<Entity> entity = PollingUtils.pollUntilWithHttpInfo(
                 () -> doRead(request),
                 predicate
         );
 
-        updateContext(entity);
-        return entity;
+        doUpdateHttpContext(entity);
+        doUpdateModelContext(entity.getBody());
+
+        return entity.getBody();
     }
 
     default Entity getSuccessfully(Request request) {
