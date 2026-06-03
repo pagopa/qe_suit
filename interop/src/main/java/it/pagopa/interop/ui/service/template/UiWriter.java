@@ -4,7 +4,7 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.interop.common.service.template.RequestOverride;
 import it.pagopa.interop.common.utils.DeepMerger;
 
-public interface UiWriteService<M, C extends Component> extends UiReadService<C, M> {
+public interface UiWriter<M, C extends Component> extends UiReader<C, M> {
 
     /**
      * COMPORTAMENTO 1: Il modello in input vince sempre (Compilazione Assoluta).

@@ -2,7 +2,7 @@ package it.pagopa.interop.ui.service.template;
 
 import it.frontend.e2e.framework.web.domain.Component;
 
-public interface UiReadService<C extends Component, M> {
+public interface UiReader<C extends Component, M> {
 
     default M read() {
         C component = getComponent();
