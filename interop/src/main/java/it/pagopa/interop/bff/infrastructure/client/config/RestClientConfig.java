@@ -2,10 +2,7 @@ package it.pagopa.interop.bff.infrastructure.client.config;
 
 import it.pagopa.interop.bff.infrastructure.http.interceptor.HttpLoggingInterceptor;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
-import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
+import it.pagopa.interop.generated.openapi.clients.bff.api.*;
 import it.pagopa.interop.bff.infrastructure.client.auth.bearer.BearerAuthProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -50,5 +47,10 @@ public class RestClientConfig {
     @Bean
     public ClientsApi clientsApi(ApiClient apiClient) {
         return new ClientsApi(apiClient);
+    }
+
+    @Bean
+    public ProducerKeychainApi  producerKeychainApi(ApiClient apiClient) {
+        return new ProducerKeychainApi(apiClient);
     }
 }
