@@ -14,16 +14,26 @@ public class XPathValidator {
         if (normalized == null)
             throw new IllegalArgumentException("XPath is empty or contains only whitespace");
 
-        if (!normalized.startsWith("."))
-            throw new IllegalArgumentException("XPath path must start with '.'");
+        // Permetti l'eccezione globale se inizia con // (ricerca in tutta la pagina)
+        if (normalized.startsWith("//")) {
+            return isCompilable(normalized);
+        }
+
+        // Altrimenti, applica la regola standard del componente relativo
+        String checkString = normalized;
+        while (checkString.startsWith("(")) {
+            checkString = checkString.substring(1).trim();
+        }
+
+        if (!checkString.startsWith("."))
+            throw new IllegalArgumentException("XPath path must start with '.' or '//'");
 
         return isCompilable(normalized);
     }
 
     public boolean isSyntacticallyValid(String xpath) {
         String normalized = normalize(xpath);
-        if (normalized == null)
-            throw new IllegalArgumentException("XPath is empty or contains only whitespace");
+        if (normalized == null) throw new IllegalArgumentException("XPath is empty or contains only whitespace");
 
         if (!isXPathNotation(normalized))
             throw new IllegalArgumentException("XPath must start with '/', './', './/' or '(...)'");
