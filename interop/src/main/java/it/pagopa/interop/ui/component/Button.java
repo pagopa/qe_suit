@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 
-@XPath(".//*[contains(@class, 'MuiButton)]")
+@XPath(".//*[contains(@class, 'MuiButton')]")
 public interface Button extends Component, Clickable, Readable<String> {
     String DISABLED_CLASS = "Mui-disabled";
     String SELECTED_CLASS = "Mui-selected";
