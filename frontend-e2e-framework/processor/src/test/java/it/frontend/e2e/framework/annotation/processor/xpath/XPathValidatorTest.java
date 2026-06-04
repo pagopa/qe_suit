@@ -39,10 +39,10 @@ class XPathValidatorTest {
     }
 
     @Test
-    @DisplayName("Rifiuta XPath di metodo senza prefisso punto")
-    void shouldRejectMethodXPathWithoutDotPrefix() {
-        assertThrows(IllegalArgumentException.class,
-                () -> validator.isValidMethodXPath("//*[@id='username']"));
+    @DisplayName("Accetta XPath di metodo con prefisso doppio slash per ricerca globale")
+    void shouldAcceptMethodXPathWithDoubleSlashPrefix() {
+        boolean isValid = validator.isValidMethodXPath("//*[@id='username']");
+        assertTrue(isValid);
     }
 
     @Test
