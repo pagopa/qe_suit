@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.service.action;
 
+import it.pagopa.interop.bff.service.action.strategy.PollingStrategy;
 import lombok.Setter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,23 +18,22 @@ public class TestChain<Entity> {
 
     private Supplier<ResponseEntity<Entity>> responseSupplier;
     @Setter(onMethod_ = {@Autowired}) private ObjectProvider<PollingAction<Entity>> pollingActionProvider;
-    @Setter(onMethod_ = {@Autowired}) private ObjectProvider<ResponseAction<Entity>> responseActionProvider;
 
-    public TestChain<Entity> handle(Supplier<ResponseEntity<Entity>> responseSupplier) {
+    TestChain<Entity> handle(Supplier<ResponseEntity<Entity>> responseSupplier) {
         this.responseSupplier = responseSupplier;
         return this;
     }
 
-    public PollingAction<Entity> withPolling() {
-        return pollingActionProvider.getObject().handle(responseSupplier);
+    public PollingAction<Entity> withPolling(PollingStrategy<? super Entity> pollingStrategy) {
+        return pollingActionProvider.getObject().handle(responseSupplier, pollingStrategy);
     }
 
-    public PollingAction<Entity> withPolling(Duration timeout, Duration interval) {
-        return pollingActionProvider.getObject().handle(responseSupplier, timeout, interval);
+    public PollingAction<Entity> withPolling(PollingStrategy<? super Entity> pollingStrategy, Duration timeout, Duration interval) {
+        return pollingActionProvider.getObject().handle(responseSupplier, pollingStrategy, timeout, interval);
     }
 
-    public ResponseAction<Entity> withoutPolling() {
+    public PollingAction<Entity> withoutPolling() {
         ResponseEntity<Entity> response = responseSupplier.get();
-        return responseActionProvider.getObject().handle(response);
+        return pollingActionProvider.getObject().handle(response);
     }
 }
