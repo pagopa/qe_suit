@@ -1,14 +1,14 @@
 package it.pagopa.interop.bff.service.action;
 
+import it.pagopa.interop.common.domain.model.TestModel;
 import org.springframework.http.ResponseEntity;
 
-public interface Finalizer {
-    default <E> E body(ResponseEntity<E> finalResponse) {
-        if (finalResponse != null) return finalResponse.getBody();
-        return null;
-    }
+import java.util.List;
 
-    default <E> ResponseEntity<E> raw(ResponseEntity<E> finalResponse) {
-        return finalResponse;
-    }
+public interface Finalizer<Response, Model extends TestModel> {
+    ResponseEntity<Response> getResponse();
+
+    Model getModel();
+
+    List<Model> getModels();
 }

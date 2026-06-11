@@ -1,0 +1,21 @@
+package it.pagopa.interop.bff.service.template;
+
+import it.pagopa.interop.bff.service.action.TestChain;
+import it.pagopa.interop.bff.service.action.TestChainFactory;
+import it.pagopa.interop.common.domain.model.TestModel;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
+
+public interface CanReadAll<Request, Response, Model extends TestModel> {
+
+    TestChainFactory getChainFactory();
+
+    ResponseEntity<Response> doReadAll(Request request);
+
+    default TestChain<Response, Model> readAll(Request request) {
+        return getChainFactory().build(() -> doReadAll(request), this::updateModelsAfterRead);
+    }
+
+    List<Model> updateModelsAfterRead(Response response);
+}

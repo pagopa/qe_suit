@@ -1,39 +1,42 @@
 package it.pagopa.interop.bff.service.action;
 
+import it.pagopa.interop.bff.service.action.context.BaseActionContext;
+import it.pagopa.interop.bff.service.action.context.PollingActionContext;
 import it.pagopa.interop.bff.service.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.domain.model.TestModel;
 import lombok.Setter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.function.Supplier;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class TestChain<Entity> {
+public class TestChain<Entity, Model extends TestModel> {
 
-    private Supplier<ResponseEntity<Entity>> responseSupplier;
-    @Setter(onMethod_ = {@Autowired}) private ObjectProvider<PollingAction<Entity>> pollingActionProvider;
+    private BaseActionContext<Entity, Model> baseActionContext;
+    @Setter(onMethod_ = {@Autowired}) private ObjectProvider<PollingAction<Entity, Model>> pollingActionProvider;
 
-    TestChain<Entity> handle(Supplier<ResponseEntity<Entity>> responseSupplier) {
-        this.responseSupplier = responseSupplier;
+    TestChain<Entity, Model> handle(BaseActionContext<Entity, Model> baseActionContext) {
+        this.baseActionContext = baseActionContext;
         return this;
     }
 
-    public PollingAction<Entity> withPolling(PollingStrategy<? super Entity> pollingStrategy) {
-        return pollingActionProvider.getObject().handle(responseSupplier, pollingStrategy);
+    public PollingAction<Entity, Model> withPolling(PollingStrategy<? super Entity> pollingStrategy) {
+        var pollingContext = new PollingActionContext<>(baseActionContext, pollingStrategy, null, null);
+        return pollingActionProvider.getObject().handle(pollingContext);
     }
 
-    public PollingAction<Entity> withPolling(PollingStrategy<? super Entity> pollingStrategy, Duration timeout, Duration interval) {
-        return pollingActionProvider.getObject().handle(responseSupplier, pollingStrategy, timeout, interval);
+    public PollingAction<Entity, Model> withPolling(PollingStrategy<? super Entity> pollingStrategy, Duration timeout, Duration interval) {
+        var pollingContext = new PollingActionContext<>(baseActionContext, pollingStrategy, timeout, interval);
+        return pollingActionProvider.getObject().handle(pollingContext);
     }
 
-    public PollingAction<Entity> withoutPolling() {
-        ResponseEntity<Entity> response = responseSupplier.get();
-        return pollingActionProvider.getObject().handle(response);
+    public PollingAction<Entity, Model> withoutPolling() {
+        var pollingContext = new PollingActionContext<>(baseActionContext, null, null, null);
+        return pollingActionProvider.getObject().handleWithout(pollingContext);
     }
 }

@@ -1,13 +1,14 @@
 package it.pagopa.interop.bff.service.action;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.interop.bff.service.action.context.BaseActionContext;
+import it.pagopa.interop.bff.service.action.context.PollingActionContext;
 import it.pagopa.interop.bff.service.action.strategy.AssertionStrategy;
-import it.pagopa.interop.bff.service.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.domain.context.ContextEntry;
 import it.pagopa.interop.common.domain.context.ScenarioContext;
-import it.pagopa.interop.common.domain.model.DomainModelRegistry;
 import it.pagopa.interop.common.domain.model.TestModel;
 import it.pagopa.interop.common.utils.PollingUtils;
 import lombok.Setter;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -15,58 +16,77 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PollingAction<Entity> implements Finalizer {
+public class PollingAction<Entity, Model extends TestModel> implements Finalizer<Entity, Model> {
 
-    @Setter(onMethod_ = {@Autowired}) private AssertAction assertAction;
-    @Setter(onMethod_ = {@Autowired}) private ScenarioContext scenarioContext;
-    @Setter(onMethod_ = {@Autowired}) private DomainModelRegistry domainModelRegistry;
-    @Setter(onMethod_ = {@Autowired}) private ObjectMapper objectMapper;
+    @Setter(onMethod_ = {@Autowired})
+    private ObjectProvider<AssertAction<Entity, Model>> assertActionProvider;
+    @Setter(onMethod_ = {@Autowired})
+    private ScenarioContext scenarioContext;
+    private BaseActionContext<Entity, Model> baseActionContext;
     private ResponseEntity<Entity> finalResponse;
 
-    PollingAction<Entity> handle(Supplier<ResponseEntity<Entity>> responseSupplier, PollingStrategy<? super Entity> pollingStrategy) {
-        return handle(responseSupplier, pollingStrategy, Duration.ofSeconds(10), Duration.ofSeconds(1));
-    }
-
-    PollingAction<Entity> handle(Supplier<ResponseEntity<Entity>> responseSupplier, PollingStrategy<? super Entity> pollingStrategy, Duration timeout, Duration interval) {
-        ResponseEntity<Entity> response = PollingUtils.pollUntil(
-                responseSupplier,
-                r -> r != null && pollingStrategy.isSatisfied(r.getStatusCode(), r.getBody()),
-                timeout,
-                interval
+    PollingAction<Entity, Model> handle(PollingActionContext<Entity, Model> context) {
+        this.baseActionContext = context.getBaseActionContext();
+        this.finalResponse = PollingUtils.pollUntil(
+                context.getResponseSupplier(),
+                r -> r != null && context.getPollingStrategy().isSatisfied(r.getStatusCode(), r.getBody()),
+                context.getTimeout() != null ? context.getTimeout() : Duration.ofSeconds(10),
+                context.getInterval() != null ? context.getInterval() : Duration.ofSeconds(1)
         );
 
-        return handle(response);
-    }
-
-    PollingAction<Entity> handle(ResponseEntity<Entity> finalResponse) {
-        this.finalResponse = finalResponse;
-        this.syncContext(finalResponse);
         return this;
     }
 
-    public AssertAction andAssert(AssertionStrategy<? super Entity> assertionStrategy) {
-        return assertAction.handle(finalResponse, assertionStrategy);
+    PollingAction<Entity, Model> handleWithout(PollingActionContext<Entity, Model> context) {
+        this.baseActionContext = context.getBaseActionContext();
+        this.finalResponse = context.getResponseSupplier().get();
+        return this;
     }
 
-    private void syncContext(ResponseEntity<Entity> response) {
-        scenarioContext.upsert(response);
+    public AssertAction<Entity, Model> andAssertThat(AssertionStrategy<? super Entity> assertionStrategy) {
+        return assertActionProvider.getObject().handle(finalResponse, baseActionContext, assertionStrategy);
+    }
 
-        Entity body = response.getBody();
-        if (response.getStatusCode().is2xxSuccessful() && body != null) {
-            Class<? extends TestModel> domainClass = domainModelRegistry.getDomainClassFor(body.getClass());
+    public PollingAction<Entity, Model> andUpdateContext(String... alias) {
+        List<? extends TestModel> models = baseActionContext.getMapper().apply(finalResponse.getBody());
 
-            if (domainClass != null) {
-                TestModel domainModel = objectMapper.convertValue(body, domainClass);
-                scenarioContext.upsert(domainModel);
-            } else if (body instanceof TestModel testModel) {
-                scenarioContext.upsert(testModel);
-            } else {
-                scenarioContext.upsert(body);
-            }
+        if (alias.length > models.size()) {
+            throw new IllegalArgumentException("The given alias exceeds the maximum number of test models");
         }
+
+        List<ContextEntry<? extends TestModel>> contextEntries = new ArrayList<>();
+
+        for (int i = 0; i < models.size(); i++) {
+            TestModel model = models.get(i);
+            String modelAlias = i < alias.length ? alias[i] : null;
+            contextEntries.add(new ContextEntry<>(model, modelAlias));
+        }
+
+        scenarioContext.setLastResponseEntity(finalResponse);
+        scenarioContext.upsert(contextEntries);
+
+        return this;
     }
+
+    @Override
+    public ResponseEntity<Entity> getResponse() {
+        return finalResponse;
+    }
+
+    @Override
+    public Model getModel() {
+        List<Model> models = baseActionContext.getMapper().apply(finalResponse.getBody());
+        return models.get(0);
+    }
+
+    @Override
+    public List<Model> getModels() {
+        return baseActionContext.getMapper().apply(finalResponse.getBody());
+    }
+
 }
