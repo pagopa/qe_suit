@@ -2,31 +2,35 @@ package it.pagopa.interop.bff.service.template;
 
 import it.pagopa.interop.bff.service.action.TestChain;
 import it.pagopa.interop.bff.service.action.TestChainFactory;
+import it.pagopa.interop.common.domain.model.TestModel;
+import it.pagopa.interop.common.service.template.RequestOverride;
 import org.springframework.http.ResponseEntity;
 
-import java.util.function.Consumer;
+import java.util.List;
 
-public interface CanCreate<Entity, Request> {
+public interface CanCreate<Request, Response, Model extends TestModel> {
 
-    default TestChain<Entity> create() {
+    default TestChain<Response, Model> create() {
         return create(request -> {
         });
     }
 
-    default TestChain<Entity> create(Consumer<Request> requestOverride) {
-        // 1. Genera il payload valido di default
+    default TestChain<Response, Model> create(RequestOverride<Request> requestOverride) {
         Request request = doDefaultCreationRequest();
+        requestOverride.applyTo(request);
 
-        // 2. Applica le modifiche richieste dal test (RequestOverride)
-        requestOverride.accept(request);
+        return create(request);
+    }
 
-        // 3. Avvia la catena passando la chiamata reale dell'OpenAPI client
-        return getChainFactory().build(() -> doCreate(request));
+    default TestChain<Response, Model> create(Request request){
+        return getChainFactory().build(() -> doCreate(request), resp -> List.of(updateModelAfterCreate(resp)));
     }
 
     Request doDefaultCreationRequest();
 
     TestChainFactory getChainFactory();
 
-    ResponseEntity<Entity> doCreate(Request request);
+    ResponseEntity<Response> doCreate(Request request);
+
+    Model updateModelAfterCreate(Response response);
 }

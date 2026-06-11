@@ -1,0 +1,12 @@
+package it.pagopa.interop.common.domain.context;
+
+import it.pagopa.interop.common.domain.model.TestModel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
+public class ContextEntry<Model extends TestModel> {
+    private final Model item;
+    private final String alias;
+}
