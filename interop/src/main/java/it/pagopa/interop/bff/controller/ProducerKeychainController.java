@@ -42,19 +42,7 @@ public class ProducerKeychainController {
 
     @When("l'utente elimina tutti i Producer Keychain")
     public void deleteProducerKeychains() {
-        var response = readAllKeychains();
-
-        while (!response.isEmpty()) {
-
-            // Elimina in blocco tutti i keychain trovati nella pagina corrente
-            response.forEach(keychain ->
-                    service.delete(keychain.getId())
-                            .withPolling(PollingStrategy.UNTIL_SUCCESS)
-            );
-
-            // Ricarica la lista per verificare se ci sono altre pagine o elementi residui
-            response = readAllKeychains();
-        }
+        service.deleteAll();
     }
 
     @Then("tutti i Producer Keychain sono stati eliminati")
