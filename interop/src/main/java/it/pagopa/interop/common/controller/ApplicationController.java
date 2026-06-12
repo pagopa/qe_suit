@@ -4,7 +4,7 @@ import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.cucumber.context.ChannelContext;
-import it.pagopa.interop.common.cucumber.context.CurrentUserContext;
+import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.common.domain.enums.Channel;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ApplicationController {
-    private final CurrentUserContext currentUserContext;
+    private final UserContext userContext;
     private final ChannelContext channelContext;
 
     @And("un {userRole} di {tenant}")
@@ -22,8 +22,8 @@ public class ApplicationController {
     public void loginWith(UserRole userRole, Tenant tenant) {
         User user = User.getTenantUser(tenant, userRole);
 
-        if (!currentUserContext.isLoggedIn(user, tenant))
-            currentUserContext.set(user, tenant);
+        if (!userContext.isLoggedIn(user, tenant))
+            userContext.set(user, tenant);
     }
 
     @Given("una sessione HTTP autenticata su {channel}")

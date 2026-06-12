@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
-import it.pagopa.interop.common.cucumber.context.CurrentUserContext;
+import it.pagopa.interop.common.cucumber.context.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.cache.annotation.Cacheable;
@@ -31,13 +31,13 @@ public class BearerAuthProvider {
     private final ObjectMapper objectMapper;
     private final KmsClient kmsClient;
     private final BearerTokenProperties properties;
-    private final CurrentUserContext currentUserContext;
+    private final UserContext userContext;
 
     @Cacheable(cacheNames = "sessionToken", key = "@bearerAuthProvider.cacheKey()")
     public String getToken() {
         try {
-            User user = currentUserContext.getUser();
-            Tenant tenant = currentUserContext.getTenant();
+            User user = userContext.getUser();
+            Tenant tenant = userContext.getTenant();
             String role = user.getRole().name().toLowerCase();
 
             long now = Instant.now().getEpochSecond();
@@ -99,8 +99,8 @@ public class BearerAuthProvider {
     }
 
     public String cacheKey() {
-        User u = currentUserContext.getUser();
-        Tenant t = currentUserContext.getTenant();
+        User u = userContext.getUser();
+        Tenant t = userContext.getTenant();
 
         return String.join("|",
                 u.getUserId().toString(),

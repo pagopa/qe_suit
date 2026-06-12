@@ -8,7 +8,7 @@ import it.pagopa.interop.common.domain.enums.User;
 import it.pagopa.interop.common.domain.model.Client;
 import it.pagopa.interop.common.domain.model.Purpose;
 
-import it.pagopa.interop.common.cucumber.context.CurrentUserContext;
+import it.pagopa.interop.common.cucumber.context.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,7 +20,7 @@ import static it.pagopa.interop.common.domain.enums.InteropClientType.CONSUMER;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ClientController {
 
-    private final CurrentUserContext currentUserContext;
+    private final UserContext userContext;
     private final ClientDataPreparationService clientService;
 
     @Given("un client CONSUMER creato da {tenant}, associato alla {currentPurpose}, in cui è presente l'admin e una coppia di chiavi crittografiche")
@@ -36,7 +36,7 @@ public class ClientController {
 
     private Client createClientWithAdmin(InteropClientType type, Tenant tenant) {
         User admin = User.getTenantAdmin(tenant);
-        currentUserContext.set(admin, tenant);
+        userContext.set(admin, tenant);
 
         Client client = clientService.createClient(
                 type,

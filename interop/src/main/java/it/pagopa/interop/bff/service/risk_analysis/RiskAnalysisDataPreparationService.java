@@ -7,7 +7,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
-import it.pagopa.interop.common.cucumber.context.CurrentUserContext;
+import it.pagopa.interop.common.cucumber.context.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.UUID;
 public class RiskAnalysisDataPreparationService {
 
     private final PurposesApi purposesApi;
-    private final CurrentUserContext currentUserContext;
+    private final UserContext userContext;
     private final RiskAnalysisDataInitializer initializer;
 
     public RiskAnalysis createRiskAnalysis() {
@@ -28,7 +28,7 @@ public class RiskAnalysisDataPreparationService {
     }
 
     public RiskAnalysis createRiskAnalysis(boolean completed) {
-        Tenant currentTenant = currentUserContext.getTenant();
+        Tenant currentTenant = userContext.getTenant();
         String templateKey = resolveTemplateKey(currentTenant);
 
         RiskAnalysisDataInitializer.RiskAnalysisTemplate template = initializer

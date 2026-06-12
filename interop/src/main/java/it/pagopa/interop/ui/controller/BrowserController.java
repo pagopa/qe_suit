@@ -3,7 +3,7 @@ package it.pagopa.interop.ui.controller;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.common.infrastructure.client.auth.bearer.BearerAuthProvider;
-import it.pagopa.interop.common.cucumber.context.CurrentUserContext;
+import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
 import it.pagopa.interop.common.domain.enums.UserRole;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class BrowserController {
 
     private final BrowserContext browserContext;
-    private final CurrentUserContext currentUserContext;
+    private final UserContext userContext;
 
     private final BrowserService webBrowserService;
     private final EServiceCatalogPage eServiceCatalogPage;
@@ -30,8 +30,8 @@ public class BrowserController {
     public void navigateToPage(UserRole userRole, Tenant tenant, Page page) {
         User user = User.getTenantUser(tenant, userRole);
 
-        if (!currentUserContext.isLoggedIn(user, tenant) || !webBrowserService.hasSessionToken()) {
-            currentUserContext.set(user, tenant);
+        if (!userContext.isLoggedIn(user, tenant) || !webBrowserService.hasSessionToken()) {
+            userContext.set(user, tenant);
             browserContext.set(user, tenant);
 
             String sessionToken = bearerAuthProvider.getToken();
