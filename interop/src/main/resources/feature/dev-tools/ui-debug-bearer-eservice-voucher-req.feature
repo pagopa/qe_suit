@@ -1,22 +1,20 @@
 @debug-client-assertion-page-ui-flow
-Feature: Debugger Client Assertion Sync Bearer (Frontend)
+Feature: Debugger della request di tipo bearer per un voucher spendibile presso un erogatore di un e-service sincrono (Frontend) - Test di Flusso Funzionale
 
   Come Aderente in possesso di un client di tipo CONSUMER
-  Voglio validare la mia Client Assertion standard
-  Al fine di identificare errori strutturali, temporali o crittografici nelle quattro fasi di validazione (Formale, Recupero Chiave, Firma, Stato Piattaforma)
+  Voglio validare la mia request di tipo bearer per un voucher spendibile presso un erogatore di un e-service sincrono
+  Al fine di identificare errori strutturali, temporali o crittografici nelle quattro fasi di validazione (Client assertion, Recupero Chiave, Firma, Stato Piattaforma)
 
   ***
   OBIETTIVI DEL TEST FRONTEND:
-  1. Verificare che il flusso utente (caricamento dei componenti, input, invio) sia funzionale e fluido.
-  2. Verificare il corretto comportamento dei componenti grafici (es. text field, messaggi di errore) in risposta ai diversi input dell'utente.
-  3. Validare il mapping tra le risposte API (BE) e i componenti grafici della pagina (Step di validazione).
-  4. Verificare, per induzione, la corretta renderizzazione dei messaggi di errore:
-  non si mira alla copertura esaustiva di ogni casistica di business (demandata ai test BE),
-  ma alla conferma che il componente di UI reagisca correttamente ai diversi stati (PASSED, FAILED, SKIPPED).
+  1. Verificare che il flusso utente sia completabile con l'esito atteso e con fluidità.
+  2. Validare il mapping tra le risposte API (BE) e i componenti grafici della pagina.
   ***
 
-  Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_SUCCESS]
-  Dato un client CONSUMER valido, quando viene inviata una client assertion corretta allora tutte le fasi di validazione risultano PASSED
+  Scenario: [DEBUG_ESERVICE_VOUCHER_BEARER_REQ_1]
+  Dato un client CONSUMER ed una Client assertion valida,
+  quando l'utente sottomette le informazioni nella form di debugging,
+  allora tutte le fasi di validazione risultano in stato PASSED
 
     Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
     And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
@@ -30,11 +28,12 @@ Feature: Debugger Client Assertion Sync Bearer (Frontend)
       | clientAssertionSignatureVerification | PASSED | []     |
       | platformStatesVerification           | PASSED | []     |
 
-
-  # Vista la segnalazione rigettata (https://pagopa.atlassian.net/browse/PIN-10056) lo step platformStatesVerification viene commentato
-  Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_INVALID_AUDIENCE]
-  Dato un client CONSUMER valido, quando la client assertion ha audience invalida
-  allora la validazione formale fallisce con invalidAudience
+  Scenario: [DEBUG_ESERVICE_VOUCHER_BEARER_REQ_2]
+  Dato un client CONSUMER ed una Client assertion avente claim audiance invalido,
+  quando l'utente sottomette le informazioni nella form di debugging,
+  allora la fase di validazione della Client Assertion risulta in stato FAILED
+  e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
+  e le restanti risultano in stato SKIPPED
 
     Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
     And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
@@ -48,12 +47,13 @@ Feature: Debugger Client Assertion Sync Bearer (Frontend)
       | clientAssertionValidation            | FAILED  | [Unexpected client assertion audience: invalid_audience] |
       | publicKeyRetrieve                    | SKIPPED | []                                                       |
       | clientAssertionSignatureVerification | SKIPPED | []                                                       |
-      #| platformStatesVerification           | SKIPPED | []                                                       |
 
-  # Vista la segnalazione rigettata (https://pagopa.atlassian.net/browse/PIN-10056) lo step platformStatesVerification viene commentato
-  Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_MISSING_REQUIRED_CLAIMS]
-  Dato un client CONSUMER valido, quando la client assertion non contiene claim obbligatori
-  allora la validazione formale fallisce con i rispettivi errori
+  Scenario: [DEBUG_ESERVICE_VOUCHER_BEARER_REQ_3]
+  Dato un client CONSUMER ed una Client assertion non contenete claim obbligatori,
+  quando l'utente sottomette le informazioni nella form di debugging,
+  allora la fase di validazione della Client Assertion risulta in stato FAILED
+  e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
+  e le restanti risultano in stato SKIPPED
 
     Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
     And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
@@ -72,13 +72,13 @@ Feature: Debugger Client Assertion Sync Bearer (Frontend)
       | clientAssertionValidation            | FAILED  | [JTI not found in client assertion, IAT not found in client assertion, EXP not found in client assertion, Issuer not found in client assertion, Subject not found in client assertion, Audience not found in client assertion] |
       | publicKeyRetrieve                    | SKIPPED | []                                                                                                                                                                                                                             |
       | clientAssertionSignatureVerification | SKIPPED | []                                                                                                                                                                                                                             |
-      #| platformStatesVerification           | SKIPPED | []                                                                                                                                                                                                                             |
 
-
-  # Vista la segnalazione rigettata (https://pagopa.atlassian.net/browse/PIN-10056) lo step platformStatesVerification viene commentato
-  Scenario: [CONSUMER_CLIENT_ASSERTION_PUBLIC_KEY_RETRIEVE_INVALID_KID_FORMAT]
-  Dato un client CONSUMER valido, quando il claim kid non è in formato valido
-  allora il recupero della chiave pubblica fallisce con invalidKidFormat
+  Scenario: [DEBUG_ESERVICE_VOUCHER_BEARER_REQ_4]
+  Dato un client CONSUMER ed una Client assertion avente claim kid invalido,
+  quando l'utente sottomette le informazioni nella form di debugging,
+  allora la fase di validazione della Client Assertion risulta in stato FAILED
+  e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
+  e le restanti risultano in stato SKIPPED
 
     Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
     And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
@@ -92,12 +92,13 @@ Feature: Debugger Client Assertion Sync Bearer (Frontend)
       | clientAssertionValidation            | FAILED  | [Unexpected format for kid] |
       | publicKeyRetrieve                    | SKIPPED | []                          |
       | clientAssertionSignatureVerification | SKIPPED | []                          |
-      #| platformStatesVerification           | SKIPPED | []                                                                                    |
 
-
-  Scenario: [CONSUMER_CLIENT_ASSERTION_VALIDATION_EXPIRED_TOKEN]
-  Dato un client CONSUMER valido, quando la client assertion è scaduta
-  allora la verifica della firma fallisce con tokenExpiredError
+  Scenario: [DEBUG_ESERVICE_VOUCHER_BEARER_REQ_5]
+  Dato un client CONSUMER ed una Client assertion scaduta,
+  quando l'utente sottomette le informazioni nella form di debugging,
+  allora la fasi di validazione Client Assertion e Recupero Chiave risultano in stato PASSED
+  e la fase di validazione della Firma risulta in stato FAILED con errore di token scaduto
+  e le restanti risultano in stato SKIPPED
 
     Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
     And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
@@ -113,10 +114,11 @@ Feature: Debugger Client Assertion Sync Bearer (Frontend)
       | clientAssertionSignatureVerification | FAILED  | [Token expired in client assertion signature validation] |
       | platformStatesVerification           | SKIPPED | []                                                       |
 
-
-  Scenario: [CONSUMER_CLIENT_ASSERTION_PLATFORM_STATES_INVALID_PURPOSE_STATE]
-  Dato un client CONSUMER valido, quando la finalità associata è in stato non valido
-  allora la verifica degli stati fallisce con invalidPurposeState
+  Scenario: [DEBUG_ESERVICE_VOUCHER_BEARER_REQ_6]
+  Dato un client CONSUMER valido, una PURPOSE associata in stato SUSPENDED ed una Client assertion valida,
+  quando l'utente sottomette le informazioni nella form di debugging,
+  allora la fasi di validazione Client Assertion, Recupero Chiave e Firma risultano in stato PASSED
+  e la fase di validazione dello Stato Piattaforma risulta in stato FAILED con errore di finalità in stato inattivo
 
     Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità in stato SUSPENDED provenienti da PagoPA
     And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche

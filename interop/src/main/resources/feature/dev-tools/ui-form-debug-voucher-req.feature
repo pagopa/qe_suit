@@ -11,8 +11,9 @@ Feature: Debugger Client Assertion Page (Frontend)
   ***
 
   Scenario: [DEBUG_CLIENT_ASSERTION_REQUIRED_INPUTS_VALIDATION]
-  Dato un utente abilitato alla piattaforma, quando si accede alla sezione Tool per lo sviluppo del portale Interop e si accede alla pagina Debug Client Assertion,
-  quando si tenta di validare una client assertion senza compilare il campo 'Client assertion'
+  Dato un utente abilitato alla piattaforma,
+  quando si accede alla sezione Tool per lo sviluppo del portale Interop e si accede alla pagina Debug Client Assertion,
+  e si tenta di validare una client assertion senza compilare il campo 'Client assertion',
   allora l'input viene evidenziato come errore e viene mostrato un messaggio di validazione 'Campo richiesto'
 
     Given l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
@@ -21,8 +22,9 @@ Feature: Debugger Client Assertion Page (Frontend)
     Then il text field Client assertion viene evidenziato come errore e viene mostrato il messaggio di validazione "Campo richiesto"
 
   Scenario: [DEBUG_CLIENT_ASSERTION_CLIENT_ID_INPUT_VALIDATION]
-  Dato un utente abilitato alla piattaforma, quando si accede alla sezione Tool per lo sviluppo del portale Interop e si accede alla pagina Debug Client Assertion,
-  quando si tenta di validare una client assertion con un valore per il campo 'client id' diverso da un UUID valido
+  Dato un utente abilitato alla piattaforma,
+  quando si accede alla sezione Tool per lo sviluppo del portale Interop e si accede alla pagina Debug Client Assertion,
+  e si tenta di validare una client assertion con un valore per il campo 'client id' diverso da un UUID valido,
   allora compare uno snackbar con un messaggio di errore di elaborazione della richiesta
 
     Given l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
