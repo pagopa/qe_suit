@@ -32,8 +32,8 @@ public class ProducerKeychainService extends TestService implements IProducerKey
     }
 
     @Override
-    public it.pagopa.interop.bff.model.ProducerKeychain updateModelAfterRead(ProducerKeychain producerKeychain) {
-        return objectMapper.convertValue(producerKeychain, it.pagopa.interop.bff.model.ProducerKeychain.class);
+    public it.pagopa.interop.bff.domain.ProducerKeychain updateModelAfterRead(ProducerKeychain producerKeychain) {
+        return objectMapper.convertValue(producerKeychain, it.pagopa.interop.bff.domain.ProducerKeychain.class);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class ProducerKeychainService extends TestService implements IProducerKey
     }
 
     @Override
-    public it.pagopa.interop.bff.model.ProducerKeychain updateModelAfterCreate(CreatedResource createdResource) {
+    public it.pagopa.interop.bff.domain.ProducerKeychain updateModelAfterCreate(CreatedResource createdResource) {
         return this.read(createdResource.getId())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .getModel();
@@ -71,11 +71,11 @@ public class ProducerKeychainService extends TestService implements IProducerKey
     }
 
     @Override
-    public List<it.pagopa.interop.bff.model.ProducerKeychain> updateModelsAfterRead(CompactProducerKeychains compactProducerKeychains) {
-        List<it.pagopa.interop.bff.model.ProducerKeychain> producerKeychains = new ArrayList<>();
+    public List<it.pagopa.interop.bff.domain.ProducerKeychain> updateModelsAfterRead(CompactProducerKeychains compactProducerKeychains) {
+        List<it.pagopa.interop.bff.domain.ProducerKeychain> producerKeychains = new ArrayList<>();
 
         for(CompactProducerKeychain keychain : compactProducerKeychains.getResults()){
-            var item = objectMapper.convertValue(keychain, it.pagopa.interop.bff.model.ProducerKeychain.class);
+            var item = objectMapper.convertValue(keychain, it.pagopa.interop.bff.domain.ProducerKeychain.class);
             producerKeychains.add(item);
         }
 

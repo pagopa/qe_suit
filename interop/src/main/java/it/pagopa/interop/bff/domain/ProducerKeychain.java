@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.model;
+package it.pagopa.interop.bff.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.pagopa.interop.common.domain.model.TestModel;
