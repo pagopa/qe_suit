@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.service.producer_keychain;
 
-import it.pagopa.interop.bff.model.ProducerKeychain;
+import it.pagopa.interop.bff.domain.ProducerKeychain;
 import it.pagopa.interop.bff.service.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.service.template.CanCreate;
 import it.pagopa.interop.bff.service.template.CanDelete;
