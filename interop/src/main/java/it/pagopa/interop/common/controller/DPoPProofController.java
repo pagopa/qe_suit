@@ -2,7 +2,7 @@ package it.pagopa.interop.common.controller;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.common.cucumber.context.DPoPProofContext;
+import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.domain.model.DPoPProof;
 import it.pagopa.interop.common.service.DPoPProofService;
 import it.pagopa.interop.common.utils.JwtBuilderUtils;
@@ -19,7 +19,7 @@ import java.util.List;
 public class DPoPProofController {
 
     private final DPoPProofService dpopProofService;
-    private final DPoPProofContext dpopProofContext;
+    private final ScenarioContext scenarioContext;
 
     @Given("una dpop proof valida generata con una chiave {keyAlgorithm}")
     public void createDPoPProof(KeyPairUtils.KeyAlgorithm keyAlgorithm) {
@@ -38,6 +38,6 @@ public class DPoPProofController {
                 : dpopProofService.buildProofWithOverrides(keyPair, overrides);
 
         log.info("Generated DPoP proof: {}", proof);
-        dpopProofContext.upsert(new DPoPProof(proof, keyPair));
+        scenarioContext.upsert(new DPoPProof(proof, keyPair));
     }
 }
