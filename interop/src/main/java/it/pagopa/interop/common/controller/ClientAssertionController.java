@@ -3,6 +3,8 @@ package it.pagopa.interop.common.controller;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.cucumber.context.ClientAssertionContext;
+import it.pagopa.interop.common.cucumber.context.ContextEntry;
+import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.domain.model.Client;
 import it.pagopa.interop.common.domain.model.ClientAssertion;
 import it.pagopa.interop.common.domain.model.Purpose;
@@ -17,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ClientAssertionController {
     private final CreateClientAssertionService clientAssertionService;
-    private final ClientAssertionContext clientAssertionContext;
+    private final ScenarioContext scenarioContext;
 
     @Given("una client assertion valida generata usando il {currentClient} e la {currentPurpose}")
     public void createClientAssertion(Client client, Purpose purpose) throws NoSuchAlgorithmException, JsonProcessingException {
@@ -39,7 +41,8 @@ public class ClientAssertionController {
         saveClientAssertion(clientAssertionService.createClientAssertion(client, overrides));
     }
 
-    private void saveClientAssertion(String clientAssertion) {
-        clientAssertionContext.upsert(new ClientAssertion(clientAssertion));
+    private void saveClientAssertion(String rawClientAssertion) {
+        ClientAssertion clientAssertion = new ClientAssertion(rawClientAssertion);
+        scenarioContext.upsert(clientAssertion);
     }
 }
