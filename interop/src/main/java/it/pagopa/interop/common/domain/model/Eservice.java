@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public class Eservice extends AbstractModel {
+public class Eservice extends AbstractModel implements TestModel {
     @Delegate
     private final ProducerEServiceDescriptor embeddedModel;
 

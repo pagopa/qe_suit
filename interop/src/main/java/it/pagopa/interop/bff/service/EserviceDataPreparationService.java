@@ -1,12 +1,12 @@
 package it.pagopa.interop.bff.service;
 
 import it.pagopa.interop.bff.service.risk_analysis.RiskAnalysisDataPreparationService;
-import it.pagopa.interop.common.cucumber.context.EserviceContext;
+import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.domain.model.Eservice;
 import it.pagopa.interop.common.domain.model.RiskAnalysis;
+import it.pagopa.interop.common.utils.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-import it.pagopa.interop.common.utils.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -24,9 +24,9 @@ public class EserviceDataPreparationService {
 
     private final EservicesApi eservicesApi;
     private final RiskAnalysisDataPreparationService riskAnalysisService;
-    private final EserviceContext context;
+    private final ScenarioContext context;
 
-    
+
     public Eservice createEservice(EServiceSeed request) {
         CreatedEServiceDescriptor createdEservice = eservicesApi.createEService(request);
         return getEservice(createdEservice.getId(), createdEservice.getDescriptorId());
@@ -35,7 +35,7 @@ public class EserviceDataPreparationService {
     public Eservice createEservice() {
         return createEservice(buildDefaultRequest());
     }
-    
+
     public Eservice createEservice(Consumer<EServiceSeed> overrides) {
         EServiceSeed seed = buildDefaultRequest();
         if (overrides != null) {
@@ -43,7 +43,7 @@ public class EserviceDataPreparationService {
         }
         return createEservice(seed);
     }
-    
+
     public Eservice publishEservice(Eservice eservice) {
         UUID eserviceId = eservice.getEserviceId();
         UUID descriptorId = eservice.getLastDraftDescriptorId();
@@ -65,7 +65,7 @@ public class EserviceDataPreparationService {
         context.upsert(published);
         return published;
     }
-    
+
     public Eservice getEservice(UUID eserviceId, UUID descriptorId) {
         Eservice eservice = pollEservice(
                 () -> new Eservice(eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId)),

@@ -22,8 +22,7 @@ public class ClientAssertionParameterType {
 
     @ParameterType("client assertion|client assertion creata")
     public ClientAssertion currentClientAssertion(String token) {
-        return scenarioContext.getLast(ClientAssertion.class)
-                .orElseThrow(() -> new IllegalStateException("Nessuna client assertion trovata nel contesto"));
+        return scenarioContext.getLastOrThrow(ClientAssertion.class);
     }
 
     @ParameterType("RSA|EC|ED25519")
