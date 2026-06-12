@@ -34,7 +34,7 @@ public class PollingAction<Entity, Model extends TestModel> implements Finalizer
         this.baseActionContext = context.getBaseActionContext();
         this.finalResponse = PollingUtils.pollUntil(
                 context.getResponseSupplier(),
-                r -> r != null && context.getPollingStrategy().isSatisfied(r.getStatusCode(), r.getBody()),
+                r -> context.getPollingStrategy().isSatisfied(r.getStatusCode(), r.getBody()),
                 context.getTimeout() != null ? context.getTimeout() : Duration.ofSeconds(10),
                 context.getInterval() != null ? context.getInterval() : Duration.ofSeconds(1)
         );
