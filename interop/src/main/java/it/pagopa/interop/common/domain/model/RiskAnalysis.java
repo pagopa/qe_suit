@@ -5,17 +5,20 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 @Getter
-public class RiskAnalysis extends AbstractModel {
+public class RiskAnalysis implements TestModel {
 
     private final String title;
+    private final UUID id = UUID.randomUUID();
 
     @Delegate
     private final RiskAnalysisFormSeed form;
 
     @Override
-    public String getUniqueIdentifier() {
-        return title;
+    public UUID getId() {
+        return id;
     }
 }
