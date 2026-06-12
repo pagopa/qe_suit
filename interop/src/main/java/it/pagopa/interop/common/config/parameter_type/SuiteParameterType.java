@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.config.parameter_type;
 
 import io.cucumber.java.ParameterType;
+import it.pagopa.interop.common.domain.enums.Channel;
 import it.pagopa.interop.common.domain.enums.User;
 import it.pagopa.interop.common.domain.enums.UserRole;
 import it.pagopa.interop.common.domain.context.CurrentUserContext;
@@ -8,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class UserParameterType {
+public class SuiteParameterType {
 
     private final CurrentUserContext currentUserContext;
 
@@ -20,5 +21,10 @@ public class UserParameterType {
     @ParameterType("admin|ADMIN|api|API|security|SECURITY|support|SUPPORT|API,SECURITY|api,security")
     public UserRole userRole(String name) {
         return UserRole.fromName(name);
+    }
+
+    @ParameterType("BFF|bff")
+    public Channel channel(String channel) {
+        return Channel.valueOf(channel.toUpperCase());
     }
 }
