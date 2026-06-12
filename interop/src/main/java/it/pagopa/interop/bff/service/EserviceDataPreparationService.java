@@ -1,7 +1,7 @@
 package it.pagopa.interop.bff.service;
 
 import it.pagopa.interop.bff.service.risk_analysis.RiskAnalysisDataPreparationService;
-import it.pagopa.interop.common.domain.context.EserviceContext;
+import it.pagopa.interop.common.cucumber.context.EserviceContext;
 import it.pagopa.interop.common.domain.model.Eservice;
 import it.pagopa.interop.common.domain.model.RiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;

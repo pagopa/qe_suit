@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.cucumber.parameter_type.mapper;
 
-import it.pagopa.interop.common.domain.context.ClientContext;
+import it.pagopa.interop.common.cucumber.context.ClientContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

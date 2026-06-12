@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.domain.context;
+package it.pagopa.interop.common.cucumber.context;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.domain.model.Agreement;

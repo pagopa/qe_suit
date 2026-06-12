@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.common.domain.context.ClientContext;
+import it.pagopa.interop.common.cucumber.context.ClientContext;
 import it.pagopa.interop.common.domain.enums.InteropClientType;
 import it.pagopa.interop.common.domain.model.Client;
 import lombok.RequiredArgsConstructor;

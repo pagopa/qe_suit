@@ -1,6 +1,5 @@
 package it.pagopa.interop.bff.service.action.context;
 
-import it.pagopa.interop.common.domain.context.ContextEntry;
 import it.pagopa.interop.common.domain.model.TestModel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
