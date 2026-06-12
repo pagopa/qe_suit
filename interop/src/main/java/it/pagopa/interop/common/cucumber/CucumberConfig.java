@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.config;
+package it.pagopa.interop.common.cucumber;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

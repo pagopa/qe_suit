@@ -3,7 +3,7 @@ package it.pagopa.interop.ui.controller;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.common.config.parameter_type.mapper.DataTableMapper;
+import it.pagopa.interop.common.cucumber.parameter_type.mapper.DataTableMapper;
 import it.pagopa.interop.common.domain.context.ClientAssertionContext;
 import it.pagopa.interop.common.domain.model.Client;
 import it.pagopa.interop.common.domain.model.ClientAssertion;

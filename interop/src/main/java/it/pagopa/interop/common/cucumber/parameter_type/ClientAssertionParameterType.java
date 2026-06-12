@@ -1,9 +1,9 @@
-package it.pagopa.interop.common.config.parameter_type;
+package it.pagopa.interop.common.cucumber.parameter_type;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.common.config.parameter_type.mapper.ClientAssertionValidationResultMapper;
+import it.pagopa.interop.common.cucumber.parameter_type.mapper.ClientAssertionValidationResultMapper;
 import it.pagopa.interop.common.domain.context.ClientAssertionContext;
 import it.pagopa.interop.common.domain.model.ClientAssertion;
 import it.pagopa.interop.common.domain.model.ClientAssertionValidationResult;
