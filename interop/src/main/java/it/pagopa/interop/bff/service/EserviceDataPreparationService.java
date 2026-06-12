@@ -2,7 +2,7 @@ package it.pagopa.interop.bff.service;
 
 import it.pagopa.interop.bff.service.risk_analysis.RiskAnalysisDataPreparationService;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
-import it.pagopa.interop.common.domain.model.Eservice;
+import it.pagopa.interop.common.domain.model.EService;
 import it.pagopa.interop.common.domain.model.RiskAnalysis;
 import it.pagopa.interop.common.utils.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
@@ -27,16 +27,16 @@ public class EserviceDataPreparationService {
     private final ScenarioContext context;
 
 
-    public Eservice createEservice(EServiceSeed request) {
+    public EService createEservice(EServiceSeed request) {
         CreatedEServiceDescriptor createdEservice = eservicesApi.createEService(request);
         return getEservice(createdEservice.getId(), createdEservice.getDescriptorId());
     }
 
-    public Eservice createEservice() {
+    public EService createEservice() {
         return createEservice(buildDefaultRequest());
     }
 
-    public Eservice createEservice(Consumer<EServiceSeed> overrides) {
+    public EService createEservice(Consumer<EServiceSeed> overrides) {
         EServiceSeed seed = buildDefaultRequest();
         if (overrides != null) {
             overrides.accept(seed);
@@ -44,7 +44,7 @@ public class EserviceDataPreparationService {
         return createEservice(seed);
     }
 
-    public Eservice publishEservice(Eservice eservice) {
+    public EService publishEservice(EService eservice) {
         UUID eserviceId = eservice.getEserviceId();
         UUID descriptorId = eservice.getLastDraftDescriptorId();
 
@@ -54,8 +54,8 @@ public class EserviceDataPreparationService {
 
         eservicesApi.publishDescriptor(eserviceId, descriptorId);
 
-        Eservice published = pollEservice(
-                () -> new Eservice(eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId)),
+        EService published = pollEservice(
+                () -> new EService(eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId)),
                 resp -> resp != null
                         && Objects.equals(descriptorId, resp.getId())
                         && resp.getState() == EServiceDescriptorState.PUBLISHED,
@@ -66,9 +66,9 @@ public class EserviceDataPreparationService {
         return published;
     }
 
-    public Eservice getEservice(UUID eserviceId, UUID descriptorId) {
-        Eservice eservice = pollEservice(
-                () -> new Eservice(eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId)),
+    public EService getEservice(UUID eserviceId, UUID descriptorId) {
+        EService eservice = pollEservice(
+                () -> new EService(eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId)),
                 resp -> resp != null
                         && Objects.equals(eserviceId, resp.getEservice().getId())
                         && Objects.equals(descriptorId, resp.getId()),
@@ -108,7 +108,7 @@ public class EserviceDataPreparationService {
         eservicesApi.updateDraftDescriptor(eserviceId, descriptorId, seed);
     }
 
-    private void ensureRiskAnalysisIfReceive(Eservice eservice) {
+    private void ensureRiskAnalysisIfReceive(EService eservice) {
         if (eservice.getEservice().getMode() != EServiceMode.RECEIVE) return;
 
         RiskAnalysis riskAnalysis = riskAnalysisService.createRiskAnalysis(true);

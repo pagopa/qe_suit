@@ -3,7 +3,7 @@ package it.pagopa.interop.bff.service;
 import it.pagopa.interop.bff.service.risk_analysis.RiskAnalysisDataPreparationService;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.cucumber.context.UserContext;
-import it.pagopa.interop.common.domain.model.Eservice;
+import it.pagopa.interop.common.domain.model.EService;
 import it.pagopa.interop.common.domain.model.Purpose;
 import it.pagopa.interop.common.domain.model.RiskAnalysis;
 import it.pagopa.interop.common.utils.PollingUtils;
@@ -33,11 +33,11 @@ public class PurposeDataPreparationService {
     private final RiskAnalysisDataPreparationService riskAnalysisService;
     private final UserContext userContext;
 
-    public Purpose createEservicePurpose(Eservice eservice) {
+    public Purpose createEservicePurpose(EService eservice) {
         return createEservicePurpose(eservice, null);
     }
 
-    public Purpose createEservicePurpose(Eservice eservice, Consumer<PurposeSeed> overrides) {
+    public Purpose createEservicePurpose(EService eservice, Consumer<PurposeSeed> overrides) {
         PurposeSeed seed = buildDefaultPurposeSeed(eservice);
         if (overrides != null) {
             overrides.accept(seed);
@@ -52,11 +52,11 @@ public class PurposeDataPreparationService {
         return getPurpose(created.getId());
     }
 
-    public Purpose createEservicePurposeWithState(Eservice eservice, PurposeVersionState targetState) {
+    public Purpose createEservicePurposeWithState(EService eservice, PurposeVersionState targetState) {
         return createEservicePurposeWithState(eservice, targetState, null);
     }
 
-    public Purpose createEservicePurposeWithState(Eservice eservice, PurposeVersionState targetState, Consumer<PurposeSeed> overrides) {
+    public Purpose createEservicePurposeWithState(EService eservice, PurposeVersionState targetState, Consumer<PurposeSeed> overrides) {
         Purpose purpose = createEservicePurpose(eservice, overrides);
         UUID purposeId = purpose.getId();
 
@@ -96,7 +96,7 @@ public class PurposeDataPreparationService {
         return purpose;
     }
 
-    private PurposeSeed buildDefaultPurposeSeed(Eservice eservice) {
+    private PurposeSeed buildDefaultPurposeSeed(EService eservice) {
         RiskAnalysis riskAnalysis = riskAnalysisService.createRiskAnalysis();
         UUID consumerId = userContext.getTenant().getOrganizationId();
         String title = "purpose-" + UUID.randomUUID().toString().substring(0, 8);

@@ -2,7 +2,7 @@ package it.pagopa.interop.bff.service;
 
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.domain.model.Agreement;
-import it.pagopa.interop.common.domain.model.Eservice;
+import it.pagopa.interop.common.domain.model.EService;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;
@@ -25,11 +25,11 @@ public class AgreementDataPreparationService {
     private final AgreementsApi agreementsApi;
     private final ScenarioContext context;
 
-    public Agreement createAgreement(Eservice eservice) {
+    public Agreement createAgreement(EService eservice) {
         return createAgreement(eservice, null);
     }
 
-    public Agreement createAgreement(Eservice eservice, UUID delegationId) {
+    public Agreement createAgreement(EService eservice, UUID delegationId) {
         AgreementPayload request = buildAgreementPayload(eservice, Optional.ofNullable(delegationId));
         UUID agreementId = agreementsApi.createAgreement(request).getId();
         return getAgreement(agreementId);
@@ -84,7 +84,7 @@ public class AgreementDataPreparationService {
         );
     }
 
-    private AgreementPayload buildAgreementPayload(Eservice eservice, Optional<UUID> delegationId) {
+    private AgreementPayload buildAgreementPayload(EService eservice, Optional<UUID> delegationId) {
         AgreementPayload request = new AgreementPayload();
         request.setEserviceId(eservice.getEserviceId());
         request.setDescriptorId(eservice.getLastDescriptorId());

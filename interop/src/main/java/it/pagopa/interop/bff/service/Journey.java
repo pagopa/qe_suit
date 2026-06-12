@@ -5,7 +5,7 @@ import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
-import it.pagopa.interop.common.domain.model.Eservice;
+import it.pagopa.interop.common.domain.model.EService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
@@ -61,7 +61,7 @@ public class Journey {
 
     public Journey addActiveAgreement() {
         setUserContext(consumerUser, consumerTenant);
-        var agreement = agreementService.createAgreement(scenarioContext.getLastOrThrow(Eservice.class));
+        var agreement = agreementService.createAgreement(scenarioContext.getLastOrThrow(EService.class));
         agreementService.submitAgreement(agreement);
         return this;
     }
@@ -74,7 +74,7 @@ public class Journey {
 
     public Journey addPurposeInState(PurposeVersionState state, Consumer<PurposeSeed> purpose) {
         setUserContext(consumerUser, consumerTenant);
-        var eservice = scenarioContext.getLastOrThrow(Eservice.class);
+        var eservice = scenarioContext.getLastOrThrow(EService.class);
         purposeService.createEservicePurposeWithState(eservice, state, purpose);
         return this;
     }

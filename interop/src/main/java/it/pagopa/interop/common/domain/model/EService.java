@@ -10,14 +10,9 @@ import java.util.Objects;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public class Eservice extends AbstractModel implements TestModel {
+public class EService implements TestModel {
     @Delegate
     private final ProducerEServiceDescriptor embeddedModel;
-
-    @Override
-    public String getUniqueIdentifier() {
-        return this.getEservice().getId().toString();
-    }
 
     public UUID getEserviceId() {
         return this.getEservice().getId();
@@ -26,7 +21,7 @@ public class Eservice extends AbstractModel implements TestModel {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Eservice other) || !super.equals(o)) return false;
+        if (!(o instanceof EService other) || !super.equals(o)) return false;
 
         return Objects.equals(descriptorIds(this), descriptorIds(other));
     }
@@ -48,7 +43,7 @@ public class Eservice extends AbstractModel implements TestModel {
         return this.getEservice().getDraftDescriptor().getId();
     }
 
-    private static List<String> descriptorIds(Eservice e) {
+    private static List<String> descriptorIds(EService e) {
         e.getEservice();
         return e.getEservice().getDescriptors()
                 .stream()
