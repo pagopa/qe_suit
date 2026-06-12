@@ -4,12 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.Delegate;
 
 @RequiredArgsConstructor
-public class Agreement extends AbstractModel{
+public class Agreement implements TestModel {
     @Delegate
     private final it.pagopa.interop.generated.openapi.clients.bff.model.Agreement model;
-
-    @Override
-    public String getUniqueIdentifier() {
-       return model.getId().toString();
-    }
 }

@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.service;
 
-import it.pagopa.interop.common.cucumber.context.AgreementContext;
+import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.domain.model.Agreement;
 import it.pagopa.interop.common.domain.model.Eservice;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public class AgreementDataPreparationService {
 
     private final AgreementsApi agreementsApi;
-    private final AgreementContext context;
+    private final ScenarioContext context;
 
     public Agreement createAgreement(Eservice eservice) {
         return createAgreement(eservice, null);
