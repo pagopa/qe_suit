@@ -5,18 +5,18 @@ import it.pagopa.interop.common.domain.enums.Channel;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
 import it.pagopa.interop.common.domain.enums.UserRole;
-import it.pagopa.interop.common.cucumber.context.CurrentUserContext;
+import it.pagopa.interop.common.cucumber.context.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ApplicationParameterType {
 
-    private final CurrentUserContext currentUserContext;
+    private final UserContext userContext;
 
     @ParameterType("l'utente|l'utente corrente")
     public User currentUser(String token) {
-        return currentUserContext.getUser();
+        return userContext.getUser();
     }
 
     @ParameterType("admin|ADMIN|api|API|security|SECURITY|support|SUPPORT|API,SECURITY|api,security")

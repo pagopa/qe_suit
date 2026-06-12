@@ -10,7 +10,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.common.cucumber.context.CurrentUserContext;
+import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.common.utils.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class PurposeDataPreparationService {
     private final PurposesApi purposesApi;
     private final PurposeContext context;
     private final RiskAnalysisDataPreparationService riskAnalysisService;
-    private final CurrentUserContext currentUserContext;
+    private final UserContext userContext;
 
     public Purpose createEservicePurpose(Eservice eservice) {
         return createEservicePurpose(eservice, null);
@@ -98,7 +98,7 @@ public class PurposeDataPreparationService {
 
     private PurposeSeed buildDefaultPurposeSeed(Eservice eservice) {
         RiskAnalysis riskAnalysis = riskAnalysisService.createRiskAnalysis();
-        UUID consumerId = currentUserContext.getTenant().getOrganizationId();
+        UUID consumerId = userContext.getTenant().getOrganizationId();
         String title = "purpose-" + UUID.randomUUID().toString().substring(0, 8);
 
         return new PurposeSeed()
