@@ -1,17 +1,17 @@
 package it.pagopa.interop.bff.service;
 
-import it.pagopa.interop.common.cucumber.context.PurposeContext;
+import it.pagopa.interop.bff.service.risk_analysis.RiskAnalysisDataPreparationService;
+import it.pagopa.interop.common.cucumber.context.ScenarioContext;
+import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.common.domain.model.Eservice;
 import it.pagopa.interop.common.domain.model.Purpose;
 import it.pagopa.interop.common.domain.model.RiskAnalysis;
-import it.pagopa.interop.bff.service.risk_analysis.RiskAnalysisDataPreparationService;
+import it.pagopa.interop.common.utils.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.common.cucumber.context.UserContext;
-import it.pagopa.interop.common.utils.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 public class PurposeDataPreparationService {
 
     private final PurposesApi purposesApi;
-    private final PurposeContext context;
+    private final ScenarioContext scenarioContext;
     private final RiskAnalysisDataPreparationService riskAnalysisService;
     private final UserContext userContext;
 
@@ -84,7 +84,7 @@ public class PurposeDataPreparationService {
 
         return getPurpose(purposeId);
     }
-    
+
     public Purpose getPurpose(UUID purposeId) {
         Purpose purpose = poll(
                 () -> new Purpose(purposesApi.getPurpose(purposeId)),
@@ -92,7 +92,7 @@ public class PurposeDataPreparationService {
                 Duration.ofSeconds(20)
         );
 
-        context.upsert(purpose);
+        scenarioContext.upsert(purpose);
         return purpose;
     }
 
