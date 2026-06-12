@@ -2,6 +2,7 @@ package it.pagopa.interop.common.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.domain.enums.Channel;
+import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
 import it.pagopa.interop.common.domain.enums.UserRole;
 import it.pagopa.interop.common.cucumber.context.CurrentUserContext;
@@ -21,6 +22,11 @@ public class ApplicationParameterType {
     @ParameterType("admin|ADMIN|api|API|security|SECURITY|support|SUPPORT|API,SECURITY|api,security")
     public UserRole userRole(String name) {
         return UserRole.fromName(name);
+    }
+
+    @ParameterType("AgID|Comune di Milano|Comune di Pozzallo|Comune di Comun Nuovo|PagoPA|Kyma|Sogecap|Sogessur")
+    public Tenant tenant(String tenant) {
+        return Tenant.fromAlias(tenant);
     }
 
     @ParameterType("BFF|bff")
