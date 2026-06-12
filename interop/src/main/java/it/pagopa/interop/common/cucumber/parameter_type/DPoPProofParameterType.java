@@ -9,11 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class DPoPProofParameterType {
 
-    private final ScenarioContext dpopProofContext;
+    private final ScenarioContext scenarioContext;
 
     @ParameterType("dpop proof|dpop proof creata")
     public DPoPProof currentDpopProof(String token) {
-        return dpopProofContext.getLast(DPoPProof.class)
-                .orElseThrow(() -> new IllegalStateException("Nessuna dpop proof trovata nel contesto"));
+        return scenarioContext.getLastOrThrow(DPoPProof.class);
     }
 }

@@ -13,8 +13,7 @@ public class PurposeParameterType {
 
     @ParameterType("purpose|purpose creata|finalità|finalità creata")
     public Purpose currentPurpose(String token) {
-        return purposeContext.getLast(Purpose.class)
-                .orElseThrow(() -> new IllegalStateException("No purpose found in context"));
+        return purposeContext.getLastOrThrow(Purpose.class);
     }
 
     @ParameterType("SUSPENDED")

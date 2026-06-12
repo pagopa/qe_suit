@@ -123,6 +123,11 @@ public class ScenarioContext {
         return entryList.isEmpty() ? Optional.empty() : Optional.of(entryList.get(entryList.size() - 1).getItem());
     }
 
+    public <Model extends TestModel> Model getLastOrThrow(Class<Model> modelClass){
+        return getLast(modelClass)
+                .orElseThrow(() -> new NoSuchElementException("Nessun elemento trovato per il tipo: " + modelClass.getSimpleName()));
+    }
+
     public <Model extends TestModel> Optional<Model> getAtIndex(Class<Model> modelClass, int index) {
         List<ContextEntry<Model>> entryList = entries(modelClass);
         if (index < 0 || index >= entryList.size()) {

@@ -20,5 +20,4 @@ public class ClientParameterType {
     public Client currentClient(String token){
         return clientContext.getLast();
     }
-
 }

@@ -1,13 +1,14 @@
 package it.pagopa.interop.bff.service;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.common.cucumber.context.EserviceContext;
+import it.pagopa.interop.common.cucumber.context.ScenarioContext;
+import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
+import it.pagopa.interop.common.domain.model.Eservice;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.common.cucumber.context.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class Journey {
     private final PurposeDataPreparationService purposeService;
 
     private final UserContext userContext;
-    private final EserviceContext eserviceContext;
+    private final ScenarioContext scenarioContext;
 
     private Tenant producerTenant;
     private User producerUser;
@@ -60,7 +61,7 @@ public class Journey {
 
     public Journey addActiveAgreement() {
         setUserContext(consumerUser, consumerTenant);
-        var agreement = agreementService.createAgreement(eserviceContext.getLast());
+        var agreement = agreementService.createAgreement(scenarioContext.getLastOrThrow(Eservice.class));
         agreementService.submitAgreement(agreement);
         return this;
     }
@@ -73,7 +74,7 @@ public class Journey {
 
     public Journey addPurposeInState(PurposeVersionState state, Consumer<PurposeSeed> purpose) {
         setUserContext(consumerUser, consumerTenant);
-        var eservice = eserviceContext.getLast();
+        var eservice = scenarioContext.getLastOrThrow(Eservice.class);
         purposeService.createEservicePurposeWithState(eservice, state, purpose);
         return this;
     }
