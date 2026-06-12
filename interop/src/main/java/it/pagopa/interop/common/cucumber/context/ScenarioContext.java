@@ -84,6 +84,11 @@ public class ScenarioContext {
         }
     }
 
+    public <Model extends TestModel> void upsert(Model model){
+        ContextEntry<Model> entry = new ContextEntry<>(model, null);
+        upsert(entry);
+    }
+
     public void upsert(List<ContextEntry<? extends TestModel>> entries) {
         for (ContextEntry<? extends TestModel> entry : entries) {
             this.upsert(entry);
