@@ -2,8 +2,6 @@ package it.pagopa.interop.common.controller;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.common.cucumber.context.ClientAssertionContext;
-import it.pagopa.interop.common.cucumber.context.ContextEntry;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.domain.model.Client;
 import it.pagopa.interop.common.domain.model.ClientAssertion;
