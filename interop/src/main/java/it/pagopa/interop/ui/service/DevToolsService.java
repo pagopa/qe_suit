@@ -3,7 +3,7 @@ package it.pagopa.interop.ui.service;
 import it.pagopa.interop.common.domain.enums.InteropClientType;
 import it.pagopa.interop.common.domain.model.Client;
 import it.pagopa.interop.common.domain.model.ClientAssertion;
-import it.pagopa.interop.common.domain.model.ClientAssertionValidationResult;
+import it.pagopa.interop.common.domain.model.VoucherRequestValidationResult;
 import it.pagopa.interop.common.domain.model.DPoPProof;
 import it.pagopa.interop.ui.page.dev_tools.debug_client_assertion.DebugClientAssertionPage;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +23,15 @@ public class DevToolsService {
 
     private final DebugClientAssertionPage debugPage;
 
-    public ClientAssertionValidationResult performValidation(ClientAssertion clientAssertion, Client client) {
+    public VoucherRequestValidationResult performValidation(ClientAssertion clientAssertion, Client client) {
         return performValidationInternal(clientAssertion.getClientAssertion(), InteropClientType.valueOf(client.getKind().name()), client.getId().toString(), null);
     }
 
-    public ClientAssertionValidationResult performValidation(ClientAssertion clientAssertion, Client client, DPoPProof proof) {
+    public VoucherRequestValidationResult performValidation(ClientAssertion clientAssertion, Client client, DPoPProof proof) {
         return performValidationInternal(clientAssertion.getClientAssertion(), InteropClientType.valueOf(client.getKind().name()), client.getId().toString(), proof.getJwt());
     }
 
-    public ClientAssertionValidationResult performValidation(String clientAssertion, InteropClientType clientType, String clientId, String proof) {
+    public VoucherRequestValidationResult performValidation(String clientAssertion, InteropClientType clientType, String clientId, String proof) {
         return performValidationInternal(clientAssertion, clientType, clientId, proof);
     }
 
@@ -47,16 +47,16 @@ public class DevToolsService {
         return debugPage.getClientAssertionErrorMessage();
     }
 
-    private ClientAssertionValidationResult performValidationInternal(String clientAssertion, InteropClientType clientType, String clientId, String dPoPProof) {
+    private VoucherRequestValidationResult performValidationInternal(String rawClientAssertion, InteropClientType clientType, String clientId, String dPoPProof) {
 
         // 1. Popola la form e la sottomette
-        submitValidationRequest(clientAssertion, clientId, dPoPProof);
+        submitValidationRequest(rawClientAssertion, clientId, dPoPProof);
 
-        // 2. Verifica coerenza Input (Echo)
-        verifyRequestEcho(clientAssertion, clientId, dPoPProof);
+        // 2. Verifica la coerenza degli Input (Echo) verificando che ciò che è stato inserito coincide con quanto specificato
+        verifyRequestEcho(rawClientAssertion, clientId, dPoPProof);
 
         // 3. Costruisce il risultato della validazione
-        ClientAssertionValidationResult result = buildValidationResult(clientType, dPoPProof != null);
+        VoucherRequestValidationResult result = buildValidationResult(rawClientAssertion, clientType, dPoPProof != null);
 
         // 4. Verifica che il risultato calcolato sia coerente con il banner di riepilogo
         if(debugPage.resultAlert().isSuccess() != result.isAllPassed())
@@ -77,10 +77,11 @@ public class DevToolsService {
         request.verifyGrantType(clientAssertionGrantType);
     }
 
-    private ClientAssertionValidationResult buildValidationResult(InteropClientType clientType, boolean isDpop) {
+    private VoucherRequestValidationResult buildValidationResult(String rawClientAssertion, InteropClientType clientType, boolean hasDPoP) {
         var results = debugPage.debugResults();
         results.assertLoaded();
 
+        ClientAssertion clientAssertion = new ClientAssertion(rawClientAssertion);
         var caValidation = results.getClientAssertionValidation();
         var pkValidation = results.getPublicKeyValidation();
         var sigValidation = results.getSignatureValidation();
@@ -88,13 +89,13 @@ public class DevToolsService {
         // Come indicato da https://pagopa.atlassian.net/browse/PIN-10056 si intende validare lo stato della piattaforma solo quando:
         // - Il client è tipo CONSUMER
         // - La fase di client assertion è PASSED
-        var platform = shouldValidatePlatform(clientType, caValidation, pkValidation) ? results.getPlatformValidation() : null;
-        var dpop = isDpop ? results.getDPoPValidation() : null;
+        var platformValidation = shouldValidatePlatform(clientType, caValidation, pkValidation) ? results.getPlatformValidation() : null;
+        var dPoPValidation = hasDPoP ? results.getDPoPValidation() : null;
 
-        return new ClientAssertionValidationResult(caValidation, pkValidation, sigValidation, platform, dpop);
+        return new VoucherRequestValidationResult(clientAssertion, caValidation, pkValidation, sigValidation, platformValidation, dPoPValidation);
     }
 
-    private boolean shouldValidatePlatform(InteropClientType type, ClientAssertionValidationResult.ValidationResult caStep, ClientAssertionValidationResult.PublicKeyValidation pkStep) {
+    private boolean shouldValidatePlatform(InteropClientType type, VoucherRequestValidationResult.ValidationResult caStep, VoucherRequestValidationResult.PublicKeyValidation pkStep) {
         return type == InteropClientType.CONSUMER && caStep.isSuccess() && pkStep.isSuccess();
     }
 }

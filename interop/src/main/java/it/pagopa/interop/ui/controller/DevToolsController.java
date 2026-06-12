@@ -3,12 +3,12 @@ package it.pagopa.interop.ui.controller;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.cucumber.parameter_type.mapper.DataTableMapper;
-import it.pagopa.interop.common.cucumber.context.ClientAssertionContext;
 import it.pagopa.interop.common.domain.model.Client;
 import it.pagopa.interop.common.domain.model.ClientAssertion;
-import it.pagopa.interop.common.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.common.domain.model.DPoPProof;
+import it.pagopa.interop.common.domain.model.VoucherRequestValidationResult;
 import it.pagopa.interop.ui.service.DevToolsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +20,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class DevToolsController {
     private final DevToolsService webClientAssertionService;
-    private final ClientAssertionContext clientAssertionContext;
+    private final ScenarioContext scenarioContext;
     private final DataTableMapper dataTableMapper;
 
     @When("l'utente richiede la validazione della {currentClientAssertion} associata al {currentClient}")
     public void validateClientAssertion(ClientAssertion clientAssertion, Client client) {
-        ClientAssertionValidationResult result = webClientAssertionService.performValidation(clientAssertion, client);
-        clientAssertionContext.addValidation(clientAssertion, result);
+        VoucherRequestValidationResult result = webClientAssertionService.performValidation(clientAssertion, client);
+        scenarioContext.upsert(result);
     }
 
     @When("l'utente richiede la validazione della {currentClientAssertion} e della {currentDpopProof} associate al {currentClient}")
     public void validateClientAssertion(ClientAssertion clientAssertion, DPoPProof dPoPProof, Client client) {
-        ClientAssertionValidationResult result = webClientAssertionService.performValidation(clientAssertion, client, dPoPProof);
-        clientAssertionContext.addValidation(clientAssertion, result);
+        VoucherRequestValidationResult result = webClientAssertionService.performValidation(clientAssertion, client, dPoPProof);
+        scenarioContext.upsert(result);
     }
 
     @When("l'utente invia la form della debug client assertion inserendo:")
@@ -51,8 +51,13 @@ public class DevToolsController {
     }
 
     @Then("i risultati della validazione della {currentClientAssertion} sono:")
-    public void checkValidationResult(ClientAssertion clientAssertion, ClientAssertionValidationResult expected) {
-        ClientAssertionValidationResult actual = clientAssertionContext.getValidation(clientAssertion);
+    public void checkValidationResult(ClientAssertion clientAssertion, VoucherRequestValidationResult expected) {
+        VoucherRequestValidationResult actual = scenarioContext.find(
+                VoucherRequestValidationResult.class,
+                validation -> validation.getClientAssertion().getId().equals(clientAssertion.getId())
+                )
+                .orElseThrow(() -> new AssertionError("Client assertion validation not found"));
+
         assertThat(actual)
                 .as("Validation result for clientAssertion: %s", clientAssertion)
                 .isEqualTo(expected);

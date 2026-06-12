@@ -4,14 +4,14 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.common.domain.model.ClientAssertionValidationResult;
+import it.pagopa.interop.common.domain.model.VoucherRequestValidationResult;
 import it.pagopa.interop.ui.component.Button;
 import org.assertj.core.api.Assertions;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.pagopa.interop.common.domain.model.ClientAssertionValidationResult.Status.*;
+import static it.pagopa.interop.common.domain.model.VoucherRequestValidationResult.Status.*;
 
 public interface DebugResultComponent extends Component {
 
@@ -44,37 +44,37 @@ public interface DebugResultComponent extends Component {
         );
     }
 
-    default ClientAssertionValidationResult.ClientAssertionValidation getClientAssertionValidation() {
-        return new ClientAssertionValidationResult.ClientAssertionValidation(
+    default VoucherRequestValidationResult.ClientAssertionValidation getClientAssertionValidation() {
+        return new VoucherRequestValidationResult.ClientAssertionValidation(
                 readValidationStep(clientAssertionValidationResultButton())
         );
     }
 
-    default ClientAssertionValidationResult.PublicKeyValidation getPublicKeyValidation() {
-        return new ClientAssertionValidationResult.PublicKeyValidation(
+    default VoucherRequestValidationResult.PublicKeyValidation getPublicKeyValidation() {
+        return new VoucherRequestValidationResult.PublicKeyValidation(
                 readValidationStep(publicKetValidationResultButton())
         );
     }
 
-    default ClientAssertionValidationResult.SignatureValidation getSignatureValidation() {
-        return new ClientAssertionValidationResult.SignatureValidation(
+    default VoucherRequestValidationResult.SignatureValidation getSignatureValidation() {
+        return new VoucherRequestValidationResult.SignatureValidation(
                 readValidationStep(signatureValidationResultButton())
         );
     }
 
-    default ClientAssertionValidationResult.PlatformValidation getPlatformValidation() {
-        return new ClientAssertionValidationResult.PlatformValidation(
+    default VoucherRequestValidationResult.PlatformValidation getPlatformValidation() {
+        return new VoucherRequestValidationResult.PlatformValidation(
                 readValidationStep(platformValidationResultButton())
         );
     }
 
-    default ClientAssertionValidationResult.DPoPValidation getDPoPValidation() {
-        return new ClientAssertionValidationResult.DPoPValidation(
+    default VoucherRequestValidationResult.DPoPValidation getDPoPValidation() {
+        return new VoucherRequestValidationResult.DPoPValidation(
                 readValidationStep(dpopProofValidationResultButton())
         );
     }
 
-    private ClientAssertionValidationResult.ValidationResult readValidationStep(Clickable button) {
+    private VoucherRequestValidationResult.ValidationResult readValidationStep(Clickable button) {
         button.click();
         try {
             boolean isSuccess = drawer().result().isSuccess();
@@ -85,7 +85,7 @@ public interface DebugResultComponent extends Component {
                     .as("Faild to retrive validation status")
                     .isTrue();
 
-            ClientAssertionValidationResult.Status status = PASSED;
+            VoucherRequestValidationResult.Status status = PASSED;
             final List<String> errorsCode = new ArrayList<>();
 
             if (isError) {
@@ -109,7 +109,7 @@ public interface DebugResultComponent extends Component {
                 status = SKIPPED;
             }
 
-            return new ClientAssertionValidationResult.ValidationResult(status, isSuccess, errorsCode);
+            return new VoucherRequestValidationResult.ValidationResult(status, isSuccess, errorsCode);
         } finally {
             // chiude sempre il drawer, anche in caso di eccezione
             drawer().close();

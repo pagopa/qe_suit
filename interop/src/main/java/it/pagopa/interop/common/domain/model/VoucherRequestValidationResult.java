@@ -6,12 +6,13 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor
-public class ClientAssertionValidationResult {
+public class VoucherRequestValidationResult implements TestModel {
 
     public enum Status {
         PASSED,
@@ -19,6 +20,8 @@ public class ClientAssertionValidationResult {
         SKIPPED
     }
 
+    @EqualsAndHashCode.Exclude
+    private final ClientAssertion clientAssertion;
     private final ClientAssertionValidation clientAssertionValidation;
     private final PublicKeyValidation publicKeyRetrieve;
     private final SignatureValidation clientAssertionSignatureVerification;
@@ -90,5 +93,10 @@ public class ClientAssertionValidationResult {
         if(dpopValidation != null) isPassed &= dpopValidation.isSuccess();
 
         return isPassed;
+    }
+
+    @Override
+    public UUID getId() {
+        return this.clientAssertion.getId();
     }
 }

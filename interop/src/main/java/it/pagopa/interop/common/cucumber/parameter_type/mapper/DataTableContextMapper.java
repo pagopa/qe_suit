@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.cucumber.parameter_type.mapper;
 
-import it.pagopa.interop.common.cucumber.context.ClientContext;
+import it.pagopa.interop.common.cucumber.context.ScenarioContext;
+import it.pagopa.interop.common.domain.model.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,11 +15,11 @@ public class DataTableContextMapper {
     private static final Map<String, Supplier<String>> dataTableTokens = new HashMap<>();
     private static final String functionName = "$retrieve";
 
-    private final ClientContext clientContext;
+    private final ScenarioContext scenarioContext;
 
     @Autowired
-    public DataTableContextMapper(ClientContext clientContext) {
-        this.clientContext = clientContext;
+    public DataTableContextMapper(ScenarioContext scenarioContext) {
+        this.scenarioContext = scenarioContext;
         resolveDataTableToken();
     }
 
@@ -53,6 +54,6 @@ public class DataTableContextMapper {
     }
 
     private void resolveDataTableToken() {
-        dataTableTokens.put(composeFunction("clientId"), () -> clientContext.getLast().getId().toString());
+        dataTableTokens.put(composeFunction("clientId"), () -> scenarioContext.getLastOrThrow(Client.class).getId().toString());
     }
 }

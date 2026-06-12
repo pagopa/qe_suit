@@ -1,16 +1,16 @@
 package it.pagopa.interop.bff.service;
 
-import it.pagopa.interop.common.cucumber.context.ClientContext;
+import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.domain.enums.InteropClientType;
 import it.pagopa.interop.common.domain.model.Client;
 import it.pagopa.interop.common.domain.model.Purpose;
+import it.pagopa.interop.common.utils.KeyPairUtils;
+import it.pagopa.interop.common.utils.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
-import it.pagopa.interop.common.utils.KeyPairUtils;
-import it.pagopa.interop.common.utils.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 public class ClientDataPreparationService {
 
     private final ClientsApi clientsApi;
-    private final ClientContext context;
+    private final ScenarioContext scenarioContext;
 
     public Client createClient(InteropClientType kind) {
         return createClient(kind, null);
@@ -53,7 +53,7 @@ public class ClientDataPreparationService {
                 () -> new Client(clientsApi.getClient(clientId), new java.util.LinkedHashSet<>()),
                 c -> c != null && Objects.equals(clientId, c.getId())
         );
-        context.upsert(client);
+        scenarioContext.upsert(client);
         return client;
     }
 
@@ -79,7 +79,7 @@ public class ClientDataPreparationService {
         pollClientKeys(client.getId(), seed.getName());
 
         client.addKeyPair(effectiveKeyPair);
-        context.upsert(client);
+        scenarioContext.upsert(client);
 
         return getClient(client.getId());
     }
