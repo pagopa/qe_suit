@@ -9,6 +9,7 @@ import it.pagopa.interop.bff.service.template.CanReadAll;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactProducerKeychains;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSeed;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,17 +26,27 @@ public interface IProducerKeychainService extends
     }
 
     default void deleteAll() {
-        List<ProducerKeychain> response;
+        List<ProducerKeychain> keychains;
 
         do {
-            response = this.readAll(new GetAllRequest(0, 100, null, null, null))
+            keychains = this.readAll(new GetAllRequest(0, 50, null, null, null))
                     .withPolling(PollingStrategy.UNTIL_SUCCESS)
                     .getModels();
 
-            response.forEach(keychain ->
-                    this.delete(keychain.getId())
-                            .withPolling(PollingStrategy.UNTIL_SUCCESS)
-            );
-        } while (response.isEmpty());
+            if (keychains == null || keychains.isEmpty()) {
+                return;
+            }
+
+            for (ProducerKeychain keychain : keychains) {
+                this.delete(keychain.getId())
+                        .withPolling(((statusCode, body) -> {
+                            System.out.println("StatusCode: " + statusCode.value());
+                            if(statusCode.value() == HttpStatus.NOT_FOUND.value())
+                                System.out.println("Not found");
+                            return statusCode.is2xxSuccessful() || statusCode.equals(HttpStatus.NOT_FOUND);
+                        }));
+            }
+
+        } while (true);
     }
 }
