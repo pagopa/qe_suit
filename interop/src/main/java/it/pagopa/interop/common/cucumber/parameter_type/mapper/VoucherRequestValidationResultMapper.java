@@ -10,7 +10,7 @@ import java.util.*;
 
 @Component
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public final class ClientAssertionValidationResultMapper {
+public final class VoucherRequestValidationResultMapper {
     private final DataTableContextMapper dataTableContextMapper;
 
     public VoucherRequestValidationResult fromDataTable(DataTable dataTable) {
@@ -20,7 +20,7 @@ public final class ClientAssertionValidationResultMapper {
         }
 
         List<String> header = rows.get(0).stream()
-                .map(ClientAssertionValidationResultMapper::normalize)
+                .map(VoucherRequestValidationResultMapper::normalize)
                 .toList();
 
         int stepIdx = header.indexOf("step");

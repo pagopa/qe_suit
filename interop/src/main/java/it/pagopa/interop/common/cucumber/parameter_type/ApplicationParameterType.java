@@ -1,11 +1,9 @@
 package it.pagopa.interop.common.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.common.domain.enums.Channel;
-import it.pagopa.interop.common.domain.enums.Tenant;
-import it.pagopa.interop.common.domain.enums.User;
-import it.pagopa.interop.common.domain.enums.UserRole;
+import it.pagopa.interop.common.domain.enums.*;
 import it.pagopa.interop.common.cucumber.context.UserContext;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,5 +30,15 @@ public class ApplicationParameterType {
     @ParameterType("BFF|bff")
     public Channel channel(String channel) {
         return Channel.valueOf(channel.toUpperCase());
+    }
+
+    @ParameterType("CONSUMER|Consumer|consumer|API|Api|api")
+    public InteropClientType clientType(String type) {
+        return InteropClientType.valueOf(type);
+    }
+
+    @ParameterType("SUSPENDED")
+    public PurposeVersionState purposeState(String name) {
+        return PurposeVersionState.fromValue(name);
     }
 }
