@@ -18,7 +18,7 @@ public class ProducerKeychainController {
 
     private final ProducerKeychainService service;
 
-    @Given("una lista di {int} Producer Keychain")
+    @Given("una lista di {int} Producer Keychain( associati al contesto dell'Ente Erogatore)")
     public void createProducerKeychains(int size) {
         for (int i = 0; i < size; i++)
             service
@@ -26,26 +26,27 @@ public class ProducerKeychainController {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS);
     }
 
-    @When("l'utente legge tutti i Producer Keychain")
+    @When("(l'utente )legge tutti i Producer Keychain")
     public void getProducerKeychains() {
         Assertions.assertThat(readAllKeychains())
                 .as("La lista dei Producer Keychain non deve essere null")
                 .isNotNull();
     }
 
-    @When("l'utente legge tutti gli {int} Producer Keychain")
+    @When("(l'utente )legge tutti gli {int} Producer Keychain")
+    @When("(l'utente )legge tutti i {int} Producer Keychain")
     public void getProducerKeychains(Integer size) {
         Assertions.assertThat(readAllKeychains())
                 .as("La lista dei Producer Keychain deve contenere " + size + " elementi")
                 .hasSize(size);
     }
 
-    @When("l'utente elimina tutti i Producer Keychain")
+    @When("viene inviata una richiesta di eliminazione per ogni Producer Keychain presente nella lista")
     public void deleteProducerKeychains() {
         service.deleteAll();
     }
 
-    @Then("tutti i Producer Keychain sono stati eliminati")
+    @Then("la lista di tutti i Producer Keychain per l'Ente risulta vuota")
     public void verifyProducerKeychainsDeleted() {
         Assertions.assertThat(readAllKeychains())
                 .as("La lista dei Producer Keychain deve essere vuota dopo l'eliminazione")
@@ -60,6 +61,6 @@ public class ProducerKeychainController {
     }
 
     private IProducerKeychainService.GetAllRequest buildGetAllRequest() {
-        return new IProducerKeychainService.GetAllRequest(0, 100, null, null, null);
+        return new IProducerKeychainService.GetAllRequest(0, 50, null, null, null);
     }
 }
