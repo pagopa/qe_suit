@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class TestSuiteController {
+public class ApplicationController {
     private final CurrentUserContext currentUserContext;
     private final ChannelContext channelContext;
 
