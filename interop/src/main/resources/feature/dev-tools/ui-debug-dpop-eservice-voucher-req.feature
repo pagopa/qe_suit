@@ -1,23 +1,20 @@
 @debug-client-assertion-page-ui-flow
-Feature: Debugger Client Assertion Sync Bearer And DPoP (Frontend)
+Feature: Debugger della request di tipo DPoP per un voucher spendibile presso un erogatore di un e-service sincrono (Frontend) - Test di Flusso Funzionale
 
   Come Aderente in possesso di un client di tipo CONSUMER
-  Voglio validare la mia Client Assertion standard e la mia DPoP proof
-  Al fine di identificare errori strutturali, temporali o crittografici nelle cinque fasi di validazione (Formale, Recupero Chiave, Firma, Stato Piattaforma, DPoP)
+  Voglio validare la mia request di tipo DPoP per un voucher spendibile presso un erogatore di un e-service sincrono
+  Al fine di identificare errori strutturali, temporali o crittografici nelle cinque fasi di validazione (Client assertion, Recupero Chiave, Firma, Stato Piattaforma, DPoP)
 
   ***
   OBIETTIVI DEL TEST FRONTEND:
-  1. Verificare che il flusso utente (caricamento dei componenti, input, invio) sia funzionale e fluido.
-  2. Verificare il corretto comportamento dei componenti grafici (es. text field, messaggi di errore) in risposta ai diversi input dell'utente.
-  3. Validare il mapping tra le risposte API (BE) e i componenti grafici della pagina (Step di validazione).
-  4. Verificare, per induzione, la corretta renderizzazione dei messaggi di errore:
-  non si mira alla copertura esaustiva di ogni casistica di business (demandata ai test BE),
-  ma alla conferma che il componente di UI reagisca correttamente ai diversi stati (PASSED, FAILED, SKIPPED).
+  1. Verificare che il flusso utente sia completabile con l'esito atteso e con fluidità.
+  2. Validare il mapping tra le risposte API (BE) e i componenti grafici della pagina.
   ***
 
-  Scenario: [DPOP_CONSUMER_CLIENT_ASSERTION_VALIDATION_SUCCESS]
-  Dato un client CONSUMER valido ed una DPoP proof valida, quando viene inviata una client assertion corretta
-  allora tutte le fasi di validazione risultano PASSED.
+  Scenario: [DEBUG_ESERVICE_VOUCHER_DPOP_REQ_1]
+  Dato un client CONSUMER, una DPoP Proof valida ed una Client assertion valida,
+  quando l'utente sottomette le informazioni nella form di debugging,
+  allora tutte le fasi di validazione risultano in stato PASSED
 
     Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
     And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
@@ -33,11 +30,12 @@ Feature: Debugger Client Assertion Sync Bearer And DPoP (Frontend)
       | platformStatesVerification           | PASSED | []     |
       | dpopProofValidation                  | PASSED | []     |
 
-
-  # Vista la segnalazione rigettata (https://pagopa.atlassian.net/browse/PIN-10056) lo step platformStatesVerification viene commentato
-  Scenario: [DPOP_CONSUMER_CLIENT_ASSERTION_VALIDATION_INVALID_AUDIENCE]
-  Dato un client CONSUMER valido ed una DPoP Proof valida, quando la client assertion ha audience invalida
-  allora la validazione formale fallisce con invalidAudience e la DPoP Proof viene validata correttamente
+  Scenario: [DEBUG_ESERVICE_VOUCHER_DPOP_REQ_2]
+  Dato un client CONSUMER, DPoP Proof valida ed una Client assertion avente claim audiance invalido,
+  quando l'utente sottomette le informazioni nella form di debugging,
+  allora la fase di validazione della Client Assertion risulta in stato FAILED
+  e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
+  e le restanti risultano in stato SKIPPED
 
     Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
     And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
@@ -52,13 +50,13 @@ Feature: Debugger Client Assertion Sync Bearer And DPoP (Frontend)
       | clientAssertionValidation            | FAILED  | [Unexpected client assertion audience: invalid_audience] |
       | publicKeyRetrieve                    | SKIPPED | []                                                       |
       | clientAssertionSignatureVerification | SKIPPED | []                                                       |
-      #| platformStatesVerification           | SKIPPED | []                                                       |
       | dpopProofValidation                  | PASSED  | []                                                       |
 
-
-  Scenario Outline: [DPOP_CONSUMER_CLIENT_ASSERTION_VALIDATION_MISSING_REQUIRED_CLAIMS]
-  Dato un client CONSUMER valido ed una client assertion valida, quando la DPoP Proof presenta un claim obbligatorio mancante
-  allora la validazione formale fallisce con il rispettivo messaggio di errore
+  Scenario Outline: [DEBUG_ESERVICE_VOUCHER_DPOP_REQ_3]
+  Dato un client CONSUMER, una Client assertion validae ed una DPoP Proof invalida,
+  quando l'utente sottomette le informazioni nella form di debugging,
+  allora tutte le fasi di validazione di Client assertion, Recupero chiave, Firma e Stato della piattaforma risultano in stato PASSED
+  e la fase di validazione della DPoP Proof risulta in stato FAILED con il messaggio di errore specifico al claim mancante
 
     Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
     And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
