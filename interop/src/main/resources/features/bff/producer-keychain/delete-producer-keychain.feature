@@ -1,3 +1,4 @@
+@BFF @delete-producer-keychain
 Feature: Gestione dei Producer Keychain (BFF API Headless) - Test di Flusso Funzionale
 
   Come utente autenticato di un Ente Erogatore (Aderente)

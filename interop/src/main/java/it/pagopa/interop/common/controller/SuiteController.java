@@ -1,8 +1,8 @@
 package it.pagopa.interop.common.controller;
 
+import io.cucumber.java.Before;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import io.cucumber.java.en.When;
 import it.pagopa.interop.common.domain.context.ChannelContext;
 import it.pagopa.interop.common.domain.context.CurrentUserContext;
 import it.pagopa.interop.common.domain.enums.Channel;
@@ -19,7 +19,7 @@ public class SuiteController {
 
     @And("un {userRole} di {tenant}")
     @And("un {userRole} del {tenant}")
-    public void loginWith(UserRole userRole, Tenant tenant){
+    public void loginWith(UserRole userRole, Tenant tenant) {
         User user = User.getTenantUser(tenant, userRole);
 
         if (!currentUserContext.isLoggedIn(user, tenant))
@@ -27,7 +27,13 @@ public class SuiteController {
     }
 
     @Given("una sessione HTTP autenticata su {channel}")
-    public void setChannel(Channel channel){
+    public void setChannel(Channel channel) {
         channelContext.setChannel(channel);
     }
+
+    @Before("BFF")
+    public void setBffChannel() {
+        channelContext.setChannel(Channel.BFF);
+    }
+
 }
