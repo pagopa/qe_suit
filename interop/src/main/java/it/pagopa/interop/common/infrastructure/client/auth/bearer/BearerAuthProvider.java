@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
-import it.pagopa.interop.common.domain.context.CurrentUserContext;
+import it.pagopa.interop.common.cucumber.context.CurrentUserContext;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.cache.annotation.Cacheable;

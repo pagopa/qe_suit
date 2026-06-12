@@ -3,7 +3,7 @@ package it.pagopa.interop.ui.controller;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.common.infrastructure.client.auth.bearer.BearerAuthProvider;
-import it.pagopa.interop.common.domain.context.CurrentUserContext;
+import it.pagopa.interop.common.cucumber.context.CurrentUserContext;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;
 import it.pagopa.interop.common.domain.enums.UserRole;

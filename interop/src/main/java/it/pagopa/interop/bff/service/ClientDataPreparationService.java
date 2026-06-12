@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.service;
 
-import it.pagopa.interop.common.domain.context.ClientContext;
+import it.pagopa.interop.common.cucumber.context.ClientContext;
 import it.pagopa.interop.common.domain.enums.InteropClientType;
 import it.pagopa.interop.common.domain.model.Client;
 import it.pagopa.interop.common.domain.model.Purpose;

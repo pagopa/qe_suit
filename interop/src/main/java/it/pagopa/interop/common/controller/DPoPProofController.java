@@ -2,7 +2,7 @@ package it.pagopa.interop.common.controller;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.common.domain.context.DPoPProofContext;
+import it.pagopa.interop.common.cucumber.context.DPoPProofContext;
 import it.pagopa.interop.common.domain.model.DPoPProof;
 import it.pagopa.interop.common.service.DPoPProofService;
 import it.pagopa.interop.common.utils.JwtBuilderUtils;

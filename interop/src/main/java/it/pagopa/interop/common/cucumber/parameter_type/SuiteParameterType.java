@@ -4,7 +4,7 @@ import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.domain.enums.Channel;
 import it.pagopa.interop.common.domain.enums.User;
 import it.pagopa.interop.common.domain.enums.UserRole;
-import it.pagopa.interop.common.domain.context.CurrentUserContext;
+import it.pagopa.interop.common.cucumber.context.CurrentUserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 

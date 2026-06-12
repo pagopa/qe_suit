@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.service;
 
-import it.pagopa.interop.common.domain.context.PurposeContext;
+import it.pagopa.interop.common.cucumber.context.PurposeContext;
 import it.pagopa.interop.common.domain.model.Eservice;
 import it.pagopa.interop.common.domain.model.Purpose;
 import it.pagopa.interop.common.domain.model.RiskAnalysis;
@@ -10,7 +10,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
-import it.pagopa.interop.common.domain.context.CurrentUserContext;
+import it.pagopa.interop.common.cucumber.context.CurrentUserContext;
 import it.pagopa.interop.common.utils.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
