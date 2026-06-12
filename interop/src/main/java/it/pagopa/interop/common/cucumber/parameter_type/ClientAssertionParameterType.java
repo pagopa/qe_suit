@@ -3,8 +3,8 @@ package it.pagopa.interop.common.cucumber.parameter_type;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.ParameterType;
+import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.cucumber.parameter_type.mapper.ClientAssertionValidationResultMapper;
-import it.pagopa.interop.common.cucumber.context.ClientAssertionContext;
 import it.pagopa.interop.common.domain.model.ClientAssertion;
 import it.pagopa.interop.common.domain.model.ClientAssertionValidationResult;
 import it.pagopa.interop.common.utils.JwtBuilderUtils;
@@ -17,12 +17,13 @@ import java.util.Map;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ClientAssertionParameterType {
 
-    private final ClientAssertionContext clientAssertionContext;
+    private final ScenarioContext scenarioContext;
     private final ClientAssertionValidationResultMapper clientAssertionValidationResultMapper;
 
     @ParameterType("client assertion|client assertion creata")
     public ClientAssertion currentClientAssertion(String token) {
-        return clientAssertionContext.getLast();
+        return scenarioContext.getLast(ClientAssertion.class)
+                .orElseThrow(() -> new IllegalStateException("Nessuna client assertion trovata nel contesto"));
     }
 
     @ParameterType("RSA|EC|ED25519")
