@@ -1,6 +1,7 @@
 package it.pagopa.interop.ui.service.template;
 
 import it.frontend.e2e.framework.web.domain.Component;
+import it.pagopa.interop.common.cucumber.CucumberConfig;
 import it.pagopa.interop.common.service.template.RequestOverride;
 import it.pagopa.interop.common.utils.DeepMerger;
 
@@ -28,7 +29,7 @@ public interface UiWriter<M, C extends Component> extends UiReader<C, M> {
         M fuzedModel = DeepMerger.merge(overrideModel, defaultModel);
 
         // Puliamo il ThreadLocal subito dopo il merge
-        it.pagopa.interop.common.config.CucumberConfig.clearGherkinKeys();
+        CucumberConfig.clearGherkinKeys();
 
         return fill(fuzedModel);
     }

@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.config.parameter_type;
+package it.pagopa.interop.common.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.domain.context.ClientContext;

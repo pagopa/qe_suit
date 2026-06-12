@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import it.pagopa.interop.common.config.CucumberConfig;
+import it.pagopa.interop.common.cucumber.CucumberConfig;
 
 import java.util.Map;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.config.parameter_type.mapper;
+package it.pagopa.interop.common.cucumber.parameter_type.mapper;
 
 import org.springframework.stereotype.Component;
 
