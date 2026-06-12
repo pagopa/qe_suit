@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.infrastructure.http.interceptor;
+package it.pagopa.interop.common.infrastructure.http.interceptor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

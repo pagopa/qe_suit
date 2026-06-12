@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.infrastructure.client.auth.bearer;
+package it.pagopa.interop.common.infrastructure.client.auth.bearer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
