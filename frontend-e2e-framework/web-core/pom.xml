@@ -58,6 +58,13 @@
             <scope>compile</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-devtools-v148</artifactId>
+            <version>${selenium.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
         <!-- Junit -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
