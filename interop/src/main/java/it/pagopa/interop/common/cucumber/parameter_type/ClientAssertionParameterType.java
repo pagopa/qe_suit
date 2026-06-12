@@ -6,7 +6,7 @@ import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.cucumber.parameter_type.mapper.ClientAssertionValidationResultMapper;
 import it.pagopa.interop.common.domain.model.ClientAssertion;
-import it.pagopa.interop.common.domain.model.ClientAssertionValidationResult;
+import it.pagopa.interop.common.domain.model.VoucherRequestValidationResult;
 import it.pagopa.interop.common.utils.JwtBuilderUtils;
 import it.pagopa.interop.common.utils.KeyPairUtils;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class ClientAssertionParameterType {
     }
 
     @DataTableType
-    public ClientAssertionValidationResult fromDataTable(DataTable dataTable) {
+    public VoucherRequestValidationResult fromDataTable(DataTable dataTable) {
         return clientAssertionValidationResultMapper.fromDataTable(dataTable);
     }
 

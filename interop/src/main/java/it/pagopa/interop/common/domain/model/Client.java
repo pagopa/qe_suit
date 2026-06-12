@@ -8,18 +8,13 @@ import java.security.KeyPair;
 import java.util.Set;
 
 @RequiredArgsConstructor
-public class Client extends AbstractModel {
+public class Client implements TestModel {
 
     @Delegate
     private final it.pagopa.interop.generated.openapi.clients.bff.model.Client embeddedModel;
 
     @Getter
     private final Set<KeyPair> keyPairs;
-
-    @Override
-    public String getUniqueIdentifier() {
-        return getId().toString();
-    }
 
     public void addKeyPair(KeyPair keyPair) {
         if (keyPair != null) {

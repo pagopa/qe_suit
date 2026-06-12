@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.cucumber.parameter_type.mapper;
 
 import io.cucumber.datatable.DataTable;
-import it.pagopa.interop.common.domain.model.ClientAssertionValidationResult;
+import it.pagopa.interop.common.domain.model.VoucherRequestValidationResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import java.util.*;
 public final class ClientAssertionValidationResultMapper {
     private final DataTableContextMapper dataTableContextMapper;
 
-    public ClientAssertionValidationResult fromDataTable(DataTable dataTable) {
+    public VoucherRequestValidationResult fromDataTable(DataTable dataTable) {
         List<List<String>> rows = dataTable.cells();
         if (rows == null || rows.size() < 2) {
             throw new IllegalArgumentException("DataTable vuota o senza righe dati");
@@ -31,7 +31,7 @@ public final class ClientAssertionValidationResultMapper {
             throw new IllegalArgumentException("Header DataTable non valido. Attesi: step, result, errors");
         }
 
-        Map<String, ClientAssertionValidationResult.ValidationResult> byStep = new HashMap<>();
+        Map<String, VoucherRequestValidationResult.ValidationResult> byStep = new HashMap<>();
 
         for (int i = 1; i < rows.size(); i++) {
             List<String> row = rows.get(i);
@@ -40,51 +40,52 @@ public final class ClientAssertionValidationResultMapper {
             String result = row.get(resultIdx).trim();
             String errors = row.get(errorsIdx).trim();
 
-            ClientAssertionValidationResult.Status status = parseStatus(result);
-            boolean success = status == ClientAssertionValidationResult.Status.PASSED;
+            VoucherRequestValidationResult.Status status = parseStatus(result);
+            boolean success = status == VoucherRequestValidationResult.Status.PASSED;
             List<String> errorsCode = this.parseErrors(errors);
 
-            byStep.put(step, new ClientAssertionValidationResult.ValidationResult(status, success, errorsCode));
+            byStep.put(step, new VoucherRequestValidationResult.ValidationResult(status, success, errorsCode));
         }
 
-        return new ClientAssertionValidationResult(
-                new ClientAssertionValidationResult.ClientAssertionValidation(
+        return new VoucherRequestValidationResult(
+                null,
+                new VoucherRequestValidationResult.ClientAssertionValidation(
                         require(byStep, "clientAssertionValidation")
                 ),
-                new ClientAssertionValidationResult.PublicKeyValidation(
+                new VoucherRequestValidationResult.PublicKeyValidation(
                         require(byStep, "publicKeyRetrieve")
                 ),
-                new ClientAssertionValidationResult.SignatureValidation(
+                new VoucherRequestValidationResult.SignatureValidation(
                         require(byStep, "clientAssertionSignatureVerification")
                 ),
                 byStep.containsKey("platformStatesVerification")
-                        ? new ClientAssertionValidationResult.PlatformValidation(
+                        ? new VoucherRequestValidationResult.PlatformValidation(
                         require(byStep, "platformStatesVerification")
                 ) : null,
                 byStep.containsKey("dpopProofValidation")
-                        ? new ClientAssertionValidationResult.DPoPValidation(
+                        ? new VoucherRequestValidationResult.DPoPValidation(
                         require(byStep, "dpopProofValidation")
                 ) : null
         );
     }
 
-    private static ClientAssertionValidationResult.ValidationResult require(
-            Map<String, ClientAssertionValidationResult.ValidationResult> byStep,
+    private static VoucherRequestValidationResult.ValidationResult require(
+            Map<String, VoucherRequestValidationResult.ValidationResult> byStep,
             String key
     ) {
-        ClientAssertionValidationResult.ValidationResult value = byStep.get(key);
+        VoucherRequestValidationResult.ValidationResult value = byStep.get(key);
         if (value == null) {
             throw new IllegalArgumentException("Step mancante nella DataTable: " + key);
         }
         return value;
     }
 
-    private static ClientAssertionValidationResult.Status parseStatus(String raw) {
+    private static VoucherRequestValidationResult.Status parseStatus(String raw) {
         String value = normalize(raw);
         return switch (value) {
-            case "passed" -> ClientAssertionValidationResult.Status.PASSED;
-            case "failed" -> ClientAssertionValidationResult.Status.FAILED;
-            case "skipped" -> ClientAssertionValidationResult.Status.SKIPPED;
+            case "passed" -> VoucherRequestValidationResult.Status.PASSED;
+            case "failed" -> VoucherRequestValidationResult.Status.FAILED;
+            case "skipped" -> VoucherRequestValidationResult.Status.SKIPPED;
             default -> throw new IllegalArgumentException("Result non valido: " + raw);
         };
     }

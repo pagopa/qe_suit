@@ -109,6 +109,18 @@ public class ScenarioContext {
         return Optional.of((Model) item);
     }
 
+    public <Model extends TestModel> Optional<Model> getById(UUID id, Class<Model> modelClass) {
+        List<ContextEntry<Model>> entryList = entries(modelClass);
+        int index = indexOfById(entryList, id);
+
+        if (index != -1) {
+            return Optional.of(entryList.get(index).getItem());
+        }
+
+        log.debug("Nessun elemento trovato per il tipo {} con ID {}", modelClass.getSimpleName(), id);
+        return Optional.empty();
+    }
+
     public Optional<TestModel> getByAlias(String alias) {
         return Optional.ofNullable(aliasStorage.get(alias));
     }
@@ -116,6 +128,16 @@ public class ScenarioContext {
     public <Model extends TestModel> Optional<Model> getFirst(Class<Model> modelClass) {
         List<ContextEntry<Model>> entryList = entries(modelClass);
         return entryList.isEmpty() ? Optional.empty() : Optional.of(entryList.get(0).getItem());
+    }
+
+    /**
+     * Recupera il primo elemento del tipo richiesto che soddisfa il predicato specificato.
+     */
+    public <Model extends TestModel> Optional<Model> find(Class<Model> modelClass, java.util.function.Predicate<? super Model> predicate) {
+        return entries(modelClass).stream()
+                .map(ContextEntry::getItem)
+                .filter(predicate)
+                .findFirst();
     }
 
     public <Model extends TestModel> Optional<Model> getLast(Class<Model> modelClass) {
