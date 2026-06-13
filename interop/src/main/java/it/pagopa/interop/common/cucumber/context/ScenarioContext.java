@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.cucumber.context;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.common.domain.model.TestModel;
+import it.pagopa.interop.common.template.TestModel;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;

@@ -1,8 +1,8 @@
 package it.pagopa.interop.bff.agreement;
 
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
-import it.pagopa.interop.common.domain.model.Agreement;
-import it.pagopa.interop.common.domain.model.EService;
+import it.pagopa.interop.common.agreement.Agreement;
+import it.pagopa.interop.common.eservice.EService;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementState;

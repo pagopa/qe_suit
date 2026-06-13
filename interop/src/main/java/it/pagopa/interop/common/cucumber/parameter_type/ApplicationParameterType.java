@@ -1,8 +1,8 @@
 package it.pagopa.interop.common.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.common.domain.enums.*;
 import it.pagopa.interop.common.cucumber.context.UserContext;
+import it.pagopa.interop.common.enums.*;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

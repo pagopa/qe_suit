@@ -1,10 +1,10 @@
 package it.pagopa.interop.web.service;
 
-import it.pagopa.interop.common.domain.enums.InteropClientType;
-import it.pagopa.interop.common.domain.model.Client;
-import it.pagopa.interop.common.domain.model.ClientAssertion;
-import it.pagopa.interop.common.domain.model.VoucherRequestValidationResult;
-import it.pagopa.interop.common.domain.model.DPoPProof;
+import it.pagopa.interop.common.enums.InteropClientType;
+import it.pagopa.interop.common.client.Client;
+import it.pagopa.interop.common.client_assertion.ClientAssertion;
+import it.pagopa.interop.common.dev_tools.VoucherRequestValidationResult;
+import it.pagopa.interop.common.dpop.DPoPProof;
 import it.pagopa.interop.web.page.dev_tools.debug_client_assertion.DebugClientAssertionPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
