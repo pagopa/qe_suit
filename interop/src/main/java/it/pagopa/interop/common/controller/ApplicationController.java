@@ -28,12 +28,12 @@ public class ApplicationController {
 
     @Given("una sessione HTTP autenticata su {channel}")
     public void setChannel(Channel channel) {
-        channelContext.setChannel(channel);
+        channelContext.setCurrentChannel(channel);
     }
 
     @Before("BFF")
     public void setBffChannel() {
-        channelContext.setChannel(Channel.BFF);
+        channelContext.setCurrentChannel(Channel.BFF);
     }
 
 }

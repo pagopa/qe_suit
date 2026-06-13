@@ -11,5 +11,5 @@ import org.springframework.stereotype.Component;
 @Setter
 @ScenarioScope
 public class ChannelContext {
-    private Channel channel;
+    private Channel currentChannel;
 }

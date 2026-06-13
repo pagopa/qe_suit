@@ -4,9 +4,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.domain.model.ProducerKeychain;
+import it.pagopa.interop.common.service.producer_keychain.ProducerKeychainService;
+import it.pagopa.interop.common.service.producer_keychain.request.BaseReadAllProducerKeychainRequest;
 import it.pagopa.interop.common.service.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.bff.service.producer_keychain.IProducerKeychainService;
-import it.pagopa.interop.bff.service.producer_keychain.ProducerKeychainService;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,12 +55,8 @@ public class ProducerKeychainController {
 
     private List<ProducerKeychain> readAllKeychains() {
         return service
-                .readAll(buildGetAllRequest())
+                .readAll(BaseReadAllProducerKeychainRequest.unfiltered())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .getModels();
-    }
-
-    private IProducerKeychainService.GetAllRequest buildGetAllRequest() {
-        return new IProducerKeychainService.GetAllRequest(0, 50, null, null, null);
     }
 }
