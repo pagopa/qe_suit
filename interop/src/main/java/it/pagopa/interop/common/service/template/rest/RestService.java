@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public abstract class TestService {
+public abstract class RestService {
     @Getter
     @Setter(onMethod_ = {@Autowired})
     protected TestChainFactory chainFactory;
