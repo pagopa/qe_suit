@@ -1,9 +1,9 @@
 @debug-client-assertion-page-ui-behavior
-Feature: Debugger Client Assertion Page (Frontend)
+Feature: Debugger Client Assertion Page (Frontend) - Test Comportamentale
 
   Come Aderente iscritto alla piattaforma Interop
-  Voglio accedere alla pagina di Debugger Client Assertion del portale
-  Al fine di accedere ai tools (Export analisi del rischio, Debug Client Assertion, Simulatore ottenimento di un voucher)
+  Voglio visualizzare gli errori commessi nel compilare la form presente alla pagina di Debugger Client Assertion
+  Al fine di poterli comprendere e correggere
 
   ***
   OBIETTIVI DEL TEST FRONTEND:
