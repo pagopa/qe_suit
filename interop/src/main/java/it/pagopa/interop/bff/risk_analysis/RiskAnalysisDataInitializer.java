@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.service.risk_analysis;
+package it.pagopa.interop.bff.risk_analysis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

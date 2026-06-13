@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.service;
+package it.pagopa.interop.bff.client;
 
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.domain.enums.InteropClientType;
