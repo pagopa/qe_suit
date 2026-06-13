@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.controller;
+package it.pagopa.interop.common.controller;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
