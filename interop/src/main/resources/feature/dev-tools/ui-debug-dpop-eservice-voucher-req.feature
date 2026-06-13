@@ -2,7 +2,7 @@
 Feature: Debugger della request di tipo DPoP per un voucher spendibile presso un erogatore di un e-service sincrono (Frontend) - Test di Flusso Funzionale
 
   Come Aderente in possesso di un client di tipo CONSUMER
-  Voglio validare la mia request di tipo DPoP per un voucher spendibile presso un erogatore di un e-service sincrono
+  Voglio validare la mia Client Assertion facente parte di una request di tipo DPoP utile al recupero di un Voucher spendibile presso un erogatore di un EService sincrono
   Al fine di identificare errori strutturali, temporali o crittografici nelle cinque fasi di validazione (Client assertion, Recupero Chiave, Firma, Stato Piattaforma, DPoP)
 
   ***
@@ -21,7 +21,7 @@ Feature: Debugger della request di tipo DPoP per un voucher spendibile presso un
     And una client assertion valida generata usando il client e la finalità
     And una dpop proof valida generata con una chiave RSA
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
-    And l'utente richiede la validazione della client assertion e della dpop proof associate al client
+    And l'utente inoltra la richiesta di validazione specificando client assertion, dpop proof e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result | errors |
       | clientAssertionValidation            | PASSED | []     |
@@ -44,7 +44,7 @@ Feature: Debugger della request di tipo DPoP per un voucher spendibile presso un
       | aud   | invalid_audience |
     And una dpop proof valida generata con una chiave RSA
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
-    And l'utente richiede la validazione della client assertion e della dpop proof associate al client
+    And l'utente inoltra la richiesta di validazione specificando client assertion, dpop proof e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result  | errors                                                   |
       | clientAssertionValidation            | FAILED  | [Unexpected client assertion audience: invalid_audience] |
@@ -65,7 +65,7 @@ Feature: Debugger della request di tipo DPoP per un voucher spendibile presso un
       | claim    | value           |
       | __remove | <claimToRemove> |
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
-    And l'utente richiede la validazione della client assertion e della dpop proof associate al client
+    And l'utente inoltra la richiesta di validazione specificando client assertion, dpop proof e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result | errors            |
       | clientAssertionValidation            | PASSED | []                |

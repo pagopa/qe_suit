@@ -2,7 +2,7 @@
 Feature: Debugger della request di tipo bearer per un voucher spendibile presso le API della piattaforma Interop (Frontend) - Test di Flusso Funzionale
 
   Come Aderente in possesso di un client di tipo API
-  Voglio validare la mia request di tipo bearer per un voucher spendibile presso le API della piattaforma Interop
+  Voglio validare la mia Client Assertion facente parte di una request di tipo bearer utile al recupero di un Voucher spendibile presso le API della piattaforma Interop
   Al fine di identificare errori strutturali, temporali o crittografici nelle tre fasi di validazione (Client assertion, Recupero Chiave, Firma)
 
   ***
@@ -20,7 +20,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
     And un client API creato da PagoPA in cui è presente l'admin e una coppia di chiavi crittografiche
     And una client assertion valida generata usando il client creato
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
-    And l'utente richiede la validazione della client assertion associata al client
+    And l'utente inoltra la richiesta di validazione specificando client assertion e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result | errors |
       | clientAssertionValidation            | PASSED | []     |
@@ -40,7 +40,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | claim | value            |
       | aud   | invalid_audience |
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
-    And l'utente richiede la validazione della client assertion associata al client
+    And l'utente inoltra la richiesta di validazione specificando client assertion e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result  | errors                                                   |
       | clientAssertionValidation            | FAILED  | [Unexpected client assertion audience: invalid_audience] |
@@ -64,7 +64,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | __remove | iss   |
       | __remove | sub   |
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
-    And l'utente richiede la validazione della client assertion associata al client
+    And l'utente inoltra la richiesta di validazione specificando client assertion e client
     Then i risultati della validazione della client assertion creata sono:
       | step                                 | result  | errors                                                                                                                                                                                 |
       | clientAssertionValidation            | FAILED  | [JTI not found in client assertion, IAT not found in client assertion, EXP not found in client assertion, Issuer not found in client assertion, Subject not found in client assertion] |
@@ -84,7 +84,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | claim    | value |
       | __remove | aud   |
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
-    And l'utente richiede la validazione della client assertion associata al client
+    And l'utente inoltra la richiesta di validazione specificando client assertion e client
     Then i risultati della validazione della client assertion creata sono:
       | step                                 | result  | errors                                   |
       | clientAssertionValidation            | FAILED  | [Audience not found in client assertion] |
@@ -104,7 +104,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | claim      | value                  |
       | header.kid | not-a-valid-kid-format |
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
-    And l'utente richiede la validazione della client assertion associata al client
+    And l'utente inoltra la richiesta di validazione specificando client assertion e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result  | errors                      |
       | clientAssertionValidation            | FAILED  | [Unexpected format for kid] |
@@ -124,7 +124,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | claim | value     |
       | exp   | now-10800 |
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
-    And l'utente richiede la validazione della client assertion associata al client
+    And l'utente inoltra la richiesta di validazione specificando client assertion e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result | errors                                                   |
       | clientAssertionValidation            | PASSED | []                                                       |

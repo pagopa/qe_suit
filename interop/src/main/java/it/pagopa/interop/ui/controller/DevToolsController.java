@@ -23,13 +23,7 @@ public class DevToolsController {
     private final ScenarioContext scenarioContext;
     private final DataTableMapper dataTableMapper;
 
-    @When("l'utente richiede la validazione della {currentClientAssertion} associata al {currentClient}")
-    public void validateClientAssertion(ClientAssertion clientAssertion, Client client) {
-        VoucherRequestValidationResult result = webClientAssertionService.performValidation(clientAssertion, client);
-        scenarioContext.upsert(result);
-    }
-
-    @When("l'utente richiede la validazione della {currentClientAssertion} e della {currentDpopProof} associate al {currentClient}")
+    @When("l'utente inoltra la richiesta di validazione specificando {currentClientAssertion}(, {currentDpopProof}) e {currentClient}")
     public void validateClientAssertion(ClientAssertion clientAssertion, DPoPProof dPoPProof, Client client) {
         VoucherRequestValidationResult result = webClientAssertionService.performValidation(clientAssertion, client, dPoPProof);
         scenarioContext.upsert(result);

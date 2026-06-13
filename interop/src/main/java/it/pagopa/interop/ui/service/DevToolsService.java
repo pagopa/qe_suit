@@ -23,12 +23,8 @@ public class DevToolsService {
 
     private final DebugClientAssertionPage debugPage;
 
-    public VoucherRequestValidationResult performValidation(ClientAssertion clientAssertion, Client client) {
-        return performValidationInternal(clientAssertion.getClientAssertion(), InteropClientType.valueOf(client.getKind().name()), client.getId().toString(), null);
-    }
-
     public VoucherRequestValidationResult performValidation(ClientAssertion clientAssertion, Client client, DPoPProof proof) {
-        return performValidationInternal(clientAssertion.getClientAssertion(), InteropClientType.valueOf(client.getKind().name()), client.getId().toString(), proof.getJwt());
+        return performValidationInternal(clientAssertion.getClientAssertion(), InteropClientType.valueOf(client.getKind().name()), client.getId().toString(), proof != null ? proof.getJwt() : null);
     }
 
     public VoucherRequestValidationResult performValidation(String clientAssertion, InteropClientType clientType, String clientId, String proof) {
