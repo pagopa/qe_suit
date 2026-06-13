@@ -22,6 +22,7 @@
         <java.version>17</java.version>
         <cucumber.version>7.14.0</cucumber.version>
         <jjwt.version>0.12.6</jjwt.version>
+        <spring-plugin.version>4.1.0</spring-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -88,6 +89,16 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- ========================= -->
+        <!-- SPRING PLUGIN -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>org.springframework.plugin</groupId>
+            <artifactId>spring-plugin-core</artifactId>
+            <version>${spring-plugin.version}</version>
         </dependency>
 
         <!-- ========================= -->

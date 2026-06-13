@@ -1,38 +1,41 @@
-package it.pagopa.interop.bff.service.producer_keychain;
+package it.pagopa.interop.bff.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.interop.common.domain.model.ProducerKeychain;
+import it.pagopa.interop.common.service.producer_keychain.request.BaseReadAllProducerKeychainRequest;
 import it.pagopa.interop.common.service.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.common.service.template.rest.RestService;
-import it.pagopa.interop.common.cucumber.context.ScenarioContext;
+import it.pagopa.interop.common.service.template.rest.*;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerKeychainApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-import lombok.Getter;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactProducerKeychain;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactProducerKeychains;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSeed;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-
-@Service
-@Getter
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ProducerKeychainService extends RestService implements IProducerKeychainService {
+@Component
+@RequiredArgsConstructor
+public class BffProducerKeychainClient extends RestService implements
+        CanCreate<ProducerKeychainSeed, CreatedResource, ProducerKeychain>,
+        CanRead<UUID, it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain, ProducerKeychain>,
+        CanReadAll<BaseReadAllProducerKeychainRequest, CompactProducerKeychains, ProducerKeychain>,
+        CanDelete<UUID, Void, ProducerKeychain> {
 
     private final ProducerKeychainApi keychainApi;
     private final ObjectMapper objectMapper;
-    private final ScenarioContext scenarioContext;
 
     @Override
-    public ResponseEntity<ProducerKeychain> doRead(UUID id) {
+    public ResponseEntity<it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain> doRead(UUID id) {
         return keychainApi.getProducerKeychainWithHttpInfo(id);
     }
 
     @Override
-    public it.pagopa.interop.common.domain.model.ProducerKeychain updateModelAfterRead(ProducerKeychain producerKeychain) {
+    public it.pagopa.interop.common.domain.model.ProducerKeychain updateModelAfterRead(it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain producerKeychain) {
         return objectMapper.convertValue(producerKeychain, it.pagopa.interop.common.domain.model.ProducerKeychain.class);
     }
 
@@ -59,14 +62,16 @@ public class ProducerKeychainService extends RestService implements IProducerKey
                 .members(List.of());
     }
 
+
+
     @Override
-    public ResponseEntity<CompactProducerKeychains> doReadAll(GetAllRequest getAllRequest) {
+    public ResponseEntity<CompactProducerKeychains> doReadAll(BaseReadAllProducerKeychainRequest getAllRequest) {
         return keychainApi.getProducerKeychainsWithHttpInfo(
-                getAllRequest.offset(),
-                getAllRequest.limit(),
-                getAllRequest.q(),
-                getAllRequest.userIds(),
-                getAllRequest.eserviceId()
+                getAllRequest.getOffset(),
+                getAllRequest.getLimit(),
+                getAllRequest.getQ(),
+                getAllRequest.getUserIds(),
+                getAllRequest.getEserviceId()
         );
     }
 
