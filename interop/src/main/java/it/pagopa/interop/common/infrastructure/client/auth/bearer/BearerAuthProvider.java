@@ -2,8 +2,8 @@ package it.pagopa.interop.common.infrastructure.client.auth.bearer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.interop.common.domain.enums.Tenant;
-import it.pagopa.interop.common.domain.enums.User;
+import it.pagopa.interop.common.enums.Tenant;
+import it.pagopa.interop.common.enums.User;
 import it.pagopa.interop.common.cucumber.context.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;

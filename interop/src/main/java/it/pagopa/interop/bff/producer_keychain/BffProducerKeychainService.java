@@ -1,11 +1,11 @@
 package it.pagopa.interop.bff.producer_keychain;
 
-import it.pagopa.interop.common.domain.enums.Channel;
-import it.pagopa.interop.common.domain.model.ProducerKeychain;
-import it.pagopa.interop.common.service.producer_keychain.ProducerKeychainService;
-import it.pagopa.interop.common.service.producer_keychain.request.BaseReadAllProducerKeychainRequest;
-import it.pagopa.interop.common.service.template.action.TestChain;
-import it.pagopa.interop.common.service.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.enums.Channel;
+import it.pagopa.interop.common.producer_keychain.ProducerKeychain;
+import it.pagopa.interop.common.producer_keychain.ProducerKeychainService;
+import it.pagopa.interop.common.producer_keychain.request.BaseReadAllProducerKeychainRequest;
+import it.pagopa.interop.common.template.action.TestChain;
+import it.pagopa.interop.common.template.action.strategy.PollingStrategy;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

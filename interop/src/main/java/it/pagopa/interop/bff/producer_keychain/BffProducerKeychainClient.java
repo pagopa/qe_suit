@@ -1,10 +1,10 @@
 package it.pagopa.interop.bff.producer_keychain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.interop.common.domain.model.ProducerKeychain;
-import it.pagopa.interop.common.service.producer_keychain.request.BaseReadAllProducerKeychainRequest;
-import it.pagopa.interop.common.service.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.common.service.template.rest.*;
+import it.pagopa.interop.common.producer_keychain.ProducerKeychain;
+import it.pagopa.interop.common.producer_keychain.request.BaseReadAllProducerKeychainRequest;
+import it.pagopa.interop.common.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.template.rest.*;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerKeychainApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactProducerKeychain;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactProducerKeychains;
@@ -35,8 +35,8 @@ public class BffProducerKeychainClient extends RestService implements
     }
 
     @Override
-    public it.pagopa.interop.common.domain.model.ProducerKeychain updateModelAfterRead(it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain producerKeychain) {
-        return objectMapper.convertValue(producerKeychain, it.pagopa.interop.common.domain.model.ProducerKeychain.class);
+    public ProducerKeychain updateModelAfterRead(it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain producerKeychain) {
+        return objectMapper.convertValue(producerKeychain, ProducerKeychain.class);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class BffProducerKeychainClient extends RestService implements
     }
 
     @Override
-    public it.pagopa.interop.common.domain.model.ProducerKeychain updateModelAfterCreate(CreatedResource createdResource) {
+    public ProducerKeychain updateModelAfterCreate(CreatedResource createdResource) {
         return this.read(createdResource.getId())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .getModel();
@@ -74,11 +74,11 @@ public class BffProducerKeychainClient extends RestService implements
     }
 
     @Override
-    public List<it.pagopa.interop.common.domain.model.ProducerKeychain> updateModelsAfterRead(CompactProducerKeychains compactProducerKeychains) {
-        List<it.pagopa.interop.common.domain.model.ProducerKeychain> producerKeychains = new ArrayList<>();
+    public List<ProducerKeychain> updateModelsAfterRead(CompactProducerKeychains compactProducerKeychains) {
+        List<ProducerKeychain> producerKeychains = new ArrayList<>();
 
         for(CompactProducerKeychain keychain : compactProducerKeychains.getResults()){
-            var item = objectMapper.convertValue(keychain, it.pagopa.interop.common.domain.model.ProducerKeychain.class);
+            var item = objectMapper.convertValue(keychain, ProducerKeychain.class);
             producerKeychains.add(item);
         }
 

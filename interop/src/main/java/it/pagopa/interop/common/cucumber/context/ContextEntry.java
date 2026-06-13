@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.cucumber.context;
 
-import it.pagopa.interop.common.domain.model.TestModel;
+import it.pagopa.interop.common.template.TestModel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

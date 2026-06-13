@@ -1,8 +1,8 @@
 package it.pagopa.interop.bff.risk_analysis;
 
-import it.pagopa.interop.common.domain.enums.Tenant;
-import it.pagopa.interop.common.domain.enums.TenantType;
-import it.pagopa.interop.common.domain.model.RiskAnalysis;
+import it.pagopa.interop.common.enums.Tenant;
+import it.pagopa.interop.common.enums.TenantType;
+import it.pagopa.interop.common.risk_analysis.RiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;

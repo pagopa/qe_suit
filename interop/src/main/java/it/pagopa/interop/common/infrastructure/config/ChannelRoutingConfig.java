@@ -1,9 +1,9 @@
 package it.pagopa.interop.common.infrastructure.config;
 
 import it.pagopa.interop.common.cucumber.context.ChannelContext;
-import it.pagopa.interop.common.domain.enums.Channel;
+import it.pagopa.interop.common.enums.Channel;
 import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
-import it.pagopa.interop.common.service.producer_keychain.ProducerKeychainService;
+import it.pagopa.interop.common.producer_keychain.ProducerKeychainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.aop.framework.ProxyFactory;
