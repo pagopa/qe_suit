@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.service.template;
+package it.pagopa.interop.common.service.template.rest;
 
 import it.pagopa.interop.bff.service.action.TestChainFactory;
 import lombok.Getter;
