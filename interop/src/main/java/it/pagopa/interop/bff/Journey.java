@@ -1,6 +1,9 @@
-package it.pagopa.interop.bff.service;
+package it.pagopa.interop.bff;
 
 import io.cucumber.spring.ScenarioScope;
+import it.pagopa.interop.bff.agreement.AgreementDataPreparationService;
+import it.pagopa.interop.bff.eservice.EserviceDataPreparationService;
+import it.pagopa.interop.bff.purpose.PurposeDataPreparationService;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.common.domain.enums.Tenant;

@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.controller;
 
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.bff.service.ClientDataPreparationService;
+import it.pagopa.interop.bff.client.ClientDataPreparationService;
 import it.pagopa.interop.common.domain.enums.InteropClientType;
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.User;

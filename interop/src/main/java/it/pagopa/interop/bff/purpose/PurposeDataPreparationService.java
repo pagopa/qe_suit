@@ -1,6 +1,6 @@
-package it.pagopa.interop.bff.service;
+package it.pagopa.interop.bff.purpose;
 
-import it.pagopa.interop.bff.service.risk_analysis.RiskAnalysisDataPreparationService;
+import it.pagopa.interop.bff.risk_analysis.RiskAnalysisDataPreparationService;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.common.domain.model.EService;

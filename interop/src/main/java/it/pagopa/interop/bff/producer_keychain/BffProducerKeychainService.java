@@ -1,8 +1,8 @@
-package it.pagopa.interop.bff.service.producer_keychain;
+package it.pagopa.interop.bff.producer_keychain;
 
-import it.pagopa.interop.bff.client.BffProducerKeychainClient;
 import it.pagopa.interop.common.domain.enums.Channel;
 import it.pagopa.interop.common.domain.model.ProducerKeychain;
+import it.pagopa.interop.common.service.producer_keychain.ProducerKeychainService;
 import it.pagopa.interop.common.service.producer_keychain.request.BaseReadAllProducerKeychainRequest;
 import it.pagopa.interop.common.service.template.action.TestChain;
 import it.pagopa.interop.common.service.template.action.strategy.PollingStrategy;
@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 @Getter
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class BffProducerKeychainService implements IBffProducerKeychainService {
+public class BffProducerKeychainService implements ProducerKeychainService {
 
     private final BffProducerKeychainClient client;
 

@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.service.risk_analysis;
+package it.pagopa.interop.bff.risk_analysis;
 
 import it.pagopa.interop.common.domain.enums.Tenant;
 import it.pagopa.interop.common.domain.enums.TenantType;

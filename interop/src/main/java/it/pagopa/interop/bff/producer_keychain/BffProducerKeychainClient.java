@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.client;
+package it.pagopa.interop.bff.producer_keychain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.common.domain.model.ProducerKeychain;
@@ -61,8 +61,6 @@ public class BffProducerKeychainClient extends RestService implements
                 .description("Portachiavi di test generato automaticamente")
                 .members(List.of());
     }
-
-
 
     @Override
     public ResponseEntity<CompactProducerKeychains> doReadAll(BaseReadAllProducerKeychainRequest getAllRequest) {
