@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.service.template.rest;
 
-import it.pagopa.interop.bff.service.action.TestChain;
-import it.pagopa.interop.bff.service.action.TestChainFactory;
+import it.pagopa.interop.common.service.template.action.TestChain;
+import it.pagopa.interop.common.service.template.action.TestChainFactory;
 import it.pagopa.interop.common.domain.model.TestModel;
 import it.pagopa.interop.common.service.template.RequestOverride;
 import org.springframework.http.ResponseEntity;

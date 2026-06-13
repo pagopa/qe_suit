@@ -1,7 +1,7 @@
-package it.pagopa.interop.bff.service.action;
+package it.pagopa.interop.common.service.template.action;
 
-import it.pagopa.interop.bff.service.action.context.BaseActionContext;
-import it.pagopa.interop.bff.service.action.strategy.AssertionStrategy;
+import it.pagopa.interop.common.service.template.action.context.BaseActionContext;
+import it.pagopa.interop.common.service.template.action.strategy.AssertionStrategy;
 import it.pagopa.interop.common.domain.model.TestModel;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;

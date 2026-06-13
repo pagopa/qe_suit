@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.service.template.rest;
 
-import it.pagopa.interop.bff.service.action.TestChainFactory;
+import it.pagopa.interop.common.service.template.action.TestChainFactory;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;

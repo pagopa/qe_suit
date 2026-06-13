@@ -1,8 +1,8 @@
-package it.pagopa.interop.bff.service.action;
+package it.pagopa.interop.common.service.template.action;
 
-import it.pagopa.interop.bff.service.action.context.BaseActionContext;
-import it.pagopa.interop.bff.service.action.context.PollingActionContext;
-import it.pagopa.interop.bff.service.action.strategy.AssertionStrategy;
+import it.pagopa.interop.common.service.template.action.context.BaseActionContext;
+import it.pagopa.interop.common.service.template.action.context.PollingActionContext;
+import it.pagopa.interop.common.service.template.action.strategy.AssertionStrategy;
 import it.pagopa.interop.common.cucumber.context.ContextEntry;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.domain.model.TestModel;

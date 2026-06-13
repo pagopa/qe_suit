@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.service.action.strategy;
+package it.pagopa.interop.common.service.template.action.strategy;
 
 import org.assertj.core.api.Assertions;
 import org.springframework.http.ResponseEntity;

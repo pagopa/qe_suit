@@ -1,7 +1,7 @@
 package it.pagopa.interop.bff.service.producer_keychain;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.interop.bff.service.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.service.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.service.template.rest.RestService;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerKeychainApi;

@@ -1,8 +1,7 @@
-package it.pagopa.interop.bff.service.action.strategy;
+package it.pagopa.interop.common.service.template.action.strategy;
 
 import org.springframework.http.HttpStatusCode;
 
-import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 @FunctionalInterface

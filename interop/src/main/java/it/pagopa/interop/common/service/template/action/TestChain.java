@@ -1,8 +1,8 @@
-package it.pagopa.interop.bff.service.action;
+package it.pagopa.interop.common.service.template.action;
 
-import it.pagopa.interop.bff.service.action.context.BaseActionContext;
-import it.pagopa.interop.bff.service.action.context.PollingActionContext;
-import it.pagopa.interop.bff.service.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.service.template.action.context.BaseActionContext;
+import it.pagopa.interop.common.service.template.action.context.PollingActionContext;
+import it.pagopa.interop.common.service.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.domain.model.TestModel;
 import lombok.Setter;
 import org.springframework.beans.factory.ObjectProvider;

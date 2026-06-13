@@ -1,6 +1,6 @@
-package it.pagopa.interop.bff.service.action.context;
+package it.pagopa.interop.common.service.template.action.context;
 
-import it.pagopa.interop.bff.service.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.service.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.domain.model.TestModel;
 import lombok.Getter;
 
