@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.service.action;
+package it.pagopa.interop.common.service.template.action;
 
 import it.pagopa.interop.common.domain.model.TestModel;
 import org.springframework.http.ResponseEntity;

@@ -4,7 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.domain.model.ProducerKeychain;
-import it.pagopa.interop.bff.service.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.service.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.service.producer_keychain.IProducerKeychainService;
 import it.pagopa.interop.bff.service.producer_keychain.ProducerKeychainService;
 import lombok.RequiredArgsConstructor;
