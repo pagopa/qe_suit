@@ -1,7 +1,6 @@
-package it.pagopa.interop.bff.domain;
+package it.pagopa.interop.common.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import it.pagopa.interop.common.domain.model.TestModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
