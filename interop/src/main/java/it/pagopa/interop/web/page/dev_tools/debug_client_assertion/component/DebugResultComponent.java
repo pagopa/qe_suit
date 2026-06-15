@@ -11,6 +11,8 @@ import org.assertj.core.api.Assertions;
 import java.util.ArrayList;
 import java.util.List;
 
+import static it.pagopa.interop.common.contract.model.response.DebugClientAssertionValidationResponse.Status.*;
+
 public interface DebugResultComponent extends Component {
 
     @XPath(".//h2")
