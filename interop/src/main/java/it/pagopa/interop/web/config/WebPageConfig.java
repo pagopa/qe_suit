@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Bean;
 @TestConfiguration
 @Getter
 @Setter
-public class PageConfig {
+public class WebPageConfig {
 
 
     @Bean
