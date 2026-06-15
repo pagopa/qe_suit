@@ -5,7 +5,7 @@ import it.pagopa.interop.common.client.Client;
 import it.pagopa.interop.common.client_assertion.ClientAssertion;
 import it.pagopa.interop.common.dev_tools.VoucherRequestValidationResult;
 import it.pagopa.interop.common.dpop.DPoPProof;
-import it.pagopa.interop.web.page.dev_tools.debug_client_assertion.DebugClientAssertionPage;
+import it.pagopa.interop.web.dev_tools.debug_client_assertion.DebugClientAssertionPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

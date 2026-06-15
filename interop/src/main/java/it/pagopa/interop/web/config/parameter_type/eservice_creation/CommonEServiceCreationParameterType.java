@@ -2,25 +2,25 @@ package it.pagopa.interop.web.config.parameter_type.eservice_creation;
 
 import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.web.page.eservice_creation.step.GeneralDataStep;
-import it.pagopa.interop.web.page.eservice_creation.step.ThresholdAndAttributeStep;
-import it.pagopa.interop.web.page.eservice_creation.step.technical.TechnicalSpecStep;
+import it.pagopa.interop.web.eservice.creation.wizard.GeneralDataWizard;
+import it.pagopa.interop.web.eservice.creation.wizard.ThresholdAndAttributeWizard;
+import it.pagopa.interop.web.eservice.creation.wizard.technical.TechnicalSpecWizard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CommonEServiceCreationParameterType {
 
-    private final GeneralDataStep generalDataStepComponent;
-    private final TechnicalSpecStep technicalSpecStep;
-    private final ThresholdAndAttributeStep thresholdAndAttributeStep;
+    private final GeneralDataWizard generalDataWizardComponent;
+    private final TechnicalSpecWizard technicalSpecWizard;
+    private final ThresholdAndAttributeWizard thresholdAndAttributeWizard;
 
     @ParameterType("Informazioni generali|Specifiche tecniche|Soglie e attributi")
     public Component eServiceCreationStep(String stepName) {
         return switch (stepName.toLowerCase()) {
-            case "informazioni generali", "dati generali" -> generalDataStepComponent;
-            case "specifiche tecniche" -> technicalSpecStep;
-            case "soglie e attributi" -> thresholdAndAttributeStep;
+            case "informazioni generali", "dati generali" -> generalDataWizardComponent;
+            case "specifiche tecniche" -> technicalSpecWizard;
+            case "soglie e attributi" -> thresholdAndAttributeWizard;
             default -> throw new IllegalArgumentException("Illegal eservice creation step name: " + stepName);
         };
     }
