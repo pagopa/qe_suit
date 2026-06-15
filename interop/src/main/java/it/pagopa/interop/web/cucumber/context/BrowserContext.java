@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.domain.context;
+package it.pagopa.interop.web.cucumber.context;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.domain.Page;

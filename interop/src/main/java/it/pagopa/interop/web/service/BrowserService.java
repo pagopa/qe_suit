@@ -2,7 +2,7 @@ package it.pagopa.interop.web.service;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.model.location.Url;
-import it.pagopa.interop.web.domain.context.BrowserContext;
+import it.pagopa.interop.web.cucumber.context.BrowserContext;
 import it.pagopa.interop.common.enums.Tenant;
 import it.pagopa.interop.common.enums.User;
 import it.pagopa.interop.web.component.Header;
