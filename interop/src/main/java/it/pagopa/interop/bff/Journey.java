@@ -1,14 +1,14 @@
 package it.pagopa.interop.bff;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.bff.agreement.AgreementDataPreparationService;
-import it.pagopa.interop.bff.eservice.EserviceDataPreparationService;
-import it.pagopa.interop.bff.purpose.PurposeDataPreparationService;
+import it.pagopa.interop.bff.service.AgreementService;
+import it.pagopa.interop.bff.service.EserviceService;
+import it.pagopa.interop.bff.service.PurposeDataService;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.cucumber.context.UserContext;
-import it.pagopa.interop.common.enums.Tenant;
-import it.pagopa.interop.common.enums.User;
-import it.pagopa.interop.common.eservice.EService;
+import it.pagopa.interop.common.contract.enums.Tenant;
+import it.pagopa.interop.common.contract.enums.User;
+import it.pagopa.interop.common.contract.model.EService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
@@ -23,9 +23,9 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class Journey {
 
-    private final EserviceDataPreparationService eserviceService;
-    private final AgreementDataPreparationService agreementService;
-    private final PurposeDataPreparationService purposeService;
+    private final EserviceService eserviceService;
+    private final AgreementService agreementService;
+    private final PurposeDataService purposeService;
 
     private final UserContext userContext;
     private final ScenarioContext scenarioContext;

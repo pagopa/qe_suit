@@ -1,26 +1,26 @@
 package it.pagopa.interop.web.service;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.web.eservice.model.EServiceGeneralDataModel;
-import it.pagopa.interop.web.eservice.creation.wizard.GeneralDataWizard;
-import it.pagopa.interop.web.service.template.UiService;
+import it.pagopa.interop.web.model.EServiceGeneralData;
+import it.pagopa.interop.web.page.eservice.creation.wizard.GeneralDataWizard;
+import it.pagopa.interop.common.contract.template.ui.UiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EServiceGeneralDataService implements UiService<EServiceGeneralDataModel, GeneralDataWizard> {
+public class EServiceGeneralDataService implements UiService<EServiceGeneralData, GeneralDataWizard> {
 
     private final GeneralDataWizard generalDataWizardComponent;
 
     @Override
-    public EServiceGeneralDataModel doDefaultModel() {
-        return EServiceGeneralDataModel.buildDefault();
+    public EServiceGeneralData doDefaultModel() {
+        return EServiceGeneralData.buildDefault();
     }
 
     @Override
-    public void doFill(EServiceGeneralDataModel model) {
+    public void doFill(EServiceGeneralData model) {
         boolean hasAsyncExchange = Boolean.TRUE.equals(model.eservice().getAsyncExchange());
 
         generalDataWizardComponent
@@ -43,7 +43,7 @@ public class EServiceGeneralDataService implements UiService<EServiceGeneralData
     }
 
     @Override
-    public EServiceGeneralDataModel mapToModel(GeneralDataWizard component) {
+    public EServiceGeneralData mapToModel(GeneralDataWizard component) {
         EServiceSeed seed =
                 new EServiceSeed()
                         .name(component.name().read())
@@ -53,7 +53,7 @@ public class EServiceGeneralDataService implements UiService<EServiceGeneralData
                         .mode(component.getMode())
                         .personalData(component.getPersonalData());
 
-        return new EServiceGeneralDataModel(seed);
+        return new EServiceGeneralData(seed);
     }
 
 }

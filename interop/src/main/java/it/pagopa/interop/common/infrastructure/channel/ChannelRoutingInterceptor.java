@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.channel;
 
 import it.pagopa.interop.common.cucumber.context.ChannelContext;
-import it.pagopa.interop.common.enums.Channel;
+import it.pagopa.interop.common.contract.enums.Channel;
 import lombok.RequiredArgsConstructor;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;

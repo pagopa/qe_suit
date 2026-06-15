@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.cucumber.parameter_type.mapper;
 
 import io.cucumber.datatable.DataTable;
-import it.pagopa.interop.common.dev_tools.VoucherRequestValidationResult;
+import it.pagopa.interop.common.contract.model.response.DebugClientAssertionValidationResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,7 +13,7 @@ import java.util.*;
 public final class VoucherRequestValidationResultMapper {
     private final DataTableContextMapper dataTableContextMapper;
 
-    public VoucherRequestValidationResult fromDataTable(DataTable dataTable) {
+    public DebugClientAssertionValidationResponse fromDataTable(DataTable dataTable) {
         List<List<String>> rows = dataTable.cells();
         if (rows == null || rows.size() < 2) {
             throw new IllegalArgumentException("DataTable vuota o senza righe dati");
@@ -31,7 +31,7 @@ public final class VoucherRequestValidationResultMapper {
             throw new IllegalArgumentException("Header DataTable non valido. Attesi: step, result, errors");
         }
 
-        Map<String, VoucherRequestValidationResult.ValidationResult> byStep = new HashMap<>();
+        Map<String, DebugClientAssertionValidationResponse.ValidationResult> byStep = new HashMap<>();
 
         for (int i = 1; i < rows.size(); i++) {
             List<String> row = rows.get(i);
@@ -40,52 +40,52 @@ public final class VoucherRequestValidationResultMapper {
             String result = row.get(resultIdx).trim();
             String errors = row.get(errorsIdx).trim();
 
-            VoucherRequestValidationResult.Status status = parseStatus(result);
-            boolean success = status == VoucherRequestValidationResult.Status.PASSED;
+            DebugClientAssertionValidationResponse.Status status = parseStatus(result);
+            boolean success = status == DebugClientAssertionValidationResponse.Status.PASSED;
             List<String> errorsCode = this.parseErrors(errors);
 
-            byStep.put(step, new VoucherRequestValidationResult.ValidationResult(status, success, errorsCode));
+            byStep.put(step, new DebugClientAssertionValidationResponse.ValidationResult(status, success, errorsCode));
         }
 
-        return new VoucherRequestValidationResult(
+        return new DebugClientAssertionValidationResponse(
                 null,
-                new VoucherRequestValidationResult.ClientAssertionValidation(
+                new DebugClientAssertionValidationResponse.ClientAssertionValidation(
                         require(byStep, "clientAssertionValidation")
                 ),
-                new VoucherRequestValidationResult.PublicKeyValidation(
+                new DebugClientAssertionValidationResponse.PublicKeyValidation(
                         require(byStep, "publicKeyRetrieve")
                 ),
-                new VoucherRequestValidationResult.SignatureValidation(
+                new DebugClientAssertionValidationResponse.SignatureValidation(
                         require(byStep, "clientAssertionSignatureVerification")
                 ),
                 byStep.containsKey("platformStatesVerification")
-                        ? new VoucherRequestValidationResult.PlatformValidation(
+                        ? new DebugClientAssertionValidationResponse.PlatformValidation(
                         require(byStep, "platformStatesVerification")
                 ) : null,
                 byStep.containsKey("dpopProofValidation")
-                        ? new VoucherRequestValidationResult.DPoPValidation(
+                        ? new DebugClientAssertionValidationResponse.DPoPValidation(
                         require(byStep, "dpopProofValidation")
                 ) : null
         );
     }
 
-    private static VoucherRequestValidationResult.ValidationResult require(
-            Map<String, VoucherRequestValidationResult.ValidationResult> byStep,
+    private static DebugClientAssertionValidationResponse.ValidationResult require(
+            Map<String, DebugClientAssertionValidationResponse.ValidationResult> byStep,
             String key
     ) {
-        VoucherRequestValidationResult.ValidationResult value = byStep.get(key);
+        DebugClientAssertionValidationResponse.ValidationResult value = byStep.get(key);
         if (value == null) {
             throw new IllegalArgumentException("Step mancante nella DataTable: " + key);
         }
         return value;
     }
 
-    private static VoucherRequestValidationResult.Status parseStatus(String raw) {
+    private static DebugClientAssertionValidationResponse.Status parseStatus(String raw) {
         String value = normalize(raw);
         return switch (value) {
-            case "passed" -> VoucherRequestValidationResult.Status.PASSED;
-            case "failed" -> VoucherRequestValidationResult.Status.FAILED;
-            case "skipped" -> VoucherRequestValidationResult.Status.SKIPPED;
+            case "passed" -> DebugClientAssertionValidationResponse.Status.PASSED;
+            case "failed" -> DebugClientAssertionValidationResponse.Status.FAILED;
+            case "skipped" -> DebugClientAssertionValidationResponse.Status.SKIPPED;
             default -> throw new IllegalArgumentException("Result non valido: " + raw);
         };
     }
