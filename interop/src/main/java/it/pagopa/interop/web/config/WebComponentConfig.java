@@ -1,10 +1,10 @@
 package it.pagopa.interop.web.config;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.web.page.eservice_creation.EServiceCreationPage;
-import it.pagopa.interop.web.page.eservice_creation.step.GeneralDataStep;
-import it.pagopa.interop.web.page.eservice_creation.step.ThresholdAndAttributeStep;
-import it.pagopa.interop.web.page.eservice_creation.step.technical.TechnicalSpecStep;
+import it.pagopa.interop.web.eservice.creation.EServiceCreationPage;
+import it.pagopa.interop.web.eservice.creation.wizard.GeneralDataWizard;
+import it.pagopa.interop.web.eservice.creation.wizard.ThresholdAndAttributeWizard;
+import it.pagopa.interop.web.eservice.creation.wizard.technical.TechnicalSpecWizard;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -17,19 +17,19 @@ public class WebComponentConfig {
 
     @Bean
     @ScenarioScope
-    public GeneralDataStep generalDataStepComponent(EServiceCreationPage creationPage) {
+    public GeneralDataWizard generalDataStepComponent(EServiceCreationPage creationPage) {
         return creationPage.generalDataStep();
     }
 
     @Bean
     @ScenarioScope
-    public ThresholdAndAttributeStep thresholdAndAttributeStep(EServiceCreationPage creationPage) {
+    public ThresholdAndAttributeWizard thresholdAndAttributeStep(EServiceCreationPage creationPage) {
         return creationPage.thresholdAndAttributeStep();
     }
 
     @Bean
     @ScenarioScope
-    public TechnicalSpecStep technicalDataStepComponent(EServiceCreationPage creationPage) {
+    public TechnicalSpecWizard technicalDataStepComponent(EServiceCreationPage creationPage) {
         return creationPage.technicalSpecificationStep();
     }
 

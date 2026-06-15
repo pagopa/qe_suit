@@ -1,8 +1,8 @@
 package it.pagopa.interop.web.service;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.web.domain.model.EServiceGeneralDataModel;
-import it.pagopa.interop.web.page.eservice_creation.step.GeneralDataStep;
+import it.pagopa.interop.web.eservice.model.EServiceGeneralDataModel;
+import it.pagopa.interop.web.eservice.creation.wizard.GeneralDataWizard;
 import it.pagopa.interop.web.service.template.UiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EServiceGeneralDataService implements UiService<EServiceGeneralDataModel, GeneralDataStep> {
+public class EServiceGeneralDataService implements UiService<EServiceGeneralDataModel, GeneralDataWizard> {
 
-    private final GeneralDataStep generalDataStepComponent;
+    private final GeneralDataWizard generalDataWizardComponent;
 
     @Override
     public EServiceGeneralDataModel doDefaultModel() {
@@ -23,7 +23,7 @@ public class EServiceGeneralDataService implements UiService<EServiceGeneralData
     public void doFill(EServiceGeneralDataModel model) {
         boolean hasAsyncExchange = Boolean.TRUE.equals(model.eservice().getAsyncExchange());
 
-        generalDataStepComponent
+        generalDataWizardComponent
                 .setName(model.eservice().getName())
                 .setDescription(model.eservice().getDescription())
                 .setAsyncExchange(model.eservice().getAsyncExchange())
@@ -34,16 +34,16 @@ public class EServiceGeneralDataService implements UiService<EServiceGeneralData
         if (hasAsyncExchange && model.eservice().getMode() != null)
             throw new IllegalStateException("Cannot set MODE for an async eService, but got: " + model.eservice().getMode());
 
-        generalDataStepComponent.setMode(model.eservice().getMode());
+        generalDataWizardComponent.setMode(model.eservice().getMode());
     }
 
     @Override
-    public GeneralDataStep getComponent() {
-        return generalDataStepComponent;
+    public GeneralDataWizard getComponent() {
+        return generalDataWizardComponent;
     }
 
     @Override
-    public EServiceGeneralDataModel mapToModel(GeneralDataStep component) {
+    public EServiceGeneralDataModel mapToModel(GeneralDataWizard component) {
         EServiceSeed seed =
                 new EServiceSeed()
                         .name(component.name().read())

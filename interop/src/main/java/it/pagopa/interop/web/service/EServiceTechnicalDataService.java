@@ -1,8 +1,8 @@
 package it.pagopa.interop.web.service;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties;
-import it.pagopa.interop.web.domain.model.EServiceTechnicalModel;
-import it.pagopa.interop.web.page.eservice_creation.step.technical.TechnicalSpecStep;
+import it.pagopa.interop.web.eservice.model.EServiceTechnicalModel;
+import it.pagopa.interop.web.eservice.creation.wizard.technical.TechnicalSpecWizard;
 import it.pagopa.interop.web.service.template.UiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +14,9 @@ import static it.pagopa.interop.common.utils.TypeUtils.safeParseInt;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EServiceTechnicalDataService implements UiService<EServiceTechnicalModel, TechnicalSpecStep> {
+public class EServiceTechnicalDataService implements UiService<EServiceTechnicalModel, TechnicalSpecWizard> {
 
-    private final TechnicalSpecStep techStepComponent;
+    private final TechnicalSpecWizard techStepComponent;
 
     @Override
     public EServiceTechnicalModel doDefaultModel() {
@@ -56,12 +56,12 @@ public class EServiceTechnicalDataService implements UiService<EServiceTechnical
     }
 
     @Override
-    public TechnicalSpecStep getComponent() {
+    public TechnicalSpecWizard getComponent() {
         return techStepComponent;
     }
 
     @Override
-    public EServiceTechnicalModel mapToModel(TechnicalSpecStep component) {
+    public EServiceTechnicalModel mapToModel(TechnicalSpecWizard component) {
         var voucherComp = component.voucherComponent();
         var asyncComp = component.asyncComponent();
 
