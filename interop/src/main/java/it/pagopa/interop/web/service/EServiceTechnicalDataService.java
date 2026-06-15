@@ -1,9 +1,9 @@
 package it.pagopa.interop.web.service;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties;
-import it.pagopa.interop.web.eservice.model.EServiceTechnicalModel;
-import it.pagopa.interop.web.eservice.creation.wizard.technical.TechnicalSpecWizard;
-import it.pagopa.interop.web.service.template.UiService;
+import it.pagopa.interop.web.model.EServiceTechnicalData;
+import it.pagopa.interop.web.page.eservice.creation.wizard.technical.TechnicalSpecWizard;
+import it.pagopa.interop.common.contract.template.ui.UiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,17 +14,17 @@ import static it.pagopa.interop.common.utils.TypeUtils.safeParseInt;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EServiceTechnicalDataService implements UiService<EServiceTechnicalModel, TechnicalSpecWizard> {
+public class EServiceTechnicalDataService implements UiService<EServiceTechnicalData, TechnicalSpecWizard> {
 
     private final TechnicalSpecWizard techStepComponent;
 
     @Override
-    public EServiceTechnicalModel doDefaultModel() {
-        return EServiceTechnicalModel.buildDefault();
+    public EServiceTechnicalData doDefaultModel() {
+        return EServiceTechnicalData.buildDefault();
     }
 
     @Override
-    public void doFill(EServiceTechnicalModel model) {
+    public void doFill(EServiceTechnicalData model) {
         var voucherComponent = techStepComponent.voucherComponent();
         var interfaceComponent = techStepComponent.interfaceComponent();
 
@@ -61,7 +61,7 @@ public class EServiceTechnicalDataService implements UiService<EServiceTechnical
     }
 
     @Override
-    public EServiceTechnicalModel mapToModel(TechnicalSpecWizard component) {
+    public EServiceTechnicalData mapToModel(TechnicalSpecWizard component) {
         var voucherComp = component.voucherComponent();
         var asyncComp = component.asyncComponent();
 
@@ -78,6 +78,6 @@ public class EServiceTechnicalDataService implements UiService<EServiceTechnical
                     .confirmation(asyncComp.confirmation().isChecked());
         }
 
-        return new EServiceTechnicalModel(aud, lifespan, null, asyncProps, null);
+        return new EServiceTechnicalData(aud, lifespan, null, asyncProps, null);
     }
 }

@@ -2,12 +2,12 @@ package it.pagopa.interop.web.config;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.interop.web.eservice.catalog.EServiceCatalogPage;
-import it.pagopa.interop.web.dev_tools.DevToolsPage;
-import it.pagopa.interop.web.dev_tools.debug_client_assertion.DebugClientAssertionPage;
-import it.pagopa.interop.web.eservice.creation.EServiceCreationPage;
-import it.pagopa.interop.web.login.DashboardPage;
-import it.pagopa.interop.web.login.LoginPage;
+import it.pagopa.interop.web.page.eservice.catalog.EServiceCatalogPage;
+import it.pagopa.interop.web.page.dev_tools.DevToolsPage;
+import it.pagopa.interop.web.page.dev_tools.debug_client_assertion.DebugClientAssertionPage;
+import it.pagopa.interop.web.page.eservice.creation.EServiceCreationPage;
+import it.pagopa.interop.web.page.login.DashboardPage;
+import it.pagopa.interop.web.page.login.LoginPage;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.test.context.TestConfiguration;

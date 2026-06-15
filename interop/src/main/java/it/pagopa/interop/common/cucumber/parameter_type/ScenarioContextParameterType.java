@@ -2,10 +2,10 @@ package it.pagopa.interop.common.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
-import it.pagopa.interop.common.client.Client;
-import it.pagopa.interop.common.client_assertion.ClientAssertion;
-import it.pagopa.interop.common.dpop.DPoPProof;
-import it.pagopa.interop.common.purpose.Purpose;
+import it.pagopa.interop.common.contract.model.Client;
+import it.pagopa.interop.common.contract.model.ClientAssertion;
+import it.pagopa.interop.common.contract.model.DPoPProof;
+import it.pagopa.interop.common.contract.model.Purpose;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 

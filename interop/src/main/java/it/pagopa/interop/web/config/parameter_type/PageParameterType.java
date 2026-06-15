@@ -2,9 +2,9 @@ package it.pagopa.interop.web.config.parameter_type;
 
 import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.web.dev_tools.DevToolsPage;
-import it.pagopa.interop.web.dev_tools.debug_client_assertion.DebugClientAssertionPage;
-import it.pagopa.interop.web.eservice.creation.EServiceCreationPage;
+import it.pagopa.interop.web.page.dev_tools.DevToolsPage;
+import it.pagopa.interop.web.page.dev_tools.debug_client_assertion.DebugClientAssertionPage;
+import it.pagopa.interop.web.page.eservice.creation.EServiceCreationPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 

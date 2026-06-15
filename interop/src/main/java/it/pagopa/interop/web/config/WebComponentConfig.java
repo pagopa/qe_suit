@@ -1,10 +1,10 @@
 package it.pagopa.interop.web.config;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.web.eservice.creation.EServiceCreationPage;
-import it.pagopa.interop.web.eservice.creation.wizard.GeneralDataWizard;
-import it.pagopa.interop.web.eservice.creation.wizard.ThresholdAndAttributeWizard;
-import it.pagopa.interop.web.eservice.creation.wizard.technical.TechnicalSpecWizard;
+import it.pagopa.interop.web.page.eservice.creation.EServiceCreationPage;
+import it.pagopa.interop.web.page.eservice.creation.wizard.GeneralDataWizard;
+import it.pagopa.interop.web.page.eservice.creation.wizard.ThresholdAndAttributeWizard;
+import it.pagopa.interop.web.page.eservice.creation.wizard.technical.TechnicalSpecWizard;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.test.context.TestConfiguration;
