@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.controller;
+package it.pagopa.interop.web.dev_tools;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;

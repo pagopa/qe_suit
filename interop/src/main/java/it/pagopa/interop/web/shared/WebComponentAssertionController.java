@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.controller;
+package it.pagopa.interop.web.shared;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class AssertionController {
+public class WebComponentAssertionController {
     private final BrowserService webBrowserService;
 
     @Then("il radio group {generalInformationRadioGroup} è disabilitato")

@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.dev_tools.debug_client_assertion.components;
+package it.pagopa.interop.web.dev_tools.debug_client_assertion.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
