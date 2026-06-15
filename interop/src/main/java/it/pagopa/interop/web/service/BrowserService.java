@@ -7,7 +7,7 @@ import it.pagopa.interop.common.contract.enums.Tenant;
 import it.pagopa.interop.common.contract.enums.User;
 import it.pagopa.interop.web.component.Header;
 import it.pagopa.interop.web.component.Snackbar;
-import it.pagopa.interop.web.page.eservice.catalog.EServiceCatalogPage;
+import it.pagopa.interop.web.page.eservice.EServiceCatalogPage;
 import it.pagopa.interop.web.page.login.DashboardPage;
 import it.pagopa.interop.web.page.login.LoginPage;
 import lombok.RequiredArgsConstructor;

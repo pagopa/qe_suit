@@ -2,13 +2,13 @@ package it.pagopa.interop.web.controller;
 
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.common.infrastructure.client.auth.bearer.BearerAuthProvider;
+import it.pagopa.interop.bff.infrastracture.auth.bearer.BearerAuthProvider;
 import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.common.contract.enums.Tenant;
 import it.pagopa.interop.common.contract.enums.User;
 import it.pagopa.interop.common.contract.enums.UserRole;
 import it.pagopa.interop.web.cucumber.context.BrowserContext;
-import it.pagopa.interop.web.page.eservice.catalog.EServiceCatalogPage;
+import it.pagopa.interop.web.page.eservice.EServiceCatalogPage;
 import it.pagopa.interop.web.service.BrowserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

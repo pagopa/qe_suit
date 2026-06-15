@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.page.eservice.catalog;
+package it.pagopa.interop.web.page.eservice;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
