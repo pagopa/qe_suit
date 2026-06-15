@@ -7,7 +7,7 @@ import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.common.enums.Tenant;
 import it.pagopa.interop.common.enums.User;
 import it.pagopa.interop.common.enums.UserRole;
-import it.pagopa.interop.web.domain.context.BrowserContext;
+import it.pagopa.interop.web.cucumber.context.BrowserContext;
 import it.pagopa.interop.web.page.catalog.EServiceCatalogPage;
 import it.pagopa.interop.web.service.BrowserService;
 import lombok.RequiredArgsConstructor;
