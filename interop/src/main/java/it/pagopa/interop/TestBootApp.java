@@ -1,6 +1,6 @@
 package it.pagopa.interop;
 
-import it.pagopa.interop.common.infrastructure.client.auth.bearer.BearerTokenProperties;
+import it.pagopa.interop.bff.infrastracture.auth.bearer.BearerTokenProperties;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;

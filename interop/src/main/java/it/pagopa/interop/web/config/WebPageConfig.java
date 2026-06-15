@@ -2,7 +2,7 @@ package it.pagopa.interop.web.config;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.interop.web.page.eservice.catalog.EServiceCatalogPage;
+import it.pagopa.interop.web.page.eservice.EServiceCatalogPage;
 import it.pagopa.interop.web.page.dev_tools.DevToolsPage;
 import it.pagopa.interop.web.page.dev_tools.debug_client_assertion.DebugClientAssertionPage;
 import it.pagopa.interop.web.page.eservice.creation.EServiceCreationPage;
