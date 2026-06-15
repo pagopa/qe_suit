@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 @TestConfiguration
 @Getter
 @Setter
-public class ComponentConfig {
+public class WebComponentConfig {
 
     @Bean
     @ScenarioScope
