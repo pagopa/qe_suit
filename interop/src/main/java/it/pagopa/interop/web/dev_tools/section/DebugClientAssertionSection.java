@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.dev_tools.components;
+package it.pagopa.interop.web.dev_tools.section;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;

@@ -7,8 +7,8 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.web.component.Alert;
 import it.pagopa.interop.web.component.Button;
 import it.pagopa.interop.web.component.TextField;
-import it.pagopa.interop.web.dev_tools.debug_client_assertion.components.DebugRequestContentComponent;
-import it.pagopa.interop.web.dev_tools.debug_client_assertion.components.DebugResultComponent;
+import it.pagopa.interop.web.dev_tools.debug_client_assertion.component.DebugRequestContentComponent;
+import it.pagopa.interop.web.dev_tools.debug_client_assertion.component.DebugResultComponent;
 import org.assertj.core.api.SoftAssertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo/debug-voucher")

@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.controller;
+package it.pagopa.interop.web.shared;
 
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Page;

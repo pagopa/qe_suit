@@ -4,8 +4,8 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.web.dev_tools.components.DebugClientAssertionSection;
-import it.pagopa.interop.web.dev_tools.components.SimulatoreOttenimentoTokenSection;
+import it.pagopa.interop.web.dev_tools.section.DebugClientAssertionSection;
+import it.pagopa.interop.web.dev_tools.section.SimulatoreOttenimentoTokenSection;
 import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo")
