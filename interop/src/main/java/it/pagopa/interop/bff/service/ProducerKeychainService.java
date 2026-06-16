@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.service;
 
-import it.pagopa.interop.bff.infrastructure.client.ProducerKeychainApiClient;
+import it.pagopa.interop.bff.infrastructure.client_old.ProducerKeychainApiClient;
 import it.pagopa.interop.common.contract.enums.Channel;
 import it.pagopa.interop.common.contract.model.ProducerKeychain;
 import it.pagopa.interop.common.contract.model.request.ProducerKeychainReadAllRequest;

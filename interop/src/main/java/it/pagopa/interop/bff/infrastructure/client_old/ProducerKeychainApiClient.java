@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.infrastructure.client;
+package it.pagopa.interop.bff.infrastructure.client_old;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.common.contract.template.rest.*;

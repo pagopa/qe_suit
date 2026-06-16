@@ -50,6 +50,16 @@ public class RestClientConfig {
     }
 
     @Bean
+    public AttributesApi attributesApi(ApiClient apiClient) {
+        return new AttributesApi(apiClient);
+    }
+
+    @Bean
+    public TenantsApi tenantsApi(ApiClient apiClient) {
+        return new TenantsApi(apiClient);
+    }
+
+    @Bean
     public ProducerKeychainApi  producerKeychainApi(ApiClient apiClient) {
         return new ProducerKeychainApi(apiClient);
     }
