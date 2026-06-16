@@ -1,5 +1,7 @@
 package it.pagopa.interop.bff.service;
 
+import it.pagopa.interop.common.contract.template.action.TestChain;
+import it.pagopa.interop.common.contract.template.rest.RestService;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.contract.model.EService;
 import it.pagopa.interop.common.contract.model.RiskAnalysis;
@@ -19,12 +21,18 @@ import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EserviceService {
+public class EserviceService extends RestService {
 
     private final EservicesApi eservicesApi;
     private final RiskAnalysisDataService riskAnalysisService;
     private final ScenarioContext context;
 
+    public TestChain<CreatedEServiceDescriptor, EService> create() {
+        return super.create(
+                () -> eservicesApi.createEServiceWithHttpInfo(buildDefaultRequest()),
+                (res) -> new EService()
+        );
+    }
 
     public EService createEservice(EServiceSeed request) {
         CreatedEServiceDescriptor createdEservice = eservicesApi.createEService(request);

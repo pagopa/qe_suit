@@ -1,54 +1,46 @@
 package it.pagopa.interop.common.contract.model;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.CompactDescriptor;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Delegate;
+import it.pagopa.interop.common.contract.enums.EServiceDescriptorState;
+import it.pagopa.interop.common.contract.enums.EServiceMode;
+import it.pagopa.interop.common.contract.enums.EServiceTechnology;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
-@RequiredArgsConstructor
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EService implements TestModel {
-    @Delegate
-    private final ProducerEServiceDescriptor embeddedModel;
 
-    public UUID getEserviceId() {
-        return this.getEservice().getId();
-    }
+    private UUID id;
+    private String name;
+    private String description;
+    private EServiceTechnology technology;
+    private EServiceMode mode;
+    private List<EServiceRiskAnalysis> riskAnalyses;
+    private Boolean isSignalHubEnabled;
+    private Boolean isConsumerDelegable;
+    private Boolean isClientAccessDelegable;
+    private Boolean personalData;
+    private Boolean isAsync;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof EService other) || !super.equals(o)) return false;
+    @Builder.Default
+    private List<EServiceDescriptor> descriptors = new ArrayList<>();
 
-        return Objects.equals(descriptorIds(this), descriptorIds(other));
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), descriptorIds(this));
-    }
-
-    public UUID getLastDescriptorId() {
-        List<UUID> descriptorIds = this.getEservice().getDescriptors()
-                .stream()
-                .map(CompactDescriptor::getId)
-                .toList();
-        return descriptorIds.isEmpty() ? null : descriptorIds.get(descriptorIds.size() - 1);
-    }
-
-    public UUID getLastDraftDescriptorId() {
-        return this.getEservice().getDraftDescriptor().getId();
-    }
-
-    private static List<String> descriptorIds(EService e) {
-        e.getEservice();
-        return e.getEservice().getDescriptors()
-                .stream()
-                .map(d -> d.getId().toString())
-                .sorted(java.util.Comparator.nullsFirst(String::compareTo))
-                .toList();
+    /**
+     * Recupera il descrittore attivo più recente basandosi sul timestamp.
+     */
+    public EServiceDescriptor getLatestActiveDescriptor() {
+        return descriptors.stream()
+                .filter(d -> d.getState().equals(EServiceDescriptorState.PUBLISHED))
+                .max(Comparator.comparing(EServiceDescriptor::getPublishedAt))
+                .orElse(null);
     }
 }
