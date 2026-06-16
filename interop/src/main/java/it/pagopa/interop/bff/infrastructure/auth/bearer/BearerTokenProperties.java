@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.infrastracture.auth.bearer;
+package it.pagopa.interop.bff.infrastructure.auth.bearer;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

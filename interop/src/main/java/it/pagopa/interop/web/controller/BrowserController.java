@@ -2,7 +2,7 @@ package it.pagopa.interop.web.controller;
 
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.bff.infrastracture.auth.bearer.BearerAuthProvider;
+import it.pagopa.interop.bff.infrastructure.auth.bearer.BearerAuthProvider;
 import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.common.contract.enums.Tenant;
 import it.pagopa.interop.common.contract.enums.User;
