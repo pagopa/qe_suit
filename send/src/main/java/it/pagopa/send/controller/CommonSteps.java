@@ -1,6 +1,7 @@
 package it.pagopa.send.controller;
 
 import io.cucumber.java.en.And;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CommonSteps {
     private final WebPresentationGateway uiGateway;
+    private Page currentPage;
 
     @When("si passa alla sezione {string} tramite la sidebar")
     public void navigateToSection(String section) {
@@ -47,5 +49,16 @@ public class CommonSteps {
     public void logout() {
         Header footer = uiGateway.bind(Header.class);
         footer.logout();
+    }
+
+    @When("naviga alla pagina {page}")
+    public void navigateTo(Class<? extends Page> page) {
+        currentPage = uiGateway.bind(page);
+        currentPage.navigateTo();
+    }
+
+    @Then("la pagina deve caricarsi correttamente")
+    public void laPaginaDeveCaricarsiCorrettamente() {
+        currentPage.assertLoaded();
     }
 }

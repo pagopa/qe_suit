@@ -77,6 +77,11 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
         <!-- ========================= -->
         <!-- JUNIT PLATFORM SUITE API (se ti serve la @Suite) -->
         <!-- ========================= -->

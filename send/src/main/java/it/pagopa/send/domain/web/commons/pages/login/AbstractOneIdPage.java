@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.AbstractPage;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.frontend.e2e.framework.web.domain.User;
+import it.pagopa.send.domain.User;
 import it.pagopa.send.domain.web.component.login.OneIdLoginForm;
 import it.pagopa.send.domain.web.component.login.OneTrustBanner;
 

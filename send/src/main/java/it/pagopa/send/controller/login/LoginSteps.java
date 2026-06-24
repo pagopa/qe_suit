@@ -3,7 +3,8 @@ package it.pagopa.send.controller.login;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.frontend.e2e.framework.web.domain.User;
+import it.pagopa.send.domain.User;
+import it.pagopa.send.domain.context.CurrentUserContext;
 import it.pagopa.send.domain.web.pages.destinatario.ConfigureAddressSendPage;
 import it.pagopa.send.domain.web.commons.pages.login.AbstractOneIdPage;
 import it.pagopa.send.domain.web.commons.pages.login.OneIdPage;
@@ -16,9 +17,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class LoginSteps {
 
     private final WebPresentationGateway uiGateway;
+    private final CurrentUserContext currentUserContext;
 
     @Given("{userType} {user} effettua l'accesso a SelfCare con autenticazione SPID")
     public void spidAuth(String userType, User user) {
+        currentUserContext.set(user);
         AbstractOneIdPage loginPage = switch (userType) {
             case "PA" -> uiGateway.bind(OneIdPage.class);
             case "PG" -> uiGateway.bind(PgLoginPage.class);
