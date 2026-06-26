@@ -73,7 +73,7 @@ public interface DigitalDomicileOnboardPage extends Page {
         activationConfirmationMessage().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
             Assertions.assertThat(h).isIn("You have activated your digital domicile on SEND", "Hai attivato il tuo domicilio digitale su SEND",
-                    "You have activated the Digital Domicile on SEND", "Hai attivato il Domicilio Digitale su SEND");
+                    "You have activated the Digital Domicile on SEND", "Hai attivato il domicilio digitale su SEND");
         });
 
     }
