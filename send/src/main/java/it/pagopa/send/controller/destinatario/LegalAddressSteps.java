@@ -21,8 +21,7 @@ public class LegalAddressSteps {
     public void enableSercqDigitalDomicile(String email) {
         browser.bind(AddressPage.class).addLegalAddress();
         DigitalDomicileOnboardPage currentPage = browser.bind(DigitalDomicileOnboardPage.class);
-        currentPage.startOnboarding();
-        currentPage.submitEmail(email);
+        currentPage.startOnboarding(email);
         String otp = verificationCodeProvider.makeRequest(email);
         currentPage.submitOtp(otp);
         currentPage.continueToSummary();

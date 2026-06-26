@@ -29,6 +29,9 @@ public interface DigitalDomicileOnboardPage extends Page {
     @XPath("//button[normalize-space()='Continue']|//button[normalize-space()='Continua']")
     Clickable continueToSummaryButton();
 
+    @XPath("//div[@data-testid='emailSmsContactWizard']/p[1]")
+    Readable<String> legalMailSmsTitleSection2();
+
     @XPath("//div[@role='alert']//div[contains(@class,'MuiAlert-message') and contains(., 'Monitor the contact details you have chosen')]")
     Readable<String> summarySubtitle();
 
@@ -38,11 +41,8 @@ public interface DigitalDomicileOnboardPage extends Page {
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/div/h4")
     Readable<String> activationConfirmationMessage();
 
-    default void startOnboarding() {
+    default void startOnboarding(String email) {
         startOnboardingButton().click();
-    }
-
-    default void submitEmail(String email) {
         emailInput().write(email);
         emailSubmitButton().click();
     }
@@ -53,6 +53,11 @@ public interface DigitalDomicileOnboardPage extends Page {
     }
 
     default void continueToSummary() {
+        legalMailSmsTitleSection2().readAndAssert((h -> {
+            Assertions.assertThat(h).isNotNull();
+            Assertions.assertThat(h).isIn("The email to receive alerts about SEND notifications",
+                    "L’email per ricevere avvisi sulle notifiche SEND");
+        }));
         continueToSummaryButton().click();
         summarySubtitle().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
