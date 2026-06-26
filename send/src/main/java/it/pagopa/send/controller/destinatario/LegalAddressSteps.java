@@ -28,6 +28,7 @@ public class LegalAddressSteps {
         currentPage.activateDigitalDomicile();
     }
 
+    @When("se presente viene disabilitato il domicilio digitale SERCQ")
     @When("viene disabilitato il domicilio digitale SERCQ")
     public void disableSercqDigitalDomicile() {
         String type = currentUserContext.getUser().getType();
