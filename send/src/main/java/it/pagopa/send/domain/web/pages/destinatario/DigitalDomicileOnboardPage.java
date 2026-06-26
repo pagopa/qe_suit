@@ -56,6 +56,7 @@ public interface DigitalDomicileOnboardPage extends Page {
         legalMailSmsTitleSection2().readAndAssert((h -> {
             Assertions.assertThat(h).isNotNull();
             Assertions.assertThat(h).isIn("The email to receive alerts about SEND notifications",
+                    "La tua email per ricevere avvisi sulle notifiche SEND",
                     "L’email per ricevere avvisi sulle notifiche SEND");
         }));
         continueToSummaryButton().click();
