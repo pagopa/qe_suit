@@ -12,3 +12,4 @@ Feature: Abilitazione Domicilio Digitale (SERCQ) per persone giuridiche
     Then la pagina deve caricarsi correttamente
     And se presente viene rimosso l'indirizzo di cortesia
     And viene abilitato il domicilio digitale SERCQ utilizzando la seguente email: "provaemail@test.it"
+    Then viene disabilitato il domicilio digitale SERCQ
