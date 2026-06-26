@@ -32,7 +32,7 @@ public interface DigitalDomicileOnboardPage extends Page {
     @XPath("//div[@data-testid='emailSmsContactWizard']/p[1]")
     Readable<String> legalMailSmsTitleSection2();
 
-    @XPath("//div[@role='alert']//div[contains(@class,'MuiAlert-message') and contains(., 'Monitor the contact details you have chosen')]")
+    @XPath("//div[@data-testid='sercqSendContactWizard']//div[@role='alert']//div[contains(@class,'MuiAlert-message')]/div/div")
     Readable<String> summarySubtitle();
 
     @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div/div/div/div[3]/div/button")
