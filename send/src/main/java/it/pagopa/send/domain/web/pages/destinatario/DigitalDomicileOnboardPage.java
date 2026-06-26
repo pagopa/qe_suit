@@ -62,7 +62,8 @@ public interface DigitalDomicileOnboardPage extends Page {
         continueToSummaryButton().click();
         summarySubtitle().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h).isIn("Monitor the contact details you have chosen: a SEND digital notification begins to produce legal effects even if you have not viewed it.");
+            Assertions.assertThat(h).isIn("Monitor the contact details you have chosen: a SEND digital notification begins to produce legal effects even if you have not viewed it.",
+                    "Monitora i recapiti che hai scelto: una notifica digitale SEND inizia a produrre effetti giuridici anche se non l'hai consultata.");
         });
     }
 
