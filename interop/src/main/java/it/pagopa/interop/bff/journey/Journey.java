@@ -1,8 +1,8 @@
-package it.pagopa.interop.bff;
+package it.pagopa.interop.bff.journey;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.bff.service.AgreementService;
-import it.pagopa.interop.bff.service.EserviceService;
+import it.pagopa.interop.bff.service.EserviceServiceOld;
 import it.pagopa.interop.bff.service.PurposeDataService;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.cucumber.context.UserContext;
@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class Journey {
 
-    private final EserviceService eserviceService;
+    private final EserviceServiceOld eserviceService;
     private final AgreementService agreementService;
     private final PurposeDataService purposeService;
 

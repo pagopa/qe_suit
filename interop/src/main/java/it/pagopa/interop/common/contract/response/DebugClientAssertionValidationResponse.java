@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.contract.model.response;
+package it.pagopa.interop.common.contract.response;
 
 import it.pagopa.interop.common.contract.model.shared.ClientAssertion;
 import lombok.AllArgsConstructor;

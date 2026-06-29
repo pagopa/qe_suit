@@ -4,14 +4,12 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.common.contract.model.response.DebugClientAssertionValidationResponse;
+import it.pagopa.interop.common.contract.response.DebugClientAssertionValidationResponse;
 import it.pagopa.interop.web.component.Button;
 import org.assertj.core.api.Assertions;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static it.pagopa.interop.common.contract.model.response.DebugClientAssertionValidationResponse.Status.*;
 
 public interface DebugResultComponent extends Component {
 

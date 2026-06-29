@@ -3,7 +3,7 @@ package it.pagopa.interop.common.contract.template.rest;
 import it.pagopa.interop.common.contract.template.action.TestChain;
 import it.pagopa.interop.common.contract.template.action.TestChainFactory;
 import it.pagopa.interop.common.contract.model.TestModel;
-import it.pagopa.interop.common.contract.model.request.RequestOverride;
+import it.pagopa.interop.common.contract.request.RequestOverride;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

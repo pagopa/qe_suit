@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
-import static it.pagopa.interop.common.contract.model.shared.enums.TenantType.*;
+import static it.pagopa.interop.common.contract.model.shared.enums.TenantKind.*;
 
 @RequiredArgsConstructor
 @Getter
@@ -83,7 +83,7 @@ public enum Tenant {
             "TODO_EXTERNAL_ID"    // TODO sostituire con valore reale
     );
 
-    private final TenantType tenantType;
+    private final TenantKind tenantType;
     private final String name;
     private final String alias;
     private final UUID organizationId;
@@ -118,7 +118,7 @@ public enum Tenant {
         throw new IllegalArgumentException("No enum constant for name " + name);
     }
 
-    public static Tenant fromTenantType(TenantType tenantType) {
+    public static Tenant fromTenantType(TenantKind tenantType) {
         for (Tenant tenant : Tenant.values()) {
             if (tenant.getTenantType() == tenantType) {
                 return tenant;

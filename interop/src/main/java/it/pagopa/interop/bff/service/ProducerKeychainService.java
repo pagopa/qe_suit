@@ -3,7 +3,7 @@ package it.pagopa.interop.bff.service;
 import it.pagopa.interop.bff.infrastructure.client_old.ProducerKeychainApiClient;
 import it.pagopa.interop.common.contract.model.shared.enums.Channel;
 import it.pagopa.interop.common.contract.model.producer_keychain.ProducerKeychain;
-import it.pagopa.interop.common.contract.model.request.ProducerKeychainReadAllRequest;
+import it.pagopa.interop.common.contract.request.ProducerKeychainReadAllRequest;
 import it.pagopa.interop.common.contract.template.action.TestChain;
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 @Getter
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ProducerKeychainService implements it.pagopa.interop.common.contract.template.ProducerKeychainService {
+public class ProducerKeychainService implements it.pagopa.interop.common.contract.service.ProducerKeychainService {
 
     private final ProducerKeychainApiClient client;
 

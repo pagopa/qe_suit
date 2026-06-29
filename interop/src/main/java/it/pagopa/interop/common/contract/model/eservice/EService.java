@@ -20,13 +20,11 @@ public class EService implements TestModel {
     EServiceTechnology technology;
     EServiceMode mode;
     String description;
-    UUID riskAnalysisId;
-    Boolean handlePersonalData;
-    Boolean isAsync;
+    Boolean personalData;
+    Boolean asyncExchange;
     Boolean isSignalHubEnabled;
     Boolean isConsumerDelegable;
     Boolean isClientAccessDelegable;
-    ProducerEServiceDescriptor eservice;
     List<EServiceDescriptor> descriptors;
 
     public EServiceDescriptor findDescriptor(UUID descriptorId) {

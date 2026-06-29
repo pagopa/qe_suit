@@ -2,12 +2,11 @@ package it.pagopa.interop.bff.service;
 
 import it.pagopa.interop.bff.support.RiskAnalysisDataInitializer;
 import it.pagopa.interop.common.contract.model.shared.enums.Tenant;
-import it.pagopa.interop.common.contract.model.shared.enums.TenantType;
+import it.pagopa.interop.common.contract.model.shared.enums.TenantKind;
 import it.pagopa.interop.common.contract.model.risk_analysis.RiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind;
 import it.pagopa.interop.common.cucumber.context.UserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,7 @@ public class RiskAnalysisDataService {
     }
 
     private RiskAnalysisFormSeed buildRiskAnalysisFormSeed(Tenant tenant, Map<String, java.util.List<String>> answers) {
-        TenantKind tenantKind = TenantKind.fromValue(tenant.getTenantType().name());
+        it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind tenantKind = it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind.fromValue(tenant.getTenantType().name());
         RiskAnalysisFormConfig config = purposesApi.retrieveLatestRiskAnalysisConfiguration(tenantKind);
 
         return new RiskAnalysisFormSeed()
@@ -59,6 +58,6 @@ public class RiskAnalysisDataService {
     }
 
     private String resolveTemplateKey(Tenant tenant) {
-        return tenant.getTenantType() == TenantType.PA ? "PA" : "Privato/GSP";
+        return tenant.getTenantType() == TenantKind.PA ? "PA" : "Privato/GSP";
     }
 }

@@ -4,7 +4,7 @@ import it.pagopa.interop.common.contract.model.client.ClientKind;
 import it.pagopa.interop.common.contract.model.client.Client;
 import it.pagopa.interop.common.contract.model.shared.ClientAssertion;
 import it.pagopa.interop.common.contract.model.shared.DPoPProof;
-import it.pagopa.interop.common.contract.model.response.DebugClientAssertionValidationResponse;
+import it.pagopa.interop.common.contract.response.DebugClientAssertionValidationResponse;
 import it.pagopa.interop.web.page.dev_tools.debug_client_assertion.DebugClientAssertionPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

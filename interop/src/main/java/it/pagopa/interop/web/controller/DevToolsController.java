@@ -8,7 +8,7 @@ import it.pagopa.interop.common.cucumber.parameter_type.mapper.DataTableMapper;
 import it.pagopa.interop.common.contract.model.client.Client;
 import it.pagopa.interop.common.contract.model.shared.ClientAssertion;
 import it.pagopa.interop.common.contract.model.shared.DPoPProof;
-import it.pagopa.interop.common.contract.model.response.DebugClientAssertionValidationResponse;
+import it.pagopa.interop.common.contract.response.DebugClientAssertionValidationResponse;
 import it.pagopa.interop.web.service.DevToolsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

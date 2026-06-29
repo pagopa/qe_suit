@@ -15,7 +15,7 @@ public class EServiceTemplateRef {
     UUID templateVersionId;
     String templateName;
     DocumentRef templateInterface;
-    Boolean newTemplateVersionAvailable;
+    Boolean isNewTemplateVersionAvailable;
     Integer templateDailyCallsPerConsumer;
     Integer templateDailyCallsTotal;
 }
