@@ -1,20 +1,18 @@
 package it.pagopa.interop.common.contract.model.response;
 
 import it.pagopa.interop.common.contract.model.shared.ClientAssertion;
-import it.pagopa.interop.common.contract.model.TestModel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
-import java.util.UUID;
 
 @Getter
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor
-public class DebugClientAssertionValidationResponse implements TestModel {
+public class DebugClientAssertionValidationResponse {
 
     public enum Status {
         PASSED,
@@ -85,20 +83,15 @@ public class DebugClientAssertionValidationResponse implements TestModel {
         }
     }
 
-    public boolean isAllPassed(){
+    public boolean isAllPassed() {
         boolean isPassed = true;
 
-        if(clientAssertionValidation != null) isPassed &= clientAssertionValidation.isSuccess();
-        if(publicKeyRetrieve != null) isPassed &= publicKeyRetrieve.isSuccess();
-        if(clientAssertionSignatureVerification != null) isPassed &= clientAssertionSignatureVerification.isSuccess();
-        if(platformStatesVerification != null) isPassed &= platformStatesVerification.isSuccess();
-        if(dpopValidation != null) isPassed &= dpopValidation.isSuccess();
+        if (clientAssertionValidation != null) isPassed &= clientAssertionValidation.isSuccess();
+        if (publicKeyRetrieve != null) isPassed &= publicKeyRetrieve.isSuccess();
+        if (clientAssertionSignatureVerification != null) isPassed &= clientAssertionSignatureVerification.isSuccess();
+        if (platformStatesVerification != null) isPassed &= platformStatesVerification.isSuccess();
+        if (dpopValidation != null) isPassed &= dpopValidation.isSuccess();
 
         return isPassed;
-    }
-
-    @Override
-    public UUID getId() {
-        return this.clientAssertion.getId();
     }
 }
