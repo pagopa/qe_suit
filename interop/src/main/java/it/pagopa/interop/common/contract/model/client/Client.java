@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -19,8 +20,16 @@ public class Client implements TestModel {
     UUID consumerId;
     String name;
     String description;
-    Set<Key> keys;
+    List<Key> keys;
     ClientKind kind;
     Set<Purpose> purposes;
     Set<UserRef> users;
+
+    public Key getLastKey() {
+        if (keys == null || keys.isEmpty()) {
+            return null;
+        }
+
+        return keys.get(keys.size() - 1);
+    }
 }

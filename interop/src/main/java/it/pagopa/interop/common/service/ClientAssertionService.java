@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import it.pagopa.interop.common.contract.model.client.ClientKind;
 import it.pagopa.interop.common.contract.model.client.Client;
 import it.pagopa.interop.common.contract.model.purpose.Purpose;
+import it.pagopa.interop.common.contract.model.shared.Key;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,7 @@ public class ClientAssertionService {
     }
 
     public String createClientAssertion(Client client, Purpose purpose, KeyPair keyPair, List<JwtClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
-        KeyPair kp = Optional.ofNullable(keyPair).orElseGet(client::getLastKeyPair);
+        KeyPair kp = Optional.ofNullable(keyPair).orElseGet(() -> client.getLastKey().getPair());
 
         JwtBuilder builder = buildJwt(client, purpose, kp);
 
