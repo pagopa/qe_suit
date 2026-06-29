@@ -1,12 +1,10 @@
 package it.pagopa.interop.common.contract.model.agreement;
 
 import it.pagopa.interop.common.contract.model.TestModel;
-import it.pagopa.interop.common.contract.model.shared.DelegationRef;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Value
@@ -19,12 +17,8 @@ public class Agreement implements TestModel {
     UUID producerId;
     UUID consumerId;
     AgreementState state;
-    DelegationRef delegationRef;
+    UUID delegationId;
     Boolean suspendedByConsumer;
     Boolean suspendedByProducer;
     String rejectionReason;
-    Instant createdAt;
-    Instant updatedAt;
-    Instant submittedAt;
-    Instant activatedAt;
 }
