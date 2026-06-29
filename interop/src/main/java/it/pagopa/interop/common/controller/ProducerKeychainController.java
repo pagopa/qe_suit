@@ -3,7 +3,7 @@ package it.pagopa.interop.common.controller;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.common.contract.model.ProducerKeychain;
+import it.pagopa.interop.common.contract.model.producer_keychain.ProducerKeychain;
 import it.pagopa.interop.common.contract.template.ProducerKeychainService;
 import it.pagopa.interop.common.contract.model.request.ProducerKeychainReadAllRequest;
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
@@ -24,6 +24,7 @@ public class ProducerKeychainController {
             service
                 .create()
                 .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
     }
 
     @When("(l'utente )legge tutti i Producer Keychain")

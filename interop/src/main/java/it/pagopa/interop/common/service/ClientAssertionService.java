@@ -4,8 +4,8 @@ import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingExcept
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import it.pagopa.interop.common.contract.enums.InteropClientType;
-import it.pagopa.interop.common.contract.model.Client;
-import it.pagopa.interop.common.contract.model.Purpose;
+import it.pagopa.interop.common.contract.model.client.Client;
+import it.pagopa.interop.common.contract.model.purpose.Purpose;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

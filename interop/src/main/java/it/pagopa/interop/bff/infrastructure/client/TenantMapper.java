@@ -1,36 +1,52 @@
 package it.pagopa.interop.bff.infrastructure.client;
 
-import it.pagopa.interop.common.contract.model.Tenant;
+import it.pagopa.interop.bff.infrastructure.config.StrictMapperConfig;
+import it.pagopa.interop.common.contract.model.tenant.Tenant;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization;
+import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(config = StrictMapperConfig.class)
 public interface TenantMapper {
 
+
+    @BeanMapping(ignoreUnmappedSourceProperties = {
+            "externalId",
+            "features",
+            "createdAt",
+            "updatedAt",
+            "onboardedAt",
+            "subUnitType",
+            "selfcareInstitutionType",
+            "remoteIds",
+            "contactMail",
+    })
     Tenant toDomain(it.pagopa.interop.generated.openapi.clients.bff.model.Tenant dto);
 
     Tenant toDomain(it.pagopa.interop.generated.openapi.clients.bff.model.IsTenantAllowedToDelegation dto);
 
-    /*
-     * TODO: implementare il mapping del wrapper/list response.
-     * Esempio tipico:
-     *
-     * if (dto == null || dto.getResults() == null) {
-     *     return List.of();
-     * }
-     *
-     * return dto.getResults().stream()
-     *     .map(this::toDomain)
-     *     .toList();
-     */
-    default List<Tenant> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations dto) {
-        return List.of();
+    @BeanMapping(ignoreUnmappedSourceProperties = {
+            "contactMail",
+            "hasUnreadNotifications"
+    })
+    @Mapping(target = "selfcareId", ignore = true)
+    Tenant toDomain(CompactOrganization dto);
+
+    default Tenant toDomain(Void dto) {
+        return null;
     }
 
+    default List<Tenant> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations dto) {
+            return dto.getResults().stream()
+                     .map(this::toDomain)
+                     .toList();
+    }
     /*
      * TODO: implementare il mapping del wrapper/list response.
-     * Esempio tipico:
+     * Esempio tipico per wrapper paginati:
      *
      * if (dto == null || dto.getResults() == null) {
      *     return List.of();
@@ -43,10 +59,9 @@ public interface TenantMapper {
     default List<Tenant> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.RequesterCertifiedAttributes dto) {
         return List.of();
     }
-
     /*
      * TODO: implementare il mapping del wrapper/list response.
-     * Esempio tipico:
+     * Esempio tipico per wrapper paginati:
      *
      * if (dto == null || dto.getResults() == null) {
      *     return List.of();
@@ -59,10 +74,9 @@ public interface TenantMapper {
     default List<Tenant> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributesResponse dto) {
         return List.of();
     }
-
     /*
      * TODO: implementare il mapping del wrapper/list response.
-     * Esempio tipico:
+     * Esempio tipico per wrapper paginati:
      *
      * if (dto == null || dto.getResults() == null) {
      *     return List.of();
@@ -75,10 +89,9 @@ public interface TenantMapper {
     default List<Tenant> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse dto) {
         return List.of();
     }
-
     /*
      * TODO: implementare il mapping del wrapper/list response.
-     * Esempio tipico:
+     * Esempio tipico per wrapper paginati:
      *
      * if (dto == null || dto.getResults() == null) {
      *     return List.of();
@@ -91,10 +104,9 @@ public interface TenantMapper {
     default List<Tenant> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedAttributesResponse dto) {
         return List.of();
     }
-
     /*
      * TODO: implementare il mapping del wrapper/list response.
-     * Esempio tipico:
+     * Esempio tipico per wrapper paginati:
      *
      * if (dto == null || dto.getResults() == null) {
      *     return List.of();
@@ -107,9 +119,4 @@ public interface TenantMapper {
     default List<Tenant> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.Tenants dto) {
         return List.of();
     }
-
-    default Tenant toDomain(Void dto) {
-        return null;
-    }
-
 }

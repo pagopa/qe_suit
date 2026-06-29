@@ -2,11 +2,11 @@ package it.pagopa.interop.common.controller;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.common.contract.model.ClientAssertion;
+import it.pagopa.interop.common.contract.model.client.ClientAssertion;
 import it.pagopa.interop.common.service.ClientAssertionService;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
-import it.pagopa.interop.common.contract.model.Client;
-import it.pagopa.interop.common.contract.model.Purpose;
+import it.pagopa.interop.common.contract.model.client.Client;
+import it.pagopa.interop.common.contract.model.purpose.Purpose;
 import it.pagopa.interop.common.utils.JwtBuilderUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

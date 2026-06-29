@@ -2,9 +2,9 @@ package it.pagopa.interop.bff.service;
 
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.cucumber.context.UserContext;
-import it.pagopa.interop.common.contract.model.EService;
-import it.pagopa.interop.common.contract.model.Purpose;
-import it.pagopa.interop.common.contract.model.RiskAnalysis;
+import it.pagopa.interop.common.contract.model.eservice.EService;
+import it.pagopa.interop.common.contract.model.purpose.Purpose;
+import it.pagopa.interop.common.contract.model.risk_analysis.RiskAnalysis;
 import it.pagopa.interop.common.utils.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;

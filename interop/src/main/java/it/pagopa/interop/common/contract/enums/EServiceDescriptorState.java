@@ -1,8 +1,10 @@
 package it.pagopa.interop.common.contract.enums;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@Getter
 public enum EServiceDescriptorState {
     DRAFT("DRAFT"),
 

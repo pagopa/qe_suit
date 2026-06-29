@@ -2,7 +2,7 @@ package it.pagopa.interop.bff.infrastructure.client_old;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.common.contract.template.rest.*;
-import it.pagopa.interop.common.contract.model.ProducerKeychain;
+import it.pagopa.interop.common.contract.model.producer_keychain.ProducerKeychain;
 import it.pagopa.interop.common.contract.model.request.ProducerKeychainReadAllRequest;
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerKeychainApi;

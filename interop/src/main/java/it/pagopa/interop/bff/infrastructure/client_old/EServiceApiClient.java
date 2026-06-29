@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.infrastructure.client_old;
 
-import it.pagopa.interop.common.contract.model.EService;
+import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.common.contract.template.action.TestChain;

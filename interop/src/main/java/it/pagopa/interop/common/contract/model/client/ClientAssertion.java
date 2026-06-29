@@ -1,5 +1,6 @@
-package it.pagopa.interop.common.contract.model;
+package it.pagopa.interop.common.contract.model.client;
 
+import it.pagopa.interop.common.contract.model.TestModel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
