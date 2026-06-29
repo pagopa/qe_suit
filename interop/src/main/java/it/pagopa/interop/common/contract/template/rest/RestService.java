@@ -21,30 +21,30 @@ public abstract class RestService {
 
     protected <RESPONSE, MODEL extends TestModel> TestChain<RESPONSE, MODEL> create(
             Supplier<ResponseEntity<RESPONSE>> apiCall,
-            Function<RESPONSE, MODEL> mapper) {
+            Function<RESPONSE, MODEL> domainMapper) {
 
-        return execute(apiCall, resp -> List.of(mapper.apply(resp)));
+        return execute(apiCall, resp -> List.of(domainMapper.apply(resp)));
     }
 
     protected <RESPONSE, MODEL extends TestModel> TestChain<RESPONSE, MODEL> update(
             Supplier<ResponseEntity<RESPONSE>> apiCall,
-            Function<RESPONSE, MODEL> mapper) {
+            Function<RESPONSE, MODEL> domainMapper) {
 
-        return execute(apiCall, resp -> List.of(mapper.apply(resp)));
+        return execute(apiCall, resp -> List.of(domainMapper.apply(resp)));
     }
 
     protected <RESPONSE, MODEL extends TestModel> TestChain<RESPONSE, MODEL> read(
             Supplier<ResponseEntity<RESPONSE>> apiCall,
-            Function<RESPONSE, MODEL> mapper) {
+            Function<RESPONSE, MODEL> domainMapper) {
 
-        return execute(apiCall, resp -> List.of(mapper.apply(resp)));
+        return execute(apiCall, resp -> List.of(domainMapper.apply(resp)));
     }
 
     protected <RESPONSE, MODEL extends TestModel> TestChain<RESPONSE, MODEL> readAll(
             Supplier<ResponseEntity<RESPONSE>> apiCall,
-            Function<RESPONSE, List<MODEL>> mapper) {
+            Function<RESPONSE, List<MODEL>> domainMapper) {
 
-        return execute(apiCall, mapper);
+        return execute(apiCall, domainMapper);
     }
 
     /**

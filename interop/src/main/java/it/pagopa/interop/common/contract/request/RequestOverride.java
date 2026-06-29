@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.contract.model.request;
+package it.pagopa.interop.common.contract.request;
 
 @FunctionalInterface
 public interface RequestOverride<Request> {

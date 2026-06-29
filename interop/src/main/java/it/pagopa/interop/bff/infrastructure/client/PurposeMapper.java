@@ -1,15 +1,9 @@
 package it.pagopa.interop.bff.infrastructure.client;
 
-import it.pagopa.interop.bff.infrastructure.config.StrictMapperConfig;
-import it.pagopa.interop.common.contract.model.purpose.Purpose;
-import it.pagopa.interop.common.contract.model.purpose.PurposeVersion;
-import it.pagopa.interop.common.contract.model.purpose.PurposeVersionState;
+import it.pagopa.interop.bff.infrastructure.config.TestMapperConfig;
 import org.mapstruct.Mapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Mapper(config = StrictMapperConfig.class)
+@Mapper(config = TestMapperConfig.class)
 public interface PurposeMapper {
 
 }

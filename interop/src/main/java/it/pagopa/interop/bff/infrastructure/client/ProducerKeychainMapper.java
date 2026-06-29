@@ -1,13 +1,9 @@
 package it.pagopa.interop.bff.infrastructure.client;
 
-import it.pagopa.interop.bff.infrastructure.config.StrictMapperConfig;
-import it.pagopa.interop.common.contract.model.producer_keychain.ProducerKeychain;
+import it.pagopa.interop.bff.infrastructure.config.TestMapperConfig;
 import org.mapstruct.Mapper;
 
-import java.util.List;
-import java.util.Set;
-
-@Mapper(config = StrictMapperConfig.class)
+@Mapper(config = TestMapperConfig.class)
 public interface ProducerKeychainMapper {
 
 }

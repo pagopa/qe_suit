@@ -1,8 +1,8 @@
 package it.pagopa.interop.bff.infrastructure.client;
 
-import it.pagopa.interop.bff.infrastructure.config.StrictMapperConfig;
+import it.pagopa.interop.bff.infrastructure.config.TestMapperConfig;
 import org.mapstruct.Mapper;
 
-@Mapper(config = StrictMapperConfig.class)
+@Mapper(config = TestMapperConfig.class)
 public interface AttributeMapper {
 }

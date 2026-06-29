@@ -21,7 +21,7 @@ import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EserviceService extends RestService {
+public class EserviceServiceOld extends RestService {
 
     private final EservicesApi eservicesApi;
     private final RiskAnalysisDataService riskAnalysisService;

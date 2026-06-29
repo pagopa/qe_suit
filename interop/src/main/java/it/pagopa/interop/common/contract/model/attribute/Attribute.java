@@ -16,4 +16,5 @@ public class Attribute implements TestModel {
     String name;
     String description;
     AttributeKind kind;
+    Integer group;
 }

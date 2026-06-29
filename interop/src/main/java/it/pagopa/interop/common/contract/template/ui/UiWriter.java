@@ -2,7 +2,7 @@ package it.pagopa.interop.common.contract.template.ui;
 
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.interop.common.cucumber.CucumberConfig;
-import it.pagopa.interop.common.contract.model.request.RequestOverride;
+import it.pagopa.interop.common.contract.request.RequestOverride;
 import it.pagopa.interop.common.utils.DeepMerger;
 
 public interface UiWriter<M, C extends Component> extends UiReader<C, M> {
