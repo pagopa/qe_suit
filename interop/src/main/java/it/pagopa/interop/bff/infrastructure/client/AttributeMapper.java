@@ -1,7 +1,7 @@
 package it.pagopa.interop.bff.infrastructure.client;
 
 import it.pagopa.interop.bff.infrastructure.config.StrictMapperConfig;
-import it.pagopa.interop.common.contract.model.Attribute;
+import it.pagopa.interop.common.contract.model.attribute.Attribute;
 import org.mapstruct.Mapper;
 import java.util.List;
 

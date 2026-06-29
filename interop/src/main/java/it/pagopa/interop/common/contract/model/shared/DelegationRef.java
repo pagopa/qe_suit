@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.contract.model.eservice;
+package it.pagopa.interop.common.contract.model.shared;
 
 import lombok.Builder;
 import lombok.Value;

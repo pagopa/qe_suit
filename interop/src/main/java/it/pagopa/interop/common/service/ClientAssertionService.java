@@ -3,7 +3,7 @@ package it.pagopa.interop.common.service;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
-import it.pagopa.interop.common.contract.enums.InteropClientType;
+import it.pagopa.interop.common.contract.model.client.ClientKind;
 import it.pagopa.interop.common.contract.model.client.Client;
 import it.pagopa.interop.common.contract.model.purpose.Purpose;
 import lombok.extern.slf4j.Slf4j;
@@ -77,7 +77,7 @@ public class ClientAssertionService {
                 .expiration(Date.from(Instant.now().plusSeconds(43200)))
                 .header().add("kid", rawKid).and();
 
-        if (InteropClientType.valueOf(client.getKind().name()) == InteropClientType.CONSUMER && purpose != null) {
+        if (ClientKind.valueOf(client.getKind().name()) == ClientKind.CONSUMER && purpose != null) {
             jwt.claim("purposeId", purpose.getId().toString());
         }
 

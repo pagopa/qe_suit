@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.contract.enums;
+package it.pagopa.interop.common.contract.model.shared.enums;
 
 import lombok.Getter;
 

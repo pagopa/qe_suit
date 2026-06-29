@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.contract.enums;
+package it.pagopa.interop.common.contract.model.shared.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static it.pagopa.interop.common.contract.enums.Tenant.*;
-import static it.pagopa.interop.common.contract.enums.UserRole.ADMIN;
-import static it.pagopa.interop.common.contract.enums.UserRole.API;
+import static it.pagopa.interop.common.contract.model.shared.enums.Tenant.*;
+import static it.pagopa.interop.common.contract.model.shared.enums.UserRole.ADMIN;
+import static it.pagopa.interop.common.contract.model.shared.enums.UserRole.API;
 
 @Getter
 @RequiredArgsConstructor

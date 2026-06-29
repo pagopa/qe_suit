@@ -2,24 +2,23 @@ package it.pagopa.interop.common.contract.model.risk_analysis;
 
 import it.pagopa.interop.common.contract.model.TestModel;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.experimental.Delegate;
+import lombok.extern.jackson.Jacksonized;
 
+import java.time.Instant;
 import java.util.UUID;
 
-@RequiredArgsConstructor
-@Getter
+@Value
+@Builder(toBuilder = true)
+@Jacksonized
 public class RiskAnalysis implements TestModel {
-
-    private final String title;
-    private final UUID id = UUID.randomUUID();
-
-    @Delegate
-    private final RiskAnalysisFormSeed form;
-
-    @Override
-    public UUID getId() {
-        return id;
-    }
+    UUID id;
+    String name;
+    String riskAnalysisVersion;
+    Instant createdAt;
+    Instant rulesetExpiration;
 }

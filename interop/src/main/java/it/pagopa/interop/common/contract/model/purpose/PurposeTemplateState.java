@@ -1,11 +1,10 @@
 package it.pagopa.interop.common.contract.model.purpose;
 
-public enum PurposeVersionState {
+public enum PurposeTemplateState {
     DRAFT,
-    WAITING_FOR_APPROVAL,
-    ACTIVE,
+    PUBLISHED,
     SUSPENDED,
     ARCHIVED,
-    REJECTED,
+    UNKNOWN
 }
 

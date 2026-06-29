@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.infrastructure.client;
 
-import it.pagopa.interop.common.contract.model.Attribute;
+import it.pagopa.interop.common.contract.model.attribute.Attribute;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AttributesApi;
 import it.pagopa.interop.common.contract.template.action.TestChain;
 import it.pagopa.interop.common.contract.template.rest.RestService;
@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 import java.util.UUID;
 import java.util.List;
-import java.io.File;
 
 @Component
 @RequiredArgsConstructor

@@ -1,9 +1,9 @@
 package it.pagopa.interop.web.service;
 
-import it.pagopa.interop.common.contract.enums.InteropClientType;
+import it.pagopa.interop.common.contract.model.client.ClientKind;
 import it.pagopa.interop.common.contract.model.client.Client;
-import it.pagopa.interop.common.contract.model.client.ClientAssertion;
-import it.pagopa.interop.common.contract.model.client.DPoPProof;
+import it.pagopa.interop.common.contract.model.shared.ClientAssertion;
+import it.pagopa.interop.common.contract.model.shared.DPoPProof;
 import it.pagopa.interop.common.contract.model.response.DebugClientAssertionValidationResponse;
 import it.pagopa.interop.web.page.dev_tools.debug_client_assertion.DebugClientAssertionPage;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +24,10 @@ public class DevToolsService {
     private final DebugClientAssertionPage debugPage;
 
     public DebugClientAssertionValidationResponse performValidation(ClientAssertion clientAssertion, Client client, DPoPProof proof) {
-        return performValidationInternal(clientAssertion.getClientAssertion(), InteropClientType.valueOf(client.getKind().name()), client.getId().toString(), proof != null ? proof.getJwt() : null);
+        return performValidationInternal(clientAssertion.getClientAssertion(), ClientKind.valueOf(client.getKind().name()), client.getId().toString(), proof != null ? proof.getJwt() : null);
     }
 
-    public DebugClientAssertionValidationResponse performValidation(String clientAssertion, InteropClientType clientType, String clientId, String proof) {
+    public DebugClientAssertionValidationResponse performValidation(String clientAssertion, ClientKind clientType, String clientId, String proof) {
         return performValidationInternal(clientAssertion, clientType, clientId, proof);
     }
 
@@ -43,7 +43,7 @@ public class DevToolsService {
         return debugPage.getClientAssertionErrorMessage();
     }
 
-    private DebugClientAssertionValidationResponse performValidationInternal(String rawClientAssertion, InteropClientType clientType, String clientId, String dPoPProof) {
+    private DebugClientAssertionValidationResponse performValidationInternal(String rawClientAssertion, ClientKind clientType, String clientId, String dPoPProof) {
 
         // 1. Popola la form e la sottomette
         submitValidationRequest(rawClientAssertion, clientId, dPoPProof);
@@ -73,7 +73,7 @@ public class DevToolsService {
         request.verifyGrantType(clientAssertionGrantType);
     }
 
-    private DebugClientAssertionValidationResponse buildValidationResult(String rawClientAssertion, InteropClientType clientType, boolean hasDPoP) {
+    private DebugClientAssertionValidationResponse buildValidationResult(String rawClientAssertion, ClientKind clientType, boolean hasDPoP) {
         var results = debugPage.debugResults();
         results.assertLoaded();
 
@@ -91,7 +91,7 @@ public class DevToolsService {
         return new DebugClientAssertionValidationResponse(clientAssertion, caValidation, pkValidation, sigValidation, platformValidation, dPoPValidation);
     }
 
-    private boolean shouldValidatePlatform(InteropClientType type, DebugClientAssertionValidationResponse.ValidationResult caStep, DebugClientAssertionValidationResponse.PublicKeyValidation pkStep) {
-        return type == InteropClientType.CONSUMER && caStep.isSuccess() && pkStep.isSuccess();
+    private boolean shouldValidatePlatform(ClientKind type, DebugClientAssertionValidationResponse.ValidationResult caStep, DebugClientAssertionValidationResponse.PublicKeyValidation pkStep) {
+        return type == ClientKind.CONSUMER && caStep.isSuccess() && pkStep.isSuccess();
     }
 }

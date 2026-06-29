@@ -1,10 +1,8 @@
 package it.pagopa.interop.common.contract.model.eservice;
 
-import it.pagopa.interop.common.contract.enums.EServiceMode;
-import it.pagopa.interop.common.contract.enums.EServiceTechnology;
-import lombok.Builder;
-import lombok.Singular;
-import lombok.Value;
+import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
+import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 
 import java.util.List;
@@ -13,8 +11,9 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class EService {
+public class EService implements TestModel {
     UUID id;
+    UUID eserviceId;
     String name;
     String producerId;
     EServiceTechnology technology;
@@ -26,7 +25,6 @@ public class EService {
     Boolean isSignalHubEnabled;
     Boolean isConsumerDelegable;
     Boolean isClientAccessDelegable;
-
-    @Singular("descriptor")
+    ProducerEServiceDescriptor eservice;
     List<EServiceDescriptor> descriptors;
 }
