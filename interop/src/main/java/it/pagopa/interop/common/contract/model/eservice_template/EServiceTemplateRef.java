@@ -1,5 +1,6 @@
-package it.pagopa.interop.common.contract.model.eservice;
+package it.pagopa.interop.common.contract.model.eservice_template;
 
+import it.pagopa.interop.common.contract.model.shared.DocumentRef;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
@@ -13,7 +14,7 @@ public class EServiceTemplateRef {
     UUID templateId;
     UUID templateVersionId;
     String templateName;
-    DescriptorDocumentRef templateInterface;
+    DocumentRef templateInterface;
     Boolean newTemplateVersionAvailable;
     Integer templateDailyCallsPerConsumer;
     Integer templateDailyCallsTotal;

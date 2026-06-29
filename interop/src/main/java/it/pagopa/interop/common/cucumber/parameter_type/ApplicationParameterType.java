@@ -1,7 +1,11 @@
 package it.pagopa.interop.common.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.common.contract.enums.*;
+import it.pagopa.interop.common.contract.model.client.ClientKind;
+import it.pagopa.interop.common.contract.model.shared.enums.Channel;
+import it.pagopa.interop.common.contract.model.shared.enums.Tenant;
+import it.pagopa.interop.common.contract.model.shared.enums.User;
+import it.pagopa.interop.common.contract.model.shared.enums.UserRole;
 import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +37,8 @@ public class ApplicationParameterType {
     }
 
     @ParameterType("CONSUMER|Consumer|consumer|API|Api|api")
-    public InteropClientType clientType(String type) {
-        return InteropClientType.valueOf(type);
+    public ClientKind clientType(String type) {
+        return ClientKind.valueOf(type);
     }
 
     @ParameterType("SUSPENDED")

@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.contract.enums;
+package it.pagopa.interop.common.contract.model.agreement;
 
 import lombok.RequiredArgsConstructor;
 

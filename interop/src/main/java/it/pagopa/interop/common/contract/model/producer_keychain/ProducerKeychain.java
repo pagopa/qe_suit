@@ -1,29 +1,23 @@
 package it.pagopa.interop.common.contract.model.producer_keychain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import it.pagopa.interop.common.contract.model.TestModel;
-import lombok.*;
+import it.pagopa.interop.common.contract.model.shared.Key;
+import it.pagopa.interop.common.contract.model.shared.UserRef;
+import lombok.Builder;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
 
-import java.security.KeyPair;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
-@Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Value
+@Builder(toBuilder = true)
+@Jacksonized
 public class ProducerKeychain implements TestModel {
-
-    private UUID id;
-    private String name;
-    private String description;
-    private List<Key> keys;
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Key {
-        private KeyPair keyPair;
-    }
+    UUID id;
+    String name;
+    String description;
+    List<Key> keys;
+    Set<UserRef> users;
 }

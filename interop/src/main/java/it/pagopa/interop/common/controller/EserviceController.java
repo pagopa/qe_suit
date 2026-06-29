@@ -1,8 +1,8 @@
 package it.pagopa.interop.common.controller;
 
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.common.contract.enums.Tenant;
-import it.pagopa.interop.common.contract.enums.User;
+import it.pagopa.interop.common.contract.model.shared.enums.Tenant;
+import it.pagopa.interop.common.contract.model.shared.enums.User;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import it.pagopa.interop.bff.Journey;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,11 @@
 package it.pagopa.interop.common.contract.model.eservice;
 
-import it.pagopa.interop.common.contract.enums.AgreementApprovalPolicy;
-import it.pagopa.interop.common.contract.enums.EServiceDescriptorState;
+import it.pagopa.interop.common.contract.model.agreement.AgreementApprovalPolicy;
+import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.attribute.Attributes;
+import it.pagopa.interop.common.contract.model.eservice_template.EServiceTemplateRef;
+import it.pagopa.interop.common.contract.model.shared.DelegationRef;
+import it.pagopa.interop.common.contract.model.shared.DocumentRef;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
@@ -14,43 +18,37 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class EServiceDescriptor {
+public class EServiceDescriptor implements TestModel {
     UUID id;
     String version;
     EServiceDescriptorState state;
-    String description; // nullable
-
-    DescriptorDocumentRef interfaceDocument; // nullable
-
-    @Singular("doc")
-    List<DescriptorDocumentRef> docs; // vuota se assente
-
-    DescriptorAttributes attributes; // nullable
-
-    @Singular("audienceItem")
-    List<String> audience; // vuota se assente
-
-    Integer voucherLifespan;       // nullable
-    Integer dailyCallsPerConsumer; // nullable
-    Integer dailyCallsTotal;       // nullable
-
-    AgreementApprovalPolicy agreementApprovalPolicy; // nullable
+    String description;
+    DocumentRef interfaceDocument;
+    Attributes attributes;
+    Integer voucherLifespan;       
+    Integer dailyCallsPerConsumer; 
+    Integer dailyCallsTotal;
+    AgreementApprovalPolicy agreementApprovalPolicy;
+    Instant createdAt;    
+    Instant publishedAt;  
+    Instant deprecatedAt; 
+    Instant archivedAt;   
+    Instant suspendedAt;
+    EServiceTemplateRef templateRef;
+    AsyncExchangeProperties asyncExchangeProperties; 
+    DocumentRef asyncExchangeCallbackInterface;
+    DelegationRef delegation;
+    ArchivingSchedule archivingSchedule;
 
     @Singular("serverUrl")
-    List<String> serverUrls; // vuota se assente
-
-    Instant createdAt;    // nullable
-    Instant publishedAt;  // nullable
-    Instant deprecatedAt; // nullable
-    Instant archivedAt;   // nullable
-    Instant suspendedAt;  // nullable
+    List<String> serverUrls;
 
     @Singular("rejectionReason")
-    List<DescriptorRejectionReason> rejectionReasons; // vuota se assente
+    List<DescriptorRejectionReason> rejectionReasons;
 
-    EServiceTemplateRef templateRef; // nullable
-    AsyncExchangeProperties asyncExchangeProperties; // nullable
-    DescriptorDocumentRef asyncExchangeCallbackInterface; // nullable
-    DelegationRef delegation; // nullable
-    ArchivingSchedule archivingSchedule; // nullable
+    @Singular("audienceItem")
+    List<String> audience;
+
+    @Singular("doc")
+    List<DocumentRef> docs;
 }

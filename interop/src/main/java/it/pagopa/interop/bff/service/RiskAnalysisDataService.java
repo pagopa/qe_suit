@@ -1,8 +1,8 @@
 package it.pagopa.interop.bff.service;
 
 import it.pagopa.interop.bff.support.RiskAnalysisDataInitializer;
-import it.pagopa.interop.common.contract.enums.Tenant;
-import it.pagopa.interop.common.contract.enums.TenantType;
+import it.pagopa.interop.common.contract.model.shared.enums.Tenant;
+import it.pagopa.interop.common.contract.model.shared.enums.TenantType;
 import it.pagopa.interop.common.contract.model.risk_analysis.RiskAnalysis;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormConfig;

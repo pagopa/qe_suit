@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.contract.model.response;
 
-import it.pagopa.interop.common.contract.model.client.ClientAssertion;
+import it.pagopa.interop.common.contract.model.shared.ClientAssertion;
 import it.pagopa.interop.common.contract.model.TestModel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

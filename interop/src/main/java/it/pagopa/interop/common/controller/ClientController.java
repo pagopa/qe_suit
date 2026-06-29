@@ -2,9 +2,9 @@ package it.pagopa.interop.common.controller;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.bff.service.ClientService;
-import it.pagopa.interop.common.contract.enums.InteropClientType;
-import it.pagopa.interop.common.contract.enums.Tenant;
-import it.pagopa.interop.common.contract.enums.User;
+import it.pagopa.interop.common.contract.model.client.ClientKind;
+import it.pagopa.interop.common.contract.model.shared.enums.Tenant;
+import it.pagopa.interop.common.contract.model.shared.enums.User;
 import it.pagopa.interop.common.contract.model.client.Client;
 import it.pagopa.interop.common.contract.model.purpose.Purpose;
 
@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static it.pagopa.interop.common.contract.enums.InteropClientType.API;
-import static it.pagopa.interop.common.contract.enums.InteropClientType.CONSUMER;
+import static it.pagopa.interop.common.contract.model.client.ClientKind.API;
+import static it.pagopa.interop.common.contract.model.client.ClientKind.CONSUMER;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ClientController {
@@ -34,7 +34,7 @@ public class ClientController {
         createClientWithAdmin(API, consumer);
     }
 
-    private Client createClientWithAdmin(InteropClientType type, Tenant tenant) {
+    private Client createClientWithAdmin(ClientKind type, Tenant tenant) {
         User admin = User.getTenantAdmin(tenant);
         userContext.set(admin, tenant);
 

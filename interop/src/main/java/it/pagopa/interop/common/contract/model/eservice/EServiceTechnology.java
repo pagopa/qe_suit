@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.contract.enums;
+package it.pagopa.interop.common.contract.model.eservice;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

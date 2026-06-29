@@ -1,11 +1,11 @@
-package it.pagopa.interop.common.contract.enums;
+package it.pagopa.interop.common.contract.model.shared.enums;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
-import static it.pagopa.interop.common.contract.enums.TenantType.*;
+import static it.pagopa.interop.common.contract.model.shared.enums.TenantType.*;
 
 @RequiredArgsConstructor
 @Getter

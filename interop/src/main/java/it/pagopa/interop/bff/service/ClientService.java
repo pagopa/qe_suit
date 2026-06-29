@@ -1,7 +1,7 @@
 package it.pagopa.interop.bff.service;
 
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
-import it.pagopa.interop.common.contract.enums.InteropClientType;
+import it.pagopa.interop.common.contract.model.client.ClientKind;
 import it.pagopa.interop.common.contract.model.client.Client;
 import it.pagopa.interop.common.contract.model.purpose.Purpose;
 import it.pagopa.interop.common.utils.KeyPairUtils;
@@ -32,11 +32,11 @@ public class ClientService {
     private final ClientsApi clientsApi;
     private final ScenarioContext scenarioContext;
 
-    public Client createClient(InteropClientType kind) {
+    public Client createClient(ClientKind kind) {
         return createClient(kind, null);
     }
 
-    public Client createClient(InteropClientType kind, Consumer<ClientSeed> overrides) {
+    public Client createClient(ClientKind kind, Consumer<ClientSeed> overrides) {
         ClientSeed seed = buildDefaultSeed();
         Optional.ofNullable(overrides).ifPresent(o -> o.accept(seed));
 

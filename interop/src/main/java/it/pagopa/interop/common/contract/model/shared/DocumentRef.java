@@ -1,6 +1,5 @@
-package it.pagopa.interop.common.contract.model.eservice;
+package it.pagopa.interop.common.contract.model.shared;
 
-import it.pagopa.interop.common.contract.enums.TenantType;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
@@ -10,10 +9,12 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class DelegationTenantRef {
+public class DocumentRef {
     UUID id;
     String name;
-    TenantType kind;
+    String contentType;
+    String prettyName;
+    String checksum;
 }
 
 

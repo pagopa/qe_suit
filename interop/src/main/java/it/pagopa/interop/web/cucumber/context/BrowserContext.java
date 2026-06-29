@@ -2,8 +2,8 @@ package it.pagopa.interop.web.cucumber.context;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.common.contract.enums.Tenant;
-import it.pagopa.interop.common.contract.enums.User;
+import it.pagopa.interop.common.contract.model.shared.enums.Tenant;
+import it.pagopa.interop.common.contract.model.shared.enums.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;

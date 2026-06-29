@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.config;
 
 import it.pagopa.interop.common.cucumber.context.ChannelContext;
-import it.pagopa.interop.common.contract.enums.Channel;
+import it.pagopa.interop.common.contract.model.shared.enums.Channel;
 import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
 import it.pagopa.interop.common.contract.template.ProducerKeychainService;
 import lombok.RequiredArgsConstructor;

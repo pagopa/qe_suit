@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.contract.model.eservice;
+package it.pagopa.interop.common.contract.model.attribute;
 
 import lombok.Builder;
 import lombok.Singular;
@@ -10,13 +10,13 @@ import java.util.List;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class DescriptorAttributes {
+public class Attributes {
     @Singular("certified")
-    List<AttributeRef> certified;
+    List<Attribute> certified;
 
     @Singular("declared")
-    List<AttributeRef> declared;
+    List<Attribute> declared;
 
     @Singular("verified")
-    List<AttributeRef> verified;
+    List<Attribute> verified;
 }

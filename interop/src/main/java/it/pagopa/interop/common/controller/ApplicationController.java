@@ -5,10 +5,10 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.cucumber.context.ChannelContext;
 import it.pagopa.interop.common.cucumber.context.UserContext;
-import it.pagopa.interop.common.contract.enums.Channel;
-import it.pagopa.interop.common.contract.enums.Tenant;
-import it.pagopa.interop.common.contract.enums.User;
-import it.pagopa.interop.common.contract.enums.UserRole;
+import it.pagopa.interop.common.contract.model.shared.enums.Channel;
+import it.pagopa.interop.common.contract.model.shared.enums.Tenant;
+import it.pagopa.interop.common.contract.model.shared.enums.User;
+import it.pagopa.interop.common.contract.model.shared.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 

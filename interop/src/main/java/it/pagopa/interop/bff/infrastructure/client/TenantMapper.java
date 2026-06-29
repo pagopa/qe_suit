@@ -1,7 +1,7 @@
 package it.pagopa.interop.bff.infrastructure.client;
 
 import it.pagopa.interop.bff.infrastructure.config.StrictMapperConfig;
-import it.pagopa.interop.common.contract.model.tenant.Tenant;
+import it.pagopa.interop.common.contract.model.shared.TenantRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -24,22 +24,22 @@ public interface TenantMapper {
             "remoteIds",
             "contactMail",
     })
-    Tenant toDomain(it.pagopa.interop.generated.openapi.clients.bff.model.Tenant dto);
+    TenantRef toDomain(it.pagopa.interop.generated.openapi.clients.bff.model.Tenant dto);
 
-    Tenant toDomain(it.pagopa.interop.generated.openapi.clients.bff.model.IsTenantAllowedToDelegation dto);
+    TenantRef toDomain(it.pagopa.interop.generated.openapi.clients.bff.model.IsTenantAllowedToDelegation dto);
 
     @BeanMapping(ignoreUnmappedSourceProperties = {
             "contactMail",
             "hasUnreadNotifications"
     })
     @Mapping(target = "selfcareId", ignore = true)
-    Tenant toDomain(CompactOrganization dto);
+    TenantRef toDomain(CompactOrganization dto);
 
-    default Tenant toDomain(Void dto) {
+    default TenantRef toDomain(Void dto) {
         return null;
     }
 
-    default List<Tenant> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations dto) {
+    default List<TenantRef> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganizations dto) {
             return dto.getResults().stream()
                      .map(this::toDomain)
                      .toList();
@@ -56,7 +56,7 @@ public interface TenantMapper {
      *     .map(this::toDomain)
      *     .toList();
      */
-    default List<Tenant> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.RequesterCertifiedAttributes dto) {
+    default List<TenantRef> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.RequesterCertifiedAttributes dto) {
         return List.of();
     }
     /*
@@ -71,7 +71,7 @@ public interface TenantMapper {
      *     .map(this::toDomain)
      *     .toList();
      */
-    default List<Tenant> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributesResponse dto) {
+    default List<TenantRef> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedAttributesResponse dto) {
         return List.of();
     }
     /*
@@ -86,7 +86,7 @@ public interface TenantMapper {
      *     .map(this::toDomain)
      *     .toList();
      */
-    default List<Tenant> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse dto) {
+    default List<TenantRef> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredAttributesResponse dto) {
         return List.of();
     }
     /*
@@ -101,7 +101,7 @@ public interface TenantMapper {
      *     .map(this::toDomain)
      *     .toList();
      */
-    default List<Tenant> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedAttributesResponse dto) {
+    default List<TenantRef> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedAttributesResponse dto) {
         return List.of();
     }
     /*
@@ -116,7 +116,7 @@ public interface TenantMapper {
      *     .map(this::toDomain)
      *     .toList();
      */
-    default List<Tenant> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.Tenants dto) {
+    default List<TenantRef> toDomainList(it.pagopa.interop.generated.openapi.clients.bff.model.Tenants dto) {
         return List.of();
     }
 }
