@@ -1,18 +1,18 @@
 package it.pagopa.interop.bff.infrastructure.client;
 
+import it.pagopa.interop.bff.infrastructure.config.StrictMapperConfig;
 import it.pagopa.interop.common.contract.model.Attribute;
 import org.mapstruct.Mapper;
-
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(config = StrictMapperConfig.class)
 public interface AttributeMapper {
-
     Attribute toDomain(it.pagopa.interop.generated.openapi.clients.bff.model.Attribute dto);
+
 
     /*
      * TODO: implementare il mapping del wrapper/list response.
-     * Esempio tipico:
+     * Esempio tipico per wrapper paginati:
      *
      * if (dto == null || dto.getResults() == null) {
      *     return List.of();

@@ -1,10 +1,26 @@
 package it.pagopa.interop.common.contract.model;
 
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Delegate;
+import it.pagopa.interop.common.contract.enums.AttributeKind;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-@RequiredArgsConstructor
+import java.util.UUID;
+
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Attribute implements TestModel {
-    @Delegate
-    private final it.pagopa.interop.generated.openapi.clients.bff.model.Agreement model;
+    private UUID id;
+    private String name;
+    private String description;
+    private AttributeKind kind;
+    private Boolean explicitAttributeVerification;
+
+    @Override
+    public UUID getId() {
+        return id;
+    }
 }

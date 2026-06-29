@@ -8,7 +8,7 @@ import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.common.contract.enums.Tenant;
 import it.pagopa.interop.common.contract.enums.User;
-import it.pagopa.interop.common.contract.model.EService;
+import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;

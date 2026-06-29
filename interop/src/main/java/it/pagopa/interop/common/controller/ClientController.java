@@ -2,11 +2,11 @@ package it.pagopa.interop.common.controller;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.bff.service.ClientService;
-import it.pagopa.interop.common.contract.model.Client;
 import it.pagopa.interop.common.contract.enums.InteropClientType;
 import it.pagopa.interop.common.contract.enums.Tenant;
 import it.pagopa.interop.common.contract.enums.User;
-import it.pagopa.interop.common.contract.model.Purpose;
+import it.pagopa.interop.common.contract.model.client.Client;
+import it.pagopa.interop.common.contract.model.purpose.Purpose;
 
 import it.pagopa.interop.common.cucumber.context.UserContext;
 import lombok.RequiredArgsConstructor;

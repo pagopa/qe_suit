@@ -2,8 +2,8 @@ package it.pagopa.interop.bff.service;
 
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.contract.enums.InteropClientType;
-import it.pagopa.interop.common.contract.model.Client;
-import it.pagopa.interop.common.contract.model.Purpose;
+import it.pagopa.interop.common.contract.model.client.Client;
+import it.pagopa.interop.common.contract.model.purpose.Purpose;
 import it.pagopa.interop.common.utils.KeyPairUtils;
 import it.pagopa.interop.common.utils.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;

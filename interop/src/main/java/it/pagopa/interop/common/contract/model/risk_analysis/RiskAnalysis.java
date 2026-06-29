@@ -1,5 +1,6 @@
-package it.pagopa.interop.common.contract.model;
+package it.pagopa.interop.common.contract.model.risk_analysis;
 
+import it.pagopa.interop.common.contract.model.TestModel;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
