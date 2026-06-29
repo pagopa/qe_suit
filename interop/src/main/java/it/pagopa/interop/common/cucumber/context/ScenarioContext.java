@@ -121,6 +121,12 @@ public class ScenarioContext {
         return Optional.empty();
     }
 
+    public <Model extends TestModel> Model getByIdOrElseThrow(UUID id, Class<Model> modelClass){
+        var result = getById(id, modelClass);
+        if(result.isEmpty()) throw new NoSuchElementException("Nessun elemento trovato per il tipo " + modelClass.getSimpleName() + " con ID " + id);
+        return result.get();
+    }
+
     public Optional<TestModel> getByAlias(String alias) {
         return Optional.ofNullable(aliasStorage.get(alias));
     }
