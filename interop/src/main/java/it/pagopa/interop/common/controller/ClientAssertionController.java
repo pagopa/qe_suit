@@ -40,7 +40,11 @@ public class ClientAssertionController {
     }
 
     private void saveClientAssertion(String rawClientAssertion) {
-        ClientAssertion clientAssertion = new ClientAssertion(rawClientAssertion);
+        ClientAssertion clientAssertion =  ClientAssertion
+                .builder()
+                .clientAssertion(rawClientAssertion)
+                .build();
+
         scenarioContext.upsert(clientAssertion);
     }
 }
