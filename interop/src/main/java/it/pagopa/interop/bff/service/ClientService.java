@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.service;
 
+import it.pagopa.interop.common.contract.model.shared.Key;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.contract.model.client.ClientKind;
 import it.pagopa.interop.common.contract.model.client.Client;
@@ -50,7 +51,7 @@ public class ClientService {
 
     public Client getClient(UUID clientId) {
         Client client = pollClient(
-                () -> new Client(clientsApi.getClient(clientId), new java.util.LinkedHashSet<>()),
+                () -> null,
                 c -> c != null && Objects.equals(clientId, c.getId())
         );
         scenarioContext.upsert(client);
@@ -78,7 +79,7 @@ public class ClientService {
 
         pollClientKeys(client.getId(), seed.getName());
 
-        client.addKeyPair(effectiveKeyPair);
+        client.getKeys().add(Key.builder().pair(effectiveKeyPair).build());
         scenarioContext.upsert(client);
 
         return getClient(client.getId());

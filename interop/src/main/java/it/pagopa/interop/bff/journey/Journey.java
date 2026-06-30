@@ -42,9 +42,9 @@ public class Journey {
     }
 
     public Journey publishEservice(Consumer<EServiceSeed> eservice) {
-        setUserContext(producerUser, producerTenant);
-        var draftEservice = eserviceService.createEservice(eservice);
-        eserviceService.publishEservice(draftEservice);
+//        setUserContext(producerUser, producerTenant);
+//        var draftEservice = eserviceService.createEservice(eservice);
+//        eserviceService.publishEservice(draftEservice);
         return this;
     }
 

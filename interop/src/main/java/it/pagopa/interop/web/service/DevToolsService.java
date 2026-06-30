@@ -77,7 +77,7 @@ public class DevToolsService {
         var results = debugPage.debugResults();
         results.assertLoaded();
 
-        ClientAssertion clientAssertion = new ClientAssertion(rawClientAssertion);
+        ClientAssertion clientAssertion = ClientAssertion.builder().clientAssertion(rawClientAssertion).build();
         var caValidation = results.getClientAssertionValidation();
         var pkValidation = results.getPublicKeyValidation();
         var sigValidation = results.getSignatureValidation();

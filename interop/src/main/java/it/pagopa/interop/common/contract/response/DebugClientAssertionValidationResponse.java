@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.contract.response;
 
+import it.pagopa.interop.common.contract.model.TestModel;
 import it.pagopa.interop.common.contract.model.shared.ClientAssertion;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -7,12 +8,14 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor
-public class DebugClientAssertionValidationResponse {
+public class DebugClientAssertionValidationResponse implements TestModel {
+
 
     public enum Status {
         PASSED,
@@ -22,6 +25,8 @@ public class DebugClientAssertionValidationResponse {
 
     @EqualsAndHashCode.Exclude
     private final ClientAssertion clientAssertion;
+    @EqualsAndHashCode.Exclude
+    private final UUID id =  UUID.randomUUID();
     private final ClientAssertionValidation clientAssertionValidation;
     private final PublicKeyValidation publicKeyRetrieve;
     private final SignatureValidation clientAssertionSignatureVerification;

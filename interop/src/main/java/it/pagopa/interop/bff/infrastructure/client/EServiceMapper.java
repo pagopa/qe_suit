@@ -12,14 +12,61 @@ import org.mapstruct.*;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Mapper(config = TestMapperConfig.class)
 public interface EServiceMapper {
-    EService toDomain(CreatedEServiceDescriptor createdEServiceDescriptor);
 
-    EService toDomain(ProducerEServiceDetails producerEServiceDetails);
+    /**
+     * Prende il nuovo descrittore dal BFF e l'EService attualmente salvato nel contesto del test.
+     * Se il descrittore esiste già (stesso ID), lo aggiorna. Se non esiste, lo aggiunge alla lista.
+     */
+    default EService toDomainWithUpsert(ProducerEServiceDescriptor source, EService existingEService) {
+        if (source == null) return existingEService;
 
+        // 1. Mappiamo i dati generali aggiornati dell'E-Service dal payload del BFF
+        EService updatedBase = toDomainBase(source);
+
+        // 2. Convertiamo la sorgente nel descrittore di dominio custom
+        EServiceDescriptor newDescriptor = toEServiceDescriptor(source);
+
+        // 3. Prepariamo la nuova lista unificata dei descrittori
+        List<EServiceDescriptor> finalDescriptors = new ArrayList<>();
+
+        if (existingEService != null && existingEService.getDescriptors() != null) {
+            boolean idTrovato = false;
+
+            for (EServiceDescriptor currentDescriptor : existingEService.getDescriptors()) {
+                if (currentDescriptor.getId().equals(newDescriptor.getId())) {
+                    // MODIFICA: L'ID esiste già, inseriamo il descrittore aggiornato
+                    finalDescriptors.add(newDescriptor);
+                    idTrovato = true;
+                } else {
+                    // Mantieni invariati i descrittori delle altre versioni
+                    finalDescriptors.add(currentDescriptor);
+                }
+            }
+
+            // AGGIUNTA: Se l'ID non è stato trovato in tutta la lista, lo appendiamo alla fine
+            if (!idTrovato) {
+                finalDescriptors.add(newDescriptor);
+            }
+        } else {
+            // Se non c'era uno stato precedente nel test, iniziamo la lista con questo descrittore
+            finalDescriptors.add(newDescriptor);
+        }
+
+        // 4. Restituiamo l'oggetto EService finale usando il toBuilder() di Lombok
+        return updatedBase.toBuilder()
+                .descriptors(List.copyOf(finalDescriptors)) // Crea una lista immutabile
+                .build();
+    }
+
+    /**
+     * Mappa i dati generali dell'E-Service.
+     * La lista 'descriptors' viene ignorata qui perché viene gestita sopra nel metodo smart.
+     */
     @Mapping(target = "id", source = "eservice.id")
     @Mapping(target = "name", source = "eservice.name")
     @Mapping(target = "producerId", source = "eservice.producer.id")
@@ -31,15 +78,13 @@ public interface EServiceMapper {
     @Mapping(target = "isSignalHubEnabled", source = "eservice.isSignalHubEnabled")
     @Mapping(target = "isConsumerDelegable", source = "eservice.isConsumerDelegable")
     @Mapping(target = "isClientAccessDelegable", source = "eservice.isClientAccessDelegable")
-    EService toDomain(ProducerEServiceDescriptor producerEServiceDescriptor);
+    @Mapping(target = "descriptors", ignore = true)
+    EService toDomainBase(ProducerEServiceDescriptor source);
 
-    @AfterMapping
-    default void aggiungiDescrittoreAllaLista(ProducerEServiceDescriptor source, @MappingTarget EService.EServiceBuilder targetBuilder) {
-        EServiceDescriptor descrittoreCustom = toEServiceDescriptor(source);
-        targetBuilder.descriptors(List.of(descrittoreCustom));
-    }
-
-    @Mapping(target = "interfaceDocument", source = "_interface")
+    // ==========================================
+    // MAPPATURA DEL SINGOLO DESCRITTORE
+    // ==========================================
+    @Mapping(target = "interfaceDocument", source = "interface") // Corretto senza underscore
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "publishedAt", source = "publishedAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "deprecatedAt", source = "deprecatedAt", qualifiedByName = "mapStringToInstant")
@@ -64,24 +109,25 @@ public interface EServiceMapper {
 
     DelegationTenantRef toDelegationTenantRef(it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization source);
 
+    @ValueMapping(source = MappingConstants.ANY_REMAINING, target = MappingConstants.NULL)
+    it.pagopa.interop.common.contract.model.shared.enums.TenantKind toDomainTenantKind(it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind source);
+
     it.pagopa.interop.common.contract.model.eservice_template.EServiceTemplateRef toTemplateRef(it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRef source);
 
     // ==========================================
-    //  LOGICA DI CONVERSIONE STRING -> INSTANT
+    // LOGICA DI CONVERSIONE STRING -> INSTANT
     // ==========================================
     @Named("mapStringToInstant")
     default Instant mapStringToInstant(String dateStr) {
         if (dateStr == null || dateStr.isBlank()) {
             return null;
         }
-        // Usiamo OffsetDateTime perché gestisce le stringhe ISO-8601 con fuso orario generate da OpenAPI
         return OffsetDateTime.parse(dateStr).toInstant();
     }
 
-    /**
-     * Metodo di utilità personalizzato per trasformare la List<List<DescriptorAttribute>>
-     * in una List<Attribute> piatta usando i Java Stream.
-     */
+    // ==========================================
+    // LOGICA DI FLATTENING ATTRIBUTI + INDICE GRUPPO
+    // ==========================================
     @Named("flattenAttributes")
     default List<it.pagopa.interop.common.contract.model.attribute.Attribute> flattenAttributes(List<List<DescriptorAttribute>> nestedList) {
         if (nestedList == null) {
@@ -99,6 +145,7 @@ public interface EServiceMapper {
 
                         it.pagopa.interop.common.contract.model.attribute.Attribute domainAttr = this.toAttribute(bffAttr);
 
+                        // Applica l'indice della lista esterna al campo group dell'Attribute di Dominio
                         it.pagopa.interop.common.contract.model.attribute.Attribute attrWithGroup = domainAttr.toBuilder()
                                 .group(i)
                                 .build();
@@ -111,5 +158,4 @@ public interface EServiceMapper {
 
         return flattenedList;
     }
-
 }
