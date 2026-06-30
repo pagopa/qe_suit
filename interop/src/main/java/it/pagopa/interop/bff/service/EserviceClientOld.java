@@ -1,13 +1,13 @@
 package it.pagopa.interop.bff.service;
 
-import it.pagopa.interop.common.contract.template.rest.AbstractRestClient;
+import it.pagopa.interop.common.contract.template.rest.RestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EserviceClientOld extends AbstractRestClient {
+public class EserviceClientOld extends RestService {
 //
 //    private final EservicesApi eservicesApi;
 //    private final RiskAnalysisDataService riskAnalysisService;

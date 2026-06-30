@@ -6,7 +6,7 @@ import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.common.contract.model.shared.enums.Channel;
 import it.pagopa.interop.common.contract.template.action.TestChain;
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.common.contract.template.rest.AbstractRestClient;
+import it.pagopa.interop.common.contract.template.rest.RestService;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysisSeed;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EServiceRiskAnalysisTestService extends AbstractRestClient implements IEServiceRiskAnalysisTestService {
+public class EServiceRiskAnalysisTestService extends RestService implements IEServiceRiskAnalysisTestService {
 
     private final EservicesApi eservicesApi;
     private final RiskAnalysisSeedFactory riskAnalysisSeedFactory;
