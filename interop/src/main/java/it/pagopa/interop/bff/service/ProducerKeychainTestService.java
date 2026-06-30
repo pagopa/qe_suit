@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.service;
 
 import it.pagopa.interop.bff.infrastructure.client_old.ProducerKeychainApiClient;
+import it.pagopa.interop.common.contract.service.IProducerKeychainTestService;
 import it.pagopa.interop.common.contract.model.shared.enums.Channel;
 import it.pagopa.interop.common.contract.model.producer_keychain.ProducerKeychain;
 import it.pagopa.interop.common.contract.request.ProducerKeychainReadAllRequest;
@@ -17,7 +18,7 @@ import java.util.List;
 @Service
 @Getter
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ProducerKeychainClient implements it.pagopa.interop.common.contract.client.ProducerKeychainClient {
+public class ProducerKeychainTestService implements IProducerKeychainTestService {
 
     private final ProducerKeychainApiClient client;
 

@@ -4,7 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.contract.model.producer_keychain.ProducerKeychain;
-import it.pagopa.interop.common.contract.client.ProducerKeychainClient;
+import it.pagopa.interop.common.contract.service.IProducerKeychainTestService;
 import it.pagopa.interop.common.contract.request.ProducerKeychainReadAllRequest;
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class ProducerKeychainController {
 
-    private final ProducerKeychainClient service;
+    private final IProducerKeychainTestService service;
 
     @Given("una lista di {int} Producer Keychain( associati al contesto dell'Ente Erogatore)")
     public void createProducerKeychains(int size) {

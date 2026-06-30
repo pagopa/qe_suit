@@ -1,7 +1,7 @@
-package it.pagopa.interop.bff.client;
+package it.pagopa.interop.bff.service;
 
 import it.pagopa.interop.bff.support.EServiceSeedFactory;
-import it.pagopa.interop.common.contract.client.EServiceClient;
+import it.pagopa.interop.common.contract.service.IEServiceTestService;
 import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.common.contract.model.shared.enums.Channel;
 import it.pagopa.interop.common.contract.template.action.TestChain;
@@ -20,11 +20,11 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EServiceBffClient extends AbstractRestClient implements EServiceClient {
+public class EServiceTestService extends AbstractRestClient implements IEServiceTestService {
 
     private final EservicesApi eservicesApi;
     private final EServiceSeedFactory seedFactory;
-    private final EServiceDescriptorBffClient descriptorClient;
+    private final EServiceDescriptorTestService descriptorClient;
 
     public TestChain<CreatedEServiceDescriptor, EService> createDraftWith(EServiceSeed seed) {
         return super.create(

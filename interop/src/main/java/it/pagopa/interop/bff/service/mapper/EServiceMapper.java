@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.client.mapper;
+package it.pagopa.interop.bff.service.mapper;
 
 import it.pagopa.interop.bff.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.contract.model.attribute.Attributes;

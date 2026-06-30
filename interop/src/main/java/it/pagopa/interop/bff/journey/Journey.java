@@ -1,90 +1,76 @@
 package it.pagopa.interop.bff.journey;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.bff.service.AgreementService;
-import it.pagopa.interop.bff.service.EserviceClientOld;
-import it.pagopa.interop.bff.service.PurposeDataService;
-import it.pagopa.interop.common.cucumber.context.ScenarioContext;
-import it.pagopa.interop.common.cucumber.context.UserContext;
+import it.pagopa.interop.bff.service.EServiceTestService;
+import it.pagopa.interop.common.contract.model.agreement.AgreementState;
+import it.pagopa.interop.common.contract.model.eservice.EServiceDescriptorState;
+import it.pagopa.interop.common.contract.model.purpose.PurposeVersionState;
+import it.pagopa.interop.common.contract.model.shared.enums.Channel;
 import it.pagopa.interop.common.contract.model.shared.enums.Tenant;
 import it.pagopa.interop.common.contract.model.shared.enums.User;
-import it.pagopa.interop.common.contract.model.eservice.EService;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.common.cucumber.context.UserContext;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.function.Consumer;
 
 @Service
 @ScenarioScope
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class Journey {
-
-    private final EserviceClientOld eserviceService;
-    private final AgreementService agreementService;
-    private final PurposeDataService purposeService;
+@RequiredArgsConstructor
+public class Journey implements it.pagopa.interop.common.contract.journey.Journey {
 
     private final UserContext userContext;
-    private final ScenarioContext scenarioContext;
+    private final EServiceTestService eServiceTestService;
 
     private Tenant producerTenant;
     private User producerUser;
     private Tenant consumerTenant;
     private User consumerUser;
 
-    public Journey publishEservice() {
-        publishEservice(es -> {
-        });
-        return this;
-    }
-
-    public Journey publishEservice(Consumer<EServiceSeed> eservice) {
-//        setUserContext(producerUser, producerTenant);
-//        var draftEservice = eserviceService.createEservice(eservice);
-//        eserviceService.publishEservice(draftEservice);
-        return this;
-    }
-
-    public Journey withProducer(Tenant tenant, User user) {
-        setUserContext(user, tenant);
+    @Override
+    public it.pagopa.interop.common.contract.journey.Journey withProducer(Tenant tenant, User user) {
         this.producerTenant = tenant;
         this.producerUser = user;
+        setUserContext(user, tenant);
         return this;
     }
 
-    public Journey withConsumer(Tenant tenant, User user) {
-        setUserContext(user, tenant);
+    @Override
+    public it.pagopa.interop.common.contract.journey.Journey withConsumer(Tenant tenant, User user) {
         this.consumerTenant = tenant;
         this.consumerUser = user;
-        return this;
-    }
-
-    public Journey addActiveAgreement() {
-        setUserContext(consumerUser, consumerTenant);
-        var agreement = agreementService.createAgreement(scenarioContext.getLastOrThrow(EService.class));
-        agreementService.submitAgreement(agreement);
-        return this;
-    }
-
-    public Journey addPurposeInState(PurposeVersionState state) {
-        addPurposeInState(state, purpose -> {
-        });
-        return this;
-    }
-
-    public Journey addPurposeInState(PurposeVersionState state, Consumer<PurposeSeed> purpose) {
-        setUserContext(consumerUser, consumerTenant);
-        var eservice = scenarioContext.getLastOrThrow(EService.class);
-        purposeService.createEservicePurposeWithState(eservice, state, purpose);
+        setUserContext(user, tenant);
         return this;
     }
 
     private void setUserContext(User user, Tenant tenant) {
-        if (user != null && tenant != null) {
-            userContext.set(user, tenant);
+        if (user == null || tenant == null) {
+            return;
         }
+
+        userContext.set(user, tenant);
+    }
+
+    @Override
+    public it.pagopa.interop.common.contract.journey.Journey addAgreement(AgreementState agreementState) {
+        return null;
+    }
+
+    @Override
+    public it.pagopa.interop.common.contract.journey.Journey createEService(EServiceDescriptorState state) {
+        return null;
+    }
+
+    @Override
+    public it.pagopa.interop.common.contract.journey.Journey publishEService() {
+        return null;
+    }
+
+    @Override
+    public it.pagopa.interop.common.contract.journey.Journey addPurpose(PurposeVersionState state) {
+        return null;
+    }
+
+    @Override
+    public boolean supports(Channel delimiter) {
+        return delimiter == Channel.BFF;
     }
 }

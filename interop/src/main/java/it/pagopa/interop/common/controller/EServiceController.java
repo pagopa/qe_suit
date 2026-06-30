@@ -2,7 +2,7 @@ package it.pagopa.interop.common.controller;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.common.contract.client.EServiceClient;
+import it.pagopa.interop.common.contract.service.IEServiceTestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,7 +11,7 @@ import java.util.Map;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EServiceController {
 
-    private final EServiceClient service;
+    private final IEServiceTestService service;
 
     @Given("un EService in stato DRAFT avente tutti i campi compilati, tra cui:")
     public void createWithOverride(Map<String, String> rawSeed) {

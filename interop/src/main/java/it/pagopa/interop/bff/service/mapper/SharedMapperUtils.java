@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.client.mapper;
+package it.pagopa.interop.bff.service.mapper;
 
 import org.mapstruct.Named;
 import java.time.Instant;

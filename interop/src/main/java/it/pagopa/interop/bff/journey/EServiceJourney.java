@@ -1,9 +1,8 @@
 package it.pagopa.interop.bff.journey;
 
-import it.pagopa.interop.bff.client.EServiceBffClient;
-import it.pagopa.interop.bff.client.EServiceDescriptorBffClient;
-import it.pagopa.interop.bff.client.EServiceRiskAnalysisBffClient;
-import it.pagopa.interop.common.contract.journey.EServiceJourney;
+import it.pagopa.interop.bff.service.EServiceTestService;
+import it.pagopa.interop.bff.service.EServiceDescriptorTestService;
+import it.pagopa.interop.bff.service.EServiceRiskAnalysisTestService;
 import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.common.contract.model.eservice.EServiceDescriptor;
 import it.pagopa.interop.common.contract.model.eservice.EServiceDescriptorState;
@@ -15,15 +14,15 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EServiceBffJourney implements EServiceJourney<EServiceBffJourney> {
+public class EServiceJourney implements it.pagopa.interop.common.contract.journey.EServiceJourney<EServiceJourney> {
 
-    private final EServiceBffClient service;
-    private final EServiceDescriptorBffClient descriptorService;
-    private final EServiceRiskAnalysisBffClient riskAnalysisService;
+    private final EServiceTestService service;
+    private final EServiceDescriptorTestService descriptorService;
+    private final EServiceRiskAnalysisTestService riskAnalysisService;
     private final ScenarioContext context;
 
     @Override
-    public EServiceBffJourney createEService(EServiceDescriptorState state) {
+    public EServiceJourney createEService(EServiceDescriptorState state) {
         // DRAFT
         EService eService = service.createAndFillDraftEservice()
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
@@ -57,7 +56,7 @@ public class EServiceBffJourney implements EServiceJourney<EServiceBffJourney> {
     }
 
     @Override
-    public EServiceBffJourney publishEService() {
+    public EServiceJourney publishEService() {
         EService current = context.getLastOrThrow(EService.class);
         EServiceDescriptor draftDescriptor = current.getLastDraftDescriptor();
 

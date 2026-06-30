@@ -1,8 +1,8 @@
-package it.pagopa.interop.bff.client;
+package it.pagopa.interop.bff.service;
 
 import it.pagopa.interop.bff.support.EServiceDescriptorUpdater;
 import it.pagopa.interop.bff.support.EServiceSeedFactory;
-import it.pagopa.interop.common.contract.client.EServiceDescriptorClient;
+import it.pagopa.interop.common.contract.service.IEServiceDescriptorTestService;
 import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.common.contract.model.shared.enums.Channel;
 import it.pagopa.interop.common.contract.template.action.TestChain;
@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EServiceDescriptorBffClient extends AbstractRestClient implements EServiceDescriptorClient {
+public class EServiceDescriptorTestService extends AbstractRestClient implements IEServiceDescriptorTestService {
 
     private final EservicesApi eservicesApi;
     private final EServiceSeedFactory seedFactory;
