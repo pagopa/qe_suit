@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.contract.client;
+package it.pagopa.interop.common.contract.service;
 
 import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.common.contract.model.shared.enums.Channel;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public interface EServiceRiskAnalysisClient extends Plugin<Channel> {
+public interface IEServiceRiskAnalysisTestService extends Plugin<Channel> {
 
     TestChain<?, EService> addRiskAnalysis(UUID eserviceId, String version, Map<String, List<String>> answers);
 

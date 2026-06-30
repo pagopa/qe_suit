@@ -1,7 +1,7 @@
-package it.pagopa.interop.bff.client;
+package it.pagopa.interop.bff.service;
 
 import it.pagopa.interop.bff.support.RiskAnalysisSeedFactory;
-import it.pagopa.interop.common.contract.client.EServiceRiskAnalysisClient;
+import it.pagopa.interop.common.contract.service.IEServiceRiskAnalysisTestService;
 import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.common.contract.model.shared.enums.Channel;
 import it.pagopa.interop.common.contract.template.action.TestChain;
@@ -19,11 +19,11 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EServiceRiskAnalysisBffClient extends AbstractRestClient implements EServiceRiskAnalysisClient {
+public class EServiceRiskAnalysisTestService extends AbstractRestClient implements IEServiceRiskAnalysisTestService {
 
     private final EservicesApi eservicesApi;
     private final RiskAnalysisSeedFactory riskAnalysisSeedFactory;
-    private final EServiceBffClient eserviceBffClient;
+    private final EServiceTestService eserviceBffClient;
 
     @Override
     public TestChain<?, EService> addRiskAnalysis(UUID eserviceId, String version, Map<String, List<String>> answers) {

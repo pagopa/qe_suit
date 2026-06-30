@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.contract.client;
+package it.pagopa.interop.common.contract.service;
 
 import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.common.contract.model.shared.enums.Channel;
@@ -8,7 +8,7 @@ import org.springframework.plugin.core.Plugin;
 import java.util.Map;
 import java.util.UUID;
 
-public interface EServiceDescriptorClient extends Plugin<Channel> {
+public interface IEServiceDescriptorTestService extends Plugin<Channel> {
 
     TestChain<?, EService> read(UUID eserviceId, UUID descriptorId);
 

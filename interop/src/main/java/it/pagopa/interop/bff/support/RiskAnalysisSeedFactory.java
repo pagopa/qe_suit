@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.support;
 
-import it.pagopa.interop.bff.client.PurposeBffClient;
+import it.pagopa.interop.bff.service.PurposeTestService;
 import it.pagopa.interop.common.contract.model.shared.enums.Tenant;
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.cucumber.context.UserContext;
@@ -23,7 +23,7 @@ public class RiskAnalysisSeedFactory {
 
     private final RiskAnalysisDataInitializer riskAnalysisDataInitializer;
     private final UserContext userContext;
-    private final PurposeBffClient purposeService;
+    private final PurposeTestService purposeService;
 
     public EServiceRiskAnalysisSeed from(String version, Map<String, List<String>> answers) {
         RiskAnalysisFormSeed form = new RiskAnalysisFormSeed()

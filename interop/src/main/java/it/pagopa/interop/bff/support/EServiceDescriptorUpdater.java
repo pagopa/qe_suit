@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.support;
 
-import it.pagopa.interop.bff.client.mapper.EServiceMapper;
+import it.pagopa.interop.bff.service.mapper.EServiceMapper;
 import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
