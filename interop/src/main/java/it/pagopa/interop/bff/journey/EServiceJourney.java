@@ -44,7 +44,38 @@ public class EServiceJourney implements it.pagopa.interop.common.contract.journe
                     .andUpdateContext();
 
             //TODO: aggiungere interfaccia al descrittore
-
+//    private void addInterfaceToDraftDescriptor(UUID eserviceId, UUID descriptorId) {
+//        // 1) assicura descriptor disponibile/stabile
+//        pollEservice(
+//                () -> eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId),
+//                resp -> resp != null && resp.getState() == EServiceDescriptorState.DRAFT,
+//                Duration.ofSeconds(20)
+//        );
+//
+//        ClassPathResource resource = new ClassPathResource("assets/origin-interface.yaml");
+//        ResponseEntity<CreatedResource> createResponse = pollResponse(
+//                () -> eservicesApi.createEServiceDocumentWithHttpInfo(
+//                        eserviceId,
+//                        descriptorId,
+//                        "INTERFACE",
+//                        "Interfaccia",
+//                        resource
+//                ),
+//                resp -> resp != null && resp.getStatusCode().is2xxSuccessful() && resp.getBody() != null,
+//                Duration.ofSeconds(20)
+//        );
+//
+//        CreatedResource created = createResponse.getBody();
+//
+//        // 3) verifica interfaccia presente
+//        pollEservice(
+//                () -> eservicesApi.getProducerEServiceDescriptor(eserviceId, descriptorId),
+//                resp -> resp != null
+//                        && resp.getInterface() != null
+//                        && Objects.equals(resp.getInterface().getId(), created.getId()),
+//                Duration.ofSeconds(20)
+//        );
+//    }
             descriptorService.publish(eService.getId(), draftDescriptor.getId())
                     .withPolling(PollingStrategy.UNTIL_SUCCESS)
                     .andUpdateContext();
