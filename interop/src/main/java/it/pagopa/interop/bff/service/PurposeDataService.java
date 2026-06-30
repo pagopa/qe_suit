@@ -29,7 +29,7 @@ public class PurposeDataService {
 
     private final PurposesApi purposesApi;
     private final ScenarioContext scenarioContext;
-    private final RiskAnalysisBffService riskAnalysisService;
+    //private final RiskAnalysisBffService riskAnalysisService;
     private final UserContext userContext;
 
     public Purpose createEservicePurpose(EService eservice) {
@@ -96,7 +96,7 @@ public class PurposeDataService {
     }
 
     private PurposeSeed buildDefaultPurposeSeed(EService eservice) {
-        RiskAnalysisForm riskAnalysis = riskAnalysisService.createRiskAnalysis();
+        RiskAnalysisForm riskAnalysis = null;
         UUID consumerId = userContext.getTenant().getOrganizationId();
         String title = "purpose-" + UUID.randomUUID().toString().substring(0, 8);
 
