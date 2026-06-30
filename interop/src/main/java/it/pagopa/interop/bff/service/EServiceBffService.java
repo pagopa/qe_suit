@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.bff.infrastructure.client.EServiceMapper;
 import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.common.contract.model.shared.enums.Channel;
-import it.pagopa.interop.common.contract.service.EServiceService;
+import it.pagopa.interop.common.service.EServiceService;
 import it.pagopa.interop.common.contract.template.action.TestChain;
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.contract.template.rest.RestService;

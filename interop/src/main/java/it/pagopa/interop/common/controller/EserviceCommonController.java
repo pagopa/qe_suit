@@ -1,13 +1,10 @@
-package it.pagopa.interop.common.contract.controller;
+package it.pagopa.interop.common.controller;
 
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.common.contract.model.shared.enums.Channel;
-import it.pagopa.interop.common.contract.service.EServiceService;
+import it.pagopa.interop.common.service.EServiceService;
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.Map;
 

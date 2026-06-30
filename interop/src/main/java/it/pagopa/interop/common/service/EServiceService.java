@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.contract.service;
+package it.pagopa.interop.common.service;
 
 import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.common.contract.model.shared.enums.Channel;
