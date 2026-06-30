@@ -37,7 +37,7 @@ public class AgreementService {
 
     public Agreement getAgreement(UUID agreementId) {
         Agreement agreement = pollAgreement(
-                () -> new Agreement(agreementsApi.getAgreementById(agreementId)),
+                () -> null,
                 a -> a.getId().equals(agreementId)
         );
         context.upsert(agreement);
@@ -58,7 +58,7 @@ public class AgreementService {
             throw new IllegalStateException("submitAgreement returned 2xx but empty body for agreement " + agreement.getId());
         }
 
-        Agreement result = new Agreement(submitted.getBody());
+        Agreement result =  null;
         context.upsert(result);
         return result;
     }
@@ -68,8 +68,8 @@ public class AgreementService {
         agreementsApi.activateAgreement(agreementId, null);
 
         Agreement activatedAgreement = pollAgreement(
-                () -> new Agreement(agreementsApi.getAgreementById(agreementId)),
-                a -> a.getId().equals(agreementId) && a.getState() == AgreementState.ACTIVE
+                () -> null,
+                a -> a.getId().equals(agreementId) && a.getState().name().equals(AgreementState.ACTIVE.name())
         );
         context.upsert(activatedAgreement);
         return activatedAgreement;
@@ -86,8 +86,8 @@ public class AgreementService {
 
     private AgreementPayload buildAgreementPayload(EService eservice, Optional<UUID> delegationId) {
         AgreementPayload request = new AgreementPayload();
-        request.setEserviceId(eservice.getEserviceId());
-        request.setDescriptorId(eservice.getLastDescriptorId());
+        request.setEserviceId(eservice.getId());
+        request.setDescriptorId(eservice.getDescriptors().get(eservice.getDescriptors().size() - 1).getId());
         request.setDelegationId(delegationId.orElse(null));
         return request;
     }

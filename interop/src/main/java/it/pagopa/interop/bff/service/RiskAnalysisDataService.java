@@ -45,7 +45,7 @@ public class RiskAnalysisDataService {
         RiskAnalysisFormSeed seed = buildRiskAnalysisFormSeed(currentTenant, answers);
 
         String title = "risk-analysis-" + UUID.randomUUID().toString().substring(0, 8);
-        return new RiskAnalysis(title, seed);
+        return null;
     }
 
     private RiskAnalysisFormSeed buildRiskAnalysisFormSeed(Tenant tenant, Map<String, java.util.List<String>> answers) {

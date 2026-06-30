@@ -86,7 +86,7 @@ public class PurposeDataService {
 
     public Purpose getPurpose(UUID purposeId) {
         Purpose purpose = poll(
-                () -> new Purpose(purposesApi.getPurpose(purposeId)),
+                () -> null,
                 resp -> resp != null && Objects.equals(purposeId, resp.getId()),
                 Duration.ofSeconds(20)
         );
@@ -106,9 +106,9 @@ public class PurposeDataService {
                 .isFreeOfCharge(true)
                 .freeOfChargeReason("free of charge")
                 .dailyCalls(1)
-                .eserviceId(eservice.getEserviceId())
+                .eserviceId(eservice.getId())
                 .consumerId(consumerId)
-                .riskAnalysisForm(riskAnalysis.getForm());
+                .riskAnalysisForm(null);
     }
 
     private UUID waitCurrentVersion(UUID purposeId) {
