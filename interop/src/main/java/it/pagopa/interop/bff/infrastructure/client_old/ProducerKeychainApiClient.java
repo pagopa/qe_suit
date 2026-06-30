@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-public class ProducerKeychainApiClient extends RestService implements
+public class ProducerKeychainApiClient extends AbstractRestClient implements
         CanCreate<ProducerKeychainSeed, CreatedResource, ProducerKeychain>,
         CanRead<UUID, it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain, ProducerKeychain>,
         CanReadAll<ProducerKeychainReadAllRequest, CompactProducerKeychains, ProducerKeychain>,
