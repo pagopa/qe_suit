@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 @Getter
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class ProducerKeychainService implements it.pagopa.interop.common.service.ProducerKeychainService {
+public class ProducerKeychainClient implements it.pagopa.interop.common.contract.client.ProducerKeychainClient {
 
     private final ProducerKeychainApiClient client;
 
