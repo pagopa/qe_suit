@@ -5,7 +5,7 @@ import it.pagopa.interop.common.contract.service.IEServiceTestService;
 import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.common.contract.model.shared.enums.Channel;
 import it.pagopa.interop.common.contract.template.action.TestChain;
-import it.pagopa.interop.common.contract.template.rest.AbstractRestClient;
+import it.pagopa.interop.common.contract.template.rest.RestService;
 import it.pagopa.interop.common.utils.DeepMerger;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceDescriptor;
@@ -20,7 +20,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EServiceTestService extends AbstractRestClient implements IEServiceTestService {
+public class EServiceTestService extends RestService implements IEServiceTestService {
 
     private final EservicesApi eservicesApi;
     private final EServiceSeedFactory seedFactory;

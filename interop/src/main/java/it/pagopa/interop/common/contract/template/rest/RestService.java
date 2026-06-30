@@ -14,7 +14,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Component
-public abstract class AbstractRestClient {
+public class RestService {
     @Getter
     @Setter(onMethod_ = {@Autowired})
     protected TestChainFactory chainFactory;
@@ -45,6 +45,13 @@ public abstract class AbstractRestClient {
             Function<RESPONSE, List<MODEL>> domainMapper) {
 
         return execute(apiCall, domainMapper);
+    }
+
+    protected <RESPONSE, MODEL extends TestModel> TestChain<RESPONSE, MODEL> delete(
+            Supplier<ResponseEntity<RESPONSE>> apiCall,
+            Function<RESPONSE, MODEL> domainMapper) {
+
+        return execute(apiCall, resp -> List.of(domainMapper.apply(resp)));
     }
 
     /**
