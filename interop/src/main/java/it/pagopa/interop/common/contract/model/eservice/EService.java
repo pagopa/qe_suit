@@ -2,11 +2,11 @@ package it.pagopa.interop.common.contract.model.eservice;
 
 import it.pagopa.interop.common.contract.model.TestModel;
 import it.pagopa.interop.common.contract.model.shared.DocumentRef;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,5 +46,11 @@ public class EService implements TestModel {
                                 .toList()
                 )
                 .build();
+    }
+
+    public EServiceDescriptor getLastDraftDescriptor() {
+        return descriptors.stream().filter(descriptor -> descriptor.getState() == EServiceDescriptorState.DRAFT)
+                .max(Comparator.comparing(EServiceDescriptor::getCreatedAt))
+                .orElse(null);
     }
 }
