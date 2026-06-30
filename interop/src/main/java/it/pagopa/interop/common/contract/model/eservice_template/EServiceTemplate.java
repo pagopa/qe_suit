@@ -1,9 +1,8 @@
 package it.pagopa.interop.common.contract.model.eservice_template;
 
+import it.pagopa.interop.common.contract.model.TestModel;
 import it.pagopa.interop.common.contract.model.eservice.EServiceMode;
 import it.pagopa.interop.common.contract.model.eservice.EServiceTechnology;
-import it.pagopa.interop.common.contract.model.TestModel;
-import it.pagopa.interop.common.contract.model.risk_analysis.RiskAnalysis;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
@@ -33,5 +32,5 @@ public class EServiceTemplate implements TestModel {
     List<EServiceTemplateVersion> versions;
 
     @Singular("riskAnalysis")
-    List<RiskAnalysis> riskAnalyses;
+    List<EServiceRiskAnalysis> riskAnalyses;
 }
