@@ -14,7 +14,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Component
-public abstract class RestService {
+public abstract class AbstractRestClient {
     @Getter
     @Setter(onMethod_ = {@Autowired})
     protected TestChainFactory chainFactory;
