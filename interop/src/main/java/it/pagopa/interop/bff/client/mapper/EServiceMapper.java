@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.infrastructure.client;
+package it.pagopa.interop.bff.client.mapper;
 
 import it.pagopa.interop.bff.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.contract.model.attribute.Attributes;
@@ -7,15 +7,16 @@ import it.pagopa.interop.common.contract.model.eservice.EServiceDescriptor;
 import it.pagopa.interop.common.contract.model.shared.DelegationRef;
 import it.pagopa.interop.common.contract.model.shared.DelegationTenantRef;
 import it.pagopa.interop.common.contract.model.shared.DocumentRef;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttribute;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDescriptor;
 import org.mapstruct.*;
 
-import java.time.Instant;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mapper(config = TestMapperConfig.class)
+@Mapper(config = TestMapperConfig.class, uses = {SharedMapperUtils.class})
 public interface EServiceMapper {
 
     /**
@@ -113,17 +114,6 @@ public interface EServiceMapper {
     it.pagopa.interop.common.contract.model.shared.enums.TenantKind toDomainTenantKind(it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind source);
 
     it.pagopa.interop.common.contract.model.eservice_template.EServiceTemplateRef toTemplateRef(it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateRef source);
-
-    // ==========================================
-    // LOGICA DI CONVERSIONE STRING -> INSTANT
-    // ==========================================
-    @Named("mapStringToInstant")
-    default Instant mapStringToInstant(String dateStr) {
-        if (dateStr == null || dateStr.isBlank()) {
-            return null;
-        }
-        return OffsetDateTime.parse(dateStr).toInstant();
-    }
 
     // ==========================================
     // LOGICA DI FLATTENING ATTRIBUTI + INDICE GRUPPO
