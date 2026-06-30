@@ -1,0 +1,18 @@
+package it.pagopa.interop.common.contract.model.eservice_template;
+
+import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.risk_analysis.RiskAnalysisForm;
+import lombok.Builder;
+import lombok.Value;
+import lombok.extern.jackson.Jacksonized;
+
+import java.util.UUID;
+
+@Value
+@Builder(toBuilder = true)
+@Jacksonized
+public class EServiceRiskAnalysis implements TestModel {
+    UUID id;
+    String name;
+    RiskAnalysisForm riskAnalysisForm;
+}

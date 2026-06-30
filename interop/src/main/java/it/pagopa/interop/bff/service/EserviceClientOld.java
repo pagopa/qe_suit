@@ -1,27 +1,13 @@
 package it.pagopa.interop.bff.service;
 
-import it.pagopa.interop.common.contract.template.action.TestChain;
-import it.pagopa.interop.common.contract.template.rest.RestService;
-import it.pagopa.interop.common.cucumber.context.ScenarioContext;
-import it.pagopa.interop.common.contract.model.eservice.EService;
-import it.pagopa.interop.common.contract.model.risk_analysis.RiskAnalysis;
-import it.pagopa.interop.common.utils.PollingUtils;
-import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.common.contract.template.rest.AbstractRestClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
-import java.time.Duration;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EserviceServiceOld extends RestService {
+public class EserviceClientOld extends AbstractRestClient {
 //
 //    private final EservicesApi eservicesApi;
 //    private final RiskAnalysisDataService riskAnalysisService;

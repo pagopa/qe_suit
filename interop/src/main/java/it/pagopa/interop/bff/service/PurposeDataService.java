@@ -1,10 +1,10 @@
 package it.pagopa.interop.bff.service;
 
+import it.pagopa.interop.common.contract.model.risk_analysis.RiskAnalysisForm;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.cucumber.context.UserContext;
 import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.common.contract.model.purpose.Purpose;
-import it.pagopa.interop.common.contract.model.risk_analysis.RiskAnalysis;
 import it.pagopa.interop.common.utils.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
@@ -29,7 +29,7 @@ public class PurposeDataService {
 
     private final PurposesApi purposesApi;
     private final ScenarioContext scenarioContext;
-    private final RiskAnalysisDataService riskAnalysisService;
+    private final RiskAnalysisBffService riskAnalysisService;
     private final UserContext userContext;
 
     public Purpose createEservicePurpose(EService eservice) {
@@ -96,7 +96,7 @@ public class PurposeDataService {
     }
 
     private PurposeSeed buildDefaultPurposeSeed(EService eservice) {
-        RiskAnalysis riskAnalysis = riskAnalysisService.createRiskAnalysis();
+        RiskAnalysisForm riskAnalysis = riskAnalysisService.createRiskAnalysis();
         UUID consumerId = userContext.getTenant().getOrganizationId();
         String title = "purpose-" + UUID.randomUUID().toString().substring(0, 8);
 
