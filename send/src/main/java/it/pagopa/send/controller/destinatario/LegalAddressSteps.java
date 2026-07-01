@@ -1,6 +1,7 @@
 package it.pagopa.send.controller.destinatario;
 
 import io.cucumber.java.en.When;
+import it.frontend.e2e.framework.core.model.selector.XPathSelector;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.send.domain.context.CurrentUserContext;
 import it.pagopa.send.domain.web.pages.destinatario.AddressPage;
@@ -15,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class LegalAddressSteps {
+    private static final XPathSelector OTP_DIALOG = XPathSelector.of("//div[@role='dialog']");
+
     private final CurrentUserContext currentUserContext;
     private final WebPresentationGateway browser;
     private final VerificationCodeProvider verificationCodeProvider;
@@ -26,8 +29,9 @@ public class LegalAddressSteps {
         currentPage.startOnboarding(email);
         String otp = verificationCodeProvider.makeRequest(email);
         log.info("OTP received for email {}: {}", email, otp);
-
         currentPage.submitOtp(otp);
+        // Wait for the OTP dialog to disappear before continuing
+        browser.waitUntilElementDisappears(OTP_DIALOG, 15);
         currentPage.continueToSummary();
         currentPage.activateDigitalDomicile();
     }
