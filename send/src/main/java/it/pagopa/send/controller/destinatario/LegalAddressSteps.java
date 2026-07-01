@@ -9,8 +9,10 @@ import it.pagopa.send.domain.web.pages.destinatario.pf.AddressPFPage;
 import it.pagopa.send.domain.web.pages.destinatario.pg.AddressPGPage;
 import it.pagopa.send.services.VerificationCodeProvider;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
+@Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class LegalAddressSteps {
     private final CurrentUserContext currentUserContext;
@@ -23,6 +25,8 @@ public class LegalAddressSteps {
         DigitalDomicileOnboardPage currentPage = browser.bind(DigitalDomicileOnboardPage.class);
         currentPage.startOnboarding(email);
         String otp = verificationCodeProvider.makeRequest(email);
+        log.info("OTP received for email {}: {}", email, otp);
+
         currentPage.submitOtp(otp);
         currentPage.continueToSummary();
         currentPage.activateDigitalDomicile();

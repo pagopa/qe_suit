@@ -20,7 +20,7 @@ public interface DigitalDomicileOnboardPage extends Page {
     @XPath("//*[@id=\"default_email-button\"]")
     Clickable emailSubmitButton();
 
-    @XPath("//*[@id=\":rh:\"]|//*[@id=\":re:\"]")
+    @XPath("//div[@role='dialog']//input[@autocomplete='one-time-code']")
     Writable<String> otpInput();
 
     @XPath("//*[@id=\"code-confirm-button\"]")
