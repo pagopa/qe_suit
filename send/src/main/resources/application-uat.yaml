@@ -54,7 +54,8 @@ selettore:
     pg:
       area-riservata-selettore-env: '//*[@id="root"]/div/div[2]/div[2]/main/div/div[3]/div[2]/div[7]/div/div/div/div[3]/button'
   supporto:
-    area-riservata-selettore-env: '//*[@id="root"]/div/div[2]/div[2]/main/div/div[3]/div[3]/table/tbody/tr[3]/td[5]/button'
+    area-riservata-selettore-env: '//*[@id="root"]/div/div[2]/div[2]/main/div/div[2]/div[3]/table/tbody/tr[3]/td[5]
+'
 
 
 

@@ -16,7 +16,7 @@ import it.pagopa.send.domain.web.pages.destinatario.pf.AddressPFPage;
 import it.pagopa.send.domain.web.pages.destinatario.pf.AppStatusPFPage;
 import it.pagopa.send.domain.web.pages.destinatario.pf.DelegationsPFPage;
 import it.pagopa.send.domain.web.pages.destinatario.pf.NotificationPFPage;
-import it.pagopa.send.domain.web.pages.destinatario.pg.AddressPage;
+import it.pagopa.send.domain.web.pages.destinatario.pg.AddressPGPage;
 import it.pagopa.send.domain.web.pages.destinatario.pg.ApiIntegrationPage;
 import it.pagopa.send.domain.web.pages.destinatario.pg.DelegatedNotificationPage;
 import it.pagopa.send.domain.web.pages.destinatario.pg.NewDelegationPage;
@@ -38,7 +38,7 @@ public class PageType {
         STATISTICS("Statistics", StatisticsPage.class),
         PLATFORM_STATUS("PlatformStatus", PlatformStatusPage.class),
         BACKSTAGE_PROFILE("BackstageProfile", BackstageProfilePage.class),
-        ADDRESS("Address", AddressPage.class),
+        ADDRESS("Address", AddressPGPage.class),
         API_INTEGRATION("ApiIntegration", ApiIntegrationPage.class),
         DELEGATED_NOTIFICATION("DelegatedNotification", DelegatedNotificationPage.class),
         NEW_DELEGATION("NewDelegation", NewDelegationPage.class),

@@ -3,7 +3,7 @@
 # ============================================================================
 spring:
   profiles:
-    active: uat
+    active: test
 
 # ============================================================================
 # Channel Configuration
@@ -23,3 +23,8 @@ channel:
 logging:
   level:
     E2E-Framework: DEBUG
+
+verification:
+  code:
+    service:
+      url: http://localhost:8886

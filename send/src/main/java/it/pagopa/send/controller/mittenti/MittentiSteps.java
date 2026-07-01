@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class MittentiSteps {
 
     private final WebPresentationGateway browser;
-    private Page currentPage;
 
     @Given("l'utente è un {string} di {string}")
     public void login(String role, String pa) {
@@ -25,15 +24,6 @@ public class MittentiSteps {
         Assertions.assertTrue(auth.isAuthenticated());
     }
 
-    @When("naviga alla pagina {page}")
-    public void navigateTo(Class<? extends Page> page) {
-        currentPage = browser.bind(page);
-        currentPage.navigateTo();
-    }
 
-    @Then("la pagina deve caricarsi correttamente")
-    public void laPaginaDeveCaricarsiCorrettamente() {
-       currentPage.assertLoaded();
-    }
 
 }
