@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @ScenarioScope
-public class CurrentUserContext {
+public class UserContext {
     private User currentUser;
 
     public void set(User user) {

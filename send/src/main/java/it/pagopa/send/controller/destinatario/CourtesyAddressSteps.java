@@ -4,9 +4,8 @@ import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.send.domain.web.pages.destinatario.AddressPage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class CourtesyAddressSteps {
     private final WebPresentationGateway browser;
 

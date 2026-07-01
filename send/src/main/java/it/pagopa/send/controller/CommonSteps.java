@@ -11,9 +11,8 @@ import it.pagopa.send.domain.web.commons.component.Sidebar;
 import it.pagopa.send.domain.web.commons.pages.login.AbstractComunePickerPage;
 import it.pagopa.send.domain.web.pages.supporto.BackstageProfilePage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class CommonSteps {
     private final WebPresentationGateway uiGateway;
     private Page currentPage;

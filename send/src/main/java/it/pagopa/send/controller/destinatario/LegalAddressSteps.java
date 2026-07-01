@@ -2,7 +2,7 @@ package it.pagopa.send.controller.destinatario;
 
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.send.domain.context.CurrentUserContext;
+import it.pagopa.send.domain.context.UserContext;
 import it.pagopa.send.domain.web.pages.destinatario.AddressPage;
 import it.pagopa.send.domain.web.pages.destinatario.DigitalDomicileOnboardPage;
 import it.pagopa.send.domain.web.pages.destinatario.pf.AddressPFPage;
@@ -10,12 +10,11 @@ import it.pagopa.send.domain.web.pages.destinatario.pg.AddressPGPage;
 import it.pagopa.send.services.VerificationCodeProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@RequiredArgsConstructor
 public class LegalAddressSteps {
-    private final CurrentUserContext currentUserContext;
+    private final UserContext userContext;
     private final WebPresentationGateway browser;
     private final VerificationCodeProvider verificationCodeProvider;
 
@@ -33,7 +32,7 @@ public class LegalAddressSteps {
     @When("se presente viene disabilitato il domicilio digitale SERCQ")
     @When("viene disabilitato il domicilio digitale SERCQ")
     public void disableSercqDigitalDomicile() {
-        String type = currentUserContext.getUser().getType();
+        String type = userContext.getUser().getType();
         AddressPage addressPage;
         if (type.equals("PG")) {
             addressPage = browser.bind(AddressPGPage.class);
