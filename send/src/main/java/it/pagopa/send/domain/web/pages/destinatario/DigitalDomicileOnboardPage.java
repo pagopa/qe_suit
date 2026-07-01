@@ -57,7 +57,8 @@ public interface DigitalDomicileOnboardPage extends Page {
             Assertions.assertThat(h).isNotNull();
             Assertions.assertThat(h).isIn("The email to receive alerts about SEND notifications",
                     "La tua email per ricevere avvisi sulle notifiche SEND",
-                    "L’email per ricevere avvisi sulle notifiche SEND");
+                    "L’email per ricevere avvisi sulle notifiche SEND",
+                    "Your email to receive alerts on SEND notifications");
         }));
         continueToSummaryButton().click();
         summarySubtitle().readAndAssert((h) -> {
