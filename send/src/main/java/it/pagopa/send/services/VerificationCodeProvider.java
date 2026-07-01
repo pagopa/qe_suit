@@ -20,7 +20,8 @@ public class VerificationCodeProvider {
 
     public String makeRequest(String email) {
         try {
-            TimeUnit.SECONDS.sleep(5); // Attendi un po' prima di fare la richiesta per assicurarti che il codice sia generato
+            TimeUnit.SECONDS.sleep(5);
+            //Attendi un po' prima di fare la richiesta per assicurarti che il codice sia generato
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.error("Thread interrotto durante l'attesa: {}", e.getMessage());
@@ -32,6 +33,15 @@ public class VerificationCodeProvider {
                 .retrieve()
                 .body(String.class);
         log.info("OTP received for email {}: {}", email, otp);
+
+        try {
+            TimeUnit.SECONDS.sleep(5);
+            // Attendi un po' dopo aver ricevuto il codice per assicurarti che l'OTP sia stato registrato come valido
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.error("Thread interrotto durante l'attesa: {}", e.getMessage());
+        }
+
         return otp;
     }
 
