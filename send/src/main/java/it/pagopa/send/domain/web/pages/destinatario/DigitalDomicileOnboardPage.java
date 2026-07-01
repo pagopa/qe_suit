@@ -26,7 +26,7 @@ public interface DigitalDomicileOnboardPage extends Page {
     @XPath("//*[@id=\"code-confirm-button\"]")
     Clickable otpSubmitButton();
 
-    @XPath("//button[normalize-space()='Continue']|//button[normalize-space()='Continua']")
+    @XPath("//button[@data-testid='prev-button']/following-sibling::button")
     Clickable continueToSummaryButton();
 
     @XPath("//div[@data-testid='emailSmsContactWizard']/p[1]")
