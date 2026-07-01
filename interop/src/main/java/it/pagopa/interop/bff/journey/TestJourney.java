@@ -1,8 +1,7 @@
 package it.pagopa.interop.bff.journey;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.common.contract.journey.AbstractJourney;
-import it.pagopa.interop.common.contract.journey.IBaseJourney;
+import it.pagopa.interop.common.contract.journey.*;
 import it.pagopa.interop.common.contract.model.agreement.AgreementState;
 import it.pagopa.interop.common.contract.model.client.ClientKind;
 import it.pagopa.interop.common.contract.model.eservice.EServiceDescriptorState;
@@ -15,7 +14,8 @@ import java.util.UUID;
 
 @Service
 @ScenarioScope
-public class TestJourney extends AbstractJourney<TestJourney> implements IBaseJourney<TestJourney> {
+public class TestJourney extends AbstractJourney<TestJourney> implements
+        IBaseJourney<TestJourney>, IEServiceJourney<TestJourney>, IAgreementJourney<TestJourney>, IClientJourney<TestJourney>, IPurposeJourney<TestJourney> {
 
     private final EServiceJourney eServiceJourney;
     private final ClientJourney clientJourney;
