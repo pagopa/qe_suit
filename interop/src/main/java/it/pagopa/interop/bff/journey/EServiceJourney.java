@@ -3,6 +3,7 @@ package it.pagopa.interop.bff.journey;
 import it.pagopa.interop.bff.service.EServiceTestService;
 import it.pagopa.interop.bff.service.EServiceDescriptorTestService;
 import it.pagopa.interop.bff.service.EServiceRiskAnalysisTestService;
+import it.pagopa.interop.common.contract.journey.IEServiceJourney;
 import it.pagopa.interop.common.contract.model.eservice.EService;
 import it.pagopa.interop.common.contract.model.eservice.EServiceDescriptor;
 import it.pagopa.interop.common.contract.model.eservice.EServiceDescriptorState;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class EServiceJourney implements it.pagopa.interop.common.contract.journey.EServiceJourney<EServiceJourney> {
+public class EServiceJourney implements IEServiceJourney<EServiceJourney> {
 
     private final EServiceTestService service;
     private final EServiceDescriptorTestService descriptorService;

@@ -3,6 +3,7 @@ package it.pagopa.interop.bff.service;
 import it.pagopa.interop.bff.service.mapper.AgreementMapper;
 import it.pagopa.interop.bff.support.AgreementSeedFactory;
 import it.pagopa.interop.common.contract.model.agreement.Agreement;
+import it.pagopa.interop.common.contract.model.shared.enums.Channel;
 import it.pagopa.interop.common.contract.service.IAgreementTestService;
 import it.pagopa.interop.common.contract.template.action.TestChain;
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
@@ -71,5 +72,10 @@ public class AgreementTestService extends RestService implements IAgreementTestS
                         agreement -> agreement.getState() == AgreementState.ACTIVE
                 ))
                 .getModel();
+    }
+
+    @Override
+    public boolean supports(Channel delimiter) {
+        return delimiter == Channel.BFF;
     }
 }
