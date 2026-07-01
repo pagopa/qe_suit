@@ -42,6 +42,12 @@ public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<
     }
 
     @Override
+    public byte[] takeScreenshot() {
+        logger.logInfo("Taking screenshot");
+        return webAdapter.takeScreenshot();
+    }
+
+    @Override
     public void close() {
         logger.logInfo("Closing Browser");
         webAdapter.close();

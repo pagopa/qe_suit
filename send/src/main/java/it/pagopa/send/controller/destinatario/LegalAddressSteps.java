@@ -28,7 +28,6 @@ public class LegalAddressSteps {
         DigitalDomicileOnboardPage currentPage = browser.bind(DigitalDomicileOnboardPage.class);
         currentPage.startOnboarding(email);
         String otp = verificationCodeProvider.makeRequest(email);
-        log.info("OTP received for email {}: {}", email, otp);
         currentPage.submitOtp(otp);
         // Wait for the OTP dialog to disappear before continuing
         browser.waitUntilElementDisappears(OTP_DIALOG, 15);
