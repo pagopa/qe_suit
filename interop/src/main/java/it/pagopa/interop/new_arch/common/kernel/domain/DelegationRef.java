@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.shared.domain;
+package it.pagopa.interop.new_arch.common.kernel.domain;
 
 import lombok.Builder;
 import lombok.Value;
@@ -9,12 +9,10 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class DocumentRef {
+public class DelegationRef {
     UUID id;
-    String name;
-    String contentType;
-    String prettyName;
-    String checksum;
+    DelegationTenantRef delegate;
+    DelegationTenantRef delegator;
 }
 
 

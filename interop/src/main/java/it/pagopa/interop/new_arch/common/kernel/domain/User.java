@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.shared.domain;
+package it.pagopa.interop.new_arch.common.kernel.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import java.util.Arrays;
 import java.util.UUID;
 
-import static it.pagopa.interop.new_arch.common.shared.domain.Tenant.*;
-import static it.pagopa.interop.new_arch.common.shared.domain.UserRole.ADMIN;
-import static it.pagopa.interop.new_arch.common.shared.domain.UserRole.API;
+import static it.pagopa.interop.new_arch.common.kernel.domain.Tenant.*;
+import static it.pagopa.interop.new_arch.common.kernel.domain.UserRole.ADMIN;
+import static it.pagopa.interop.new_arch.common.kernel.domain.UserRole.API;
 
 @Getter
 @RequiredArgsConstructor
