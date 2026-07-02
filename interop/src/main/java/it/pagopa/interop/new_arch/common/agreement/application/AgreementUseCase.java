@@ -7,6 +7,7 @@ import it.pagopa.interop.new_arch.common.agreement.domain.Agreement;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementRef;
 import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +19,18 @@ public class AgreementUseCase {
     private final AgreementGateway agreementGateway;
     private final AgreementRequestFactory requestFactory;
 
-    public Agreement createAgreement(EService eService, EServiceDescriptor eServiceDescriptor) {
+    public Agreement createAgreement(EService eService, EServiceDescriptor eServiceDescriptor, DelegationRef delegation){
         CreateAgreementRequest request = requestFactory.creationRequest()
                 .eService(eService)
-                .eServiceDescriptor(eServiceDescriptor);
+                .eServiceDescriptor(eServiceDescriptor)
+                .delegation(delegation);
 
         AgreementRef ref = agreementGateway.createAgreement(request);
         return agreementGateway.getAgreement(ref);
+    }
+
+    public Agreement createAgreement(EService eService, EServiceDescriptor eServiceDescriptor) {
+        return createAgreement(eService, eServiceDescriptor, null);
     }
 
     public Agreement getAgreement(Agreement agreement) {
