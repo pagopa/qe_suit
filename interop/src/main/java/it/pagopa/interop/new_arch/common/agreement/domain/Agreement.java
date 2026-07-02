@@ -21,4 +21,8 @@ public class Agreement implements Identifiable {
     Boolean suspendedByConsumer;
     Boolean suspendedByProducer;
     String rejectionReason;
+
+    public AgreementRef getRef(){
+        return new AgreementRef(id);
+    }
 }
