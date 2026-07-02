@@ -1,27 +1,23 @@
 package it.pagopa.interop.new_arch.common.agreement.application;
 
-import it.pagopa.interop.new_arch.common.agreement.application.request.CreateAgreementRequest;
 import it.pagopa.interop.new_arch.common.agreement.domain.Agreement;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementRef;
+import it.pagopa.interop.new_arch.common.eservice.domain.EService;
+import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
 public class AgreementUseCase {
     private final AgreementGateway agreementGateway;
-    private final AgreementRequestFactory requestFactory;
 
-    public Agreement createAgreement(Consumer<CreateAgreementRequest> configurator) {
-        CreateAgreementRequest request = requestFactory.creationRequest();
-        configurator.accept(request);
-
-        AgreementRef ref = agreementGateway.createAgreement(request.getEService(), request.getEServiceDescriptor(), request.getDelegation());
+    public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation) {
+        AgreementRef ref = agreementGateway.createAgreement(eService, descriptor, delegation);
         return agreementGateway.getAgreement(ref);
     }
 

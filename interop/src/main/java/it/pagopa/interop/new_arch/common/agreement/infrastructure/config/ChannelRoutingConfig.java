@@ -1,7 +1,6 @@
 package it.pagopa.interop.new_arch.common.agreement.infrastructure.config;
 
 import it.pagopa.interop.new_arch.common.agreement.application.AgreementGateway;
-import it.pagopa.interop.new_arch.common.agreement.application.AgreementRequestFactory;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ChannelContext;
 import it.pagopa.interop.new_arch.common.infrastructure.interceptor.ChannelRoutingInterceptor;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
@@ -16,7 +15,7 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 
 @Configuration
 @RequiredArgsConstructor
-@EnablePluginRegistries({AgreementGateway.class, AgreementRequestFactory.class})
+@EnablePluginRegistries({AgreementGateway.class})
 public class ChannelRoutingConfig {
 
     private final ObjectProvider<ChannelContext> channelContextProvider;
@@ -31,17 +30,5 @@ public class ChannelRoutingConfig {
         proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, channelContextProvider));
 
         return (AgreementGateway) proxyFactory.getProxy();
-    }
-
-    @Bean
-    @Primary
-    public AgreementRequestFactory transparentAgreementRequestFactory(
-            PluginRegistry<AgreementRequestFactory, Channel> registry) {
-
-        ProxyFactory proxyFactory = new ProxyFactory();
-        proxyFactory.setInterfaces(AgreementRequestFactory.class);
-        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, channelContextProvider));
-
-        return (AgreementRequestFactory) proxyFactory.getProxy();
     }
 }

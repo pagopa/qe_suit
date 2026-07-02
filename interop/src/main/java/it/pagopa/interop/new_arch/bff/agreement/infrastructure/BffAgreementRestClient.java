@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.bff.agreement.infrastructure.client;
+package it.pagopa.interop.new_arch.bff.agreement.infrastructure;
 
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
@@ -18,7 +18,7 @@ import java.util.UUID;
 public class BffAgreementRestClient extends RestGateway {
 
     private final AgreementsApi agreementsApi;
-    private final BffAgreementMapper mapper;
+    private final BffAgreementRestClientMapper mapper;
 
     public TestChain<CreatedResource, Agreement> create(@Nonnull AgreementPayload payload) {
         return super.create(
