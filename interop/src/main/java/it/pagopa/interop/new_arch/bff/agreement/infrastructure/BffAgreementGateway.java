@@ -2,7 +2,6 @@ package it.pagopa.interop.new_arch.bff.agreement.infrastructure;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
-import it.pagopa.interop.new_arch.bff.agreement.infrastructure.client.BffAgreementRestClient;
 import it.pagopa.interop.new_arch.common.agreement.application.AgreementGateway;
 import it.pagopa.interop.new_arch.common.agreement.domain.Agreement;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementRef;

@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.bff.agreement.infrastructure.client;
+package it.pagopa.interop.new_arch.bff.agreement.infrastructure;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementDelegation;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementsEService;
@@ -13,7 +13,7 @@ import org.mapstruct.Mapping;
 import java.util.UUID;
 
 @Mapper(config = TestMapperConfig.class, uses = { SharedMapperUtils.class })
-public interface BffAgreementMapper {
+public interface BffAgreementRestClientMapper {
 
     @Mapping(target = "producerId", source = "producer")
     @Mapping(target = "consumerId", source = "consumer")
