@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.shared.domain;
+package it.pagopa.interop.new_arch.common.kernel.domain;
 
 import it.pagopa.interop.common.contract.model.TestModel;
 import it.pagopa.interop.common.contract.model.attribute.Attributes;

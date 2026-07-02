@@ -1,11 +1,11 @@
-package it.pagopa.interop.new_arch.common.shared.domain;
+package it.pagopa.interop.new_arch.common.kernel.domain;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.UUID;
 
-import static it.pagopa.interop.new_arch.common.shared.domain.TenantKind.*;
+import static it.pagopa.interop.new_arch.common.kernel.domain.TenantKind.*;
 
 @RequiredArgsConstructor
 @Getter

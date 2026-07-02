@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.shared.domain;
+package it.pagopa.interop.new_arch.common.kernel.domain;
 
 import lombok.Builder;
 import lombok.Value;
