@@ -1,9 +1,9 @@
 package it.pagopa.interop.new_arch.common.eservice_template.domain;
 
-import it.pagopa.interop.common.contract.model.Identifiable;
-import it.pagopa.interop.common.contract.model.agreement.AgreementApprovalPolicy;
-import it.pagopa.interop.common.contract.model.attribute.Attributes;
-import it.pagopa.interop.common.contract.model.shared.DocumentRef;
+import it.pagopa.interop.new_arch.common.agreement.domain.AgreementApprovalPolicy;
+import it.pagopa.interop.new_arch.common.attribute.domain.Attributes;
+import it.pagopa.interop.new_arch.common.kernel.domain.DocumentRef;
+import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;

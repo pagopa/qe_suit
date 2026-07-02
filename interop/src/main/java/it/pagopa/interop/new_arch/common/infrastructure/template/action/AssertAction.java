@@ -1,8 +1,8 @@
 package it.pagopa.interop.new_arch.common.infrastructure.template.action;
 
-import it.pagopa.interop.common.contract.model.Identifiable;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.context.BaseActionContext;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.AssertionStrategy;
+import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;

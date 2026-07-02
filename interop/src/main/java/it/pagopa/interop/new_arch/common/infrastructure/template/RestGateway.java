@@ -1,8 +1,8 @@
 package it.pagopa.interop.new_arch.common.infrastructure.template;
 
-import it.pagopa.interop.common.contract.model.Identifiable;
-import it.pagopa.interop.common.contract.template.action.TestChain;
-import it.pagopa.interop.common.contract.template.action.TestChainFactory;
+import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChain;
+import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChainFactory;
+import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package it.pagopa.interop.new_arch.common.eservice_template.domain;
 
-import it.pagopa.interop.common.contract.model.shared.DocumentRef;
+import it.pagopa.interop.new_arch.common.kernel.domain.DocumentRef;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
