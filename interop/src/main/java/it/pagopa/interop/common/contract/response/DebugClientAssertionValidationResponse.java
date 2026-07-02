@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.contract.response;
 
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import it.pagopa.interop.common.contract.model.shared.ClientAssertion;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -14,7 +14,7 @@ import java.util.UUID;
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor
-public class DebugClientAssertionValidationResponse implements TestModel {
+public class DebugClientAssertionValidationResponse implements Identifiable {
 
 
     public enum Status {

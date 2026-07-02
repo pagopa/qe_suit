@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.contract.template.action;
 
 import it.pagopa.interop.common.contract.template.action.context.BaseActionContext;
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import lombok.Setter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ public class TestChainFactory {
     private ObjectProvider<TestChain> testActionChainProvider;
 
     @SuppressWarnings("unchecked")
-    public <Entity, Model extends TestModel> TestChain<Entity, Model> build(Supplier<ResponseEntity<Entity>> httpCall, Function<Entity, List<Model>> mapper) {
+    public <Entity, Model extends Identifiable> TestChain<Entity, Model> build(Supplier<ResponseEntity<Entity>> httpCall, Function<Entity, List<Model>> mapper) {
         var baseActionContext = new BaseActionContext<>(httpCall, mapper);
         return testActionChainProvider.getObject().handle(baseActionContext);
     }

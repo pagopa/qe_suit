@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.contract.template.rest;
 
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import it.pagopa.interop.common.contract.template.action.TestChain;
 import it.pagopa.interop.common.contract.template.action.TestChainFactory;
 import lombok.Getter;
@@ -19,35 +19,35 @@ public class RestService {
     @Setter(onMethod_ = {@Autowired})
     protected TestChainFactory chainFactory;
 
-    protected <RESPONSE, MODEL extends TestModel> TestChain<RESPONSE, MODEL> create(
+    protected <RESPONSE, MODEL extends Identifiable> TestChain<RESPONSE, MODEL> create(
             Supplier<ResponseEntity<RESPONSE>> apiCall,
             Function<RESPONSE, MODEL> domainMapper) {
 
         return execute(apiCall, resp -> List.of(domainMapper.apply(resp)));
     }
 
-    protected <RESPONSE, MODEL extends TestModel> TestChain<RESPONSE, MODEL> update(
+    protected <RESPONSE, MODEL extends Identifiable> TestChain<RESPONSE, MODEL> update(
             Supplier<ResponseEntity<RESPONSE>> apiCall,
             Function<RESPONSE, MODEL> domainMapper) {
 
         return execute(apiCall, resp -> List.of(domainMapper.apply(resp)));
     }
 
-    protected <RESPONSE, MODEL extends TestModel> TestChain<RESPONSE, MODEL> read(
+    protected <RESPONSE, MODEL extends Identifiable> TestChain<RESPONSE, MODEL> read(
             Supplier<ResponseEntity<RESPONSE>> apiCall,
             Function<RESPONSE, MODEL> domainMapper) {
 
         return execute(apiCall, resp -> List.of(domainMapper.apply(resp)));
     }
 
-    protected <RESPONSE, MODEL extends TestModel> TestChain<RESPONSE, MODEL> readAll(
+    protected <RESPONSE, MODEL extends Identifiable> TestChain<RESPONSE, MODEL> readAll(
             Supplier<ResponseEntity<RESPONSE>> apiCall,
             Function<RESPONSE, List<MODEL>> domainMapper) {
 
         return execute(apiCall, domainMapper);
     }
 
-    protected <RESPONSE, MODEL extends TestModel> TestChain<RESPONSE, MODEL> delete(
+    protected <RESPONSE, MODEL extends Identifiable> TestChain<RESPONSE, MODEL> delete(
             Supplier<ResponseEntity<RESPONSE>> apiCall,
             Function<RESPONSE, MODEL> domainMapper) {
 
@@ -65,7 +65,7 @@ public class RestService {
      * @param mapper     La lambda del tuo Handler che definisce COME mappare il DTO nel dominio
      * @return Una TestChain pronta per essere eseguita o configurata con politiche di polling
      */
-    private <RESPONSE, MODEL extends TestModel> TestChain<RESPONSE, MODEL> execute(
+    private <RESPONSE, MODEL extends Identifiable> TestChain<RESPONSE, MODEL> execute(
             Supplier<ResponseEntity<RESPONSE>> apiCall,
             Function<RESPONSE, List<MODEL>> mapper) {
 

@@ -3,7 +3,7 @@ package it.pagopa.interop.common.contract.template.action;
 import it.pagopa.interop.common.contract.template.action.context.BaseActionContext;
 import it.pagopa.interop.common.contract.template.action.context.PollingActionContext;
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import lombok.Setter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.time.Duration;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class TestChain<Entity, Model extends TestModel> {
+public class TestChain<Entity, Model extends Identifiable> {
 
     private BaseActionContext<Entity, Model> baseActionContext;
     @Setter(onMethod_ = {@Autowired}) private ObjectProvider<PollingAction<Entity, Model>> pollingActionProvider;

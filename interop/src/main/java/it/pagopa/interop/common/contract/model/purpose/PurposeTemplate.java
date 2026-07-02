@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.contract.model.purpose;
 
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class PurposeTemplate implements TestModel {
+public class PurposeTemplate implements Identifiable {
     UUID id;
     UUID creatorId;
     String title;

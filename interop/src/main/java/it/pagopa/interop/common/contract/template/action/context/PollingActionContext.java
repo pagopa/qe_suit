@@ -1,13 +1,13 @@
 package it.pagopa.interop.common.contract.template.action.context;
 
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import lombok.Getter;
 
 import java.time.Duration;
 
 @Getter
-public class PollingActionContext<Entity, Model extends TestModel> extends BaseActionContext<Entity, Model> {
+public class PollingActionContext<Entity, Model extends Identifiable> extends BaseActionContext<Entity, Model> {
 
     private final PollingStrategy<? super Entity> pollingStrategy;
     private final Duration timeout;

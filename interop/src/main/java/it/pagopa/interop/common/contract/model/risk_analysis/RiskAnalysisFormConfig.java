@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.contract.model.risk_analysis;
 
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class RiskAnalysisFormConfig implements TestModel {
+public class RiskAnalysisFormConfig implements Identifiable {
     UUID id = UUID.randomUUID();
     String version;
     Instant expiration;

@@ -4,7 +4,7 @@ import it.pagopa.interop.common.contract.template.action.context.BaseActionConte
 import it.pagopa.interop.common.contract.template.action.context.PollingActionContext;
 import it.pagopa.interop.common.contract.template.action.strategy.AssertionStrategy;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import it.pagopa.interop.common.utils.PollingUtils;
 import lombok.Setter;
 import org.springframework.beans.factory.ObjectProvider;
@@ -20,7 +20,7 @@ import java.util.List;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PollingAction<Entity, Model extends TestModel> implements Finalizer<Entity, Model> {
+public class PollingAction<Entity, Model extends Identifiable> implements Finalizer<Entity, Model> {
 
     @Setter(onMethod_ = {@Autowired})
     private ObjectProvider<AssertAction<Entity, Model>> assertActionProvider;
@@ -52,16 +52,16 @@ public class PollingAction<Entity, Model extends TestModel> implements Finalizer
     }
 
     public PollingAction<Entity, Model> andUpdateContext(String... alias) {
-        List<? extends TestModel> models = baseActionContext.getMapper().apply(finalResponse.getBody());
+        List<? extends Identifiable> models = baseActionContext.getMapper().apply(finalResponse.getBody());
 
         if (alias.length > models.size()) {
             throw new IllegalArgumentException("The given alias exceeds the maximum number of test models");
         }
 
-        List<ScenarioContext.ContextEntry<? extends TestModel>> contextEntries = new ArrayList<>();
+        List<ScenarioContext.ContextEntry<? extends Identifiable>> contextEntries = new ArrayList<>();
 
         for (int i = 0; i < models.size(); i++) {
-            TestModel model = models.get(i);
+            Identifiable model = models.get(i);
             String modelAlias = i < alias.length ? alias[i] : null;
             contextEntries.add(new ScenarioContext.ContextEntry<>(model, modelAlias));
         }

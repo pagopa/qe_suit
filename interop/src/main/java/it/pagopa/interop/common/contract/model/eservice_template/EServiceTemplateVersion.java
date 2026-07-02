@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.contract.model.eservice_template;
 
 import it.pagopa.interop.common.contract.model.agreement.AgreementApprovalPolicy;
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import it.pagopa.interop.common.contract.model.attribute.Attributes;
 import it.pagopa.interop.common.contract.model.shared.DocumentRef;
 import lombok.Builder;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class EServiceTemplateVersion implements TestModel {
+public class EServiceTemplateVersion implements Identifiable {
     UUID id;
     String version;
     EServiceTemplateVersionState state;

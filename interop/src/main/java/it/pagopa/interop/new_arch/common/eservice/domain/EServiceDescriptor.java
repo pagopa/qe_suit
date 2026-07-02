@@ -1,6 +1,6 @@
 package it.pagopa.interop.new_arch.common.eservice.domain;
 
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import it.pagopa.interop.common.contract.model.agreement.AgreementApprovalPolicy;
 import it.pagopa.interop.common.contract.model.attribute.Attributes;
 import it.pagopa.interop.common.contract.model.eservice_template.EServiceTemplateRef;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class EServiceDescriptor implements TestModel {
+public class EServiceDescriptor implements Identifiable {
     UUID id;
     String version;
     EServiceDescriptorState state;
