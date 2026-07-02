@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.utils;
+package it.pagopa.interop.new_arch.common.infrastructure.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;

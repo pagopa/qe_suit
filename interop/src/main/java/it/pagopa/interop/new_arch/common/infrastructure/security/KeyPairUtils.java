@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.utils;
+package it.pagopa.interop.new_arch.common.infrastructure.security;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;

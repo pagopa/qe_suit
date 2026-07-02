@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.utils;
+package it.pagopa.interop.new_arch.common.infrastructure.utils;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;

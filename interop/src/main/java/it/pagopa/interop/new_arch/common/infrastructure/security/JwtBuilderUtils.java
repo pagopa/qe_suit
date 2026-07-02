@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.utils;
+package it.pagopa.interop.new_arch.common.infrastructure.security;
 
 import io.jsonwebtoken.JwtBuilder;
 import java.util.List;
