@@ -5,11 +5,13 @@ import it.pagopa.interop.new_arch.common.agreement.domain.Agreement;
 import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
 import lombok.Getter;
 
+import javax.annotation.Nullable;
+
 @Getter
 public class BffActivateAgreementRequest implements ActivateAgreementRequest {
 
     private Agreement agreement;
-    private DelegationRef delegation;
+    @Nullable private DelegationRef delegation;
 
     @Override
     public ActivateAgreementRequest agreement(Agreement agreement) {

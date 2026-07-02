@@ -1,11 +1,11 @@
 package it.pagopa.interop.new_arch.bff.agreement.infrastructure.client;
 
-import it.pagopa.interop.common.contract.template.action.TestChain;
-import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.new_arch.common.agreement.domain.Agreement;
 import it.pagopa.interop.new_arch.common.infrastructure.template.RestGateway;
+import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChain;
+import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.PollingStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

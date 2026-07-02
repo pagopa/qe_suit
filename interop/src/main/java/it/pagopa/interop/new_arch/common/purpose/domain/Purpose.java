@@ -1,6 +1,6 @@
 package it.pagopa.interop.new_arch.common.purpose.domain;
 
-import it.pagopa.interop.common.contract.model.Identifiable;
+import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;

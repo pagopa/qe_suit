@@ -1,7 +1,7 @@
 package it.pagopa.interop.new_arch.bff.agreement.infrastructure;
 
-import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.new_arch.bff.agreement.infrastructure.client.BffAgreementRestClient;
+import it.pagopa.interop.new_arch.bff.agreement.infrastructure.request.BffActivateAgreementRequest;
 import it.pagopa.interop.new_arch.bff.agreement.infrastructure.request.BffCreateAgreementRequest;
 import it.pagopa.interop.new_arch.bff.agreement.infrastructure.request.BffSubmitAgreementRequest;
 import it.pagopa.interop.new_arch.common.agreement.application.AgreementGateway;
@@ -10,7 +10,9 @@ import it.pagopa.interop.new_arch.common.agreement.application.request.CreateAgr
 import it.pagopa.interop.new_arch.common.agreement.application.request.SubmitAgreementRequest;
 import it.pagopa.interop.new_arch.common.agreement.domain.Agreement;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementRef;
+import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
+import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -58,7 +60,12 @@ public class BffAgreementGateway implements AgreementGateway {
 
     @Override
     public Optional<AgreementRef> activateAgreement(ActivateAgreementRequest request) {
-        AgreementRef ref = restClient.activate(request.getAgreement().getId(), request.getDelegation().getId())
+        if (!(request instanceof BffActivateAgreementRequest bffRequest))
+            throw new IllegalArgumentException("Invalid request type: " + request.getClass().getName());
+
+        AgreementRef ref = restClient.activate(
+                        bffRequest.getAgreement().getId(), Optional.ofNullable(bffRequest.getDelegation()).map(DelegationRef::getId).orElse(null)
+                )
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .andUpdateContext()
                 .getModel()

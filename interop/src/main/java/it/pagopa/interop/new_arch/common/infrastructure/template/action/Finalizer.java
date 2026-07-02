@@ -1,6 +1,6 @@
 package it.pagopa.interop.new_arch.common.infrastructure.template.action;
 
-import it.pagopa.interop.common.contract.model.Identifiable;
+import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;

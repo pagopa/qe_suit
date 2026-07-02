@@ -7,12 +7,14 @@ import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
 import lombok.Getter;
 
+import javax.annotation.Nullable;
+
 @Getter
 public class BffCreateAgreementRequest implements CreateAgreementRequest {
 
     private final AgreementPayload realPayload = new AgreementPayload();
     private EService eService;
-    private DelegationRef delegation;
+    @Nullable private DelegationRef delegation;
     private EServiceDescriptor eServiceDescriptor;
 
     @Override

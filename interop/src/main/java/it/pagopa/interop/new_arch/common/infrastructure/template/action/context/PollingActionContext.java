@@ -1,7 +1,7 @@
 package it.pagopa.interop.new_arch.common.infrastructure.template.action.context;
 
-import it.pagopa.interop.common.contract.model.Identifiable;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Getter;
 
 import java.time.Duration;
