@@ -1,13 +1,10 @@
 package it.pagopa.interop.new_arch.common.agreement.application;
 
-import it.pagopa.interop.new_arch.common.agreement.application.request.ActivateAgreementRequest;
 import it.pagopa.interop.new_arch.common.agreement.application.request.CreateAgreementRequest;
-import it.pagopa.interop.new_arch.common.agreement.application.request.SubmitAgreementRequest;
 import it.pagopa.interop.new_arch.common.agreement.domain.Agreement;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementRef;
-import it.pagopa.interop.new_arch.common.eservice.domain.EService;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +17,11 @@ public class AgreementUseCase {
     private final AgreementGateway agreementGateway;
     private final AgreementRequestFactory requestFactory;
 
-    public Agreement createAgreement(Consumer<CreateAgreementRequest> configurator){
+    public Agreement createAgreement(Consumer<CreateAgreementRequest> configurator) {
         CreateAgreementRequest request = requestFactory.creationRequest();
         configurator.accept(request);
 
-        AgreementRef ref = agreementGateway.createAgreement(request);
+        AgreementRef ref = agreementGateway.createAgreement(request.getEService(), request.getEServiceDescriptor(), request.getDelegation());
         return agreementGateway.getAgreement(ref);
     }
 
@@ -32,19 +29,13 @@ public class AgreementUseCase {
         return agreementGateway.getAgreement(agreement.getRef());
     }
 
-    public Agreement activateAgreement(Agreement agreement) {
-        ActivateAgreementRequest request = requestFactory.activateRequest()
-                .agreement(agreement);
-
-        Optional<AgreementRef> maybeRef = agreementGateway.activateAgreement(request);
+    public Agreement activateAgreement(Agreement agreement, @Nullable DelegationRef delegation) {
+        Optional<AgreementRef> maybeRef = agreementGateway.activateAgreement(agreement, delegation);
         return agreementGateway.getAgreement(maybeRef.orElse(agreement.getRef()));
     }
 
     public Agreement submitAgreement(Agreement agreement) {
-        SubmitAgreementRequest request = requestFactory.submitRequest()
-                .agreement(agreement);
-
-        Optional<AgreementRef> maybeRef = agreementGateway.submitAgreement(request);
+        Optional<AgreementRef> maybeRef = agreementGateway.submitAgreement(agreement);
         return agreementGateway.getAgreement(maybeRef.orElse(agreement.getRef()));
     }
 }

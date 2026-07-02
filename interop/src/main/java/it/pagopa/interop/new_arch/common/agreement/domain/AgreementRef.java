@@ -1,8 +1,9 @@
 package it.pagopa.interop.new_arch.common.agreement.domain;
 
+import javax.annotation.Nonnull;
 import java.util.UUID;
 
-public record AgreementRef(UUID id) {
+public record AgreementRef(@Nonnull UUID id) {
     public static AgreementRef of(UUID id) {
         return new AgreementRef(id);
     }
