@@ -1,6 +1,9 @@
 package it.pagopa.interop.new_arch.bff.agreement.infrastructure;
 
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.new_arch.bff.agreement.infrastructure.client.BffAgreementRestClient;
+import it.pagopa.interop.new_arch.bff.agreement.infrastructure.request.BffCreateAgreementRequest;
+import it.pagopa.interop.new_arch.bff.agreement.infrastructure.request.BffSubmitAgreementRequest;
 import it.pagopa.interop.new_arch.common.agreement.application.AgreementGateway;
 import it.pagopa.interop.new_arch.common.agreement.application.request.ActivateAgreementRequest;
 import it.pagopa.interop.new_arch.common.agreement.application.request.CreateAgreementRequest;
@@ -21,7 +24,10 @@ public class BffAgreementGateway implements AgreementGateway {
 
     @Override
     public AgreementRef createAgreement(CreateAgreementRequest request) {
-        return restClient.create(request.getEService().getId(), request.getEServiceDescriptor().getId(), request.getDelegation().getId())
+        if (!(request instanceof BffCreateAgreementRequest bffRequest))
+            throw new IllegalArgumentException("Invalid request type: " + request.getClass().getName());
+
+        return restClient.create(bffRequest.getRealPayload())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .andUpdateContext()
                 .getModel()
@@ -38,7 +44,10 @@ public class BffAgreementGateway implements AgreementGateway {
 
     @Override
     public Optional<AgreementRef> submitAgreement(SubmitAgreementRequest request) {
-        AgreementRef ref = restClient.submit(request.getAgreement().getId())
+        if (!(request instanceof BffSubmitAgreementRequest bffRequest))
+            throw new IllegalArgumentException("Invalid request type: " + request.getClass().getName());
+
+        AgreementRef ref = restClient.submit(bffRequest.getAgreementId(), bffRequest.getPayload())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .andUpdateContext()
                 .getModel()

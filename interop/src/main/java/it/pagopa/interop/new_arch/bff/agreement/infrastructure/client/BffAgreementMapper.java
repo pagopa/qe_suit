@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.bff.agreement.infrastructure;
+package it.pagopa.interop.new_arch.bff.agreement.infrastructure.client;
 
 import it.pagopa.interop.bff.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.bff.service.mapper.SharedMapperUtils;

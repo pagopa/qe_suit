@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.bff.agreement.infrastructure;
+package it.pagopa.interop.new_arch.bff.agreement.infrastructure.client;
 
 import it.pagopa.interop.common.contract.template.action.TestChain;
 import it.pagopa.interop.common.contract.template.action.strategy.PollingStrategy;
@@ -9,7 +9,6 @@ import it.pagopa.interop.new_arch.common.infrastructure.template.RestGateway;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.UUID;
 
 @Component
@@ -17,12 +16,9 @@ import java.util.UUID;
 public class BffAgreementRestClient extends RestGateway {
 
     private final AgreementsApi agreementsApi;
-    private final BffAgreementRequestFactory requestFactory;
     private final BffAgreementMapper mapper;
 
-    public TestChain<CreatedResource, Agreement> create(UUID eserviceId, UUID descriptorId, UUID delegationId) {
-        AgreementPayload payload = requestFactory.fullCreationRequest(eserviceId, descriptorId, Optional.ofNullable(delegationId));
-
+    public TestChain<CreatedResource, Agreement> create(AgreementPayload payload) {
         return super.create(
                 () -> agreementsApi.createAgreementWithHttpInfo(payload),
                 created -> read(created.getId())
@@ -38,7 +34,7 @@ public class BffAgreementRestClient extends RestGateway {
         );
     }
 
-    public TestChain<it.pagopa.interop.generated.openapi.clients.bff.model.Agreement, Agreement> submit(UUID agreementId) {
+    public TestChain<it.pagopa.interop.generated.openapi.clients.bff.model.Agreement, Agreement> submit(UUID agreementId, AgreementSubmissionPayload payload) {
         return super.update(
                 () -> agreementsApi.submitAgreementWithHttpInfo(agreementId, new AgreementSubmissionPayload()),
                 mapper::toAgreement
