@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -19,18 +20,12 @@ public class AgreementUseCase {
     private final AgreementGateway agreementGateway;
     private final AgreementRequestFactory requestFactory;
 
-    public Agreement createAgreement(EService eService, EServiceDescriptor eServiceDescriptor, DelegationRef delegation){
-        CreateAgreementRequest request = requestFactory.creationRequest()
-                .eService(eService)
-                .eServiceDescriptor(eServiceDescriptor)
-                .delegation(delegation);
+    public Agreement createAgreement(Consumer<CreateAgreementRequest> configurator){
+        CreateAgreementRequest request = requestFactory.creationRequest();
+        configurator.accept(request);
 
         AgreementRef ref = agreementGateway.createAgreement(request);
         return agreementGateway.getAgreement(ref);
-    }
-
-    public Agreement createAgreement(EService eService, EServiceDescriptor eServiceDescriptor) {
-        return createAgreement(eService, eServiceDescriptor, null);
     }
 
     public Agreement getAgreement(Agreement agreement) {
