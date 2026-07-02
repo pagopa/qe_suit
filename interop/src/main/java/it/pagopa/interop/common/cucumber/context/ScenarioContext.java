@@ -2,6 +2,8 @@ package it.pagopa.interop.common.cucumber.context;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.contract.model.TestModel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @ScenarioScope
 public class ScenarioContext {
+
+    @Getter
+    @RequiredArgsConstructor
+    public static class ContextEntry<Model extends TestModel> {
+        private final Model item;
+        private final String alias;
+    }
 
     private final Map<Class<? extends TestModel>, List<ContextEntry<? extends TestModel>>> storage = new ConcurrentHashMap<>();
     private final Map<String, TestModel> aliasStorage = new ConcurrentHashMap<>();

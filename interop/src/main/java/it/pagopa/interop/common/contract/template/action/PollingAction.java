@@ -3,7 +3,6 @@ package it.pagopa.interop.common.contract.template.action;
 import it.pagopa.interop.common.contract.template.action.context.BaseActionContext;
 import it.pagopa.interop.common.contract.template.action.context.PollingActionContext;
 import it.pagopa.interop.common.contract.template.action.strategy.AssertionStrategy;
-import it.pagopa.interop.common.cucumber.context.ContextEntry;
 import it.pagopa.interop.common.cucumber.context.ScenarioContext;
 import it.pagopa.interop.common.contract.model.TestModel;
 import it.pagopa.interop.common.utils.PollingUtils;
@@ -59,12 +58,12 @@ public class PollingAction<Entity, Model extends TestModel> implements Finalizer
             throw new IllegalArgumentException("The given alias exceeds the maximum number of test models");
         }
 
-        List<ContextEntry<? extends TestModel>> contextEntries = new ArrayList<>();
+        List<ScenarioContext.ContextEntry<? extends TestModel>> contextEntries = new ArrayList<>();
 
         for (int i = 0; i < models.size(); i++) {
             TestModel model = models.get(i);
             String modelAlias = i < alias.length ? alias[i] : null;
-            contextEntries.add(new ContextEntry<>(model, modelAlias));
+            contextEntries.add(new ScenarioContext.ContextEntry<>(model, modelAlias));
         }
 
         scenarioContext.setLastResponseEntity(finalResponse);
