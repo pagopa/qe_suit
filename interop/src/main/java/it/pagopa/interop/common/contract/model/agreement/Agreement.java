@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.contract.model.agreement;
 
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
@@ -10,7 +10,7 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class Agreement implements TestModel {
+public class Agreement implements Identifiable {
     UUID id;
     UUID eserviceId;
     UUID descriptorId;

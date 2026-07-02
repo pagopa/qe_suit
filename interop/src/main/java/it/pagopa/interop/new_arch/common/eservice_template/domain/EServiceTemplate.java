@@ -1,6 +1,6 @@
 package it.pagopa.interop.new_arch.common.eservice_template.domain;
 
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import it.pagopa.interop.common.contract.model.eservice.EServiceMode;
 import it.pagopa.interop.common.contract.model.eservice.EServiceTechnology;
 import lombok.Builder;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class EServiceTemplate implements TestModel {
+public class EServiceTemplate implements Identifiable {
     UUID id;
     UUID creatorId;
     String name;

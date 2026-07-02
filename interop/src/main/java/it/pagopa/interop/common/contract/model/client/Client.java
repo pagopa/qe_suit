@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.contract.model.client;
 
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import it.pagopa.interop.common.contract.model.purpose.Purpose;
 import it.pagopa.interop.common.contract.model.shared.Key;
 import it.pagopa.interop.common.contract.model.shared.UserRef;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class Client implements TestModel {
+public class Client implements Identifiable {
     UUID id;
     UUID consumerId;
     String name;

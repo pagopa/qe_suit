@@ -2,7 +2,7 @@ package it.pagopa.interop.common.contract.template.action;
 
 import it.pagopa.interop.common.contract.template.action.context.BaseActionContext;
 import it.pagopa.interop.common.contract.template.action.strategy.AssertionStrategy;
-import it.pagopa.interop.common.contract.model.TestModel;
+import it.pagopa.interop.common.contract.model.Identifiable;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class AssertAction<Entity, Model extends TestModel> implements Finalizer<Entity, Model> {
+public class AssertAction<Entity, Model extends Identifiable> implements Finalizer<Entity, Model> {
 
     private ResponseEntity<Entity> finalResponse;
     private BaseActionContext<Entity, Model> baseActionContext;
