@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class AgreementRestApiConfig {
+public class RestConfig {
     @Bean
     public AgreementsApi agreementsApi(ApiClient apiClient) {
         return new AgreementsApi(apiClient);
