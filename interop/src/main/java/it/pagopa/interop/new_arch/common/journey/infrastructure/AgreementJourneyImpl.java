@@ -7,6 +7,7 @@ import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ScenarioContext;
 import it.pagopa.interop.new_arch.common.journey.application.AgreementJourney;
 import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,17 +18,23 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
     private final ScenarioContext scenarioContext;
 
     @Override
-    public AgreementJourneyImpl linkAgreement(AgreementState agreementState, DelegationRef delegationRef) {
-        EService eService = scenarioContext.getLastOrThrow(EService.class);
+    public AgreementJourneyImpl linkAgreementInState(EService eService, AgreementState agreementState, @org.jspecify.annotations.Nullable DelegationRef delegationRef) {
         Agreement agreement = agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor(), delegationRef);
 
-        switch(agreementState) {
-            case DRAFT -> {}
+        switch (agreementState) {
+            case DRAFT -> {
+            }
             case PENDING -> agreementUseCase.submitAgreement(agreement);
             case ACTIVE -> agreementUseCase.activateAgreement(agreement, delegationRef);
             default -> throw new UnsupportedOperationException("Not implemented yet: " + agreementState);
         }
 
         return this;
+    }
+
+    @Override
+    public AgreementJourneyImpl linkAgreementInState(AgreementState agreementState, @Nullable DelegationRef delegationRef) {
+        EService eService = scenarioContext.getLastOrThrow(EService.class);
+        return linkAgreementInState(eService, agreementState, delegationRef);
     }
 }
