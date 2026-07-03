@@ -1,8 +1,8 @@
 package it.pagopa.interop.new_arch.common.infrastructure.cucumber.context;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.common.contract.model.shared.enums.Tenant;
-import it.pagopa.interop.common.contract.model.shared.enums.User;
+import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
+import it.pagopa.interop.new_arch.common.kernel.domain.User;
 import org.springframework.stereotype.Component;
 
 @Component
