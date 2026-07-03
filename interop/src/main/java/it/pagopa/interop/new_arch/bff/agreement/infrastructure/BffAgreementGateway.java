@@ -2,16 +2,20 @@ package it.pagopa.interop.new_arch.bff.agreement.infrastructure;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.new_arch.common.agreement.application.AgreementGateway;
 import it.pagopa.interop.new_arch.common.agreement.domain.Agreement;
+import it.pagopa.interop.new_arch.common.agreement.domain.AgreementCreationFailureReason;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementRef;
 import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.AssertionStrategy;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
 import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -32,6 +36,19 @@ public class BffAgreementGateway implements AgreementGateway {
                 .andUpdateContext()
                 .getModel()
                 .getRef();
+    }
+
+    @Override
+    public void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, @org.jspecify.annotations.Nullable DelegationRef delegation, AgreementCreationFailureReason reason) {
+        AgreementPayload payload = agreementRequestFactory.creationRequest(eService, descriptor, delegation);
+
+        AssertionStrategy<? super CreatedResource> expectedStatus = switch (reason) {
+            case ESERVICE_INVALID_STATE -> AssertionStrategy.STATUS_400;
+        };
+
+        restClient.create(payload)
+                .withPolling(PollingStrategy.UNTIL_ERROR)
+                .andAssertThat(expectedStatus);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package it.pagopa.interop.new_arch.common.agreement.application;
 
 import it.pagopa.interop.new_arch.common.agreement.domain.Agreement;
+import it.pagopa.interop.new_arch.common.agreement.domain.AgreementCreationFailureReason;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementRef;
 import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
@@ -18,6 +19,12 @@ public interface AgreementGateway extends Plugin<Channel> {
 
     default AgreementRef createAgreement(EService eService, EServiceDescriptor descriptor) {
         return createAgreement(eService, descriptor, null);
+    }
+
+    void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation, AgreementCreationFailureReason reason);
+
+    default void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, AgreementCreationFailureReason reason) {
+        shouldFailToCreateAgreement(eService, descriptor, null, reason);
     }
 
     Agreement getAgreement(AgreementRef ref);
