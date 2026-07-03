@@ -38,7 +38,7 @@ public class BffAgreementGateway implements AgreementGateway {
     }
 
     @Override
-    public void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, @org.jspecify.annotations.Nullable DelegationRef delegation, AgreementCreationFailureReason reason) {
+    public void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation, AgreementCreationFailureReason reason) {
         AgreementPayload payload = agreementRequestFactory.creationRequest(eService, descriptor, delegation);
 
         AssertionStrategy<? super CreatedResource> expectedStatus = switch (reason) {
