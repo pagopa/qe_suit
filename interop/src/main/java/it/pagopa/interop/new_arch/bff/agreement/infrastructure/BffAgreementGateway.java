@@ -15,7 +15,6 @@ import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
 import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
