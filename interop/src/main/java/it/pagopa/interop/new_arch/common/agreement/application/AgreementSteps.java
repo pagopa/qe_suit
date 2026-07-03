@@ -10,6 +10,6 @@ public class AgreementSteps {
 
     @Given("associa un Agreement in stato DRAFT all'{eService}")
     public void createAgreement(EService eService) {
-        agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor(), null);
+        agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor());
     }
 }
