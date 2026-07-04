@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.interceptor;
+package it.pagopa.interop.new_arch.common.infrastructure;
 
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ChannelContext;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
