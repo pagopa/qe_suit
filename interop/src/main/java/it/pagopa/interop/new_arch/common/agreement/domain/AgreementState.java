@@ -1,8 +1,10 @@
 package it.pagopa.interop.new_arch.common.agreement.domain;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@Getter
 public enum AgreementState {
     DRAFT("DRAFT"),
 
