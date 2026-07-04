@@ -1,14 +1,13 @@
 package it.pagopa.interop.new_arch.common.infrastructure.security;
 
-import io.jsonwebtoken.JwtBuilder;
 import java.util.List;
 
-public final class JwtBuilderUtils {
+public final class JwtBuilder {
 
     public record JwtClaimOverride(String claim, String value) { }
 
 
-    public static void applyOverrides(JwtBuilder builder, List<JwtClaimOverride> overrides) {
+    public static void applyOverrides(io.jsonwebtoken.JwtBuilder builder, List<JwtClaimOverride> overrides) {
         for (JwtClaimOverride ov : overrides) {
             String claim = ov.claim();
             String raw = ov.value();
@@ -48,7 +47,7 @@ public final class JwtBuilderUtils {
         }
     }
 
-    private static void setClaim(JwtBuilder builder, String name, Object value) {
+    private static void setClaim(io.jsonwebtoken.JwtBuilder builder, String name, Object value) {
         // 1. Gestione del "not found": se il valore è null o stringa vuota, non aggiungiamo il claim
         if (value == null || (value instanceof String s && s.isBlank())) {
             return;
@@ -66,7 +65,7 @@ public final class JwtBuilderUtils {
         builder.claim(name, finalValue);
     }
 
-    private static void setHeader(JwtBuilder builder, String name, String value) {
+    private static void setHeader(io.jsonwebtoken.JwtBuilder builder, String name, String value) {
         if (value == null || value.isBlank()) return;
         builder.header().add(name, value).and();
     }
@@ -123,15 +122,15 @@ public final class JwtBuilderUtils {
         return raw;
     }
 
-    private static void removeClaim(JwtBuilder builder, String claimName) {
+    private static void removeClaim(io.jsonwebtoken.JwtBuilder builder, String claimName) {
         builder.claim(claimName, null);
     }
 
-    private static void removeHeader(JwtBuilder builder, String headerName) {
+    private static void removeHeader(io.jsonwebtoken.JwtBuilder builder, String headerName) {
         builder.header().delete(headerName);
     }
 
-    private static void setRawPayload(JwtBuilder builder, String raw) {
+    private static void setRawPayload(io.jsonwebtoken.JwtBuilder builder, String raw) {
         if (raw == null) return;
 
         // Rimuove tutti i claims impostati finora per evitare l'IllegalStateException
