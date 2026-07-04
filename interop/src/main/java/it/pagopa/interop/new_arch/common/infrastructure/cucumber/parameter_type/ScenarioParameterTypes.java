@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
+//TODO: da rifattorizzare, va messo nelle rispettive cartelle infrastructure/cucumber
 public class ScenarioParameterTypes {
 
     private final ScenarioContext scenarioContext;
