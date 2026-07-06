@@ -5,7 +5,7 @@ import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
 import jakarta.annotation.Nullable;
 
-public interface AgreementJourney<SELF extends AgreementJourney<SELF>> {
+public interface AgreementJourney<SELF extends AgreementJourney<SELF>> extends JourneyModule {
 
     SELF linkAgreementInState(EService eService, AgreementState agreementState, @Nullable DelegationRef delegationRef);
 
