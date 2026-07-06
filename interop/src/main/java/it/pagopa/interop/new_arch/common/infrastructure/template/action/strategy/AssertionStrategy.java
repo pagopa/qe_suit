@@ -1,20 +1,20 @@
 package it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy;
 
+import it.pagopa.interop.new_arch.common.infrastructure.http.ApiResponse;
 import org.assertj.core.api.Assertions;
-import org.springframework.http.ResponseEntity;
 
 @FunctionalInterface
-public interface AssertionStrategy<T> {
+public interface AssertionStrategy {
 
-    void assertThat(ResponseEntity<? extends T> response);
+    void assertThat(ApiResponse response);
 
-    AssertionStrategy<Object> STATUS_200 = response -> Assertions.assertThat(response.getStatusCode().value()).isEqualTo(200);
-    AssertionStrategy<Object> STATUS_201 = response -> Assertions.assertThat(response.getStatusCode().value()).isEqualTo(201);
-    AssertionStrategy<Object> STATUS_204 = response -> Assertions.assertThat(response.getStatusCode().value()).isEqualTo(204);
-    AssertionStrategy<Object> STATUS_400 = response -> Assertions.assertThat(response.getStatusCode().value()).isEqualTo(400);
-    AssertionStrategy<Object> STATUS_401 = response -> Assertions.assertThat(response.getStatusCode().value()).isEqualTo(401);
-    AssertionStrategy<Object> STATUS_403 = response -> Assertions.assertThat(response.getStatusCode().value()).isEqualTo(403);
-    AssertionStrategy<Object> STATUS_404 = response -> Assertions.assertThat(response.getStatusCode().value()).isEqualTo(404);
-    AssertionStrategy<Object> STATUS_500 = response -> Assertions.assertThat(response.getStatusCode().value()).isEqualTo(500);
+    AssertionStrategy STATUS_200 = response -> Assertions.assertThat(response.statusCode()).isEqualTo(200);
+    AssertionStrategy STATUS_201 = response -> Assertions.assertThat(response.statusCode()).isEqualTo(201);
+    AssertionStrategy STATUS_204 = response -> Assertions.assertThat(response.statusCode()).isEqualTo(204);
+    AssertionStrategy STATUS_400 = response -> Assertions.assertThat(response.statusCode()).isEqualTo(400);
+    AssertionStrategy STATUS_401 = response -> Assertions.assertThat(response.statusCode()).isEqualTo(401);
+    AssertionStrategy STATUS_403 = response -> Assertions.assertThat(response.statusCode()).isEqualTo(403);
+    AssertionStrategy STATUS_404 = response -> Assertions.assertThat(response.statusCode()).isEqualTo(404);
+    AssertionStrategy STATUS_500 = response -> Assertions.assertThat(response.statusCode()).isEqualTo(500);
 
 }

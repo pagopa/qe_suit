@@ -24,3 +24,11 @@ logging:
   level:
     suit: DEBUG
 
+# ============================================================================
+# Open-api URLs Configuration
+# Centralizzato e iniettato direttamente dal POM tramite Spring
+# ============================================================================
+interop:
+  api:
+    openapi-url:
+      bff: @bff.openapi.url@

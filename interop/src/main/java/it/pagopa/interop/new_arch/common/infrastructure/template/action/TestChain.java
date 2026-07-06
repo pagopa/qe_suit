@@ -15,28 +15,28 @@ import java.time.Duration;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class TestChain<Entity, Model extends Identifiable> {
+public class TestChain<Response, Model extends Identifiable> {
 
-    private BaseActionContext<Entity, Model> baseActionContext;
-    @Setter(onMethod_ = {@Autowired}) private ObjectProvider<PollingAction<Entity, Model>> pollingActionProvider;
+    private BaseActionContext baseActionContext;
+    @Setter(onMethod_ = {@Autowired}) private ObjectProvider<PollingAction<Response, Model>> pollingActionProvider;
 
-    TestChain<Entity, Model> handle(BaseActionContext<Entity, Model> baseActionContext) {
+    TestChain<Response, Model> handle(BaseActionContext baseActionContext) {
         this.baseActionContext = baseActionContext;
         return this;
     }
 
-    public PollingAction<Entity, Model> withPolling(PollingStrategy<? super Entity> pollingStrategy) {
+    public PollingAction<Response, Model> withPolling(PollingStrategy<? super Response> pollingStrategy) {
         var pollingContext = new PollingActionContext<>(baseActionContext, pollingStrategy, null, null);
         return pollingActionProvider.getObject().handle(pollingContext);
     }
 
-    public PollingAction<Entity, Model> withPolling(PollingStrategy<? super Entity> pollingStrategy, Duration timeout, Duration interval) {
+    public PollingAction<Response, Model> withPolling(PollingStrategy<? super Response> pollingStrategy, Duration timeout, Duration interval) {
         var pollingContext = new PollingActionContext<>(baseActionContext, pollingStrategy, timeout, interval);
         return pollingActionProvider.getObject().handle(pollingContext);
     }
 
-    public PollingAction<Entity, Model> withoutPolling() {
-        var pollingContext = new PollingActionContext<>(baseActionContext, null, null, null);
+    public PollingAction<Response, Model> withoutPolling() {
+        PollingActionContext<Response> pollingContext = new PollingActionContext<>(baseActionContext, (statusCode, body) -> true, null, null);
         return pollingActionProvider.getObject().handleWithout(pollingContext);
     }
 }
