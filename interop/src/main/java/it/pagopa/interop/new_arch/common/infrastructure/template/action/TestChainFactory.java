@@ -1,15 +1,13 @@
 package it.pagopa.interop.new_arch.common.infrastructure.template.action;
 
+import it.pagopa.interop.new_arch.common.infrastructure.http.ApiResponse;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.context.BaseActionContext;
 import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Setter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Service
@@ -19,8 +17,8 @@ public class TestChainFactory {
     private ObjectProvider<TestChain> testActionChainProvider;
 
     @SuppressWarnings("unchecked")
-    public <Entity, Model extends Identifiable> TestChain<Entity, Model> build(Supplier<ResponseEntity<Entity>> httpCall, Function<Entity, List<Model>> mapper) {
-        var baseActionContext = new BaseActionContext<>(httpCall, mapper);
+    public <Response, Model extends Identifiable> TestChain<Response, Model> build(Supplier<ApiResponse> httpCall, Class<Model> modelClass, Class<?> responseClass) {
+        var baseActionContext = new BaseActionContext(httpCall, modelClass, responseClass);
         return testActionChainProvider.getObject().handle(baseActionContext);
     }
 }

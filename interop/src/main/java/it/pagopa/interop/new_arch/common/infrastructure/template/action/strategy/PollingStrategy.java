@@ -1,19 +1,19 @@
 package it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy;
 
-import org.springframework.http.HttpStatusCode;
-
-import java.util.function.Predicate;
-
 @FunctionalInterface
-public interface PollingStrategy<T> {
+public interface PollingStrategy<Response> {
 
-    boolean isSatisfied(HttpStatusCode statusCode, T body);
+    boolean isSatisfied(int statusCode, Response body);
 
-    PollingStrategy<Object> UNTIL_SUCCESS = (status, body) -> status.is2xxSuccessful();
+    PollingStrategy<Object> UNTIL_SUCCESS = (code, body) -> is2xxSuccessful(code);
 
-    PollingStrategy<Object> UNTIL_ERROR = (status, body) -> !status.is2xxSuccessful();
+    PollingStrategy<Object>  UNTIL_ERROR = (code, body) -> !is2xxSuccessful(code);
 
-    static <E> PollingStrategy<E> UNTIL_SUCCESS_WHERE(Predicate<E> bodyCondition) {
-        return (status, body) -> status.is2xxSuccessful() && body != null && bodyCondition.test(body);
+    static <R> PollingStrategy<R> UNTIL_SUCCESS_WHERE(java.util.function.Predicate<R> bodyCondition) {
+        return (code, body) -> is2xxSuccessful(code) && bodyCondition.test(body);
+    }
+
+    private static boolean is2xxSuccessful(int code) {
+        return code >= 200 && code < 300;
     }
 }

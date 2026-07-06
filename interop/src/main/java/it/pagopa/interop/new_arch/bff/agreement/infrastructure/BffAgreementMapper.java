@@ -13,7 +13,7 @@ import org.mapstruct.Mapping;
 import java.util.UUID;
 
 @Mapper(config = TestMapperConfig.class, uses = { SharedMapperUtils.class })
-public interface BffAgreementRestClientMapper {
+public interface BffAgreementMapper {
 
     @Mapping(target = "producerId", source = "producer")
     @Mapping(target = "consumerId", source = "consumer")

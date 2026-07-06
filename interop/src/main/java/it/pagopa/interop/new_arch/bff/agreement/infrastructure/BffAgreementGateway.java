@@ -2,11 +2,11 @@ package it.pagopa.interop.new_arch.bff.agreement.infrastructure;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.new_arch.common.agreement.application.AgreementGateway;
 import it.pagopa.interop.new_arch.common.agreement.domain.Agreement;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementCreationFailureReason;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementRef;
+import it.pagopa.interop.new_arch.common.agreement.domain.AgreementState;
 import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.AssertionStrategy;
@@ -24,6 +24,7 @@ import java.util.Optional;
 public class BffAgreementGateway implements AgreementGateway {
 
     private final BffAgreementRestClient restClient;
+    private final BffAgreementMapper mapper;
     private final BffAgreementRequestFactory agreementRequestFactory;
 
     @Override
@@ -32,7 +33,7 @@ public class BffAgreementGateway implements AgreementGateway {
 
         return restClient.create(payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .andUpdateContext()
+                .saveToContext(createdResource -> getAgreement(new AgreementRef(createdResource.getId())))
                 .getModel()
                 .getRef();
     }
@@ -41,7 +42,7 @@ public class BffAgreementGateway implements AgreementGateway {
     public void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation, AgreementCreationFailureReason reason) {
         AgreementPayload payload = agreementRequestFactory.creationRequest(eService, descriptor, delegation);
 
-        AssertionStrategy<? super CreatedResource> expectedStatus = switch (reason) {
+        AssertionStrategy expectedStatus = switch (reason) {
             case ESERVICE_INVALID_STATE -> AssertionStrategy.STATUS_400;
         };
 
@@ -54,7 +55,7 @@ public class BffAgreementGateway implements AgreementGateway {
     public Agreement getAgreement(AgreementRef ref) {
         return restClient.read(ref.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .andUpdateContext()
+                .saveToContext(mapper::toAgreement)
                 .getModel();
     }
 
@@ -63,7 +64,7 @@ public class BffAgreementGateway implements AgreementGateway {
     public Optional<AgreementRef> submitAgreement(Agreement agreement) {
         AgreementRef ref = restClient.submit(agreement.getId(), new AgreementSubmissionPayload().consumerNotes("consumerNotes"))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .andUpdateContext()
+                .saveToContext(mapper::toAgreement)
                 .getModel()
                 .getRef();
 
@@ -75,13 +76,14 @@ public class BffAgreementGateway implements AgreementGateway {
         AgreementRef ref = restClient.activate(
                         agreement.getId(), Optional.ofNullable(delegation).map(DelegationRef::getId).orElse(null)
                 )
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .andUpdateContext()
+                .withPolling(PollingStrategy.UNTIL_SUCCESS_WHERE(a -> a.getState().getValue().equals(AgreementState.ACTIVE.getValue())))
+                .saveToContext(mapper::toAgreement)
                 .getModel()
                 .getRef();
 
         return Optional.of(ref);
     }
+
 
     @Override
     public boolean supports(Channel delimiter) {
