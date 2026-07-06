@@ -2,8 +2,9 @@ package it.pagopa.interop.new_arch.common.infrastructure.cucumber.parameter_type
 
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.common.utils.JwtBuilderUtils;
-import it.pagopa.interop.common.utils.KeyPairUtils;
+
+import it.pagopa.interop.new_arch.common.infrastructure.security.JwtBuilder;
+import it.pagopa.interop.new_arch.common.infrastructure.utils.KeyPairUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +19,7 @@ public class JwtParameterTypes {
     }
 
     @DataTableType
-    public JwtBuilderUtils.JwtClaimOverride jwtBuilder(Map<String, String> row) {
+    public JwtBuilder.JwtClaimOverride jwtBuilder(Map<String, String> row) {
         String claim = row.get("claim");
         String value = row.get("value");
 
@@ -27,6 +28,6 @@ public class JwtParameterTypes {
         }
 
         // value può essere vuoto/null: utile per simulare claim mancanti o header non valorizzati
-        return new JwtBuilderUtils.JwtClaimOverride(claim.trim(), value);
+        return new JwtBuilder.JwtClaimOverride(claim.trim(), value);
     }
 }
