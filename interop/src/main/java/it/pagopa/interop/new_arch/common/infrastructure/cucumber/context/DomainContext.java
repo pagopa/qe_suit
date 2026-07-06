@@ -5,7 +5,6 @@ import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -14,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Slf4j
 @ScenarioScope
-public class ScenarioContext {
+public class DomainContext {
 
     @Getter
     @RequiredArgsConstructor
@@ -25,46 +24,6 @@ public class ScenarioContext {
 
     private final Map<Class<? extends Identifiable>, List<ContextEntry<? extends Identifiable>>> storage = new ConcurrentHashMap<>();
     private final Map<String, Identifiable> aliasStorage = new ConcurrentHashMap<>();
-
-    // Riferimento all'ultima risposta HTTP ricevuta nello scenario corrente
-    private ResponseEntity<?> lastResponseEntity;
-
-    /**
-     * Memorizza l'ultima ResponseEntity ricevuta da una chiamata API.
-     */
-    public void setLastResponseEntity(ResponseEntity<?> responseEntity) {
-        this.lastResponseEntity = responseEntity;
-        if (responseEntity != null) {
-            log.debug("Saved last ResponseEntity with status: {}", responseEntity.getStatusCode());
-        }
-    }
-
-    /**
-     * Recupera il codice di stato HTTP dell'ultima risposta (es. 200, 404, 500).
-     */
-    public Optional<Integer> getLastResponseStatusCode() {
-        return Optional.ofNullable(lastResponseEntity)
-                .map(response -> response.getStatusCode().value());
-    }
-
-    /**
-     * Recupera il body dell'ultima risposta come Object generico.
-     */
-    public Optional<Object> getLastResponseBody() {
-        return Optional.ofNullable(lastResponseEntity)
-                .map(ResponseEntity::getBody);
-    }
-
-    /**
-     * Recupera il body dell'ultima risposta castato automaticamente al tipo atteso.
-     * Ritorna Optional.empty() se il body è nullo o non è compatibile con la classe richiesta.
-     */
-    @SuppressWarnings("unchecked")
-    public <T> Optional<T> getLastResponseBody(Class<T> targetClass) {
-        return getLastResponseBody()
-                .filter(targetClass::isInstance)
-                .map(body -> (T) body);
-    }
 
     @SuppressWarnings("unchecked")
     public <Model extends Identifiable> void upsert(ContextEntry<Model> entry) {
@@ -93,7 +52,7 @@ public class ScenarioContext {
         }
     }
 
-    public <Model extends Identifiable> void upsert(Model model){
+    public <Model extends Identifiable> void upsert(Model model) {
         ContextEntry<Model> entry = new ContextEntry<>(model, null);
         upsert(entry);
     }
@@ -130,9 +89,10 @@ public class ScenarioContext {
         return Optional.empty();
     }
 
-    public <Model extends Identifiable> Model getByIdOrElseThrow(UUID id, Class<Model> modelClass){
+    public <Model extends Identifiable> Model getByIdOrElseThrow(UUID id, Class<Model> modelClass) {
         var result = getById(id, modelClass);
-        if(result.isEmpty()) throw new NoSuchElementException("Nessun elemento trovato per il tipo " + modelClass.getSimpleName() + " con ID " + id);
+        if (result.isEmpty())
+            throw new NoSuchElementException("Nessun elemento trovato per il tipo " + modelClass.getSimpleName() + " con ID " + id);
         return result.get();
     }
 
@@ -160,7 +120,7 @@ public class ScenarioContext {
         return entryList.isEmpty() ? Optional.empty() : Optional.of(entryList.get(entryList.size() - 1).getItem());
     }
 
-    public <Model extends Identifiable> Model getLastOrThrow(Class<Model> modelClass){
+    public <Model extends Identifiable> Model getLastOrThrow(Class<Model> modelClass) {
         return getLast(modelClass)
                 .orElseThrow(() -> new NoSuchElementException("Nessun elemento trovato per il tipo: " + modelClass.getSimpleName()));
     }
