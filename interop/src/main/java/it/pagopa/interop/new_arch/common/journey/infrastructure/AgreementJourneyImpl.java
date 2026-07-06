@@ -4,7 +4,7 @@ import it.pagopa.interop.new_arch.common.agreement.application.AgreementUseCase;
 import it.pagopa.interop.new_arch.common.agreement.domain.Agreement;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementState;
 import it.pagopa.interop.new_arch.common.eservice.domain.EService;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ScenarioContext;
+import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
 import it.pagopa.interop.new_arch.common.journey.application.AgreementJourney;
 import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
 import jakarta.annotation.Nullable;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyImpl> {
     private final AgreementUseCase agreementUseCase;
-    private final ScenarioContext scenarioContext;
+    private final DomainContext domainContext;
 
     @Override
     public AgreementJourneyImpl linkAgreementInState(EService eService, AgreementState agreementState, @org.jspecify.annotations.Nullable DelegationRef delegationRef) {
@@ -34,7 +34,7 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
 
     @Override
     public AgreementJourneyImpl linkAgreementInState(AgreementState agreementState, @Nullable DelegationRef delegationRef) {
-        EService eService = scenarioContext.getLastOrThrow(EService.class);
+        EService eService = domainContext.getLastOrThrow(EService.class);
         return linkAgreementInState(eService, agreementState, delegationRef);
     }
 }
