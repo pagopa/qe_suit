@@ -1,13 +1,14 @@
 package it.pagopa.interop.new_arch.common.infrastructure.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.common.contract.model.client.ClientKind;
-import it.pagopa.interop.common.contract.model.shared.enums.Channel;
-import it.pagopa.interop.common.contract.model.shared.enums.Tenant;
-import it.pagopa.interop.common.contract.model.shared.enums.User;
-import it.pagopa.interop.common.contract.model.shared.enums.UserRole;
-import it.pagopa.interop.common.cucumber.context.UserContext;
+
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.new_arch.common.client.domain.ClientKind;
+import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.UserContext;
+import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
+import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
+import it.pagopa.interop.new_arch.common.kernel.domain.User;
+import it.pagopa.interop.new_arch.common.kernel.domain.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
