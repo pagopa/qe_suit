@@ -2,9 +2,9 @@ package it.pagopa.interop.new_arch.bff.infrastructure.security.bearer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.interop.common.contract.model.shared.enums.Tenant;
-import it.pagopa.interop.common.contract.model.shared.enums.User;
-import it.pagopa.interop.common.cucumber.context.UserContext;
+import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.UserContext;
+import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
+import it.pagopa.interop.new_arch.common.kernel.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.cache.annotation.Cacheable;
