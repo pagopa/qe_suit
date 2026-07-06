@@ -1,13 +1,15 @@
 package it.pagopa.interop.new_arch.common.journey.infrastructure.config;
 
+import it.pagopa.interop.new_arch.common.journey.application.JourneyModule;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.List;
 
 public class JourneyInvocationHandler implements InvocationHandler {
-    private final List<Object> delegates;
+    private final List<JourneyModule> delegates;
 
-    public JourneyInvocationHandler(List<Object> delegates) {
+    public JourneyInvocationHandler(List<JourneyModule> delegates) {
         this.delegates = delegates;
     }
 
