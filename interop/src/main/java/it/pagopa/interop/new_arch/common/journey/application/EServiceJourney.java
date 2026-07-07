@@ -9,5 +9,4 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
     SELF createEService(EServiceCreationCommand command);
     SELF createEService(Consumer<EServiceCreationCommand> command);
     SELF createEService();
-    EService getEService();
 }

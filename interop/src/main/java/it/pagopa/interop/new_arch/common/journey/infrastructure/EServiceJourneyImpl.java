@@ -33,9 +33,4 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         eServiceUseCase.createEService(cmd -> {});
         return this;
     }
-
-    @Override
-    public EService getEService() {
-        return domainContext.getLastOrThrow(EService.class);
-    }
 }
