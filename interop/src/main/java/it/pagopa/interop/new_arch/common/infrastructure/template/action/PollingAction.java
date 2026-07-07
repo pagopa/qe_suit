@@ -1,10 +1,7 @@
 package it.pagopa.interop.new_arch.common.infrastructure.template.action;
 
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ApiContext;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
 import it.pagopa.interop.new_arch.common.infrastructure.http.ApiResponse;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.context.PollingActionContext;
-import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.AssertionStrategy;
 import it.pagopa.interop.new_arch.common.infrastructure.utils.PollingUtils;
 import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Getter;
@@ -16,20 +13,15 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PollingAction<Response, Model extends Identifiable> implements Finalizer<Response, Model> {
+public class PollingAction<Response, Model extends Identifiable> implements ApiFinalizer<Response> {
 
     @Setter(onMethod_ = {@Autowired})
-    private ObjectProvider<AssertAction<Response, Model>> assertActionProvider;
-    @Setter(onMethod_ = {@Autowired})
-    private DomainContext domainContext;
-    @Setter(onMethod_ = {@Autowired})
-    private ApiContext apiContext;
+    private ObjectProvider<ContextAction<Response, Model>> contextActionProvider;
     @Getter
     private ApiResponse rawResponse;
     @Getter
@@ -54,46 +46,15 @@ public class PollingAction<Response, Model extends Identifiable> implements Fina
         return this;
     }
 
-    public AssertAction<Response, Model> andAssertThat(AssertionStrategy assertionStrategy) {
-        return assertActionProvider.getObject().handle(rawResponse, context, assertionStrategy);
+    public ContextAction<Response, Model> saveToContext(Function<Response, Model> mapper, String alias) {
+        return contextActionProvider.getObject().handle(context, rawResponse, mapper, alias);
     }
 
-    @SuppressWarnings("unchecked")
-    public PollingAction<Response, Model> saveToContext(Function<Response, Model> mapper, String alias) {
-        Response resp = (Response) rawResponse.as(context.getResponseClass());
-        Model model = mapper.apply(resp);
-
-        if (model != null) {
-            apiContext.setLastResponse(rawResponse);
-            domainContext.upsert(new DomainContext.ContextEntry<>(model, alias));
-        }
-        return this;
+    public ContextAction<Response, Model> saveToContext(Function<Response, Model> mapper) {
+        return contextActionProvider.getObject().handle(context, rawResponse, mapper, null);
     }
 
-    public PollingAction<Response, Model> saveToContext(Function<Response, Model> mapper) {
-        return this.saveToContext(mapper, null);
-    }
-
-    @SuppressWarnings("unchecked")
-    public PollingAction<Response, Model> saveListToContext(Function<Response, List<Model>> mapper, String... aliases) {
-        Response resp = (Response) rawResponse.as(context.getResponseClass());
-        List<? extends Identifiable> models = mapper.apply(resp);
-
-        if (aliases.length > models.size()) {
-            throw new IllegalArgumentException("The given aliases exceed the maximum number of test models");
-        }
-
-        List<DomainContext.ContextEntry<? extends Identifiable>> contextEntries = new ArrayList<>();
-
-        for (int i = 0; i < models.size(); i++) {
-            Identifiable model = models.get(i);
-            String modelAlias = i < aliases.length ? aliases[i] : null;
-            contextEntries.add(new DomainContext.ContextEntry<>(model, modelAlias));
-        }
-
-        apiContext.setLastResponse(rawResponse);
-        domainContext.upsert(contextEntries);
-
-        return this;
+    public ContextAction<Response, Model> saveToContext(Function<Response, List<Model>> mapper, String... aliases) {
+        return contextActionProvider.getObject().handle(context, rawResponse, mapper, aliases);
     }
 }
