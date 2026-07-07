@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import java.util.function.Supplier;
 
 @Component
-public class RestGateway {
+public class RestClient {
     @Getter
     @Setter(onMethod_ = {@Autowired})
     protected TestChainFactory chainFactory;
