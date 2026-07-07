@@ -7,7 +7,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmission
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
 import it.pagopa.interop.new_arch.common.agreement.domain.Agreement;
-import it.pagopa.interop.new_arch.common.infrastructure.template.RestGateway;
+import it.pagopa.interop.new_arch.common.infrastructure.template.RestClient;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChain;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
@@ -17,7 +17,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 @Component
-public class BffAgreementRestClient extends RestGateway {
+public class BffAgreementRestClient extends RestClient {
 
     private final AgreementsApi agreementsApi;
 

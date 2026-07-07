@@ -10,14 +10,11 @@ import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
 import jakarta.annotation.Nullable;
 import org.springframework.plugin.core.Plugin;
 
-
-import java.util.Optional;
-
 public interface AgreementGateway extends Plugin<Channel> {
 
-    AgreementRef createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation);
+    Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation);
 
-    default AgreementRef createAgreement(EService eService, EServiceDescriptor descriptor) {
+    default Agreement createAgreement(EService eService, EServiceDescriptor descriptor) {
         return createAgreement(eService, descriptor, null);
     }
 
@@ -29,7 +26,7 @@ public interface AgreementGateway extends Plugin<Channel> {
 
     Agreement getAgreement(AgreementRef ref);
 
-    Optional<AgreementRef> submitAgreement(Agreement agreement);
+    Agreement submitAgreement(Agreement agreement);
 
-    Optional<AgreementRef> activateAgreement(Agreement agreement, @Nullable DelegationRef delegation);
+    Agreement activateAgreement(Agreement agreement, @Nullable DelegationRef delegation);
 }
