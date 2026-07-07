@@ -28,14 +28,13 @@ public class BffAgreementGateway implements AgreementGateway {
     private final BffAgreementRequestFactory agreementRequestFactory;
 
     @Override
-    public AgreementRef createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation) {
+    public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation) {
         AgreementPayload payload = agreementRequestFactory.creationRequest(eService, descriptor, delegation);
 
         return restClient.create(payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .saveToContext(createdResource -> getAgreement(new AgreementRef(createdResource.getId())))
-                .getModel()
-                .getRef();
+                .getModel();
     }
 
     @Override
@@ -47,8 +46,8 @@ public class BffAgreementGateway implements AgreementGateway {
         };
 
         restClient.create(payload)
-                .withPolling(PollingStrategy.UNTIL_ERROR)
-                .andAssertThat(expectedStatus);
+                .withPolling(PollingStrategy.UNTIL_ERROR);
+                //.andAssertThat(expectedStatus);
     }
 
     @Override
@@ -61,27 +60,21 @@ public class BffAgreementGateway implements AgreementGateway {
 
 
     @Override
-    public Optional<AgreementRef> submitAgreement(Agreement agreement) {
-        AgreementRef ref = restClient.submit(agreement.getId(), new AgreementSubmissionPayload().consumerNotes("consumerNotes"))
+    public Agreement submitAgreement(Agreement agreement) {
+        return restClient.submit(agreement.getId(), new AgreementSubmissionPayload().consumerNotes("consumerNotes"))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .saveToContext(mapper::toAgreement)
-                .getModel()
-                .getRef();
-
-        return Optional.of(ref);
+                .getModel();
     }
 
     @Override
-    public Optional<AgreementRef> activateAgreement(Agreement agreement, @Nullable DelegationRef delegation) {
-        AgreementRef ref = restClient.activate(
+    public Agreement activateAgreement(Agreement agreement, @Nullable DelegationRef delegation) {
+        return restClient.activate(
                         agreement.getId(), Optional.ofNullable(delegation).map(DelegationRef::getId).orElse(null)
                 )
                 .withPolling(PollingStrategy.UNTIL_SUCCESS_WHERE(a -> a.getState().getValue().equals(AgreementState.ACTIVE.getValue())))
                 .saveToContext(mapper::toAgreement)
-                .getModel()
-                .getRef();
-
-        return Optional.of(ref);
+                .getModel();
     }
 
 

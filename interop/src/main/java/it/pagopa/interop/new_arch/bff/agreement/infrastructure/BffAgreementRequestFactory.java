@@ -6,6 +6,8 @@ import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
 import it.pagopa.interop.new_arch.common.journey.application.InteropJourney;
 import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
+import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
+import it.pagopa.interop.new_arch.common.kernel.domain.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
 import org.jspecify.annotations.Nullable;
@@ -18,7 +20,6 @@ import static org.instancio.Select.field;
 public class BffAgreementRequestFactory {
 
     private final InteropJourney interopJourney;
-    private final DomainContext domainContext;
 
     public AgreementPayload creationRequest(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation) {
         return Instancio.of(AgreementPayload.class)
@@ -29,12 +30,12 @@ public class BffAgreementRequestFactory {
     }
 
     public AgreementPayload baseCreationRequest() {
-//        final EService eService = interopJourney
-//                //.withProducer()
-//                .createEService(EServiceDescriptorState.PUBLISHED)
-//                .getEService();
+        final EService eService = interopJourney
+                .withProducer(Tenant.AGID, UserRole.ADMIN)
+                .createEService()
+                .getEService();
 
-        return creationRequest(null, null, null);
+        return creationRequest(eService, eService.getLastDraftDescriptor(), null);
     }
 
 }

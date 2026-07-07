@@ -21,8 +21,7 @@ public class AgreementUseCase {
     private final List<AgreementFailureValidator> failureValidators;
 
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation) {
-        AgreementRef ref = agreementGateway.createAgreement(eService, descriptor, delegation);
-        return agreementGateway.getAgreement(ref);
+        return agreementGateway.createAgreement(eService, descriptor, delegation);
     }
 
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor) {
@@ -47,8 +46,7 @@ public class AgreementUseCase {
     }
 
     public Agreement activateAgreement(Agreement agreement, @Nullable DelegationRef delegation) {
-        Optional<AgreementRef> maybeRef = agreementGateway.activateAgreement(agreement, delegation);
-        return agreementGateway.getAgreement(maybeRef.orElse(agreement.getRef()));
+        return agreementGateway.activateAgreement(agreement, delegation);
     }
 
     public Agreement activateAgreement(Agreement agreement) {
@@ -56,7 +54,6 @@ public class AgreementUseCase {
     }
 
     public Agreement submitAgreement(Agreement agreement) {
-        Optional<AgreementRef> maybeRef = agreementGateway.submitAgreement(agreement);
-        return agreementGateway.getAgreement(maybeRef.orElse(agreement.getRef()));
+        return agreementGateway.submitAgreement(agreement);
     }
 }
