@@ -1,6 +1,7 @@
 package it.pagopa.interop.new_arch.common.eservice.domain;
 
 import it.pagopa.interop.new_arch.common.kernel.domain.DocumentRef;
+import it.pagopa.interop.new_arch.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Builder;
 import lombok.Value;
@@ -52,5 +53,9 @@ public class EService implements Identifiable {
         return descriptors.stream().filter(descriptor -> descriptor.getState() == EServiceDescriptorState.DRAFT)
                 .max(Comparator.comparing(EServiceDescriptor::getCreatedAt))
                 .orElse(null);
+    }
+
+    public EServiceRef getEServiceRef() {
+        return EServiceRef.of(this.id);
     }
 }
