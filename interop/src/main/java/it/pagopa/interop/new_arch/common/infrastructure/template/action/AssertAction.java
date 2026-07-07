@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Getter
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class AssertAction<Response, Model extends Identifiable> implements Finalizer<Response, Model> {
+public class AssertAction<Response, Model extends Identifiable> implements ApiFinalizer<Response> {
 
     private ApiResponse rawResponse;
     private BaseActionContext context;
