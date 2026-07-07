@@ -10,7 +10,13 @@ import org.springframework.stereotype.Component;
 @ScenarioScope
 @Setter
 @Getter
-//TODO: assicurarsi di scrivere l'hook cucumber
 public class TestContext {
-    private TestKind currentTestKind = TestKind.FLOW;
+    /**
+     * Tipo di test attualmente in esecuzione
+     * <p>
+     * Viene lasciato di default a CONTRACT poiché i test di questo tipo non vengono eseguiti mediante
+     * scenari Cucumber ma tramite JUnit 5 e pertanto non potrebbero essere associati ad alcun tag @Contract
+     * </p>
+     */
+    private TestKind currentTestKind = TestKind.CONTRACT;
 }
