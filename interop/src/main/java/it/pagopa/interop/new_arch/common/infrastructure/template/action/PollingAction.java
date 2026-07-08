@@ -5,7 +5,6 @@ import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ApiCont
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
 import it.pagopa.interop.new_arch.common.infrastructure.http.ApiResponse;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.context.PollingActionContext;
-import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import java.util.function.Function;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PollingAction<Response, Model extends Identifiable> implements ApiFinalizer<Response, Model> {
+public class PollingAction<Response> implements ResponseFinalizer<Response> {
 
     @Setter(onMethod_ = {@Autowired})
     private ApiContext apiContext;
@@ -33,15 +32,11 @@ public class PollingAction<Response, Model extends Identifiable> implements ApiF
     @Getter
     private PollingActionContext<? super Response> context;
 
-    @SuppressWarnings("unchecked")
-    PollingAction<Response, Model> handle(PollingActionContext<? super Response> context) {
+    PollingAction<Response> handle(PollingActionContext<? super Response> context) {
         this.context = context;
         this.raw = PollingUtils.pollUntil(
                 context.getResponseSupplier(),
-                r -> context.getPollingStrategy().isSatisfied(
-                        r.statusCode(),
-                        (Response) r.as(context.getResponseClass())
-                ),
+                r -> context.getPollingStrategy().isSatisfied(r),
                 context.getTimeout() != null ? context.getTimeout() : Duration.ofSeconds(10),
                 context.getInterval() != null ? context.getInterval() : Duration.ofSeconds(1)
         );
@@ -50,7 +45,7 @@ public class PollingAction<Response, Model extends Identifiable> implements ApiF
         return this;
     }
 
-    PollingAction<Response, Model> handleWithout(PollingActionContext<Response> context) {
+    PollingAction<Response> handleWithout(PollingActionContext<Response> context) {
         this.context = context;
         this.raw = context.getResponseSupplier().get();
         apiContext.setLastResponse(raw);
@@ -58,10 +53,10 @@ public class PollingAction<Response, Model extends Identifiable> implements ApiF
     }
 
     @Override
-    public <T> ApiFinalizer<T, Model> map(Function<? super Response, ? extends T> mapper) {
-        ApiFinalizer<Response, Model> source = this;
+    public <T> ResponseFinalizer<T> map(Function<? super Response, ? extends T> mapper) {
+        ResponseFinalizer<Response> source = this;
 
-        return new MappedApiFinalizer<>(source, mapper);
+        return new MappedResponseFinalizer<>(source, mapper);
     }
 
     @Override

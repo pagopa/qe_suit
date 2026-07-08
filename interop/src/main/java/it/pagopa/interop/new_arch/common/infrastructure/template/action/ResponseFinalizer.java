@@ -1,21 +1,20 @@
 package it.pagopa.interop.new_arch.common.infrastructure.template.action;
 
 import it.pagopa.interop.new_arch.common.infrastructure.http.ApiResponse;
-import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-public interface ApiFinalizer<Response, Model extends Identifiable> {
+public interface ResponseFinalizer<Response> {
 
-    <T> ApiFinalizer<T, Model> map(Function<? super Response, ? extends T> mapper);
+    <T> ResponseFinalizer<T> map(Function<? super Response, ? extends T> mapper);
 
     Response get();
 
     ApiResponse getRaw();
 
-    default ApiFinalizer<Response, Model> assertThat(BiPredicate<Integer, ? super Response> predicate) {
+    default ResponseFinalizer<Response> assertThat(BiPredicate<Integer, ? super Response> predicate) {
         Response response = get();
         Integer statusCode = getRaw().statusCode();
 
@@ -26,7 +25,7 @@ public interface ApiFinalizer<Response, Model extends Identifiable> {
         return this;
     }
 
-    default ApiFinalizer<Response, Model> assertThat(Predicate<ApiResponse> predicate) {
+    default ResponseFinalizer<Response> assertThat(Predicate<ApiResponse> predicate) {
         ApiResponse response = getRaw();
 
         if (!predicate.test(response)) {
