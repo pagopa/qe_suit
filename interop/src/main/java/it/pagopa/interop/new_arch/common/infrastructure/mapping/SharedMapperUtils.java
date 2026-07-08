@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.utils;
+package it.pagopa.interop.new_arch.common.infrastructure.mapping;
 
 import org.mapstruct.Named;
 import java.time.Instant;

@@ -20,6 +20,7 @@ import static org.instancio.Select.field;
 public class BffAgreementRequestFactory {
 
     private final InteropJourney interopJourney;
+    private final DomainContext domainContext;
 
     public AgreementPayload creationRequest(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation) {
         return Instancio.of(AgreementPayload.class)
@@ -30,11 +31,11 @@ public class BffAgreementRequestFactory {
     }
 
     public AgreementPayload baseCreationRequest() {
-        final EService eService = interopJourney
+        interopJourney
                 .withProducer(Tenant.AGID, UserRole.ADMIN)
-                .createEService()
-                .getEService();
+                .createEService();
 
+        final EService eService = domainContext.getLastOrThrow(EService.class);
         return creationRequest(eService, eService.getLastDraftDescriptor(), null);
     }
 

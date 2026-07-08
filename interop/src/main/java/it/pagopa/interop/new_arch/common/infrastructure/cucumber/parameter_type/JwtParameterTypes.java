@@ -2,9 +2,8 @@ package it.pagopa.interop.new_arch.common.infrastructure.cucumber.parameter_type
 
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.ParameterType;
-
-import it.pagopa.interop.new_arch.common.infrastructure.security.JwtBuilder;
-import it.pagopa.interop.new_arch.common.infrastructure.utils.KeyPairUtils;
+import it.pagopa.interop.new_arch.common.infrastructure.security.crypto.KeyAlgorithm;
+import it.pagopa.interop.new_arch.common.infrastructure.security.jwt.JwtBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,8 +13,8 @@ import java.util.Map;
 public class JwtParameterTypes {
 
     @ParameterType("RSA|EC|ED25519")
-    public KeyPairUtils.KeyAlgorithm keyAlgorithm(String alg) {
-        return KeyPairUtils.KeyAlgorithm.valueOf(alg);
+    public KeyAlgorithm keyAlgorithm(String alg) {
+        return KeyAlgorithm.valueOf(alg);
     }
 
     @DataTableType

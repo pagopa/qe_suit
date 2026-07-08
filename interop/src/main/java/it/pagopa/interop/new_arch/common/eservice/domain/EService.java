@@ -55,7 +55,17 @@ public class EService implements Identifiable {
                 .orElse(null);
     }
 
-    public EServiceRef getEServiceRef() {
+    public EServiceDescriptor getActiveDescriptor() {
+        return descriptors.stream().filter(descriptor -> descriptor.getState() == EServiceDescriptorState.PUBLISHED)
+                .max(Comparator.comparing(EServiceDescriptor::getPublishedAt))
+                .orElse(null);
+    }
+
+    public void addDescriptor(EServiceDescriptor descriptor) {
+        this.descriptors.add(descriptor);
+    }
+
+    public EServiceRef getRef() {
         return EServiceRef.of(this.id);
     }
 }

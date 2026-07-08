@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.client.application;
+package it.pagopa.interop.new_arch.common.journey.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementState;
@@ -10,7 +10,7 @@ import it.pagopa.interop.new_arch.common.purpose.domain.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ClientSteps {
+public class EServiceJourneySteps {
 
     private final InteropJourney interopJourney;
 

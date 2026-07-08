@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.utils;
+package it.pagopa.interop.new_arch.common.infrastructure.security.crypto;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -9,12 +9,6 @@ import java.security.spec.ECGenParameterSpec;
 import java.util.Base64;
 
 public final class KeyPairUtils {
-
-    public enum KeyAlgorithm {
-        RSA,
-        EC,
-        ED25519
-    }
 
     private KeyPairUtils() {
         throw new AssertionError("Utility class");

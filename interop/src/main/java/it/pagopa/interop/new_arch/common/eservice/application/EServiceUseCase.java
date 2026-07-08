@@ -11,21 +11,21 @@ import java.util.function.Consumer;
 @Service
 @RequiredArgsConstructor
 public class EServiceUseCase {
-    private final EServiceGateway gateway;
+    private final EServiceGateway eServiceGateway;
     private final EServiceRequestFactory requestFactory;
 
-    public EService createEService(Consumer<EServiceCreationCommand> config){
-        EServiceCreationCommand creationCommand = requestFactory.createDefaultCreationRequest();
+    public EService createEService(Consumer<EServiceCreationCommand> config) {
+        EServiceCreationCommand creationCommand = requestFactory.defaultCreationEServiceCommand();
         config.accept(creationCommand);
 
         return createEService(creationCommand);
     }
 
-   public EService createEService(EServiceCreationCommand creationCommand){
-       return gateway.createEService(creationCommand);
-   }
+    public EService createEService(EServiceCreationCommand creationCommand) {
+        return eServiceGateway.createEService(creationCommand);
+    }
 
-   public EService getEService(EServiceRef eServiceRef){
-       return gateway.getEService(eServiceRef);
-   }
+    public EService getEService(EServiceRef eServiceRef) {
+        return eServiceGateway.getEService(eServiceRef);
+    }
 }

@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.utils;
+package it.pagopa.interop.new_arch.common.infrastructure.security.jwt;
 
 import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;

@@ -8,5 +8,6 @@ import org.springframework.plugin.core.Plugin;
 
 public interface EServiceGateway extends Plugin<Channel> {
     EService createEService(EServiceCreationCommand command);
+
     EService getEService(EServiceRef eServiceRef);
 }

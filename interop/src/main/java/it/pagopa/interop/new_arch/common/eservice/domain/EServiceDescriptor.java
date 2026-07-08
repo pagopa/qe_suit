@@ -2,10 +2,7 @@ package it.pagopa.interop.new_arch.common.eservice.domain;
 
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.new_arch.common.attribute.domain.Attributes;
-import it.pagopa.interop.new_arch.common.kernel.domain.EServiceTemplateRef;
-import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
-import it.pagopa.interop.new_arch.common.kernel.domain.DocumentRef;
-import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
+import it.pagopa.interop.new_arch.common.kernel.domain.*;
 
 import lombok.Builder;
 import lombok.Singular;
@@ -19,7 +16,7 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class EServiceDescriptor implements Identifiable {
+public class EServiceDescriptor {
     UUID id;
     String version;
     EServiceDescriptorState state;
@@ -95,5 +92,9 @@ public class EServiceDescriptor implements Identifiable {
                                 .toList()
                 )
                 .build();
+    }
+
+    public EServiceDescriptorRef getRef(){
+        return EServiceDescriptorRef.of(this.id);
     }
 }

@@ -9,7 +9,6 @@ import it.pagopa.interop.new_arch.common.agreement.domain.AgreementRef;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementState;
 import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.AssertionStrategy;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
 import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
@@ -33,29 +32,29 @@ public class BffAgreementGateway implements AgreementGateway {
 
         return restClient.create(payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .saveToContext(createdResource -> getAgreement(new AgreementRef(createdResource.getId())))
-                .getModel();
+                .map(createdResource -> getAgreement(new AgreementRef(createdResource.getId())))
+                .get();
     }
 
     @Override
     public void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation, AgreementCreationFailureReason reason) {
         AgreementPayload payload = agreementRequestFactory.creationRequest(eService, descriptor, delegation);
 
-        AssertionStrategy expectedStatus = switch (reason) {
-            case ESERVICE_INVALID_STATE -> AssertionStrategy.STATUS_400;
+        int expectedStatus = switch (reason) {
+            case ESERVICE_INVALID_STATE -> 400;
         };
 
         restClient.create(payload)
-                .withPolling(PollingStrategy.UNTIL_ERROR);
-                //.andAssertThat(expectedStatus);
+                .withPolling(PollingStrategy.UNTIL_ERROR)
+                .assertThat(apiResp -> apiResp.statusCode() == expectedStatus);
     }
 
     @Override
     public Agreement getAgreement(AgreementRef ref) {
         return restClient.read(ref.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .saveToContext(mapper::toAgreement)
-                .getModel();
+                .map(mapper::toAgreement)
+                .get();
     }
 
 
@@ -63,8 +62,8 @@ public class BffAgreementGateway implements AgreementGateway {
     public Agreement submitAgreement(Agreement agreement) {
         return restClient.submit(agreement.getId(), new AgreementSubmissionPayload().consumerNotes("consumerNotes"))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .saveToContext(mapper::toAgreement)
-                .getModel();
+                .map(mapper::toAgreement)
+                .get();
     }
 
     @Override
@@ -73,8 +72,8 @@ public class BffAgreementGateway implements AgreementGateway {
                         agreement.getId(), Optional.ofNullable(delegation).map(DelegationRef::getId).orElse(null)
                 )
                 .withPolling(PollingStrategy.UNTIL_SUCCESS_WHERE(a -> a.getState().getValue().equals(AgreementState.ACTIVE.getValue())))
-                .saveToContext(mapper::toAgreement)
-                .getModel();
+                .map(mapper::toAgreement)
+                .get();
     }
 
 

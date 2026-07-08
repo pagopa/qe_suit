@@ -16,7 +16,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   quando l'utente sottomette le informazioni nella form di debugging,
   allora tutte le fasi di validazione risultano in stato PASSED
 
-    Given un eservice creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
+    Given un EService creato da Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
     And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente l'admin e una coppia di chiavi crittografiche
     And una client assertion valida generata usando il client e la finalità
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop

@@ -39,4 +39,5 @@ public class TestChain<Response, Model extends Identifiable> {
         PollingActionContext<Response> pollingContext = new PollingActionContext<>(baseActionContext, (statusCode, body) -> true, null, null);
         return pollingActionProvider.getObject().handleWithout(pollingContext);
     }
+
 }
