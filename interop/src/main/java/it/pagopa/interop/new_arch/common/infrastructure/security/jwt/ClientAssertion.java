@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.security;
+package it.pagopa.interop.new_arch.common.infrastructure.security.jwt;
 
 import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Builder;
@@ -10,8 +10,7 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class DPoPProof implements Identifiable {
-    String jwt;
-    Key key;
+public class ClientAssertion implements Identifiable {
+    String clientAssertion;
     UUID id = UUID.randomUUID();
 }

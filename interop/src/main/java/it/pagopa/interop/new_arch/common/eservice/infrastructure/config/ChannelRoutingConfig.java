@@ -1,6 +1,7 @@
 package it.pagopa.interop.new_arch.common.eservice.infrastructure.config;
 
 import it.pagopa.interop.new_arch.common.agreement.application.AgreementGateway;
+import it.pagopa.interop.new_arch.common.eservice.application.EServiceDescriptorGateway;
 import it.pagopa.interop.new_arch.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.new_arch.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.new_arch.common.infrastructure.ChannelRoutingInterceptor;
@@ -17,7 +18,7 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 
 @Configuration
 @RequiredArgsConstructor
-@EnablePluginRegistries({EServiceGateway.class, EServiceRequestFactory.class})
+@EnablePluginRegistries({EServiceGateway.class, EServiceDescriptorGateway.class, EServiceRequestFactory.class})
 public class ChannelRoutingConfig {
 
     private final ObjectProvider<ChannelContext> channelContextProvider;
@@ -25,7 +26,7 @@ public class ChannelRoutingConfig {
     @Bean
     @Primary
     public EServiceGateway transparentEServiceGateway(
-            PluginRegistry<AgreementGateway, Channel> registry) {
+            PluginRegistry<EServiceGateway, Channel> registry) {
 
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.setInterfaces(EServiceGateway.class);
@@ -36,8 +37,20 @@ public class ChannelRoutingConfig {
 
     @Bean
     @Primary
+    public EServiceDescriptorGateway transparentEServiceDescriptorGateway(
+            PluginRegistry<EServiceDescriptorGateway, Channel> registry) {
+
+        ProxyFactory proxyFactory = new ProxyFactory();
+        proxyFactory.setInterfaces(EServiceDescriptorGateway.class);
+        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, channelContextProvider));
+
+        return (EServiceDescriptorGateway) proxyFactory.getProxy();
+    }
+
+    @Bean
+    @Primary
     public EServiceRequestFactory transparentEServiceRequestFactory(
-            PluginRegistry<AgreementGateway, Channel> registry) {
+            PluginRegistry<EServiceRequestFactory, Channel> registry) {
 
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.setInterfaces(EServiceRequestFactory.class);
