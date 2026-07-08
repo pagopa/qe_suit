@@ -18,11 +18,10 @@ public class RestClient {
     @Setter(onMethod_ = {@Autowired})
     protected TestChainFactory chainFactory;
 
-    protected <RESPONSE, MODEL extends Identifiable> TestChain<RESPONSE, MODEL> execute(
+    protected <RESPONSE> TestChain<RESPONSE> execute(
             Supplier<Response> apiCall,
-            Class<RESPONSE> responseClass,
-            Class<MODEL> domainClass) {
+            Class<RESPONSE> responseClass) {
 
-        return chainFactory.build(() -> ApiResponse.from(apiCall.get()), domainClass, responseClass);
+        return chainFactory.build(() -> ApiResponse.from(apiCall.get()), responseClass);
     }
 }

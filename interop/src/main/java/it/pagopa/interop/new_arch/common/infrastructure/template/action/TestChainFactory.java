@@ -2,7 +2,6 @@ package it.pagopa.interop.new_arch.common.infrastructure.template.action;
 
 import it.pagopa.interop.new_arch.common.infrastructure.http.ApiResponse;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.context.BaseActionContext;
-import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Setter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +16,8 @@ public class TestChainFactory {
     private ObjectProvider<TestChain> testActionChainProvider;
 
     @SuppressWarnings("unchecked")
-    public <Response, Model extends Identifiable> TestChain<Response, Model> build(Supplier<ApiResponse> httpCall, Class<Model> modelClass, Class<?> responseClass) {
-        var baseActionContext = new BaseActionContext(httpCall, modelClass, responseClass);
+    public <Response> TestChain<Response> build(Supplier<ApiResponse> httpCall, Class<?> responseClass) {
+        var baseActionContext = new BaseActionContext(httpCall, responseClass);
         return testActionChainProvider.getObject().handle(baseActionContext);
     }
 }

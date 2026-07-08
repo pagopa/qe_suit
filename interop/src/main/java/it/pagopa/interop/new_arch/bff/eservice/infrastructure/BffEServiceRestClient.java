@@ -23,51 +23,45 @@ public class BffEServiceRestClient extends RestClient {
         this.eservicesApi = apiClient.eservices();
     }
 
-    public TestChain<CreatedEServiceDescriptor, EService> createEService(@Nonnull EServiceSeed payload) {
+    public TestChain<CreatedEServiceDescriptor> createEService(@Nonnull EServiceSeed payload) {
         return execute(
                 () -> eservicesApi.createEService().body(payload).execute(Function.identity()),
-                CreatedEServiceDescriptor.class,
-                EService.class
+                CreatedEServiceDescriptor.class
         );
     }
 
-    public TestChain<CreatedResource, EService> addDescriptor(@Nonnull UUID eserviceId) {
+    public TestChain<CreatedResource> addDescriptor(@Nonnull UUID eserviceId) {
         return execute(
                 () -> eservicesApi.createDescriptor().eServiceIdPath(eserviceId).execute(Function.identity()),
-                CreatedResource.class,
-                EService.class
+                CreatedResource.class
         );
     }
 
-    public TestChain<CreatedResource, EService> updateDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceDescriptorQuotas payload) {
+    public TestChain<CreatedResource> updateDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceDescriptorQuotas payload) {
         return execute(
                 () -> eservicesApi.updateDescriptor().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).body(payload).execute(Function.identity()),
-                CreatedResource.class,
-                EService.class
+                CreatedResource.class
         );
     }
 
-    public TestChain<ProducerEServiceDetails, EService> readEService(@Nonnull UUID eserviceId) {
+    public TestChain<ProducerEServiceDetails> readEService(@Nonnull UUID eserviceId) {
         return execute(
                 () -> eservicesApi.getProducerEServiceDetails().eserviceIdPath(eserviceId).execute(Function.identity()),
-                ProducerEServiceDetails.class,
-                EService.class
+                ProducerEServiceDetails.class
         );
     }
 
-    public TestChain<ProducerEServiceDescriptor, EService> readDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+    public TestChain<ProducerEServiceDescriptor> readDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
         return execute(
                 () -> eservicesApi.getProducerEServiceDescriptor().eserviceIdPath(eserviceId).descriptorIdPath(descriptorId).execute(Function.identity()),
-                ProducerEServiceDescriptor.class,
-                EService.class
+                ProducerEServiceDescriptor.class
         );
     }
 
-    public TestChain<?, EService> publishDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+    public TestChain<Void> publishDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
         return execute(
                 () -> eservicesApi.publishDescriptor().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).execute(Function.identity()),
-                Void.class,
-                EService.class
+                Void.class
         );
     }
 }

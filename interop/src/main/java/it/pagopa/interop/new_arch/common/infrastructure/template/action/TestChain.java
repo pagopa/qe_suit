@@ -15,28 +15,28 @@ import java.time.Duration;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class TestChain<Response, Model extends Identifiable> {
+public class TestChain<Response> {
 
     private BaseActionContext baseActionContext;
-    @Setter(onMethod_ = {@Autowired}) private ObjectProvider<PollingAction<Response, Model>> pollingActionProvider;
+    @Setter(onMethod_ = {@Autowired}) private ObjectProvider<PollingAction<Response>> pollingActionProvider;
 
-    TestChain<Response, Model> handle(BaseActionContext baseActionContext) {
+    TestChain<Response> handle(BaseActionContext baseActionContext) {
         this.baseActionContext = baseActionContext;
         return this;
     }
 
-    public PollingAction<Response, Model> withPolling(PollingStrategy<? super Response> pollingStrategy) {
+    public PollingAction<Response> withPolling(PollingStrategy pollingStrategy) {
         var pollingContext = new PollingActionContext<>(baseActionContext, pollingStrategy, null, null);
         return pollingActionProvider.getObject().handle(pollingContext);
     }
 
-    public PollingAction<Response, Model> withPolling(PollingStrategy<? super Response> pollingStrategy, Duration timeout, Duration interval) {
+    public PollingAction<Response> withPolling(PollingStrategy pollingStrategy, Duration timeout, Duration interval) {
         var pollingContext = new PollingActionContext<>(baseActionContext, pollingStrategy, timeout, interval);
         return pollingActionProvider.getObject().handle(pollingContext);
     }
 
-    public PollingAction<Response, Model> withoutPolling() {
-        PollingActionContext<Response> pollingContext = new PollingActionContext<>(baseActionContext, (statusCode, body) -> true, null, null);
+    public PollingAction<Response> withoutPolling() {
+        PollingActionContext<Response> pollingContext = new PollingActionContext<>(baseActionContext, resp -> true, null, null);
         return pollingActionProvider.getObject().handleWithout(pollingContext);
     }
 
