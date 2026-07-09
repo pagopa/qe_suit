@@ -11,7 +11,7 @@ import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
-import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
+import it.pagopa.interop.new_arch.common.kernel.domain.Delegation;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class BffAgreementGateway implements AgreementGateway {
     private final BffAgreementRequestFactory agreementRequestFactory;
 
     @Override
-    public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation) {
+    public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         AgreementPayload payload = agreementRequestFactory.creationRequest(eService, descriptor, delegation);
 
         return restClient.create(payload)
@@ -37,7 +37,7 @@ public class BffAgreementGateway implements AgreementGateway {
     }
 
     @Override
-    public void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation, AgreementCreationFailureReason reason) {
+    public void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation, AgreementCreationFailureReason reason) {
         AgreementPayload payload = agreementRequestFactory.creationRequest(eService, descriptor, delegation);
 
         int expectedStatus = switch (reason) {
@@ -54,6 +54,7 @@ public class BffAgreementGateway implements AgreementGateway {
         return restClient.read(ref.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(mapper::toAgreement)
+                .updateContext()
                 .get();
     }
 
@@ -63,16 +64,19 @@ public class BffAgreementGateway implements AgreementGateway {
         return restClient.submit(agreement.getId(), new AgreementSubmissionPayload().consumerNotes("consumerNotes"))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(mapper::toAgreement)
+                .updateContext()
                 .get();
     }
 
     @Override
-    public Agreement activateAgreement(Agreement agreement, @Nullable DelegationRef delegation) {
+    public Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation) {
         return restClient.activate(
-                        agreement.getId(), Optional.ofNullable(delegation).map(DelegationRef::getId).orElse(null)
+                        agreement.getId(), Optional.ofNullable(delegation).map(Delegation::getId).orElse(null)
                 )
-                .withPolling(PollingStrategy.UNTIL_SUCCESS_WHERE(a -> a.getState().getValue().equals(AgreementState.ACTIVE.getValue())))
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .assertThat((statusCode, a) -> a.getState().getValue().equals(AgreementState.ACTIVE.getValue()))
                 .map(mapper::toAgreement)
+                .updateContext()
                 .get();
     }
 

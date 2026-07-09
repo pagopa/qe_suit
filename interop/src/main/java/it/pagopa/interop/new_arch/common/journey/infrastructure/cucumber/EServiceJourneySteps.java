@@ -20,7 +20,7 @@ public class EServiceJourneySteps {
                 .withProducer(producer, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
                 .withConsumer(consumer, UserRole.ADMIN)
-                .linkAgreementInState(AgreementState.ACTIVE)
-                .linkPurposeInState(PurposeVersionState.ACTIVE);
+                .linkAgreement(AgreementState.ACTIVE)
+                .linkPurpose(PurposeVersionState.ACTIVE);
     }
 }

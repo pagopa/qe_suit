@@ -32,11 +32,10 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(descriptor -> {
                     Optional<EService> maybeEService = domainContext.getById(eServiceRef.id(), EService.class);
-                    final EService updatedEService = mapper.toEServiceWithUpsert(descriptor,  maybeEService.orElse(null));
-                    domainContext.upsert(updatedEService);
-
-                    return updatedEService.findDescriptor(descriptor.getId());
+                    return mapper.toEServiceWithUpsert(descriptor,  maybeEService.orElse(null));
                 })
+                .updateContext()
+                .map(eService -> eService.findDescriptor(descriptorRef.id()))
                 .get();
     }
 

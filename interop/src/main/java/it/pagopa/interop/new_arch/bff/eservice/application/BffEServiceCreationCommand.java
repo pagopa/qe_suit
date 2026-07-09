@@ -2,6 +2,7 @@ package it.pagopa.interop.new_arch.bff.eservice.application;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.new_arch.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.new_arch.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceTechnology;
 import lombok.Getter;
 
@@ -24,6 +25,12 @@ public class BffEServiceCreationCommand implements EServiceCreationCommand {
     @Override
     public EServiceCreationCommand name(String name) {
         bffCreationPayload.setName(name);
+        return this;
+    }
+
+    @Override
+    public EServiceCreationCommand mode(EServiceMode mode) {
+        bffCreationPayload.setMode(it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.fromValue(mode.name()));
         return this;
     }
 

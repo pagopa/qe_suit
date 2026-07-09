@@ -2,6 +2,7 @@ package it.pagopa.interop.new_arch.common.eservice_template.domain;
 
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceTechnology;
+import it.pagopa.interop.new_arch.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Builder;
 import lombok.Singular;

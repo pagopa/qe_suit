@@ -2,8 +2,10 @@ package it.pagopa.interop.new_arch.common.eservice.domain;
 
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.new_arch.common.attribute.domain.Attributes;
-import it.pagopa.interop.new_arch.common.kernel.domain.*;
-
+import it.pagopa.interop.new_arch.common.kernel.domain.Delegation;
+import it.pagopa.interop.new_arch.common.kernel.domain.Document;
+import it.pagopa.interop.new_arch.common.kernel.domain.EServiceDescriptorRef;
+import it.pagopa.interop.new_arch.common.kernel.domain.EServiceTemplateRef;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
@@ -21,7 +23,7 @@ public class EServiceDescriptor {
     String version;
     EServiceDescriptorState state;
     String description;
-    DocumentRef interfaceDocument;
+    Document interfaceDocument;
     Attributes attributes;
     Integer voucherLifespan;
     Integer dailyCallsPerConsumer;
@@ -34,8 +36,8 @@ public class EServiceDescriptor {
     Instant suspendedAt;
     EServiceTemplateRef templateRef;
     AsyncExchangeProperties asyncExchangeProperties;
-    DocumentRef asyncExchangeCallbackInterface;
-    DelegationRef delegation;
+    Document asyncExchangeCallbackInterface;
+    Delegation delegation;
     ArchivingSchedule archivingSchedule;
 
     @Singular("serverUrl")
@@ -48,9 +50,9 @@ public class EServiceDescriptor {
     List<String> audience;
 
     @Singular("doc")
-    List<DocumentRef> docs;
+    List<Document> docs;
 
-    public DocumentRef findDocument(UUID documentId) {
+    public Document findDocument(UUID documentId) {
         if (interfaceDocument != null && interfaceDocument.getId().equals(documentId)) {
             return interfaceDocument;
         }
@@ -59,7 +61,7 @@ public class EServiceDescriptor {
             return asyncExchangeCallbackInterface;
         }
 
-        for (DocumentRef doc : docs) {
+        for (Document doc : docs) {
             if (doc.getId().equals(documentId)) {
                 return doc;
             }
@@ -68,7 +70,7 @@ public class EServiceDescriptor {
         return null;
     }
 
-    public EServiceDescriptor replaceDocument(UUID documentId, DocumentRef updatedDocument) {
+    public EServiceDescriptor replaceDocument(UUID documentId, Document updatedDocument) {
         if (interfaceDocument != null && interfaceDocument.getId().equals(documentId)) {
             return this.toBuilder()
                     .interfaceDocument(updatedDocument)
@@ -94,7 +96,7 @@ public class EServiceDescriptor {
                 .build();
     }
 
-    public EServiceDescriptorRef getRef(){
+    public EServiceDescriptorRef getRef() {
         return EServiceDescriptorRef.of(this.id);
     }
 }

@@ -1,14 +1,18 @@
 package it.pagopa.interop.new_arch.common.purpose.domain;
 
 import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
+import it.pagopa.interop.new_arch.common.kernel.domain.PurposeRef;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
 import java.time.Instant;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+
+import static it.pagopa.interop.new_arch.common.purpose.domain.PurposeVersionState.DRAFT;
 
 @Value
 @Builder(toBuilder = true)
@@ -28,4 +32,14 @@ public class Purpose implements Identifiable {
 
     @Singular("version")
     List<PurposeVersion> versions;
+
+    public PurposeRef getRef() {
+        return PurposeRef.of(this.id);
+    }
+
+    public PurposeVersion getLastDraftVersion() {
+        return versions.stream().filter(version -> version.getPurposeVersionState() == DRAFT)
+                .max(Comparator.comparing(PurposeVersion::getCreatedAt))
+                .orElse(null);
+    }
 }
