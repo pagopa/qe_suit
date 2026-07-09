@@ -21,6 +21,6 @@ public class ClientSteps {
                 .createEService(EServiceDescriptorState.PUBLISHED)
                 .withConsumer(consumer, UserRole.ADMIN)
                 .linkAgreement(AgreementState.ACTIVE)
-                .linkPurposeInState(PurposeVersionState.ACTIVE);
+                .linkPurpose(PurposeVersionState.ACTIVE);
     }
 }
