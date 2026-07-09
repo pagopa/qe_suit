@@ -8,16 +8,16 @@ import java.time.Duration;
 @Getter
 public class PollingActionContext<Response> extends BaseActionContext {
 
-    private final PollingStrategy<Response> pollingStrategy;
+    private final PollingStrategy pollingStrategy;
     private final Duration timeout;
     private final Duration interval;
 
     public PollingActionContext(
             BaseActionContext context,
-            PollingStrategy<Response> pollingStrategy,
+            PollingStrategy pollingStrategy,
             Duration timeout,
             Duration interval) {
-        super(context.getResponseSupplier(), context.getModelClass(), context.getResponseClass());
+        super(context.getResponseSupplier(), context.getResponseClass());
         this.pollingStrategy = pollingStrategy;
         this.timeout = timeout;
         this.interval = interval;
