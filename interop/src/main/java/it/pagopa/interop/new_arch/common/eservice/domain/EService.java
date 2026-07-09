@@ -1,5 +1,6 @@
 package it.pagopa.interop.new_arch.common.eservice.domain;
 
+import it.pagopa.interop.new_arch.common.kernel.domain.Document;
 import it.pagopa.interop.new_arch.common.kernel.domain.DocumentRef;
 import it.pagopa.interop.new_arch.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
@@ -35,7 +36,7 @@ public class EService implements Identifiable {
                 .orElse(null);
     }
 
-    public EService replaceDocument(UUID descriptorId, UUID documentId, DocumentRef updatedDocument) {
+    public EService replaceDocument(UUID descriptorId, UUID documentId, Document updatedDocument) {
         return this.toBuilder()
                 .descriptors(
                         descriptors.stream()

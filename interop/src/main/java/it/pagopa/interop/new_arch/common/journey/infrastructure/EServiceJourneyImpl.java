@@ -1,5 +1,6 @@
 package it.pagopa.interop.new_arch.common.journey.infrastructure;
 
+import it.pagopa.interop.new_arch.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.new_arch.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.new_arch.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.new_arch.common.eservice.domain.EService;
@@ -15,10 +16,21 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor
 public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl> {
     private final EServiceUseCase eServiceUseCase;
+    private final EServiceDescriptorUseCase  eServiceDescriptorUseCase;
     private final DomainContext domainContext;
 
     @Override
     public EServiceJourneyImpl createEService(EServiceCreationCommand command, EServiceDescriptorState state) {
+        // DRAFT
+        EService draftEService = eServiceUseCase.createEService(command);
+        if (state == EServiceDescriptorState.DRAFT) return this;
+
+        // PUBLISHED
+        if(state != EServiceDescriptorState.PUBLISHED)
+            throw new UnsupportedOperationException("State " + state + " not supported yet.");
+
+
+
         return null;
     }
 

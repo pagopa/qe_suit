@@ -20,7 +20,7 @@ public class ClientSteps {
                 .withProducer(producer, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
                 .withConsumer(consumer, UserRole.ADMIN)
-                .linkAgreementInState(AgreementState.ACTIVE)
+                .linkAgreement(AgreementState.ACTIVE)
                 .linkPurposeInState(PurposeVersionState.ACTIVE);
     }
 }

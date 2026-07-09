@@ -6,7 +6,7 @@ import it.pagopa.interop.new_arch.common.agreement.domain.AgreementState;
 import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
 import it.pagopa.interop.new_arch.common.journey.application.AgreementJourney;
-import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
+import it.pagopa.interop.new_arch.common.kernel.domain.Delegation;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,14 +18,14 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
     private final DomainContext domainContext;
 
     @Override
-    public AgreementJourneyImpl linkAgreementInState(EService eService, AgreementState agreementState, @org.jspecify.annotations.Nullable DelegationRef delegationRef) {
-        Agreement agreement = agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor(), delegationRef);
+    public AgreementJourneyImpl linkAgreement(EService eService, AgreementState agreementState, @org.jspecify.annotations.Nullable Delegation delegation) {
+        Agreement agreement = agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor(), delegation);
 
         switch (agreementState) {
             case DRAFT -> {
             }
             case PENDING -> agreementUseCase.submitAgreement(agreement);
-            case ACTIVE -> agreementUseCase.activateAgreement(agreement, delegationRef);
+            case ACTIVE -> agreementUseCase.activateAgreement(agreement, delegation);
             default -> throw new UnsupportedOperationException("Not implemented yet: " + agreementState);
         }
 
@@ -33,8 +33,8 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
     }
 
     @Override
-    public AgreementJourneyImpl linkAgreementInState(AgreementState agreementState, @Nullable DelegationRef delegationRef) {
+    public AgreementJourneyImpl linkAgreement(AgreementState agreementState, @Nullable Delegation delegation) {
         EService eService = domainContext.getLastOrThrow(EService.class);
-        return linkAgreementInState(eService, agreementState, delegationRef);
+        return linkAgreement(eService, agreementState, delegation);
     }
 }

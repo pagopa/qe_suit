@@ -41,6 +41,7 @@ public class BffEServiceGateway implements EServiceGateway {
 
                     return savedEService;
                 })
+                .updateContext()
                 .get();
     }
 
@@ -52,6 +53,7 @@ public class BffEServiceGateway implements EServiceGateway {
                     Optional<EService> maybeEService = domainContext.getById(eServiceRef.id(), EService.class);
                     return mapper.toEServicePreservingDescriptors(eServiceDetails, maybeEService.orElse(null));
                 })
+                .updateContext()
                 .get();
     }
 

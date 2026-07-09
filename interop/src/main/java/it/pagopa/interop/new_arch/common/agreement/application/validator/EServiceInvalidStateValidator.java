@@ -4,7 +4,7 @@ import it.pagopa.interop.new_arch.common.agreement.domain.AgreementCreationFailu
 import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptorState;
-import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
+import it.pagopa.interop.new_arch.common.kernel.domain.Delegation;
 import jakarta.annotation.Nullable;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,7 @@ public class EServiceInvalidStateValidator implements AgreementFailureValidator 
     }
 
     @Override
-    public void validate(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation) {
+    public void validate(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         List<EServiceDescriptorState> validStates = List.of(EServiceDescriptorState.PUBLISHED);
 
         if (validStates.contains(descriptor.getState())) {

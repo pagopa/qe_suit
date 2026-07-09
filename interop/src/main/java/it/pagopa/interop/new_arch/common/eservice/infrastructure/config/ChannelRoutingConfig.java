@@ -4,6 +4,7 @@ import it.pagopa.interop.new_arch.common.agreement.application.AgreementGateway;
 import it.pagopa.interop.new_arch.common.eservice.application.EServiceDescriptorGateway;
 import it.pagopa.interop.new_arch.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.new_arch.common.eservice.application.EServiceRequestFactory;
+import it.pagopa.interop.new_arch.common.eservice.application.EServiceRiskAnalysisGateway;
 import it.pagopa.interop.new_arch.common.infrastructure.ChannelRoutingInterceptor;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ChannelContext;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
@@ -18,7 +19,7 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 
 @Configuration
 @RequiredArgsConstructor
-@EnablePluginRegistries({EServiceGateway.class, EServiceDescriptorGateway.class, EServiceRequestFactory.class})
+@EnablePluginRegistries({EServiceGateway.class, EServiceDescriptorGateway.class, EServiceRequestFactory.class, EServiceRiskAnalysisGateway.class})
 public class ChannelRoutingConfig {
 
     private final ObjectProvider<ChannelContext> channelContextProvider;
@@ -57,5 +58,17 @@ public class ChannelRoutingConfig {
         proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, channelContextProvider));
 
         return (EServiceRequestFactory) proxyFactory.getProxy();
+    }
+
+    @Bean
+    @Primary
+    public EServiceRiskAnalysisGateway transparentEServiceRiskAnalysisGateway(
+            PluginRegistry<EServiceRiskAnalysisGateway, Channel> registry) {
+
+        ProxyFactory proxyFactory = new ProxyFactory();
+        proxyFactory.setInterfaces(EServiceRiskAnalysisGateway.class);
+        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, channelContextProvider));
+
+        return (EServiceRiskAnalysisGateway) proxyFactory.getProxy();
     }
 }

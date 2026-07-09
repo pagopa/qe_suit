@@ -25,6 +25,7 @@ public class TestChain<Response> {
         return this;
     }
 
+
     public PollingAction<Response> withPolling(PollingStrategy pollingStrategy) {
         var pollingContext = new PollingActionContext<>(baseActionContext, pollingStrategy, null, null);
         return pollingActionProvider.getObject().handle(pollingContext);

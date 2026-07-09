@@ -6,19 +6,19 @@ import it.pagopa.interop.new_arch.common.agreement.domain.AgreementRef;
 import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
-import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
+import it.pagopa.interop.new_arch.common.kernel.domain.Delegation;
 import jakarta.annotation.Nullable;
 import org.springframework.plugin.core.Plugin;
 
 public interface AgreementGateway extends Plugin<Channel> {
 
-    Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation);
+    Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation);
 
     default Agreement createAgreement(EService eService, EServiceDescriptor descriptor) {
         return createAgreement(eService, descriptor, null);
     }
 
-    void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation, AgreementCreationFailureReason reason);
+    void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation, AgreementCreationFailureReason reason);
 
     default void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, AgreementCreationFailureReason reason) {
         shouldFailToCreateAgreement(eService, descriptor, null, reason);
@@ -28,5 +28,5 @@ public interface AgreementGateway extends Plugin<Channel> {
 
     Agreement submitAgreement(Agreement agreement);
 
-    Agreement activateAgreement(Agreement agreement, @Nullable DelegationRef delegation);
+    Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation);
 }

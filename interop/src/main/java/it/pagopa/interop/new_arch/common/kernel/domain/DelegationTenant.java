@@ -9,7 +9,7 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class DelegationTenantRef {
+public class DelegationTenant {
     UUID id;
     String name;
     TenantKind kind;

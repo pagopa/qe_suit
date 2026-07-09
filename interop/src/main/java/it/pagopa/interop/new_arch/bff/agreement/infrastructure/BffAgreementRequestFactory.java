@@ -5,7 +5,7 @@ import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
 import it.pagopa.interop.new_arch.common.journey.application.InteropJourney;
-import it.pagopa.interop.new_arch.common.kernel.domain.DelegationRef;
+import it.pagopa.interop.new_arch.common.kernel.domain.Delegation;
 import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
 import it.pagopa.interop.new_arch.common.kernel.domain.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class BffAgreementRequestFactory {
     private final InteropJourney interopJourney;
     private final DomainContext domainContext;
 
-    public AgreementPayload creationRequest(EService eService, EServiceDescriptor descriptor, @Nullable DelegationRef delegation) {
+    public AgreementPayload creationRequest(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         return Instancio.of(AgreementPayload.class)
                 .set(field(AgreementPayload::getEserviceId), eService.getId())
                 .set(field(AgreementPayload::getDescriptorId), descriptor.getId())
