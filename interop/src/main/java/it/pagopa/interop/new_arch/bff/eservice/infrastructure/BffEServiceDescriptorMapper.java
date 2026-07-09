@@ -14,6 +14,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Mapper(
@@ -28,6 +29,7 @@ public interface BffEServiceDescriptorMapper {
     @Mapping(target = "deprecatedAt", source = "deprecatedAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "archivedAt", source = "archivedAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "suspendedAt", source = "suspendedAt", qualifiedByName = "mapStringToInstant")
+    @Mapping(target = "serverUrls", source = "serverUrls", qualifiedByName = "mapServerUrls")
     EServiceDescriptor toEServiceDescriptor(ProducerEServiceDescriptor source);
 
     @Mapping(target = "id", source = "eservice.id")
@@ -82,6 +84,16 @@ public interface BffEServiceDescriptorMapper {
         return updatedBase.toBuilder()
                 .descriptors(List.copyOf(finalDescriptors))
                 .build();
+    }
+
+    @Named("mapServerUrls")
+    default List<String> mapServerUrls(Collection<? extends ProducerEServiceDescriptorServerUrlsInner> serverUrls) {
+        if (serverUrls == null) {
+            return List.of();
+        }
+        return serverUrls.stream()
+                .map(ProducerEServiceDescriptorServerUrlsInner::getUrl)
+                .toList();
     }
 
     @Mapping(target = "certified", source = "certified", qualifiedByName = "flattenAttributes")
