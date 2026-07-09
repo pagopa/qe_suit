@@ -46,7 +46,7 @@ public class BffAgreementRestClient extends RestClient {
         var payload = new DelegationRef().delegationId(delegationId);
 
         return execute(
-                () -> agreementsApi.activateAgreement().agreementIdPath(agreementId).body(payload).execute(Function.identity()),
+                () -> agreementsApi.approveAgreement().agreementIdPath(agreementId).body(payload).execute(Function.identity()),
                 Agreement.class
         );
     }
