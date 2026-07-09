@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.client.application;
+package it.pagopa.interop.new_arch.common.client.infrasructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementState;
