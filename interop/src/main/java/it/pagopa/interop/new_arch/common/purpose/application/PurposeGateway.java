@@ -7,8 +7,6 @@ import it.pagopa.interop.new_arch.common.risk_analysis.domain.RiskAnalysisFormCo
 import org.springframework.plugin.core.Plugin;
 
 public interface PurposeGateway extends Plugin<Channel> {
-    RiskAnalysisFormConfig getLatestRiskAnalysisConfig(Tenant tenant);
-
     Purpose createPurpose(EServiceRef eServiceRef, Tenant consumer, RiskAnalysisForm riskAnalysisForm);
 
     Purpose activatePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef);

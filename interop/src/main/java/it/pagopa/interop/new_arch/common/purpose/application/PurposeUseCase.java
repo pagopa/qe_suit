@@ -5,6 +5,7 @@ import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
 import it.pagopa.interop.new_arch.common.purpose.domain.Purpose;
 import it.pagopa.interop.new_arch.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.new_arch.common.risk_analysis.application.RiskAnalysisDataInitializer;
+import it.pagopa.interop.new_arch.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.new_arch.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.new_arch.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +18,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
+    private final RiskAnalysisGateway riskAnalysisGateway;
     private final RiskAnalysisDataInitializer riskAnalysisDataInitializer;
 
     public RiskAnalysisFormConfig getLatestRiskAnalysisConfig(Tenant tenant) {
-        return purposeGateway.getLatestRiskAnalysisConfig(tenant);
+        return riskAnalysisGateway.getLatestRiskAnalysisConfig(tenant);
     }
 
     public Purpose addDraftPurpose(Tenant consumer, EService eService, RiskAnalysisForm riskAnalysisForm) {
