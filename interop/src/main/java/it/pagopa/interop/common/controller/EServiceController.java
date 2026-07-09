@@ -16,6 +16,11 @@ public class EServiceController {
     @Given("un EService in stato DRAFT avente tutti i campi compilati, tra cui:")
     public void createWithOverride(Map<String, String> rawSeed) {
         service
+                .createAndFillDraftEservice()
+                        .withoutPolling()
+                                .andAssertThat()
+
+        service
             .createDraftWithOverride(rawSeed)
             .withPolling(PollingStrategy.UNTIL_SUCCESS)
             .andUpdateContext();
