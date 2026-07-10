@@ -3,7 +3,7 @@ package it.pagopa.interop.new_arch.common.eservice_template.domain;
 import it.pagopa.interop.new_arch.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.new_arch.common.attribute.domain.Attributes;
 import it.pagopa.interop.new_arch.common.kernel.domain.DocumentRef;
-import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
+import it.pagopa.interop.new_arch.common.kernel.Identifiable;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;

@@ -3,7 +3,7 @@ package it.pagopa.interop.new_arch.common.client.application;
 import it.pagopa.interop.new_arch.common.client.domain.Client;
 import it.pagopa.interop.new_arch.common.client.domain.ClientKind;
 import it.pagopa.interop.new_arch.common.client.domain.ClientRef;
-import it.pagopa.interop.new_arch.common.infrastructure.security.crypto.Key;
+import it.pagopa.interop.new_arch.common.kernel.domain.Key;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
 import it.pagopa.interop.new_arch.common.kernel.domain.User;
 import it.pagopa.interop.new_arch.common.purpose.domain.Purpose;

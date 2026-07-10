@@ -4,7 +4,6 @@ import io.restassured.response.Response;
 import it.pagopa.interop.new_arch.common.infrastructure.http.ApiResponse;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChain;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChainFactory;
-import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;

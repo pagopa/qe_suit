@@ -2,7 +2,7 @@ package it.pagopa.interop.new_arch.common.infrastructure.template.action;
 
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
 import it.pagopa.interop.new_arch.common.infrastructure.http.ApiResponse;
-import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
+import it.pagopa.interop.new_arch.common.kernel.Identifiable;
 
 import java.util.function.BiPredicate;
 import java.util.function.Function;
