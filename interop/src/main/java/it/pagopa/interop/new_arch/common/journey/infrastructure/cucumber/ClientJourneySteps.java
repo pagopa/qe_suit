@@ -1,8 +1,8 @@
 package it.pagopa.interop.new_arch.common.journey.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.new_arch.common.infrastructure.security.crypto.Key;
-import it.pagopa.interop.new_arch.common.infrastructure.security.crypto.KeyAlgorithm;
+import it.pagopa.interop.new_arch.common.kernel.domain.Key;
+import it.pagopa.interop.new_arch.common.kernel.domain.KeyAlgorithm;
 import it.pagopa.interop.new_arch.common.journey.application.InteropJourney;
 import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
 import it.pagopa.interop.new_arch.common.kernel.domain.UserRole;

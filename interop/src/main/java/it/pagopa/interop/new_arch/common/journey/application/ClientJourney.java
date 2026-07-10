@@ -1,6 +1,6 @@
 package it.pagopa.interop.new_arch.common.journey.application;
 
-import it.pagopa.interop.new_arch.common.infrastructure.security.crypto.Key;
+import it.pagopa.interop.new_arch.common.kernel.domain.Key;
 import it.pagopa.interop.new_arch.common.kernel.domain.UserRole;
 
 import java.util.UUID;

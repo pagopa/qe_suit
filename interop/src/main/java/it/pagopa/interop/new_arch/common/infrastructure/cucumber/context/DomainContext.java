@@ -1,7 +1,7 @@
 package it.pagopa.interop.new_arch.common.infrastructure.cucumber.context;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
+import it.pagopa.interop.new_arch.common.kernel.Identifiable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -3,7 +3,6 @@ package it.pagopa.interop.new_arch.common.infrastructure.template.action;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.context.BaseActionContext;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.context.PollingActionContext;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
 import lombok.Setter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;

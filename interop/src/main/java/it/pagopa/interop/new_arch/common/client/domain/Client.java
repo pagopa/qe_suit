@@ -1,7 +1,7 @@
 package it.pagopa.interop.new_arch.common.client.domain;
 
-import it.pagopa.interop.new_arch.common.infrastructure.security.crypto.Key;
-import it.pagopa.interop.new_arch.common.kernel.domain.Identifiable;
+import it.pagopa.interop.new_arch.common.kernel.domain.Key;
+import it.pagopa.interop.new_arch.common.kernel.Identifiable;
 import it.pagopa.interop.new_arch.common.kernel.domain.UserRef;
 import it.pagopa.interop.new_arch.common.purpose.domain.Purpose;
 import lombok.Builder;
