@@ -1,12 +1,5 @@
 package it.pagopa.interop.new_arch.web.eservice.infrastructure.cucumber;
 
-import io.cucumber.java.en.When;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.new_arch.web.eservice.domain.WebEServiceGeneralData;
-import it.pagopa.interop.new_arch.web.eservice.domain.WebEServiceTechnicalData;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.WebEServiceGeneralDataGateway;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.WebEServiceTechDataGateway;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.EServiceCreationPage;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

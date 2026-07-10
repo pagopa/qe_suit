@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.web.eservice.domain;
+package it.pagopa.interop.new_arch.web.eservice.application;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;

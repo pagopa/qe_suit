@@ -2,7 +2,7 @@ package it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.component.cr
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.web.component.InterfaceComponent;
+import it.pagopa.interop.new_arch.web.infrastructure.suit.component.InterfaceComponent;
 import org.assertj.core.api.SoftAssertions;
 
 public interface TechnicalSpecWizard extends Component {
