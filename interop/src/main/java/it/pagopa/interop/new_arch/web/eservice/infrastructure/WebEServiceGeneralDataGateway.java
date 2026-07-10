@@ -1,7 +1,11 @@
 package it.pagopa.interop.new_arch.web.eservice.infrastructure;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.new_arch.web.eservice.domain.WebEServiceGeneralData;
+import it.pagopa.interop.new_arch.common.eservice.domain.EService;
+import it.pagopa.interop.new_arch.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.new_arch.common.eservice.domain.EServiceTechnology;
+import it.pagopa.interop.new_arch.web.eservice.application.WebEServiceGeneralData;
+import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.EServiceCreationPage;
 import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.component.creation_wizard.GeneralDataWizard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +15,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebEServiceGeneralDataGateway {
 
-    private final GeneralDataWizard generalDataWizard;
+    private final EServiceCreationPage eServiceCreationPage;
 
-    public void fillWizard(WebEServiceGeneralData model) {
+    public void fillEServiceGeneralData(WebEServiceGeneralData model) {
         validateAsyncExchangeMode(model);
+        GeneralDataWizard generalDataWizard = eServiceCreationPage.generalDataStep();
 
         generalDataWizard
                 .setName(model.eservice().getName())
@@ -23,23 +28,26 @@ public class WebEServiceGeneralDataGateway {
                 .setTechnology(model.eservice().getTechnology())
                 .setPersonalData(model.eservice().getPersonalData())
                 .setMode(model.eservice().getMode());
+
+        eServiceCreationPage.saveDraftButton().click();
     }
 
-    public WebEServiceGeneralData readWizard() {
-        EServiceSeed seed = new EServiceSeed()
+    public EService readEServiceGeneralData() {
+        GeneralDataWizard generalDataWizard = eServiceCreationPage.generalDataStep();
+
+        return EService.builder()
                 .name(generalDataWizard.name().read())
                 .description(generalDataWizard.description().read())
-                .technology(generalDataWizard.getTechnology())
+                .technology(EServiceTechnology.valueOf(generalDataWizard.getTechnology().name()))
                 .asyncExchange(generalDataWizard.getAsyncExchange())
-                .mode(generalDataWizard.getMode())
-                .personalData(generalDataWizard.getPersonalData());
-
-        return new WebEServiceGeneralData(seed);
+                .mode(EServiceMode.valueOf(generalDataWizard.getMode().name()))
+                .personalData(generalDataWizard.getPersonalData())
+                .build();
     }
 
     private void validateAsyncExchangeMode(WebEServiceGeneralData model) {
         boolean hasAsyncExchange = Boolean.TRUE.equals(model.eservice().getAsyncExchange());
-        if (hasAsyncExchange && model.eservice().getMode() != null) {
+        if (hasAsyncExchange) {
             throw new IllegalStateException(
                     "Cannot set MODE for an async eService, but got: " + model.eservice().getMode()
             );
