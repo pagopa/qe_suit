@@ -23,13 +23,21 @@
         <cucumber.version>7.14.0</cucumber.version>
         <jjwt.version>0.12.6</jjwt.version>
         <spring-plugin.version>4.1.0</spring-plugin.version>
-        <rest-assured.version>5.5.0</rest-assured.version>
+        <rest-assured.version>6.0.1</rest-assured.version>
         <swagger-request-validator.version>2.46.1</swagger-request-validator.version>
         <bff.openapi.url>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</bff.openapi.url>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured-bom</artifactId>
+                <version>${rest-assured.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>bom</artifactId>
@@ -202,12 +210,17 @@
             <version>${rest-assured.version}</version>
         </dependency>
 
-        <dependency>
+               <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>xml-path</artifactId>
             <version>${rest-assured.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>3.0.21</version>
+        </dependency>
         <dependency>
             <groupId>com.atlassian.oai</groupId>
             <artifactId>swagger-request-validator-core</artifactId>
@@ -373,8 +386,6 @@
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
                             </configOptions>
-                            <apiPackage>it.pagopa.interop.generated.openapi.clients.bff.api</apiPackage>
-                            <modelPackage>it.pagopa.interop.generated.openapi.clients.bff.model</modelPackage>
                         </configuration>
                     </execution>
                 </executions>
