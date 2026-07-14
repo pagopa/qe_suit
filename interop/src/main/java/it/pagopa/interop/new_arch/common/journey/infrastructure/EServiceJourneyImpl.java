@@ -10,55 +10,45 @@ import it.pagopa.interop.new_arch.common.journey.application.EServiceJourney;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.function.Consumer;
-
 @Component
 @RequiredArgsConstructor
 public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl> {
+
     private final EServiceUseCase eServiceUseCase;
-    private final EServiceDescriptorUseCase  eServiceDescriptorUseCase;
+    private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final DomainContext domainContext;
 
     @Override
-    public EServiceJourneyImpl createEService(EServiceCreationCommand command, EServiceDescriptorState state) {
-        // DRAFT
+    public EServiceJourneyImpl createEService(EServiceCreationCommand command, EServiceDescriptorState targetState) {
         EService draftEService = eServiceUseCase.createEService(command);
-        if (state == EServiceDescriptorState.DRAFT) return this;
-
-        // PUBLISHED
-        if(state != EServiceDescriptorState.PUBLISHED)
-            throw new UnsupportedOperationException("State " + state + " not supported yet.");
-
-
-
-        return null;
+        return processLifecycle(draftEService, targetState);
     }
 
     @Override
-    public EServiceJourneyImpl createEService(Consumer<EServiceCreationCommand> command, EServiceDescriptorState state) {
-        return null;
+    public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {
+        EService draftEService = eServiceUseCase.createEService(cmd -> {});
+        return processLifecycle(draftEService, targetState);
     }
 
-    @Override
-    public EServiceJourneyImpl createEService(EServiceDescriptorState state) {
-        return null;
+    private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptorState targetState) {
+        domainContext.upsert(eService);
+
+        return switch (targetState) {
+            case DRAFT -> this;
+
+            case PUBLISHED -> publishPipeline(eService);
+
+            // Facilmente estensibile in futuro senza toccare i metodi pubblici:
+            // case SUSPENDED -> publishPipeline(eService).suspendPipeline(eService);
+
+            default -> throw new UnsupportedOperationException(
+                    String.format("La transizione allo stato %s non è ancora supportata nel Journey.", targetState)
+            );
+        };
     }
 
-//    @Override
-//    public EServiceJourneyImpl createEService(EServiceCreationCommand command) {
-//        eServiceUseCase.createEService(command);
-//        return this;
-//    }
-//
-//    @Override
-//    public EServiceJourneyImpl createEService(Consumer<EServiceCreationCommand> command) {
-//        eServiceUseCase.createEService(command);
-//        return this;
-//    }
-//
-//    @Override
-//    public EServiceJourneyImpl createEService() {
-//        eServiceUseCase.createEService(cmd -> {});
-//        return this;
-//    }
+    private EServiceJourneyImpl publishPipeline(EService eService) {
+        eServiceDescriptorUseCase.publishDescriptor(eService, eService.getLastDraftDescriptor());
+        return this;
+    }
 }

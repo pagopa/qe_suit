@@ -1,6 +1,6 @@
 package it.pagopa.interop.new_arch.common.purpose.infrastructure.config;
 
-import it.pagopa.interop.new_arch.common.infrastructure.ChannelRoutingInterceptor;
+import it.pagopa.interop.new_arch.common.infrastructure.channel.ChannelRoutingInterceptor;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ChannelContext;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
 import it.pagopa.interop.new_arch.common.purpose.application.PurposeGateway;

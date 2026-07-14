@@ -7,6 +7,7 @@ import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
 import it.pagopa.interop.new_arch.common.kernel.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.core.SdkBytes;
@@ -31,11 +32,12 @@ public class BearerAuthProvider {
     private final ObjectMapper objectMapper;
     private final KmsClient kmsClient;
     private final BearerTokenProperties properties;
-    private final UserContext userContext;
+    private final ObjectProvider<UserContext> userContextProvider;
 
     @Cacheable(cacheNames = "sessionToken", key = "@bearerAuthProvider.cacheKey()")
     public String getToken() {
         try {
+            UserContext userContext = getUserContextOrThrow();
             User user = userContext.getUser();
             Tenant tenant = userContext.getTenant();
             String role = user.getRole().name().toLowerCase();
@@ -98,18 +100,40 @@ public class BearerAuthProvider {
         }
     }
 
+    /**
+     * Calcola la chiave di cache in modo sicuro.
+     * Se invocato fuori da uno scenario attivo (es. durante ispezioni dell'IDE o warmup),
+     * restituisce una chiave di fallback evitando crash di sistema.
+     */
     public String cacheKey() {
-        User u = userContext.getUser();
-        Tenant t = userContext.getTenant();
+        UserContext userContext = userContextProvider.getIfAvailable();
+        if (userContext == null) {
+            return "no-active-scenario";
+        }
 
-        return String.join("|",
-                u.getUserId().toString(),
-                t.getOrganizationId().toString(),
-                t.getSelfcareId().toString(),
-                u.getRole().name(),
-                t.getExternalIdOrigin(),
-                t.getExternalIdValue()
-        );
+        try {
+            User u = userContext.getUser();
+            Tenant t = userContext.getTenant();
+
+            return String.join("|",
+                    u.getUserId().toString(),
+                    t.getOrganizationId().toString(),
+                    t.getSelfcareId().toString(),
+                    u.getRole().name(),
+                    t.getExternalIdOrigin(),
+                    t.getExternalIdValue()
+            );
+        } catch (IllegalStateException e) {
+            return "no-active-session";
+        }
+    }
+
+    private UserContext getUserContextOrThrow() {
+        UserContext userContext = userContextProvider.getIfAvailable();
+        if (userContext == null) {
+            throw new IllegalStateException("UserContext is not available in the current execution scope.");
+        }
+        return userContext;
     }
 
     @SuppressWarnings("unchecked")

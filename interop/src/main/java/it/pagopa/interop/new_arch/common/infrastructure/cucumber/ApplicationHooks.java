@@ -2,14 +2,17 @@ package it.pagopa.interop.new_arch.common.infrastructure.cucumber;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
+import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ChannelContext;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.TestContext;
+import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
 import it.pagopa.interop.new_arch.common.kernel.domain.TestKind;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class TestKindHooks {
+public class ApplicationHooks {
 
     private final TestContext testContext;
+    private final ChannelContext channelContext;
 
     @Before("@Business")
     public void beforeBusinessScenario(Scenario scenario) {
@@ -19,5 +22,15 @@ public class TestKindHooks {
     @Before("@Contract")
     public void beforeContractScenario(Scenario scenario) {
         testContext.setCurrentTestKind(TestKind.CONTRACT);
+    }
+
+    @Before("@BFF")
+    public void beforeBFFScenario(Scenario scenario) {
+        channelContext.setCurrentChannel(Channel.BFF);
+    }
+
+    @Before("@WEB")
+    public void beforeWEBScenario(Scenario scenario) {
+        channelContext.setCurrentChannel(Channel.WEB_BROWSER);
     }
 }

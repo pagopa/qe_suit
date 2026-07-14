@@ -22,6 +22,7 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
     public EServiceCreationCommand defaultCreationEServiceCommand() {
         EServiceSeed creationSeed = Instancio.of(EServiceSeed.class)
                 .generate(field(EServiceSeed::getName), gen -> gen.string().prefix("eservice-").length(15))
+                .generate(field(EServiceSeed::getDescription), gen -> gen.string().prefix("description-").length(15))
                 .set(field(EServiceSeed::getTechnology), EServiceTechnology.REST)
                 .set(field(EServiceSeed::getMode), EServiceMode.DELIVER)
                 .set(field(EServiceSeed::getIsConsumerDelegable), true)
