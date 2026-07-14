@@ -10,6 +10,7 @@ import io.restassured.filter.Filter;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.new_arch.bff.infrastructure.security.bearer.BearerAuthProvider;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.TestContext;
+import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.UserContext;
 import it.pagopa.interop.new_arch.common.infrastructure.http.HttpLoggingFilter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -42,17 +43,25 @@ public class RestApiClientConfig {
     }
 
     @Bean
-    public ApiClient apiClient(BearerAuthProvider bearerAuthProvider, ObjectProvider<TestContext> testContextProvider) {
+    public ApiClient apiClient(
+            BearerAuthProvider bearerAuthProvider,
+            ObjectProvider<TestContext> testContextProvider,
+            ObjectProvider<UserContext> userContextProvider
+    ) {
         Filter contractTestFilter = createContractTestFilter();
         Filter businessTestFilter = createBusinessTestFilter();
 
         ApiClient.Config apiConfig = ApiClient.Config.apiConfig()
                 .reqSpecSupplier(() -> {
-                    // Questa lambda viene eseguita a RUNTIME durante l'esecuzione dei test.
-                    // Poiché il test è attivo, lo scope 'cucumber-glue' è presente e possiamo recuperare il TestContext.
                     TestContext context = testContextProvider.getObject();
+                    UserContext userContext = userContextProvider.getObject();
 
-                    RequestSpecBuilder builder = createBaseSpecBuilder(bearerAuthProvider);
+                    String token = bearerAuthProvider.getToken(
+                            userContext.getUser(),
+                            userContext.getTenant()
+                    );
+
+                    RequestSpecBuilder builder = createBaseSpecBuilder(token);
 
                     switch (context.getCurrentTestKind()) {
                         case CONTRACT -> builder.addFilter(contractTestFilter);
@@ -89,11 +98,11 @@ public class RestApiClientConfig {
         };
     }
 
-    private RequestSpecBuilder createBaseSpecBuilder(BearerAuthProvider bearerAuthProvider) {
+    private RequestSpecBuilder createBaseSpecBuilder(String bearerToken) {
         return new RequestSpecBuilder()
                 .setBaseUri(basePath)
                 .setConfig(config().objectMapperConfig(objectMapperConfig().defaultObjectMapper(jackson())))
-                .setAuth(RestAssured.oauth2(bearerAuthProvider.getToken()))
+                .setAuth(RestAssured.oauth2(bearerToken))
                 .addFilter(new HttpLoggingFilter());
     }
 }
