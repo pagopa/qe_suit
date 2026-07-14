@@ -4,7 +4,6 @@ import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.report.LevelResolver;
 import com.atlassian.oai.validator.report.ValidationReport;
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter;
-import io.cucumber.spring.ScenarioScope;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.Filter;
@@ -14,6 +13,7 @@ import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.TestCon
 import it.pagopa.interop.new_arch.common.infrastructure.http.HttpLoggingFilter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,15 +42,30 @@ public class RestApiClientConfig {
     }
 
     @Bean
-    @ScenarioScope
-    public ApiClient apiClient(BearerAuthProvider bearerAuthProvider, TestContext testContext) {
-        return switch (testContext.getCurrentTestKind()) {
-            case CONTRACT -> contractApiClient(bearerAuthProvider);
-            case FLOW -> flowApiClient(bearerAuthProvider);
-        };
+    public ApiClient apiClient(BearerAuthProvider bearerAuthProvider, ObjectProvider<TestContext> testContextProvider) {
+        Filter contractTestFilter = createContractTestFilter();
+        Filter businessTestFilter = createBusinessTestFilter();
+
+        ApiClient.Config apiConfig = ApiClient.Config.apiConfig()
+                .reqSpecSupplier(() -> {
+                    // Questa lambda viene eseguita a RUNTIME durante l'esecuzione dei test.
+                    // Poiché il test è attivo, lo scope 'cucumber-glue' è presente e possiamo recuperare il TestContext.
+                    TestContext context = testContextProvider.getObject();
+
+                    RequestSpecBuilder builder = createBaseSpecBuilder(bearerAuthProvider);
+
+                    switch (context.getCurrentTestKind()) {
+                        case CONTRACT -> builder.addFilter(contractTestFilter);
+                        case FLOW -> builder.addFilter(businessTestFilter);
+                    }
+
+                    return builder;
+                });
+
+        return ApiClient.api(apiConfig);
     }
 
-    private ApiClient contractApiClient(BearerAuthProvider bearerAuthProvider) {
+    private Filter createContractTestFilter() {
         OpenApiInteractionValidator validator = OpenApiInteractionValidator
                 .createFor(openApiSpecUrl)
                 .withLevelResolver(LevelResolver.create()
@@ -60,18 +75,11 @@ public class RestApiClientConfig {
                         .build())
                 .build();
 
-        Filter openApiFilter = new OpenApiValidationFilter(validator);
-
-        ApiClient.Config apiConfig = ApiClient.Config.apiConfig()
-                .reqSpecSupplier(() -> createBaseSpecBuilder(bearerAuthProvider)
-                        .addFilter(openApiFilter)
-                );
-
-        return ApiClient.api(apiConfig);
+        return new OpenApiValidationFilter(validator);
     }
 
-    private ApiClient flowApiClient(BearerAuthProvider bearerAuthProvider) {
-        Filter macroStatusCodeFilter = (requestSpec, responseSpec, ctx) -> {
+    private Filter createBusinessTestFilter() {
+        return (requestSpec, responseSpec, ctx) -> {
             var response = ctx.next(requestSpec, responseSpec);
             int code = response.getStatusCode();
             if ((code >= 200 && code < 300) || (code >= 400 && code < 500)) {
@@ -79,13 +87,6 @@ public class RestApiClientConfig {
             }
             throw new AssertionError("Test di Flusso interrotto! Errore server: " + code);
         };
-
-        ApiClient.Config apiConfig = ApiClient.Config.apiConfig()
-                .reqSpecSupplier(() -> createBaseSpecBuilder(bearerAuthProvider)
-                        .addFilter(macroStatusCodeFilter)
-                );
-
-        return ApiClient.api(apiConfig);
     }
 
     private RequestSpecBuilder createBaseSpecBuilder(BearerAuthProvider bearerAuthProvider) {
