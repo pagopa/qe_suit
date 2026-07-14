@@ -1,9 +1,12 @@
 package it.pagopa.interop.new_arch.common.infrastructure.mapping;
 
 import org.mapstruct.Named;
+import org.springframework.stereotype.Component;
+
 import java.time.Instant;
 import java.time.OffsetDateTime;
 
+@Component
 public class SharedMapperUtils {
 
     @Named("mapStringToInstant")
