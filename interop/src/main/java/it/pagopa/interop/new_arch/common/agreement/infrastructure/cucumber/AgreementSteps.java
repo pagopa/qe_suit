@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 public class AgreementSteps {
     private final AgreementUseCase agreementUseCase;
 
-    @Given("associa un Agreement in stato DRAFT all'{eService}")
+    @Given("associa un Agreement in stato DRAFT all'{currentEService}")
     public void createAgreement(EService eService) {
         agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor());
     }
