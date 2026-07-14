@@ -19,7 +19,7 @@ public class WebDebugClientAssertionSteps {
     private final WebDebugClientAssertionGateway debugClientAssertionGateway;
     private final DomainContext domainContext;
 
-    @When("l'utente inoltra la richiesta di validazione specificando {currentClientAssertion}(, {currentDpopProof}) e {currentClient}")
+    @When("l'utente inoltra la richiesta di validazione specificando {currentClientAssertion}, {currentDpopProof} e {currentClient}")
     public void validateClientAssertion(ClientAssertion clientAssertion, DPoPProof dPoPProof, Client client) {
         DebugClientAssertionValidationResponse result = debugClientAssertionGateway.performValidation(clientAssertion, client, dPoPProof);
         domainContext.upsert(result);
