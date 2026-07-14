@@ -1,12 +1,8 @@
-package it.pagopa.interop.new_arch.common.client.infrasructure.config;
+package it.pagopa.interop.new_arch.common.agreement.infrastructure.config;
 
-import it.pagopa.interop.new_arch.common.client.application.ClientGateway;
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceDescriptorGateway;
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceGateway;
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceRequestFactory;
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceRiskAnalysisGateway;
-import it.pagopa.interop.new_arch.common.infrastructure.ChannelRoutingInterceptor;
+import it.pagopa.interop.new_arch.common.agreement.application.AgreementGateway;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ChannelContext;
+import it.pagopa.interop.new_arch.common.infrastructure.ChannelRoutingInterceptor;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.framework.ProxyFactory;
@@ -19,20 +15,20 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 
 @Configuration
 @RequiredArgsConstructor
-@EnablePluginRegistries({ClientGateway.class})
-public class ChannelRoutingConfig {
+@EnablePluginRegistries({AgreementGateway.class})
+public class AgreementRoutingConfig {
 
     private final ObjectProvider<ChannelContext> channelContextProvider;
 
     @Bean
     @Primary
-    public ClientGateway transparentClientGateway(
-            PluginRegistry<ClientGateway, Channel> registry) {
+    public AgreementGateway transparentAgreementGateway(
+            PluginRegistry<AgreementGateway, Channel> registry) {
 
         ProxyFactory proxyFactory = new ProxyFactory();
-        proxyFactory.setInterfaces(ClientGateway.class);
+        proxyFactory.setInterfaces(AgreementGateway.class);
         proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, channelContextProvider));
 
-        return (ClientGateway) proxyFactory.getProxy();
+        return (AgreementGateway) proxyFactory.getProxy();
     }
 }
