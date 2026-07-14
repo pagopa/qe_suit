@@ -16,13 +16,13 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 @Configuration
 @RequiredArgsConstructor
 @EnablePluginRegistries({PurposeGateway.class})
-public class ChannelRoutingConfig {
+public class PurposeRoutingConfig {
 
     private final ObjectProvider<ChannelContext> channelContextProvider;
 
     @Bean
     @Primary
-    public PurposeGateway transparentEServiceRiskAnalysisGateway(
+    public PurposeGateway transparentPurposeGateway(
             PluginRegistry<PurposeGateway, Channel> registry) {
 
         ProxyFactory proxyFactory = new ProxyFactory();
