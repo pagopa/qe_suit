@@ -12,6 +12,6 @@ public interface PollingStrategy {
     PollingStrategy UNTIL_ERROR = (code) -> !is2xxSuccessful(code);
 
     static boolean is2xxSuccessful(ApiResponse apiResponse) {
-        return apiResponse.statusCode() >= 200 && apiResponse.statusCode() < 300;
+        return apiResponse != null && apiResponse.statusCode() >= 200 && apiResponse.statusCode() < 300;
     }
 }
