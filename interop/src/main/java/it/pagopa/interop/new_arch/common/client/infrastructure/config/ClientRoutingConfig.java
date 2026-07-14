@@ -1,7 +1,7 @@
 package it.pagopa.interop.new_arch.common.client.infrastructure.config;
 
 import it.pagopa.interop.new_arch.common.client.application.ClientGateway;
-import it.pagopa.interop.new_arch.common.infrastructure.ChannelRoutingInterceptor;
+import it.pagopa.interop.new_arch.common.infrastructure.channel.ChannelRoutingInterceptor;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ChannelContext;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;

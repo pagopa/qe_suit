@@ -1,5 +1,6 @@
-package it.pagopa.interop.new_arch.common.infrastructure;
+package it.pagopa.interop.new_arch.common.infrastructure.channel;
 
+import it.pagopa.interop.new_arch.common.eservice.infrastructure.config.MissingActiveChannelException;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ChannelContext;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,9 @@ public class ChannelRoutingInterceptor<T extends Plugin<Channel>> implements Met
     public Object invoke(MethodInvocation invocation) throws Throwable {
         // 1. Recupero il canale attivo a runtime
         Channel activeChannel = channelContextProvider.getObject().getCurrentChannel();
-
+        if (activeChannel == null)
+            throw new MissingActiveChannelException();
+        
         // 2. Prendo il plugin reale dal registro di Spring
         T activePlugin = registry.getRequiredPluginFor(activeChannel);
 
