@@ -4,6 +4,7 @@ import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.report.LevelResolver;
 import com.atlassian.oai.validator.report.ValidationReport;
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter;
+import io.cucumber.spring.ScenarioScope;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.Filter;
@@ -22,7 +23,6 @@ import static io.restassured.config.RestAssuredConfig.config;
 import static it.pagopa.interop.generated.openapi.clients.bff.JacksonObjectMapper.jackson;
 
 @Configuration
-@RequiredArgsConstructor
 public class RestApiClientConfig {
 
     @Value("${interop.api.base-url.bff}")
@@ -30,8 +30,6 @@ public class RestApiClientConfig {
 
     @Value("${interop.api.openapi-url.bff}")
     private String openApiSpecUrl;
-
-    private final TestContext testContext;
 
     @Getter
     @RequiredArgsConstructor
@@ -44,7 +42,8 @@ public class RestApiClientConfig {
     }
 
     @Bean
-    public ApiClient apiClient(BearerAuthProvider bearerAuthProvider) {
+    @ScenarioScope
+    public ApiClient apiClient(BearerAuthProvider bearerAuthProvider, TestContext testContext) {
         return switch (testContext.getCurrentTestKind()) {
             case CONTRACT -> contractApiClient(bearerAuthProvider);
             case FLOW -> flowApiClient(bearerAuthProvider);
