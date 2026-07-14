@@ -1,11 +1,11 @@
 package it.pagopa.interop.new_arch.common.infrastructure.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
-
 import it.pagopa.interop.new_arch.common.client.domain.Client;
+import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
-import it.pagopa.interop.new_arch.common.kernel.security.ClientAssertion;
 import it.pagopa.interop.new_arch.common.infrastructure.security.jwt.DPoPProof;
+import it.pagopa.interop.new_arch.common.kernel.security.ClientAssertion;
 import it.pagopa.interop.new_arch.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,4 +35,10 @@ public class ScenarioParameterTypes {
     public ClientAssertion currentClientAssertion(String token) {
         return domainContext.getLastOrThrow(ClientAssertion.class);
     }
+
+    @ParameterType("e-service|EService|e-service creato|EService creato")
+    public EService currentEService(String token) {
+        return domainContext.getLastOrThrow(EService.class);
+    }
+
 }
