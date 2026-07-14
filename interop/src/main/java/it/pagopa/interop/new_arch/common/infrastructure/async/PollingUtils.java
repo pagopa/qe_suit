@@ -25,6 +25,7 @@ public final class PollingUtils {
             return Awaitility.await()
                     .atMost(timeout)
                     .with()
+                    .pollInSameThread()
                     .pollInterval(interval)
                     .ignoreExceptions()
                     .until(supplier::get, condition);
