@@ -101,8 +101,11 @@ public class RestApiClientConfig {
     private RequestSpecBuilder createBaseSpecBuilder(String bearerToken) {
         return new RequestSpecBuilder()
                 .setBaseUri(basePath)
-                .setConfig(config().objectMapperConfig(objectMapperConfig().defaultObjectMapper(jackson())))
-                .setAuth(RestAssured.oauth2(bearerToken))
-                .addFilter(new HttpLoggingFilter());
+                .setConfig(
+                        config().objectMapperConfig(
+                                objectMapperConfig().defaultObjectMapper(jackson())
+                        )
+                )
+                .addHeader("Authorization", "Bearer " + bearerToken);
     }
 }
