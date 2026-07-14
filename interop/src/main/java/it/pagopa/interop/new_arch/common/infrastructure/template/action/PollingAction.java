@@ -34,12 +34,19 @@ public class PollingAction<Response> implements ResponseFinalizer<Response> {
 
     PollingAction<Response> handle(PollingActionContext<? super Response> context) {
         this.context = context;
-        this.raw = PollingUtils.pollUntil(
-                context.getResponseSupplier(),
-                r -> context.getPollingStrategy().isSatisfied(r),
-                context.getTimeout() != null ? context.getTimeout() : Duration.ofSeconds(10),
-                context.getInterval() != null ? context.getInterval() : Duration.ofSeconds(1)
-        );
+
+        if (context.getTimeout() == null)
+            this.raw = PollingUtils.pollUntil(
+                    context.getResponseSupplier(),
+                    r -> context.getPollingStrategy().isSatisfied(r)
+            );
+        else
+            this.raw = PollingUtils.pollUntil(
+                    context.getResponseSupplier(),
+                    r -> context.getPollingStrategy().isSatisfied(r),
+                    context.getTimeout(),
+                   context.getInterval()
+            );
 
         apiContext.setLastResponse(raw);
         return this;
