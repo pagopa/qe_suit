@@ -106,6 +106,7 @@ public class RestApiClientConfig {
                                 objectMapperConfig().defaultObjectMapper(jackson())
                         )
                 )
+                .addFilter(new HttpLoggingFilter())
                 .addHeader("Authorization", "Bearer " + bearerToken);
     }
 }
