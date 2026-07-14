@@ -35,7 +35,7 @@ public class WebBrowserSteps {
             userContext.set(user, tenant);
             browserContext.set(user, tenant);
 
-            String sessionToken = bearerAuthProvider.getToken();
+            String sessionToken = bearerAuthProvider.getToken(user, tenant);
 
             // Il localStorage è legato all'origin corrente.
             // Se il browser non è ancora sul portale Interop,
