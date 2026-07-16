@@ -12,7 +12,9 @@ spring:
   config:
     activate:
       on-profile: test
-    import: optional:classpath:secrets/bearer-token-test.properties
+    import:
+      - optional:classpath:secrets/bearer-token-test.properties
+      - optional:classpath:secrets/gpd-subscription-key.properties
 
 # ============================================================================
 # URLs Configuration
@@ -64,3 +66,20 @@ selettore:
 token:
   mittente: ${pn.external.bearer-token.tokentestMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
+
+# ============================================================================
+# BFF API Configuration (notifiche legali via API)
+# ============================================================================
+bff:
+  api:
+    # REPLACE_ME: host BFF reale per l'ambiente di test, non deducibile da questo repo
+    base-url: https://webapi.test.notifichedigitali.it
+    bearer-token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImU0ZjJhYTIyLTE5MDctNDIyNC1iYWViLTExYzZiY2RkZDNkYSJ9.eyJpYXQiOjE3ODQxMzE2ODUsImV4cCI6MTc4NDE2NDA2OSwidWlkIjoiMjEzNGQ5MmItNWQxYi00OWI1LTlhNmUtNDI4M2Y0ODc5YmJmIiwiaXNzIjoiaHR0cHM6Ly93ZWJhcGkudGVzdC5ub3RpZmljaGVkaWdpdGFsaS5pdCIsImF1ZCI6IndlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwianRpIjoiNzQwMTZmOGItODI5Ny00YWNjLWE0NDYtNGFhYTViZDM3NmRiIiwib3JnYW5pemF0aW9uIjp7ImlkIjoiYTk1ZGFjZTQtNGE0Ny00MTQ5LWE4MTQtMGU2NjkxMTNjZTQwIiwicm9sZSI6ImFkbWluIiwiZ3JvdXBzIjpbIjY1NjRiOWE2NzE5MTlhNjk2MTU3ZjJjMCIsIjY1ZGYzYmI1Mjg0MjVhNDMyNTYzMDNlYSJdLCJmaXNjYWxfY29kZSI6IjAwMjE1MTUwMjM2In19.cTtkYtH0940c6-JhiPJzFh63ffk2YKKUbozM2TbGSFu-V5JMCnx-2hWuLipblSDge-OGMgXGh6ycwyHzVS7TWfTseBqxJtk7qrkCuxoy3BgE_Guao24MfXodpK5GMb1IxPWnzDs_zG91XPkA9nz_cn2WyKrPBbrJ81hBs8hu7RiJLsktTRzDLmwCT5G4K5llFvZlHTw51cHby_XQDx8xKRWFevVfiqnrPOeR1pAaji1Zqzs8wFvCgoHSExqx6I8WfReXXhxXe_7STi91cIpQBE9xZKJqBNZZayZikDSWn0IdHVC3R6F4CVBq7eZ1vjvygadBKeWiW69fpU6R-4Zapw
+
+# ============================================================================
+# GPD API Configuration (posizioni debitorie)
+# ============================================================================
+gpd:
+  api:
+    base-url: https://api.uat.platform.pagopa.it/gpd/debt-positions-service/v1
+    subscription-key: ${gpd.subscription-key}

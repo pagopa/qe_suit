@@ -12,7 +12,9 @@ spring:
   config:
     activate:
       on-profile: uat
-    import: optional:classpath:secrets/bearer-token-uat.properties
+    import:
+      - optional:classpath:secrets/bearer-token-uat.properties
+      - optional:classpath:secrets/gpd-subscription-key.properties
 
 # ============================================================================
 # URLs Configuration
@@ -64,3 +66,20 @@ selettore:
 token:
   mittente: ${pn.external.bearer-token.tokentestMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
+
+# ============================================================================
+# BFF API Configuration (notifiche legali via API)
+# ============================================================================
+bff:
+  api:
+    # REPLACE_ME: host BFF reale per l'ambiente uat, non deducibile da questo repo
+    base-url: REPLACE_ME
+    bearer-token: ${token.mittente}
+
+# ============================================================================
+# GPD API Configuration (posizioni debitorie)
+# ============================================================================
+gpd:
+  api:
+    base-url: https://api.uat.platform.pagopa.it/gpd/debt-positions-service/v1
+    subscription-key: ${gpd.subscription-key}
