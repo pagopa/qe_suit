@@ -23,11 +23,11 @@ public interface DashboardPage extends Page {
 
     @Override
     default void assertLoaded() {
-       header().readAndAssert((h) -> {
+        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        header().readAndAssert((h) -> {
            Assertions.assertThat(h).isNotNull();
            Assertions.assertThat(h).isIn("Notifiche", "Notifications");
        });
-       oneTrustBanner().ifPresent(OneTrustBanner::accept);
     }
 
     default void goToNotificationDetails() {

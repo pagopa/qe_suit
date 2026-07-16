@@ -1,13 +1,13 @@
 package it.pagopa.send.config.parameter_type;
 
 import io.cucumber.java.ParameterType;
-import it.frontend.e2e.framework.web.domain.User;
+import it.pagopa.send.common.kernel.domain.Recipient;
 
 public class UserType {
 
     @ParameterType("Grossini|FrancescoPetrarca|Lucrezia")
-    public User user(String username) {
-       return User.fromUsername(username);
+    public Recipient user(String username) {
+       return Recipient.fromUsername(username);
     }
 
     @ParameterType("la PA|la PG|l'utente")

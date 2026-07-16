@@ -5,6 +5,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.User;
+import it.pagopa.send.common.kernel.domain.Recipient;
 
 public interface OneIdLoginForm extends Component {
 
@@ -21,7 +22,7 @@ public interface OneIdLoginForm extends Component {
 
     OneIdPrivacyDialog oneIdPrivacyDialog();
 
-    default void loginWith(User user) {
+    default void loginWith(Recipient user) {
         this.username().writeAndAssert(user.getUsername());
         this.password().writeAndAssert(user.getPassword());
         this.submit().click();

@@ -9,12 +9,27 @@ import it.pagopa.send.domain.web.commons.component.Header;
 import it.pagopa.send.domain.web.commons.component.Sidebar;
 import it.pagopa.send.domain.web.commons.pages.login.AbstractComunePickerPage;
 import it.pagopa.send.domain.web.pages.supporto.BackstageProfilePage;
+import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
+import it.pagopa.send.web.infrastructure.suit.component.BackNavigable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CommonSteps {
     private final WebPresentationGateway uiGateway;
+    private final WebBrowserContext webBrowserContext;
+
+    @And("torna alla pagina precedente")
+    public void goBackToPreviousPage() {
+        Page currentPage = webBrowserContext.getCurrentPage();
+        if (!(currentPage instanceof BackNavigable backNavigable)) {
+            throw new IllegalStateException("La pagina corrente (" + currentPage.getClass().getSimpleName() + ") non supporta la navigazione all'indietro");
+        }
+
+        backNavigable.goBack();
+        webBrowserContext.getPreviousPage().assertLoaded();
+        webBrowserContext.setCurrentPage(webBrowserContext.getPreviousPage());
+    }
 
     @When("si passa alla sezione {string} tramite la sidebar")
     public void navigateToSection(String section) {
@@ -32,6 +47,7 @@ public class CommonSteps {
     public void assertPageLoaded(Class<? extends Page> page) {
         Page pageInstance = uiGateway.bind(page);
         pageInstance.assertLoaded();
+        webBrowserContext.setCurrentPage(pageInstance);
     }
 
     @When("l'utente accede alla {page} selezionando {string}")
