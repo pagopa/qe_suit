@@ -6,21 +6,15 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.send.domain.web.pages.destinatario.pf.login.DowntimeItem;
-import it.pagopa.infrastructure.suit.component.Chip;
+import it.pagopa.send.web.infrastructure.suit.component.Chip;
 import it.pagopa.send.web.notification_details.infrastructure.suit.NotificationDetailsPage;
-import it.pagopa.send.web.notification_details.infrastructure.suit.section.AttachmentSection;
-import it.pagopa.send.web.notification_details.infrastructure.suit.section.NotificationStatusSection;
-import it.pagopa.send.web.notification_details.infrastructure.suit.section.NotificationSummarySection;
-import it.pagopa.send.web.notification_details.infrastructure.suit.section.PaymentSection;
 import org.assertj.core.api.Assertions;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Questa pagina rappresenta la pagina dei dettagli di una notifica per il cittadino, accessibile dal portale delle notifiche.
  * La pagina mostra informazioni dettagliate sulla notifica selezionata.
  */
-@Url("about:blank")
+@Url("da mappare")
 public interface NotificationDetailsPFPage extends NotificationDetailsPage {
 
     @XPath("//*[@id=\"title-of-page\"]")
@@ -29,7 +23,7 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
     @XPath("//*[@id=\"title-of-page\"]")
     Chip notificationCancelledMessage();
 
-    interface NotificationDetailsSection extends NotificationSummarySection {
+    interface NotificationDetailsSection extends Component {
 
         @XPath("//*[@id=\"item\"]")
         Chip type();
@@ -37,79 +31,67 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
         @XPath("//*[@id=\"item\"]")
         Readable<String> header();
 
-        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[1]/div[1]/div[3]/div[1]/div[2]/span")
+        @XPath("//*[@id=\"item\"]")
         Readable<String> sender();
 
-        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[1]/div[1]/div[3]/div[1]/div[2]/p")
+        @XPath("//*[@id=\"item\"]")
         Readable<String> date();
 
-        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[1]/div[1]/div[3]/div[2]/div/p[2]")
+        @XPath("//*[@id=\"item\"]")
         Readable<String> iun();
 
-        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[1]/div[1]/p")
+        @XPath("//*[@id=\"item\"]")
         Readable<String> description();
-
-        @Override
-        default void assertLoaded() {
-            header().readAndAssert((h) -> {
-                assertThat(h).isNotNull();
-                assertThat(h).isIn("Configure SEND", "Configura SEND");
-            });
-        }
     }
 
-    interface AttachmentDocumentSection extends AttachmentSection {
-        @XPath("//*[@id=\"notification-detail-document-attached\"]")
+    interface AttachmentDocumentSection extends Component {
+        @XPath("//*[@id=\"item\"]")
         Readable<String> header();
 
-        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[2]/div[1]/div/div[1]/div/p")
+        @XPath("//*[@id=\"item\"]")
         Readable<String> message();
 
-        @XPath("//*[@id=\"document-button\"]")
+        @XPath("//*[@id=\"item\"]")
         Readable<String> file();
 
         @XPath("//*[@id=\"item\"]")
         Chip raddMessage();
     }
 
-    interface PfPaymentSection extends PaymentSection {
-        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[2]/div[2]/div/h2")
+    interface PaymentSection extends Component {
+        @XPath("//*[@id=\"item\"]")
         Readable<String> header();
 
-        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[2]/div[2]/div/div[1]/div[2]/div/div")
+        @XPath("//*[@id=\"item\"]")
         Readable<String> costMessage();
 
-        @XPath("//*[@id=\"paymentPagoPa-302040124464100004\"]/div[1]/div[1]/span[2]")
+        @XPath("//*[@id=\"item\"]")
         Readable<String> noticeCode();
 
-        @XPath("//*[@id=\"paymentPagoPa-302040124464100004\"]/div[1]/div[2]/span[2]")
+        @XPath("//*[@id=\"item\"]")
         Readable<String> expiredDate();
 
-        @XPath("//*[@id=\"paymentPagoPa-302040124464100004\"]/div[2]/div/p")
+        @XPath("//*[@id=\"item\"]")
         Readable<String> amount();
 
-        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[2]/div[2]/div/button")
+        @XPath("//*[@id=\"item\"]")
         Clickable payButton();
 
         @XPath("//*[@id=\"item\"]")
         Clickable downloadButton();
     }
 
-    interface PfNotificationStatusSection extends NotificationStatusSection {
-        @Override
-        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/aside/div[1]/div/h2")
+    interface NotificationStatusSection extends Component {
+        @XPath("//*[@id=\"item\"]")
         Readable<String> header();
 
-        @Override
-        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/aside/div[1]/div/div")
-        Chip statusChip();
+        @XPath("//*[@id=\"item\"]")
+        Chip status();
 
-        @Override
-        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/aside/div[1]/div/p")
-        Readable<String> detailsMessage();
+        @XPath("//*[@id=\"item\"]")
+        Readable<String> message();
 
-        @Override
-        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/aside/div[1]/div/button")
+        @XPath("//*[@id=\"item\"]")
         Clickable detailsButton();
 
     }
@@ -147,13 +129,13 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
     NotificationDetailsSection notificationSummarySection();
 
     @Override
-    PfPaymentSection paymentSection();
+    PaymentSection paymentSection();
 
     @Override
     AttachmentDocumentSection attachmentSection();
 
     @Override
-    PfNotificationStatusSection notificationStatusSection();
+    NotificationStatusSection notificationStatusSection();
 
     NotificationAARDetailsSection notificationAARDetailsSection();
 
