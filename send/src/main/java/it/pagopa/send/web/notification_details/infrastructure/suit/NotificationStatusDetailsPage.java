@@ -11,17 +11,14 @@ import org.assertj.core.api.Assertions;
 @Url("da mappare")
 public interface NotificationStatusDetailsPage extends Page, BackNavigable {
 
-//    @XPath("breadcrumbs")
-    @XPath("//*[@id=\"title-of-page\"]")
+    @XPath("breadcrumbs")
     Readable<String> breadcrumbs();
 
-//    @XPath("header pagina")
-    @XPath("//*[@id=\"title-of-page\"]")
+    @XPath("header pagina")
     Readable<String> header();
 
     @Override
-//    @XPath("torna al dettaglio della notifica")
-    @XPath("//*[@id=\"title-of-page\"]")
+    @XPath("torna al dettaglio della notifica")
     Clickable backButton();
 
     @Override
