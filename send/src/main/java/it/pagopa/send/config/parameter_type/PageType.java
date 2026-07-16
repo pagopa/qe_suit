@@ -9,7 +9,7 @@ import it.pagopa.send.domain.web.pages.mittente.APIKeyPage;
 import it.pagopa.send.domain.web.pages.mittente.CreateNotificationPage;
 import it.pagopa.send.domain.web.pages.mittente.DashboardPage;
 import it.pagopa.send.domain.web.pages.mittente.NewAPIKeyPage;
-import it.pagopa.send.domain.web.pages.mittente.NotificationDetailsPage;
+import it.pagopa.send.domain.web.pages.mittente.MittenteNotificationDetailsPage;
 import it.pagopa.send.domain.web.pages.mittente.PlatformStatusPage;
 import it.pagopa.send.domain.web.pages.mittente.StatisticsPage;
 import it.pagopa.send.domain.web.pages.destinatario.pf.AddressPFPage;
@@ -31,7 +31,7 @@ public class PageType {
         LOGIN_PAGE("LoginPage", OneIdPage.class),
         LOGOUT_PAGE("LogoutPage", LogoutPage.class),
         DASHBOARD("Dashboard", DashboardPage.class),
-        NOTIFICATION_DETAILS("NotificationDetails", NotificationDetailsPage.class),
+        NOTIFICATION_DETAILS("NotificationDetails", MittenteNotificationDetailsPage.class),
         CREATE_NOTIFICATION("CreateNotification", CreateNotificationPage.class),
         API_KEY("APIKey", APIKeyPage.class),
         NEW_API_KEY("NewAPIKey", NewAPIKeyPage.class),

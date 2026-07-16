@@ -5,8 +5,10 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.send.domain.web.pages.mittente.DashboardPage;
 import it.pagopa.send.utils.FakeAuthenticator;
 import it.pagopa.send.utils.IAuthenticator;
+import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class MittentiSteps {
 
     private final WebPresentationGateway browser;
+    private final WebBrowserContext webBrowserContext;
+//    private final DashboardPage dashboardPage;
     private Page currentPage;
 
     @Given("l'utente è un {string} di {string}")
@@ -29,6 +33,7 @@ public class MittentiSteps {
     public void navigateTo(Class<? extends Page> page) {
         currentPage = browser.bind(page);
         currentPage.navigateTo();
+        webBrowserContext.setCurrentPage(currentPage);
     }
 
     @Then("la pagina deve caricarsi correttamente")
