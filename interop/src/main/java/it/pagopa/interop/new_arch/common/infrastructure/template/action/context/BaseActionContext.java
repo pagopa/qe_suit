@@ -1,6 +1,5 @@
 package it.pagopa.interop.new_arch.common.infrastructure.template.action.context;
 
-import it.pagopa.interop.new_arch.common.infrastructure.response.ApiResponse;
 import it.pagopa.interop.new_arch.common.infrastructure.response.RawResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
