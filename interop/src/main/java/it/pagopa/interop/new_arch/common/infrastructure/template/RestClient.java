@@ -21,6 +21,6 @@ public class RestClient {
             Supplier<Response> apiCall,
             Class<RESPONSE> responseClass) {
 
-        return chainFactory.build(() -> ApiResponse.from(apiCall.get()), responseClass);
+        return chainFactory.build(() -> new ApiResponse(apiCall.get()), responseClass);
     }
 }

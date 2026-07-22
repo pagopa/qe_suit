@@ -30,7 +30,7 @@ public interface ResponseFinalizer<Response> {
 
     default ResponseFinalizer<Response> assertThat(BiPredicate<Integer, ? super Response> predicate) {
         Response response = get();
-        Integer statusCode = getRaw().statusCode();
+        Integer statusCode = getRaw().getStatusCode();
 
         if (!predicate.test(statusCode, response)) {
             throw new AssertionError("Assertion failed for response: " + response);
