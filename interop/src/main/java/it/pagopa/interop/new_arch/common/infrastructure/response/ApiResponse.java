@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.http;
+package it.pagopa.interop.new_arch.common.infrastructure.response;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
