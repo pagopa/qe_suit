@@ -1,53 +1,28 @@
 package it.pagopa.interop.new_arch.common.infrastructure.response;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
+import lombok.Getter;
 
-public record ApiResponse(int statusCode, String rawBody) {
+public class ApiResponse extends RawResponse {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    @Getter
+    private final int statusCode;
+    private final Response apiResponse;
 
-    public static ApiResponse from(Response raResponse) {
-        return new ApiResponse(raResponse.getStatusCode(), raResponse.asString());
+    public ApiResponse(Response raResponse) {
+        super(raResponse.getStatusCode() >= 200 && raResponse.getStatusCode() < 300, raResponse.asString());
+        this.statusCode = raResponse.getStatusCode();
+        this.apiResponse = raResponse;
     }
 
+    @Override
     public <T> T as(Class<T> clazz) {
-        if (rawBody == null || rawBody.isBlank()) {
-            return null;
-        }
-        try {
-            return MAPPER.readValue(rawBody, clazz);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Impossibile convertire il body nel tipo " + clazz.getSimpleName(), e);
-        }
+        return apiResponse.as(clazz);
     }
 
+    @Override
     public <T> T as(TypeReference<T> typeReference) {
-        if (rawBody == null || rawBody.isBlank()) {
-            return null;
-        }
-        try {
-            return MAPPER.readValue(rawBody, typeReference);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Impossibile convertire il body nel tipo generico richiesto", e);
-        }
-    }
-
-    public String jsonPath(String path) {
-        if (rawBody == null || rawBody.isBlank()) {
-            return null;
-        }
-        try {
-            JsonNode node = MAPPER.readTree(rawBody);
-            for (String part : path.split("\\.")) {
-                node = node.get(part);
-                if (node == null) return null;
-            }
-            return node.isValueNode() ? node.asText() : node.toString();
-        } catch (Exception e) {
-            return null;
-        }
+        return apiResponse.as(typeReference.getType());
     }
 }
