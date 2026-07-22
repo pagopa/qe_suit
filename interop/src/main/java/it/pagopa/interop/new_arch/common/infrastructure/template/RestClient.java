@@ -1,7 +1,7 @@
 package it.pagopa.interop.new_arch.common.infrastructure.template;
 
 import io.restassured.response.Response;
-import it.pagopa.interop.new_arch.common.infrastructure.http.ApiResponse;
+import it.pagopa.interop.new_arch.common.infrastructure.response.ApiResponse;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChain;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChainFactory;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy;
 
-import it.pagopa.interop.new_arch.common.infrastructure.http.ApiResponse;
+import it.pagopa.interop.new_arch.common.infrastructure.response.ApiResponse;
 
 @FunctionalInterface
 public interface PollingStrategy {
