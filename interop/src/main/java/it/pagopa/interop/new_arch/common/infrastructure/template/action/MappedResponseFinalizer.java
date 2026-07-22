@@ -2,6 +2,7 @@ package it.pagopa.interop.new_arch.common.infrastructure.template.action;
 
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
 import it.pagopa.interop.new_arch.common.infrastructure.response.ApiResponse;
+import it.pagopa.interop.new_arch.common.infrastructure.response.RawResponse;
 
 import java.util.function.Function;
 
@@ -34,7 +35,7 @@ public class MappedResponseFinalizer<SourceResponse, TargetResponse> implements 
     }
 
     @Override
-    public ApiResponse getRaw() {
+    public RawResponse getRaw() {
         return source.getRaw();
     }
 }

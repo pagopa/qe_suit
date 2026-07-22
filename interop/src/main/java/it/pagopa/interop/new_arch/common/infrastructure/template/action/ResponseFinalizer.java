@@ -2,7 +2,9 @@ package it.pagopa.interop.new_arch.common.infrastructure.template.action;
 
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
 import it.pagopa.interop.new_arch.common.infrastructure.response.ApiResponse;
+import it.pagopa.interop.new_arch.common.infrastructure.response.RawResponse;
 import it.pagopa.interop.new_arch.common.kernel.Identifiable;
+import org.assertj.core.api.Assertions;
 
 import java.util.function.BiPredicate;
 import java.util.function.Function;
@@ -26,21 +28,21 @@ public interface ResponseFinalizer<Response> {
 
     Response get();
 
-    ApiResponse getRaw();
+    RawResponse getRaw();
 
-    default ResponseFinalizer<Response> assertThat(BiPredicate<Integer, ? super Response> predicate) {
-        Response response = get();
-        Integer statusCode = getRaw().getStatusCode();
+    default ResponseFinalizer<Response> assertStatusCode(int expectedStatusCode) {
+        RawResponse rawResponse = getRaw();
 
-        if (!predicate.test(statusCode, response)) {
-            throw new AssertionError("Assertion failed for response: " + response);
+        if(!(rawResponse instanceof ApiResponse apiResponse)){
+            throw new IllegalStateException("Response is not ApiResponse");
         }
 
+        Assertions.assertThat(apiResponse.getStatusCode()).isEqualTo(expectedStatusCode);
         return this;
     }
 
-    default ResponseFinalizer<Response> assertThat(Predicate<ApiResponse> predicate) {
-        ApiResponse response = getRaw();
+    default ResponseFinalizer<Response> assertThat(Predicate<? super Response> predicate) {
+        Response response = get();
 
         if (!predicate.test(response)) {
             throw new AssertionError("Assertion failed for response: " + response);
