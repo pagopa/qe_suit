@@ -11,7 +11,7 @@ public class ApiResponse extends RawResponse {
     private final Response apiResponse;
 
     public ApiResponse(Response raResponse) {
-        super(raResponse.getStatusCode() >= 200 && raResponse.getStatusCode() < 300, raResponse.asString());
+        super(is2xxSuccessful(raResponse), raResponse.asString());
         this.statusCode = raResponse.getStatusCode();
         this.apiResponse = raResponse;
     }
@@ -27,6 +27,10 @@ public class ApiResponse extends RawResponse {
     }
 
     public boolean is2xxSuccessful() {
+        return is2xxSuccessful(apiResponse);
+    }
+
+    private static boolean is2xxSuccessful(Response apiResponse) {
         return apiResponse.getStatusCode() >= 200 && apiResponse.getStatusCode() < 300;
     }
 }
