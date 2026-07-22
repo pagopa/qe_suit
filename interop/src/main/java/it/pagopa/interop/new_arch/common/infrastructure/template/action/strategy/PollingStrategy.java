@@ -9,9 +9,9 @@ public interface PollingStrategy {
 
     PollingStrategy UNTIL_SUCCESS = PollingStrategy::is2xxSuccessful;
 
-    PollingStrategy UNTIL_ERROR = (code) -> !is2xxSuccessful(code);
+    PollingStrategy UNTIL_ERROR = (response) -> !is2xxSuccessful(response);
 
     static boolean is2xxSuccessful(ApiResponse apiResponse) {
-        return apiResponse != null && apiResponse.statusCode() >= 200 && apiResponse.statusCode() < 300;
+        return apiResponse.is2xxSuccessful();
     }
 }

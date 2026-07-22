@@ -46,7 +46,7 @@ public class BffAgreementGateway implements AgreementGateway {
 
         restClient.create(payload)
                 .withPolling(PollingStrategy.UNTIL_ERROR)
-                .assertThat(apiResp -> apiResp.statusCode() == expectedStatus);
+                .assertThat(apiResp -> apiResp.getStatusCode() == expectedStatus);
     }
 
     @Override

@@ -25,4 +25,8 @@ public class ApiResponse extends RawResponse {
     public <T> T as(TypeReference<T> typeReference) {
         return apiResponse.as(typeReference.getType());
     }
+
+    public boolean is2xxSuccessful() {
+        return apiResponse.getStatusCode() >= 200 && apiResponse.getStatusCode() < 300;
+    }
 }
