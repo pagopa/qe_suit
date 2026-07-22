@@ -46,7 +46,7 @@ public class BffAgreementGateway implements AgreementGateway {
 
         restClient.create(payload)
                 .withPolling(PollingStrategy.UNTIL_ERROR)
-                .assertThat(apiResp -> apiResp.getStatusCode() == expectedStatus);
+                .assertStatusCode(expectedStatus);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class BffAgreementGateway implements AgreementGateway {
                         agreement.getId(), Optional.ofNullable(delegation).map(Delegation::getId).orElse(null)
                 )
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .assertThat((statusCode, a) -> a.getState().getValue().equals(AgreementState.ACTIVE.getValue()))
+                .assertThat( a -> a.getState().getValue().equals(AgreementState.ACTIVE.getValue()))
                 .map(mapper::toAgreement)
                 .updateContext()
                 .get();
