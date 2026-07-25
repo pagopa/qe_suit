@@ -382,4 +382,29 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>ci-rules</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/suite/**</exclude>
+                                <exclude>**/architecture/**</exclude>
+                                <exclude>**/ci/**</exclude>
+                            </excludes>
+                            <failIfNoTests>true</failIfNoTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>
