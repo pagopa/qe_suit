@@ -6,7 +6,7 @@ import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
 import it.pagopa.interop.new_arch.common.kernel.domain.User;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Button;
+import it.pagopa.interop.new_arch.web.infrastructure.component.Button;
 import it.pagopa.interop.new_arch.web.login.infrastructure.suit.component.LoginForm;
 import it.pagopa.interop.new_arch.web.login.infrastructure.suit.component.OneTrustBanner;
 import it.pagopa.interop.new_arch.web.login.infrastructure.suit.component.PrivacyDialog;

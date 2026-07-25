@@ -4,14 +4,14 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.new_arch.web.debug_client_assertion.application.DebugClientAssertionValidationResponse;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Button;
+import it.pagopa.interop.new_arch.common.debug_client_assertion.domain.DebugClientAssertionValidation;
+import it.pagopa.interop.new_arch.web.infrastructure.component.Button;
 import org.assertj.core.api.Assertions;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.pagopa.interop.new_arch.web.debug_client_assertion.application.DebugClientAssertionValidationResponse.Status.*;
+import static it.pagopa.interop.new_arch.common.debug_client_assertion.domain.DebugClientAssertionValidation.Status.*;
 
 public interface DebugResultComponent extends Component {
 
@@ -44,37 +44,37 @@ public interface DebugResultComponent extends Component {
         );
     }
 
-    default DebugClientAssertionValidationResponse.ClientAssertionValidation getClientAssertionValidation() {
-        return new DebugClientAssertionValidationResponse.ClientAssertionValidation(
+    default DebugClientAssertionValidation.ClientAssertionValidation getClientAssertionValidation() {
+        return new DebugClientAssertionValidation.ClientAssertionValidation(
                 readValidationStep(clientAssertionValidationResultButton())
         );
     }
 
-    default DebugClientAssertionValidationResponse.PublicKeyValidation getPublicKeyValidation() {
-        return new DebugClientAssertionValidationResponse.PublicKeyValidation(
+    default DebugClientAssertionValidation.PublicKeyValidation getPublicKeyValidation() {
+        return new DebugClientAssertionValidation.PublicKeyValidation(
                 readValidationStep(publicKetValidationResultButton())
         );
     }
 
-    default DebugClientAssertionValidationResponse.SignatureValidation getSignatureValidation() {
-        return new DebugClientAssertionValidationResponse.SignatureValidation(
+    default DebugClientAssertionValidation.SignatureValidation getSignatureValidation() {
+        return new DebugClientAssertionValidation.SignatureValidation(
                 readValidationStep(signatureValidationResultButton())
         );
     }
 
-    default DebugClientAssertionValidationResponse.PlatformValidation getPlatformValidation() {
-        return new DebugClientAssertionValidationResponse.PlatformValidation(
+    default DebugClientAssertionValidation.PlatformValidation getPlatformValidation() {
+        return new DebugClientAssertionValidation.PlatformValidation(
                 readValidationStep(platformValidationResultButton())
         );
     }
 
-    default DebugClientAssertionValidationResponse.DPoPValidation getDPoPValidation() {
-        return new DebugClientAssertionValidationResponse.DPoPValidation(
+    default DebugClientAssertionValidation.DPoPValidation getDPoPValidation() {
+        return new DebugClientAssertionValidation.DPoPValidation(
                 readValidationStep(dpopProofValidationResultButton())
         );
     }
 
-    private DebugClientAssertionValidationResponse.ValidationResult readValidationStep(Clickable button) {
+    private DebugClientAssertionValidation.ValidationResult readValidationStep(Clickable button) {
         button.click();
         try {
             boolean isSuccess = drawer().result().isSuccess();
@@ -85,7 +85,7 @@ public interface DebugResultComponent extends Component {
                     .as("Faild to retrive validation status")
                     .isTrue();
 
-            DebugClientAssertionValidationResponse.Status status = PASSED;
+            DebugClientAssertionValidation.Status status = PASSED;
             final List<String> errorsCode = new ArrayList<>();
 
             if (isError) {
@@ -109,7 +109,7 @@ public interface DebugResultComponent extends Component {
                 status = SKIPPED;
             }
 
-            return new DebugClientAssertionValidationResponse.ValidationResult(status, isSuccess, errorsCode);
+            return new DebugClientAssertionValidation.ValidationResult(status, isSuccess, errorsCode);
         } finally {
             // chiude sempre il drawer, anche in caso di eccezione
             drawer().close();

@@ -34,3 +34,4 @@ interop:
       bff: https://selfcare.qa.interop.pagopa.it/1.0/backend-for-frontend
   web:
     base-url: https://selfcare.qa.interop.pagopa.it/ui/it
+    catalog: ${interop.web.base-url}/catalogo-e-service

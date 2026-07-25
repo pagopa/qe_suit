@@ -6,9 +6,9 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.suit.component.DebugRequestContentComponent;
 import it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.suit.component.DebugResultComponent;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Alert;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Button;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.TextField;
+import it.pagopa.interop.new_arch.web.infrastructure.component.Alert;
+import it.pagopa.interop.new_arch.web.infrastructure.component.Button;
+import it.pagopa.interop.new_arch.web.infrastructure.component.TextField;
 import org.assertj.core.api.SoftAssertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo/debug-voucher")
@@ -53,7 +53,8 @@ public interface DebugClientAssertionPage extends Page {
     }
 
     default void setClientAssertion(String clientAssertion) {
-        clientAssertionInput().writeAndAssert(clientAssertion);
+        if (clientAssertion != null)
+            clientAssertionInput().writeAndAssert(clientAssertion);
     }
 
     default String getClientAssertionErrorMessage() {
@@ -65,11 +66,13 @@ public interface DebugClientAssertionPage extends Page {
     }
 
     default void setClientId(String clientId) {
-        clientIdInput().writeAndAssert(clientId);
+        if (clientId != null)
+            clientIdInput().writeAndAssert(clientId);
     }
 
     default void setDpopProof(String dpopProof) {
-        dpopProofInput().writeAndAssert(dpopProof);
+        if (dpopProof != null)
+            dpopProofInput().writeAndAssert(dpopProof);
     }
 
     default void submitForm() {
