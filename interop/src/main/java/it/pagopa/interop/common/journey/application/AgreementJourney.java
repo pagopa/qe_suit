@@ -1,8 +1,8 @@
-package it.pagopa.interop.new_arch.common.journey.application;
+package it.pagopa.interop.common.journey.application;
 
-import it.pagopa.interop.new_arch.common.agreement.domain.AgreementState;
-import it.pagopa.interop.new_arch.common.eservice.domain.EService;
-import it.pagopa.interop.new_arch.common.kernel.domain.Delegation;
+import it.pagopa.interop.common.agreement.domain.AgreementState;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.kernel.domain.Delegation;
 import jakarta.annotation.Nullable;
 
 public interface AgreementJourney<SELF extends AgreementJourney<SELF>> extends JourneyModule {

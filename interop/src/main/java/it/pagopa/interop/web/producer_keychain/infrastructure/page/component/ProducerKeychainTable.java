@@ -1,11 +1,11 @@
-package it.pagopa.interop.new_arch.web.producer_keychain.infrastructure.page.component;
+package it.pagopa.interop.web.producer_keychain.infrastructure.page.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Alert;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.PageSize;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Pagination;
+import it.pagopa.interop.web.infrastructure.suit.component.Alert;
+import it.pagopa.interop.web.infrastructure.suit.component.PageSize;
+import it.pagopa.interop.web.infrastructure.suit.component.Pagination;
 import org.assertj.core.api.SoftAssertions;
 
 import java.util.List;

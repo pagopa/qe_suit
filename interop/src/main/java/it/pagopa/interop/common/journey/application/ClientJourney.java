@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.common.journey.application;
+package it.pagopa.interop.common.journey.application;
 
-import it.pagopa.interop.new_arch.common.kernel.domain.Key;
-import it.pagopa.interop.new_arch.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.kernel.domain.Key;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 
 import java.util.UUID;
 

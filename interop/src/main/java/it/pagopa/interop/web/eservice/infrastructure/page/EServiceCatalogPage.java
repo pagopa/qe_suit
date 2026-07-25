@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.web.eservice.infrastructure.page;
+package it.pagopa.interop.web.eservice.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;

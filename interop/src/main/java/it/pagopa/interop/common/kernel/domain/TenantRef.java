@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.common.kernel.domain;
+package it.pagopa.interop.common.kernel.domain;
 
-import it.pagopa.interop.new_arch.common.attribute.domain.Attributes;
-import it.pagopa.interop.new_arch.common.kernel.Identifiable;
+import it.pagopa.interop.common.attribute.domain.Attributes;
+import it.pagopa.interop.common.kernel.Identifiable;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;

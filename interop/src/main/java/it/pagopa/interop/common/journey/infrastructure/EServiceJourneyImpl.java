@@ -1,12 +1,12 @@
-package it.pagopa.interop.new_arch.common.journey.infrastructure;
+package it.pagopa.interop.common.journey.infrastructure;
 
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceDescriptorUseCase;
-import it.pagopa.interop.new_arch.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceUseCase;
-import it.pagopa.interop.new_arch.common.eservice.domain.EService;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptorState;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
-import it.pagopa.interop.new_arch.common.journey.application.EServiceJourney;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.EServiceUseCase;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.journey.application.EServiceJourney;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

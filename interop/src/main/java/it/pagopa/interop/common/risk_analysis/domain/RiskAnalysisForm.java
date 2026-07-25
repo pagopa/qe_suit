@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.risk_analysis.domain;
+package it.pagopa.interop.common.risk_analysis.domain;
 
 import lombok.Builder;
 import lombok.Value;

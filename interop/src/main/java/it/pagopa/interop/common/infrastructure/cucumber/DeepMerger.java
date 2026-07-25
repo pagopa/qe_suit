@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.cucumber;
+package it.pagopa.interop.common.infrastructure.cucumber;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.type.TypeReference;

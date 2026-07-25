@@ -1,8 +1,8 @@
-package it.pagopa.interop.new_arch.common.agreement.infrastructure.cucumber;
+package it.pagopa.interop.common.agreement.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.new_arch.common.agreement.application.AgreementUseCase;
-import it.pagopa.interop.new_arch.common.eservice.domain.EService;
+import it.pagopa.interop.common.agreement.application.AgreementUseCase;
+import it.pagopa.interop.common.eservice.domain.EService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

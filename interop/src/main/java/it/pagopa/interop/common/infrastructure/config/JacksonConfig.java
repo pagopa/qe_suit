@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.config;
+package it.pagopa.interop.common.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;

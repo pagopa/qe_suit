@@ -1,11 +1,11 @@
-package it.pagopa.interop.new_arch.common.infrastructure.template.action;
+package it.pagopa.interop.common.infrastructure.template.action;
 
-import it.pagopa.interop.new_arch.common.infrastructure.async.PollingUtils;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ApiContext;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
-import it.pagopa.interop.new_arch.common.infrastructure.response.ApiResponse;
-import it.pagopa.interop.new_arch.common.infrastructure.response.RawResponse;
-import it.pagopa.interop.new_arch.common.infrastructure.template.action.context.PollingActionContext;
+import it.pagopa.interop.common.infrastructure.async.PollingUtils;
+import it.pagopa.interop.common.infrastructure.cucumber.context.ApiContext;
+import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.response.ApiResponse;
+import it.pagopa.interop.common.infrastructure.response.RawResponse;
+import it.pagopa.interop.common.infrastructure.template.action.context.PollingActionContext;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;

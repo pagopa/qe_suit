@@ -1,13 +1,13 @@
-package it.pagopa.interop.new_arch.bff.agreement.infrastructure;
+package it.pagopa.interop.bff.agreement.infrastructure;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
-import it.pagopa.interop.new_arch.common.eservice.domain.EService;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
-import it.pagopa.interop.new_arch.common.journey.application.InteropJourney;
-import it.pagopa.interop.new_arch.common.kernel.domain.Delegation;
-import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
-import it.pagopa.interop.new_arch.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.Delegation;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
 import org.jspecify.annotations.Nullable;

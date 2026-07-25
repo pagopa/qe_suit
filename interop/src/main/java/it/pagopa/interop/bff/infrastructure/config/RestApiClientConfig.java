@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.bff.infrastructure.config;
+package it.pagopa.interop.bff.infrastructure.config;
 
 import com.atlassian.oai.validator.OpenApiInteractionValidator;
 import com.atlassian.oai.validator.report.LevelResolver;
@@ -7,10 +7,10 @@ import com.atlassian.oai.validator.restassured.OpenApiValidationFilter;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.Filter;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
-import it.pagopa.interop.new_arch.bff.infrastructure.security.bearer.BearerAuthProvider;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.TestContext;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.UserContext;
-import it.pagopa.interop.new_arch.common.infrastructure.http.HttpLoggingFilter;
+import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
+import it.pagopa.interop.common.infrastructure.cucumber.context.TestContext;
+import it.pagopa.interop.common.infrastructure.cucumber.context.UserContext;
+import it.pagopa.interop.common.infrastructure.http.HttpLoggingFilter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.ObjectProvider;

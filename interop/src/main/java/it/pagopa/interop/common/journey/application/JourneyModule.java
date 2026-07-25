@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.journey.application;
+package it.pagopa.interop.common.journey.application;
 
 public interface JourneyModule {
 }

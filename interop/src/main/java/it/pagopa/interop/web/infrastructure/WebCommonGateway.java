@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.web.infrastructure;
+package it.pagopa.interop.web.infrastructure;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Snackbar;
+import it.pagopa.interop.web.infrastructure.suit.component.Snackbar;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

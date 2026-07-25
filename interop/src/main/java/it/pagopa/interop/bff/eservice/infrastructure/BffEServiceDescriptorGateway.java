@@ -1,18 +1,18 @@
-package it.pagopa.interop.new_arch.bff.eservice.infrastructure;
+package it.pagopa.interop.bff.eservice.infrastructure;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
-import it.pagopa.interop.new_arch.bff.eservice.application.BffEServiceCreationCommand;
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceDescriptorGateway;
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceGateway;
-import it.pagopa.interop.new_arch.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.new_arch.common.eservice.application.command.UpdateEServiceDescriptorCommand;
-import it.pagopa.interop.new_arch.common.eservice.domain.EService;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
-import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
-import it.pagopa.interop.new_arch.common.kernel.domain.EServiceDescriptorRef;
-import it.pagopa.interop.new_arch.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
+import it.pagopa.interop.common.eservice.application.EServiceGateway;
+import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

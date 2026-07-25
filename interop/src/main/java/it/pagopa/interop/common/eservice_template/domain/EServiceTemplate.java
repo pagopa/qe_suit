@@ -1,9 +1,9 @@
-package it.pagopa.interop.new_arch.common.eservice_template.domain;
+package it.pagopa.interop.common.eservice_template.domain;
 
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceMode;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceTechnology;
-import it.pagopa.interop.new_arch.common.kernel.domain.EServiceRiskAnalysis;
-import it.pagopa.interop.new_arch.common.kernel.Identifiable;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
+import it.pagopa.interop.common.kernel.Identifiable;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;

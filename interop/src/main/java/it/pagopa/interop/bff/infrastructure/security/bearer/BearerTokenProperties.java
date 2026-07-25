@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.bff.infrastructure.security.bearer;
+package it.pagopa.interop.bff.infrastructure.security.bearer;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

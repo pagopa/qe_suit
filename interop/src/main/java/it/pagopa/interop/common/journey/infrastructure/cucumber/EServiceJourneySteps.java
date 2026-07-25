@@ -1,12 +1,12 @@
-package it.pagopa.interop.new_arch.common.journey.infrastructure.cucumber;
+package it.pagopa.interop.common.journey.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.new_arch.common.agreement.domain.AgreementState;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptorState;
-import it.pagopa.interop.new_arch.common.journey.application.InteropJourney;
-import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
-import it.pagopa.interop.new_arch.common.kernel.domain.UserRole;
-import it.pagopa.interop.new_arch.common.purpose.domain.PurposeVersionState;
+import it.pagopa.interop.common.agreement.domain.AgreementState;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

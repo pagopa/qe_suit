@@ -1,8 +1,8 @@
-package it.pagopa.interop.new_arch.common.eservice.domain;
+package it.pagopa.interop.common.eservice.domain;
 
-import it.pagopa.interop.new_arch.common.kernel.domain.Document;
-import it.pagopa.interop.new_arch.common.kernel.domain.EServiceRef;
-import it.pagopa.interop.new_arch.common.kernel.Identifiable;
+import it.pagopa.interop.common.kernel.domain.Document;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.common.kernel.Identifiable;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;

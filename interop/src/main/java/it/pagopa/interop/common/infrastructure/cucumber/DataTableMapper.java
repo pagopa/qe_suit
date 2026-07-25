@@ -1,10 +1,10 @@
-package it.pagopa.interop.new_arch.common.infrastructure.cucumber;
+package it.pagopa.interop.common.infrastructure.cucumber;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.DefaultDataTableEntryTransformer;
 
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.resolver.DataTableExpressionResolver;
+import it.pagopa.interop.common.infrastructure.cucumber.resolver.DataTableExpressionResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 

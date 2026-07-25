@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.common.infrastructure.cucumber.context;
+package it.pagopa.interop.common.infrastructure.cucumber.context;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.new_arch.common.infrastructure.response.ApiResponse;
+import it.pagopa.interop.common.infrastructure.response.ApiResponse;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;

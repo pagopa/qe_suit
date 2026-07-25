@@ -1,11 +1,11 @@
-package it.pagopa.interop.new_arch.web.infrastructure.cucumber;
+package it.pagopa.interop.web.infrastructure.cucumber;
 
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.UserContext;
-import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
-import it.pagopa.interop.new_arch.common.kernel.domain.User;
-import it.pagopa.interop.new_arch.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.infrastructure.cucumber.context.UserContext;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 

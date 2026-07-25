@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.client.domain;
+package it.pagopa.interop.common.client.domain;
 
 public enum ClientKind {
     API,

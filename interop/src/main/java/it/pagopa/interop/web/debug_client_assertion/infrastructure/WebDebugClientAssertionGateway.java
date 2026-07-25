@@ -1,9 +1,9 @@
-package it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure;
+package it.pagopa.interop.web.debug_client_assertion.infrastructure;
 
-import it.pagopa.interop.new_arch.common.client.domain.ClientKind;
-import it.pagopa.interop.new_arch.common.debug_client_assertion.application.DebugClientAssertionGateway;
-import it.pagopa.interop.new_arch.common.debug_client_assertion.domain.DebugClientAssertionValidation;
-import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
+import it.pagopa.interop.common.client.domain.ClientKind;
+import it.pagopa.interop.common.debug_client_assertion.application.DebugClientAssertionGateway;
+import it.pagopa.interop.common.debug_client_assertion.domain.DebugClientAssertionValidation;
+import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

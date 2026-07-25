@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.attribute.domain;
+package it.pagopa.interop.common.attribute.domain;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.cucumber.resolver;
+package it.pagopa.interop.common.infrastructure.cucumber.resolver;
 
 public interface DataTableResolutionStrategy {
     String getFunctionName();

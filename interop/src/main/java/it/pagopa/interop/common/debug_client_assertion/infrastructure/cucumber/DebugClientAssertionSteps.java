@@ -1,14 +1,14 @@
-package it.pagopa.interop.new_arch.common.debug_client_assertion.infrastructure.cucumber;
+package it.pagopa.interop.common.debug_client_assertion.infrastructure.cucumber;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.new_arch.common.client.domain.Client;
-import it.pagopa.interop.new_arch.common.debug_client_assertion.application.DebugClientAssertionCommand;
-import it.pagopa.interop.new_arch.common.debug_client_assertion.application.DebugClientAssertionUseCase;
-import it.pagopa.interop.new_arch.common.debug_client_assertion.domain.DebugClientAssertionValidation;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
-import it.pagopa.interop.new_arch.common.infrastructure.security.jwt.DPoPProof;
-import it.pagopa.interop.new_arch.common.kernel.security.ClientAssertion;
+import it.pagopa.interop.common.client.domain.Client;
+import it.pagopa.interop.common.debug_client_assertion.application.DebugClientAssertionCommand;
+import it.pagopa.interop.common.debug_client_assertion.application.DebugClientAssertionUseCase;
+import it.pagopa.interop.common.debug_client_assertion.domain.DebugClientAssertionValidation;
+import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.security.jwt.DPoPProof;
+import it.pagopa.interop.common.kernel.security.ClientAssertion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 

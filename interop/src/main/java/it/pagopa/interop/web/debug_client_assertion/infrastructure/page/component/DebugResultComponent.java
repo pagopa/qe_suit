@@ -1,17 +1,17 @@
-package it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.page.component;
+package it.pagopa.interop.web.debug_client_assertion.infrastructure.page.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.new_arch.common.debug_client_assertion.domain.DebugClientAssertionValidation;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Button;
+import it.pagopa.interop.common.debug_client_assertion.domain.DebugClientAssertionValidation;
+import it.pagopa.interop.web.infrastructure.suit.component.Button;
 import org.assertj.core.api.Assertions;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static it.pagopa.interop.new_arch.common.debug_client_assertion.domain.DebugClientAssertionValidation.Status.*;
+import static it.pagopa.interop.common.debug_client_assertion.domain.DebugClientAssertionValidation.Status.*;
 
 public interface DebugResultComponent extends Component {
 

@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.mapping;
+package it.pagopa.interop.common.infrastructure.mapping;
 
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;

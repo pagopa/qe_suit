@@ -1,8 +1,8 @@
-package it.pagopa.interop.new_arch.common.infrastructure.channel;
+package it.pagopa.interop.common.infrastructure.channel;
 
-import it.pagopa.interop.new_arch.common.eservice.infrastructure.config.MissingActiveChannelException;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ChannelContext;
-import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
+import it.pagopa.interop.common.eservice.infrastructure.config.MissingActiveChannelException;
+import it.pagopa.interop.common.infrastructure.cucumber.context.ChannelContext;
+import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;

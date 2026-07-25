@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.http.contract.engine;
+package it.pagopa.interop.common.infrastructure.http.contract.engine;
 
 import java.util.Map;
 

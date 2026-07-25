@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.web.infrastructure.cucumber;
+package it.pagopa.interop.web.infrastructure.cucumber;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;

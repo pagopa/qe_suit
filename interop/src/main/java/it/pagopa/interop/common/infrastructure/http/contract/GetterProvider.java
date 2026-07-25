@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.http.contract;
+package it.pagopa.interop.common.infrastructure.http.contract;
 
 import java.io.Serializable;
 import java.util.function.Function;

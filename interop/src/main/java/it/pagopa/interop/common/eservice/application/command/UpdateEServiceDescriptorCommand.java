@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.eservice.application.command;
+package it.pagopa.interop.common.eservice.application.command;
 
 public interface UpdateEServiceDescriptorCommand {
     UpdateEServiceDescriptorCommand voucherLifespan(Integer voucherLifespan);

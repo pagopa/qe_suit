@@ -1,9 +1,9 @@
-package it.pagopa.interop.new_arch.common.eservice.application;
+package it.pagopa.interop.common.eservice.application;
 
-import it.pagopa.interop.new_arch.common.eservice.application.command.UpdateEServiceDescriptorCommand;
-import it.pagopa.interop.new_arch.common.eservice.domain.EService;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

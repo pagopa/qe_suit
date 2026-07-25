@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.common.eservice.application;
+package it.pagopa.interop.common.eservice.application;
 
-import it.pagopa.interop.new_arch.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.new_arch.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.domain.EService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

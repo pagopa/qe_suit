@@ -1,9 +1,9 @@
-package it.pagopa.interop.new_arch.common.infrastructure.template;
+package it.pagopa.interop.common.infrastructure.template;
 
 import io.restassured.response.Response;
-import it.pagopa.interop.new_arch.common.infrastructure.response.ApiResponse;
-import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChain;
-import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChainFactory;
+import it.pagopa.interop.common.infrastructure.response.ApiResponse;
+import it.pagopa.interop.common.infrastructure.template.action.TestChain;
+import it.pagopa.interop.common.infrastructure.template.action.TestChainFactory;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;

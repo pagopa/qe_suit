@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.eservice.application;
+package it.pagopa.interop.common.eservice.application;
 
 public class EServiceSteps {
 }

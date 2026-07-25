@@ -1,11 +1,11 @@
-package it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure;
+package it.pagopa.interop.web.debug_client_assertion.infrastructure;
 
-import it.pagopa.interop.new_arch.common.client.domain.ClientKind;
-import it.pagopa.interop.new_arch.common.debug_client_assertion.domain.DebugClientAssertionValidation;
-import it.pagopa.interop.new_arch.common.infrastructure.template.BrowserClient;
-import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChain;
-import it.pagopa.interop.new_arch.common.kernel.security.ClientAssertion;
-import it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.page.DebugClientAssertionPage;
+import it.pagopa.interop.common.client.domain.ClientKind;
+import it.pagopa.interop.common.debug_client_assertion.domain.DebugClientAssertionValidation;
+import it.pagopa.interop.common.infrastructure.template.BrowserClient;
+import it.pagopa.interop.common.infrastructure.template.action.TestChain;
+import it.pagopa.interop.common.kernel.security.ClientAssertion;
+import it.pagopa.interop.web.debug_client_assertion.infrastructure.page.DebugClientAssertionPage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

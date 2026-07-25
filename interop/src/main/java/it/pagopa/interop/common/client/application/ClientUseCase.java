@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.client.application;
+package it.pagopa.interop.common.client.application;
 
 public class ClientUseCase {
 }

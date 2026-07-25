@@ -1,11 +1,11 @@
-package it.pagopa.interop.new_arch.common.journey.infrastructure;
+package it.pagopa.interop.common.journey.infrastructure;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.UserContext;
-import it.pagopa.interop.new_arch.common.journey.application.UserJourney;
-import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
-import it.pagopa.interop.new_arch.common.kernel.domain.User;
-import it.pagopa.interop.new_arch.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.infrastructure.cucumber.context.UserContext;
+import it.pagopa.interop.common.journey.application.UserJourney;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

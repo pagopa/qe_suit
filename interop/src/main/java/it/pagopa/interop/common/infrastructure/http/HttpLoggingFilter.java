@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.http;
+package it.pagopa.interop.common.infrastructure.http;
 
 import io.restassured.filter.Filter;
 import io.restassured.filter.FilterContext;

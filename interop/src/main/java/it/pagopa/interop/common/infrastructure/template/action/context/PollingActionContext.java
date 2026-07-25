@@ -1,6 +1,6 @@
-package it.pagopa.interop.new_arch.common.infrastructure.template.action.context;
+package it.pagopa.interop.common.infrastructure.template.action.context;
 
-import it.pagopa.interop.new_arch.common.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;
 import lombok.Getter;
 
 import java.time.Duration;

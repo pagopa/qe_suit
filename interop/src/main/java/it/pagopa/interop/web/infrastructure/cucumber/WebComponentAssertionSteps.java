@@ -1,13 +1,13 @@
-package it.pagopa.interop.new_arch.web.infrastructure.cucumber;
+package it.pagopa.interop.web.infrastructure.cucumber;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.new_arch.web.infrastructure.WebCommonGateway;
+import it.pagopa.interop.web.infrastructure.WebCommonGateway;
 
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Alert;
+import it.pagopa.interop.web.infrastructure.suit.component.Alert;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.SoftAssertions;
 import org.springframework.beans.factory.annotation.Autowired;

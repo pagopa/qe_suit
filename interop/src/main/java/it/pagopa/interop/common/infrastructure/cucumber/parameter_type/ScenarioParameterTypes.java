@@ -1,12 +1,12 @@
-package it.pagopa.interop.new_arch.common.infrastructure.cucumber.parameter_type;
+package it.pagopa.interop.common.infrastructure.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.new_arch.common.client.domain.Client;
-import it.pagopa.interop.new_arch.common.eservice.domain.EService;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
-import it.pagopa.interop.new_arch.common.infrastructure.security.jwt.DPoPProof;
-import it.pagopa.interop.new_arch.common.kernel.security.ClientAssertion;
-import it.pagopa.interop.new_arch.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.client.domain.Client;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.security.jwt.DPoPProof;
+import it.pagopa.interop.common.kernel.security.ClientAssertion;
+import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 

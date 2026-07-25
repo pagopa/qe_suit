@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.config;
+package it.pagopa.interop.common.infrastructure.config;
 
 import org.mapstruct.MapperConfig;
 import org.mapstruct.ReportingPolicy;

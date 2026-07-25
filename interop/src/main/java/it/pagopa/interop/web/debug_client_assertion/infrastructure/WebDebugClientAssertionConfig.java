@@ -1,8 +1,8 @@
-package it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure;
+package it.pagopa.interop.web.debug_client_assertion.infrastructure;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.page.DebugClientAssertionPage;
+import it.pagopa.interop.web.debug_client_assertion.infrastructure.page.DebugClientAssertionPage;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.test.context.TestConfiguration;

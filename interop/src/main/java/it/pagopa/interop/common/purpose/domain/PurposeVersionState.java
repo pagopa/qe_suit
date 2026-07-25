@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.purpose.domain;
+package it.pagopa.interop.common.purpose.domain;
 
 public enum PurposeVersionState {
     DRAFT,

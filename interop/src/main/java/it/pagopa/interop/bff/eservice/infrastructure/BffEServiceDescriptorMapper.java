@@ -1,14 +1,14 @@
-package it.pagopa.interop.new_arch.bff.eservice.infrastructure;
+package it.pagopa.interop.bff.eservice.infrastructure;
 
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-import it.pagopa.interop.new_arch.bff.infrastructure.mapping.BffCommonMapper;
-import it.pagopa.interop.new_arch.common.attribute.domain.Attributes;
-import it.pagopa.interop.new_arch.common.eservice.domain.EService;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.new_arch.common.infrastructure.config.TestMapperConfig;
-import it.pagopa.interop.new_arch.common.infrastructure.mapping.SharedMapperUtils;
-import it.pagopa.interop.new_arch.common.kernel.domain.DocumentRef;
+import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
+import it.pagopa.interop.common.attribute.domain.Attributes;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
+import it.pagopa.interop.common.infrastructure.mapping.SharedMapperUtils;
+import it.pagopa.interop.common.kernel.domain.DocumentRef;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -101,15 +101,15 @@ public interface BffEServiceDescriptorMapper {
     @Mapping(target = "verified", source = "verified", qualifiedByName = "flattenAttributes")
     Attributes toAttributes(DescriptorAttributes source);
 
-    it.pagopa.interop.new_arch.common.attribute.domain.Attribute toAttribute(DescriptorAttribute source);
+    it.pagopa.interop.common.attribute.domain.Attribute toAttribute(DescriptorAttribute source);
 
     @Named("flattenAttributes")
-    default List<it.pagopa.interop.new_arch.common.attribute.domain.Attribute> flattenAttributes(List<List<DescriptorAttribute>> nestedList) {
+    default List<it.pagopa.interop.common.attribute.domain.Attribute> flattenAttributes(List<List<DescriptorAttribute>> nestedList) {
         if (nestedList == null) {
             return List.of();
         }
 
-        List<it.pagopa.interop.new_arch.common.attribute.domain.Attribute> flattenedList = new ArrayList<>();
+        List<it.pagopa.interop.common.attribute.domain.Attribute> flattenedList = new ArrayList<>();
 
         for (int i = 0; i < nestedList.size(); i++) {
             List<DescriptorAttribute> innerList = nestedList.get(i);
@@ -118,10 +118,10 @@ public interface BffEServiceDescriptorMapper {
                 for (DescriptorAttribute bffAttr : innerList) {
                     if (bffAttr != null) {
 
-                        it.pagopa.interop.new_arch.common.attribute.domain.Attribute domainAttr = this.toAttribute(bffAttr);
+                        it.pagopa.interop.common.attribute.domain.Attribute domainAttr = this.toAttribute(bffAttr);
 
                         // Applica l'indice della lista esterna al campo group dell'Attribute di Dominio
-                        it.pagopa.interop.new_arch.common.attribute.domain.Attribute attrWithGroup = domainAttr.toBuilder()
+                        it.pagopa.interop.common.attribute.domain.Attribute attrWithGroup = domainAttr.toBuilder()
                                 .group(i)
                                 .build();
 

@@ -1,6 +1,6 @@
-package it.pagopa.interop.new_arch.common.infrastructure.security;
+package it.pagopa.interop.common.infrastructure.security;
 
-import it.pagopa.interop.new_arch.common.kernel.domain.KeyAlgorithm;
+import it.pagopa.interop.common.kernel.domain.KeyAlgorithm;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;

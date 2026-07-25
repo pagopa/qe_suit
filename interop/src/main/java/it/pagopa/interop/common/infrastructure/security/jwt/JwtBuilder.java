@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.security.jwt;
+package it.pagopa.interop.common.infrastructure.security.jwt;
 
 import java.util.List;
 

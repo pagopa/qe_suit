@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.bff.eservice.application;
+package it.pagopa.interop.bff.eservice.application;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
-import it.pagopa.interop.new_arch.common.eservice.application.command.UpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import lombok.Getter;
 
 @Getter

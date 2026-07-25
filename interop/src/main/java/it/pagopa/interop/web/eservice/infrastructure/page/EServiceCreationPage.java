@@ -1,14 +1,14 @@
-package it.pagopa.interop.new_arch.web.eservice.infrastructure.page;
+package it.pagopa.interop.web.eservice.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.creation_wizard.AdditionalDataWizard;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.creation_wizard.GeneralDataWizard;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.creation_wizard.ThresholdAndAttributeWizard;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.creation_wizard.technical.TechnicalSpecWizard;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Button;
+import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.AdditionalDataWizard;
+import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.GeneralDataWizard;
+import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.ThresholdAndAttributeWizard;
+import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.technical.TechnicalSpecWizard;
+import it.pagopa.interop.web.infrastructure.suit.component.Button;
 
 @Url("${interop.web.base-url}/erogazione/e-service/crea/")
 public interface EServiceCreationPage extends Page {

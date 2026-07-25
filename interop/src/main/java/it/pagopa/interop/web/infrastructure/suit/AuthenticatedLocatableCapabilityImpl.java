@@ -1,13 +1,13 @@
-package it.pagopa.interop.new_arch.web.infrastructure.suit;
+package it.pagopa.interop.web.infrastructure.suit;
 
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.capability.impl.LocatableCapabilityImpl;
 import it.frontend.e2e.framework.web.model.location.Url;
-import it.pagopa.interop.new_arch.bff.infrastructure.security.bearer.BearerAuthProvider;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.UserContext;
-import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
-import it.pagopa.interop.new_arch.common.kernel.domain.User;
-import it.pagopa.interop.new_arch.web.infrastructure.cucumber.WebBrowserContext;
+import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
+import it.pagopa.interop.common.infrastructure.cucumber.context.UserContext;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.web.infrastructure.cucumber.WebBrowserContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
