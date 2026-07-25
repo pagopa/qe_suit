@@ -20,7 +20,7 @@ import java.util.List;
 @ConfigurationProperties(prefix = "channel.web")
 @Getter
 @Setter
-public class SuitConfig {
+public class WebSuitConfig {
 
     private String browser;
     private boolean headless;

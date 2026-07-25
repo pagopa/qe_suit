@@ -4,7 +4,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
-import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataInitializer;
+import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final RiskAnalysisGateway riskAnalysisGateway;
-    private final RiskAnalysisDataInitializer riskAnalysisDataInitializer;
+    private final RiskAnalysisDataFactory riskAnalysisDataFactory;
 
     public RiskAnalysisFormConfig getLatestRiskAnalysisConfig(Tenant tenant) {
         return riskAnalysisGateway.getLatestRiskAnalysisConfig(tenant);
@@ -32,7 +32,7 @@ public class PurposeUseCase {
     public Purpose addDraftPurpose(Tenant consumer, EService eService) {
         RiskAnalysisFormConfig latestConfig = getLatestRiskAnalysisConfig(consumer);
         Map<String, List<String>> answers =
-                riskAnalysisDataInitializer.getTemplateForTenant(consumer, true);
+                riskAnalysisDataFactory.getTemplateForTenant(consumer, true);
 
         RiskAnalysisForm form = RiskAnalysisForm.builder()
                 .version(latestConfig.getVersion())

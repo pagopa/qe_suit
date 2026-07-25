@@ -4,7 +4,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.purpose.application.PurposeUseCase;
-import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataInitializer;
+import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +19,12 @@ public class EServiceRiskAnalysisUseCase {
 
     private final PurposeUseCase purposeUseCase;
     private final EServiceRiskAnalysisGateway riskAnalysisGateway;
-    private final RiskAnalysisDataInitializer riskAnalysisDataInitializer;
+    private final RiskAnalysisDataFactory riskAnalysisDataFactory;
 
     public EServiceRiskAnalysis addLatestRiskAnalysis(Tenant tenant, EService eService, boolean completed) {
         RiskAnalysisFormConfig latestConfig = purposeUseCase.getLatestRiskAnalysisConfig(tenant);
         Map<String, List<String>> answers =
-                riskAnalysisDataInitializer.getTemplateForTenant(tenant, completed);
+                riskAnalysisDataFactory.getTemplateForTenant(tenant, completed);
 
         RiskAnalysisForm form = RiskAnalysisForm.builder()
                 .version(latestConfig.getVersion())

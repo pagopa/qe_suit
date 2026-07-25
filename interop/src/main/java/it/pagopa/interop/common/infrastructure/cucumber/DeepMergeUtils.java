@@ -10,7 +10,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.util.Map;
 import java.util.Set;
 
-public final class DeepMerger {
+public final class DeepMergeUtils {
 
     // Configurazione avanzata: forziamo Jackson a ignorare i @JsonInclude(NON_NULL) dei model generati
     private static final ObjectMapper MAPPER = new ObjectMapper()
@@ -23,7 +23,7 @@ public final class DeepMerger {
                 }
             });
 
-    private DeepMerger() {
+    private DeepMergeUtils() {
     }
 
     public static <T> T merge(T overrideSource, T defaultTarget) {

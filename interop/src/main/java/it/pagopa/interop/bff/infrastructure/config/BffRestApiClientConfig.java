@@ -23,7 +23,7 @@ import static io.restassured.config.RestAssuredConfig.config;
 import static it.pagopa.interop.generated.openapi.clients.bff.JacksonObjectMapper.jackson;
 
 @Configuration
-public class RestApiClientConfig {
+public class BffRestApiClientConfig {
 
     @Value("${interop.api.base-url.bff}")
     private String basePath;
