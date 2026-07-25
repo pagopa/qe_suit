@@ -18,22 +18,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
       - name: Validate branch naming
         shell: bash
-        run: |
-          BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
-          echo "Branch: $BRANCH"
-
-          # eccezioni comuni automatiche
-          if [[ "$BRANCH" =~ ^(dependabot|renovate)/ ]]; then
-            echo "Bot branch allowed"
-            exit 0
-          fi
-
-          if [[ ! "$BRANCH" =~ ^(feature|bugfix|hotfix|chore)\/[a-z0-9._-]+$ ]]; then
-            echo "Branch name non conforme allo standard."
-            exit 1
-          fi
+        run: bash .github/scripts/validate-branch-naming.sh
 
       - name: Validate commit messages
         shell: bash
@@ -54,31 +47,7 @@ jobs:
             fi
           fi
 
-          echo "Validating commits in range: $RANGE"
+          bash .github/scripts/validate-commit-messages.sh "$RANGE"
 
-          git log --pretty=format:%s "$RANGE" | while read -r msg; do
-            if [[ -z "$msg" ]]; then
-              continue
-            fi
-
-            if [[ ! "$msg" =~ ^(feat|fix|chore|docs|refactor|test|ci)(\(.+\))?:\ .+ ]]; then
-              echo "Commit message non conforme allo standard: $msg"
-              exit 1
-            fi
-          done
-
-  arch-rules:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - name: Run architecture tests
-        run: ./mvnw -q -Dtest=ArchitectureRulesTest test
+      - name: Run workflow rule suite
+        run: ./mvnw -q -Dtest=InteropRulesSuite test
