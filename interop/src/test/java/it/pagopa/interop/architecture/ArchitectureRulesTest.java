@@ -133,6 +133,29 @@ public class ArchitectureRulesTest {
         }
     }
 
+    @Test
+    void java_test_files_must_end_with_test_suffix() throws Exception {
+        Path testRoot = Path.of("src/test/java");
+        Set<String> violations = new TreeSet<>();
+
+        try (Stream<Path> paths = Files.walk(testRoot)) {
+            paths.filter(path -> path.toString().endsWith(".java"))
+                    .forEach(path -> {
+                        String fileName = path.getFileName().toString();
+                        if ("package-info.java".equals(fileName) || "module-info.java".equals(fileName)) {
+                            return;
+                        }
+                        if (!fileName.endsWith("Test.java")) {
+                            violations.add(path.toString());
+                        }
+                    });
+        }
+
+        if (!violations.isEmpty()) {
+            fail("I file sotto src/test/java devono terminare con 'Test': " + violations);
+        }
+    }
+
     private static void checkNamingConvention(JavaClass javaClass, Set<String> violations) {
         String packageName = javaClass.getPackageName();
         String fullName = javaClass.getFullName();
