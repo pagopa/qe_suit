@@ -2,7 +2,7 @@ package it.pagopa.interop.new_arch.web.eservice.infrastructure.cucumber;
 
 import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.EServiceCreationPage;
+import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.EServiceCreationPage;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;

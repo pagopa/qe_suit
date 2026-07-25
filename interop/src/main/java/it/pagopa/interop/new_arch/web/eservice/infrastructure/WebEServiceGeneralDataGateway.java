@@ -1,12 +1,11 @@
 package it.pagopa.interop.new_arch.web.eservice.infrastructure;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.new_arch.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.new_arch.web.eservice.application.WebEServiceGeneralData;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.EServiceCreationPage;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.component.creation_wizard.GeneralDataWizard;
+import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.EServiceCreationPage;
+import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.creation_wizard.GeneralDataWizard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

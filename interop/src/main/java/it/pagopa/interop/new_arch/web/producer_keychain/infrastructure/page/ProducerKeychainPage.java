@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.web.producer_keychain.infrastructure.suit;
+package it.pagopa.interop.new_arch.web.producer_keychain.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
@@ -6,8 +6,8 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.new_arch.web.infrastructure.component.Button;
 import it.pagopa.interop.new_arch.web.infrastructure.component.TextField;
-import it.pagopa.interop.new_arch.web.producer_keychain.infrastructure.suit.component.ProducerKeychainRow;
-import it.pagopa.interop.new_arch.web.producer_keychain.infrastructure.suit.component.ProducerKeychainTable;
+import it.pagopa.interop.new_arch.web.producer_keychain.infrastructure.page.component.ProducerKeychainRow;
+import it.pagopa.interop.new_arch.web.producer_keychain.infrastructure.page.component.ProducerKeychainTable;
 import org.assertj.core.api.SoftAssertions;
 import org.openqa.selenium.Keys;
 

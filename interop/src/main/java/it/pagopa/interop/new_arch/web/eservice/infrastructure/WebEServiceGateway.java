@@ -6,7 +6,7 @@ import it.pagopa.interop.new_arch.common.eservice.domain.EService;
 import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
 import it.pagopa.interop.new_arch.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.new_arch.web.eservice.application.WebEServiceCreationCommand;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.EServiceCreationPage;
+import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.EServiceCreationPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

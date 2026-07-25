@@ -2,9 +2,9 @@ package it.pagopa.interop.new_arch.web.eservice.infrastructure.cucumber;
 
 import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.component.creation_wizard.GeneralDataWizard;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.component.creation_wizard.ThresholdAndAttributeWizard;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.component.creation_wizard.technical.TechnicalSpecWizard;
+import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.creation_wizard.GeneralDataWizard;
+import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.creation_wizard.ThresholdAndAttributeWizard;
+import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.creation_wizard.technical.TechnicalSpecWizard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
