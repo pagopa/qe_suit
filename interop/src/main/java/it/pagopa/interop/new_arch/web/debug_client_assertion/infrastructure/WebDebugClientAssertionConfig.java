@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.config;
+package it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
