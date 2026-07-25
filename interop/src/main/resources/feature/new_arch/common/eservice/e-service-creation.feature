@@ -1,5 +1,5 @@
 @Business @BFF
-Feature: Creazione di un EService
+Feature: Creazione di un EServiced
 
   Come utente autenticato di un Ente Erogatore (Aderente)
   Voglio creare un EService con un descrittore in stato DRAFT tramite i canali messi a disposizione
