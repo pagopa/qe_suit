@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.common.journey.application;
+package it.pagopa.interop.common.journey.application;
 
-import it.pagopa.interop.new_arch.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 
 public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends JourneyModule {
     SELF createEService(EServiceCreationCommand command, EServiceDescriptorState state);

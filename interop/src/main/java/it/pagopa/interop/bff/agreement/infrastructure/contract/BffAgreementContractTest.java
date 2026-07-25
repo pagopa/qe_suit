@@ -1,9 +1,9 @@
-package it.pagopa.interop.new_arch.bff.agreement.infrastructure.contract;
+package it.pagopa.interop.bff.agreement.infrastructure.contract;
 
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
-import it.pagopa.interop.new_arch.bff.agreement.infrastructure.BffAgreementRequestFactory;
-import it.pagopa.interop.new_arch.common.infrastructure.http.contract.engine.ContractTestEngine;
+import it.pagopa.interop.bff.agreement.infrastructure.BffAgreementRequestFactory;
+import it.pagopa.interop.common.infrastructure.http.contract.engine.ContractTestEngine;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;

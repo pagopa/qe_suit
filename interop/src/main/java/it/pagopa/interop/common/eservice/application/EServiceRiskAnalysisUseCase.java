@@ -1,12 +1,12 @@
-package it.pagopa.interop.new_arch.common.eservice.application;
+package it.pagopa.interop.common.eservice.application;
 
-import it.pagopa.interop.new_arch.common.eservice.domain.EService;
-import it.pagopa.interop.new_arch.common.kernel.domain.EServiceRiskAnalysis;
-import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
-import it.pagopa.interop.new_arch.common.purpose.application.PurposeUseCase;
-import it.pagopa.interop.new_arch.common.risk_analysis.application.RiskAnalysisDataInitializer;
-import it.pagopa.interop.new_arch.common.risk_analysis.domain.RiskAnalysisForm;
-import it.pagopa.interop.new_arch.common.risk_analysis.domain.RiskAnalysisFormConfig;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.purpose.application.PurposeUseCase;
+import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataInitializer;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

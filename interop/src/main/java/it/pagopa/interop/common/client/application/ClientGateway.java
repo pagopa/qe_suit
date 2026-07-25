@@ -1,12 +1,12 @@
-package it.pagopa.interop.new_arch.common.client.application;
+package it.pagopa.interop.common.client.application;
 
-import it.pagopa.interop.new_arch.common.client.domain.Client;
-import it.pagopa.interop.new_arch.common.client.domain.ClientKind;
-import it.pagopa.interop.new_arch.common.kernel.domain.ClientRef;
-import it.pagopa.interop.new_arch.common.kernel.domain.Key;
-import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
-import it.pagopa.interop.new_arch.common.kernel.domain.User;
-import it.pagopa.interop.new_arch.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.client.domain.Client;
+import it.pagopa.interop.common.client.domain.ClientKind;
+import it.pagopa.interop.common.kernel.domain.ClientRef;
+import it.pagopa.interop.common.kernel.domain.Key;
+import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.purpose.domain.Purpose;
 import jakarta.annotation.Nullable;
 import org.springframework.plugin.core.Plugin;
 

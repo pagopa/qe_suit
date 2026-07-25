@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.http.contract.engine;
 
-import it.pagopa.interop.new_arch.common.infrastructure.http.contract.FuzzVectors;
+import it.pagopa.interop.common.infrastructure.http.contract.FuzzVectors;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

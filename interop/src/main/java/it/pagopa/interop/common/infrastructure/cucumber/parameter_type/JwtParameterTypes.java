@@ -1,9 +1,9 @@
-package it.pagopa.interop.new_arch.common.infrastructure.cucumber.parameter_type;
+package it.pagopa.interop.common.infrastructure.cucumber.parameter_type;
 
 import io.cucumber.java.DataTableType;
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.new_arch.common.kernel.domain.KeyAlgorithm;
-import it.pagopa.interop.new_arch.common.infrastructure.security.jwt.JwtBuilder;
+import it.pagopa.interop.common.kernel.domain.KeyAlgorithm;
+import it.pagopa.interop.common.infrastructure.security.jwt.JwtBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 

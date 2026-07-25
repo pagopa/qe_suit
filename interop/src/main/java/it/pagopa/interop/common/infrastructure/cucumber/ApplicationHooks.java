@@ -1,11 +1,11 @@
-package it.pagopa.interop.new_arch.common.infrastructure.cucumber;
+package it.pagopa.interop.common.infrastructure.cucumber;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ChannelContext;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.TestContext;
-import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
-import it.pagopa.interop.new_arch.common.kernel.domain.TestKind;
+import it.pagopa.interop.common.infrastructure.cucumber.context.ChannelContext;
+import it.pagopa.interop.common.infrastructure.cucumber.context.TestContext;
+import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.TestKind;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

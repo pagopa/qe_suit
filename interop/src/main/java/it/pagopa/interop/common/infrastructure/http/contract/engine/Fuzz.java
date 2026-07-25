@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.common.infrastructure.http.contract.engine;
+package it.pagopa.interop.common.infrastructure.http.contract.engine;
 
-import it.pagopa.interop.new_arch.common.infrastructure.http.contract.FuzzVectors;
-import it.pagopa.interop.new_arch.common.infrastructure.http.contract.GetterProvider;
+import it.pagopa.interop.common.infrastructure.http.contract.FuzzVectors;
+import it.pagopa.interop.common.infrastructure.http.contract.GetterProvider;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;

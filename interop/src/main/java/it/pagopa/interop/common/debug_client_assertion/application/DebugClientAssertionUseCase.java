@@ -1,6 +1,6 @@
-package it.pagopa.interop.new_arch.common.debug_client_assertion.application;
+package it.pagopa.interop.common.debug_client_assertion.application;
 
-import it.pagopa.interop.new_arch.common.debug_client_assertion.domain.DebugClientAssertionValidation;
+import it.pagopa.interop.common.debug_client_assertion.domain.DebugClientAssertionValidation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

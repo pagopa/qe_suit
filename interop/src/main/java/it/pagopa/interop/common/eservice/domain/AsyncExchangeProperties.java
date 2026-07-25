@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.eservice.domain;
+package it.pagopa.interop.common.eservice.domain;
 
 import lombok.Builder;
 import lombok.Value;

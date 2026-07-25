@@ -1,15 +1,15 @@
-package it.pagopa.interop.new_arch.bff.eservice.infrastructure;
+package it.pagopa.interop.bff.eservice.infrastructure;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
-import it.pagopa.interop.new_arch.bff.eservice.application.BffEServiceCreationCommand;
-import it.pagopa.interop.new_arch.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceRequestFactory;
-import it.pagopa.interop.new_arch.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.new_arch.common.eservice.application.command.UpdateEServiceDescriptorCommand;
-import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
+import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
+import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
+import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.kernel.domain.Channel;
 import org.instancio.Instancio;
 import org.springframework.stereotype.Component;
 

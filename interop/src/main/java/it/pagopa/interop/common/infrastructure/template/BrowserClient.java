@@ -1,9 +1,9 @@
-package it.pagopa.interop.new_arch.common.infrastructure.template;
+package it.pagopa.interop.common.infrastructure.template;
 
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.new_arch.common.infrastructure.response.UiResponse;
-import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChain;
-import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChainFactory;
+import it.pagopa.interop.common.infrastructure.response.UiResponse;
+import it.pagopa.interop.common.infrastructure.template.action.TestChain;
+import it.pagopa.interop.common.infrastructure.template.action.TestChainFactory;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;

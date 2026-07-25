@@ -1,9 +1,9 @@
-package it.pagopa.interop.new_arch.common.infrastructure.template.action;
+package it.pagopa.interop.common.infrastructure.template.action;
 
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.DomainContext;
-import it.pagopa.interop.new_arch.common.infrastructure.response.ApiResponse;
-import it.pagopa.interop.new_arch.common.infrastructure.response.RawResponse;
-import it.pagopa.interop.new_arch.common.kernel.Identifiable;
+import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.response.ApiResponse;
+import it.pagopa.interop.common.infrastructure.response.RawResponse;
+import it.pagopa.interop.common.kernel.Identifiable;
 import org.assertj.core.api.Assertions;
 
 import java.util.function.Function;

@@ -1,9 +1,9 @@
-package it.pagopa.interop.new_arch.bff.eservice.application;
+package it.pagopa.interop.bff.eservice.application;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.new_arch.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceMode;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceTechnology;
+import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import lombok.Getter;
 
 public class BffEServiceCreationCommand implements EServiceCreationCommand {

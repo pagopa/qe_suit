@@ -1,9 +1,9 @@
-package it.pagopa.interop.new_arch.common.risk_analysis.application;
+package it.pagopa.interop.common.risk_analysis.application;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
-import it.pagopa.interop.new_arch.common.kernel.domain.TenantKind;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

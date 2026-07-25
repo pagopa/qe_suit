@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.eservice.infrastructure.config;
+package it.pagopa.interop.common.eservice.infrastructure.config;
 
 public class MissingActiveChannelException extends IllegalStateException {
 

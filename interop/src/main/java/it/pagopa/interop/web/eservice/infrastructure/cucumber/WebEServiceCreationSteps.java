@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.web.eservice.infrastructure.cucumber;
+package it.pagopa.interop.web.eservice.infrastructure.cucumber;
 
 import lombok.RequiredArgsConstructor;
 

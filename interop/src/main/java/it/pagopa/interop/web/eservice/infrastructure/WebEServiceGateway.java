@@ -1,12 +1,12 @@
-package it.pagopa.interop.new_arch.web.eservice.infrastructure;
+package it.pagopa.interop.web.eservice.infrastructure;
 
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceGateway;
-import it.pagopa.interop.new_arch.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.new_arch.common.eservice.domain.EService;
-import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
-import it.pagopa.interop.new_arch.common.kernel.domain.EServiceRef;
-import it.pagopa.interop.new_arch.web.eservice.application.WebEServiceCreationCommand;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.EServiceCreationPage;
+import it.pagopa.interop.common.eservice.application.EServiceGateway;
+import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.web.eservice.application.WebEServiceCreationCommand;
+import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreationPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

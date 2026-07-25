@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.web.infrastructure.suit;
+package it.pagopa.interop.web.infrastructure.suit;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;

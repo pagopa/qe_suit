@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.common.infrastructure.security.jwt;
+package it.pagopa.interop.common.infrastructure.security.jwt;
 
-import it.pagopa.interop.new_arch.common.kernel.domain.Key;
-import it.pagopa.interop.new_arch.common.kernel.Identifiable;
+import it.pagopa.interop.common.kernel.domain.Key;
+import it.pagopa.interop.common.kernel.Identifiable;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;

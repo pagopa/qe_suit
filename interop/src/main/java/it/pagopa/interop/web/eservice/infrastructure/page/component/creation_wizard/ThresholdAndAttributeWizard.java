@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.creation_wizard;
+package it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;

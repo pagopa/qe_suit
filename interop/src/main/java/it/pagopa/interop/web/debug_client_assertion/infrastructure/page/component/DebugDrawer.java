@@ -1,9 +1,9 @@
-package it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.page.component;
+package it.pagopa.interop.web.debug_client_assertion.infrastructure.page.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Chip;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Drawer;
+import it.pagopa.interop.web.infrastructure.suit.component.Chip;
+import it.pagopa.interop.web.infrastructure.suit.component.Drawer;
 
 @XPath("//div[contains(@class, 'MuiDrawer-root')][1]")
 public interface DebugDrawer extends Drawer {

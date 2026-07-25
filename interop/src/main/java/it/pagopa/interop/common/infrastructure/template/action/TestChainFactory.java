@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.common.infrastructure.template.action;
+package it.pagopa.interop.common.infrastructure.template.action;
 
-import it.pagopa.interop.new_arch.common.infrastructure.response.RawResponse;
-import it.pagopa.interop.new_arch.common.infrastructure.template.action.context.BaseActionContext;
+import it.pagopa.interop.common.infrastructure.response.RawResponse;
+import it.pagopa.interop.common.infrastructure.template.action.context.BaseActionContext;
 import lombok.Setter;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;

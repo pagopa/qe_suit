@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.purpose_template.domain;
+package it.pagopa.interop.common.purpose_template.domain;
 
 public enum PurposeTemplateState {
     DRAFT,

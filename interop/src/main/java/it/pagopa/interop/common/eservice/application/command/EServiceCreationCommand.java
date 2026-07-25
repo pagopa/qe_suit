@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.common.eservice.application.command;
+package it.pagopa.interop.common.eservice.application.command;
 
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceMode;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceTechnology;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 
 public interface EServiceCreationCommand {
     EServiceCreationCommand name(String name);

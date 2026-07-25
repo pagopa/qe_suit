@@ -1,9 +1,9 @@
-package it.pagopa.interop.new_arch.common.purpose.application;
+package it.pagopa.interop.common.purpose.application;
 
-import it.pagopa.interop.new_arch.common.kernel.domain.*;
-import it.pagopa.interop.new_arch.common.purpose.domain.Purpose;
-import it.pagopa.interop.new_arch.common.risk_analysis.domain.RiskAnalysisForm;
-import it.pagopa.interop.new_arch.common.risk_analysis.domain.RiskAnalysisFormConfig;
+import it.pagopa.interop.common.kernel.domain.*;
+import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import org.springframework.plugin.core.Plugin;
 
 public interface PurposeGateway extends Plugin<Channel> {

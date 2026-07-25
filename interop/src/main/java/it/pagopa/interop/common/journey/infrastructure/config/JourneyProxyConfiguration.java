@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.common.journey.infrastructure.config;
+package it.pagopa.interop.common.journey.infrastructure.config;
 
-import it.pagopa.interop.new_arch.common.journey.application.InteropJourney;
-import it.pagopa.interop.new_arch.common.journey.application.JourneyModule;
+import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.journey.application.JourneyModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

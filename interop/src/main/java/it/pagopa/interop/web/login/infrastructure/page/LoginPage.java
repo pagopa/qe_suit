@@ -1,16 +1,16 @@
-package it.pagopa.interop.new_arch.web.login.infrastructure.page;
+package it.pagopa.interop.web.login.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
-import it.pagopa.interop.new_arch.common.kernel.domain.User;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Button;
-import it.pagopa.interop.new_arch.web.login.infrastructure.page.component.LoginForm;
-import it.pagopa.interop.new_arch.web.login.infrastructure.page.component.OneTrustBanner;
-import it.pagopa.interop.new_arch.web.login.infrastructure.page.component.PrivacyDialog;
-import it.pagopa.interop.new_arch.web.login.infrastructure.page.component.ProviderDialog;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.web.infrastructure.suit.component.Button;
+import it.pagopa.interop.web.login.infrastructure.page.component.LoginForm;
+import it.pagopa.interop.web.login.infrastructure.page.component.OneTrustBanner;
+import it.pagopa.interop.web.login.infrastructure.page.component.PrivacyDialog;
+import it.pagopa.interop.web.login.infrastructure.page.component.ProviderDialog;
 
 import java.util.Optional;
 

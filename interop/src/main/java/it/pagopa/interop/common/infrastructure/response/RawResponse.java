@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.infrastructure.response;
+package it.pagopa.interop.common.infrastructure.response;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.Getter;

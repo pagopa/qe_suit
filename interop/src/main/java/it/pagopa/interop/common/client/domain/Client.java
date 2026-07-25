@@ -1,9 +1,9 @@
-package it.pagopa.interop.new_arch.common.client.domain;
+package it.pagopa.interop.common.client.domain;
 
-import it.pagopa.interop.new_arch.common.kernel.domain.Key;
-import it.pagopa.interop.new_arch.common.kernel.Identifiable;
-import it.pagopa.interop.new_arch.common.kernel.domain.UserRef;
-import it.pagopa.interop.new_arch.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.kernel.domain.Key;
+import it.pagopa.interop.common.kernel.Identifiable;
+import it.pagopa.interop.common.kernel.domain.UserRef;
+import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;

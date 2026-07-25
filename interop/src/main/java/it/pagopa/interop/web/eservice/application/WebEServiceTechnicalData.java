@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.web.eservice.application;
+package it.pagopa.interop.web.eservice.application;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties;
 import org.springframework.core.io.ClassPathResource;

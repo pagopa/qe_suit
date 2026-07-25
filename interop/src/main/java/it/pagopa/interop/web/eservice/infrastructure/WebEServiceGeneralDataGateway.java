@@ -1,11 +1,11 @@
-package it.pagopa.interop.new_arch.web.eservice.infrastructure;
+package it.pagopa.interop.web.eservice.infrastructure;
 
-import it.pagopa.interop.new_arch.common.eservice.domain.EService;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceMode;
-import it.pagopa.interop.new_arch.common.eservice.domain.EServiceTechnology;
-import it.pagopa.interop.new_arch.web.eservice.application.WebEServiceGeneralData;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.EServiceCreationPage;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.creation_wizard.GeneralDataWizard;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
+import it.pagopa.interop.web.eservice.application.WebEServiceGeneralData;
+import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreationPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.GeneralDataWizard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

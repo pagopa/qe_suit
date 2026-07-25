@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.eservice_template.domain;
+package it.pagopa.interop.common.eservice_template.domain;
 
 public enum EServiceTemplateVersionState {
     DRAFT,

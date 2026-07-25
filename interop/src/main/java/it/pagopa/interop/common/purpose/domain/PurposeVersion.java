@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.common.purpose.domain;
+package it.pagopa.interop.common.purpose.domain;
 
-import it.pagopa.interop.new_arch.common.kernel.Identifiable;
-import it.pagopa.interop.new_arch.common.kernel.domain.PurposeVersionRef;
+import it.pagopa.interop.common.kernel.Identifiable;
+import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;

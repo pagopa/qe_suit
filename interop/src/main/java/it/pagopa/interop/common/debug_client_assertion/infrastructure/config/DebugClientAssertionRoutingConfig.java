@@ -1,13 +1,13 @@
-package it.pagopa.interop.new_arch.common.debug_client_assertion.infrastructure.config;
+package it.pagopa.interop.common.debug_client_assertion.infrastructure.config;
 
-import it.pagopa.interop.new_arch.common.debug_client_assertion.application.DebugClientAssertionGateway;
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceDescriptorGateway;
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceGateway;
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceRequestFactory;
-import it.pagopa.interop.new_arch.common.eservice.application.EServiceRiskAnalysisGateway;
-import it.pagopa.interop.new_arch.common.infrastructure.channel.ChannelRoutingInterceptor;
-import it.pagopa.interop.new_arch.common.infrastructure.cucumber.context.ChannelContext;
-import it.pagopa.interop.new_arch.common.kernel.domain.Channel;
+import it.pagopa.interop.common.debug_client_assertion.application.DebugClientAssertionGateway;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
+import it.pagopa.interop.common.eservice.application.EServiceGateway;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
+import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisGateway;
+import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
+import it.pagopa.interop.common.infrastructure.cucumber.context.ChannelContext;
+import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.ObjectProvider;

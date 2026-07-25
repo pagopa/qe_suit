@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.common.kernel.domain;
+package it.pagopa.interop.common.kernel.domain;
 
-import it.pagopa.interop.new_arch.common.kernel.Identifiable;
-import it.pagopa.interop.new_arch.common.risk_analysis.domain.RiskAnalysisForm;
+import it.pagopa.interop.common.kernel.Identifiable;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;

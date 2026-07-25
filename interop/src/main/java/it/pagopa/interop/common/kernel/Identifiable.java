@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.common.kernel;
+package it.pagopa.interop.common.kernel;
 
 import java.util.UUID;
 

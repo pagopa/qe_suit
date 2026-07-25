@@ -1,12 +1,12 @@
-package it.pagopa.interop.new_arch.common.journey.infrastructure.cucumber;
+package it.pagopa.interop.common.journey.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.new_arch.common.kernel.domain.Key;
-import it.pagopa.interop.new_arch.common.kernel.domain.KeyAlgorithm;
-import it.pagopa.interop.new_arch.common.journey.application.InteropJourney;
-import it.pagopa.interop.new_arch.common.kernel.domain.Tenant;
-import it.pagopa.interop.new_arch.common.kernel.domain.UserRole;
-import it.pagopa.interop.new_arch.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.kernel.domain.Key;
+import it.pagopa.interop.common.kernel.domain.KeyAlgorithm;
+import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

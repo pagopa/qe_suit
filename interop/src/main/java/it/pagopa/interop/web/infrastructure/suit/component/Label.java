@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.web.infrastructure.suit.component;
+package it.pagopa.interop.web.infrastructure.suit.component;
 
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;

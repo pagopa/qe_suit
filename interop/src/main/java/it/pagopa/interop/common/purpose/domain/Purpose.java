@@ -1,7 +1,7 @@
-package it.pagopa.interop.new_arch.common.purpose.domain;
+package it.pagopa.interop.common.purpose.domain;
 
-import it.pagopa.interop.new_arch.common.kernel.Identifiable;
-import it.pagopa.interop.new_arch.common.kernel.domain.PurposeRef;
+import it.pagopa.interop.common.kernel.Identifiable;
+import it.pagopa.interop.common.kernel.domain.PurposeRef;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
-import static it.pagopa.interop.new_arch.common.purpose.domain.PurposeVersionState.DRAFT;
+import static it.pagopa.interop.common.purpose.domain.PurposeVersionState.DRAFT;
 
 @Value
 @Builder(toBuilder = true)
