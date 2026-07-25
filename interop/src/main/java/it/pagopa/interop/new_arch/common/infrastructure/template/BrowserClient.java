@@ -29,9 +29,13 @@ public class BrowserClient {
             Supplier<?> uiAction,
             Class<RESPONSE> responseClass) {
 
-        page.navigateTo();
-        page.assertLoaded();
-        return execute(uiAction, responseClass);
+        Supplier<?> navigateAndAction = () -> {
+            page.navigateTo();
+            page.assertLoaded();
+            return uiAction.get();
+        };
+
+        return execute(navigateAndAction, responseClass);
     }
 
     protected TestChain<Void> execute(Runnable uiAction) {
@@ -40,8 +44,12 @@ public class BrowserClient {
     }
 
     protected TestChain<Void> navigateAndExecute(Page page, Runnable uiAction){
-        page.navigateTo();
-        page.assertLoaded();
-        return execute(uiAction);
+        Runnable navigateAndAction = () -> {
+            page.navigateTo();
+            page.assertLoaded();
+            uiAction.run();
+        };
+
+        return execute(navigateAndAction);
     }
 }
