@@ -5,7 +5,7 @@ import it.pagopa.interop.new_arch.common.debug_client_assertion.domain.DebugClie
 import it.pagopa.interop.new_arch.common.infrastructure.template.BrowserClient;
 import it.pagopa.interop.new_arch.common.infrastructure.template.action.TestChain;
 import it.pagopa.interop.new_arch.common.kernel.security.ClientAssertion;
-import it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.suit.DebugClientAssertionPage;
+import it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.page.DebugClientAssertionPage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
