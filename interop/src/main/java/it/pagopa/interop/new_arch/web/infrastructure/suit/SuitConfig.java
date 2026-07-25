@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.web.infrastructure;
+package it.pagopa.interop.new_arch.web.infrastructure.suit;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
@@ -7,7 +7,6 @@ import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
 import it.frontend.e2e.framework.web.adapter.selenium.SeleniumApiAdapter;
 import it.frontend.e2e.framework.web.config.WebSuiteBuilder;
 import it.frontend.e2e.framework.web.model.location.Url;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.AuthenticatedLocatableCapabilityHandler;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -21,7 +20,7 @@ import java.util.List;
 @ConfigurationProperties(prefix = "channel.web")
 @Getter
 @Setter
-public class BrowserConfig {
+public class SuitConfig {
 
     private String browser;
     private boolean headless;

@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.web.infrastructure.component;
+package it.pagopa.interop.new_arch.web.infrastructure.suit.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Uploadable;

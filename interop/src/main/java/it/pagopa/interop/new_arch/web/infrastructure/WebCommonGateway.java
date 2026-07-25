@@ -1,13 +1,13 @@
 package it.pagopa.interop.new_arch.web.infrastructure;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.interop.new_arch.web.infrastructure.component.Snackbar;
+import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Snackbar;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class WebComponentGateway {
+public class WebCommonGateway {
 
     private final WebPresentationGateway presentationGateway;
 

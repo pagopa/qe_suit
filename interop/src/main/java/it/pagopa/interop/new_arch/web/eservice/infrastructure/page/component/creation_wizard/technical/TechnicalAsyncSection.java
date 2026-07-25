@@ -3,10 +3,10 @@ package it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.cr
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.new_arch.web.infrastructure.component.Alert;
-import it.pagopa.interop.new_arch.web.infrastructure.component.Checkbox;
-import it.pagopa.interop.new_arch.web.infrastructure.component.InterfaceComponent;
-import it.pagopa.interop.new_arch.web.infrastructure.component.TextField;
+import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Alert;
+import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Checkbox;
+import it.pagopa.interop.new_arch.web.infrastructure.suit.component.InterfaceComponent;
+import it.pagopa.interop.new_arch.web.infrastructure.suit.component.TextField;
 import org.assertj.core.api.SoftAssertions;
 
 public interface TechnicalAsyncSection extends Component {

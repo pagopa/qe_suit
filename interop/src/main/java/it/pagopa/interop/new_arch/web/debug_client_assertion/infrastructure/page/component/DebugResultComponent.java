@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.interop.new_arch.common.debug_client_assertion.domain.DebugClientAssertionValidation;
-import it.pagopa.interop.new_arch.web.infrastructure.component.Button;
+import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Button;
 import org.assertj.core.api.Assertions;
 
 import java.util.ArrayList;
