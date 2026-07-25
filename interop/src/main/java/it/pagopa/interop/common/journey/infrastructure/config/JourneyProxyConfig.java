@@ -9,7 +9,7 @@ import java.lang.reflect.Proxy;
 import java.util.List;
 
 @Configuration
-public class JourneyProxyConfiguration {
+public class JourneyProxyConfig {
 
     @Bean
     public InteropJourney interopJourney(List<JourneyModule> modules) {

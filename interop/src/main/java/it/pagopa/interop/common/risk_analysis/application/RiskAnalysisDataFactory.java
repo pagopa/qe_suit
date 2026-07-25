@@ -16,7 +16,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class RiskAnalysisDataInitializer {
+public class RiskAnalysisDataFactory {
 
     private final ObjectMapper objectMapper;
     private Map<String, RiskAnalysisTemplate> riskAnalysisData;
