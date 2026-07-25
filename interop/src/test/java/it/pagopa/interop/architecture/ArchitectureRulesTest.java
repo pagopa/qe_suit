@@ -8,9 +8,14 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -101,6 +106,30 @@ public class ArchitectureRulesTest {
 
         if (!violations.isEmpty()) {
             fail("Violazioni naming classi architetturali nei channel: " + violations);
+        }
+    }
+
+    @Test
+    void java_source_files_must_have_less_than_200_lines() throws Exception {
+        Path sourceRoot = Path.of("src/main/java");
+        Set<String> violations = new TreeSet<>();
+
+        try (Stream<Path> paths = Files.walk(sourceRoot)) {
+            paths.filter(path -> path.toString().endsWith(".java"))
+                    .forEach(path -> {
+                        try (Stream<String> linesStream = Files.lines(path)) {
+                            long lines = linesStream.count();
+                            if (lines >= 200) {
+                                violations.add(path + " (" + lines + " lines)");
+                            }
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
+                        }
+                    });
+        }
+
+        if (!violations.isEmpty()) {
+            fail("Classi con 200 o più righe: " + violations);
         }
     }
 
