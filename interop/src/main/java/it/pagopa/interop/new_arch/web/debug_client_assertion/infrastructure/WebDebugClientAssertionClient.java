@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class BrowserDebugClientAssertionClient extends BrowserClient {
+public class WebDebugClientAssertionClient extends BrowserClient {
     @Value("${interop.auth.client-assertion.grant_type}")
     private String clientAssertionGrantType;
 

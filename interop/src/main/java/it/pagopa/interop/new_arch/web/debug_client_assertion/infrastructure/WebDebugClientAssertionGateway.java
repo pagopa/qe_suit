@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WebDebugClientAssertionGateway implements DebugClientAssertionGateway {
 
-    private final BrowserDebugClientAssertionClient client;
+    private final WebDebugClientAssertionClient client;
 
     @Override
     public DebugClientAssertionValidation executeClientAssertionValidation(String clientAssertion, String dpopProof, ClientKind clientKind, String clientId) {
