@@ -1,4 +1,4 @@
-package it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.component.creation_wizard.technical;
+package it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.creation_wizard.technical;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;

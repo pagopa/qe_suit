@@ -2,8 +2,8 @@ package it.pagopa.interop.new_arch.web.eservice.infrastructure;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties;
 import it.pagopa.interop.new_arch.web.eservice.application.WebEServiceTechnicalData;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.EServiceCreationPage;
-import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.component.creation_wizard.technical.TechnicalSpecWizard;
+import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.EServiceCreationPage;
+import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.creation_wizard.technical.TechnicalSpecWizard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

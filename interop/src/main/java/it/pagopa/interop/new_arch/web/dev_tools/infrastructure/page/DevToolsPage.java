@@ -1,11 +1,11 @@
-package it.pagopa.interop.new_arch.web.dev_tools.infrastructure.suit;
+package it.pagopa.interop.new_arch.web.dev_tools.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.new_arch.web.dev_tools.infrastructure.suit.component.DebugClientAssertionSection;
-import it.pagopa.interop.new_arch.web.dev_tools.infrastructure.suit.component.SimulatoreOttenimentoTokenSection;
+import it.pagopa.interop.new_arch.web.dev_tools.infrastructure.page.component.DebugClientAssertionSection;
+import it.pagopa.interop.new_arch.web.dev_tools.infrastructure.page.component.SimulatoreOttenimentoTokenSection;
 import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo")
