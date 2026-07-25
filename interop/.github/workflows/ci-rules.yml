@@ -1,0 +1,56 @@
+name: ci-rules
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  validate-rules:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate branch naming
+        run: |
+          BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+          echo "Branch: $BRANCH"
+
+          # eccezioni comuni automatiche
+          if [[ "$BRANCH" =~ ^(dependabot|renovate)/ ]]; then
+            echo "Bot branch allowed"
+            exit 0
+          fi
+
+          if [[ ! "$BRANCH" =~ ^(feature|bugfix|hotfix|chore)\/[a-z0-9._-]+$ ]]; then
+            echo "Branch name non conforme allo standard."
+            exit 1
+          fi
+
+      - name: Validate commit messages
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+            RANGE="$BASE_SHA..$HEAD_SHA"
+          else
+            BEFORE_SHA="${{ github.event.before }}"
+            AFTER_SHA="${{ github.sha }}"
+            RANGE="$BEFORE_SHA..$AFTER_SHA"
+          fi
+
+          echo "Validating commits in range: $RANGE"
+
+          git log --pretty=format:%s "$RANGE" | while read -r msg; do
+            if [[ ! "$msg" =~ ^(feat|fix|chore|docs|refactor|test|ci)(\(.+\))?:\ .+ ]]; then
+              echo "Commit message non conforme allo standard: $msg"
+              exit 1
+            fi
+          done
