@@ -48,30 +48,6 @@
         </dependencies>
     </dependencyManagement>
 
-    <!-- ========================= -->
-    <!-- TODO: DA ELIMINARE, SEZIONE UTILE DURANTE IL REFACTOR PER EVITARE ERRORI DI COMPILAZIONE SUL PREGRESSO -->
-    <!-- ========================= -->
-    <profiles>
-        <profile>
-            <id>refactor</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <exclude>it/pagopa/interop/bff/**</exclude>
-                                <exclude>it/pagopa/interop/common/**</exclude>
-                                <exclude>it/pagopa/interop/web/**</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
     <dependencies>
 
         <!-- ========================= -->
