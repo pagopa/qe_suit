@@ -36,8 +36,8 @@ class CiRulesScriptsTest {
     @Test
     void commit_script_accepts_conventional_messages(@TempDir Path tempDir) throws Exception {
         initGitRepo(tempDir);
-        writeCommit(tempDir, "feat: initial commit", "first\n");
-        writeCommit(tempDir, "fix(auth): improve token handling", "second\n");
+        writeCommit(tempDir, "feat: [PROJ-123] initial commit", "first\n");
+        writeCommit(tempDir, "fix(auth): [AUTH-88] improve token handling", "second\n");
 
         assertScriptSuccess(COMMIT_SCRIPT, tempDir, "HEAD~1..HEAD");
     }
@@ -45,12 +45,33 @@ class CiRulesScriptsTest {
     @Test
     void commit_script_rejects_non_conventional_messages(@TempDir Path tempDir) throws Exception {
         initGitRepo(tempDir);
-        writeCommit(tempDir, "feat: initial commit", "first\n");
+        writeCommit(tempDir, "feat: [PROJ-123] initial commit", "first\n");
         writeCommit(tempDir, "bad message", "second\n");
 
         var result = runScript(COMMIT_SCRIPT, tempDir, "HEAD~1..HEAD");
         assertEquals(1, result.exitCode(), result.stderr());
         assertTrue(result.stderr().contains("Commit message non conforme"));
+    }
+
+    @Test
+    void commit_script_rejects_messages_without_jira_ticket(@TempDir Path tempDir) throws Exception {
+        initGitRepo(tempDir);
+        writeCommit(tempDir, "feat: [PROJ-123] initial commit", "first\n");
+        writeCommit(tempDir, "fix(auth): improve token handling", "second\n");
+
+        var result = runScript(COMMIT_SCRIPT, tempDir, "HEAD~1..HEAD");
+        assertEquals(1, result.exitCode(), result.stderr());
+        assertTrue(result.stderr().contains("Commit message non conforme"));
+    }
+
+    @Test
+    void commit_script_accepts_various_ticket_formats(@TempDir Path tempDir) throws Exception {
+        initGitRepo(tempDir);
+        writeCommit(tempDir, "feat: [PROJ-123] new feature", "first\n");
+        writeCommit(tempDir, "fix(api): [API-456] fix endpoint", "second\n");
+        writeCommit(tempDir, "chore(deps): [TECH-789] update dependencies", "third\n");
+
+        assertScriptSuccess(COMMIT_SCRIPT, tempDir, "HEAD~2..HEAD");
     }
 
     private static void assertScriptSuccess(Path script, Path workingDir, String... args) throws Exception {

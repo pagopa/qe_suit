@@ -33,8 +33,13 @@ while IFS= read -r msg || [[ -n "$msg" ]]; do
     continue
   fi
 
-  if [[ ! "$msg" =~ ^(feat|fix|chore|docs|refactor|test|ci)(\(.+\))?:\ .+ ]]; then
+  # Validazione formato conventional commit con ticket Jira
+  # Formato: type(scope): [TICKET-ID] message
+  # Esempio: feat(payment): [PROJ-123] add retry on timeout
+  if [[ ! "$msg" =~ ^(feat|fix|chore|docs|refactor|test|ci)(\(.+\))?:\ \[[A-Z]+\-[0-9]+\]\ .+ ]]; then
     echo "Commit message non conforme allo standard: $msg" >&2
+    echo "Expected format: type(scope): [TICKET-ID] message" >&2
+    echo "Example: feat(payment): [PROJ-123] add retry on timeout" >&2
     exit 1
   fi
 done < <(git log --pretty=format:%s "$RANGE")
