@@ -6,7 +6,6 @@ import it.pagopa.interop.new_arch.common.infrastructure.response.RawResponse;
 import it.pagopa.interop.new_arch.common.kernel.Identifiable;
 import org.assertj.core.api.Assertions;
 
-import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 

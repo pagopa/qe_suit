@@ -7,7 +7,6 @@ import io.cucumber.java.DefaultDataTableEntryTransformer;
 import it.pagopa.interop.new_arch.common.infrastructure.cucumber.resolver.DataTableExpressionResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
