@@ -1,11 +1,11 @@
-package it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.suit;
+package it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.suit.component.DebugRequestContentComponent;
-import it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.suit.component.DebugResultComponent;
+import it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.page.component.DebugRequestContentComponent;
+import it.pagopa.interop.new_arch.web.debug_client_assertion.infrastructure.page.component.DebugResultComponent;
 import it.pagopa.interop.new_arch.web.infrastructure.component.Alert;
 import it.pagopa.interop.new_arch.web.infrastructure.component.Button;
 import it.pagopa.interop.new_arch.web.infrastructure.component.TextField;
