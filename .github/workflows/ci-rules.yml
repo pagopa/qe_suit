@@ -50,4 +50,5 @@ jobs:
           bash .github/scripts/validate-commit-messages.sh "$RANGE"
 
       - name: Run workflow rule suite
-        run: ./mvnw -q -Dtest=InteropRulesSuite test
+        working-directory: interop
+        run: ./mvnw -Dtest=ArchitectureRulesTest test
