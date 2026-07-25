@@ -53,6 +53,6 @@ jobs:
         working-directory: frontend-e2e-framework
         run: bash ./mvnw -DskipTests install
 
-      - name: Run architecture rule suite
+      - name: Run interop architecture rule suite
         working-directory: interop
         run: bash ./mvnw -Dtest=ArchitectureRulesTest test
