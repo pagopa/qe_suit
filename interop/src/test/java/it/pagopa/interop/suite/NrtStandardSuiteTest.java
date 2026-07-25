@@ -24,5 +24,5 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         // UI
         "debug-client-assertion-page-ui-flow", "debug-client-assertion-page-ui-behavior", "dev-tools-page-ui-behavior"
 })
-public class NrtStandardSuite {
+public class NrtStandardSuiteTest {
 }
