@@ -37,17 +37,23 @@ while IFS= read -r msg || [[ -n "$msg" ]]; do
   # Formato: type(scope): [TICKET-ID] message
   # Esempio: feat(payment): [PROJ-123] add retry on timeout
   if [[ ! "$msg" =~ ^(feat|fix|chore|docs|refactor|test|ci)(\(.+\))?:\ \[[A-Z]+\-[0-9]+\]\ .+ ]]; then
-    echo "Commit message non conforme allo standard: $msg" >&2
-    echo "Expected one of these formats: " >&2
-    echo "type(AFFECTED-SCOPE): [TICKET-ID] message" >&2
-    echo "Example: feat(payment): [QA-123] add retry on timeout" >&2
-    echo "type: [TICKET-ID] message" >&2
-    echo "Example: feat: [PROJ-123] add retry on timeout" >&2
+    echo "" >&2
+    echo "========================================" >&2
+    echo "Invalid commit message format" >&2
+    echo "========================================" >&2
+    echo "Message: $msg" >&2
+    echo "" >&2
+    echo "Expected one of these formats:" >&2
+    echo "  1) type(AFFECTED-SCOPE): [TICKET-ID] message" >&2
+    echo "     Example: feat(payment): [QA-123] add retry on timeout" >&2
+    echo "" >&2
+    echo "  2) type: [TICKET-ID] message" >&2
+    echo "     Example: feat: [PROJ-123] add retry on timeout" >&2
+    echo "========================================" >&2
     exit 1
   fi
 done < <(git log --pretty=format:%s "$RANGE")
 
 echo "Commit messages conform to the standard"
-
 
 
