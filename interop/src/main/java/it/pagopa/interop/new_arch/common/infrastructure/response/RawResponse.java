@@ -7,8 +7,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public abstract class RawResponse {
-    protected final boolean isSuccess;
+    protected boolean isSuccess = true;
     protected final String rawContent;
+
+    protected RawResponse(boolean isSuccess, String rawContent) {
+        this.isSuccess = isSuccess;
+        this.rawContent = rawContent;
+    }
 
     public abstract <T> T as(Class<T> clazz);
 

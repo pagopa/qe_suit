@@ -7,7 +7,7 @@ import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.interop.new_arch.web.infrastructure.WebComponentGateway;
 
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Alert;
+import it.pagopa.interop.new_arch.web.infrastructure.component.Alert;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.SoftAssertions;
 import org.springframework.beans.factory.annotation.Autowired;

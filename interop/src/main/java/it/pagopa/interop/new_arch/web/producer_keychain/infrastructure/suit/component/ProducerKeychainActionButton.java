@@ -3,7 +3,7 @@ package it.pagopa.interop.new_arch.web.producer_keychain.infrastructure.suit.com
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Button;
+import it.pagopa.interop.new_arch.web.infrastructure.component.Button;
 
 public interface ProducerKeychainActionButton extends Button {
 

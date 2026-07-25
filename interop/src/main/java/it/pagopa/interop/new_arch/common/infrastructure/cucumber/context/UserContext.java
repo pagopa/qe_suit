@@ -33,7 +33,7 @@ public class UserContext {
                 && this.currentTenant == tenant;
     }
 
-    public void logout() {
+    public void reset() {
         this.currentUser = null;
         this.currentTenant = null;
     }

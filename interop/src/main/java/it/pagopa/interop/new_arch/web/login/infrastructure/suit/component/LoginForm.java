@@ -3,7 +3,7 @@ package it.pagopa.interop.new_arch.web.login.infrastructure.suit.component;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Button;
+import it.pagopa.interop.new_arch.web.infrastructure.component.Button;
 
 public interface LoginForm extends Component {
     @XPath("//*[@id=\"username\"]")

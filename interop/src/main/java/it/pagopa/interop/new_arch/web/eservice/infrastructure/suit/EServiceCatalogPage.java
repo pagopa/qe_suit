@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 
-@Url("${interop.web.base-url}/catalogo-e-service")
+@Url("${interop.web.catalog}")
 public interface EServiceCatalogPage extends Page {
 
     @XPath(".//h1")

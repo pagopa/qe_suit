@@ -8,7 +8,7 @@ import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.component.cre
 import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.component.creation_wizard.GeneralDataWizard;
 import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.component.creation_wizard.ThresholdAndAttributeWizard;
 import it.pagopa.interop.new_arch.web.eservice.infrastructure.suit.component.creation_wizard.technical.TechnicalSpecWizard;
-import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Button;
+import it.pagopa.interop.new_arch.web.infrastructure.component.Button;
 
 @Url("${interop.web.base-url}/erogazione/e-service/crea/")
 public interface EServiceCreationPage extends Page {
