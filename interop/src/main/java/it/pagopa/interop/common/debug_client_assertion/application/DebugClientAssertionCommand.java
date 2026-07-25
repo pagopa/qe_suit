@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.debug_client_assertion.application;
 
 import it.pagopa.interop.common.client.domain.Client;
-import it.pagopa.interop.common.infrastructure.security.jwt.DPoPProof;
+import it.pagopa.interop.common.kernel.security.DPoPProof;
 import it.pagopa.interop.common.kernel.security.ClientAssertion;
 import lombok.Builder;
 import lombok.Value;

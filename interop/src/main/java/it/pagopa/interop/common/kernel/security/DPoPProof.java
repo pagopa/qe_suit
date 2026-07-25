@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.security.jwt;
+package it.pagopa.interop.common.kernel.security;
 
 import it.pagopa.interop.common.kernel.domain.Key;
 import it.pagopa.interop.common.kernel.Identifiable;
