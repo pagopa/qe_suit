@@ -49,6 +49,10 @@ jobs:
 
           bash .github/scripts/validate-commit-messages.sh "$RANGE"
 
-      - name: Run workflow rule suite
+      - name: Run install SUIT
+        working-directory: frontend-e2e-framework
+        run: bash ./mvnw -DskipTests install
+
+      - name: Run architecture rule suite
         working-directory: interop
-        run: ./mvnw -Dtest=ArchitectureRulesTest test
+        run: bash ./mvnw -Dtest=ArchitectureRulesTest test
