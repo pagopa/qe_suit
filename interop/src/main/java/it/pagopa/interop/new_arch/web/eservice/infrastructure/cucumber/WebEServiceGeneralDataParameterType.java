@@ -3,7 +3,7 @@ package it.pagopa.interop.new_arch.web.eservice.infrastructure.cucumber;
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.EServiceCreationPage;
 import it.pagopa.interop.new_arch.web.eservice.infrastructure.page.component.creation_wizard.GeneralDataWizard;
-import it.pagopa.interop.new_arch.web.infrastructure.component.Alert;
+import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Alert;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class WebEServiceGeneralDataParameterType {

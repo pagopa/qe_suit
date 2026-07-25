@@ -5,9 +5,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.new_arch.web.infrastructure.WebComponentGateway;
+import it.pagopa.interop.new_arch.web.infrastructure.WebCommonGateway;
 
-import it.pagopa.interop.new_arch.web.infrastructure.component.Alert;
+import it.pagopa.interop.new_arch.web.infrastructure.suit.component.Alert;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.SoftAssertions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebComponentAssertionSteps {
-    private final WebComponentGateway webComponentGateway;
+    private final WebCommonGateway webCommonGateway;
 
     @Then("il radio group {generalInformationRadioGroup} è disabilitato")
     public void assertRadioGroupDisabled(Boolean isDisabled) {
@@ -60,7 +60,7 @@ public class WebComponentAssertionSteps {
 
     @Then("viene mostrata la snackbar con un messaggio di errore contenente {string}")
     public void assertSnackbar(String errorMessage) {
-        String actualErrorMessage = webComponentGateway.getSnackbarErrorMessage();
+        String actualErrorMessage = webCommonGateway.getSnackbarErrorMessage();
 
         assertThat(actualErrorMessage)
                 .as("Messaggio di errore visualizzato nella snackbar")
