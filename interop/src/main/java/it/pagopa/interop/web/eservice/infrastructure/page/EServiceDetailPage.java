@@ -13,10 +13,7 @@ import java.util.List;
 @Url("${interop.web.catalog}")
 public interface EServiceDetailPage extends Page {
 
-    @XPath(".//h1[" +
-            "contains(concat(' ', normalize-space(@class), ' '), ' MuiTypography-root ') and " +
-            "contains(concat(' ', normalize-space(@class), ' '), ' MuiTypography-h4 ')" +
-            "]")
+    @XPath(".//h1")
     Readable<String> eServiceName();
 
     Breadcrumb breadcrumb();
