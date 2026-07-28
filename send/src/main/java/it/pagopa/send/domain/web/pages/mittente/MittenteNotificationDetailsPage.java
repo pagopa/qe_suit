@@ -19,28 +19,36 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
     Clickable seeDetailsButton();
 
     interface NotificationSummarySection extends Component {
-        @XPath("header iun")
+//        @XPath("header iun")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> iunHeader();
 
-        @XPath("header protocol number")
+//        @XPath("header protocol number")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> protocolNumberHeader();
 
-        @XPath("protocol number value")
+//        @XPath("protocol number value")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> protocolNumberValue();
 
-        @XPath("header sender")
+//        @XPath("header sender")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> senderHeader();
 
-        @XPath("sender value")
+//        @XPath("sender value")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> senderValue();
 
-        @XPath("header recipient")
+//        @XPath("header recipient")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> recipientHeader();
 
-        @XPath("recipient value")
+//        @XPath("recipient value")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> recipientValue();
 
-        @XPath("open details sidebar")
+//        @XPath("open details sidebar")
+        @XPath("//*[@id=\"title-of-page\"]")
         Clickable openDetailsSidebarButton();
 
         NotificationStatusDrawer notificationStatusDrawer();
@@ -48,32 +56,40 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
     }
 
     interface PaymentSection extends Component {
-        @XPath("header notice code")
+//        @XPath("header notice code")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> noticeCodeHeader();
 
-        @XPath("notice code value")
+//        @XPath("notice code value")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> noticeCodeValue();
     }
 
     interface AttachmentSection extends Component {
-        @XPath("header")
+//        @XPath("header")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> header();
 
-        @XPath("griglia contenuti")
+//        @XPath("griglia contenuti")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> attachmentGrid();
     }
 
     interface NotificationStatusSection extends Component {
-        @XPath("header")
+//        @XPath("header")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> header();
 
-        @XPath("chip stato notifica")
+//        @XPath("chip stato notifica")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> notificationStatusChip();
 
-        @XPath("dettaglio stato notifica")
+//        @XPath("dettaglio stato notifica")
+        @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> detailsText();
 
-        @XPath("griglia contenuti")
+//        @XPath("griglia contenuti")
+        @XPath("//*[@id=\"title-of-page\"]")
         Clickable details();
     }
 

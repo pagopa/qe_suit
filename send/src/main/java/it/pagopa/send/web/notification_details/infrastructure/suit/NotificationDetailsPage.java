@@ -9,7 +9,7 @@ import it.frontend.e2e.framework.web.domain.Page;
  * L'{@link Url} non è risolta: questa interfaccia non viene mai bindata direttamente,
  * solo le sue implementazioni concrete (una per attore) lo sono, ciascuna con la propria URL reale.
  */
-@Url("NOT_RESOLVED")
+@Url("www.google.com")
 public interface NotificationDetailsPage extends Page {
 
     Component notificationSummarySection();

@@ -14,7 +14,6 @@ spring:
       on-profile: uat
     import:
       - optional:classpath:secrets/bearer-token-uat.properties
-      - optional:classpath:secrets/gpd-subscription-key.properties
 
 # ============================================================================
 # URLs Configuration
@@ -72,7 +71,7 @@ token:
 # ============================================================================
 bff:
   api:
-    # REPLACE_ME: host BFF reale per l'ambiente uat, non deducibile da questo repo
+    # REPLACE_ME: host BFF reale per l'ambiente uat
     base-url: REPLACE_ME
     bearer-token: ${token.mittente}
 
@@ -82,4 +81,19 @@ bff:
 gpd:
   api:
     base-url: https://api.uat.platform.pagopa.it/gpd/debt-positions-service/v1
-    subscription-key: ${gpd.subscription-key}
+    # REPLACE_ME: subscription key reale per l'header Ocp-Apim-Subscription-Key verso GPD
+    subscription-key: REPLACE_ME
+
+# ============================================================================
+# Pn External Registries API Configuration (gruppi notifica per PA)
+# ============================================================================
+external-registries:
+  api:
+    # REPLACE_ME: host reale per l'ambiente uat
+    base-url: REPLACE_ME
+
+# api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
+# ogni costante di Tenant, univoca per PA e per ambiente (qui: uat)
+pa:
+  groups-api-key:
+    GROSSINI: REPLACE_ME

@@ -3,7 +3,7 @@
 # ============================================================================
 spring:
   profiles:
-    active: test
+    active: dev
 
 # ============================================================================
 # Channel Configuration
@@ -16,6 +16,7 @@ channel:
     arguments:
       - --window-size=1920,1080
       - --incognito
+      - --lang=it-IT
 
 # ============================================================================
 # Logging Configuration
@@ -23,3 +24,12 @@ channel:
 logging:
   level:
     E2E-Framework: DEBUG
+
+# ============================================================================
+# BFF API Configuration (notifiche legali via API)
+# ============================================================================
+bff:
+  api:
+    base-url: https://webapi.dev.notifichedigitali.it
+    bearer-token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImEzYjYyYTVlLTNiYWEtNGI5Yy05ZjQyLTk3NDQxYmNlNDU3ZiJ9.eyJpYXQiOjE3ODQyMTcyODIsImV4cCI6MTc4NDI0OTY1NywidWlkIjoiZTllNGE5YzctOTU4Ni00YjkyLWE3ZGQtZWUxYTBlNzdkMzk4IiwiaXNzIjoiaHR0cHM6Ly93ZWJhcGkuZGV2Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwiYXVkIjoid2ViYXBpLmRldi5ub3RpZmljaGVkaWdpdGFsaS5pdCIsImp0aSI6IjI0NDEyODcxLTZmZTAtNGMwNS05ZmM3LTAyYzY0NDFhZDIwZiIsIm9yZ2FuaXphdGlvbiI6eyJpZCI6IjViOTk0ZDRhLTBmYTgtNDdhYy05YzdiLTM1NGYxZDQ0YTFjZSIsInJvbGUiOiJhZG1pbiIsImZpc2NhbF9jb2RlIjoiODAwMTYzNTA4MjEifX0.c4WJFrxymqfDwC9iAyZFmIMx0up2aRWs8OcPCeZBBxrqClK2ZvtthuWCyhGat3INdKQQUR-d-GM4CqGnm9q2wnJTtIJIuCASKOd3UPX1V7r0_oy0nVcOPSKDUy7O5PPWMTY5J3fKjtIq3ClwUdU7hEgyfMAlCGqBlOJYPGtsXkvwqv3WcWbIx5yAOXarcUfiFaL8sfX8T8FD0u-Jgxd2WCb7H8HSL5d_nr9tAERLp8Feesg5S4FmsFFiRPXQMoYRwe8yGjihNLUPLOFkRci0SlC8a3hOaissu0DHIBO2M2F1tlJY-IHcDW_fcwLI2_OF99raXdmtCIao9H9j-yhOIA
+

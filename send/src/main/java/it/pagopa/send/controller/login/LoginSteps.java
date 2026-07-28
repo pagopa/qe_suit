@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class LoginSteps {
 
-    private WebBrowserContext webBrowserContext;
+    private final WebBrowserContext webBrowserContext;
     private final WebPresentationGateway uiGateway;
 
     @Given("{userType} {user} effettua l'accesso a SelfCare con autenticazione SPID")
