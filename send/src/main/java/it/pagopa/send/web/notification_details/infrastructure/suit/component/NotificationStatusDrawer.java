@@ -10,40 +10,52 @@ public interface NotificationStatusDrawer extends Drawer {
     @XPath(".//h6")
     Readable<String> title();
 
-    @XPath("codice iun")
+//    @XPath("codice iun")
+    @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> iunHeader();
 
-    @XPath("iun value")
+//    @XPath("iun value")
+    @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> iunValue();
 
-    @XPath("numero protocollo header")
+//    @XPath("numero protocollo header")
+    @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> protocolNumberHeader();
 
-    @XPath("numero protocollo value")
+//    @XPath("numero protocollo value")
+    @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> protocolNumberValue();
 
-    @XPath("oggetto della notifica header")
+//    @XPath("oggetto della notifica header")
+    @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> notificationObjectHeader();
 
-    @XPath("oggetto della notifica value")
+//    @XPath("oggetto della notifica value")
+    @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> notificationObjectValue();
 
-    @XPath("mittente header")
+//    @XPath("mittente header")
+    @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> senderHeader();
 
-    @XPath("mittente value")
+//    @XPath("mittente value")
+    @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> senderValue();
 
-    @XPath("persona destinataria header")
+//    @XPath("persona destinataria header")
+    @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> recipientHeader();
 
-    @XPath("persona destinatario value")
+//    @XPath("persona destinatario value")
+    @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> recipientValue();
 
-    @XPath("testo della notifica header")
+//    @XPath("testo della notifica header")
+    @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> notificationTextHeader();
 
-    @XPath("testo della notifica value")
+//    @XPath("testo della notifica value")
+    @XPath("//*[@id=\"title-of-page\"]")
     Readable<String> notificationTextValue();
 
     @Override

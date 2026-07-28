@@ -286,6 +286,41 @@
                             </configOptions>
                         </configuration>
                     </execution>
+
+                    <!-- Pn External Registries API (selfcare groups) -->
+                    <execution>
+                        <id>generate-external-registries-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-external-registries/83867adbddde52837a4a68835eef5028681f06db/docs/openapi/pn-selfcare-external-v1.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>rest-assured</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <configOptions>
+                                <apiPackage>it.pagopa.send.generated.openapi.clients.externalregistries.api</apiPackage>
+                                <modelPackage>it.pagopa.send.generated.openapi.clients.externalregistries.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <serializableModel>true</serializableModel>
+                                <serializationLibrary>jackson</serializationLibrary>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 

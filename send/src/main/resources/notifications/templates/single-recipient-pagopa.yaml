@@ -1,0 +1,18 @@
+subject: "invio notifica con cucumber"
+abstractText: "Abstract della notifica"
+taxonomyCode: "010202N"
+notificationFeePolicy: "FLAT_RATE"
+physicalCommunicationType: "REGISTERED_LETTER_890"
+paFee: 0
+vat: 0
+physicalCommunicationPriority: 0
+pagoPaIntMode: "NONE"
+physicalAddress:
+  at: "Presso"
+  address: "Via senza nome"
+  addressDetails: "scala b"
+  zip: "87100"
+  municipality: "Cosenza"
+  municipalityDetails: "Cosenza"
+  province: "CS"
+  foreignState: "ITALIA"

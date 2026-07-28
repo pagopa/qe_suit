@@ -11,7 +11,7 @@
 spring:
   config:
     activate:
-      on-profile: test
+      on-profile: dev
     import:
       - optional:classpath:secrets/bearer-token-test.properties
 
@@ -22,14 +22,14 @@ spring:
 url:
   notifiche:
     cittadino:
-      base: https://cittadini.test.notifichedigitali.it
+      base: https://cittadini.dev.notifichedigitali.it
       notifiche: ${url.notifiche.cittadino.base}/notifiche
       recapiti: ${url.notifiche.cittadino.base}/recapiti
       deleghe: ${url.notifiche.cittadino.base}/deleghe
       add-deleghe: ${url.notifiche.cittadino.base}/deleghe/nuova
       app-status: ${url.notifiche.cittadino.base}/app-status
     persona-giuridica:
-      base: https://imprese.test.notifichedigitali.it
+      base: https://imprese.dev.notifichedigitali.it
       notifiche: ${url.notifiche.persona-giuridica.base}/notifiche
       notifiche-delegato: ${url.notifiche.persona-giuridica.base}/notifiche-delegato
       app-status: ${url.notifiche.persona-giuridica.base}/app-status
@@ -39,7 +39,7 @@ url:
       delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati
       add-delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati/nuova
     mittente:
-      base: https://selfcare.test.notifichedigitali.it
+      base: https://selfcare.dev.notifichedigitali.it
       dashboard: ${url.notifiche.mittente.base}/dashboard
       new-notification: ${url.notifiche.mittente.dashboard}/nuova-notifica
       api-keys: ${url.notifiche.mittente.base}/api-keys
@@ -71,8 +71,8 @@ token:
 # ============================================================================
 bff:
   api:
-    base-url: https://webapi.test.notifichedigitali.it
-    bearer-token: eyJhbGciOiAiUlMyNTYiLCJ0eXAiOiAiSldUIiwia2lkIjogImU0ZjJhYTIyLTE5MDctNDIyNC1iYWViLTExYzZiY2RkZDNkYSJ9.eyJpYXQiOiAxNzg0Mjc3MzAyLCJleHAiOiAxODE1ODEzMzAyLCAidWlkIjogImU5ZTRhOWM3LTk1ODYtNGI5Mi1hN2RkLWVlMWEwZTc3ZDM5OCIsImlzcyI6ICJodHRwczovL3dlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwiYXVkIjogIndlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwgIm9yZ2FuaXphdGlvbiI6IHsgImlkIjogIjViOTk0ZDRhLTBmYTgtNDdhYy05YzdiLTM1NGYxZDQ0YTFjZSIsICJyb2xlIjogImFkbWluIiwiZmlzY2FsX2NvZGUiOiAiODAwMTYzNTA4MjEifX0.tdN2Y140EdEZQEUqROd5KmkpnQTLXlgoNPWjaaolod0Yo7FsNIGbL4Tjtg1yyKFFdQXiJxP9FuzIQq_ky_6a5HKgfp-o8ffXywA_PkkJ2KAlSi4hcxQty82M0-thSauYGA1BGdeMB9bmkMzrpYAQGDrRkvFjjx0ZCPobP4o9X9UsbNGXRr_--9xxAe8DAqaDEqb7hi2Igp6v6_-v3uapm7NCT8O3X4TbqqESCAyU42DrW3EIHuvzuFqF2lAh-OQDSjGwIkWINZWG8qV7ycwA6J6123cE-ZhOl3GWIGL2EVbmdSygVpIKcAxMclV-smT-pG6b1aZ2XL5CiXF4PKiVnQ
+    base-url: https://webapi.dev.notifichedigitali.it
+    bearer-token: eyJhbGciOiAiUlMyNTYiLCJ0eXAiOiAiSldUIiwia2lkIjogImEzYjYyYTVlLTNiYWEtNGI5Yy05ZjQyLTk3NDQxYmNlNDU3ZiJ9.eyJpYXQiOiAxNzg0MjgwODkxLCJleHAiOiAxODE1ODE2ODkxLCAidWlkIjogImU5ZTRhOWM3LTk1ODYtNGI5Mi1hN2RkLWVlMWEwZTc3ZDM5OCIsImlzcyI6ICJodHRwczovL3dlYmFwaS5kZXYubm90aWZpY2hlZGlnaXRhbGkuaXQiLCJhdWQiOiAid2ViYXBpLmRldi5ub3RpZmljaGVkaWdpdGFsaS5pdCIsICJvcmdhbml6YXRpb24iOiB7ICJpZCI6ICI1Yjk5NGQ0YS0wZmE4LTQ3YWMtOWM3Yi0zNTRmMWQ0NGExY2UiLCAicm9sZSI6ICJhZG1pbiIsImZpc2NhbF9jb2RlIjogIjgwMDE2MzUwODIxIn19.Xzt4gO_67oGDLvjgNa_nr5LW0fhJyF8zn9ft1OHVpUUggXxE5MHH0_uiB2WP-Uyttw32q8YkcEJQcTwbwsM_4ErsaVf9Lbq9qC6d-wqKU-nNSY2ihrzS0_aLEQ5BYfxmShcEiqOxsNKeT4x2htzwxOqbgwhXllknmMo5gTc9gIPFq86JdV6PX_T7qKlF3R4bB-wUZnrAvwR1udHaUKDfruPJhfmS5rSvQ63eiZZz1-TNXeClSkc1s0xFebKubTPOvm9FyAXRtqFosajWC2UBDK2AX5fgYxt82Juuwz16Gg03KtZ6uFotQ-RgK3JXS-HMS2ThQ4LJiDjOOrgWrIeBAA
 
 # ============================================================================
 # GPD API Configuration (posizioni debitorie)
@@ -88,10 +88,10 @@ gpd:
 # ============================================================================
 external-registries:
   api:
-    base-url: https://api.test.notifichedigitali.it
+    base-url: https://api.dev.notifichedigitali.it
 
 # api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
-# ogni costante di Tenant, univoca per PA e per ambiente (qui: test)
+# ogni costante di Tenant, univoca per PA e per ambiente (qui: dev)
 pa:
   groups-api-key:
-    GROSSINI: 2a36ad69-fce0-416b-b94e-7242773e638b
+    GROSSINI: ab1ea42c-baea-4fd2-9b2f-32e7f34c36b6

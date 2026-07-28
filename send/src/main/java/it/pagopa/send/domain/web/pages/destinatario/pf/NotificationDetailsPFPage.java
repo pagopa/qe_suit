@@ -10,11 +10,13 @@ import it.pagopa.send.web.infrastructure.suit.component.Chip;
 import it.pagopa.send.web.notification_details.infrastructure.suit.NotificationDetailsPage;
 import org.assertj.core.api.Assertions;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * Questa pagina rappresenta la pagina dei dettagli di una notifica per il cittadino, accessibile dal portale delle notifiche.
  * La pagina mostra informazioni dettagliate sulla notifica selezionata.
  */
-@Url("da mappare")
+@Url("www.google.com")
 public interface NotificationDetailsPFPage extends NotificationDetailsPage {
 
     @XPath("//*[@id=\"title-of-page\"]")
@@ -31,27 +33,35 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
         @XPath("//*[@id=\"item\"]")
         Readable<String> header();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[1]/div[1]/div[3]/div[1]/div[2]/span")
         Readable<String> sender();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[1]/div[1]/div[3]/div[1]/div[2]/p")
         Readable<String> date();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[1]/div[1]/div[3]/div[2]/div/p[2]")
         Readable<String> iun();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[1]/div[1]/p")
         Readable<String> description();
+
+        @Override
+        default void assertLoaded() {
+            header().readAndAssert((h) -> {
+                assertThat(h).isNotNull();
+                assertThat(h).isIn("Configure SEND", "Configura SEND");
+            });
+        }
     }
 
     interface AttachmentDocumentSection extends Component {
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"notification-detail-document-attached\"]")
         Readable<String> header();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[2]/div[1]/div/div[1]/div/p")
         Readable<String> message();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"document-button\"]")
         Readable<String> file();
 
         @XPath("//*[@id=\"item\"]")
@@ -59,22 +69,22 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
     }
 
     interface PaymentSection extends Component {
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[2]/div[2]/div/h2")
         Readable<String> header();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[2]/div[2]/div/div[1]/div[2]/div/div")
         Readable<String> costMessage();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"paymentPagoPa-302040124464100004\"]/div[1]/div[1]/span[2]")
         Readable<String> noticeCode();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"paymentPagoPa-302040124464100004\"]/div[1]/div[2]/span[2]")
         Readable<String> expiredDate();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"paymentPagoPa-302040124464100004\"]/div[2]/div/p")
         Readable<String> amount();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[2]/div[2]/div/button")
         Clickable payButton();
 
         @XPath("//*[@id=\"item\"]")
@@ -82,16 +92,16 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
     }
 
     interface NotificationStatusSection extends Component {
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/aside/div[1]/div/h2")
         Readable<String> header();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/aside/div[1]/div/div")
         Chip status();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/aside/div[1]/div/p")
         Readable<String> message();
 
-        @XPath("//*[@id=\"item\"]")
+        @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/aside/div[1]/div/button")
         Clickable detailsButton();
 
     }
