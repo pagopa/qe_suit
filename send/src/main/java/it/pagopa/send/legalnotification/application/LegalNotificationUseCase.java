@@ -1,31 +1,34 @@
 package it.pagopa.send.legalnotification.application;
 
-import it.pagopa.send.common.notification.domain.LegalNotificationDomain;
-import it.pagopa.send.generated.openapi.clients.bff.model.*;
+import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
+import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
+import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
+import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
+import it.pagopa.send.legalnotification.infrastructure.LegalNotificationGateway;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
+import java.util.Base64;
 
 @Service
 @RequiredArgsConstructor
 public class LegalNotificationUseCase {
-    private final LegalNotificationGateway legalNotificationGateway;
 
-    public void sendNotification(BffNewNotificationRequest request, BffNotificationStatus targetStatus) {
-        legalNotificationGateway.sendNotification(request, targetStatus);
+    private final LegalNotificationGateway gateway;
+
+    public BffNewNotificationResponse sendNotification(BffNewNotificationRequest request) {
+        return gateway.create(request);
     }
 
-    public void deleteNotification(String iun) {
-        legalNotificationGateway.deleteNotification(iun);
+    /**
+     * Il notificationRequestId restituito dalla creazione è il base64 dello IUN, riutilizzabile
+     * per interrogare la GET della notifica.
+     */
+    public String extractIun(BffNewNotificationResponse response) {
+        return new String(Base64.getDecoder().decode(response.getNotificationRequestId()));
     }
 
-    public LegalNotificationDomain readNotification(String iun) {
-        return legalNotificationGateway.readNotification(iun);
+    public BffFullNotificationV1 waitForStatus(String iun, BffNotificationStatus targetStatus) {
+        return gateway.waitForStatus(iun, targetStatus);
     }
-
-    public LegalNotificationDomain searchNotification(Map<String, String> overrides) {
-        return legalNotificationGateway.searchNotification(overrides);
-    }
-
 }

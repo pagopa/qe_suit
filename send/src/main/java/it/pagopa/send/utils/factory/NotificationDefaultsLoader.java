@@ -59,7 +59,6 @@ public class NotificationDefaultsLoader {
         return switch (type) {
             case SIMPLE -> "simple";
             case SINGLE_RECIPIENT_WITH_PAGOPA_PAYMENT -> "single-recipient-pagopa";
-            case SINGLE_RECIPIENT_WITH_F24_PAYMENT -> "single-recipient-f24";
         };
     }
 }

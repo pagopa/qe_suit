@@ -12,13 +12,13 @@ import org.assertj.core.api.Assertions;
 import java.util.Map;
 import java.util.Optional;
 
-@Url("${url.notifiche.mittente.dashboard}")
+@Url("${url.notifiche.mittente.dashboard}#selfCareToken=${token.mittente}")
 public interface DashboardPage extends NotificationSearchPage {
 
     @XPath("//*[@data-testid=\"titleBox\"]")
     Readable<String> header();
 
-    @XPath("//*[@id='notifications-table']/tbody/tr[1]//button[@data-testid='goToNotificationDetail']")
+    @XPath("//*[@id=\"notificationsTable.body.row\"]/td[7]/div/button")
     Clickable notificationDetails();
 
     @XPath("//*[@id=\"iunMatch\"]")
