@@ -16,16 +16,16 @@ Feature: Navigazione portale SEND persone fisiche
     Then la pagina deve caricarsi correttamente
 
   Scenario: [PF_DETTAGLIO_NOTIFICA_1] Viene controllato la pagina di dettaglio di una notifica legale
-#    When l'ente "Comune di palermo" crea una notifica di tipo singolo destinatario con bollettino pagoPA per il destinatario "Lucrezia"
-#    When l'ente "Comune di palermo" crea una notifica di tipo semplice per il destinatario "Lucrezia"
-#    Then la richiesta di notifica è stata accettata
+    When l'ente "Comune di palermo" crea una notifica di tipo singolo destinatario con bollettino pagoPA per il destinatario "Lucrezia"
+    When l'ente "Comune di palermo" crea una notifica di tipo semplice per il destinatario "Lucrezia"
+    Then la richiesta di notifica è stata accettata
     Given l'utente Lucrezia effettua l'accesso a SelfCare con autenticazione SPID
     And se presente, viene saltata la configurazione del prodotto SEND
     Then la pagina NotificationPF è caricata con successo
     Then viene effettuata una ricerca notifica tramite i seguenti parametri:
-      | iun       | LPJT-LPZT-GYXQ-202604-Z-1  |
-#      | startDate | $currentDate |
-#      | endDate   | $currentDate |
+#      | iun       | LPJT-LPZT-GYXQ-202604-Z-1  |
+      | startDate | $currentDate |
+      | endDate   | $currentDate |
     And la pagina di dettaglio della notifica contiene la sezione relativa al sommario della notifica
     And la pagina di dettaglio della notifica contiene la sezione relativa al dettagli di pagamento
     And la pagina di dettaglio della notifica contiene la sezione relativa al documenti allegati
