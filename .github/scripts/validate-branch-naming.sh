@@ -20,7 +20,7 @@ if [[ "$BRANCH" =~ ^(dependabot|renovate)/ ]]; then
   exit 0
 fi
 
-if [[ ! "$BRANCH" =~ ^(feature|bugfix|hotfix|chore|refactor)\/[a-z0-9._-]+$ ]]; then
+if [[ ! "$BRANCH" =~ ^(feature|bugfix|hotfix|chore|refactor)\/[A-Za-z0-9._-]+$ ]]; then
   echo "Branch name non conforme allo standard: $BRANCH" >&2
   exit 1
 fi
