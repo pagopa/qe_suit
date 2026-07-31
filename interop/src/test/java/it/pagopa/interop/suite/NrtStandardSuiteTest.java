@@ -6,7 +6,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 
 @Suite
 @IncludeEngines("cucumber")
-@SelectClasspathResource("features")
+@SelectClasspathResource("feature")
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-reports/report.json," + "html:target/cucumber-reports/report.html"),
@@ -22,7 +22,9 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @ExcludeTags({"wait_for_fix", "ignore"})
 @IncludeTags({
         // UI
-        "debug-client-assertion-page-ui-flow", "debug-client-assertion-page-ui-behavior", "dev-tools-page-ui-behavior"
+        "debug-client-assertion-page-ui-flow",
+        "debug-client-assertion-page-ui-behavior",
+        "dev-tools-page-ui-behavior"
 })
 public class NrtStandardSuiteTest {
 }
