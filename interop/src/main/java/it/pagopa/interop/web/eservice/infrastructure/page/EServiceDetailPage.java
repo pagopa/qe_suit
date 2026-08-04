@@ -21,20 +21,7 @@ public interface EServiceDetailPage extends Page {
 
     Breadcrumb breadcrumb();
 
-    // TODO valutare se può andare bene questo XPath o se sia troppo specifico e quindi esposto a cambiamenti lato FE
-    @XPath(".//button" +
-            "[contains(concat(' ', normalize-space(@class), ' '), ' MuiButtonBase-root ')]" +
-            "[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-root ')]" +
-            "[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-contained ')]" +
-            "[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-containedPrimary ')]" +
-            "[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-sizeSmall ')]" +
-            "[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-containedSizeSmall ')]" +
-            "[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-colorPrimary ')]" +
-            "[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-disableElevation ')]" +
-            "[.//span[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-icon ')" +
-            " and contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-startIcon ')]]" +
-            "[contains(normalize-space(.), 'Richiedi fruizione')" +
-            "]")
+    @XPath(".//*[contains(normalize-space(.), 'Richiedi fruizione')]")
     Button requestAgreementButton();
 
     @Override
