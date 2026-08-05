@@ -14,13 +14,22 @@ public class EServiceJourneySteps {
 
     private final InteropJourney interopJourney;
 
-    @Given("un EService creato da/dal {tenant} con una richiesta di fruizione e una finalità associate da/dal {tenant}")
-    public void createClientWithAgreementAndPurpose(Tenant producer, Tenant consumer) {
+    @Given("un EService/eservice creato da/dal {tenant} con una richiesta di fruizione e una finalità associate da/dal {tenant}")
+    public void createEServiceWithAgreementAndPurpose(Tenant producer, Tenant consumer) {
         interopJourney
                 .withProducer(producer, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
                 .withConsumer(consumer, UserRole.ADMIN)
                 .linkAgreement(AgreementState.ACTIVE)
                 .linkPurpose(PurposeVersionState.ACTIVE);
+    }
+
+    @Given("un EService/eservice creato da/dal {tenant} con una richiesta di fruizione associata da/dal {tenant}")
+    public void createEServiceWithAgreement(Tenant producer, Tenant consumer) {
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE);
     }
 }
