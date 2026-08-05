@@ -1,6 +1,5 @@
 package it.pagopa.interop.common.infrastructure.channel;
 
-import it.pagopa.interop.common.eservice.infrastructure.config.MissingActiveChannelException;
 import it.pagopa.interop.common.infrastructure.cucumber.context.ChannelContext;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
