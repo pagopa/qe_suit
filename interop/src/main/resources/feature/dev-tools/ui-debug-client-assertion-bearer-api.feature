@@ -16,8 +16,8 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   quando l'utente sottomette le informazioni nella form di debugging,
   allora tutte le fasi di validazione risultano in stato PASSED
 
-    Given un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
-    And un client API creato da PagoPA in cui è presente l'admin e una coppia di chiavi crittografiche
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    And un client API creato da PagoPA in cui è presente un utente admin e una coppia di chiavi crittografiche
     And una client assertion valida generata usando il client creato
     When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
     And l'utente inoltra la richiesta di validazione specificando client assertion e client
@@ -34,8 +34,8 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
   e le restanti risultano in stato SKIPPED
 
-    Given un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
-    And un client API creato da PagoPA in cui è presente l'admin e una coppia di chiavi crittografiche
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    And un client API creato da PagoPA in cui è presente un utente admin e una coppia di chiavi crittografiche
     And una client assertion generata usando il client creato e:
       | claim | value            |
       | aud   | invalid_audience |
@@ -54,8 +54,8 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
   e le restanti risultano in stato SKIPPED
 
-    Given un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
-    And un client API creato da PagoPA in cui è presente l'admin e una coppia di chiavi crittografiche
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    And un client API creato da PagoPA in cui è presente un utente admin e una coppia di chiavi crittografiche
     And una client assertion generata usando il client creato e:
       | claim    | value |
       | __remove | jti   |
@@ -78,8 +78,8 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
   e le restanti risultano in stato SKIPPED
 
-    Given un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
-    And un client API creato da PagoPA in cui è presente l'admin e una coppia di chiavi crittografiche
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    And un client API creato da PagoPA in cui è presente un utente admin e una coppia di chiavi crittografiche
     And una client assertion generata usando il client creato e:
       | claim    | value |
       | __remove | aud   |
@@ -98,8 +98,8 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
   e le restanti risultano in stato SKIPPED
 
-    Given un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
-    And un client API creato da PagoPA in cui è presente l'admin e una coppia di chiavi crittografiche
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    And un client API creato da PagoPA in cui è presente un utente admin e una coppia di chiavi crittografiche
     And una client assertion generata usando il client creato e:
       | claim      | value                  |
       | header.kid | not-a-valid-kid-format |
@@ -118,8 +118,8 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   e la fase di validazione della Firma risulta in stato FAILED con errore di token scaduto
   e le restanti risultano in stato SKIPPED
 
-    Given un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
-    And un client API creato da PagoPA in cui è presente l'admin e una coppia di chiavi crittografiche
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    And un client API creato da PagoPA in cui è presente un utente admin e una coppia di chiavi crittografiche
     And una client assertion generata usando il client creato e:
       | claim | value     |
       | exp   | now-10800 |
