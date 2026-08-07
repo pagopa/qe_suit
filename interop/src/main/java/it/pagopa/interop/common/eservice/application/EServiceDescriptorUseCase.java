@@ -30,10 +30,7 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.publishDescriptor(eService.getRef(), descriptor.getRef());
     }
 
-    public EServiceDescriptor updateDescriptor(EService eService, EServiceDescriptor descriptor, Consumer<UpdateEServiceDescriptorCommand> config) {
-        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
-        config.accept(command);
-
+    public EServiceDescriptor updateDescriptor(EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand command) {
         return eServiceDescriptorGateway.updateDescriptor(eService.getRef(), descriptor.getRef(), command);
     }
 
