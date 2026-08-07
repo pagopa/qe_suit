@@ -26,8 +26,7 @@ public class BffRestApiClientConfig {
     @Getter
     @RequiredArgsConstructor
     private enum ValidationKey {
-        INVALID_REQUEST_BODY("validation.request.body.schema.invalid"),
-        MISSING_REQUEST_BODY("validation.request.body.missing"),
+        REQUEST_VALIDATION("validation.request"),
         UNKNOWN_RESPONSE_STATUS("validation.response.status.unknown"),
         UNEXPECTED_CONTENT_TYPE("validation.response.contentType.notAllowed"),
         UNEXPECTED_RESPONSE_BODY("validation.response.body.unexpected");
@@ -53,11 +52,7 @@ public class BffRestApiClientConfig {
                 .withLevelResolver(
                         LevelResolver.create()
                                 .withLevel(
-                                        ValidationKey.INVALID_REQUEST_BODY.getKey(),
-                                        ValidationReport.Level.IGNORE
-                                )
-                                .withLevel(
-                                        ValidationKey.MISSING_REQUEST_BODY.getKey(),
+                                        ValidationKey.REQUEST_VALIDATION.getKey(),
                                         ValidationReport.Level.IGNORE
                                 )
                                 .withLevel(
