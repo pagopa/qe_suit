@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.template.action;
 
-import it.pagopa.interop.common.infrastructure.async.PollingUtils;
+import it.pagopa.interop.common.infrastructure.utils.async.PollingUtils;
 import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import it.pagopa.interop.common.infrastructure.context.LastApiResponseStore;
 import it.pagopa.interop.common.infrastructure.response.ApiResponse;
