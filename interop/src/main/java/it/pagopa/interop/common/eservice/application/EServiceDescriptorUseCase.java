@@ -4,9 +4,11 @@ import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescr
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.infrastructure.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.function.Consumer;
 
 @Service
@@ -33,5 +35,23 @@ public class EServiceDescriptorUseCase {
         config.accept(command);
 
         return eServiceDescriptorGateway.updateDescriptor(eService.getRef(), descriptor.getRef(), command);
+    }
+
+    public EServiceDescriptor linkOpenApiInterface(EService eService, EServiceDescriptor descriptor, File openApiInterface) {
+        return eServiceDescriptorGateway.linkOpenApiInterface(eService.getRef(), descriptor.getRef(), openApiInterface);
+    }
+
+    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor,  Consumer<UpdateEServiceDescriptorCommand> config) {
+        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        config.accept(command);
+        return updateDescriptor(eService, descriptor, command);
+    }
+
+    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor){
+        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        EServiceDescriptor updatedDescriptor = updateDescriptor(eService, descriptor, command);
+        File openapiFile = FileUtils.loadClasspathResourceAsTempFile("assets/origin-interface.yaml");
+
+        return linkOpenApiInterface(eService, updatedDescriptor, openapiFile);
     }
 }

@@ -58,8 +58,31 @@ public class BffEServiceRestClient extends RestClient {
 
     public TestChain<Void> publishDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
         return execute(
-                () -> eservicesApi.publishDescriptor().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).execute(Function.identity()),
+                () -> eservicesApi.publishDescriptor()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
+                        .execute(Function.identity()),
                 Void.class
+        );
+    }
+
+    public TestChain<CreatedResource> addDocument(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull String documentKind, @Nonnull String documentName, @Nonnull File document) {
+        return execute(
+                () -> eservicesApi.createEServiceDocument()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .kindForm(documentKind)
+                        .prettyNameForm(documentName)
+                        .reqSpec(reqSpec ->
+                                reqSpec.addMultiPart(
+                                        "doc",
+                                        document,
+                                        "application/octet-stream"
+                                )
+                        )
+                        .execute(Function.identity()),
+                CreatedResource.class
         );
     }
 }
