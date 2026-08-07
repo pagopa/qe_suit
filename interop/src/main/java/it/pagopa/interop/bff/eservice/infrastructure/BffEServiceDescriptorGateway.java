@@ -8,7 +8,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
@@ -23,7 +23,7 @@ import java.util.Optional;
 public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
 
     private final BffEServiceRestClient restClient;
-    private final DomainContext domainContext;
+    private final EntityStore entityStore;
     private final BffEServiceDescriptorMapper mapper;
 
     @Override
@@ -31,7 +31,7 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
         return restClient.readDescriptor(eServiceRef.id(), descriptorRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(descriptor -> {
-                    Optional<EService> maybeEService = domainContext.getById(eServiceRef.id(), EService.class);
+                    Optional<EService> maybeEService = entityStore.getById(eServiceRef.id(), EService.class);
                     return mapper.toEServiceWithUpsert(descriptor,  maybeEService.orElse(null));
                 })
                 .updateContext()

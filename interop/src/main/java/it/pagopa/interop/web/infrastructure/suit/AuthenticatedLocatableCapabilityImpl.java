@@ -4,7 +4,7 @@ import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.capability.impl.LocatableCapabilityImpl;
 import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
-import it.pagopa.interop.common.infrastructure.cucumber.context.UserContext;
+import it.pagopa.interop.common.infrastructure.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.web.infrastructure.cucumber.WebBrowserContext;
@@ -19,26 +19,26 @@ public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImp
 
     private final IWebPresentationApiAdapter adapter;
     private final WebBrowserContext webBrowserContext;
-    private final UserContext userContext;
+    private final CurrentUserSession currentUserSession;
     private final BearerAuthProvider bearerAuthProvider;
 
     public AuthenticatedLocatableCapabilityImpl(
             IWebPresentationApiAdapter adapter,
             WebBrowserContext webBrowserContext,
-            UserContext userContext,
+            CurrentUserSession currentUserSession,
             BearerAuthProvider bearerAuthProvider) {
 
         super(adapter);
         this.adapter = adapter;
         this.webBrowserContext = webBrowserContext;
-        this.userContext = userContext;
+        this.currentUserSession = currentUserSession;
         this.bearerAuthProvider = bearerAuthProvider;
     }
 
     @Override
     public void navigateTo() {
-        User currentUser = userContext.getUser();
-        Tenant currentTenant = userContext.getTenant();
+        User currentUser = currentUserSession.getUser();
+        Tenant currentTenant = currentUserSession.getTenant();
         String sessionToken = bearerAuthProvider.getToken(currentUser, currentTenant);
 
         // Il localStorage è legato all'origin corrente.

@@ -5,7 +5,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
-import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     private final EServiceUseCase eServiceUseCase;
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
-    private final DomainContext domainContext;
+    private final EntityStore entityStore;
 
     @Override
     public EServiceJourneyImpl createEService(EServiceCreationCommand command, EServiceDescriptorState targetState) {
@@ -31,7 +31,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptorState targetState) {
-        domainContext.upsert(eService);
+        entityStore.upsert(eService);
 
         return switch (targetState) {
             case DRAFT -> this;
