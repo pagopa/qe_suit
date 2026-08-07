@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.util.Optional;
 
+import static it.pagopa.interop.common.eservice.domain.EServiceDescriptorState.PUBLISHED;
+
 @Service
 @RequiredArgsConstructor
 public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
@@ -46,7 +48,7 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     @Override
     public EServiceDescriptor publishDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
         return restClient.publishDescriptor(eServiceRef.id(), descriptorRef.id())
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .withPolling((response -> response.isSuccess() && getEServiceDescriptor(eServiceRef, descriptorRef).getState() == PUBLISHED))
                 .map(emptyResp -> getEServiceDescriptor(eServiceRef, descriptorRef))
                 .get();
     }
