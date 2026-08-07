@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.infrastructure.utils.FileUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
@@ -64,8 +65,10 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
-    public EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, File openApiInterface) {
-        return restClient.addDocument(eServiceRef.id(), descriptorRef.id(), "INTERFACE", openApiInterface.getName(), openApiInterface)
+    public EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String openApiInterfacePath) {
+        File openapiFile = FileUtils.loadClasspathResourceAsTempFile("assets/origin-interface.yaml");
+
+        return restClient.addDocument(eServiceRef.id(), descriptorRef.id(), "INTERFACE", openapiFile.getName(), openapiFile)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getEServiceDescriptor(eServiceRef, descriptorRef))
                 .get();
