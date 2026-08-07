@@ -4,15 +4,15 @@ import it.pagopa.interop.common.infrastructure.context.LastApiResponseStore;
 import it.pagopa.interop.common.infrastructure.response.ApiResponse;
 
 public class InMemoryLastApiResponseStore implements LastApiResponseStore {
-    private ApiResponse lastResponse;
+    private final ThreadLocal<ApiResponse> lastResponse = new ThreadLocal<>();
 
     @Override
     public ApiResponse getLastResponse() {
-        return lastResponse;
+        return lastResponse.get();
     }
 
     @Override
     public void setLastResponse(ApiResponse lastResponse) {
-        this.lastResponse = lastResponse;
+        this.lastResponse.set(lastResponse);
     }
 }

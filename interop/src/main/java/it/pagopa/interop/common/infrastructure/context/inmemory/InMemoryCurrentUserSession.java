@@ -5,24 +5,26 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 
 public class InMemoryCurrentUserSession implements CurrentUserSession {
-    private User currentUser;
-    private Tenant currentTenant;
+    private final ThreadLocal<User> currentUser = new ThreadLocal<>();
+    private final ThreadLocal<Tenant> currentTenant = new ThreadLocal<>();
 
     @Override
     public void set(User user, Tenant tenant) {
-        this.currentUser = user;
-        this.currentTenant = tenant;
+        this.currentUser.set(user);
+        this.currentTenant.set(tenant);
     }
 
     @Override
     public User getUser() {
-        if (currentUser == null) throw new IllegalStateException("Current user is not set");
-        return currentUser;
+        User user = currentUser.get();
+        if (user == null) throw new IllegalStateException("Current user is not set");
+        return user;
     }
 
     @Override
     public Tenant getTenant() {
-        if (currentTenant == null) throw new IllegalStateException("Current tenant is not set");
-        return currentTenant;
+        Tenant tenant = currentTenant.get();
+        if (tenant == null) throw new IllegalStateException("Current tenant is not set");
+        return tenant;
     }
 }

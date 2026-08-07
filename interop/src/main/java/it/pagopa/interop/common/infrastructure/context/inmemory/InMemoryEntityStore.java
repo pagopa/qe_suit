@@ -12,7 +12,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class InMemoryEntityStore implements EntityStore {
-    private final Map<Class<? extends Identifiable>, List<Identifiable>> storage = new ConcurrentHashMap<>();
+    private final ThreadLocal<Map<Class<? extends Identifiable>, List<Identifiable>>> storage =
+            ThreadLocal.withInitial(ConcurrentHashMap::new);
 
     @Override
     @SuppressWarnings("unchecked")
@@ -50,7 +51,7 @@ public class InMemoryEntityStore implements EntityStore {
 
     @SuppressWarnings("unchecked")
     private <Model extends Identifiable> List<Model> entries(Class<Model> modelClass) {
-        return (List<Model>) (List<?>) storage.computeIfAbsent(modelClass, ignored -> new ArrayList<>());
+        return (List<Model>) (List<?>) storage.get().computeIfAbsent(modelClass, ignored -> new ArrayList<>());
     }
 
     private <Model extends Identifiable> int indexOfById(List<Model> entries, UUID id) {
