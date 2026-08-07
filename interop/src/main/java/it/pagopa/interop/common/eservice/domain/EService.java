@@ -50,14 +50,22 @@ public class EService implements Identifiable {
     }
 
     public EServiceDescriptor getLastDraftDescriptor() {
-        return descriptors.stream().filter(descriptor -> descriptor.getState() == EServiceDescriptorState.DRAFT)
-                .max(Comparator.comparing(EServiceDescriptor::getCreatedAt))
+        return descriptors.stream()
+                .filter(d -> d.getState() == EServiceDescriptorState.DRAFT)
+                .max(Comparator.comparing(
+                        EServiceDescriptor::getCreatedAt,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                ))
                 .orElse(null);
     }
 
     public EServiceDescriptor getActiveDescriptor() {
-        return descriptors.stream().filter(descriptor -> descriptor.getState() == EServiceDescriptorState.PUBLISHED)
-                .max(Comparator.comparing(EServiceDescriptor::getPublishedAt))
+        return descriptors.stream()
+                .filter(d -> d.getState() == EServiceDescriptorState.PUBLISHED)
+                .max(Comparator.comparing(
+                        EServiceDescriptor::getPublishedAt,
+                        Comparator.nullsLast(Comparator.naturalOrder())
+                ))
                 .orElse(null);
     }
 
