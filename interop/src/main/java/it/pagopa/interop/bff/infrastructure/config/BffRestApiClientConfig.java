@@ -38,6 +38,7 @@ public class BffRestApiClientConfig {
     private enum ValidationKey {
         INVALID_REQUEST_BODY("validation.request.body.schema.invalid"),
         UNKNOWN_RESPONSE_STATUS("validation.response.status.unknown"),
+        UNEXPECTED_CONTENT_TYPE("validation.response.contentType.notAllowed"),
         UNEXPECTED_RESPONSE_BODY("validation.response.body.unexpected");
 
         private final String key;
@@ -85,6 +86,7 @@ public class BffRestApiClientConfig {
                         .withLevel(ValidationKey.INVALID_REQUEST_BODY.getKey(), ValidationReport.Level.IGNORE)
                         .withLevel(ValidationKey.UNKNOWN_RESPONSE_STATUS.getKey(), ValidationReport.Level.WARN)
                         .withLevel(ValidationKey.UNEXPECTED_RESPONSE_BODY.getKey(), ValidationReport.Level.ERROR)
+                        .withLevel(ValidationKey.UNEXPECTED_CONTENT_TYPE.getKey(), ValidationReport.Level.WARN)
                         .build())
                 .build();
 
