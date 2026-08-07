@@ -16,6 +16,7 @@ import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.Optional;
 
 @Service
@@ -53,6 +54,14 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
             throw new IllegalArgumentException("Command is not of type UpdateEServiceDescriptorQuotas");
 
         return restClient.updateDescriptor(eServiceRef.id(), descriptorRef.id(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdResource -> getEServiceDescriptor(eServiceRef, descriptorRef))
+                .get();
+    }
+
+    @Override
+    public EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, File openApiInterface) {
+        return restClient.addDocument(eServiceRef.id(), descriptorRef.id(), "INTERFACE", openApiInterface.getName(), openApiInterface)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getEServiceDescriptor(eServiceRef, descriptorRef))
                 .get();
