@@ -1,29 +1,25 @@
 package it.pagopa.interop.common.infrastructure.http.contract.engine;
 
-import java.lang.reflect.Field;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.HashMap;
 import java.util.Map;
 
 final class DtoRawMapper {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
     private DtoRawMapper() {
     }
 
     static Map<String, Object> toRawMap(Object dto) {
-        Map<String, Object> rawMap = new HashMap<>();
-
-        for (Field field : dto.getClass().getDeclaredFields()) {
-            field.setAccessible(true);
-            try {
-                rawMap.put(field.getName(), field.get(dto));
-            } catch (Exception e) {
-                throw new IllegalStateException(
-                        "Impossibile leggere il campo [%s] dal DTO valido".formatted(field.getName()),
-                        e
-                );
-            }
+        try {
+            Map<String, Object> rawMap = OBJECT_MAPPER.convertValue(dto, new TypeReference<>() {
+            });
+            return rawMap != null ? rawMap : new HashMap<>();
+        } catch (IllegalArgumentException e) {
+            throw new IllegalStateException("Impossibile convertire il DTO valido in mappa raw", e);
         }
-
-        return rawMap;
     }
 }
