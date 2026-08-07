@@ -1,7 +1,9 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.infrastructure.response.RawResponse;
 import it.pagopa.interop.common.infrastructure.utils.FileUtils;
+import it.pagopa.interop.common.infrastructure.utils.async.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
@@ -47,10 +49,15 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
 
     @Override
     public EServiceDescriptor publishDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
-        return restClient.publishDescriptor(eServiceRef.id(), descriptorRef.id())
-                .withPolling((response -> response.isSuccess() && getEServiceDescriptor(eServiceRef, descriptorRef).getState() == PUBLISHED))
+        restClient.publishDescriptor(eServiceRef.id(), descriptorRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(emptyResp -> getEServiceDescriptor(eServiceRef, descriptorRef))
                 .get();
+
+        return PollingUtils.pollUntil(
+                () -> getEServiceDescriptor(eServiceRef, descriptorRef),
+                descriptor -> descriptor.getState() == PUBLISHED
+        );
     }
 
     @Override
