@@ -35,9 +35,9 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedResource> updateDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceDescriptorQuotas payload) {
+    public TestChain<CreatedResource> updateDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceDescriptorSeed payload) {
         return execute(
-                () -> eservicesApi.updateDescriptor().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).body(payload).execute(Function.identity()),
+                () -> eservicesApi.updateDraftDescriptor().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).body(payload).execute(Function.identity()),
                 CreatedResource.class
         );
     }

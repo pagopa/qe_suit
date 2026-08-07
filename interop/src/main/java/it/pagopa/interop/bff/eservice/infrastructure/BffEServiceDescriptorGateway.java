@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
+import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
@@ -13,6 +14,7 @@ import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingS
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,7 +35,7 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(descriptor -> {
                     Optional<EService> maybeEService = entityStore.getById(eServiceRef.id(), EService.class);
-                    return mapper.toEServiceWithUpsert(descriptor,  maybeEService.orElse(null));
+                    return mapper.toEServiceWithUpsert(descriptor, maybeEService.orElse(null));
                 })
                 .updateContext()
                 .map(eService -> eService.findDescriptor(descriptorRef.id()))
@@ -50,8 +52,10 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
 
     @Override
     public EServiceDescriptor updateDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, UpdateEServiceDescriptorCommand command) {
-        if (!(command instanceof UpdateEServiceDescriptorQuotas payload))
-            throw new IllegalArgumentException("Command is not of type UpdateEServiceDescriptorQuotas");
+        if (!(command instanceof BffUpdateEServiceDescriptorCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of BffUpdateEServiceDescriptorCommand");
+
+        UpdateEServiceDescriptorSeed payload = bffCommand.getBffPayload();
 
         return restClient.updateDescriptor(eServiceRef.id(), descriptorRef.id(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
