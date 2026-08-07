@@ -23,7 +23,6 @@ import java.util.List;
 public interface BffEServiceDescriptorMapper {
 
     @Mapping(target = "interfaceDocument", source = "interface")
-    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "publishedAt", source = "publishedAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "deprecatedAt", source = "deprecatedAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "archivedAt", source = "archivedAt", qualifiedByName = "mapStringToInstant")
