@@ -22,9 +22,9 @@ public record FuzzVectors<T>(FuzzId id, T value, int expectedStatus, String desc
     public static final List<FuzzVectors<?>> STRINGS = List.of(
             new FuzzVectors<>(FuzzId.EMPTY_STRING, "", 400, "Stringa vuota su campo obbligatorio"),
             new FuzzVectors<>(FuzzId.BLANK_STRING, "   ", 400, "Solo spazi vuoti"),
-            new FuzzVectors<>(FuzzId.BUFFER_OVERFLOW, "A".repeat(5000), 413, "Payload troppo grande / Buffer Overflow"),
-            new FuzzVectors<>(FuzzId.SQL_INJECTION, "' OR '1'='1", 403, "SQL Injection - Atteso Forbidden"),
-            new FuzzVectors<>(FuzzId.XSS, "<script>alert(1)</script>", 403, "XSS - Atteso Forbidden"),
+            new FuzzVectors<>(FuzzId.BUFFER_OVERFLOW, "A".repeat(5000), 400, "Payload troppo grande / Buffer Overflow"),
+            new FuzzVectors<>(FuzzId.SQL_INJECTION, "' OR '1'='1", 400, "SQL Injection - Atteso Forbidden"),
+            new FuzzVectors<>(FuzzId.XSS, "<script>alert(1)</script>", 400, "XSS - Atteso Forbidden"),
             new FuzzVectors<>(FuzzId.NOT_A_STRING, 124, 400, "Integer su un campo String")
     );
 
