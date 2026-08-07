@@ -4,7 +4,7 @@ import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.bff.agreement.infrastructure.BffAgreementRequestFactory;
-import it.pagopa.interop.common.infrastructure.context.junit.JunitSupportConfig;
+import it.pagopa.interop.common.infrastructure.config.JunitSupportConfig;
 import it.pagopa.interop.common.infrastructure.http.contract.engine.ContractTestEngine;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
