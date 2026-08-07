@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.agreement.infrastructure.contract;
+package it.pagopa.interop.suite.contract;
 
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
