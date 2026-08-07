@@ -15,11 +15,14 @@ import it.pagopa.interop.common.infrastructure.http.contract.engine.ContractTest
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
+@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {TestBootApp.class, JunitSupportConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
@@ -36,14 +39,13 @@ public class BffAgreementContractTest extends ContractTestEngine {
                 .createEService(EServiceDescriptorState.PUBLISHED)
                 .get(EService.class);
 
-        // Attesa per permettere al sistema di gestire un eventual consistency
-        DelayUtils.waitForSeconds(2);
-
-        AgreementPayload validPayload = requestFactory.creationRequest(createdEservice, createdEservice.getLastDraftDescriptor(), null);
+        AgreementPayload validPayload = requestFactory.creationRequest(createdEservice, createdEservice.getActiveDescriptor(), null);
 
         return fuzz(validPayload)
                 .expectValid(200)
                 .execute((request, expectedStatus) -> {
+                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
+
                     var operation = apiClient.agreements().createAgreement();
                     injectRawBody(operation, request.body());
 
