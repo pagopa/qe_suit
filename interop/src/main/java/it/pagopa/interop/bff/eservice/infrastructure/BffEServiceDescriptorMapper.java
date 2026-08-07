@@ -81,7 +81,7 @@ public interface BffEServiceDescriptorMapper {
         }
 
         return updatedBase.toBuilder()
-                .descriptors(List.copyOf(finalDescriptors))
+                .descriptors(new ArrayList<>(finalDescriptors))
                 .build();
     }
 
