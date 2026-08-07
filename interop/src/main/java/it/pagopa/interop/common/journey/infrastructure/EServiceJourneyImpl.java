@@ -4,6 +4,7 @@ import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
@@ -48,7 +49,8 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     private EServiceJourneyImpl publishPipeline(EService eService) {
-        eServiceDescriptorUseCase.publishDescriptor(eService, eService.getLastDraftDescriptor());
+        EServiceDescriptor descriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eService.getLastDraftDescriptor());
+        eServiceDescriptorUseCase.publishDescriptor(eService, descriptor);
         return this;
     }
 }
