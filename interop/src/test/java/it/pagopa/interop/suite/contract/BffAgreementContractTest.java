@@ -1,6 +1,12 @@
 package it.pagopa.interop.suite.contract;
 
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.infrastructure.utils.async.DelayUtils;
+import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.bff.agreement.infrastructure.BffAgreementRequestFactory;
@@ -20,11 +26,20 @@ import java.util.stream.Stream;
 public class BffAgreementContractTest extends ContractTestEngine {
 
     private final ApiClient apiClient;
+    private final InteropJourney interopJourney;
     private final BffAgreementRequestFactory requestFactory;
 
     @TestFactory
     Stream<DynamicTest> createAgreement() {
-        AgreementPayload validPayload = requestFactory.baseCreationRequest();
+        EService createdEservice = interopJourney
+                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .get(EService.class);
+
+        // Attesa per permettere al sistema di gestire un eventual consistency
+        DelayUtils.waitForSeconds(2);
+
+        AgreementPayload validPayload = requestFactory.creationRequest(createdEservice, createdEservice.getLastDraftDescriptor(), null);
 
         return fuzz(validPayload)
                 .expectValid(200)
