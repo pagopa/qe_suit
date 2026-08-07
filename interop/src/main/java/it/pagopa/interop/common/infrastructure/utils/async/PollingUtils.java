@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.async;
+package it.pagopa.interop.common.infrastructure.utils.async;
 
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
