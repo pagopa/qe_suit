@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.infrastructure.cucumber.context;
 
 import io.cucumber.spring.ScenarioScope;
+import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import it.pagopa.interop.common.kernel.Identifiable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Slf4j
 @ScenarioScope
-public class DomainContext {
+public class DomainContext implements EntityStore {
 
     @Getter
     @RequiredArgsConstructor
@@ -52,6 +53,7 @@ public class DomainContext {
         }
     }
 
+    @Override
     public <Model extends Identifiable> void upsert(Model model) {
         ContextEntry<Model> entry = new ContextEntry<>(model, null);
         upsert(entry);
@@ -77,6 +79,7 @@ public class DomainContext {
         return Optional.of((Model) item);
     }
 
+    @Override
     public <Model extends Identifiable> Optional<Model> getById(UUID id, Class<Model> modelClass) {
         List<ContextEntry<Model>> entryList = entries(modelClass);
         int index = indexOfById(entryList, id);
@@ -115,11 +118,13 @@ public class DomainContext {
                 .findFirst();
     }
 
+    @Override
     public <Model extends Identifiable> Optional<Model> getLast(Class<Model> modelClass) {
         List<ContextEntry<Model>> entryList = entries(modelClass);
         return entryList.isEmpty() ? Optional.empty() : Optional.of(entryList.get(entryList.size() - 1).getItem());
     }
 
+    @Override
     public <Model extends Identifiable> Model getLastOrThrow(Class<Model> modelClass) {
         return getLast(modelClass)
                 .orElseThrow(() -> new NoSuchElementException("Nessun elemento trovato per il tipo: " + modelClass.getSimpleName()));

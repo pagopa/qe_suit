@@ -3,7 +3,7 @@ package it.pagopa.interop.bff.agreement.infrastructure;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Delegation;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -20,7 +20,7 @@ import static org.instancio.Select.field;
 public class BffAgreementRequestFactory {
 
     private final InteropJourney interopJourney;
-    private final DomainContext domainContext;
+    private final EntityStore entityStore;
 
     public AgreementPayload creationRequest(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         return Instancio.of(AgreementPayload.class)
@@ -32,10 +32,10 @@ public class BffAgreementRequestFactory {
 
     public AgreementPayload baseCreationRequest() {
         interopJourney
-                .withProducer(Tenant.AGID, UserRole.ADMIN)
+                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .createEService();
 
-        final EService eService = domainContext.getLastOrThrow(EService.class);
+        final EService eService = entityStore.getLastOrThrow(EService.class);
         return creationRequest(eService, eService.getLastDraftDescriptor(), null);
     }
 

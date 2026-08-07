@@ -8,8 +8,8 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.Filter;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
-import it.pagopa.interop.common.infrastructure.cucumber.context.TestContext;
-import it.pagopa.interop.common.infrastructure.cucumber.context.UserContext;
+import it.pagopa.interop.common.infrastructure.context.CurrentTestKind;
+import it.pagopa.interop.common.infrastructure.context.CurrentUserSession;
 import it.pagopa.interop.common.infrastructure.http.HttpLoggingFilter;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +17,8 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.net.URI;
 
 import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static io.restassured.config.RestAssuredConfig.config;
@@ -44,25 +46,25 @@ public class BffRestApiClientConfig {
     @Bean
     public ApiClient apiClient(
             BearerAuthProvider bearerAuthProvider,
-            ObjectProvider<TestContext> testContextProvider,
-            ObjectProvider<UserContext> userContextProvider
+            ObjectProvider<CurrentTestKind> testKindProvider,
+            ObjectProvider<CurrentUserSession> currentUserSessionProvider
     ) {
         Filter contractTestFilter = createContractTestFilter();
         Filter businessTestFilter = createBusinessTestFilter();
 
         ApiClient.Config apiConfig = ApiClient.Config.apiConfig()
                 .reqSpecSupplier(() -> {
-                    TestContext context = testContextProvider.getObject();
-                    UserContext userContext = userContextProvider.getObject();
+                    CurrentTestKind currentTestKind = testKindProvider.getObject();
+                    CurrentUserSession currentUserSession = currentUserSessionProvider.getObject();
 
                     String token = bearerAuthProvider.getToken(
-                            userContext.getUser(),
-                            userContext.getTenant()
+                            currentUserSession.getUser(),
+                            currentUserSession.getTenant()
                     );
 
                     RequestSpecBuilder builder = createBaseSpecBuilder(token);
 
-                    switch (context.getCurrentTestKind()) {
+                    switch (currentTestKind.getCurrentTestKind()) {
                         case CONTRACT -> builder.addFilter(contractTestFilter);
                         case FLOW -> builder.addFilter(businessTestFilter);
                     }
@@ -74,8 +76,11 @@ public class BffRestApiClientConfig {
     }
 
     private Filter createContractTestFilter() {
+        String apiBasePath = URI.create(basePath).getPath();
+
         OpenApiInteractionValidator validator = OpenApiInteractionValidator
                 .createFor(openApiSpecUrl)
+                .withBasePathOverride(apiBasePath)
                 .withLevelResolver(LevelResolver.create()
                         .withLevel(ValidationKey.INVALID_REQUEST_BODY.getKey(), ValidationReport.Level.IGNORE)
                         .withLevel(ValidationKey.UNKNOWN_RESPONSE_STATUS.getKey(), ValidationReport.Level.WARN)

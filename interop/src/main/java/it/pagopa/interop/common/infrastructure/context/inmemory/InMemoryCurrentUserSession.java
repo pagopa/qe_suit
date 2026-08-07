@@ -1,14 +1,10 @@
-package it.pagopa.interop.common.infrastructure.cucumber.context;
+package it.pagopa.interop.common.infrastructure.context.inmemory;
 
-import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.infrastructure.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
-import org.springframework.stereotype.Component;
 
-@Component
-@ScenarioScope
-public class UserContext implements CurrentUserSession {
+public class InMemoryCurrentUserSession implements CurrentUserSession {
     private User currentUser;
     private Tenant currentTenant;
 
@@ -28,17 +24,5 @@ public class UserContext implements CurrentUserSession {
     public Tenant getTenant() {
         if (currentTenant == null) throw new IllegalStateException("Current tenant is not set");
         return currentTenant;
-    }
-
-    public boolean isLoggedIn(User user, Tenant tenant) {
-        return this.currentUser != null
-                && this.currentTenant != null
-                && this.currentUser == user
-                && this.currentTenant == tenant;
-    }
-
-    public void reset() {
-        this.currentUser = null;
-        this.currentTenant = null;
     }
 }

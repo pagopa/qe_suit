@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.template.action;
 
-import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import it.pagopa.interop.common.infrastructure.response.ApiResponse;
 import it.pagopa.interop.common.infrastructure.response.RawResponse;
 
@@ -25,8 +25,8 @@ public class MappedResponseFinalizer<SourceResponse, TargetResponse> implements 
     }
 
     @Override
-    public DomainContext getDomainContext() {
-        return source.getDomainContext();
+    public EntityStore getEntityStore() {
+        return source.getEntityStore();
     }
 
     @Override

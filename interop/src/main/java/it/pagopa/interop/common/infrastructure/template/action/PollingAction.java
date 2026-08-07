@@ -1,8 +1,8 @@
 package it.pagopa.interop.common.infrastructure.template.action;
 
 import it.pagopa.interop.common.infrastructure.async.PollingUtils;
-import it.pagopa.interop.common.infrastructure.cucumber.context.ApiContext;
-import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.context.EntityStore;
+import it.pagopa.interop.common.infrastructure.context.LastApiResponseStore;
 import it.pagopa.interop.common.infrastructure.response.ApiResponse;
 import it.pagopa.interop.common.infrastructure.response.RawResponse;
 import it.pagopa.interop.common.infrastructure.template.action.context.PollingActionContext;
@@ -20,11 +20,11 @@ import java.util.function.Function;
 public class PollingAction<Response> implements ResponseFinalizer<Response> {
 
     @Setter(onMethod_ = {@Autowired})
-    private ApiContext apiContext;
+    private LastApiResponseStore lastApiResponseStore;
 
     @Getter
     @Setter(onMethod_ = {@Autowired})
-    private DomainContext domainContext;
+    private EntityStore entityStore;
 
     @Getter
     private RawResponse raw;
@@ -35,24 +35,30 @@ public class PollingAction<Response> implements ResponseFinalizer<Response> {
     PollingAction<Response> handle(PollingActionContext<? super Response> context) {
         this.context = context;
 
-        if(raw instanceof ApiResponse apiResponse) {
-            if (context.getTimeout() == null)
-                this.raw = PollingUtils.pollUntil(
-                        context.getResponseSupplier(),
-                        r -> context.getPollingStrategy().isSatisfied(apiResponse)
-                );
-            else
-                this.raw = PollingUtils.pollUntil(
-                        context.getResponseSupplier(),
-                        r -> context.getPollingStrategy().isSatisfied(apiResponse),
-                        context.getTimeout(),
-                        context.getInterval()
-                );
-
-            apiContext.setLastResponse(apiResponse);
-        }
-        else
+        RawResponse firstResponse = context.getResponseSupplier().get();
+        if (!(firstResponse instanceof ApiResponse firstApiResponse)) {
             throw new IllegalArgumentException("RawResponse is not an instance of ApiResponse. PollingAction can only handle ApiResponse instances.");
+        }
+
+        if (context.getPollingStrategy().isSatisfied(firstApiResponse)) {
+            this.raw = firstApiResponse;
+        } else if (context.getTimeout() == null) {
+            this.raw = PollingUtils.pollUntil(
+                    context.getResponseSupplier(),
+                    response -> response instanceof ApiResponse apiResponse
+                            && context.getPollingStrategy().isSatisfied(apiResponse)
+            );
+        } else {
+            this.raw = PollingUtils.pollUntil(
+                    context.getResponseSupplier(),
+                    response -> response instanceof ApiResponse apiResponse
+                            && context.getPollingStrategy().isSatisfied(apiResponse),
+                    context.getTimeout(),
+                    context.getInterval()
+            );
+        }
+
+        lastApiResponseStore.setLastResponse((ApiResponse) this.raw);
 
         return this;
     }
@@ -62,7 +68,7 @@ public class PollingAction<Response> implements ResponseFinalizer<Response> {
         this.raw = context.getResponseSupplier().get();
 
         if (raw instanceof ApiResponse apiResponse) {
-            apiContext.setLastResponse(apiResponse);
+            lastApiResponseStore.setLastResponse(apiResponse);
         } else {
             throw new IllegalArgumentException("RawResponse is not an instance of ApiResponse. PollingAction can only handle ApiResponse instances.");
         }
