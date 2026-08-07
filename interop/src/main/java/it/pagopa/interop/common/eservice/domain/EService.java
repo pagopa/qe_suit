@@ -7,9 +7,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Value
 @Builder(toBuilder = true)
@@ -50,13 +48,21 @@ public class EService implements Identifiable {
     }
 
     public EServiceDescriptor getLastDraftDescriptor() {
-        return descriptors.stream()
+        List<EServiceDescriptor> draftDescriptors = descriptors.stream()
                 .filter(d -> d.getState() == EServiceDescriptorState.DRAFT)
-                .max(Comparator.comparing(
-                        EServiceDescriptor::getCreatedAt,
-                        Comparator.nullsLast(Comparator.naturalOrder())
-                ))
-                .orElse(null);
+                .toList();
+
+        if (draftDescriptors.isEmpty()) {
+            throw new NoSuchElementException("Nessun descriptor DRAFT trovato per EService " + id);
+        }
+
+        if (draftDescriptors.size() > 1) {
+            throw new IllegalStateException(
+                    "Trovati " + draftDescriptors.size() + " descriptor DRAFT per EService " + id + ", atteso esattamente 1"
+            );
+        }
+
+        return draftDescriptors.get(0);
     }
 
     public EServiceDescriptor getActiveDescriptor() {
@@ -66,11 +72,22 @@ public class EService implements Identifiable {
                         EServiceDescriptor::getPublishedAt,
                         Comparator.nullsLast(Comparator.naturalOrder())
                 ))
-                .orElse(null);
+                .orElseThrow(() -> new NoSuchElementException("Nessun descriptor PUBLISHED trovato per EService " + id));
     }
 
     public void addDescriptor(EServiceDescriptor descriptor) {
-        this.descriptors.add(descriptor);
+        Objects.requireNonNull(descriptor, "descriptor non può essere null");
+        Objects.requireNonNull(descriptor.getId(), "descriptor.id non può essere null");
+
+        for (int i = 0; i < descriptors.size(); i++) {
+            EServiceDescriptor current = descriptors.get(i);
+            if (current.getId().equals(descriptor.getId())) {
+                descriptors.set(i, descriptor);
+                return;
+            }
+        }
+
+        descriptors.add(descriptor);
     }
 
     public EServiceRef getRef() {
