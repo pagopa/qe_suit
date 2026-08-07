@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.context.junit;
+package it.pagopa.interop.common.infrastructure.config;
 
 import it.pagopa.interop.common.infrastructure.context.CurrentChannel;
 import it.pagopa.interop.common.infrastructure.context.CurrentTestKind;
