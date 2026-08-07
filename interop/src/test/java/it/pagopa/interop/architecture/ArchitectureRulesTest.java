@@ -12,7 +12,10 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -106,6 +109,28 @@ public class ArchitectureRulesTest {
 
         if (!violations.isEmpty()) {
             fail("Violazioni naming classi architetturali nei channel: " + violations);
+        }
+    }
+
+    @Test
+    void gateway_classes_must_not_depend_on_cucumber_directly_or_indirectly() {
+        var imported = new ClassFileImporter()
+                .withImportOption(new ImportOption.DoNotIncludeTests())
+                .importPackages("it.pagopa.interop");
+
+        Set<String> violations = new TreeSet<>();
+
+        for (JavaClass javaClass : imported) {
+            if (!javaClass.getSimpleName().endsWith("Gateway")) {
+                continue;
+            }
+
+            Optional<List<JavaClass>> path = findPathToCucumber(javaClass, new HashSet<>());
+            path.ifPresent(javaClasses -> violations.add(formatPath(javaClasses)));
+        }
+
+        if (!violations.isEmpty()) {
+            fail("Gateway con dipendenze dirette/indirette da Cucumber: " + violations);
         }
     }
 
@@ -209,5 +234,50 @@ public class ArchitectureRulesTest {
             return value;
         }
         return Character.toUpperCase(value.charAt(0)) + value.substring(1);
+    }
+
+    private static Optional<List<JavaClass>> findPathToCucumber(JavaClass sourceClass, Set<String> visited) {
+        if (isCucumberClass(sourceClass)) {
+            return Optional.of(List.of(sourceClass));
+        }
+
+        if (!visited.add(sourceClass.getFullName())) {
+            return Optional.empty();
+        }
+
+        for (var dependency : sourceClass.getDirectDependenciesFromSelf()) {
+            JavaClass targetClass = dependency.getTargetClass();
+
+            if (isCucumberClass(targetClass)) {
+                return Optional.of(List.of(sourceClass, targetClass));
+            }
+
+            if (!targetClass.getPackageName().startsWith("it.pagopa.interop.")) {
+                continue;
+            }
+
+            Optional<List<JavaClass>> tailPath = findPathToCucumber(targetClass, visited);
+            if (tailPath.isPresent()) {
+                List<JavaClass> fullPath = new ArrayList<>();
+                fullPath.add(sourceClass);
+                fullPath.addAll(tailPath.get());
+                return Optional.of(fullPath);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private static boolean isCucumberClass(JavaClass javaClass) {
+        String packageName = javaClass.getPackageName();
+        return packageName.startsWith("io.cucumber.")
+                || packageName.contains(".cucumber.");
+    }
+
+    private static String formatPath(List<JavaClass> classes) {
+        return classes.stream()
+                .map(JavaClass::getFullName)
+                .reduce((left, right) -> left + " -> " + right)
+                .orElse("<empty-path>");
     }
 }
