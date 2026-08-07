@@ -1,16 +1,14 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
+import it.pagopa.interop.common.infrastructure.template.RestClient;
+import it.pagopa.interop.common.infrastructure.template.action.TestChain;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
-import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.infrastructure.template.RestClient;
-import it.pagopa.interop.common.infrastructure.template.action.TestChain;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.UUID;
 import java.util.function.Function;
 
