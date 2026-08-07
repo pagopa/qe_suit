@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.infrastructure.http.contract.engine;
 
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.common.infrastructure.http.contract.FuzzVectors;
 import org.junit.jupiter.api.Test;
 
@@ -79,8 +80,24 @@ class FuzzerGeneratorTest {
                 .orElseThrow();
 
         assertEquals("' OR '1'='1", sqlOnName.rawBody().get("name"));
-        assertEquals(id, sqlOnName.rawBody().get("id"));
+        assertTrue(
+                id.equals(sqlOnName.rawBody().get("id")) || id.toString().equals(sqlOnName.rawBody().get("id"))
+        );
         assertEquals(10, sqlOnName.rawBody().get("count"));
+    }
+
+    @Test
+    void generateFuzzCases_for_openapi_payload_ignores_static_metadata_fields() {
+        AgreementPayload payload = new AgreementPayload()
+                .eserviceId(UUID.randomUUID())
+                .descriptorId(UUID.randomUUID());
+
+        List<FuzzerGenerator.FuzzedCase> cases = FuzzerGenerator.generateFuzzCases(payload);
+
+        assertTrue(cases.stream().noneMatch(c -> c.fieldName().startsWith("JSON_PROPERTY_")));
+        assertTrue(cases.stream().noneMatch(c -> "serialVersionUID".equals(c.fieldName())));
+        assertTrue(cases.stream().noneMatch(c -> c.rawBody().containsKey("serialVersionUID")));
+        assertTrue(cases.stream().noneMatch(c -> c.rawBody().keySet().stream().anyMatch(k -> k.startsWith("JSON_PROPERTY_"))));
     }
 
     @Test

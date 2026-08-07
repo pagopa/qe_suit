@@ -2,6 +2,7 @@ package it.pagopa.interop.common.infrastructure.http.contract.engine;
 
 import it.pagopa.interop.common.infrastructure.http.contract.FuzzVectors;
 
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,10 +27,18 @@ class FuzzerGenerator {
         List<FuzzedCase> fuzzCases = new ArrayList<>();
 
         Field[] fields = validDto.getClass().getDeclaredFields();
-        Map<String, Object> baseMap = toRawMap(validDto, fields);
+        Map<String, Object> baseMap = DtoRawMapper.toRawMap(validDto);
 
         for (Field field : fields) {
+            if (Modifier.isStatic(field.getModifiers()) || field.isSynthetic()) {
+                continue;
+            }
+
             String fieldName = field.getName();
+            if (!baseMap.containsKey(fieldName)) {
+                continue;
+            }
+
             Class<?> fieldType = field.getType();
 
             /*
@@ -52,25 +61,6 @@ class FuzzerGenerator {
         }
 
         return fuzzCases;
-    }
-
-    private static Map<String, Object> toRawMap(Object validDto, Field[] fields) {
-        Map<String, Object> rawMap = new HashMap<>();
-
-        for (Field field : fields) {
-            field.setAccessible(true);
-
-            try {
-                rawMap.put(field.getName(), field.get(validDto));
-            } catch (Exception e) {
-                throw new IllegalStateException(
-                        "Impossibile leggere il campo [%s] dal DTO valido".formatted(field.getName()),
-                        e
-                );
-            }
-        }
-
-        return rawMap;
     }
 
     private static void injectMissingRequiredField(List<FuzzedCase> fuzzCases,
