@@ -86,6 +86,9 @@ public class PollingAction<Response> implements ResponseFinalizer<Response> {
     @Override
     @SuppressWarnings("unchecked")
     public Response get() {
+        if (context.getResponseClass() == Void.class)
+            return null;
+
         return (Response) raw.as(context.getResponseClass());
     }
 }
