@@ -12,12 +12,15 @@ import it.pagopa.interop.common.infrastructure.objectgraph.ObjectGraphDecomposer
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -233,6 +236,58 @@ class DefaultFuzzEngineTest {
         assertEquals("admin", fuzzCase.result().at("/role").asText());
     }
 
+    @Test
+    void end_to_end_with_complex_object_generates_nested_cases() {
+        ObjectMapper mapper = new ObjectMapper();
+        ComplexPayload source = new ComplexPayload(
+                new Profile("Mario", "Rossi"),
+                List.of("admin", "ops"),
+                new Limits(3, new BigDecimal("10.50")),
+                List.of(new Flag(true, UUID.fromString("c0d9f3c0-9a43-4d8f-9a36-c97c870b13b9")))
+        );
+
+        ObjectGraph graph = objectGraph(List.of(
+                new Node(NodeKind.OBJECT, NodePath.root(), source, ComplexPayload.class),
+                new Node(NodeKind.OBJECT, path("/profile"), source.profile(), Profile.class),
+                new Node(NodeKind.SCALAR, path("/profile/name"), source.profile().name(), String.class),
+                new Node(NodeKind.COLLECTION, path("/roles"), source.roles(), List.class),
+                new Node(NodeKind.SCALAR, path("/roles/0"), source.roles().get(0), String.class),
+                new Node(NodeKind.OBJECT, path("/limits"), source.limits(), Limits.class),
+                new Node(NodeKind.SCALAR, path("/limits/retryCount"), source.limits().retryCount(), Integer.class),
+                new Node(NodeKind.SCALAR, path("/limits/threshold"), source.limits().threshold(), BigDecimal.class),
+                new Node(NodeKind.COLLECTION, path("/flags"), source.flags(), List.class),
+                new Node(NodeKind.OBJECT, path("/flags/0"), source.flags().get(0), Flag.class),
+                new Node(NodeKind.SCALAR, path("/flags/0/enabled"), source.flags().get(0).enabled(), Boolean.class),
+                new Node(NodeKind.SCALAR, path("/flags/0/id"), source.flags().get(0).id(), UUID.class)
+        ));
+
+        DefaultFuzzEngine engine = new DefaultFuzzEngine(
+                mockReturningGraph(graph),
+                mapper,
+                new JacksonFuzzMutationApplier(mapper),
+                List.of(new NullAndMissingRule(), new ScalarRule())
+        );
+
+        List<FuzzCase> cases = engine.generate(source);
+        assertFalse(cases.isEmpty());
+
+        Map<String, FuzzCase> byKey = cases.stream()
+                .collect(Collectors.toMap(
+                        c -> c.target() + "#" + c.mutation().scenario(),
+                        Function.identity(),
+                        (left, right) -> left
+                ));
+
+        assertEquals("", byKey.get("/profile/name#EMPTY_STRING").result().at("/profile/name").asText());
+        assertEquals("' OR '1'='1", byKey.get("/roles/0#SQL_INJECTION").result().at("/roles/0").asText());
+        assertEquals("not-a-number", byKey.get("/limits/retryCount#WRONG_TYPE_STRING").result().at("/limits/retryCount").asText());
+        assertEquals("Mario", byKey.get("/limits/retryCount#WRONG_TYPE_STRING").result().at("/profile/name").asText());
+        assertEquals(1, byKey.get("/flags/0/enabled#WRONG_TYPE_NUMBER").result().at("/flags/0/enabled").asInt());
+        assertEquals("not-a-valid-uuid-12345", byKey.get("/flags/0/id#MALFORMED_UUID").result().at("/flags/0/id").asText());
+        assertTrue(byKey.get("#NULL").result() instanceof NullNode);
+        assertNull(byKey.get("#MISSING").result());
+    }
+
     private ObjectGraphDecomposer mockReturningGraph(ObjectGraph graph) {
         ObjectGraphDecomposer decomposer = mock(ObjectGraphDecomposer.class);
         when(decomposer.decompose(any())).thenReturn(graph);
@@ -261,6 +316,18 @@ class DefaultFuzzEngineTest {
     }
 
     record Payload(String name, String role) {
+    }
+
+    record ComplexPayload(Profile profile, List<String> roles, Limits limits, List<Flag> flags) {
+    }
+
+    record Profile(String name, String surname) {
+    }
+
+    record Limits(Integer retryCount, BigDecimal threshold) {
+    }
+
+    record Flag(Boolean enabled, UUID id) {
     }
 
     static class MutablePayload {
