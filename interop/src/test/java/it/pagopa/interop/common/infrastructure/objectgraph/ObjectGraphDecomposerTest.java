@@ -13,20 +13,20 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ObjectGraphFacadeTest {
+class ObjectGraphDecomposerTest {
 
-    private ObjectGraphFacade facade;
+    private ObjectGraphDecomposer decomposer;
 
     @BeforeEach
     void setUp() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        facade = new DefaultObjectGraphFacade(new JacksonObjectDecomposer(objectMapper));
+        decomposer = new DefaultObjectGraphDecomposer(new JacksonObjectDecomposer(objectMapper));
     }
 
     @Test
     void decompose_simple_pojo() {
-        ObjectGraph graph = facade.decompose(new Person("Mario", 30));
+        ObjectGraph graph = decomposer.decompose(new Person("Mario", 30));
 
         assertEquals(NodeKind.OBJECT, graph.root().kind());
         assertEquals(NodeKind.SCALAR, byPointer(graph, "/name").kind());
@@ -35,7 +35,7 @@ class ObjectGraphFacadeTest {
 
     @Test
     void decompose_nested_object_and_navigation() {
-        ObjectGraph graph = facade.decompose(new PersonWithAddress("Mario", new Address("Roma")));
+        ObjectGraph graph = decomposer.decompose(new PersonWithAddress("Mario", new Address("Roma")));
         Node root = graph.root();
         Node address = byPointer(graph, "/address");
         Node city = byPointer(graph, "/address/city");
@@ -49,7 +49,7 @@ class ObjectGraphFacadeTest {
 
     @Test
     void decompose_collection() {
-        ObjectGraph graph = facade.decompose(new PersonWithTags(List.of("premium", "customer")));
+        ObjectGraph graph = decomposer.decompose(new PersonWithTags(List.of("premium", "customer")));
 
         assertEquals(NodeKind.COLLECTION, byPointer(graph, "/tags").kind());
         assertEquals(NodeKind.SCALAR, byPointer(graph, "/tags/0").kind());
@@ -58,7 +58,7 @@ class ObjectGraphFacadeTest {
 
     @Test
     void decompose_array() {
-        ObjectGraph graph = facade.decompose(new PersonWithArray(new String[]{"a", "b"}));
+        ObjectGraph graph = decomposer.decompose(new PersonWithArray(new String[]{"a", "b"}));
 
         assertEquals(NodeKind.COLLECTION, byPointer(graph, "/tags").kind());
         assertEquals(NodeKind.SCALAR, byPointer(graph, "/tags/0").kind());
@@ -71,7 +71,7 @@ class ObjectGraphFacadeTest {
         addresses.put("home", new Address("Rome"));
         addresses.put("work", new Address("Milan"));
 
-        ObjectGraph graph = facade.decompose(new MapHolder(addresses));
+        ObjectGraph graph = decomposer.decompose(new MapHolder(addresses));
 
         assertEquals(NodeKind.OBJECT, byPointer(graph, "/addresses").kind());
         assertEquals(NodeKind.OBJECT, byPointer(graph, "/addresses/home").kind());
@@ -81,7 +81,7 @@ class ObjectGraphFacadeTest {
 
     @Test
     void decompose_null_semantics() {
-        ObjectGraph graph = facade.decompose(new NullableContainer(null, null, null));
+        ObjectGraph graph = decomposer.decompose(new NullableContainer(null, null, null));
 
         Node name = byPointer(graph, "/name");
         Node address = byPointer(graph, "/address");
@@ -104,7 +104,7 @@ class ObjectGraphFacadeTest {
 
     @Test
     void empty_collection_is_not_leaf() {
-        ObjectGraph graph = facade.decompose(new PersonWithTags(List.of()));
+        ObjectGraph graph = decomposer.decompose(new PersonWithTags(List.of()));
         Node tags = byPointer(graph, "/tags");
 
         assertEquals(NodeKind.COLLECTION, tags.kind());
@@ -114,7 +114,7 @@ class ObjectGraphFacadeTest {
 
     @Test
     void honors_jsonproperty_and_jsonignore() {
-        ObjectGraph graph = facade.decompose(new AnnotatedPerson("Mario", "hidden"));
+        ObjectGraph graph = decomposer.decompose(new AnnotatedPerson("Mario", "hidden"));
 
         assertEquals(NodeKind.SCALAR, byPointer(graph, "/first_name").kind());
         assertThrows(AssertionError.class, () -> byPointer(graph, "/firstName"));
@@ -123,7 +123,7 @@ class ObjectGraphFacadeTest {
 
     @Test
     void escapes_json_pointer_tokens() {
-        ObjectGraph graph = facade.decompose(new EscapedProps("a", "b"));
+        ObjectGraph graph = decomposer.decompose(new EscapedProps("a", "b"));
 
         assertEquals(NodeKind.SCALAR, byPointer(graph, "/foo~1bar").kind());
         assertEquals(NodeKind.SCALAR, byPointer(graph, "/foo~0bar").kind());
@@ -131,7 +131,7 @@ class ObjectGraphFacadeTest {
 
     @Test
     void selectors_work_and_are_composable() {
-        ObjectGraph graph = facade.decompose(new PersonWithTags(List.of("premium", "customer")));
+        ObjectGraph graph = decomposer.decompose(new PersonWithTags(List.of("premium", "customer")));
 
         assertEquals(graph.nodes().size(), graph.select(NodeSelectors.all()).size());
         assertFalse(graph.select(NodeSelectors.scalar()).isEmpty());
@@ -146,9 +146,9 @@ class ObjectGraphFacadeTest {
 
     @Test
     void supports_root_object_collection_and_scalar() {
-        ObjectGraph objectRoot = facade.decompose(new Person("Mario", 20));
-        ObjectGraph collectionRoot = facade.decompose(List.of("a", "b"));
-        ObjectGraph scalarRoot = facade.decompose("value");
+        ObjectGraph objectRoot = decomposer.decompose(new Person("Mario", 20));
+        ObjectGraph collectionRoot = decomposer.decompose(List.of("a", "b"));
+        ObjectGraph scalarRoot = decomposer.decompose("value");
 
         assertEquals(NodeKind.OBJECT, objectRoot.root().kind());
         assertEquals(NodeKind.COLLECTION, collectionRoot.root().kind());
@@ -157,12 +157,12 @@ class ObjectGraphFacadeTest {
 
     @Test
     void null_root_is_not_supported() {
-        assertThrows(ObjectGraphException.class, () -> facade.decompose(null));
+        assertThrows(ObjectGraphException.class, () -> decomposer.decompose(null));
     }
 
     @Test
     void wraps_jackson_errors_fail_fast() {
-        ObjectGraphException exception = assertThrows(ObjectGraphException.class, () -> facade.decompose(new ExplodingGetter()));
+        ObjectGraphException exception = assertThrows(ObjectGraphException.class, () -> decomposer.decompose(new ExplodingGetter()));
         assertTrue(exception.getMessage().contains("Failed to serialize source type"));
     }
 

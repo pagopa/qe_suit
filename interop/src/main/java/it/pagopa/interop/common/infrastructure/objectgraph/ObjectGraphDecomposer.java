@@ -1,5 +1,5 @@
 package it.pagopa.interop.common.infrastructure.objectgraph;
 
-public interface ObjectGraphFacade {
+public interface ObjectGraphDecomposer {
     ObjectGraph decompose(Object source);
 }
