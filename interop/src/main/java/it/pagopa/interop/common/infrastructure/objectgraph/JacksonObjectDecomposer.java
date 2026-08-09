@@ -10,11 +10,11 @@ import java.util.Objects;
 final class JacksonObjectDecomposer implements ObjectDecomposer {
 
     private final ObjectMapper objectMapper;
-    private final JacksonTraversal traversal;
+    private final JacksonGraphWalker graphWalker;
 
     JacksonObjectDecomposer(ObjectMapper objectMapper) {
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
-        this.traversal = new JacksonTraversal(objectMapper);
+        this.graphWalker = new JacksonGraphWalker(objectMapper);
     }
 
     @Override
@@ -29,7 +29,7 @@ final class JacksonObjectDecomposer implements ObjectDecomposer {
             throw new ObjectGraphException("Root null JSON is not supported for type: " + rootType);
         }
 
-        List<Node> nodes = traversal.decompose(rootJson, source, rootType);
+        List<Node> nodes = graphWalker.decompose(rootJson, source, rootType);
         return new ObjectGraph(nodes);
     }
 

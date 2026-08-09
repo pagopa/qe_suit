@@ -2,11 +2,11 @@ package it.pagopa.interop.common.infrastructure.objectgraph;
 
 import java.util.Objects;
 
-final class DefaultObjectGraphFacade implements ObjectGraphFacade {
+final class DefaultObjectGraphDecomposer implements ObjectGraphDecomposer {
 
     private final ObjectDecomposer decomposer;
 
-    DefaultObjectGraphFacade(ObjectDecomposer decomposer) {
+    DefaultObjectGraphDecomposer(ObjectDecomposer decomposer) {
         this.decomposer = Objects.requireNonNull(decomposer, "decomposer must not be null");
     }
 

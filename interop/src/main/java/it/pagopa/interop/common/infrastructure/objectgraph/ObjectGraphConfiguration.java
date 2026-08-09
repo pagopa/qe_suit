@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 class ObjectGraphConfiguration {
 
     @Bean
-    ObjectGraphFacade objectGraphFacade(ObjectMapper objectMapper) {
+    ObjectGraphDecomposer objectGraphDecomposer(ObjectMapper objectMapper) {
         ObjectDecomposer decomposer = new JacksonObjectDecomposer(objectMapper);
-        return new DefaultObjectGraphFacade(decomposer);
+        return new DefaultObjectGraphDecomposer(decomposer);
     }
 }
