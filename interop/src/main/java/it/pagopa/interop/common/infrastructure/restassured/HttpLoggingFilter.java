@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.http;
+package it.pagopa.interop.common.infrastructure.restassured;
 
 import io.restassured.filter.Filter;
 import io.restassured.filter.FilterContext;
