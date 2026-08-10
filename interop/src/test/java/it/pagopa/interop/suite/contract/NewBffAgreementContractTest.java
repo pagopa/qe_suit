@@ -44,7 +44,10 @@ public class NewBffAgreementContractTest  {
         AgreementPayload validPayload = requestFactory.creationRequest(createdEservice, createdEservice.getActiveDescriptor(), null);
 
         return httpContract
-                .apiCall(() -> apiClient.agreements().createAgreement())
+                .apiCall(() -> {
+                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
+                    return apiClient.agreements().createAgreement();
+                })
                 .payload(validPayload)
                 .tests();
     }
