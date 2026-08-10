@@ -7,5 +7,13 @@ import java.util.List;
 
 @FunctionalInterface
 interface NodeWalker {
-    void visit(JsonNode jsonNode, Object javaValue, JavaType declaredType, NodePath path, List<Node> nodes);
+    void visit(
+            JsonNode jsonNode,
+            Object javaValue,
+            JavaType declaredType,
+            NodePath path,
+            List<Node> nodes,
+            NodePath parentPath,
+            QueryStep stepFromParent
+    );
 }

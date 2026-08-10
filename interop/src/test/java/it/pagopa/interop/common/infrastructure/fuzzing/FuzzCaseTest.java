@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FuzzCaseTest {
 
-    private static final FuzzMutation MUTATION = new FuzzMutation(FuzzScenario.NULL, FuzzMutationKind.REPLACE, null);
+    private static final FuzzMutation MUTATION = new FuzzMutation(FuzzScenario.REPLACED_WITH_NULL, FuzzMutationKind.REPLACE, null);
 
     @Test
     void rejects_null_target() {

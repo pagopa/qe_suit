@@ -14,26 +14,26 @@ class FuzzMutationTest {
 
     @Test
     void rejects_null_kind() {
-        assertThrows(IllegalArgumentException.class, () -> new FuzzMutation(FuzzScenario.NULL, null, "x"));
+        assertThrows(IllegalArgumentException.class, () -> new FuzzMutation(FuzzScenario.REPLACED_WITH_NULL, null, "x"));
     }
 
     @Test
     void accepts_remove_with_null_value() {
-        assertDoesNotThrow(() -> new FuzzMutation(FuzzScenario.MISSING, FuzzMutationKind.REMOVE, null));
+        assertDoesNotThrow(() -> new FuzzMutation(FuzzScenario.REMOVED, FuzzMutationKind.REMOVE, null));
     }
 
     @Test
     void rejects_remove_with_non_null_value() {
-        assertThrows(IllegalArgumentException.class, () -> new FuzzMutation(FuzzScenario.MISSING, FuzzMutationKind.REMOVE, "x"));
+        assertThrows(IllegalArgumentException.class, () -> new FuzzMutation(FuzzScenario.REMOVED, FuzzMutationKind.REMOVE, "x"));
     }
 
     @Test
     void accepts_replace_with_null_value() {
-        assertDoesNotThrow(() -> new FuzzMutation(FuzzScenario.NULL, FuzzMutationKind.REPLACE, null));
+        assertDoesNotThrow(() -> new FuzzMutation(FuzzScenario.REPLACED_WITH_NULL, FuzzMutationKind.REPLACE, null));
     }
 
     @Test
     void accepts_replace_with_non_null_value() {
-        assertDoesNotThrow(() -> new FuzzMutation(FuzzScenario.EMPTY_STRING, FuzzMutationKind.REPLACE, ""));
+        assertDoesNotThrow(() -> new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, ""));
     }
 }

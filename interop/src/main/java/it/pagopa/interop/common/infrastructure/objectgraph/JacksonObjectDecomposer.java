@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.List;
 import java.util.Objects;
 
 final class JacksonObjectDecomposer implements ObjectDecomposer {
@@ -29,8 +28,8 @@ final class JacksonObjectDecomposer implements ObjectDecomposer {
             throw new ObjectGraphException("Root null JSON is not supported for type: " + rootType);
         }
 
-        List<Node> nodes = graphWalker.decompose(rootJson, source, rootType);
-        return new ObjectGraph(nodes);
+        GraphDecomposition decomposition = graphWalker.decompose(rootJson, source, rootType);
+        return new ObjectGraph(decomposition.nodes(), decomposition.queryEdges());
     }
 
     private JsonNode toJsonTree(Object source, JavaType rootType) {
