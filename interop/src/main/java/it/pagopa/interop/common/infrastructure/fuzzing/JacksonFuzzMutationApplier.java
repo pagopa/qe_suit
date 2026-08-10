@@ -68,9 +68,6 @@ class JacksonFuzzMutationApplier implements FuzzMutationApplier {
 
     private void mutateObjectChild(ObjectNode objectNode, String escapedToken, FuzzMutation mutation, NodePath path) {
         String field = unescape(escapedToken);
-        if (!objectNode.has(field)) {
-            throw new FuzzingException("Object field not found for path: " + path);
-        }
         if (mutation.kind() == FuzzMutationKind.REMOVE) {
             objectNode.remove(field);
             return;
