@@ -11,12 +11,26 @@ import it.pagopa.interop.common.infrastructure.context.inmemory.InMemoryCurrentU
 import it.pagopa.interop.common.infrastructure.context.inmemory.InMemoryEntityStore;
 import it.pagopa.interop.common.infrastructure.context.inmemory.InMemoryLastApiResponseStore;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.TestInfo;
+import org.slf4j.MDC;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.boot.test.context.TestConfiguration;
 
 @TestConfiguration
 public class JunitSupportConfig {
+
+    @BeforeEach
+    void beforeEach(TestInfo testInfo) {
+        MDC.put("scenario", testInfo.getDisplayName());
+    }
+
+    @AfterEach
+    void afterEach() {
+        MDC.remove("scenario");
+    }
 
     @Bean
     @Primary

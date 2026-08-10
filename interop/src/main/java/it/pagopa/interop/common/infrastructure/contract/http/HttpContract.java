@@ -7,7 +7,9 @@ import it.pagopa.interop.common.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.common.infrastructure.objectgraph.ObjectGraph;
 import it.pagopa.interop.common.infrastructure.objectgraph.ObjectGraphDecomposer;
 import it.pagopa.interop.generated.openapi.clients.bff.api.Oper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DynamicTest;
+import org.slf4j.MDC;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,6 +19,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
+@Slf4j
 public final class HttpContract {
     private final ObjectMapper objectMapper;
     private final FuzzEngine fuzzEngine;
@@ -24,12 +27,7 @@ public final class HttpContract {
     private final ContractCasePlanner casePlanner;
     private final OpenApiOperationAdapter operationAdapter;
 
-    public HttpContract(
-            ObjectMapper objectMapper,
-            FuzzEngine fuzzEngine,
-            ObjectGraphDecomposer objectGraphDecomposer,
-            HttpContractPolicy policy
-    ) {
+    public HttpContract(ObjectMapper objectMapper, FuzzEngine fuzzEngine, ObjectGraphDecomposer objectGraphDecomposer, HttpContractPolicy policy) {
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
         this.fuzzEngine = Objects.requireNonNull(fuzzEngine, "fuzzEngine must not be null");
         this.objectGraphDecomposer = Objects.requireNonNull(objectGraphDecomposer, "objectGraphDecomposer must not be null");
@@ -72,16 +70,37 @@ public final class HttpContract {
 
         private DynamicTest toDynamicTest(GeneratedContractCase testCase) {
             String target = testCase.target().isRoot() ? "<root>" : testCase.target().toString();
-            String name = "[" + (testCase.scope() == RequestScope.PAYLOAD ? "payload" : "pathParams")
-                    + "] " + testCase.fuzzCase().mutation().scenario() + " @ " + target;
+
+            String name =
+                    "[" + (testCase.scope() == RequestScope.PAYLOAD
+                            ? "payload"
+                            : "pathParams")
+                            + "] "
+                            + testCase.fuzzCase().mutation().scenario()
+                            + " @ "
+                            + target;
+
             return dynamicTest(name, () -> {
-                Oper operation = operationSupplier.get();
-                if (operation == null) throw new ContractHttpException("operation supplier returned null");
-                Response response = operationAdapter.execute(operation, testCase.request());
+                MDC.put("scenario", name);
+
                 try {
-                    testCase.expectation().accept(response);
-                } catch (AssertionError | RuntimeException exception) {
-                    throw HttpContractFailureDiagnostics.enrich(exception, testCase, response, objectMapper);
+                    Oper operation = operationSupplier.get();
+
+                    if (operation == null)
+                        throw new ContractHttpException(
+                                "operation supplier returned null"
+                        );
+
+                    Response response = operationAdapter.execute(operation, testCase.request());
+
+                    try {
+                        testCase.expectation().accept(response);
+                    } catch (AssertionError | RuntimeException exception) {
+                        throw HttpContractFailureDiagnostics.enrich(exception, testCase, response, objectMapper);
+                    }
+
+                } finally {
+                    MDC.remove("scenario");
                 }
             });
         }
@@ -90,13 +109,7 @@ public final class HttpContract {
         private <T> ScopeState<T> createScope(T source) {
             if (source == null) throw new ContractHttpException("scope source must not be null");
             ObjectGraph graph = objectGraphDecomposer.decompose(source);
-            return new ScopeState<>(
-                    source,
-                    (Class<T>) source.getClass(),
-                    graph,
-                    fuzzEngine.generate(source),
-                    new ScopeOverrides()
-            );
+            return new ScopeState<>(source, (Class<T>) source.getClass(), graph, fuzzEngine.generate(source), new ScopeOverrides());
         }
     }
 
