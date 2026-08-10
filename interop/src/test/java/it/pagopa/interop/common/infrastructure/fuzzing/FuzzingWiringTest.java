@@ -3,10 +3,10 @@ package it.pagopa.interop.common.infrastructure.fuzzing;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.common.infrastructure.objectgraph.ObjectGraphDecomposer;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
@@ -26,16 +26,16 @@ class FuzzingWiringTest {
         }
     }
 
-    @Configuration(proxyBeanMethods = false)
+    @TestConfiguration(proxyBeanMethods = false)
     @ComponentScan(basePackageClasses = FuzzEngine.class)
     static class TestConfig {
         @Bean
-        ObjectMapper objectMapper() {
+        ObjectMapper testObjectMapper() {
             return new ObjectMapper();
         }
 
         @Bean
-        ObjectGraphDecomposer objectGraphDecomposer() {
+        ObjectGraphDecomposer testObjectGraphDecomposer() {
             return mock(ObjectGraphDecomposer.class);
         }
     }
