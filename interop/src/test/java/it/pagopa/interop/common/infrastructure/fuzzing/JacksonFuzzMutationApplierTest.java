@@ -99,11 +99,11 @@ class JacksonFuzzMutationApplierTest {
     }
 
     private FuzzMutation replace(Object value) {
-        return new FuzzMutation(FuzzScenario.NULL, FuzzMutationKind.REPLACE, value);
+        return new FuzzMutation(FuzzScenario.REPLACED_WITH_NULL, FuzzMutationKind.REPLACE, value);
     }
 
     private FuzzMutation remove() {
-        return new FuzzMutation(FuzzScenario.MISSING, FuzzMutationKind.REMOVE, null);
+        return new FuzzMutation(FuzzScenario.REMOVED, FuzzMutationKind.REMOVE, null);
     }
 
     private NodePath path(String pointer) {

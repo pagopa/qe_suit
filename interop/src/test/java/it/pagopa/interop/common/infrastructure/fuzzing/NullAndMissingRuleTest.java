@@ -49,8 +49,8 @@ class NullAndMissingRuleTest {
         List<FuzzMutation> mutations = rule.mutationsFor(node, graph);
 
         assertEquals(2, mutations.size());
-        assertEquals(new FuzzMutation(FuzzScenario.NULL, FuzzMutationKind.REPLACE, null), mutations.get(0));
-        assertEquals(new FuzzMutation(FuzzScenario.MISSING, FuzzMutationKind.REMOVE, null), mutations.get(1));
+        assertEquals(new FuzzMutation(FuzzScenario.REPLACED_WITH_NULL, FuzzMutationKind.REPLACE, null), mutations.get(0));
+        assertEquals(new FuzzMutation(FuzzScenario.REMOVED, FuzzMutationKind.REMOVE, null), mutations.get(1));
     }
 
     private NodePath path(String pointer) {

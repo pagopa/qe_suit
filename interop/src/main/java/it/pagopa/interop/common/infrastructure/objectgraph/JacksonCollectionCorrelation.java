@@ -40,7 +40,7 @@ final class JacksonCollectionCorrelation {
         for (int index = 0; index < arrayNode.size(); index++) {
             Object childValue = Array.get(arrayValue, index);
             JavaType childType = itemType != null ? itemType : resolveFallbackType(childValue);
-            walker.visit(arrayNode.get(index), childValue, childType, path.index(index), nodes);
+            walker.visit(arrayNode.get(index), childValue, childType, path.index(index), nodes, path, new IndexStep(index));
         }
     }
 
@@ -52,7 +52,7 @@ final class JacksonCollectionCorrelation {
             }
             Object childValue = iterator.next();
             JavaType childType = itemType != null ? itemType : resolveFallbackType(childValue);
-            walker.visit(arrayNode.get(index), childValue, childType, path.index(index), nodes);
+            walker.visit(arrayNode.get(index), childValue, childType, path.index(index), nodes, path, new IndexStep(index));
         }
         if (iterator.hasNext()) {
             throw ObjectGraphErrors.fail("Collection and JSON array cardinality mismatch", path, declaredType, null);

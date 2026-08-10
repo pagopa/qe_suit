@@ -58,7 +58,7 @@ class DefaultFuzzEngineTest {
         ObjectGraph graph = objectGraph(List.of(root, scalarNode));
         when(decomposer.decompose(any())).thenReturn(graph);
         when(rule.selector()).thenReturn(NodeSelectors.scalar());
-        FuzzMutation mutation = new FuzzMutation(FuzzScenario.EMPTY_STRING, FuzzMutationKind.REPLACE, "");
+        FuzzMutation mutation = new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, "");
         when(rule.mutationsFor(same(scalarNode), same(graph))).thenReturn(List.of(mutation));
         when(applier.apply(any(), same(scalarNode.path()), same(mutation))).thenReturn(new ObjectMapper().createObjectNode().put("name", ""));
 
@@ -86,12 +86,12 @@ class DefaultFuzzEngineTest {
         FuzzRule scalarRule = mock(FuzzRule.class);
         when(scalarRule.selector()).thenReturn(NodeSelectors.scalar());
         when(scalarRule.mutationsFor(same(scalar), same(graph)))
-                .thenReturn(List.of(new FuzzMutation(FuzzScenario.EMPTY_STRING, FuzzMutationKind.REPLACE, "")));
+                .thenReturn(List.of(new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, "")));
 
         FuzzRule allRule = mock(FuzzRule.class);
         when(allRule.selector()).thenReturn(NodeSelectors.all());
         when(allRule.mutationsFor(any(), same(graph)))
-                .thenReturn(List.of(new FuzzMutation(FuzzScenario.NULL, FuzzMutationKind.REPLACE, null)));
+                .thenReturn(List.of(new FuzzMutation(FuzzScenario.REPLACED_WITH_NULL, FuzzMutationKind.REPLACE, null)));
 
         DefaultFuzzEngine engine = new DefaultFuzzEngine(decomposer, mapper, applier, List.of(scalarRule, allRule));
         engine.generate(new Payload("Mario", "admin"));
@@ -113,13 +113,13 @@ class DefaultFuzzEngineTest {
 
         FuzzRule firstRule = new StaticRule(NodeSelectors.scalar(), node -> {
             if (node.path().toString().equals("/name")) {
-                return List.of(new FuzzMutation(FuzzScenario.SQL_INJECTION, FuzzMutationKind.REPLACE, "' OR '1'='1"));
+                return List.of(new FuzzMutation(FuzzScenario.REPLACED_WITH_SQL_INJECTION, FuzzMutationKind.REPLACE, "' OR '1'='1"));
             }
-            return List.of(new FuzzMutation(FuzzScenario.EMPTY_STRING, FuzzMutationKind.REPLACE, ""));
+            return List.of(new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, ""));
         });
         FuzzRule secondRule = new StaticRule(NodeSelectors.scalar(), node -> {
             if (node.path().toString().equals("/name")) {
-                return List.of(new FuzzMutation(FuzzScenario.WRONG_TYPE_NUMBER, FuzzMutationKind.REPLACE, 124));
+                return List.of(new FuzzMutation(FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER, FuzzMutationKind.REPLACE, 124));
             }
             return List.of();
         });
@@ -130,12 +130,12 @@ class DefaultFuzzEngineTest {
                 .collect(Collectors.toMap(c -> c.target() + "#" + c.mutation().scenario(), Function.identity()));
 
         assertEquals(3, cases.size());
-        assertEquals("' OR '1'='1", byKey.get("/name#SQL_INJECTION").result().at("/name").asText());
-        assertEquals("admin", byKey.get("/name#SQL_INJECTION").result().at("/role").asText());
-        assertEquals("Mario", byKey.get("/role#EMPTY_STRING").result().at("/name").asText());
-        assertEquals("", byKey.get("/role#EMPTY_STRING").result().at("/role").asText());
-        assertEquals(124, byKey.get("/name#WRONG_TYPE_NUMBER").result().at("/name").asInt());
-        assertEquals("admin", byKey.get("/name#WRONG_TYPE_NUMBER").result().at("/role").asText());
+        assertEquals("' OR '1'='1", byKey.get("/name#REPLACED_WITH_SQL_INJECTION").result().at("/name").asText());
+        assertEquals("admin", byKey.get("/name#REPLACED_WITH_SQL_INJECTION").result().at("/role").asText());
+        assertEquals("Mario", byKey.get("/role#REPLACED_WITH_EMPTY_STRING").result().at("/name").asText());
+        assertEquals("", byKey.get("/role#REPLACED_WITH_EMPTY_STRING").result().at("/role").asText());
+        assertEquals(124, byKey.get("/name#REPLACED_WITH_WRONG_TYPE_NUMBER").result().at("/name").asInt());
+        assertEquals("admin", byKey.get("/name#REPLACED_WITH_WRONG_TYPE_NUMBER").result().at("/role").asText());
     }
 
     @Test
@@ -154,9 +154,9 @@ class DefaultFuzzEngineTest {
         List<FuzzCase> cases = engine.generate(new Payload("Mario", "admin"));
         Map<FuzzScenario, FuzzCase> byScenario = cases.stream().collect(Collectors.toMap(c -> c.mutation().scenario(), Function.identity()));
 
-        assertNotNull(byScenario.get(FuzzScenario.NULL).result());
-        assertTrue(byScenario.get(FuzzScenario.NULL).result() instanceof NullNode);
-        assertNull(byScenario.get(FuzzScenario.MISSING).result());
+        assertNotNull(byScenario.get(FuzzScenario.REPLACED_WITH_NULL).result());
+        assertTrue(byScenario.get(FuzzScenario.REPLACED_WITH_NULL).result() instanceof NullNode);
+        assertNull(byScenario.get(FuzzScenario.REMOVED).result());
     }
 
     @Test
@@ -172,7 +172,7 @@ class DefaultFuzzEngineTest {
                 decomposer,
                 mapper,
                 new JacksonFuzzMutationApplier(mapper),
-                List.of(new StaticRule(NodeSelectors.scalar(), n -> List.of(new FuzzMutation(FuzzScenario.EMPTY_STRING, FuzzMutationKind.REPLACE, ""))))
+                List.of(new StaticRule(NodeSelectors.scalar(), n -> List.of(new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, ""))))
         );
         engine.generate(source);
 
@@ -198,7 +198,7 @@ class DefaultFuzzEngineTest {
         Node scalar = new Node(NodeKind.SCALAR, path("/name"), "Mario", String.class);
         ObjectGraph graph = objectGraph(List.of(root, scalar));
         when(decomposer.decompose(any())).thenReturn(graph);
-        FuzzRule rule = new StaticRule(NodeSelectors.scalar(), n -> List.of(new FuzzMutation(FuzzScenario.EMPTY_STRING, FuzzMutationKind.REPLACE, "")));
+        FuzzRule rule = new StaticRule(NodeSelectors.scalar(), n -> List.of(new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, "")));
 
         when(mapper.valueToTree(any())).thenThrow(new RuntimeException("serialization-error"));
         assertThrows(FuzzingException.class, () -> new DefaultFuzzEngine(mockReturningGraph(graph), mapper, applier, List.of(rule)).generate(new Payload("a", "b")));
@@ -223,13 +223,13 @@ class DefaultFuzzEngineTest {
                 mockReturningGraph(graph),
                 mapper,
                 new JacksonFuzzMutationApplier(mapper),
-                List.of(new StaticRule(NodeSelectors.scalar(), n -> List.of(new FuzzMutation(FuzzScenario.EMPTY_STRING, FuzzMutationKind.REPLACE, ""))))
+                List.of(new StaticRule(NodeSelectors.scalar(), n -> List.of(new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, ""))))
         );
 
         FuzzCase fuzzCase = engine.generate(new Payload("Mario", "admin")).get(0);
 
         assertEquals("/name", fuzzCase.target().toString());
-        assertEquals(FuzzScenario.EMPTY_STRING, fuzzCase.mutation().scenario());
+        assertEquals(FuzzScenario.REPLACED_WITH_EMPTY_STRING, fuzzCase.mutation().scenario());
         assertEquals(FuzzMutationKind.REPLACE, fuzzCase.mutation().kind());
         assertEquals("", fuzzCase.mutation().value());
         assertEquals("", fuzzCase.result().at("/name").asText());
@@ -278,14 +278,14 @@ class DefaultFuzzEngineTest {
                         (left, right) -> left
                 ));
 
-        assertEquals("", byKey.get("/profile/name#EMPTY_STRING").result().at("/profile/name").asText());
-        assertEquals("' OR '1'='1", byKey.get("/roles/0#SQL_INJECTION").result().at("/roles/0").asText());
-        assertEquals("not-a-number", byKey.get("/limits/retryCount#WRONG_TYPE_STRING").result().at("/limits/retryCount").asText());
-        assertEquals("Mario", byKey.get("/limits/retryCount#WRONG_TYPE_STRING").result().at("/profile/name").asText());
-        assertEquals(1, byKey.get("/flags/0/enabled#WRONG_TYPE_NUMBER").result().at("/flags/0/enabled").asInt());
-        assertEquals("not-a-valid-uuid-12345", byKey.get("/flags/0/id#MALFORMED_UUID").result().at("/flags/0/id").asText());
-        assertTrue(byKey.get("#NULL").result() instanceof NullNode);
-        assertNull(byKey.get("#MISSING").result());
+        assertEquals("", byKey.get("/profile/name#REPLACED_WITH_EMPTY_STRING").result().at("/profile/name").asText());
+        assertEquals("' OR '1'='1", byKey.get("/roles/0#REPLACED_WITH_SQL_INJECTION").result().at("/roles/0").asText());
+        assertEquals("not-a-number", byKey.get("/limits/retryCount#REPLACED_WITH_WRONG_TYPE_STRING").result().at("/limits/retryCount").asText());
+        assertEquals("Mario", byKey.get("/limits/retryCount#REPLACED_WITH_WRONG_TYPE_STRING").result().at("/profile/name").asText());
+        assertEquals(1, byKey.get("/flags/0/enabled#REPLACED_WITH_WRONG_TYPE_NUMBER").result().at("/flags/0/enabled").asInt());
+        assertEquals("not-a-valid-uuid-12345", byKey.get("/flags/0/id#REPLACED_WITH_MALFORMED_UUID").result().at("/flags/0/id").asText());
+        assertTrue(byKey.get("#REPLACED_WITH_NULL").result() instanceof NullNode);
+        assertNull(byKey.get("#REMOVED").result());
     }
 
     private ObjectGraphDecomposer mockReturningGraph(ObjectGraph graph) {

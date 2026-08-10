@@ -48,73 +48,73 @@ class ScalarRule implements FuzzRule {
 
     private List<FuzzMutation> stringMutations() {
         return List.of(
-                replace(FuzzScenario.EMPTY_STRING, ""),
-                replace(FuzzScenario.BLANK_STRING, "   "),
-                replace(FuzzScenario.LONG_STRING, "A".repeat(5000)),
-                replace(FuzzScenario.SQL_INJECTION, "' OR '1'='1"),
-                replace(FuzzScenario.XSS, "<script>alert(1)</script>"),
-                replace(FuzzScenario.WRONG_TYPE_NUMBER, 124)
+                replace(FuzzScenario.REPLACED_WITH_EMPTY_STRING, ""),
+                replace(FuzzScenario.REPLACED_WITH_BLANK_STRING, "   "),
+                replace(FuzzScenario.REPLACED_WITH_LONG_STRING, "A".repeat(5000)),
+                replace(FuzzScenario.REPLACED_WITH_SQL_INJECTION, "' OR '1'='1"),
+                replace(FuzzScenario.REPLACED_WITH_XSS, "<script>alert(1)</script>"),
+                replace(FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER, 124)
         );
     }
 
     private List<FuzzMutation> integerMutations(Object zero, Object negative, Object min, Object max) {
         return List.of(
-                replace(FuzzScenario.ZERO, zero),
-                replace(FuzzScenario.NEGATIVE, negative),
-                replace(FuzzScenario.MIN_VALUE, min),
-                replace(FuzzScenario.MAX_VALUE, max),
-                replace(FuzzScenario.WRONG_TYPE_STRING, "not-a-number"),
-                replace(FuzzScenario.WRONG_TYPE_DECIMAL, 124.23)
+                replace(FuzzScenario.REPLACED_WITH_ZERO, zero),
+                replace(FuzzScenario.REPLACED_WITH_NEGATIVE_VALUE, negative),
+                replace(FuzzScenario.REPLACED_WITH_MIN_VALUE, min),
+                replace(FuzzScenario.REPLACED_WITH_MAX_VALUE, max),
+                replace(FuzzScenario.REPLACED_WITH_WRONG_TYPE_STRING, "not-a-number"),
+                replace(FuzzScenario.REPLACED_WITH_WRONG_TYPE_DECIMAL, 124.23)
         );
     }
 
     private List<FuzzMutation> bigIntegerMutations() {
         return List.of(
-                replace(FuzzScenario.ZERO, BigInteger.ZERO),
-                replace(FuzzScenario.NEGATIVE, BigInteger.valueOf(-1)),
-                replace(FuzzScenario.WRONG_TYPE_STRING, "not-a-number"),
-                replace(FuzzScenario.WRONG_TYPE_DECIMAL, 124.23)
+                replace(FuzzScenario.REPLACED_WITH_ZERO, BigInteger.ZERO),
+                replace(FuzzScenario.REPLACED_WITH_NEGATIVE_VALUE, BigInteger.valueOf(-1)),
+                replace(FuzzScenario.REPLACED_WITH_WRONG_TYPE_STRING, "not-a-number"),
+                replace(FuzzScenario.REPLACED_WITH_WRONG_TYPE_DECIMAL, 124.23)
         );
     }
 
     private List<FuzzMutation> floatingMutations(Object zero, Object negative, Object min, Object max) {
         return List.of(
-                replace(FuzzScenario.ZERO, zero),
-                replace(FuzzScenario.NEGATIVE, negative),
-                replace(FuzzScenario.MIN_VALUE, min),
-                replace(FuzzScenario.MAX_VALUE, max),
-                replace(FuzzScenario.WRONG_TYPE_STRING, "not-a-number")
+                replace(FuzzScenario.REPLACED_WITH_ZERO, zero),
+                replace(FuzzScenario.REPLACED_WITH_NEGATIVE_VALUE, negative),
+                replace(FuzzScenario.REPLACED_WITH_MIN_VALUE, min),
+                replace(FuzzScenario.REPLACED_WITH_MAX_VALUE, max),
+                replace(FuzzScenario.REPLACED_WITH_WRONG_TYPE_STRING, "not-a-number")
         );
     }
 
     private List<FuzzMutation> bigDecimalMutations() {
         return List.of(
-                replace(FuzzScenario.ZERO, BigDecimal.ZERO),
-                replace(FuzzScenario.NEGATIVE, BigDecimal.valueOf(-1)),
-                replace(FuzzScenario.WRONG_TYPE_STRING, "not-a-number")
+                replace(FuzzScenario.REPLACED_WITH_ZERO, BigDecimal.ZERO),
+                replace(FuzzScenario.REPLACED_WITH_NEGATIVE_VALUE, BigDecimal.valueOf(-1)),
+                replace(FuzzScenario.REPLACED_WITH_WRONG_TYPE_STRING, "not-a-number")
         );
     }
 
     private List<FuzzMutation> booleanMutations() {
         return List.of(
-                replace(FuzzScenario.WRONG_TYPE_STRING, "not-a-boolean"),
-                replace(FuzzScenario.WRONG_TYPE_NUMBER, 1)
+                replace(FuzzScenario.REPLACED_WITH_WRONG_TYPE_STRING, "not-a-boolean"),
+                replace(FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER, 1)
         );
     }
 
     private List<FuzzMutation> uuidMutations() {
         return List.of(
-                replace(FuzzScenario.MALFORMED_UUID, "not-a-valid-uuid-12345"),
-                replace(FuzzScenario.NIL_UUID, "00000000-0000-0000-0000-000000000000"),
-                replace(FuzzScenario.WRONG_TYPE_NUMBER, 123)
+                replace(FuzzScenario.REPLACED_WITH_MALFORMED_UUID, "not-a-valid-uuid-12345"),
+                replace(FuzzScenario.REPLACED_WITH_NIL_UUID, "00000000-0000-0000-0000-000000000000"),
+                replace(FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER, 123)
         );
     }
 
     private List<FuzzMutation> enumMutations() {
         return List.of(
-                replace(FuzzScenario.UNKNOWN_ENUM, "__UNKNOWN__"),
-                replace(FuzzScenario.EMPTY_STRING, ""),
-                replace(FuzzScenario.WRONG_TYPE_NUMBER, 123)
+                replace(FuzzScenario.REPLACED_WITH_UNKNOWN_ENUM, "__UNKNOWN__"),
+                replace(FuzzScenario.REPLACED_WITH_EMPTY_STRING, ""),
+                replace(FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER, 123)
         );
     }
 

@@ -12,8 +12,8 @@ import java.util.List;
 class NullAndMissingRule implements FuzzRule {
 
     private static final List<FuzzMutation> MUTATIONS = List.of(
-            new FuzzMutation(FuzzScenario.NULL, FuzzMutationKind.REPLACE, null),
-            new FuzzMutation(FuzzScenario.MISSING, FuzzMutationKind.REMOVE, null)
+            new FuzzMutation(FuzzScenario.REPLACED_WITH_NULL, FuzzMutationKind.REPLACE, null),
+            new FuzzMutation(FuzzScenario.REMOVED, FuzzMutationKind.REMOVE, null)
     );
 
     @Override

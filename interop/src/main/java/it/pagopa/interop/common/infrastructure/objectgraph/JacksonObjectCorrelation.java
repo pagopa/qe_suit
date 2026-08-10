@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,9 @@ final class JacksonObjectCorrelation {
             }
 
             Object childValue = readPropertyValue(accessor, javaValue, jsonName, path, declaredType);
-            walker.visit(childJson, childValue, accessor.getType(), path.property(jsonName), nodes);
+            Method accessorMethod = resolveAccessorMethod(accessor);
+            QueryStep step = accessorMethod == null ? null : new PropertyStep(accessorMethod);
+            walker.visit(childJson, childValue, accessor.getType(), path.property(jsonName), nodes, path, step);
             visitedChildren++;
         }
 
@@ -71,7 +75,7 @@ final class JacksonObjectCorrelation {
             Object childValue = mapIterator.next().getValue();
             Map.Entry<String, JsonNode> jsonEntry = jsonIterator.next();
             JavaType childType = valueType != null ? valueType : resolveFallbackType(childValue);
-            walker.visit(jsonEntry.getValue(), childValue, childType, path.property(jsonEntry.getKey()), nodes);
+            walker.visit(jsonEntry.getValue(), childValue, childType, path.property(jsonEntry.getKey()), nodes, path, null);
         }
 
         if (mapIterator.hasNext() || jsonIterator.hasNext()) {
@@ -98,5 +102,13 @@ final class JacksonObjectCorrelation {
 
     private JavaType resolveFallbackType(Object value) {
         return value == null ? null : objectMapper.constructType(value.getClass());
+    }
+
+    private Method resolveAccessorMethod(AnnotatedMember accessor) {
+        Member member = accessor.getMember();
+        if (member instanceof Method method) {
+            return method;
+        }
+        return null;
     }
 }
