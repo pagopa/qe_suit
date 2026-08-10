@@ -20,6 +20,8 @@ import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HttpContractCaseGenerationTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -58,6 +60,29 @@ class HttpContractCaseGenerationTest {
         RecordingOper pathMutated = operations.stream().filter(o -> "not-a-valid-uuid".equals(o.pathAgreementId)).findFirst().orElseThrow();
         assertEquals("{\"name\":\"\"}", payloadMutated.capturedBody);
         assertEquals("{\"name\":\"valid\"}", pathMutated.capturedBody);
+    }
+
+    @Test
+    void failingExpectationIncludesDetailedDiagnostics() {
+        ObjectGraphDecomposer decomposer = createDecomposer();
+        FuzzEngine fuzzEngine = source -> List.of(new FuzzCase(
+                path("/name"),
+                new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, ""),
+                objectMapper.createObjectNode().put("name", "")
+        ));
+        HttpContract contract = new HttpContract(objectMapper, fuzzEngine, decomposer, completePolicy());
+
+        var tests = contract.apiCall(FailingOper::new)
+                .payload(new Payload("valid"))
+                .scenario(FuzzScenario.REPLACED_WITH_EMPTY_STRING, response -> response.then().statusCode(200))
+                .tests()
+                .toList();
+
+        AssertionError error = assertThrows(AssertionError.class, () -> tests.get(0).getExecutable().execute());
+        assertTrue(error.getMessage().contains("scenario: REPLACED_WITH_EMPTY_STRING"));
+        assertTrue(error.getMessage().contains("targetPath: /name"));
+        assertTrue(error.getMessage().contains("responseStatus: 400"));
+        assertTrue(error.getMessage().contains("payload: {\"name\":\"\"}"));
     }
 
     private HttpContractPolicy completePolicy() {
@@ -121,6 +146,21 @@ class HttpContractCaseGenerationTest {
         @Override
         public <T> T execute(Function<io.restassured.response.Response, T> handler) {
             return handler.apply(org.mockito.Mockito.mock(io.restassured.response.Response.class));
+        }
+    }
+
+    static class FailingOper implements Oper {
+        public FailingOper reqSpec(java.util.function.Consumer<io.restassured.builder.RequestSpecBuilder> customizer) {
+            customizer.accept(new io.restassured.builder.RequestSpecBuilder());
+            return this;
+        }
+
+        @Override
+        public <T> T execute(Function<io.restassured.response.Response, T> handler) {
+            io.restassured.response.Response response = org.mockito.Mockito.mock(io.restassured.response.Response.class);
+            org.mockito.Mockito.when(response.getStatusCode()).thenReturn(400);
+            org.mockito.Mockito.when(response.asString()).thenReturn("{\"detail\":\"bad request\"}");
+            return handler.apply(response);
         }
     }
 
