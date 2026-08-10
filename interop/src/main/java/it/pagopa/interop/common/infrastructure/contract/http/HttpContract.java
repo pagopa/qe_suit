@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 public final class HttpContract {
+    private final ObjectMapper objectMapper;
     private final FuzzEngine fuzzEngine;
     private final ObjectGraphDecomposer objectGraphDecomposer;
     private final ContractCasePlanner casePlanner;
@@ -29,10 +30,10 @@ public final class HttpContract {
             ObjectGraphDecomposer objectGraphDecomposer,
             HttpContractPolicy policy
     ) {
+        this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
         this.fuzzEngine = Objects.requireNonNull(fuzzEngine, "fuzzEngine must not be null");
         this.objectGraphDecomposer = Objects.requireNonNull(objectGraphDecomposer, "objectGraphDecomposer must not be null");
         Objects.requireNonNull(policy, "policy must not be null");
-        Objects.requireNonNull(objectMapper, "objectMapper must not be null");
         this.casePlanner = new ContractCasePlanner(objectMapper, new MockitoObjectGraphQueryResolver(), policy);
         this.operationAdapter = new OpenApiOperationAdapter(objectMapper);
     }
@@ -77,7 +78,11 @@ public final class HttpContract {
                 Oper operation = operationSupplier.get();
                 if (operation == null) throw new ContractHttpException("operation supplier returned null");
                 Response response = operationAdapter.execute(operation, testCase.request());
-                testCase.expectation().accept(response);
+                try {
+                    testCase.expectation().accept(response);
+                } catch (AssertionError | RuntimeException exception) {
+                    throw HttpContractFailureDiagnostics.enrich(exception, testCase, response, objectMapper);
+                }
             });
         }
 
