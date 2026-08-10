@@ -1,15 +1,9 @@
 package it.pagopa.interop.common.infrastructure.contract.http;
 
-import it.pagopa.interop.common.infrastructure.fuzzing.FuzzCase;
-import it.pagopa.interop.common.infrastructure.objectgraph.ObjectGraph;
-
-import java.util.List;
+import java.util.function.Supplier;
 
 record ScopeState<T>(
-        T source,
-        Class<T> sourceType,
-        ObjectGraph graph,
-        List<FuzzCase> fuzzCases,
+        Supplier<T> sourceSupplier,
         ScopeOverrides overrides
 ) {
 }

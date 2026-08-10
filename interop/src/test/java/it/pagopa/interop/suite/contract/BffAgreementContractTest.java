@@ -11,7 +11,6 @@ import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -35,19 +34,20 @@ public class BffAgreementContractTest {
 
     @TestFactory
     Stream<DynamicTest> createAgreement() {
-        EService createdEservice = interopJourney
-                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
-                .createEService(EServiceDescriptorState.PUBLISHED)
-                .get(EService.class);
-
-        AgreementPayload validPayload = requestFactory.creationRequest(createdEservice, createdEservice.getActiveDescriptor(), null);
 
         return httpContract
                 .apiCall(() -> {
                     interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
                     return apiClient.agreements().createAgreement();
                 })
-                .payload(validPayload)
+                .payload(() -> {
+                    EService createdEservice = interopJourney
+                            .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                            .createEService(EServiceDescriptorState.PUBLISHED)
+                            .get(EService.class);
+
+                    return requestFactory.creationRequest(createdEservice, createdEservice.getActiveDescriptor(), null);
+                })
                 .tests();
     }
 }

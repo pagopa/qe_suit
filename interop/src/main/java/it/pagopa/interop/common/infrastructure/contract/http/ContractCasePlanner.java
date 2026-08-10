@@ -1,6 +1,5 @@
 package it.pagopa.interop.common.infrastructure.contract.http;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import it.pagopa.interop.common.infrastructure.fuzzing.FuzzCase;
@@ -27,20 +26,18 @@ final class ContractCasePlanner {
         this.policy = policy;
     }
 
-    List<GeneratedContractCase> planCases(ScopeState<?> payload, ScopeState<?> pathParams) {
-        JsonNode payloadBaseline = payload == null ? null : objectMapper.valueToTree(payload.source());
-        JsonNode pathBaseline = pathParams == null ? null : objectMapper.valueToTree(pathParams.source());
+    List<GeneratedContractCase> planCases(ScopePlanState<?> payload, ScopePlanState<?> pathParams) {
         List<GeneratedContractCase> out = new ArrayList<>();
         if (payload != null) {
-            out.addAll(planScope(RequestScope.PAYLOAD, payload, payloadBaseline, pathBaseline, pathParams != null));
+            out.addAll(planScope(RequestScope.PAYLOAD, payload));
         }
         if (pathParams != null) {
-            out.addAll(planScope(RequestScope.PATH_PARAMS, pathParams, payloadBaseline, pathBaseline, payload != null));
+            out.addAll(planScope(RequestScope.PATH_PARAMS, pathParams));
         }
         return out;
     }
 
-    private List<GeneratedContractCase> planScope(RequestScope scope, ScopeState<?> state, JsonNode payloadBaseline, JsonNode pathBaseline, boolean payloadPresent) {
+    private List<GeneratedContractCase> planScope(RequestScope scope, ScopePlanState<?> state) {
         MutationValidityResolver validityResolver = new JacksonMutationValidityResolver(objectMapper, state.sourceType());
         Map<Key, Consumer<Response>> targetOverrides = resolveTargetOverrides(state);
         List<GeneratedContractCase> out = new ArrayList<>();
@@ -49,21 +46,13 @@ final class ContractCasePlanner {
             Node node = state.graph().find(fuzzCase.target())
                     .orElseThrow(() -> new ContractHttpException("Cannot resolve node for target path " + fuzzCase.target()));
             ExpectationSelection selection = resolveExpectation(state, targetOverrides, validityResolver, fuzzCase, node);
-            HttpContractRequest request = buildRequest(scope, fuzzCase.result(), payloadBaseline, pathBaseline, payloadPresent);
-            out.add(new GeneratedContractCase(scope, fuzzCase.target(), fuzzCase, request, selection.expectation(), selection.origin()));
+            out.add(new GeneratedContractCase(scope, fuzzCase.target(), fuzzCase.mutation(), selection.expectation(), selection.origin()));
         }
         return out;
     }
 
-    private HttpContractRequest buildRequest(RequestScope scope, JsonNode mutated, JsonNode payloadBaseline, JsonNode pathBaseline, boolean payloadPresent) {
-        if (scope == RequestScope.PAYLOAD) {
-            return new HttpContractRequest(mutated, mutated != null, pathBaseline);
-        }
-        return new HttpContractRequest(payloadBaseline, payloadPresent, mutated);
-    }
-
     private ExpectationSelection resolveExpectation(
-            ScopeState<?> state,
+            ScopePlanState<?> state,
             Map<Key, Consumer<Response>> targetOverrides,
             MutationValidityResolver validityResolver,
             FuzzCase fuzzCase,
@@ -86,7 +75,7 @@ final class ContractCasePlanner {
         return new ExpectationSelection(policy.expectationFor(fuzzCase.mutation().scenario()), ExpectationOrigin.POLICY_UNKNOWN);
     }
 
-    private Map<Key, Consumer<Response>> resolveTargetOverrides(ScopeState<?> state) {
+    private Map<Key, Consumer<Response>> resolveTargetOverrides(ScopePlanState<?> state) {
         Map<Key, Consumer<Response>> out = new java.util.HashMap<>();
         for (ScopeOverrides.TargetOverride targetOverride : state.overrides().targets()) {
             for (TargetExpression<?> expression : targetOverride.targets()) {
