@@ -158,6 +158,10 @@ class HttpContractCaseGenerationTest {
         @Override
         public <T> T execute(Function<io.restassured.response.Response, T> handler) {
             io.restassured.response.Response response = org.mockito.Mockito.mock(io.restassured.response.Response.class);
+            io.restassured.response.ValidatableResponse validatable = org.mockito.Mockito.mock(io.restassured.response.ValidatableResponse.class);
+            org.mockito.Mockito.when(response.then()).thenReturn(validatable);
+            org.mockito.Mockito.when(validatable.statusCode(org.mockito.ArgumentMatchers.anyInt()))
+                    .thenThrow(new AssertionError("unexpected status"));
             org.mockito.Mockito.when(response.getStatusCode()).thenReturn(400);
             org.mockito.Mockito.when(response.asString()).thenReturn("{\"detail\":\"bad request\"}");
             return handler.apply(response);
