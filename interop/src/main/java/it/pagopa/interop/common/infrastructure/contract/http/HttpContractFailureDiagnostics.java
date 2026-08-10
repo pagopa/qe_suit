@@ -12,14 +12,9 @@ final class HttpContractFailureDiagnostics {
         message.append("\n- scope: ").append(testCase.scope());
         message.append("\n- scenario: ").append(testCase.fuzzCase().mutation().scenario());
         message.append("\n- targetPath: ").append(testCase.target().isRoot() ? "<root>" : testCase.target());
-        message.append("\n- expectationOrigin: ").append(testCase.expectationOrigin());
         message.append("\n- mutationKind: ").append(testCase.fuzzCase().mutation().kind());
-        message.append("\n- mutationValue: ").append(String.valueOf(testCase.fuzzCase().mutation().value()));
-        message.append("\n- payloadPresent: ").append(testCase.request().payloadPresent());
-        message.append("\n- payload: ").append(renderJson(testCase.request().payload(), objectMapper));
+        message.append("\n- mutationValue: ").append(testCase.fuzzCase().mutation().value());
         message.append("\n- pathParams: ").append(renderJson(testCase.request().pathParams(), objectMapper));
-        message.append("\n- responseStatus: ").append(readSafely(() -> String.valueOf(response.getStatusCode())));
-        message.append("\n- responseBody: ").append(readSafely(response::asString));
         return new AssertionError(message.toString(), cause);
     }
 
