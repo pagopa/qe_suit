@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.infrastructure.objectgraph;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -166,6 +168,18 @@ class ObjectGraphDecomposerTest {
         assertTrue(exception.getMessage().contains("Failed to serialize source type"));
     }
 
+    @Test
+    void nullablePropertyExcludedByJsonIncludeNonNullIsStillCorrelated() {
+        UUID eserviceId = UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+        UUID descriptorId = UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+        ObjectGraph graph = decomposer.decompose(new GeneratedLikePayload(eserviceId, descriptorId, null));
+
+        Node delegation = byPointer(graph, "/delegationId");
+        assertEquals(NodeKind.SCALAR, delegation.kind());
+        assertNull(delegation.value());
+        assertEquals(UUID.class, delegation.javaType());
+    }
+
     private Node byPointer(ObjectGraph graph, String pointer) {
         return graph.nodes().stream()
                 .filter(node -> node.path().toString().equals(pointer))
@@ -182,6 +196,8 @@ class ObjectGraphDecomposerTest {
     record NullableContainer(String name, Address address, List<String> tags) { }
     record AnnotatedPerson(@JsonProperty("first_name") String firstName, @JsonIgnore String internal) { }
     record EscapedProps(@JsonProperty("foo/bar") String slash, @JsonProperty("foo~bar") String tilde) { }
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    record GeneratedLikePayload(UUID eserviceId, UUID descriptorId, UUID delegationId) { }
 
     static class ExplodingGetter {
         public String getValue() {

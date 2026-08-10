@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.lang.reflect.Member;
@@ -36,7 +37,7 @@ final class JacksonObjectCorrelation {
     private void correlatePojo(ObjectNode objectNode, Object javaValue, JavaType declaredType, NodePath path, List<Node> nodes, NodeWalker walker) {
         BeanDescription description = introspect(declaredType);
         List<BeanPropertyDefinition> properties = description.findProperties();
-        int visitedChildren = 0;
+        int correlatedJsonFields = 0;
 
         for (BeanPropertyDefinition property : properties) {
             AnnotatedMember accessor = property.getAccessor();
@@ -45,19 +46,24 @@ final class JacksonObjectCorrelation {
             }
 
             String jsonName = property.getName();
+            Object childValue = readPropertyValue(accessor, javaValue, jsonName, path, declaredType);
             JsonNode childJson = objectNode.get(jsonName);
             if (childJson == null) {
-                throw ObjectGraphErrors.fail("Cannot correlate property '" + jsonName + "' with JSON object field", path, declaredType, null);
+                if (childValue == null) {
+                    childJson = NullNode.instance;
+                } else {
+                    throw ObjectGraphErrors.fail("Cannot correlate property '" + jsonName + "' with JSON object field", path, declaredType, null);
+                }
+            } else {
+                correlatedJsonFields++;
             }
 
-            Object childValue = readPropertyValue(accessor, javaValue, jsonName, path, declaredType);
             Method accessorMethod = resolveAccessorMethod(accessor);
             QueryStep step = accessorMethod == null ? null : new PropertyStep(accessorMethod);
             walker.visit(childJson, childValue, accessor.getType(), path.property(jsonName), nodes, path, step);
-            visitedChildren++;
         }
 
-        if (visitedChildren != objectNode.size()) {
+        if (correlatedJsonFields != objectNode.size()) {
             throw ObjectGraphErrors.fail("JSON object contains fields that cannot be correlated", path, declaredType, null);
         }
     }

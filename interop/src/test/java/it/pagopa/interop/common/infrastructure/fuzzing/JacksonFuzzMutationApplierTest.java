@@ -91,11 +91,19 @@ class JacksonFuzzMutationApplierTest {
         JsonNode source = objectMapper.readTree("{\"user\":{\"name\":\"Mario\"},\"values\":[\"a\"]}");
 
         assertThrows(FuzzingException.class, () -> applier.apply(source.deepCopy(), path("/missing/name"), replace("x")));
-        assertThrows(FuzzingException.class, () -> applier.apply(source.deepCopy(), path("/user/1"), replace("x")));
+        assertThrows(FuzzingException.class, () -> applier.apply(source.deepCopy(), path("/user/name/child"), replace("x")));
         assertThrows(FuzzingException.class, () -> applier.apply(source.deepCopy(), path("/values/not-an-index"), replace("x")));
         assertThrows(FuzzingException.class, () -> applier.apply(source.deepCopy(), path("/values/2"), remove()));
-        assertThrows(FuzzingException.class, () -> applier.apply(source.deepCopy(), path("/user/surname"), remove()));
-        assertThrows(FuzzingException.class, () -> applier.apply(source.deepCopy(), path("/user/surname"), replace("x")));
+    }
+
+    @Test
+    void object_field_absent_in_json_can_be_replaced_or_removed() throws Exception {
+        JsonNode source = objectMapper.readTree("{\"eserviceId\":\"a\",\"descriptorId\":\"b\"}");
+        JsonNode replaced = applier.apply(source.deepCopy(), path("/delegationId"), replace("not-a-valid-uuid"));
+        assertEquals("not-a-valid-uuid", replaced.at("/delegationId").asText());
+
+        JsonNode removed = applier.apply(source.deepCopy(), path("/delegationId"), remove());
+        assertTrue(removed.at("/delegationId").isMissingNode());
     }
 
     private FuzzMutation replace(Object value) {
