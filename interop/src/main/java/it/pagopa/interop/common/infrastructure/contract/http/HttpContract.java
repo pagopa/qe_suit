@@ -95,7 +95,7 @@ public final class HttpContract {
 
                     try {
                         testCase.expectation().accept(response);
-                    } catch (AssertionError | RuntimeException exception) {
+                    } catch (AssertionError exception) {
                         throw HttpContractFailureDiagnostics.enrich(exception, testCase, response, objectMapper);
                     }
 
