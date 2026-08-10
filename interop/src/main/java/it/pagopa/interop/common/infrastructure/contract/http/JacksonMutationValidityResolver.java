@@ -54,9 +54,8 @@ final class JacksonMutationValidityResolver implements MutationValidityResolver 
         if (meta.minSize != null && value.length() < meta.minSize) return ContractValidity.INVALID;
         if (meta.maxSize != null && value.length() > meta.maxSize) return ContractValidity.INVALID;
 
-        if (meta.notBlank || meta.notEmpty || meta.minSize != null || meta.maxSize != null) {
-            return ContractValidity.VALID;
-        }
+        if (meta.notBlank || meta.notEmpty || meta.minSize != null || meta.maxSize != null) return ContractValidity.VALID;
+
         return ContractValidity.UNKNOWN;
     }
 
@@ -86,22 +85,15 @@ final class JacksonMutationValidityResolver implements MutationValidityResolver 
 
     private JavaType propertyType(BeanPropertyDefinition property) {
         AnnotatedMember accessor = property.getAccessor();
-        if (accessor != null) {
-            return accessor.getType();
-        }
+        if (accessor != null) return accessor.getType();
         return objectMapper.constructType(Object.class);
     }
 
     private JavaType collectionElementType(JavaType type) {
-        if (type.getContentType() != null) {
-            return type.getContentType();
-        }
-        if (type.hasRawClass(List.class)) {
-            return objectMapper.constructType(Object.class);
-        }
-        if (type.isArrayType()) {
-            return type.getContentType();
-        }
+        if (type.getContentType() != null) return type.getContentType();
+        if (type.hasRawClass(List.class)) return objectMapper.constructType(Object.class);
+        if (type.isArrayType()) return type.getContentType();
+
         return objectMapper.constructType(Object.class);
     }
 
