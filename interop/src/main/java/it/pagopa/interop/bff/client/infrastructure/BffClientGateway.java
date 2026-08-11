@@ -8,9 +8,7 @@ import it.pagopa.interop.common.client.application.command.ClientKeyCreationComm
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.infrastructure.template.action.TestChain;
 import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.interop.common.kernel.domain.ClientRef;
-import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AddUsersToClientRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
@@ -48,16 +46,25 @@ public class BffClientGateway implements ClientGateway {
             case CONSUMER -> restClient.createConsumerClient(bffCommand.getClientSeed());
         };
 
-        Client client = createClientChain
+        return createClientChain
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(ref -> getClient(ClientRef.of(ref.getId())))
+                .map(ref -> {
+                    Client client = getClient(ClientRef.of(ref.getId()));
+
+                    // Associo le chiavi se specificato dal command
+                    bffCommand.getKeysCommands().forEach(keyCommand -> {
+                        addKeys(client, keyCommand.getKeySeed());
+                        client.getKeys().add(keyCommand.getKey());
+                    });
+
+                    // Associo i membri al client
+                    List<UserRef> linkedUsers = bffCommand.getUsers();
+                    client.getUsers().addAll(linkedUsers);
+
+                    return client;
+                })
+                .updateContext()
                 .get();
-
-        // Associo le chiavi se specificato dal command
-        List<KeySeed> keys = bffCommand.getKeys();
-        addKeys(client, keys.toArray(new KeySeed[0]));
-
-        return getClient(ClientRef.of(client.getId()));
     }
 
     @Override

@@ -78,9 +78,8 @@ public class PollingAction<Response> implements ResponseFinalizer<Response> {
 
     @Override
     public <T> ResponseFinalizer<T> map(Function<? super Response, ? extends T> mapper) {
-        ResponseFinalizer<Response> source = this;
-
-        return new MappedResponseFinalizer<>(source, mapper);
+        T mappedResponse = mapper.apply(get());
+        return new ResolvedResponseFinalizer<>(mappedResponse, raw, entityStore);
     }
 
     @Override

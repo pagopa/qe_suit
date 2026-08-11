@@ -7,6 +7,7 @@ import it.pagopa.interop.common.infrastructure.utils.RandomUtils;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class ClientJourneySteps {
                         clientConfig
                                 .name(RandomUtils.randomAlphanumericName("client"))
                                 .kind(ClientKind.CONSUMER)
-                                .users(User.getTenantUser(consumer, userRole))
+                                .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
                                 .keys(List.of(ClientKeyCreationCommand::randomClientConsumerKey))
                 )
                 .linkPurposeToClient(purpose);
@@ -39,7 +40,7 @@ public class ClientJourneySteps {
                         clientConfig
                                 .name(RandomUtils.randomAlphanumericName("client"))
                                 .kind(ClientKind.API)
-                                .users(User.getTenantUser(consumer, userRole))
+                                .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
                                 .keys(List.of(ClientKeyCreationCommand::randomClientConsumerKey))
                 );
     }
