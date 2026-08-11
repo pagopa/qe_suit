@@ -8,14 +8,14 @@ import it.pagopa.interop.generated.openapi.clients.bff.api.Oper;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public final class HttpContract {
+public final class HttpContractValidator {
     private final ObjectMapper objectMapper;
     private final FuzzEngine fuzzEngine;
     private final ObjectGraphDecomposer objectGraphDecomposer;
     private final ContractCasePlanner casePlanner;
     private final OpenApiOperationAdapter operationAdapter;
 
-    public HttpContract(ObjectMapper objectMapper, FuzzEngine fuzzEngine, ObjectGraphDecomposer objectGraphDecomposer, HttpContractPolicy policy) {
+    public HttpContractValidator(ObjectMapper objectMapper, FuzzEngine fuzzEngine, ObjectGraphDecomposer objectGraphDecomposer, HttpContractPolicy policy) {
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
         this.fuzzEngine = Objects.requireNonNull(fuzzEngine, "fuzzEngine must not be null");
         this.objectGraphDecomposer = Objects.requireNonNull(objectGraphDecomposer, "objectGraphDecomposer must not be null");

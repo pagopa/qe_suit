@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class HttpContractCaseGenerationTest {
+class HttpContractValidatorCaseGenerationTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
@@ -38,7 +38,7 @@ class HttpContractCaseGenerationTest {
             return List.of(new FuzzCase(path("/agreementId"), new FuzzMutation(FuzzScenario.REPLACED_WITH_MALFORMED_UUID, FuzzMutationKind.REPLACE, "not-a-valid-uuid"), params));
         };
 
-        HttpContract contract = new HttpContract(objectMapper, fuzzEngine, decomposer, completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, decomposer, completePolicy());
         List<RecordingOper> operations = new ArrayList<>();
         AtomicInteger counter = new AtomicInteger();
         var tests = contract.apiCall(() -> {
@@ -70,7 +70,7 @@ class HttpContractCaseGenerationTest {
                 new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, ""),
                 objectMapper.createObjectNode().put("name", "")
         ));
-        HttpContract contract = new HttpContract(objectMapper, fuzzEngine, decomposer, completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, decomposer, completePolicy());
 
         var tests = contract.apiCall(FailingOper::new)
                 .payload(new Payload("valid"))
