@@ -22,8 +22,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static it.pagopa.interop.common.client.domain.ClientKind.CONSUMER;
-import static it.pagopa.interop.common.infrastructure.security.jwt.JwtBuilder.applyOverrides;
-import static it.pagopa.interop.common.infrastructure.security.jwt.JwtUtils.calculateKidFromPublicKey;
+import static it.pagopa.interop.common.infrastructure.utils.jwt.JwtBuilder.applyOverrides;
+import static it.pagopa.interop.common.infrastructure.utils.jwt.JwtUtils.calculateKidFromPublicKey;
+
 
 @Slf4j
 @Service
