@@ -17,16 +17,27 @@ public class HttpLoggingFilter implements Filter {
                            FilterableResponseSpecification responseSpec,
                            FilterContext ctx) {
 
-        // 1. Log della Request
         logRequest(requestSpec);
 
-        // 2. Esecuzione della chiamata HTTP
-        Response response = ctx.next(requestSpec, responseSpec);
+        Response originalResponse = ctx.next(requestSpec, responseSpec);
 
-        // 3. Log della Response
-        logResponse(response);
+        // Salva il body SUBITO DOPO aver ricevuto la response
+        // Prima che altri filtri (come OpenApiValidationFilter) lo consumino o lancino eccezioni
+        String cachedBody = null;
+        try {
+            cachedBody = originalResponse.asString();
+        } catch (Exception e) {
+            logger.warn("Could not cache response body", e);
+        }
 
-        return response;
+        // Prova a loggare con il body salvato
+        try {
+            logResponseWithCachedBody(originalResponse, cachedBody);
+        } catch (Exception e) {
+            logger.warn("Could not log response", e);
+        }
+
+        return originalResponse;
     }
 
     private void logRequest(FilterableRequestSpecification requestSpec) {
@@ -44,7 +55,7 @@ public class HttpLoggingFilter implements Filter {
         }
     }
 
-    private void logResponse(Response response) {
+    private void logResponseWithCachedBody(Response response, String cachedBody) {
         logger.info("Response Status Code: {}", response.getStatusCode());
 
         // Estrae il testo dello status (es: "OK" da "HTTP/1.1 200 OK")
@@ -58,10 +69,9 @@ public class HttpLoggingFilter implements Filter {
                 logger.info("Response Header: {} = {}", header.getName(), header.getValue())
         );
 
-        // Logs response body (Sicuro: REST Assured non consuma lo stream qui)
-        String responseBody = response.asString();
-        if (responseBody != null && !responseBody.isBlank()) {
-            logger.info("Response Body: {}", responseBody);
+        // Logs response body (usando il body cachato PRIMA che altri filtri lo consumino)
+        if (cachedBody != null && !cachedBody.isBlank()) {
+            logger.info("Response Body: {}", cachedBody);
         }
     }
 }
