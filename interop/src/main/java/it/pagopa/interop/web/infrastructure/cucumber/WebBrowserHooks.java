@@ -15,7 +15,7 @@ public class WebBrowserHooks {
 
     @After
     public void afterScenario() {
-        log.info("Closing web presentation gateway for scenario: {}", MDC.get("scenario"));
+        log.info("Closing web presentation gateway");
         webPresentationGateway.close();
     }
 }
