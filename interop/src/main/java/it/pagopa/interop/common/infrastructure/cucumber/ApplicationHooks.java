@@ -18,6 +18,7 @@ public class ApplicationHooks {
 
     @Before
     public void beforeScenario(Scenario scenario) {
+        currentTestKind.setCurrentTestKind(TestKind.FLOW);
         MDC.put("scenario", scenario.getName());
     }
 
