@@ -18,7 +18,7 @@ import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class HttpContractPrecedenceTest {
+class HttpContractValidatorPrecedenceTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
@@ -36,7 +36,7 @@ class HttpContractPrecedenceTest {
             builder.scenario(scenario, response -> policyCount.incrementAndGet());
         }
 
-        HttpContract contract = new HttpContract(
+        HttpContractValidator contract = new HttpContractValidator(
                 objectMapper,
                 fuzzEngine,
                 createDecomposer(),

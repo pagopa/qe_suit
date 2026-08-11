@@ -1,7 +1,7 @@
 package it.pagopa.interop.bff.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.interop.common.infrastructure.contract.http.HttpContract;
+import it.pagopa.interop.common.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.interop.common.infrastructure.contract.http.HttpContractPolicy;
 import it.pagopa.interop.common.infrastructure.fuzzing.FuzzEngine;
 import it.pagopa.interop.common.infrastructure.fuzzing.FuzzScenario;
@@ -15,13 +15,13 @@ import java.util.List;
 public class BffApiContractConfig {
 
     @Bean("bffApiContract")
-    HttpContract bffApiContract(
+    HttpContractValidator bffApiContract(
             ObjectMapper objectMapper,
             FuzzEngine fuzzEngine,
             ObjectGraphDecomposer objectGraphDecomposer,
             HttpContractPolicy bffApiContractPolicy
     ) {
-        return new HttpContract(
+        return new HttpContractValidator(
                 objectMapper,
                 fuzzEngine,
                 objectGraphDecomposer,

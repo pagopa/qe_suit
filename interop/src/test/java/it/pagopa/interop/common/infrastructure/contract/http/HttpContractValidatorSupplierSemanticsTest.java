@@ -31,12 +31,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class HttpContractSupplierSemanticsTest {
+class HttpContractValidatorSupplierSemanticsTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     void supplierOverloadsAreAvailableFromAllStagesAndNullSuppliersFailFast() {
-        HttpContract contract = new HttpContract(objectMapper, source -> List.of(), createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, source -> List.of(), createDecomposer(), completePolicy());
 
         Supplier<Payload> payloadSupplier = () -> new Payload("id", "name", List.of(new Contact("x@y")));
         Supplier<PathParams> pathSupplier = () -> new PathParams("agreement", "descriptor");
@@ -67,7 +67,7 @@ class HttpContractSupplierSemanticsTest {
         FuzzEngine fuzzEngine = source -> source instanceof Payload
                 ? List.of(payloadNameCase(""))
                 : List.of(pathAgreementCase("bad-uuid"));
-        HttpContract contract = new HttpContract(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
 
         var stage = contract.apiCall(SimpleOper::new)
                 .payload(() -> {
@@ -103,7 +103,7 @@ class HttpContractSupplierSemanticsTest {
             }
             return List.of();
         };
-        HttpContract contract = new HttpContract(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
 
         var tests = contract.apiCall(() -> {
                     CapturingOper operation = new CapturingOper("op-" + operationCounter.incrementAndGet());
@@ -147,7 +147,7 @@ class HttpContractSupplierSemanticsTest {
             Payload payload = (Payload) source;
             return List.of(payloadNameCase("", payload.id()));
         };
-        HttpContract contract = new HttpContract(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
         CapturingOper operation = new CapturingOper("op");
 
         var tests = contract.apiCall(() -> operation)
@@ -178,7 +178,7 @@ class HttpContractSupplierSemanticsTest {
                             .add(objectMapper.createObjectNode().put("email", ""))
             ));
         };
-        HttpContract contract = new HttpContract(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
         var tests = contract.apiCall(SimpleOper::new)
                 .payload(() -> payloadCounter.incrementAndGet() == 1
                         ? new Payload("id", "name", List.of(new Contact("a@b")))
@@ -202,7 +202,7 @@ class HttpContractSupplierSemanticsTest {
             if (invocation == 1) return List.of(caseA);
             return List.of(caseA, payloadNameCase(""));
         };
-        HttpContract contract = new HttpContract(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
         var tests = contract.apiCall(SimpleOper::new)
                 .payload(() -> new Payload("id", "name", List.of(new Contact("x@y"))))
                 .tests()
@@ -216,7 +216,7 @@ class HttpContractSupplierSemanticsTest {
     void supplierExceptionsKeepOriginalCauseAndContext() {
         AtomicInteger counter = new AtomicInteger();
         FuzzEngine fuzzEngine = source -> List.of(payloadNameCase(""));
-        HttpContract contract = new HttpContract(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
         var tests = contract.apiCall(SimpleOper::new)
                 .payload(() -> {
                     if (counter.incrementAndGet() == 1) return new Payload("id", "name", List.of(new Contact("x@y")));
@@ -239,7 +239,7 @@ class HttpContractSupplierSemanticsTest {
             Payload payload = (Payload) source;
             return List.of(payloadNameCase("", payload.id()));
         };
-        HttpContract contract = new HttpContract(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
         ConcurrentLinkedQueue<CapturingOper> operations = new ConcurrentLinkedQueue<>();
 
         var tests = contract.apiCall(() -> {
