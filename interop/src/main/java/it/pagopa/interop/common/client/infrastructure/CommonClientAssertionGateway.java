@@ -7,9 +7,10 @@ import it.pagopa.interop.common.client.application.ClientAssertionGateway;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.client.domain.ClientAssertionClaimOverride;
-import it.pagopa.interop.common.infrastructure.context.EntityStore;
+import it.pagopa.interop.common.kernel.context.EntityStore;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class CommonClientAssertionGateway implements ClientAssertionGateway {
     private final EntityStore  entityStore;
     private final ClientAssertionClaimOverrideMapper mapper;
 
-    public ClientAssertion createClientAssertion(Client client, Purpose purpose, KeyPair keyPair, List<ClientAssertionClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
+    public ClientAssertion createClientAssertion(Client client, Purpose purpose, KeyPair keyPair, List<ClientAssertionClaimOverride> overrides) throws NoSuchAlgorithmException {
         KeyPair kp = Optional.ofNullable(keyPair).orElseGet(() -> client.getLastKey().pair());
         JwtBuilder builder = buildJwt(client, purpose, kp);
 
@@ -56,7 +57,8 @@ public class CommonClientAssertionGateway implements ClientAssertionGateway {
         return clientAssertion;
     }
 
-    private JwtBuilder buildJwt(Client client, Purpose purpose, KeyPair keyPair) throws NoSuchAlgorithmException, JsonProcessingException {
+    @SneakyThrows
+    private JwtBuilder buildJwt(Client client, Purpose purpose, KeyPair keyPair) throws NoSuchAlgorithmException {
         String clientId = client.getId().toString();
         String rawKid = calculateKidFromPublicKey(keyPair.getPublic());
 

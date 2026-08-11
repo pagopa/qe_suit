@@ -1,6 +1,6 @@
-package it.pagopa.interop.common.infrastructure.cucumber.context;
+package it.pagopa.interop.common.infrastructure.context.cucumber;
 
-import it.pagopa.interop.common.infrastructure.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 
