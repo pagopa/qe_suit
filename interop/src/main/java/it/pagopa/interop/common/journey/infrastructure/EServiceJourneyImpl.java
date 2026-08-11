@@ -6,7 +6,7 @@ import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
-import it.pagopa.interop.common.infrastructure.context.EntityStore;
+import it.pagopa.interop.common.kernel.context.EntityStore;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

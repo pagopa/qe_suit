@@ -9,7 +9,7 @@ import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.infrastructure.context.EntityStore;
+import it.pagopa.interop.common.kernel.context.EntityStore;
 import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;

@@ -4,7 +4,7 @@ import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.infrastructure.context.EntityStore;
+import it.pagopa.interop.common.kernel.context.EntityStore;
 import it.pagopa.interop.common.kernel.security.DPoPProof;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;

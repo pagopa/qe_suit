@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.config;
 
-import it.pagopa.interop.common.infrastructure.context.*;
 import it.pagopa.interop.common.infrastructure.context.inmemory.*;
+import it.pagopa.interop.common.kernel.context.*;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

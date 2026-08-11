@@ -1,6 +1,6 @@
-package it.pagopa.interop.common.infrastructure.cucumber.context;
+package it.pagopa.interop.common.infrastructure.context.cucumber;
 
-import it.pagopa.interop.common.infrastructure.context.CurrentChannel;
+import it.pagopa.interop.common.kernel.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.Getter;
 import lombok.Setter;

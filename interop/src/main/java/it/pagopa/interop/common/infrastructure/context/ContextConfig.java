@@ -1,7 +1,8 @@
 package it.pagopa.interop.common.infrastructure.context;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.common.infrastructure.cucumber.context.*;
+import it.pagopa.interop.common.infrastructure.context.cucumber.*;
+import it.pagopa.interop.common.kernel.context.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

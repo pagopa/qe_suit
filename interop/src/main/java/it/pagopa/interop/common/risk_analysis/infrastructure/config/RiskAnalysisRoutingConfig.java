@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.risk_analysis.infrastructure.config;
 
 import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
-import it.pagopa.interop.common.infrastructure.context.CurrentChannel;
+import it.pagopa.interop.common.kernel.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import lombok.RequiredArgsConstructor;

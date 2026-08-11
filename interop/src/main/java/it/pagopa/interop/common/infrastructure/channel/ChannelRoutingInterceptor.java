@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.channel;
 
-import it.pagopa.interop.common.infrastructure.context.CurrentChannel;
+import it.pagopa.interop.common.kernel.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.aopalliance.intercept.MethodInterceptor;

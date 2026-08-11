@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.client.application;
 
-import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.client.domain.ClientAssertionClaimOverride;

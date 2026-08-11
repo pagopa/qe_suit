@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.context.inmemory;
 
-import it.pagopa.interop.common.infrastructure.context.CurrentTestKind;
+import it.pagopa.interop.common.kernel.context.CurrentTestKind;
 import it.pagopa.interop.common.kernel.domain.TestKind;
 
 import java.util.concurrent.atomic.AtomicReference;
