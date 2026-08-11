@@ -8,7 +8,7 @@ import it.pagopa.interop.common.kernel.domain.KeyUse;
 
 public interface ClientKeyCreationCommand {
     ClientKeyCreationCommand name(String name);
-    ClientKeyCreationCommand key(String key);
+    ClientKeyCreationCommand key(Key key);
     ClientKeyCreationCommand use(KeyUse use);
     ClientKeyCreationCommand alg(String alg);
 
@@ -18,7 +18,7 @@ public interface ClientKeyCreationCommand {
 
         return this
                 .name(RandomUtils.randomAlphanumericName("key"))
-                .key(JwtUtils.encodeDelimitedPublicKeyBase64(key.pair().getPublic()))
+                .key(key)
                 .alg(JwtUtils.resolveAlgorithm(algorithm))
                 .use(KeyUse.SIG);
     }

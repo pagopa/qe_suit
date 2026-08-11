@@ -3,6 +3,7 @@ package it.pagopa.interop.bff.infrastructure.mapping;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.kernel.domain.Delegation;
 import it.pagopa.interop.common.kernel.domain.DelegationTenant;
+import it.pagopa.interop.common.kernel.domain.Key;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.mapstruct.Mapper;

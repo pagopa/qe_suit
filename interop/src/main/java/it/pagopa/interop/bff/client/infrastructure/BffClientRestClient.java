@@ -27,6 +27,20 @@ public class BffClientRestClient extends RestClient {
         );
     }
 
+    public TestChain<PublicKeys> getClientKeys(@Nonnull UUID clientId) {
+        return execute(
+                () -> clientsApi.getClientKeys().clientIdPath(clientId).execute(Function.identity()),
+                PublicKeys.class
+        );
+    }
+
+    public TestChain<CompactUser> getClientUsers(@Nonnull UUID clientId) {
+        return execute(
+                () -> clientsApi.getClientUsers().clientIdPath(clientId).execute(Function.identity()),
+                CompactUser.class
+        );
+    }
+
     public TestChain<CreatedResource> createApiClient(@Nonnull ClientSeed clientSeed) {
         return execute(
                 () -> clientsApi.createApiClient().body(clientSeed).execute(Function.identity()),

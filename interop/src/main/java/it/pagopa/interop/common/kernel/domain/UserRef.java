@@ -10,4 +10,8 @@ import lombok.extern.jackson.Jacksonized;
 public class UserRef {
     User user;
     Tenant tenant;
+
+    public static UserRef of(User user, Tenant tenant) {
+        return new UserRef(user, tenant);
+    }
 }

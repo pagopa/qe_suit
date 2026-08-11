@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.client.application.command;
 
 import it.pagopa.interop.common.client.domain.ClientKind;
-import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.domain.UserRef;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -11,9 +11,9 @@ public interface ClientCreationCommand {
 
     ClientCreationCommand kind(ClientKind kind);
 
-    ClientCreationCommand users(List<User> users);
+    ClientCreationCommand users(List<UserRef> users);
 
-    default ClientCreationCommand users(User... users) {
+    default ClientCreationCommand users(UserRef... users) {
         return users(List.of(users));
     }
 

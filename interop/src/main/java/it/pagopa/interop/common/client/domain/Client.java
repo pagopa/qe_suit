@@ -9,9 +9,7 @@ import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Value
 @Builder(toBuilder = true)
@@ -21,17 +19,26 @@ public class Client implements Identifiable {
     UUID consumerId;
     String name;
     String description;
-    List<Key> keys;
+
+    @Builder.Default
+    LinkedHashSet<Key> keys = new LinkedHashSet<>();
+
     ClientKind kind;
     User admin;
-    Set<Purpose> purposes;
-    Set<UserRef> users;
+
+    @Builder.Default
+    List<Purpose> purposes = new LinkedList<>();
+
+    @Builder.Default
+    List<UserRef> users  = new LinkedList<>();
 
     public Key getLastKey() {
-        if (keys == null || keys.isEmpty()) {
+        if (keys.isEmpty()) {
             return null;
         }
 
-        return keys.get(keys.size() - 1);
+        return keys.stream()
+                .reduce((first, second) -> second)
+                .orElse(null);
     }
 }
