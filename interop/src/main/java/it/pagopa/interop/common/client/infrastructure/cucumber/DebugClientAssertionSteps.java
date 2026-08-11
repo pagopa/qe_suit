@@ -12,6 +12,8 @@ import it.pagopa.interop.common.client.domain.ClientAssertion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -46,16 +48,43 @@ public class DebugClientAssertionSteps {
     }
 
     @Then("i risultati della validazione della {currentClientAssertion} sono:")
-    public void checkValidationResult(ClientAssertion clientAssertion, DebugClientAssertionValidation expected) {
+    public void checkValidationResult(ClientAssertion clientAssertion, List<ValidationExpected> expected) {
         DebugClientAssertionValidation actual = entityStore.find(
                         DebugClientAssertionValidation.class,
-                        validation -> validation.getClientAssertion().getId().equals(clientAssertion.getId())
+                        validation -> validation.getClientAssertion().getClientAssertion().equals(clientAssertion.getClientAssertion())
                 )
                 .orElseThrow(() -> new AssertionError("Client assertion validation not found"));
 
-        assertThat(actual)
-                .as("Validation result for clientAssertion: %s", clientAssertion)
-                .isEqualTo(expected);
+        expected.forEach(validation -> {
+            DebugClientAssertionValidation.ValidationResult actualResult =
+                    getValidationResult(actual, validation.step());
+
+            assertThat(actualResult)
+                    .as(
+                            "Validation result for step '%s' of clientAssertion: %s",
+                            validation.step(),
+                            clientAssertion
+                    )
+                    .isNotNull();
+
+            assertThat(actualResult.getStatus())
+                    .as("Status for validation step '%s'", validation.step())
+                    .isEqualTo(validation.result());
+
+            assertThat(actualResult.getErrorsCode())
+                    .as("Errors for validation step '%s'", validation.step())
+                    .containsExactlyElementsOf(validation.errorsAsList());
+        });
+    }
+
+    private DebugClientAssertionValidation.ValidationResult getValidationResult(DebugClientAssertionValidation validation, ValidationStep step) {
+        return switch (step) {
+            case clientAssertionValidation -> validation.getClientAssertionValidation();
+            case publicKeyRetrieve -> validation.getPublicKeyRetrieve();
+            case clientAssertionSignatureVerification -> validation.getClientAssertionSignatureVerification();
+            case platformStatesVerification -> validation.getPlatformStatesVerification();
+            case dpopValidation, dpopProofValidation -> validation.getDpopValidation();
+        };
     }
 
     //TODO: questo è un test di contratto a va gestito diversamente
