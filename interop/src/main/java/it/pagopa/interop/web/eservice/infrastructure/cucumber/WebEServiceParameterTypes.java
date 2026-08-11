@@ -14,7 +14,10 @@ public class WebEServiceParameterTypes {
     private static final String ESERVICE_CREATION_PAGE_ALIAS =
             "EServiceCreation|EserviceCreation|Creazione eservice|Creazione EService|Creazione Eservice";
 
-    private static final String PAGE_TYPES = ESERVICE_CREATION_PAGE_ALIAS;
+    private static final String DEBUG_CLIENT_ASSERTION_PAGE_ALIAS =
+            "DebugClientAssertion|Debug Client Assertion";
+
+    private static final String PAGE_TYPES = ESERVICE_CREATION_PAGE_ALIAS + "|" + DEBUG_CLIENT_ASSERTION_PAGE_ALIAS;
 
     private final EServiceCreationPage eServiceCreationPage;
 
