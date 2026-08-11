@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.utils.jwt;
+package it.pagopa.interop.common.kernel.utils.jwt;
 
 import java.util.List;
 

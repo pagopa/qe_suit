@@ -91,20 +91,12 @@ public class DebugClientAssertionValidation implements Identifiable {
 
         @Builder
         @Jacksonized
-        public ClientAssertionValidation(
-                Status status,
-                boolean success,
-                List<String> errorsCode
-        ) {
+        public ClientAssertionValidation(Status status, boolean success, List<String> errorsCode) {
             super(status, success, errorsCode);
         }
 
         public ClientAssertionValidation(ValidationResult result) {
-            this(
-                    result.getStatus(),
-                    result.isSuccess(),
-                    result.getErrorsCode()
-            );
+            this(result.getStatus(), result.isSuccess(), result.getErrorsCode());
         }
     }
 
@@ -115,20 +107,12 @@ public class DebugClientAssertionValidation implements Identifiable {
 
         @Builder
         @Jacksonized
-        public PublicKeyValidation(
-                Status status,
-                boolean success,
-                List<String> errorsCode
-        ) {
+        public PublicKeyValidation(Status status, boolean success, List<String> errorsCode) {
             super(status, success, errorsCode);
         }
 
         public PublicKeyValidation(ValidationResult result) {
-            this(
-                    result.getStatus(),
-                    result.isSuccess(),
-                    result.getErrorsCode()
-            );
+            this(result.getStatus(), result.isSuccess(), result.getErrorsCode());
         }
     }
 
@@ -139,20 +123,12 @@ public class DebugClientAssertionValidation implements Identifiable {
 
         @Builder
         @Jacksonized
-        public SignatureValidation(
-                Status status,
-                boolean success,
-                List<String> errorsCode
-        ) {
+        public SignatureValidation(Status status, boolean success, List<String> errorsCode) {
             super(status, success, errorsCode);
         }
 
         public SignatureValidation(ValidationResult result) {
-            this(
-                    result.getStatus(),
-                    result.isSuccess(),
-                    result.getErrorsCode()
-            );
+            this(result.getStatus(), result.isSuccess(), result.getErrorsCode());
         }
     }
 
@@ -163,20 +139,12 @@ public class DebugClientAssertionValidation implements Identifiable {
 
         @Builder
         @Jacksonized
-        public PlatformValidation(
-                Status status,
-                boolean success,
-                List<String> errorsCode
-        ) {
+        public PlatformValidation(Status status, boolean success, List<String> errorsCode) {
             super(status, success, errorsCode);
         }
 
         public PlatformValidation(ValidationResult result) {
-            this(
-                    result.getStatus(),
-                    result.isSuccess(),
-                    result.getErrorsCode()
-            );
+            this(result.getStatus(), result.isSuccess(), result.getErrorsCode());
         }
     }
 
@@ -187,20 +155,12 @@ public class DebugClientAssertionValidation implements Identifiable {
 
         @Builder
         @Jacksonized
-        public DPoPValidation(
-                Status status,
-                boolean success,
-                List<String> errorsCode
-        ) {
+        public DPoPValidation(Status status, boolean success, List<String> errorsCode) {
             super(status, success, errorsCode);
         }
 
         public DPoPValidation(ValidationResult result) {
-            this(
-                    result.getStatus(),
-                    result.isSuccess(),
-                    result.getErrorsCode()
-            );
+            this(result.getStatus(), result.isSuccess(), result.getErrorsCode());
         }
     }
 

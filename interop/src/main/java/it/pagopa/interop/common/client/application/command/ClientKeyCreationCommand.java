@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.client.application.command;
 
-import it.pagopa.interop.common.infrastructure.utils.RandomUtils;
-import it.pagopa.interop.common.infrastructure.utils.jwt.JwtUtils;
+import it.pagopa.interop.common.kernel.utils.RandomUtils;
+import it.pagopa.interop.common.kernel.utils.jwt.JwtUtils;
 import it.pagopa.interop.common.kernel.domain.Key;
 import it.pagopa.interop.common.kernel.domain.KeyAlgorithm;
 import it.pagopa.interop.common.kernel.domain.KeyUse;
