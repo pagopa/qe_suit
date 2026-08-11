@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.client.infrastructure.config;
 
+import it.pagopa.interop.common.client.application.ClientCommandFactory;
 import it.pagopa.interop.common.client.application.ClientGateway;
 import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
 import it.pagopa.interop.common.infrastructure.context.CurrentChannel;
@@ -15,7 +16,7 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 
 @Configuration
 @RequiredArgsConstructor
-@EnablePluginRegistries({ClientGateway.class})
+@EnablePluginRegistries({ClientGateway.class, ClientCommandFactory.class})
 public class ClientRoutingConfig {
 
     private final ObjectProvider<CurrentChannel> currentChannelProvider;
@@ -30,5 +31,16 @@ public class ClientRoutingConfig {
         proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
 
         return (ClientGateway) proxyFactory.getProxy();
+    }
+
+    @Bean
+    @Primary
+    public ClientCommandFactory transparentClientCommandFactory(
+            PluginRegistry<ClientCommandFactory, Channel> registry) {
+        ProxyFactory proxyFactory = new ProxyFactory();
+        proxyFactory.setInterfaces(ClientCommandFactory.class);
+        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
+
+        return (ClientCommandFactory) proxyFactory.getProxy();
     }
 }

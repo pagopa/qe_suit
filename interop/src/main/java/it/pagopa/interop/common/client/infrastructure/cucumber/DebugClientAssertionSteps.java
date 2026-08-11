@@ -6,7 +6,7 @@ import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.application.command.DebugClientAssertionCommand;
 import it.pagopa.interop.common.client.application.DebugClientAssertionUseCase;
 import it.pagopa.interop.common.client.domain.DebugClientAssertionValidation;
-import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import it.pagopa.interop.common.kernel.security.DPoPProof;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class DebugClientAssertionSteps {
     private final DebugClientAssertionUseCase debugClientAssertionUseCase;
-    private final DomainContext domainContext;
+    private final EntityStore entityStore;
 
     @When("l'utente inoltra la richiesta di validazione specificando {currentClientAssertion}, {currentDpopProof} e {currentClient}")
     public void executeClientAssertionValidation(ClientAssertion clientAssertion, DPoPProof dPoPProof, Client client) {
@@ -47,7 +47,7 @@ public class DebugClientAssertionSteps {
 
     @Then("i risultati della validazione della {currentClientAssertion} sono:")
     public void checkValidationResult(ClientAssertion clientAssertion, DebugClientAssertionValidation expected) {
-        DebugClientAssertionValidation actual = domainContext.find(
+        DebugClientAssertionValidation actual = entityStore.find(
                         DebugClientAssertionValidation.class,
                         validation -> validation.getClientAssertion().getId().equals(clientAssertion.getId())
                 )

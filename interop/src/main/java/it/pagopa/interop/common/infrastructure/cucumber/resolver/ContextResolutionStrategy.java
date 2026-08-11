@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.cucumber.resolver;
 
 import it.pagopa.interop.common.client.domain.Client;
-import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -11,9 +11,9 @@ import java.util.function.Supplier;
 class ContextResolutionStrategy implements DataTableResolutionStrategy {
     private final Map<String, Supplier<String>> contextTokens;
 
-    public ContextResolutionStrategy(DomainContext domainContext) {
+    public ContextResolutionStrategy(EntityStore entityStore) {
         this.contextTokens = Map.of(
-                "clientId", () -> domainContext.getLastOrThrow(Client.class).getId().toString()
+                "clientId", () -> entityStore.getLastOrThrow(Client.class).getId().toString()
         );
     }
 

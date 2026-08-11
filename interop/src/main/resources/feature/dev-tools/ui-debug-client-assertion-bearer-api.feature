@@ -16,10 +16,12 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   quando l'utente sottomette le informazioni nella form di debugging,
   allora tutte le fasi di validazione risultano in stato PASSED
 
-    Given un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    Given una sessione HTTP programmatica su BFF
+    And un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un client API creato da PagoPA in cui è presente un utente admin e una coppia di chiavi crittografiche
     And una client assertion valida generata usando il client creato
-    When l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
+    And un admin di PagoPA collegato al portale Interop dal Browser
+    When l'utente naviga alla pagina Debug Client Assertion
     And l'utente inoltra la richiesta di validazione specificando client assertion e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result | errors |

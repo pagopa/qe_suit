@@ -9,4 +9,11 @@ public interface CurrentUserSession {
     User getUser();
 
     Tenant getTenant();
+
+    default boolean isLoggedIn(User user, Tenant tenant) {
+        return this.getUser() != null
+                && this.getTenant() != null
+                && this.getUser() == user
+                && this.getTenant() == tenant;
+    }
 }

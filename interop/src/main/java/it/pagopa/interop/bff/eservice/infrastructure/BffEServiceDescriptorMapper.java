@@ -1,13 +1,13 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
 
+import it.pagopa.interop.common.infrastructure.mapping.SharedMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
 import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
-import it.pagopa.interop.common.infrastructure.utils.SharedMapperUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -18,7 +18,7 @@ import java.util.List;
 
 @Mapper(
         config = TestMapperConfig.class,
-        uses = {SharedMapperUtils.class, BffCommonMapper.class}
+        uses = {SharedMapper.class, BffCommonMapper.class}
 )
 public interface BffEServiceDescriptorMapper {
 

@@ -1,25 +1,24 @@
 package it.pagopa.interop.common.infrastructure.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
-
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import it.pagopa.interop.common.client.domain.ClientKind;
-import it.pagopa.interop.common.infrastructure.cucumber.context.UserContext;
+import it.pagopa.interop.common.infrastructure.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CommonParameterTypes {
 
-    private final UserContext userContext;
+    private final CurrentUserSession currentUserSession;
 
     @ParameterType("l'utente|l'utente corrente")
     public User currentUser(String token) {
-        return userContext.getUser();
+        return currentUserSession.getUser();
     }
 
     @ParameterType("admin|ADMIN|api|API|security|SECURITY|support|SUPPORT|API,SECURITY|api,security")
