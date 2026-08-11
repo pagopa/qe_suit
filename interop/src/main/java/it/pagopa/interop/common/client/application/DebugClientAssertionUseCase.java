@@ -12,6 +12,11 @@ public class DebugClientAssertionUseCase {
     private final DebugClientAssertionGateway debugClientAssertionGateway;
 
     public DebugClientAssertionValidation executeClientAssertionValidation(DebugClientAssertionCommand formData) {
-        return debugClientAssertionGateway.executeClientAssertionValidation(formData.getClientAssertion().getClientAssertion(), formData.getDpopProof().getJwt(), formData.getClient().getKind(), formData.getClient().getId().toString());
+        return debugClientAssertionGateway.executeClientAssertionValidation(
+                formData.getClientAssertion() != null ? formData.getClientAssertion().getClientAssertion() : null,
+                formData.getDpopProof() != null ? formData.getDpopProof().getJwt() : null,
+                formData.getClient() != null ? formData.getClient().getKind() : null,
+                formData.getClient() != null ? formData.getClient().getId().toString() : null
+        );
     }
 }

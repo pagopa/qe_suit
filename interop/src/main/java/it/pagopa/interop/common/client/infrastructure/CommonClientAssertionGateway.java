@@ -7,6 +7,7 @@ import it.pagopa.interop.common.client.application.ClientAssertionGateway;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.client.domain.ClientAssertionClaimOverride;
+import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class CommonClientAssertionGateway implements ClientAssertionGateway {
 
     @Value("${interop.auth.client-assertion.audience}")
     private String clientAssertionAudience;
-
+    private final EntityStore  entityStore;
     private final ClientAssertionClaimOverrideMapper mapper;
 
     public ClientAssertion createClientAssertion(Client client, Purpose purpose, KeyPair keyPair, List<ClientAssertionClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
@@ -44,12 +45,15 @@ public class CommonClientAssertionGateway implements ClientAssertionGateway {
             applyOverrides(builder, mapper.map(overrides));
         }
 
-        String clientAssertion = builder.signWith(kp.getPrivate()).compact();
-        log.info("Client assertion: '{}'", clientAssertion);
+        String rawClientAssertion = builder.signWith(kp.getPrivate()).compact();
+        log.info("Client assertion: '{}'", rawClientAssertion);
 
-        return ClientAssertion.builder()
-                .clientAssertion(clientAssertion)
+        ClientAssertion clientAssertion = ClientAssertion.builder()
+                .clientAssertion(rawClientAssertion)
                 .build();
+        
+        entityStore.upsert(clientAssertion);
+        return clientAssertion;
     }
 
     private JwtBuilder buildJwt(Client client, Purpose purpose, KeyPair keyPair) throws NoSuchAlgorithmException, JsonProcessingException {
