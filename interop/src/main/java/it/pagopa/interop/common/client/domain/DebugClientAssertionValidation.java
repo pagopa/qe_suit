@@ -1,6 +1,5 @@
-package it.pagopa.interop.common.debug_client_assertion.domain;
+package it.pagopa.interop.common.client.domain;
 
-import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.kernel.Identifiable;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

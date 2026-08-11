@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.debug_client_assertion.application;
+package it.pagopa.interop.common.client.application.command;
 
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.kernel.security.DPoPProof;
