@@ -60,13 +60,16 @@ public class BffRequestSpecFactory {
                                         .defaultObjectMapper(jackson())
                         )
                 )
-                .addFilter(new HttpLoggingFilter())
                 .addHeader("Authorization", "Bearer " + token);
 
         switch (currentTestKind.getCurrentTestKind()) {
             case CONTRACT -> builder.addFilter(contractTestFilter);
             case FLOW -> builder.addFilter(businessTestFilter);
         }
+        
+        // HttpLoggingFilter deve essere ULTIMO nella catena (primo eseguito)
+        // per loggare la response PRIMA che i validatori la elaborino
+        builder.addFilter(new HttpLoggingFilter());
 
         return builder;
     }

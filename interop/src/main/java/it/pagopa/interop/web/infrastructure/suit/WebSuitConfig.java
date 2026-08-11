@@ -10,13 +10,13 @@ import it.frontend.e2e.framework.web.model.location.Url;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 import java.util.List;
 
-@TestConfiguration
+@Configuration
 @ConfigurationProperties(prefix = "channel.web")
 @Getter
 @Setter

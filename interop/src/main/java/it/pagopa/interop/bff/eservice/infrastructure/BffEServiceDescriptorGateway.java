@@ -3,6 +3,8 @@ package it.pagopa.interop.bff.eservice.infrastructure;
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.infrastructure.response.RawResponse;
 import it.pagopa.interop.common.infrastructure.utils.FileUtils;
+import it.pagopa.interop.common.infrastructure.utils.RandomUtils;
+import it.pagopa.interop.common.infrastructure.utils.async.DelayUtils;
 import it.pagopa.interop.common.infrastructure.utils.async.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
@@ -75,9 +77,17 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
 
     @Override
     public EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String openApiInterfacePath) {
-        File openapiFile = FileUtils.loadClasspathResourceAsTempFile("assets/origin-interface.yaml");
+        File openapiFile = FileUtils.loadClasspathResourceAsTempFile(openApiInterfacePath);
+        String documentName = RandomUtils.randomAlphanumericName("interface") + ".yaml";
+        DelayUtils.waitForSeconds(1); // Wait for a second to avoid potential eventual consistency error
 
-        return restClient.addDocument(eServiceRef.id(), descriptorRef.id(), "INTERFACE", openapiFile.getName(), openapiFile)
+        return restClient.addDocument(
+                        eServiceRef.id(),
+                        descriptorRef.id(),
+                        "INTERFACE",
+                        documentName,
+                        openapiFile
+                )
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getEServiceDescriptor(eServiceRef, descriptorRef))
                 .get();

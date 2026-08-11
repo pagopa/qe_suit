@@ -1,22 +1,15 @@
 package it.pagopa.interop.common.journey.application;
 
+import it.pagopa.interop.common.client.application.command.ClientCreationCommand;
 import it.pagopa.interop.common.kernel.domain.Key;
 import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.purpose.domain.Purpose;
 
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public interface ClientJourney<SELF extends ClientJourney<SELF>> extends JourneyModule {
-    SELF createClientConsumer(Key keyToAssociate, UserRole... usersToAssociate);
+    SELF createClient(Consumer<ClientCreationCommand> creationCommand);
 
-    default SELF createClientConsumer(UserRole... usersToAssociate) {
-        return createClientConsumer(null, usersToAssociate);
-    }
-
-    SELF createApiClient(Key keyToAssociate, UserRole... usersToAssociate);
-
-    default SELF createApiClient(UserRole... usersToAssociate) {
-        return createApiClient(null, usersToAssociate);
-    }
-
-    SELF linkPurposeToClient(UUID... purposeIds);
+    SELF linkPurposeToClient(Purpose... purposeIds);
 }

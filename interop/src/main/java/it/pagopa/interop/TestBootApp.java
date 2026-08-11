@@ -6,7 +6,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"it.pagopa.interop"})
 @EnableConfigurationProperties(BearerTokenProperties.class)
 public class TestBootApp {
 }

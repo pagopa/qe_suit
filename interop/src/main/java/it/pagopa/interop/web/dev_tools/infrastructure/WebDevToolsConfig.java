@@ -5,10 +5,10 @@ import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.interop.web.dev_tools.infrastructure.page.DevToolsPage;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@TestConfiguration
+@Configuration
 @Getter
 @Setter
 public class WebDevToolsConfig {

@@ -1,19 +1,15 @@
 package it.pagopa.interop.common.infrastructure.cucumber.context;
 
-import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import it.pagopa.interop.common.kernel.Identifiable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
 @Slf4j
-@ScenarioScope
 public class DomainContext implements EntityStore {
 
     @Getter

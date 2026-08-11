@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 
 public class InMemoryEntityStore implements EntityStore {
     private final ThreadLocal<Map<Class<? extends Identifiable>, List<Identifiable>>> storage =
@@ -49,9 +50,20 @@ public class InMemoryEntityStore implements EntityStore {
                 .orElseThrow(() -> new NoSuchElementException("Nessun elemento trovato per il tipo: " + modelClass.getSimpleName()));
     }
 
+    @Override
+    public <Model extends Identifiable> Optional<Model> find(Class<Model> modelClass, Predicate<? super Model> predicate) {
+        List<Model> entries = entries(modelClass);
+        for (Model entry : entries) {
+            if (predicate.test(entry)) {
+                return Optional.of(entry);
+            }
+        }
+        return Optional.empty();
+    }
+
     @SuppressWarnings("unchecked")
     private <Model extends Identifiable> List<Model> entries(Class<Model> modelClass) {
-        return (List<Model>) (List<?>) storage.get().computeIfAbsent(modelClass, ignored -> new ArrayList<>());
+        return (List<Model>) storage.get().computeIfAbsent(modelClass, ignored -> new ArrayList<>());
     }
 
     private <Model extends Identifiable> int indexOfById(List<Model> entries, UUID id) {

@@ -19,13 +19,12 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
 
     @Override
     public AgreementJourneyImpl linkAgreement(EService eService, AgreementState agreementState, @org.jspecify.annotations.Nullable Delegation delegation) {
-        Agreement agreement = agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor(), delegation);
+        Agreement agreement = agreementUseCase.createAgreement(eService, eService.getActiveDescriptor(), delegation);
 
         switch (agreementState) {
             case DRAFT -> {
             }
-            case PENDING -> agreementUseCase.submitAgreement(agreement);
-            case ACTIVE -> agreementUseCase.activateAgreement(agreement, delegation);
+            case ACTIVE, PENDING -> agreementUseCase.submitAgreement(agreement);
             default -> throw new UnsupportedOperationException("Not implemented yet: " + agreementState);
         }
 

@@ -1,13 +1,9 @@
 package it.pagopa.interop.common.infrastructure.cucumber.context;
 
-import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.infrastructure.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
-import org.springframework.stereotype.Component;
 
-@Component
-@ScenarioScope
 public class UserContext implements CurrentUserSession {
     private User currentUser;
     private Tenant currentTenant;

@@ -5,10 +5,10 @@ import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.interop.web.debug_client_assertion.infrastructure.page.DebugClientAssertionPage;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@TestConfiguration
+@Configuration
 @Getter
 @Setter
 public class WebDebugClientAssertionConfig {
