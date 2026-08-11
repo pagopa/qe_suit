@@ -5,11 +5,12 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDet
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
-import it.pagopa.interop.common.infrastructure.mapping.SharedMapperUtils;
+import it.pagopa.interop.common.infrastructure.utils.SharedMapperUtils;
 import it.pagopa.interop.common.kernel.domain.DocumentRef;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Mapper(
@@ -37,7 +38,7 @@ public interface BffEServiceMapper {
         // lo stato dei descrittori e del producerId dal vecchio EService del test
         return mapped.toBuilder()
                 .producerId(existingEService.getProducerId())
-                .descriptors(existingEService.getDescriptors() != null ? List.copyOf(existingEService.getDescriptors()) : List.of())
+                .descriptors(existingEService.getDescriptors() != null ? new ArrayList<>(existingEService.getDescriptors()) : new ArrayList<>())
                 .build();
     }
 

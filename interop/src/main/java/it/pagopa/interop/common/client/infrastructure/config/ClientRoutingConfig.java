@@ -2,7 +2,7 @@ package it.pagopa.interop.common.client.infrastructure.config;
 
 import it.pagopa.interop.common.client.application.ClientGateway;
 import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
-import it.pagopa.interop.common.infrastructure.cucumber.context.ChannelContext;
+import it.pagopa.interop.common.infrastructure.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.framework.ProxyFactory;
@@ -18,7 +18,7 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 @EnablePluginRegistries({ClientGateway.class})
 public class ClientRoutingConfig {
 
-    private final ObjectProvider<ChannelContext> channelContextProvider;
+    private final ObjectProvider<CurrentChannel> currentChannelProvider;
 
     @Bean
     @Primary
@@ -27,7 +27,7 @@ public class ClientRoutingConfig {
 
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.setInterfaces(ClientGateway.class);
-        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, channelContextProvider));
+        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
 
         return (ClientGateway) proxyFactory.getProxy();
     }

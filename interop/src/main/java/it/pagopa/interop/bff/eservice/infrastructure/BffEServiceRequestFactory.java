@@ -1,17 +1,16 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.instancio.Instancio;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 import static org.instancio.Select.field;
 
@@ -37,11 +36,20 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
 
     @Override
     public UpdateEServiceDescriptorCommand defaultUpdateDescriptorCommand() {
-        var payload = Instancio.of(UpdateEServiceDescriptorQuotas.class)
-                .set(field(UpdateEServiceDescriptorQuotas::getVoucherLifespan), 60)
-                .set(field(UpdateEServiceDescriptorQuotas::getDailyCallsTotal), 10)
-                .set(field(UpdateEServiceDescriptorQuotas::getDailyCallsPerConsumer), 1)
-                .ignore(field(UpdateEServiceDescriptorQuotas::getAttributes))
+        var payload = Instancio.of(UpdateEServiceDescriptorSeed.class)
+                .set(field(UpdateEServiceDescriptorSeed::getVoucherLifespan), 60)
+                .set(field(UpdateEServiceDescriptorSeed::getDailyCallsTotal), 10)
+                .set(field(UpdateEServiceDescriptorSeed::getDailyCallsPerConsumer), 1)
+                .set(field(UpdateEServiceDescriptorSeed::getAudience), List.of("QA"))
+                .set(field(UpdateEServiceDescriptorSeed::getAgreementApprovalPolicy), AgreementApprovalPolicy.AUTOMATIC)
+                .set(field(UpdateEServiceDescriptorSeed::getDescription), "default description")
+                .set(field(UpdateEServiceDescriptorSeed::getAttributes),
+                        new DescriptorAttributesSeed()
+                                .certified(List.of())
+                                .declared(List.of())
+                                .verified(List.of())
+                )
+                .ignore(field(UpdateEServiceDescriptorSeed::getAsyncExchangeProperties))
                 .create();
 
         return BffUpdateEServiceDescriptorCommand.from(payload);

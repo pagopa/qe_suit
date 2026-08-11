@@ -7,8 +7,7 @@ import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
-import it.pagopa.interop.common.infrastructure.mapping.SharedMapperUtils;
-import it.pagopa.interop.common.kernel.domain.DocumentRef;
+import it.pagopa.interop.common.infrastructure.utils.SharedMapperUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -24,7 +23,6 @@ import java.util.List;
 public interface BffEServiceDescriptorMapper {
 
     @Mapping(target = "interfaceDocument", source = "interface")
-    @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "publishedAt", source = "publishedAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "deprecatedAt", source = "deprecatedAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "archivedAt", source = "archivedAt", qualifiedByName = "mapStringToInstant")
@@ -82,7 +80,7 @@ public interface BffEServiceDescriptorMapper {
         }
 
         return updatedBase.toBuilder()
-                .descriptors(List.copyOf(finalDescriptors))
+                .descriptors(new ArrayList<>(finalDescriptors))
                 .build();
     }
 

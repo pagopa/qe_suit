@@ -1,5 +1,9 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
+import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.infrastructure.response.RawResponse;
+import it.pagopa.interop.common.infrastructure.utils.FileUtils;
+import it.pagopa.interop.common.infrastructure.utils.async.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
@@ -8,22 +12,26 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.Optional;
+
+import static it.pagopa.interop.common.eservice.domain.EServiceDescriptorState.PUBLISHED;
 
 @Service
 @RequiredArgsConstructor
 public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
 
     private final BffEServiceRestClient restClient;
-    private final DomainContext domainContext;
+    private final EntityStore entityStore;
     private final BffEServiceDescriptorMapper mapper;
 
     @Override
@@ -31,8 +39,8 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
         return restClient.readDescriptor(eServiceRef.id(), descriptorRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(descriptor -> {
-                    Optional<EService> maybeEService = domainContext.getById(eServiceRef.id(), EService.class);
-                    return mapper.toEServiceWithUpsert(descriptor,  maybeEService.orElse(null));
+                    Optional<EService> maybeEService = entityStore.getById(eServiceRef.id(), EService.class);
+                    return mapper.toEServiceWithUpsert(descriptor, maybeEService.orElse(null));
                 })
                 .updateContext()
                 .map(eService -> eService.findDescriptor(descriptorRef.id()))
@@ -41,18 +49,35 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
 
     @Override
     public EServiceDescriptor publishDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
-        return restClient.publishDescriptor(eServiceRef.id(), descriptorRef.id())
+        restClient.publishDescriptor(eServiceRef.id(), descriptorRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(emptyResp -> getEServiceDescriptor(eServiceRef, descriptorRef))
                 .get();
+
+        return PollingUtils.pollUntil(
+                () -> getEServiceDescriptor(eServiceRef, descriptorRef),
+                descriptor -> descriptor.getState() == PUBLISHED
+        );
     }
 
     @Override
     public EServiceDescriptor updateDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, UpdateEServiceDescriptorCommand command) {
-        if (!(command instanceof UpdateEServiceDescriptorQuotas payload))
-            throw new IllegalArgumentException("Command is not of type UpdateEServiceDescriptorQuotas");
+        if (!(command instanceof BffUpdateEServiceDescriptorCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of BffUpdateEServiceDescriptorCommand");
+
+        UpdateEServiceDescriptorSeed payload = bffCommand.getBffPayload();
 
         return restClient.updateDescriptor(eServiceRef.id(), descriptorRef.id(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdResource -> getEServiceDescriptor(eServiceRef, descriptorRef))
+                .get();
+    }
+
+    @Override
+    public EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String openApiInterfacePath) {
+        File openapiFile = FileUtils.loadClasspathResourceAsTempFile("assets/origin-interface.yaml");
+
+        return restClient.addDocument(eServiceRef.id(), descriptorRef.id(), "INTERFACE", openapiFile.getName(), openapiFile)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getEServiceDescriptor(eServiceRef, descriptorRef))
                 .get();

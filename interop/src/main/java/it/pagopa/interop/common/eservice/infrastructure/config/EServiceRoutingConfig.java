@@ -5,7 +5,7 @@ import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisGateway;
 import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
-import it.pagopa.interop.common.infrastructure.cucumber.context.ChannelContext;
+import it.pagopa.interop.common.infrastructure.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.framework.ProxyFactory;
@@ -21,7 +21,7 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 @EnablePluginRegistries({EServiceGateway.class, EServiceDescriptorGateway.class, EServiceRequestFactory.class, EServiceRiskAnalysisGateway.class})
 public class EServiceRoutingConfig {
 
-    private final ObjectProvider<ChannelContext> channelContextProvider;
+    private final ObjectProvider<CurrentChannel> currentChannelProvider;
 
     @Bean
     @Primary
@@ -30,7 +30,7 @@ public class EServiceRoutingConfig {
 
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.setInterfaces(EServiceGateway.class);
-        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, channelContextProvider));
+        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
 
         return (EServiceGateway) proxyFactory.getProxy();
     }
@@ -42,7 +42,7 @@ public class EServiceRoutingConfig {
 
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.setInterfaces(EServiceDescriptorGateway.class);
-        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, channelContextProvider));
+        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
 
         return (EServiceDescriptorGateway) proxyFactory.getProxy();
     }
@@ -54,7 +54,7 @@ public class EServiceRoutingConfig {
 
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.setInterfaces(EServiceRequestFactory.class);
-        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, channelContextProvider));
+        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
 
         return (EServiceRequestFactory) proxyFactory.getProxy();
     }
@@ -66,7 +66,7 @@ public class EServiceRoutingConfig {
 
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.setInterfaces(EServiceRiskAnalysisGateway.class);
-        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, channelContextProvider));
+        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
 
         return (EServiceRiskAnalysisGateway) proxyFactory.getProxy();
     }
