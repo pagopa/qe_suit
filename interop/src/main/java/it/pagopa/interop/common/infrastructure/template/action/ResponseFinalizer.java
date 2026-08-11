@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.template.action;
 
-import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import it.pagopa.interop.common.infrastructure.response.ApiResponse;
 import it.pagopa.interop.common.infrastructure.response.RawResponse;
 import it.pagopa.interop.common.kernel.Identifiable;
@@ -13,13 +13,13 @@ public interface ResponseFinalizer<Response> {
 
     <T> ResponseFinalizer<T> map(Function<? super Response, ? extends T> mapper);
 
-    DomainContext getDomainContext();
+    EntityStore getEntityStore();
 
     default ResponseFinalizer<Response> updateContext(){
         Response response = get();
 
         if(response instanceof Identifiable identifiable)
-            getDomainContext().upsert(identifiable);
+            getEntityStore().upsert(identifiable);
         else throw new IllegalStateException("Response is not Identifiable");
 
         return this;

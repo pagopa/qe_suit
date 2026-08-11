@@ -29,7 +29,6 @@ public class EServiceDescriptor {
     Integer dailyCallsPerConsumer;
     Integer dailyCallsTotal;
     AgreementApprovalPolicy agreementApprovalPolicy;
-    Instant createdAt;
     Instant publishedAt;
     Instant deprecatedAt;
     Instant archivedAt;

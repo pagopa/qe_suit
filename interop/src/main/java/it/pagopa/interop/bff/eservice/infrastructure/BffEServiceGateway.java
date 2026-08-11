@@ -5,7 +5,7 @@ import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
+import it.pagopa.interop.common.infrastructure.context.EntityStore;
 import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
@@ -21,7 +21,7 @@ public class BffEServiceGateway implements EServiceGateway {
 
     private final BffEServiceRestClient restClient;
     private final BffEServiceDescriptorGateway descriptorGateway;
-    private final DomainContext domainContext;
+    private final EntityStore entityStore;
     private final BffEServiceMapper mapper;
 
     @Override
@@ -50,7 +50,7 @@ public class BffEServiceGateway implements EServiceGateway {
         return restClient.readEService(eServiceRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(eServiceDetails -> {
-                    Optional<EService> maybeEService = domainContext.getById(eServiceRef.id(), EService.class);
+                    Optional<EService> maybeEService = entityStore.getById(eServiceRef.id(), EService.class);
                     return mapper.toEServicePreservingDescriptors(eServiceDetails, maybeEService.orElse(null));
                 })
                 .updateContext()

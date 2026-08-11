@@ -28,10 +28,24 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.publishDescriptor(eService.getRef(), descriptor.getRef());
     }
 
-    public EServiceDescriptor updateDescriptor(EService eService, EServiceDescriptor descriptor, Consumer<UpdateEServiceDescriptorCommand> config) {
+    public EServiceDescriptor updateDescriptor(EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand command) {
+        return eServiceDescriptorGateway.updateDescriptor(eService.getRef(), descriptor.getRef(), command);
+    }
+
+    public EServiceDescriptor linkOpenApiInterface(EService eService, EServiceDescriptor descriptor, String openApiInterfacePath) {
+        return eServiceDescriptorGateway.linkOpenApiInterface(eService.getRef(), descriptor.getRef(), openApiInterfacePath);
+    }
+
+    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor,  Consumer<UpdateEServiceDescriptorCommand> config) {
         UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
         config.accept(command);
+        return updateDescriptor(eService, descriptor, command);
+    }
 
-        return eServiceDescriptorGateway.updateDescriptor(eService.getRef(), descriptor.getRef(), command);
+    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor){
+        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        EServiceDescriptor updatedDescriptor = updateDescriptor(eService, descriptor, command);
+
+        return linkOpenApiInterface(eService, updatedDescriptor, "assets/origin-interface.yaml");
     }
 }

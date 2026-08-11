@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.channel;
 
-import it.pagopa.interop.common.infrastructure.cucumber.context.ChannelContext;
+import it.pagopa.interop.common.infrastructure.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -15,12 +15,12 @@ import java.lang.reflect.InvocationTargetException;
 public class ChannelRoutingInterceptor<T extends Plugin<Channel>> implements MethodInterceptor {
 
     private final PluginRegistry<T, Channel> registry;
-    private final ObjectProvider<ChannelContext> channelContextProvider;
+    private final ObjectProvider<CurrentChannel> currentChannelProvider;
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         // 1. Recupero il canale attivo a runtime
-        Channel activeChannel = channelContextProvider.getObject().getCurrentChannel();
+        Channel activeChannel = currentChannelProvider.getObject().getCurrentChannel();
         if (activeChannel == null)
             throw new MissingActiveChannelException();
         

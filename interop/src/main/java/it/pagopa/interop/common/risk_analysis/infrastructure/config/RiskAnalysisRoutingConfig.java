@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.risk_analysis.infrastructure.config;
 
 import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
-import it.pagopa.interop.common.infrastructure.cucumber.context.ChannelContext;
+import it.pagopa.interop.common.infrastructure.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 @EnablePluginRegistries({RiskAnalysisGateway.class})
 public class RiskAnalysisRoutingConfig {
 
-    private final ObjectProvider<ChannelContext> channelContextProvider;
+    private final ObjectProvider<CurrentChannel> currentChannelProvider;
 
     @Bean
     @Primary
@@ -27,7 +27,7 @@ public class RiskAnalysisRoutingConfig {
 
         ProxyFactory proxyFactory = new ProxyFactory();
         proxyFactory.setInterfaces(RiskAnalysisGateway.class);
-        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, channelContextProvider));
+        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
 
         return (RiskAnalysisGateway) proxyFactory.getProxy();
     }

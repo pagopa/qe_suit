@@ -1,23 +1,25 @@
 package it.pagopa.interop.bff.eservice.application;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescriptorCommand {
-    private final UpdateEServiceDescriptorQuotas bffPayload;
+    private final UpdateEServiceDescriptorSeed bffPayload;
 
-    public static BffUpdateEServiceDescriptorCommand from(UpdateEServiceDescriptorQuotas payload) {
+    public static BffUpdateEServiceDescriptorCommand from(UpdateEServiceDescriptorSeed payload) {
         return new BffUpdateEServiceDescriptorCommand(payload);
     }
 
-    private BffUpdateEServiceDescriptorCommand(UpdateEServiceDescriptorQuotas payload) {
+    private BffUpdateEServiceDescriptorCommand(UpdateEServiceDescriptorSeed payload) {
         this.bffPayload = payload;
     }
 
     public BffUpdateEServiceDescriptorCommand() {
-        this.bffPayload = new UpdateEServiceDescriptorQuotas();
+        this.bffPayload = new UpdateEServiceDescriptorSeed();
     }
 
     @Override
@@ -35,6 +37,18 @@ public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescrip
     @Override
     public UpdateEServiceDescriptorCommand dailyCallsTotal(Integer dailyCallsTotal) {
         bffPayload.setDailyCallsTotal(dailyCallsTotal);
+        return this;
+    }
+
+    @Override
+    public UpdateEServiceDescriptorCommand audience(List<String> audience) {
+        bffPayload.setAudience(audience);
+        return this;
+    }
+
+    @Override
+    public UpdateEServiceDescriptorCommand description(String description) {
+        bffPayload.setDescription(description);
         return this;
     }
 }
