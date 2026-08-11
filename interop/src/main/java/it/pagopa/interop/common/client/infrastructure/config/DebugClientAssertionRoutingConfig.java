@@ -1,10 +1,6 @@
-package it.pagopa.interop.common.debug_client_assertion.infrastructure.config;
+package it.pagopa.interop.common.client.infrastructure.config;
 
-import it.pagopa.interop.common.debug_client_assertion.application.DebugClientAssertionGateway;
-import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
-import it.pagopa.interop.common.eservice.application.EServiceGateway;
-import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
-import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisGateway;
+import it.pagopa.interop.common.client.application.DebugClientAssertionGateway;
 import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
 import it.pagopa.interop.common.infrastructure.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;

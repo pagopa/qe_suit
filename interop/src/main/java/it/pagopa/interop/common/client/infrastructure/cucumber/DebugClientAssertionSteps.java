@@ -1,11 +1,11 @@
-package it.pagopa.interop.common.debug_client_assertion.infrastructure.cucumber;
+package it.pagopa.interop.common.client.infrastructure.cucumber;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.client.domain.Client;
-import it.pagopa.interop.common.debug_client_assertion.application.DebugClientAssertionCommand;
-import it.pagopa.interop.common.debug_client_assertion.application.DebugClientAssertionUseCase;
-import it.pagopa.interop.common.debug_client_assertion.domain.DebugClientAssertionValidation;
+import it.pagopa.interop.common.client.application.command.DebugClientAssertionCommand;
+import it.pagopa.interop.common.client.application.DebugClientAssertionUseCase;
+import it.pagopa.interop.common.client.domain.DebugClientAssertionValidation;
 import it.pagopa.interop.common.infrastructure.cucumber.context.DomainContext;
 import it.pagopa.interop.common.kernel.security.DPoPProof;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
@@ -26,6 +26,16 @@ public class DebugClientAssertionSteps {
                         .clientAssertion(clientAssertion)
                         .client(client)
                         .dpopProof(dPoPProof)
+                        .build()
+        );
+    }
+
+    @When("l'utente inoltra la richiesta di validazione specificando {currentClientAssertion} e {currentClient}")
+    public void executeClientAssertionValidation(ClientAssertion clientAssertion, Client client) {
+        executeClientAssertionValidation(
+                DebugClientAssertionCommand.builder()
+                        .clientAssertion(clientAssertion)
+                        .client(client)
                         .build()
         );
     }
