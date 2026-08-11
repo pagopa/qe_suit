@@ -28,6 +28,12 @@ public class WebBrowserSteps {
             userContext.set(user, tenant);
         }
 
+        navigateToPage(page);
+    }
+
+    @When("l'utente naviga alla pagina {page}( e verifica che tutti gli elementi siano visibili)")
+    @When("l'utente naviga alla pagina {page} del portale Interop( e verifica che tutti gli elementi siano visibili)")
+    public void navigateToPage(Page page) {
         page.navigateTo();
         page.assertLoaded();
 
