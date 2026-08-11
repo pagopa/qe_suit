@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.utils.async;
+package it.pagopa.interop.common.kernel.utils.async;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

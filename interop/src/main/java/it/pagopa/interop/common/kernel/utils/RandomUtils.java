@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.utils;
+package it.pagopa.interop.common.kernel.utils;
 
 import org.instancio.Instancio;
 

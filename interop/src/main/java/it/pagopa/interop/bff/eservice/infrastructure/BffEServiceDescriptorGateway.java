@@ -1,16 +1,11 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
-import it.pagopa.interop.common.infrastructure.response.RawResponse;
-import it.pagopa.interop.common.infrastructure.utils.FileUtils;
-import it.pagopa.interop.common.infrastructure.utils.RandomUtils;
-import it.pagopa.interop.common.infrastructure.utils.async.DelayUtils;
-import it.pagopa.interop.common.infrastructure.utils.async.PollingUtils;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorQuotas;
-import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
+import it.pagopa.interop.common.kernel.utils.FileUtils;
+import it.pagopa.interop.common.kernel.utils.RandomUtils;
+import it.pagopa.interop.common.kernel.utils.async.DelayUtils;
+import it.pagopa.interop.common.kernel.utils.async.PollingUtils;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
-import it.pagopa.interop.common.eservice.application.EServiceGateway;
-import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
