@@ -35,3 +35,4 @@ interop:
   web:
     base-url: https://selfcare.qa.interop.pagopa.it/ui/it
     catalog: ${interop.web.base-url}/catalogo-e-service
+    provision-catalog: ${interop.web.base-url}/erogazione/e-service     #catalogo pagina erogazione

@@ -27,4 +27,12 @@ public class EServiceUseCase {
     public EService getEService(EService eService) {
         return eServiceGateway.getEService(eService.getRef());
     }
+
+    public void verifySubscribeButtonDisabledForPreviousVersions(EService eService) {
+        eServiceGateway.verifySubscribeButtonDisabledForPreviousVersions(eService);
+    }
+
+    public void addDescriptor(EService eService) {
+        eServiceGateway.addDescriptor(eService);
+    }
 }

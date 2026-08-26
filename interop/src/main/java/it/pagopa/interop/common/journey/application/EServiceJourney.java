@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.journey.application;
 
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 
 public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends JourneyModule {
