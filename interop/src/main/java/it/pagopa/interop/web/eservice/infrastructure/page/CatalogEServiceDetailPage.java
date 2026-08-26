@@ -11,7 +11,7 @@ import org.assertj.core.api.SoftAssertions;
 import java.util.List;
 
 @Url("${interop.web.catalog}")
-public interface EServiceDetailPage extends Page {
+public interface CatalogEServiceDetailPage extends Page {
 
     @XPath(".//h1")
     Readable<String> eServiceName();
@@ -61,4 +61,6 @@ public interface EServiceDetailPage extends Page {
         }
         return ret;
     }
+
+    void verifySubscribeButtonDisabledForPreviousVersions();
 }

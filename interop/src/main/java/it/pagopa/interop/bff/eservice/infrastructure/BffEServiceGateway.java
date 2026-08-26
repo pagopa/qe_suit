@@ -58,6 +58,16 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void verifySubscribeButtonDisabledForPreviousVersions(EService eService) {
+        throw new UnsupportedOperationException("verifySubscribeButtonDisabledForPreviousVersions non supportata al momento in bff...");
+    }
+
+    @Override
+    public void addDescriptor(EService eService) {
+        throw new UnsupportedOperationException("addDescriptor non supportata al momento in bff...");
+    }
+
+    @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
     }
