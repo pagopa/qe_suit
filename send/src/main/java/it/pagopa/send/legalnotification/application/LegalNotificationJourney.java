@@ -4,6 +4,7 @@ import io.cucumber.spring.ScenarioScope;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
 import it.pagopa.send.common.kernel.domain.Tenant;
+import it.pagopa.send.generated.openapi.clients.bff.model.BffRequestStatus;
 import it.pagopa.send.model.LegalNotificationType;
 import it.pagopa.send.model.RecipientSpec;
 import it.pagopa.send.utils.factory.LegalNotificationRequestFactory;
@@ -35,6 +36,7 @@ public class LegalNotificationJourney {
     private final List<RecipientSpec> recipients = new ArrayList<>();
     private final Map<String, String> overrides = new HashMap<>();
     private Tenant sender;
+    private String IUN;
     private LegalNotificationType type = LegalNotificationType.SIMPLE;
 
     @Getter
@@ -62,10 +64,21 @@ public class LegalNotificationJourney {
         return this;
     }
 
+    public LegalNotificationJourney withIUN(String IUN) {
+        this.IUN = IUN;
+        return this;
+    }
+
     public LegalNotificationJourney send() {
         lastRequest = requestFactory.build(type, sender, List.copyOf(recipients), overrides);
         lastResponse = legalNotificationUseCase.sendNotification(lastRequest);
         log.info("Notifica legale inviata: {}", lastResponse);
+        return this;
+    }
+
+    public LegalNotificationJourney delete() {
+        BffRequestStatus response = legalNotificationUseCase.deleteNotification(this.IUN);
+        log.info("Notifica legale con IUN {} eliminata: {}", this.IUN, response.getStatus());
         return this;
     }
 

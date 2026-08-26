@@ -62,7 +62,7 @@ public class LegalNotificationRequestFactory {
 
     // "77777777777" è il creditore di test condiviso usato in pn-b2b-client (PAYMENT_CREDITOR_TAX_ID).
     private static final String PAGOPA_TEST_CREDITOR_TAX_ID = "77777777777";
-    private static final int DEFAULT_PAGOPA_PAYMENTS_COUNT = 1;
+    private static final int DEFAULT_PAYMENTS_COUNT = 1;
 
     // Direttive di override riconosciute prima della costruzione: non sono setter fluenti di
     // BffNewNotificationRequest, quindi vanno rimosse dalla mappa prima di passarla a
@@ -70,6 +70,7 @@ public class LegalNotificationRequestFactory {
     private static final String PHYSICAL_ADDRESS_OVERRIDE_KEY = "physicalAddress";
     private static final String DIGITAL_DOMICILE_OVERRIDE_KEY = "digitalDomicile";
     private static final String PAGOPA_PAYMENTS_COUNT_OVERRIDE_KEY = "pagoPA_number";
+    private static final String F24_PAYMENTS_COUNT_OVERRIDE_KEY = "F24_number";
 
     private final NotificationDefaultsLoader defaultsLoader;
     private final DebtPositionService debtPositionService;
@@ -80,7 +81,12 @@ public class LegalNotificationRequestFactory {
         Map<String, String> remainingOverrides = new HashMap<>(overrides);
         NotificationDefaults defaults = defaultsLoader.load(type);
 
-        List<RecipientSpec> resolvedRecipients = resolvePagoPaDefaults(type, recipientSpecs, remainingOverrides);
+        List<RecipientSpec> resolvedRecipients = recipientSpecs;
+        if (type.requiresPagoPaPayment())
+            resolvedRecipients = resolvePagoPaDefaults(type, recipientSpecs, remainingOverrides);
+        else if (type.requiresF24Payment())
+            resolvedRecipients = resolveF24Defaults(type, recipientSpecs, remainingOverrides);
+
         boolean hasAnyPayment = resolvedRecipients.stream().anyMatch(spec -> !spec.payments().isEmpty());
         PreloadedDocument paymentAttachment = hasAnyPayment
                 ? documentPreloadService.preloadTestPdf("pay-" + UUID.randomUUID())
@@ -119,22 +125,40 @@ public class LegalNotificationRequestFactory {
      * destinatari non vengono toccati: restano senza pagamenti.
      */
     private List<RecipientSpec> resolvePagoPaDefaults(LegalNotificationType type, List<RecipientSpec> recipientSpecs, Map<String, String> overrides) {
-        if (!type.requiresPagoPaPayment()) {
-            return recipientSpecs;
-        }
-
         int pagoPaCount = Optional.ofNullable(overrides.remove(PAGOPA_PAYMENTS_COUNT_OVERRIDE_KEY))
                 .map(Integer::parseInt)
-                .orElse(DEFAULT_PAGOPA_PAYMENTS_COUNT);
+                .orElse(DEFAULT_PAYMENTS_COUNT);
 
         return recipientSpecs.stream()
                 .map(spec -> spec.payments().isEmpty() ? RecipientSpec.of(spec.recipient(), defaultPagoPaPayments(pagoPaCount)) : spec)
                 .toList();
     }
 
+    /**
+     * Per il tipo che prevede il bollettino F24, ogni destinatario a cui non è già stato
+     * associato esplicitamente un {@link PaymentSpec} riceve di default un solo F24, salvo
+     * override tramite {@value #F24_PAYMENTS_COUNT_OVERRIDE_KEY}. Per il tipo semplice i
+     * destinatari non vengono toccati: restano senza pagamenti.
+     */
+    private List<RecipientSpec> resolveF24Defaults(LegalNotificationType type, List<RecipientSpec> recipientSpecs, Map<String, String> overrides) {
+        int f24Count = Optional.ofNullable(overrides.remove(F24_PAYMENTS_COUNT_OVERRIDE_KEY))
+                .map(Integer::parseInt)
+                .orElse(DEFAULT_PAYMENTS_COUNT);
+
+        return recipientSpecs.stream()
+                .map(spec -> spec.payments().isEmpty() ? RecipientSpec.of(spec.recipient(), defaultF24Payments(f24Count)) : spec)
+                .toList();
+    }
+
     private List<PaymentSpec> defaultPagoPaPayments(int count) {
         return IntStream.range(0, count)
                 .mapToObj(i -> (PaymentSpec) PagoPaPaymentSpec.withDefaultAmount())
+                .toList();
+    }
+
+    private List<PaymentSpec> defaultF24Payments(int count) {
+        return IntStream.range(0, count)
+                .mapToObj(i -> (PaymentSpec) F24PaymentSpec.withDefaultTitle())
                 .toList();
     }
 

@@ -1,9 +1,7 @@
 package it.pagopa.send.legalnotification.infrastructure;
 
-import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
+import it.pagopa.send.controller.creazione_notifica.NotificationContext;
+import it.pagopa.send.generated.openapi.clients.bff.model.*;
 import it.pagopa.send.infrastructure.template.ApiResponse;
 import it.pagopa.send.infrastructure.template.PollingStrategy;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +28,20 @@ public class LegalNotificationGateway {
     private static final Duration DEFAULT_STATUS_INTERVAL = Duration.ofSeconds(10);
 
     private final LegalNotificationRestClient restClient;
+    private final NotificationContext notificationContext;
 
     public BffNewNotificationResponse create(BffNewNotificationRequest request) {
-        return restClient.create(request)
+        BffNewNotificationResponse response = restClient.create(request)
+                .withoutPolling()
+                .get();
+
+        notificationContext.setBffNewNotificationResponse(response);
+
+        return response;
+    }
+
+    public BffRequestStatus delete(String iun) {
+        return restClient.delete(iun)
                 .withoutPolling()
                 .get();
     }
