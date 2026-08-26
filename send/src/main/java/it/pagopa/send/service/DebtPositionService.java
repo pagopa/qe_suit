@@ -60,6 +60,6 @@ public class DebtPositionService {
     }
 
     private String generateRandomIuv() {
-        return RandomNumericGenerator.generate(13);
+        return RandomNumericGenerator.generate(17);
     }
 }

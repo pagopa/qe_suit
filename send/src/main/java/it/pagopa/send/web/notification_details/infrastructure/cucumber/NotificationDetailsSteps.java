@@ -1,6 +1,8 @@
 package it.pagopa.send.web.notification_details.infrastructure.cucumber;
 
+import io.cucumber.java.PendingException;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Component;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

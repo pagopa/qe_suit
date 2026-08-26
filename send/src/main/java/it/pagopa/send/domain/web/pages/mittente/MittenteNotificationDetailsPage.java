@@ -5,6 +5,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
+import it.pagopa.send.web.infrastructure.suit.component.Chip;
 import it.pagopa.send.web.notification_details.infrastructure.suit.NotificationDetailsPage;
 import it.pagopa.send.web.notification_details.infrastructure.suit.component.NotificationStatusDrawer;
 import org.assertj.core.api.Assertions;
@@ -16,11 +17,13 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
     Readable<String> breadcrumbs();
 
     @XPath("//*[@id=\"notificationsTable.body.row\"]/td[7]/button")
-    Clickable seeDetailsButton();
+    Readable<String> alertMessage();
 
+    @XPath("//div[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-root ')]"+
+    "[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-root ')]")
     interface NotificationSummarySection extends Component {
 //        @XPath("header iun")
-        @XPath("//*[@id=\"title-of-page\"]")
+        @XPath(".//h1")
         Readable<String> iunHeader();
 
 //        @XPath("header protocol number")
@@ -75,14 +78,14 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
         Readable<String> attachmentGrid();
     }
 
+    @XPath(".//div[@data-testid='NotificationDetailTimeline']")
     interface NotificationStatusSection extends Component {
 //        @XPath("header")
         @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> header();
 
-//        @XPath("chip stato notifica")
-        @XPath("//*[@id=\"title-of-page\"]")
-        Readable<String> notificationStatusChip();
+        //"chip stato notifica"
+        Chip notificationStatusChip();
 
 //        @XPath("dettaglio stato notifica")
         @XPath("//*[@id=\"title-of-page\"]")

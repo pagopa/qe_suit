@@ -11,6 +11,8 @@ import it.pagopa.send.legalnotification.application.LegalNotificationJourney;
 import it.pagopa.send.legalnotification.application.LegalNotificationUseCase;
 import it.pagopa.send.model.LegalNotificationType;
 import it.pagopa.send.model.RecipientSpec;
+import it.pagopa.send.utils.IUNHelper;
+import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -24,13 +26,14 @@ public class LegalNotificationSteps {
 
     private final LegalNotificationJourney journey;
     private final LegalNotificationUseCase legalNotificationUseCase;
+    private final WebBrowserContext webBrowserContext;
 
     @When("l'ente {string} crea una notifica di tipo {legalNotificationType} per il destinatario {string}")
     public void enteCreaNotifica(String enteName, LegalNotificationType type, String destinatarioName) {
         createNotification(enteName, type, destinatarioName, Map.of());
     }
 
-    @When("l'ente {string} crea una notifica di tipo {legalNotificationType} per il destinatario {string} con i seguenti valori")
+    @When("l'ente {string} crea una notifica di tipo {legalNotificationType} per il destinatario {string} con i seguenti valori:")
     public void enteCreaNotificaConOverride(String enteName, LegalNotificationType type, String destinatarioName, DataTable overrides) {
         createNotification(enteName, type, destinatarioName, overrides.asMap(String.class, String.class));
     }
@@ -52,7 +55,8 @@ public class LegalNotificationSteps {
     public void assertRequestAccepted() {
         Assertions.assertThat(journey.getLastResponse()).isNotNull();
 
-        String iun = legalNotificationUseCase.extractIun(journey.getLastResponse());
+        //String iun = legalNotificationUseCase.extractIun(journey.getLastResponse());
+        String iun = IUNHelper.extractFromBffNewNotificationResponse(journey.getLastResponse());
         BffFullNotificationV1 notification = legalNotificationUseCase.waitForStatus(iun, BffNotificationStatus.ACCEPTED);
 
         Assertions.assertThat(notification.getNotificationStatus()).isEqualTo(BffNotificationStatus.ACCEPTED);
