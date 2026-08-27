@@ -16,10 +16,12 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
+@ActiveProfiles({"qa", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
@@ -57,8 +59,19 @@ public class WebDebugClientAssertionContractTest {
                                         testCase.expectedError()
                                 ),
                         () -> {
+                            currentUserSession.set(
+                                    User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
+                                    Tenant.COMUNE_DI_MILANO
+                            );
+
+                            WebPresentationGateway webPresentationGateway =
+                                    webPresentationGatewayProvider.getObject();
+
                             DebugClientAssertionPage page =
-                                    createDebugClientAssertionPage();
+                                    webPresentationGateway.bind(DebugClientAssertionPage.class);
+
+                            page.navigateTo();
+                            page.assertLoaded();
 
                             page.clientAssertionInput()
                                     .fill(testCase.clientAssertion());
@@ -69,6 +82,8 @@ public class WebDebugClientAssertionContractTest {
                             Assertions.assertThat(
                                     page.getClientAssertionErrorMessage()
                             ).isEqualTo(testCase.expectedError());
+
+                            webPresentationGateway.close();
                         }
                 )
         );
@@ -89,8 +104,19 @@ public class WebDebugClientAssertionContractTest {
                                         testCase.expectedError()
                                 ),
                         () -> {
+                            currentUserSession.set(
+                                    User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
+                                    Tenant.COMUNE_DI_MILANO
+                            );
+
+                            WebPresentationGateway webPresentationGateway =
+                                    webPresentationGatewayProvider.getObject();
+
                             DebugClientAssertionPage page =
-                                    createDebugClientAssertionPage();
+                                    webPresentationGateway.bind(DebugClientAssertionPage.class);
+
+                            page.navigateTo();
+                            page.assertLoaded();
 
                             page.clientIdInput()
                                     .fill(testCase.clientId());
@@ -101,26 +127,9 @@ public class WebDebugClientAssertionContractTest {
                             Assertions.assertThat(
                                     page.getClientIdErrorMessage()
                             ).isEqualTo(testCase.expectedError());
+                            webPresentationGateway.close();
                         }
                 )
         );
-    }
-
-    private DebugClientAssertionPage createDebugClientAssertionPage() {
-        currentUserSession.set(
-                User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
-                Tenant.COMUNE_DI_MILANO
-        );
-
-        WebPresentationGateway webPresentationGateway =
-                webPresentationGatewayProvider.getObject();
-
-        DebugClientAssertionPage page =
-                webPresentationGateway.bind(DebugClientAssertionPage.class);
-
-        page.navigateTo();
-        page.assertLoaded();
-
-        return page;
     }
 }
