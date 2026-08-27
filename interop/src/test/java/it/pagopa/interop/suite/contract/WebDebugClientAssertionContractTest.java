@@ -19,6 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 @ActiveProfiles({"qa", "junit"})
@@ -44,92 +46,78 @@ public class WebDebugClientAssertionContractTest {
     }
 
     @TestFactory
-    Stream<DynamicTest> shouldErrorWhenClientAssertionIsNotValid() {
+    Stream<DynamicTest> shouldValidateDebugClientAssertionForm() {
+        return validationCases()
+                .map(testCase ->
+                        DynamicTest.dynamicTest(
+                                testCase.name(),
+                                () -> executeValidationCase(testCase)
+                        )
+                );
+    }
 
-        record TestCase(String clientAssertion, String expectedError) {}
-
+    private Stream<ValidationCase> validationCases() {
         return Stream.of(
-                new TestCase(" ", "Inserisci un JWT valido."),
-                new TestCase("invalid client assertion", "Inserisci un JWT valido.")
-        ).map(testCase ->
-                DynamicTest.dynamicTest(
-                        "clientAssertion='%s' -> error='%s'"
-                                .formatted(
-                                        testCase.clientAssertion(),
-                                        testCase.expectedError()
-                                ),
-                        () -> {
-                            currentUserSession.set(
-                                    User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
-                                    Tenant.COMUNE_DI_MILANO
-                            );
 
-                            WebPresentationGateway webPresentationGateway =
-                                    webPresentationGatewayProvider.getObject();
+                new ValidationCase(
+                        "client assertion vuota",
+                        page -> page.clientAssertionInput().fill(" "),
+                        DebugClientAssertionPage::getClientAssertionErrorMessage,
+                        "Inserisci un JWT valido."
+                ),
 
-                            DebugClientAssertionPage page =
-                                    webPresentationGateway.bind(DebugClientAssertionPage.class);
+                new ValidationCase(
+                        "client assertion non valida",
+                        page -> page.clientAssertionInput()
+                                .fill("invalid client assertion"),
+                        DebugClientAssertionPage::getClientAssertionErrorMessage,
+                        "Inserisci un JWT valido."
+                ),
 
-                            page.navigateTo();
-                            page.assertLoaded();
-
-                            page.clientAssertionInput()
-                                    .fill(testCase.clientAssertion());
-
-                            page.submitButton()
-                                    .click();
-
-                            Assertions.assertThat(
-                                    page.getClientAssertionErrorMessage()
-                            ).isEqualTo(testCase.expectedError());
-
-                            webPresentationGateway.close();
-                        }
+                new ValidationCase(
+                        "client id vuoto",
+                        page -> page.clientIdInput().fill(" "),
+                        DebugClientAssertionPage::getClientIdErrorMessage,
+                        "Inserisci un UUID valido."
                 )
+
         );
     }
 
-    @TestFactory
-    Stream<DynamicTest> shouldErrorWhenClientIdIsNotValid() {
-
-        record TestCase(String clientId, String expectedError) {}
-
-        return Stream.of(
-                new TestCase(" ", "Inserisci un UUID valido.")
-        ).map(testCase ->
-                DynamicTest.dynamicTest(
-                        "clientId='%s' -> error='%s'"
-                                .formatted(
-                                        testCase.clientId(),
-                                        testCase.expectedError()
-                                ),
-                        () -> {
-                            currentUserSession.set(
-                                    User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
-                                    Tenant.COMUNE_DI_MILANO
-                            );
-
-                            WebPresentationGateway webPresentationGateway =
-                                    webPresentationGatewayProvider.getObject();
-
-                            DebugClientAssertionPage page =
-                                    webPresentationGateway.bind(DebugClientAssertionPage.class);
-
-                            page.navigateTo();
-                            page.assertLoaded();
-
-                            page.clientIdInput()
-                                    .fill(testCase.clientId());
-
-                            page.submitButton()
-                                    .click();
-
-                            Assertions.assertThat(
-                                    page.getClientIdErrorMessage()
-                            ).isEqualTo(testCase.expectedError());
-                            webPresentationGateway.close();
-                        }
-                )
+    private void executeValidationCase(ValidationCase testCase) {
+        currentUserSession.set(
+                User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
+                Tenant.COMUNE_DI_MILANO
         );
+
+        WebPresentationGateway gateway =
+                webPresentationGatewayProvider.getObject();
+
+        try {
+            DebugClientAssertionPage page =
+                    gateway.bind(DebugClientAssertionPage.class);
+
+            page.navigateTo();
+            page.assertLoaded();
+
+            testCase.fill().accept(page);
+
+            page.submitButton().click();
+
+            Assertions.assertThat(
+                    testCase.errorExtractor().apply(page)
+            ).isEqualTo(testCase.expectedError());
+
+        } finally {
+            gateway.close();
+        }
+    }
+
+    private record ValidationCase(
+            String name,
+            Consumer<DebugClientAssertionPage> fill,
+            Function<DebugClientAssertionPage, String> errorExtractor,
+            String expectedError
+    ) {
     }
 }
