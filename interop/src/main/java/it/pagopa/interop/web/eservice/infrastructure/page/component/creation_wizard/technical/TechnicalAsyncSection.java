@@ -3,10 +3,10 @@ package it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wi
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.interop.web.infrastructure.suit.component.Alert;
-import it.pagopa.interop.web.infrastructure.suit.component.Checkbox;
-import it.pagopa.interop.web.infrastructure.suit.component.InterfaceComponent;
-import it.pagopa.interop.web.infrastructure.suit.component.TextField;
+import it.pagopa.interop.web.infrastructure.config.suit.component.Alert;
+import it.pagopa.interop.web.infrastructure.config.suit.component.Checkbox;
+import it.pagopa.interop.web.infrastructure.config.suit.component.InterfaceComponent;
+import it.pagopa.interop.web.infrastructure.config.suit.component.TextField;
 import org.assertj.core.api.SoftAssertions;
 
 public interface TechnicalAsyncSection extends Component {

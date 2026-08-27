@@ -6,9 +6,9 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.web.debug_client_assertion.infrastructure.page.component.DebugRequestContentComponent;
 import it.pagopa.interop.web.debug_client_assertion.infrastructure.page.component.DebugResultComponent;
-import it.pagopa.interop.web.infrastructure.suit.component.Alert;
-import it.pagopa.interop.web.infrastructure.suit.component.Button;
-import it.pagopa.interop.web.infrastructure.suit.component.TextField;
+import it.pagopa.interop.web.infrastructure.config.suit.component.Alert;
+import it.pagopa.interop.web.infrastructure.config.suit.component.Button;
+import it.pagopa.interop.web.infrastructure.config.suit.component.TextField;
 import org.assertj.core.api.SoftAssertions;
 
 @Url("${interop.web.base-url}/tool-sviluppo/debug-voucher")
