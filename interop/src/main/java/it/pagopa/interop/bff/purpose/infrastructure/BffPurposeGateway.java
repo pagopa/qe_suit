@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.purpose.infratructure;
+package it.pagopa.interop.bff.purpose.infrastructure;
 
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
 import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;

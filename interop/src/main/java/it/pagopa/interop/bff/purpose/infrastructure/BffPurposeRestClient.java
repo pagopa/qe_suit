@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.purpose.infratructure;
+package it.pagopa.interop.bff.purpose.infrastructure;
 
 import it.pagopa.interop.common.infrastructure.template.RestClient;
 import it.pagopa.interop.common.infrastructure.template.action.TestChain;
