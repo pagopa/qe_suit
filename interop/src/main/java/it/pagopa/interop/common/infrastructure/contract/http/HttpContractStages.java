@@ -34,9 +34,9 @@ public interface HttpContractStages {
 
         PayloadStage<T> scenario(List<FuzzScenario> scenarios, Consumer<Response> expectation);
 
-        PayloadStage<T> targets(FuzzScenario scenario, Consumer<Response> expectation, TargetExpression<T>... targets);
+        PayloadStage<T> targets(FuzzScenario scenario, Consumer<Response> expectation, List<TargetExpression<T>> targets);
 
-        PayloadStage<T> targets(List<FuzzScenario> scenarios, Consumer<Response> expectation, TargetExpression<T>... targets);
+        PayloadStage<T> targets(List<FuzzScenario> scenarios, Consumer<Response> expectation, List<TargetExpression<T>> targets);
 
         default <P> PathParamsStage<P> pathParams(P pathParams) {
             return pathParams(() -> pathParams);
@@ -50,9 +50,9 @@ public interface HttpContractStages {
 
         PathParamsStage<T> scenario(List<FuzzScenario> scenarios, Consumer<Response> expectation);
 
-        PathParamsStage<T> targets(FuzzScenario scenario, Consumer<Response> expectation, TargetExpression<T>... targets);
+        PathParamsStage<T> targets(FuzzScenario scenario, Consumer<Response> expectation, List<TargetExpression<T>> targets);
 
-        PathParamsStage<T> targets(List<FuzzScenario> scenarios, Consumer<Response> expectation, TargetExpression<T>... targets);
+        PathParamsStage<T> targets(List<FuzzScenario> scenarios, Consumer<Response> expectation, List<TargetExpression<T>> targets);
 
         default <P> PayloadStage<P> payload(P payload) {
             return payload(() -> payload);
