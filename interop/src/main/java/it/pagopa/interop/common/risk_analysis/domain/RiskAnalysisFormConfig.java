@@ -2,6 +2,7 @@ package it.pagopa.interop.common.risk_analysis.domain;
 
 import it.pagopa.interop.common.kernel.Identifiable;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
@@ -14,6 +15,8 @@ import java.util.UUID;
 @Builder(toBuilder = true)
 @Jacksonized
 public class RiskAnalysisFormConfig implements Identifiable {
+    @EqualsAndHashCode.Exclude
+    @Builder.Default
     UUID id = UUID.randomUUID();
     String version;
     Instant expiration;
