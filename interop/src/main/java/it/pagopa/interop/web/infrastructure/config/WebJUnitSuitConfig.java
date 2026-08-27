@@ -19,7 +19,7 @@ import org.springframework.core.env.Environment;
 
 @Configuration(proxyBeanMethods = false)
 @Profile("junit")
-public class JUnitWebSuitConfig {
+public class WebJUnitSuitConfig {
 
     @Bean("junitWebPresentationGateway")
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

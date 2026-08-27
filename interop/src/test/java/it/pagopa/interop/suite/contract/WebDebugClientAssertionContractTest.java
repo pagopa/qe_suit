@@ -7,7 +7,7 @@ import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.web.debug_client_assertion.infrastructure.page.DebugClientAssertionPage;
-import it.pagopa.interop.web.infrastructure.config.JUnitWebSuitConfig;
+import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitSupportConfig.class,
-        JUnitWebSuitConfig.class
+        WebJUnitSuitConfig.class
 })
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class WebDebugClientAssertionContractTest {
