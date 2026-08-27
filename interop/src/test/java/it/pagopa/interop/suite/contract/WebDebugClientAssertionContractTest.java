@@ -8,6 +8,7 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.web.debug_client_assertion.infrastructure.page.DebugClientAssertionPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
+import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -27,13 +28,10 @@ import java.util.stream.Stream;
         WebJUnitSuitConfig.class
 })
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+@RequiredArgsConstructor
 public class WebDebugClientAssertionContractTest {
 
     private final WebContractValidator webContractValidator;
-
-    public WebDebugClientAssertionContractTest(WebContractValidator webContractValidator) {
-        this.webContractValidator = webContractValidator;
-    }
 
     @TestFactory
     Stream<DynamicTest> shouldValidateDebugClientAssertionForm() {
