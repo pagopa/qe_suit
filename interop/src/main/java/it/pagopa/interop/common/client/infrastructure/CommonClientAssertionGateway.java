@@ -1,6 +1,5 @@
 package it.pagopa.interop.common.client.infrastructure;
 
-import io.cucumber.core.internal.com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import it.pagopa.interop.common.client.application.ClientAssertionGateway;
