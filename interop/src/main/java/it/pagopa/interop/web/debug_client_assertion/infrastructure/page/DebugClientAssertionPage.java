@@ -15,6 +15,8 @@ import org.assertj.core.api.SoftAssertions;
 public interface DebugClientAssertionPage extends Page {
     String CLIENT_ASSERTION_INPUT_ERROR_ID = "clientAssertion-error";
     String CLIENT_ASSERTION_INPUT_HELPER_TEXT_ID = "clientAssertion-infoLabel";
+    String CLIENT_ID_INPUT_ERROR_ID = "clientId-error";
+    String CLIENT_ID_INPUT_HELPER_TEXT_ID = "clientId-infoLabel";
 
     @XPath("//*[@id=\"interop-sidenav-main\"]/div/main/div/div[2]/div/div/h1")
     Readable<String> pageTitle();
@@ -63,6 +65,14 @@ public interface DebugClientAssertionPage extends Page {
 
     default String getClientAssertionHelpText() {
         return clientAssertionInput().getHelperText(CLIENT_ASSERTION_INPUT_HELPER_TEXT_ID);
+    }
+
+    default String getClientIdErrorMessage() {
+        return clientIdInput().getErrorMessage(CLIENT_ID_INPUT_ERROR_ID);
+    }
+
+    default String getClientIdHelpText() {
+        return clientIdInput().getHelperText(CLIENT_ID_INPUT_HELPER_TEXT_ID);
     }
 
     default void setClientId(String clientId) {

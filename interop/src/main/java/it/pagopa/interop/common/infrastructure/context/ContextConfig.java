@@ -21,6 +21,13 @@ public class ContextConfig {
     @Bean
     @ScenarioScope
     @Primary
+    BrowserContext browserContext(){
+        return new CucumberBrowserContext();
+    }
+
+    @Bean
+    @ScenarioScope
+    @Primary
     CurrentUserSession currentUserSession() {
         return new UserContext();
     }

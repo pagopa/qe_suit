@@ -1,4 +1,5 @@
 @debug-client-assertion-page-ui-behavior
+@WEB
 Feature: Debugger Client Assertion Page (Frontend) - Test Comportamentale
 
   Come Aderente iscritto alla piattaforma Interop
@@ -18,7 +19,8 @@ Feature: Debugger Client Assertion Page (Frontend) - Test Comportamentale
 
     Given l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
     When l'utente invia la form della debug client assertion inserendo:
-      | clientAssertion | $blank() |
+      | clientAssertion |
+      | $blank()        |
     Then il text field Client assertion viene evidenziato come errore e viene mostrato il messaggio di validazione "Campo richiesto"
 
   Scenario: [DEBUG_CLIENT_ASSERTION_CLIENT_ID_INPUT_VALIDATION]
@@ -29,6 +31,6 @@ Feature: Debugger Client Assertion Page (Frontend) - Test Comportamentale
 
     Given l'utente admin di PagoPA si trova alla pagina DebugClientAssertion del portale Interop
     When l'utente invia la form della debug client assertion inserendo:
-      | clientAssertion | client assertion  |
-      | clientId        | invalid client id |
+      | clientAssertion  | clientId          |
+      | client assertion | invalid client id |
     Then viene mostrata la snackbar con un messaggio di errore contenente "C’è stato un errore nell’elaborazione della richiesta. Per favore, riprova in seguito!"

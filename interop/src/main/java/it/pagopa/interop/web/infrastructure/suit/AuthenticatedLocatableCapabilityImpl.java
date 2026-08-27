@@ -4,35 +4,41 @@ import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.capability.impl.LocatableCapabilityImpl;
 import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
+import it.pagopa.interop.common.kernel.context.BrowserContext;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.web.infrastructure.cucumber.WebBrowserContext;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("cucumber")
 public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImpl {
 
-    @Value("${interop.web.catalog}")
-    private String catalogUrl;
-
     private final IWebPresentationApiAdapter adapter;
-    private final WebBrowserContext webBrowserContext;
+    private final BrowserContext webBrowserContext;
     private final CurrentUserSession currentUserSession;
     private final BearerAuthProvider bearerAuthProvider;
+    private final String catalogUrl;
 
     public AuthenticatedLocatableCapabilityImpl(
             IWebPresentationApiAdapter adapter,
-            WebBrowserContext webBrowserContext,
+            BrowserContext webBrowserContext,
             CurrentUserSession currentUserSession,
-            BearerAuthProvider bearerAuthProvider) {
+            BearerAuthProvider bearerAuthProvider,
+            @Value("${interop.web.catalog}") String catalogUrl
+    ) {
 
         super(adapter);
         this.adapter = adapter;
         this.webBrowserContext = webBrowserContext;
         this.currentUserSession = currentUserSession;
         this.bearerAuthProvider = bearerAuthProvider;
+        this.catalogUrl = catalogUrl;
     }
 
     @Override
