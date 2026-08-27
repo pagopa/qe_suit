@@ -5,8 +5,9 @@ import org.junit.platform.suite.api.*;
 import static io.cucumber.junit.platform.engine.Constants.*;
 
 @Suite
-@IncludeEngines("cucumber")
-@SelectClasspathResource("features")
+@IncludeEngines({"cucumber", "junit-jupiter"})
+@SelectClasspathResource("feature")
+@SelectPackages("it.pagopa.interop.suite.contract")
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-reports/report.json," + "html:target/cucumber-reports/report.html"),
@@ -18,11 +19,18 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 
         // abilita parallelismo Cucumber
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
-})
-@ExcludeTags({"wait_for_fix", "ignore"})
-@IncludeTags({
-        // UI
-        "debug-client-assertion-page-ui-flow", "debug-client-assertion-page-ui-behavior", "dev-tools-page-ui-behavior"
+
+        // tag cucumber
+        @ConfigurationParameter(
+                key = FILTER_TAGS_PROPERTY_NAME,
+                value = """
+                        (@debug-client-assertion-page-ui-flow
+                         or @debug-client-assertion-page-ui-behavior
+                         or @dev-tools-page-ui-behavior)
+                        and not @wait_for_fix
+                        and not @ignore
+                        """
+        )
 })
 public class NrtStandardSuiteTest {
 }
