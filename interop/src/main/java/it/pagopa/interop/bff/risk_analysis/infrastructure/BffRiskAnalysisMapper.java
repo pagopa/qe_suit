@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.risk_analysis.infrastruture;
+package it.pagopa.interop.bff.risk_analysis.infrastructure;
 
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
