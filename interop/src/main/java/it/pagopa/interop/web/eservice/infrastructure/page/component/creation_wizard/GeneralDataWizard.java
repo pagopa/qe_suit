@@ -4,9 +4,9 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
-import it.pagopa.interop.web.infrastructure.suit.component.Alert;
-import it.pagopa.interop.web.infrastructure.suit.component.RadioGroup;
-import it.pagopa.interop.web.infrastructure.suit.component.TextField;
+import it.pagopa.interop.web.infrastructure.config.suit.component.Alert;
+import it.pagopa.interop.web.infrastructure.config.suit.component.RadioGroup;
+import it.pagopa.interop.web.infrastructure.config.suit.component.TextField;
 import org.assertj.core.api.SoftAssertions;
 
 public interface GeneralDataWizard extends Component {

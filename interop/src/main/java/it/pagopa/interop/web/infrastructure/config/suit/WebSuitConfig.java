@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.infrastructure.suit;
+package it.pagopa.interop.web.infrastructure.config.suit;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
