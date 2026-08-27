@@ -3,11 +3,18 @@ package it.pagopa.interop.common.infrastructure.context.inmemory;
 import it.pagopa.interop.common.kernel.context.CurrentTestKind;
 import it.pagopa.interop.common.kernel.domain.TestKind;
 
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class InMemoryCurrentTestKind implements CurrentTestKind {
+
     private final ThreadLocal<TestKind> currentTestKind = new ThreadLocal<>();
-    private final AtomicReference<TestKind> defaultTestKind = new AtomicReference<>(TestKind.CONTRACT);
+    private final AtomicReference<TestKind> defaultTestKind =
+            new AtomicReference<>(TestKind.CONTRACT);
+
+    private final ConcurrentLinkedQueue<String> eventualConsistencyErrors =
+            new ConcurrentLinkedQueue<>();
 
     @Override
     public TestKind getCurrentTestKind() {
@@ -18,5 +25,15 @@ public class InMemoryCurrentTestKind implements CurrentTestKind {
     @Override
     public void setCurrentTestKind(TestKind currentTestKind) {
         this.currentTestKind.set(currentTestKind);
+    }
+
+    @Override
+    public void addEventualConsistencyError(String error) {
+        eventualConsistencyErrors.add(error);
+    }
+
+    @Override
+    public List<String> getEventualConsistencyErrors() {
+        return List.copyOf(eventualConsistencyErrors);
     }
 }

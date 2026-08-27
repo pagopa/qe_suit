@@ -10,6 +10,8 @@ import it.pagopa.interop.common.kernel.domain.TestKind;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.MDC;
 
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 public class ApplicationHooks {
 
@@ -25,6 +27,20 @@ public class ApplicationHooks {
     @After
     public void afterScenario() {
         MDC.remove("scenario");
+
+        var errors = currentTestKind.getEventualConsistencyErrors();
+
+        if (!errors.isEmpty()) {
+            String formattedErrors = errors.stream()
+                    .map(error -> "- " + error)
+                    .collect(Collectors.joining(System.lineSeparator()));
+
+            throw new RuntimeException(
+                    "Eventual consistency errors found:"
+                            + System.lineSeparator()
+                            + formattedErrors
+            );
+        }
     }
 
     @Before("@Business")
