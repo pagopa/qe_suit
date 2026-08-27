@@ -25,8 +25,6 @@ public class Purpose implements Identifiable {
     Boolean suspendedByProducer;
     String title;
     String description;
-    Instant createdAt;
-    Instant updatedAt;
     Boolean isFreeOfCharge;
     UUID delegationId;
 
@@ -39,6 +37,12 @@ public class Purpose implements Identifiable {
 
     public PurposeVersion getLastDraftVersion() {
         return versions.stream().filter(version -> version.getPurposeVersionState() == DRAFT)
+                .max(Comparator.comparing(PurposeVersion::getCreatedAt))
+                .orElse(null);
+    }
+
+    public PurposeVersion getLastActiveVersion() {
+        return versions.stream().filter(version -> version.getPurposeVersionState() == PurposeVersionState.ACTIVE)
                 .max(Comparator.comparing(PurposeVersion::getCreatedAt))
                 .orElse(null);
     }

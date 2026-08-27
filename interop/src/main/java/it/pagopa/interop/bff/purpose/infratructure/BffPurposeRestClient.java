@@ -4,10 +4,7 @@ import it.pagopa.interop.common.infrastructure.template.RestClient;
 import it.pagopa.interop.common.infrastructure.template.action.TestChain;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +18,13 @@ public class BffPurposeRestClient extends RestClient {
 
     public BffPurposeRestClient(ApiClient apiClient) {
         this.purposesApi = apiClient.purposes();
+    }
+
+    public TestChain<Purpose> getPurpose(@Nonnull UUID purposeId) {
+        return execute(
+                () -> purposesApi.getPurpose().purposeIdPath(purposeId).execute(Function.identity()),
+                Purpose.class
+        );
     }
 
     public TestChain<CreatedResource> createPurpose(@Nonnull PurposeSeed payload) {
