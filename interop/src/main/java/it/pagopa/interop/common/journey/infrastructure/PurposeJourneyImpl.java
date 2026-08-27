@@ -30,26 +30,31 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
     }
 
     private PurposeJourneyImpl processLifecycle(Purpose purpose, PurposeVersionState targetState) {
-        return switch (targetState) {
-            case DRAFT -> this;
+       switch (targetState) {
+            case DRAFT -> {
+                // Nothing to do, the purpose is already in DRAFT state
+            }
 
             case ACTIVE -> activatePipeline(purpose);
 
-            case SUSPENDED -> suspendPipeline(purpose);
+            case SUSPENDED -> {
+                Purpose activatedPurpose = activatePipeline(purpose);
+                suspendPipeline(activatedPurpose);
+            }
 
             default -> throw new UnsupportedOperationException(
                     String.format("La transizione allo stato %s) non è ancora supportata nel Journey.", targetState)
             );
-        };
-    }
+        }
 
-    private PurposeJourneyImpl activatePipeline(Purpose purpose) {
-        purposeUseCase.activatePurpose(purpose, purpose.getLastDraftVersion(), null);
         return this;
     }
 
-    private PurposeJourneyImpl suspendPipeline(Purpose purpose) {
-        purposeUseCase.suspendPurpose(purpose, purpose.getLastActiveVersion(), null);
-        return this;
+    private Purpose activatePipeline(Purpose purpose) {
+        return purposeUseCase.activatePurpose(purpose, purpose.getLastDraftVersion(), null);
+    }
+
+    private Purpose suspendPipeline(Purpose purpose) {
+        return purposeUseCase.suspendPurpose(purpose, purpose.getLastActiveVersion(), null);
     }
 }
