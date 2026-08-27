@@ -55,7 +55,7 @@ jobs:
           google-chrome --version
 
       - name: Setup ChromeDriver
-        uses: nanasess/setup-chromedriver@master
+        uses: nanasess/setup-chromedriver@904b949d6a9e6f5bb87b61ba516e716ddcc1ff8c # master
 
       - name: Clone qe_suit repository
         run: |
@@ -80,14 +80,14 @@ jobs:
 
       - name: Upload Test Logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: test-logs
           path: ./qe_suit/interop/qa-tests.log
 
       - name: Upload Cucumber Report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: cucumber-report
           path: ./qe_suit/interop/target/cucumber-report*
