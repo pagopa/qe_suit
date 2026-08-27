@@ -55,4 +55,13 @@ public class BffPurposeRestClient extends RestClient {
                 PurposeVersionResource.class
         );
     }
+
+    public TestChain<RiskAnalysisFormConfig> retrieveLatestRiskAnalysisConfiguration(TenantKind tenantKind){
+        return execute(
+                () -> purposesApi.retrieveLatestRiskAnalysisConfiguration()
+                        .tenantKindQuery(tenantKind)
+                        .execute(Function.identity()),
+                RiskAnalysisFormConfig.class
+        );
+    }
 }

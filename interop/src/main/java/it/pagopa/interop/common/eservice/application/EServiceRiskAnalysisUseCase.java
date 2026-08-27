@@ -3,8 +3,8 @@ package it.pagopa.interop.common.eservice.application;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
+import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +17,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EServiceRiskAnalysisUseCase {
 
-    private final PurposeUseCase purposeUseCase;
-    private final EServiceRiskAnalysisGateway riskAnalysisGateway;
+    private final RiskAnalysisGateway riskAnalysisGateway;
+    private final EServiceRiskAnalysisGateway eServiceRiskAnalysisGateway;
     private final RiskAnalysisDataFactory riskAnalysisDataFactory;
 
     public EServiceRiskAnalysis addLatestRiskAnalysis(Tenant tenant, EService eService, boolean completed) {
-        RiskAnalysisFormConfig latestConfig = purposeUseCase.getLatestRiskAnalysisConfig(tenant);
+        RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(tenant);
         Map<String, List<String>> answers =
                 riskAnalysisDataFactory.getTemplateForTenant(tenant, completed);
 
@@ -31,10 +31,10 @@ public class EServiceRiskAnalysisUseCase {
                 .answers(answers)
                 .build();
 
-        return riskAnalysisGateway.addRiskAnalysis(eService.getRef(), form);
+        return eServiceRiskAnalysisGateway.addRiskAnalysis(eService.getRef(), form);
     }
 
     public EServiceRiskAnalysis getRiskAnalysis(EService eService) {
-        return riskAnalysisGateway.getRiskAnalysis(eService.getRef());
+        return eServiceRiskAnalysisGateway.getRiskAnalysis(eService.getRef());
     }
 }
