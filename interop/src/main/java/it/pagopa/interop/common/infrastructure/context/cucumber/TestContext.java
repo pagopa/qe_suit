@@ -5,6 +5,9 @@ import it.pagopa.interop.common.kernel.domain.TestKind;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Setter
 @Getter
 public class TestContext implements CurrentTestKind {
@@ -16,4 +19,11 @@ public class TestContext implements CurrentTestKind {
      * </p>
      */
     private TestKind currentTestKind = TestKind.CONTRACT;
+
+    private List<String> eventualConsistencyErrors = new ArrayList<>();
+
+    @Override
+    public void addEventualConsistencyError(String error) {
+        eventualConsistencyErrors.add(error);
+    }
 }

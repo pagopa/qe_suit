@@ -5,6 +5,8 @@ import com.atlassian.oai.validator.report.LevelResolver;
 import com.atlassian.oai.validator.report.ValidationReport;
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter;
 import io.restassured.filter.Filter;
+import it.pagopa.interop.common.infrastructure.context.cucumber.TestContext;
+import it.pagopa.interop.common.kernel.context.CurrentTestKind;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import java.net.URI;
 
 @Configuration
+@RequiredArgsConstructor
 public class BffRestApiClientConfig {
 
     @Value("${interop.api.base-url.bff}")
@@ -22,6 +25,8 @@ public class BffRestApiClientConfig {
 
     @Value("${interop.api.openapi-url.bff}")
     private String openApiSpecUrl;
+
+    private final CurrentTestKind testContext;
 
     @Getter
     @RequiredArgsConstructor
@@ -86,9 +91,29 @@ public class BffRestApiClientConfig {
                 return response;
             }
 
-            throw new AssertionError(
-                    "Test di Flusso interrotto! Errore server: " + code
+            String method = requestSpec.getMethod();
+            String endpoint = requestSpec.getURI();
+            String payload = requestSpec.getBody() != null
+                    ? requestSpec.getBody().toString()
+                    : "<empty>";
+
+            String error = """
+                HTTP %d
+                Method: %s
+                Endpoint: %s
+                Payload: %s
+                Response: %s
+                """.formatted(
+                    code,
+                    method,
+                    endpoint,
+                    payload,
+                    response.getBody().asString()
             );
+
+            testContext.addEventualConsistencyError(error);
+
+            return response;
         };
     }
 }
