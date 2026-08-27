@@ -6,6 +6,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.PurposeRef;
 import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
+import it.pagopa.interop.common.kernel.utils.async.PollingUtils;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
@@ -26,6 +27,7 @@ public class BffPurposeGateway implements PurposeGateway {
         return restClient.getPurpose(purposeRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(mapper::toPurpose)
+                .updateContext()
                 .get();
     }
 
@@ -45,20 +47,28 @@ public class BffPurposeGateway implements PurposeGateway {
     public Purpose activatePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef) {
         it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef delegation = getDelegation(delegationRef);
 
-        return restClient.activatePurposeVersion(purposeRef.id(), purposeVersionRef.id(), delegation)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(activatedResource -> getPurpose(purposeRef))
-                .get();
+        restClient.activatePurposeVersion(purposeRef.id(), purposeVersionRef.id(), delegation)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.getLastActiveVersion() != null && purpose.getLastActiveVersion().getRef().equals(purposeVersionRef)
+        );
     }
 
     @Override
     public Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef) {
         it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef delegation = getDelegation(delegationRef);
 
-        return restClient.suspendPurposeVersion(purposeRef.id(), purposeVersionRef.id(), delegation)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(suspendedResource -> getPurpose(purposeRef))
-                .get();
+        restClient.suspendPurposeVersion(purposeRef.id(), purposeVersionRef.id(), delegation)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(purposeVersionRef.id())
+                                .orElseThrow(() -> new IllegalStateException("Purpose version not found"))
+                                .getRef().equals(purposeVersionRef)
+        );
     }
 
     @Override

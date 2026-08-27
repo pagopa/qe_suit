@@ -10,6 +10,7 @@ import lombok.extern.jackson.Jacksonized;
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static it.pagopa.interop.common.purpose.domain.PurposeVersionState.DRAFT;
@@ -45,5 +46,11 @@ public class Purpose implements Identifiable {
         return versions.stream().filter(version -> version.getPurposeVersionState() == PurposeVersionState.ACTIVE)
                 .max(Comparator.comparing(PurposeVersion::getCreatedAt))
                 .orElse(null);
+    }
+
+    public Optional<PurposeVersion> findVersionById(UUID versionId) {
+        return versions.stream()
+                .filter(version -> version.getId().equals(versionId))
+                .findFirst();
     }
 }
