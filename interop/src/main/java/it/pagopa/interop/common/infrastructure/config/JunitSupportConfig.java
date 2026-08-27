@@ -41,6 +41,11 @@ public class JunitSupportConfig {
     }
 
     @Bean
+    BrowserContext browserContext() {
+        return new InMemoryBrowserContext();
+    }
+
+    @Bean
     EntityStore entityStore() {
         return new InMemoryEntityStore();
     }
