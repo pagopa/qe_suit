@@ -4,7 +4,7 @@ import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import it.pagopa.interop.common.kernel.context.CurrentChannel;
-import it.pagopa.interop.common.kernel.context.CurrentTestKind;
+import it.pagopa.interop.common.kernel.context.TestContext;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.TestKind;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ApplicationHooks {
 
-    private final CurrentTestKind currentTestKind;
+    private final TestContext testContext;
     private final CurrentChannel currentChannel;
 
     @Before
     public void beforeScenario(Scenario scenario) {
-        currentTestKind.setCurrentTestKind(TestKind.FLOW);
+        testContext.setCurrentTestKind(TestKind.FLOW);
         MDC.put("scenario", scenario.getName());
     }
 
@@ -28,7 +28,7 @@ public class ApplicationHooks {
     public void afterScenario() {
         MDC.remove("scenario");
 
-        var errors = currentTestKind.getEventualConsistencyErrors();
+        var errors = testContext.getEventualConsistencyErrors();
 
         if (!errors.isEmpty()) {
             String formattedErrors = errors.stream()
@@ -45,12 +45,12 @@ public class ApplicationHooks {
 
     @Before("@Business")
     public void beforeBusinessScenario(Scenario scenario) {
-       currentTestKind.setCurrentTestKind(TestKind.FLOW);
+       testContext.setCurrentTestKind(TestKind.FLOW);
     }
 
     @Before("@Contract")
     public void beforeContractScenario(Scenario scenario) {
-        currentTestKind.setCurrentTestKind(TestKind.CONTRACT);
+        testContext.setCurrentTestKind(TestKind.CONTRACT);
     }
 
     @Before("@BFF")

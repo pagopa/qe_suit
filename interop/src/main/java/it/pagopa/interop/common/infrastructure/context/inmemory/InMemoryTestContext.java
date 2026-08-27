@@ -1,13 +1,13 @@
 package it.pagopa.interop.common.infrastructure.context.inmemory;
 
-import it.pagopa.interop.common.kernel.context.CurrentTestKind;
+import it.pagopa.interop.common.kernel.context.TestContext;
 import it.pagopa.interop.common.kernel.domain.TestKind;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class InMemoryCurrentTestKind implements CurrentTestKind {
+public class InMemoryTestContext implements TestContext {
 
     private final ThreadLocal<TestKind> currentTestKind = new ThreadLocal<>();
     private final AtomicReference<TestKind> defaultTestKind =
