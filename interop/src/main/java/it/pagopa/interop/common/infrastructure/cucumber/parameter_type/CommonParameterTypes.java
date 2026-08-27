@@ -7,7 +7,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionState;
+import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,11 +38,11 @@ public class CommonParameterTypes {
 
     @ParameterType("CONSUMER|Consumer|consumer|API|Api|api")
     public ClientKind clientType(String type) {
-        return ClientKind.valueOf(type);
+        return ClientKind.valueOf(type.toUpperCase());
     }
 
     @ParameterType("SUSPENDED")
     public PurposeVersionState purposeState(String name) {
-        return PurposeVersionState.fromValue(name);
+        return PurposeVersionState.valueOf(name.toUpperCase());
     }
 }
