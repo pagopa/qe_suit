@@ -10,4 +10,6 @@ public interface PurposeGateway extends Plugin<Channel> {
     Purpose createPurpose(EServiceRef eServiceRef, Tenant consumer, RiskAnalysisForm riskAnalysisForm);
 
     Purpose activatePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef);
+
+    Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef);
 }
