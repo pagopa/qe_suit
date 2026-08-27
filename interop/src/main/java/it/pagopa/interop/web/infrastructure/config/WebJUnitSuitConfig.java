@@ -5,11 +5,14 @@ import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
 import it.frontend.e2e.framework.web.adapter.selenium.SeleniumApiAdapter;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
+import it.pagopa.interop.common.infrastructure.contract.browser.WebContractValidator;
 import it.pagopa.interop.common.kernel.context.BrowserContext;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityHandler;
 import it.pagopa.interop.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityImpl;
 import it.pagopa.interop.web.infrastructure.config.suit.WebSuitConfig;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +23,15 @@ import org.springframework.core.env.Environment;
 @Configuration(proxyBeanMethods = false)
 @Profile("junit")
 public class WebJUnitSuitConfig {
+
+    @Bean
+    WebContractValidator webContractValidator(
+            @Qualifier("junitWebPresentationGateway")
+            ObjectProvider<WebPresentationGateway> webPresentationGatewayProvider,
+            CurrentUserSession currentUserSession
+    ) {
+        return new WebContractValidator(webPresentationGatewayProvider, currentUserSession);
+    }
 
     @Bean("junitWebPresentationGateway")
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
