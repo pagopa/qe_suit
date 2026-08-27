@@ -1,4 +1,4 @@
-package it.pagopa.interop.bff.risk_analysis.infrastruture;
+package it.pagopa.interop.bff.risk_analysis.infrastructure;
 
 import it.pagopa.interop.bff.purpose.infrastructure.BffPurposeRestClient;
 import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;
