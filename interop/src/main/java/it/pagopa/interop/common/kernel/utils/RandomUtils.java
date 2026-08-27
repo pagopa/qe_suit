@@ -9,9 +9,8 @@ public class RandomUtils {
     }
 
     public static String randomAlphanumericName(String prefix,  int length) {
-        String randomPart = Instancio.of(String.class)
+        return Instancio.of(String.class)
                 .generate(allStrings(), gen -> gen.string().prefix(prefix+"-").length(length)).create();
-        return prefix + randomPart;
     }
 
     public static String randomAlphanumericName(String prefix) {
