@@ -13,6 +13,7 @@ import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
 import org.springframework.stereotype.Component;
@@ -45,10 +46,10 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
         Map<String, List<String>> answers =
                 riskAnalysisDataFactory.getTemplateForTenant(consumer, true);
 
-        RiskAnalysisForm form = RiskAnalysisForm.builder()
-                .version(latestConfig.getVersion())
-                .answers(answers)
-                .build();
+        RiskAnalysisFormSeed riskAnalysisFormSeed = Instancio.of(RiskAnalysisFormSeed.class)
+                .set(field(RiskAnalysisFormSeed::getVersion), latestConfig.getVersion())
+                .set(field(RiskAnalysisFormSeed::getAnswers), answers)
+                .create();
 
         PurposeSeed purposeSeed = Instancio.of(PurposeSeed.class)
                 .set(field(PurposeSeed::getTitle), RandomUtils.randomAlphanumericName("purpose"))
@@ -58,7 +59,7 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
                 .set(field(PurposeSeed::getDailyCalls), 1)
                 .set(field(PurposeSeed::getEserviceId), eService.getId())
                 .set(field(PurposeSeed::getConsumerId), consumerId)
-                .set(field(PurposeSeed::getRiskAnalysisForm), form)
+                .set(field(PurposeSeed::getRiskAnalysisForm), riskAnalysisFormSeed)
                 .create();
 
         return new BffPurposeCreateCommand(purposeSeed);
