@@ -17,7 +17,7 @@ import org.springframework.core.env.Environment;
 @Configuration
 @Profile("cucumber")
 @RequiredArgsConstructor
-public class CucumberWebSuitConfig {
+public class WebCucumberSuitConfig {
 
     private final WebSuitConfig webSuitConfig;
 
