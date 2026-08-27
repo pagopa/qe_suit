@@ -44,12 +44,12 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
     }
 
     private PurposeJourneyImpl activatePipeline(Purpose purpose) {
-        purposeUseCase.activatePurpose(purpose, purpose.getLastDraftVersion());
+        purposeUseCase.activatePurpose(purpose, purpose.getLastDraftVersion(), null);
         return this;
     }
 
     private PurposeJourneyImpl suspendPipeline(Purpose purpose) {
-        purposeUseCase.suspendPurpose(purpose, purpose.getLastActiveVersion());
+        purposeUseCase.suspendPurpose(purpose, purpose.getLastActiveVersion(), null);
         return this;
     }
 }
