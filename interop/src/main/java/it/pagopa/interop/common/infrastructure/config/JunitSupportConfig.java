@@ -31,8 +31,8 @@ public class JunitSupportConfig {
     }
 
     @Bean
-    CurrentTestKind currentTestKind() {
-        return new InMemoryCurrentTestKind();
+    TestContext currentTestKind() {
+        return new InMemoryTestContext();
     }
 
     @Bean

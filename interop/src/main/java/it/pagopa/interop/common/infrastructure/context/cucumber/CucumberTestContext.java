@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.context.cucumber;
 
-import it.pagopa.interop.common.kernel.context.CurrentTestKind;
+import it.pagopa.interop.common.kernel.context.TestContext;
 import it.pagopa.interop.common.kernel.domain.TestKind;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Setter
 @Getter
-public class TestContext implements CurrentTestKind {
+public class CucumberTestContext implements TestContext {
     /**
      * Tipo di test attualmente in esecuzione
      * <p>

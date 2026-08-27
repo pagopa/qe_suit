@@ -14,8 +14,8 @@ public class ContextConfig {
     @Bean
     @ScenarioScope
     @Primary
-    CurrentTestKind currentTestKind() {
-        return new TestContext();
+    TestContext currentTestKind() {
+        return new CucumberTestContext();
     }
 
     @Bean

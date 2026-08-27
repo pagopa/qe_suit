@@ -5,7 +5,7 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.Filter;
 import io.restassured.specification.RequestSpecification;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
-import it.pagopa.interop.common.kernel.context.CurrentTestKind;
+import it.pagopa.interop.common.kernel.context.TestContext;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.infrastructure.restassured.HttpLoggingFilter;
 import org.springframework.beans.factory.ObjectProvider;
@@ -21,7 +21,7 @@ import static it.pagopa.interop.generated.openapi.clients.bff.JacksonObjectMappe
 public class BffRequestSpecFactory {
 
     private final BearerAuthProvider bearerAuthProvider;
-    private final ObjectProvider<CurrentTestKind> testKindProvider;
+    private final ObjectProvider<TestContext> testKindProvider;
     private final ObjectProvider<CurrentUserSession> currentUserSessionProvider;
     private final Filter contractTestFilter;
     private final Filter businessTestFilter;
@@ -31,7 +31,7 @@ public class BffRequestSpecFactory {
 
     public BffRequestSpecFactory(
             BearerAuthProvider bearerAuthProvider,
-            ObjectProvider<CurrentTestKind> testKindProvider,
+            ObjectProvider<TestContext> testKindProvider,
             ObjectProvider<CurrentUserSession> currentUserSessionProvider,
             @Qualifier("contractTestFilter") Filter contractTestFilter,
             @Qualifier("businessTestFilter") Filter businessTestFilter
@@ -44,7 +44,7 @@ public class BffRequestSpecFactory {
     }
 
     public RequestSpecBuilder create() {
-        CurrentTestKind currentTestKind = testKindProvider.getObject();
+        TestContext testContext = testKindProvider.getObject();
         CurrentUserSession currentUserSession = currentUserSessionProvider.getObject();
 
         String token = bearerAuthProvider.getToken(
@@ -62,7 +62,7 @@ public class BffRequestSpecFactory {
                 )
                 .addHeader("Authorization", "Bearer " + token);
 
-        switch (currentTestKind.getCurrentTestKind()) {
+        switch (testContext.getCurrentTestKind()) {
             case CONTRACT -> builder.addFilter(contractTestFilter);
             case FLOW -> builder.addFilter(businessTestFilter);
         }
