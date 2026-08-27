@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.purpose.application;
 
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
@@ -17,6 +18,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class PurposeUseCase {
+    private final CurrentUserSession currentUserSession;
     private final PurposeGateway purposeGateway;
     private final RiskAnalysisGateway riskAnalysisGateway;
     private final RiskAnalysisDataFactory riskAnalysisDataFactory;
@@ -42,7 +44,15 @@ public class PurposeUseCase {
         return addDraftPurpose(consumer, eService, form);
     }
 
+    public Purpose addDraftPurpose(EService eService){
+        return addDraftPurpose(currentUserSession.getTenant(), eService);
+    }
+
     public Purpose activatePurpose(Purpose purpose, PurposeVersion purposeVersion) {
         return purposeGateway.activatePurpose(purpose.getRef(), purposeVersion.getRef());
+    }
+
+    public Purpose suspendPurpose(Purpose purpose, PurposeVersion purposeVersion) {
+        return purposeGateway.suspendPurpose(purpose.getRef(), purposeVersion.getRef());
     }
 }

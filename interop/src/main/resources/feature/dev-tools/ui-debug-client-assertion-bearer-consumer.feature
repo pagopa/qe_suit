@@ -131,7 +131,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   e la fase di validazione dello Stato Piattaforma risulta in stato FAILED con errore di finalità in stato inattivo
 
     Given una sessione HTTP programmatica su BFF
-    And un eservice creato dal Comune di Milano con una richiesta di fruizione e una finalità in stato SUSPENDED provenienti da PagoPA
+    And un eservice creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato SUSPENDED associate da PagoPA
     And un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente un admin e una coppia di chiavi crittografiche
     And una client assertion valida generata usando il client e la finalità
     And un admin di PagoPA collegato al portale Interop dal Browser

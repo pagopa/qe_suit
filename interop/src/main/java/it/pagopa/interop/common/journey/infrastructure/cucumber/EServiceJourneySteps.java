@@ -24,6 +24,16 @@ public class EServiceJourneySteps {
                 .linkPurpose(PurposeVersionState.ACTIVE);
     }
 
+    @Given("un EService/eservice creato da/dal {tenant} con una richiesta di fruizione in stato ACTIVE e una finalità in stato {purposeState} associate da/dal {tenant}")
+    public void createEServiceWithAgreementAndPurpose(Tenant producer, PurposeVersionState purposeState, Tenant consumer) {
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .linkPurpose(purposeState);
+    }
+
     @Given("un EService/eservice creato da/dal {tenant} con una richiesta di fruizione associata da/dal {tenant}")
     public void createEServiceWithAgreement(Tenant producer, Tenant consumer) {
         interopJourney
