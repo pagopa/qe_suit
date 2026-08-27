@@ -46,7 +46,7 @@ class HttpContractValidatorPrecedenceTest {
         var tests = contract.apiCall(EmptyOper::new)
                 .payload(new Payload("legacy", "other"))
                 .scenario(FuzzScenario.REPLACED_WITH_EMPTY_STRING, response -> scenarioOverrideCount.incrementAndGet())
-                .targets(FuzzScenario.REPLACED_WITH_EMPTY_STRING, response -> targetOverrideCount.incrementAndGet(), Payload::getLegacyField)
+                .targets(FuzzScenario.REPLACED_WITH_EMPTY_STRING, response -> targetOverrideCount.incrementAndGet(), List.of(Payload::getLegacyField))
                 .tests()
                 .toList();
 

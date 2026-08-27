@@ -25,10 +25,10 @@ final class ScopeOverrides {
         }
     }
 
-    void addTargets(List<FuzzScenario> scenarios, Consumer<Response> expectation, TargetExpression<?>[] targets) {
+    void addTargets(List<FuzzScenario> scenarios, Consumer<Response> expectation, List<? extends TargetExpression<?>> targets) {
         validateScenarios(scenarios);
         Objects.requireNonNull(expectation, "expectation must not be null");
-        if (targets == null || targets.length == 0) {
+        if (targets == null || targets.isEmpty()) {
             throw new ContractHttpException("targets must not be empty");
         }
         Set<TargetExpression<?>> seen = new HashSet<>();
@@ -36,7 +36,7 @@ final class ScopeOverrides {
             if (target == null) throw new ContractHttpException("target expression must not be null");
             if (!seen.add(target)) throw new ContractHttpException("Duplicate target expression in same override");
         }
-        targetOverrides.add(new TargetOverride(List.copyOf(scenarios), expectation, List.of(targets)));
+        targetOverrides.add(new TargetOverride(List.copyOf(scenarios), expectation, List.copyOf(targets)));
     }
 
     Consumer<Response> scenario(FuzzScenario scenario) {

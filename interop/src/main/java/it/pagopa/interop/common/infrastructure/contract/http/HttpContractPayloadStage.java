@@ -30,12 +30,12 @@ final class HttpContractPayloadStage<T> implements HttpContractStages.PayloadSta
     }
 
     @Override
-    public HttpContractPayloadStage<T> targets(FuzzScenario scenario, Consumer<Response> expectation, TargetExpression<T>... targets) {
+    public HttpContractPayloadStage<T> targets(FuzzScenario scenario, Consumer<Response> expectation, List<TargetExpression<T>> targets) {
         return targets(List.of(scenario), expectation, targets);
     }
 
     @Override
-    public HttpContractPayloadStage<T> targets(List<FuzzScenario> scenarios, Consumer<Response> expectation, TargetExpression<T>... targets) {
+    public HttpContractPayloadStage<T> targets(List<FuzzScenario> scenarios, Consumer<Response> expectation, List<TargetExpression<T>> targets) {
         overrides.addTargets(scenarios, expectation, targets);
         return this;
     }

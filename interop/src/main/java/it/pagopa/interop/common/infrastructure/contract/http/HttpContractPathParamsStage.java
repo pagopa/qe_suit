@@ -30,12 +30,12 @@ final class HttpContractPathParamsStage<T> implements HttpContractStages.PathPar
     }
 
     @Override
-    public HttpContractPathParamsStage<T> targets(FuzzScenario scenario, Consumer<Response> expectation, TargetExpression<T>... targets) {
+    public HttpContractPathParamsStage<T> targets(FuzzScenario scenario, Consumer<Response> expectation, List<TargetExpression<T>> targets) {
         return targets(List.of(scenario), expectation, targets);
     }
 
     @Override
-    public HttpContractPathParamsStage<T> targets(List<FuzzScenario> scenarios, Consumer<Response> expectation, TargetExpression<T>... targets) {
+    public HttpContractPathParamsStage<T> targets(List<FuzzScenario> scenarios, Consumer<Response> expectation, List<TargetExpression<T>> targets) {
         overrides.addTargets(scenarios, expectation, targets);
         return this;
     }
