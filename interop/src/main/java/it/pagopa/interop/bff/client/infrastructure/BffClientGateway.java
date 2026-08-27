@@ -8,6 +8,7 @@ import it.pagopa.interop.common.client.application.command.ClientKeyCreationComm
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.infrastructure.template.action.TestChain;
 import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.kernel.context.EntityStore;
 import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AddUsersToClientRequest;
@@ -19,19 +20,24 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class BffClientGateway implements ClientGateway {
 
     private final BffClientRestClient restClient;
+    private final EntityStore entityStore;
     private final BffClientMapper mapper;
 
     @Override
     public Client getClient(ClientRef ref) {
         return restClient.getClient(ref.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(mapper::toClient)
+                .map(client ->{
+                    Optional<Client> maybeClient = entityStore.getById(ref.id(), Client.class);
+                    return mapper.toClientPreservingKeysAndUsers(client, maybeClient.orElse(null));
+                })
                 .updateContext()
                 .get();
     }
