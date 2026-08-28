@@ -3,25 +3,28 @@ package it.pagopa.send.common.kernel.domain;
 import it.pagopa.send.generated.openapi.clients.bff.model.NotificationRecipientV24;
 import lombok.Getter;
 
-import static it.pagopa.send.common.kernel.domain.UserType.PA;
 import static it.pagopa.send.common.kernel.domain.UserType.PF;
 import static it.pagopa.send.common.kernel.domain.UserType.PG;
 
-public enum Recipient {
+public enum Recipient implements User {
     PETRARCA(
             PG,
             "FrancescoPetrarca",
             "test",
             "Le Epistolae srl",
             "LELPTR04A01C352E",
-            "Francesco Petrarca"
+            "Francesco Petrarca",
+            null,
+            null
     ),
     LUCREZIA(PF,
             "lucrezia",
             "password123",
             null,
             "BRGLRZ80D58H501Q",
-            "Lucrezia"
+            "Lucrezia",
+            null,
+            null
     );
 
     @Getter
@@ -36,14 +39,31 @@ public enum Recipient {
     private final String taxId;
     @Getter
     private final String denomination;
+    @Getter
+    private final String organizationId;
+    @Getter
+    private final String uid;
 
-    Recipient(UserType type, String username, String password, String organization, String taxId, String denomination) {
+    Recipient(UserType type, String username, String password, String organization, String taxId,
+              String denomination, String organizationId, String uid) {
         this.type = type;
         this.username = username;
         this.password = password;
         this.organization = organization;
         this.taxId = taxId;
         this.denomination = denomination;
+        this.organizationId = organizationId;
+        this.uid = uid;
+    }
+
+    @Override
+    public String getName() {
+        return this.denomination;
+    }
+
+    @Override
+    public String getFiscalNumber() {
+        return this.taxId;
     }
 
     /**
