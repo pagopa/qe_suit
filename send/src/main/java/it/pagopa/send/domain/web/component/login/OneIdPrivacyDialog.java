@@ -5,10 +5,10 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.domain.Component;
 
 public interface OneIdPrivacyDialog extends Component {
-
     @XPath("//*[@id=\"consent-form\"]/div[2]/button[2]/div[2]/button[2]|" +
             "/html/body/section/main/article/form/div/button[1]|" +
-            "//*[@id=\"contain-all\"]/div/div[4]/div/form[1]/input[3]")
+            "//*[@id=\"contain-all\"]/div/div[4]/div/form[1]/input[3]|" +
+            "//*[@id=\"consent-form\"]/div[2]/button[2]")
     Clickable acceptButton();
 
     @XPath("//*[@id=\"consent-form\"]/div[2]/button[1]|" +
