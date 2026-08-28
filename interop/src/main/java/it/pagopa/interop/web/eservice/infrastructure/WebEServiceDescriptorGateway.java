@@ -99,11 +99,14 @@ public class WebEServiceDescriptorGateway implements EServiceDescriptorGateway {
                 XPathSelector.of(".//button[contains(@class,'MuiButton-root') and normalize-space()='Salva documento']")
         );
         //      c) modifica input con id "audience" inserendo "https://eservice.pa.it/api/v1"
-        XPathSelector audienceSelector = XPathSelector.of(".//input[@id='audience']");
-        webPresentationGateway.clear(audienceSelector);
 
-        audience = "https://eservice.pa.it/api/v1";
-        webPresentationGateway.sendText(audienceSelector, audience);
+
+//        audience = "https://eservice.pa.it/api/v1";
+        audience = "eservice.pa.it/api/v1";
+        webPresentationGateway.clearAndSendText(
+                XPathSelector.of(".//input[@id='audience']"),
+                audience
+        );
 
         // 6) vai avanti
         webPresentationGateway.click(
@@ -145,8 +148,13 @@ public class WebEServiceDescriptorGateway implements EServiceDescriptorGateway {
         );
 
         // 10) clicca su "Pubblica" nel modale di conferma
+
         webPresentationGateway.click(
-                XPathSelector.of(".//button[contains(@class, 'MuiButton-root') and not(.//span[@class='MuiButton-icon']) and normalize-space()='Pubblica']")
+//                XPathSelector.of(".//button[contains(@class, 'MuiButton-root') and not(.//span[@class='MuiButton-icon']) and normalize-space()='Pubblica']")
+                XPathSelector.of(
+                        ".//div[.//*[contains(normalize-space(),'Pubblica e-service')]]" +
+                                "//button[normalize-space()='Pubblica']"
+                )
         );
 
         return EServiceDescriptor.builder()
