@@ -323,6 +323,27 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     }
 
     @Override
+    public void setSessionStorageItem(String key, String value) {
+        if (key == null || key.isBlank()) {
+            throw new IllegalArgumentException("key cannot be null or blank");
+        }
+
+        if (!(driver instanceof JavascriptExecutor js)) {
+            throw new IllegalStateException("Driver does not support JavascriptExecutor");
+        }
+
+        try {
+            js.executeScript(
+                    "window.sessionStorage.setItem(arguments[0], arguments[1]);",
+                    key,
+                    value
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to set sessionStorage item for key: " + key, e);
+        }
+    }
+
+    @Override
     public void close() {
         try {
             if (driver != null) {
