@@ -7,6 +7,7 @@ import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescr
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.interop.web.eservice.application.WebEServiceCreationCommand;
+import it.pagopa.interop.web.eservice.application.WebUpdateEServiceDescriptorCommand;
 import org.instancio.Instancio;
 import org.springframework.stereotype.Component;
 
@@ -51,7 +52,7 @@ public class WebEServiceRequestFactory implements EServiceRequestFactory {
                 .ignore(field(UpdateEServiceDescriptorSeed::getAsyncExchangeProperties))
                 .create();
 
-        return BffUpdateEServiceDescriptorCommand.from(payload);
+        return WebUpdateEServiceDescriptorCommand.from(payload);
     }
 
     @Override
