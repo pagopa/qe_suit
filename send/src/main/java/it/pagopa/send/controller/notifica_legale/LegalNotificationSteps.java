@@ -30,16 +30,24 @@ public class LegalNotificationSteps {
 
     @When("l'ente {string} crea una notifica di tipo {legalNotificationType} per il destinatario {string}")
     public void enteCreaNotifica(String enteName, LegalNotificationType type, String destinatarioName) {
-        createNotification(enteName, type, destinatarioName, Map.of());
+        createNotification(Tenant.fromOrganization(enteName), type, destinatarioName, Map.of());
+    }
+
+    @When("l'ente crea una notifica di tipo {legalNotificationType} per il destinatario {string}")
+    public void enteContestoCreaNotifica(LegalNotificationType type, String destinatarioName) {
+        Tenant tenant = webBrowserContext.getTenant();
+        if (tenant == null) {
+            throw new IllegalStateException("Nessun ente autenticato nel contesto: specifica l'ente esplicitamente oppure effettua prima il login");
+        }
+        createNotification(tenant, type, destinatarioName, Map.of());
     }
 
     @When("l'ente {string} crea una notifica di tipo {legalNotificationType} per il destinatario {string} con i seguenti valori:")
     public void enteCreaNotificaConOverride(String enteName, LegalNotificationType type, String destinatarioName, DataTable overrides) {
-        createNotification(enteName, type, destinatarioName, overrides.asMap(String.class, String.class));
+        createNotification(Tenant.fromOrganization(enteName), type, destinatarioName, overrides.asMap(String.class, String.class));
     }
 
-    private void createNotification(String enteName, LegalNotificationType type, String destinatarioName, Map<String, String> overrides) {
-        Tenant sender = Tenant.fromOrganization(enteName);
+    private void createNotification(Tenant sender, LegalNotificationType type, String destinatarioName, Map<String, String> overrides) {
         Recipient recipient = Recipient.fromUsername(destinatarioName);
 
         journey.withSender(sender)

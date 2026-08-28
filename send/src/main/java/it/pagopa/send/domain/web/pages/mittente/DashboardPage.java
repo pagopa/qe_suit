@@ -12,7 +12,7 @@ import org.assertj.core.api.Assertions;
 import java.util.Map;
 import java.util.Optional;
 
-@Url("${url.notifiche.mittente.dashboard}#selfCareToken=${token.mittente}")
+@Url("${url.notifiche.mittente.dashboard}")
 public interface DashboardPage extends NotificationSearchPage {
 
     @XPath("//*[@data-testid=\"titleBox\"]")
