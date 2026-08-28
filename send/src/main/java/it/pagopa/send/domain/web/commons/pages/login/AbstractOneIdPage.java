@@ -5,8 +5,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.AbstractPage;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.frontend.e2e.framework.web.domain.User;
-import it.pagopa.send.common.kernel.domain.Recipient;
+import it.pagopa.send.common.kernel.domain.User;
 import it.pagopa.send.domain.web.component.login.OneIdLoginForm;
 import it.pagopa.send.domain.web.component.login.OneTrustBanner;
 
@@ -37,7 +36,7 @@ public interface AbstractOneIdPage extends AbstractPage {
     OneIdLoginForm loginForm();
     Optional<OneTrustBanner> oneTrustBanner();
 
-    default void loginWithSpid(Recipient user) {
+    default void loginWithSpid(User user) {
         oneTrustBanner().ifPresent(OneTrustBanner::accept);
         authArea().spidButton().click();
         authArea().providerDialog().selectFakeProvider();
