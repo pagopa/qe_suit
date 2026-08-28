@@ -42,6 +42,12 @@ public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<
     }
 
     @Override
+    public void setSessionStorageItem(String key, String value) {
+        logger.logInfo("Set sessionStorage item: " + key + " = " + value);
+        webAdapter.setSessionStorageItem(key, value);
+    }
+
+    @Override
     public void close() {
         logger.logInfo("Closing Browser");
         webAdapter.close();

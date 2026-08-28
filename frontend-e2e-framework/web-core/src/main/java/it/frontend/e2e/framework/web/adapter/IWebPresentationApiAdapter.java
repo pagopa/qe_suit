@@ -14,4 +14,5 @@ public interface IWebPresentationApiAdapter
     Optional<String> getLocalStorageItem(String key);
     Optional<String> getSessionStorageItem(String key);
     void setLocalStorageItem(String key, String value);
+    void setSessionStorageItem(String key, String value);
 }
