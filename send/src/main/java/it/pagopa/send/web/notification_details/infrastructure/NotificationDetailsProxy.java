@@ -34,13 +34,13 @@ public class NotificationDetailsProxy implements NotificationDetailsPage, Notifi
     }
 
     private NotificationSearchPage currentSearchPage() {
-        return webBrowserContext.getUser().getType() == UserType.PA
+        return webBrowserContext.getCurrentUser().getType() == UserType.PA
                 ? dashboardPage
                 : notificationPFPage;
     }
 
     private NotificationDetailsPage current() {
-        return webBrowserContext.getUser().getType() == UserType.PA
+        return webBrowserContext.getCurrentUser().getType() == UserType.PA
                 ? mittenteNotificationDetailsPage
                 : notificationDetailsPFPage;
     }
