@@ -5,7 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.send.controller.creazione_notifica.NotificationContext;
 import it.pagopa.send.utils.IUNHelper;
-import it.pagopa.send.web.infrastructure.suit.component.Chip;
+import it.pagopa.suit.component.Chip;
 import it.pagopa.send.web.notification_details.infrastructure.NotificationDetailsProxy;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.SoftAssertions;

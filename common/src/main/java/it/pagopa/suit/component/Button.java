@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.infrastructure.config.suit.component;
+package it.pagopa.suit.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
@@ -19,7 +19,8 @@ public interface Button extends Component, Clickable, Readable<String> {
     }
 
     default boolean isSelected() {
-        return this.get()                .map(we -> we.getClasses().contains(SELECTED_CLASS))
+        return this.get()
+                .map(we -> we.getClasses().contains(SELECTED_CLASS))
                 .orElseThrow(() -> new java.util.NoSuchElementException(
                         "Impossibile verificare lo stato del button: l'elemento UI non è presente nella pagina."
                 ));

@@ -4,7 +4,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.send.web.infrastructure.suit.component.Chip;
+import it.pagopa.suit.component.Chip;
 
 /**
  * Contratto condiviso tra le varianti attore per la sezione di stato della notifica.
