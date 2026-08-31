@@ -19,6 +19,10 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.getEServiceDescriptor(eService.getRef(), descriptor.getRef());
     }
 
+    public EServiceDescriptor addDescriptor(EService eService){
+        return eServiceDescriptorGateway.addDescriptor(eService.getRef());
+    }
+
     public EServiceDescriptor publishDescriptor(EService eService, EServiceDescriptor descriptor) {
         if (descriptor.getState() == EServiceDescriptorState.PUBLISHED) return descriptor;
 

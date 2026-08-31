@@ -45,6 +45,14 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
+    public EServiceDescriptor addDescriptor(EServiceRef eServiceRef) {
+        return restClient.addDescriptor(eServiceRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdResource -> getEServiceDescriptor(eServiceRef, EServiceDescriptorRef.of(createdResource.getId())))
+                .get();
+    }
+
+    @Override
     public EServiceDescriptor publishDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
         restClient.publishDescriptor(eServiceRef.id(), descriptorRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
