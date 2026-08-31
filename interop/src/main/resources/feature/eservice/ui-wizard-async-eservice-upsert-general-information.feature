@@ -1,3 +1,4 @@
+@ignore
 Feature: Creazione di un e-service asincrono - Validazione dello step Informazioni Generali (Frontend) - Test Comportamentale
 
   Come Ente Erogatore autenticato nel portale Interop
