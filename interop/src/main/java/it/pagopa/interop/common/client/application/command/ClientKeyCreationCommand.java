@@ -1,10 +1,10 @@
 package it.pagopa.interop.common.client.application.command;
 
-import it.pagopa.interop.common.kernel.utils.RandomUtils;
-import it.pagopa.interop.common.kernel.utils.jwt.JwtUtils;
+import it.pagopa.utils.RandomUtils;
+import it.pagopa.utils.jwt.JwtUtils;
 import it.pagopa.interop.common.kernel.domain.Key;
-import it.pagopa.interop.common.kernel.domain.KeyAlgorithm;
 import it.pagopa.interop.common.kernel.domain.KeyUse;
+import it.pagopa.utils.kernel.KeyAlgorithm;
 
 public interface ClientKeyCreationCommand {
     ClientKeyCreationCommand name(String name);

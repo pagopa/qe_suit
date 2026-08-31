@@ -3,8 +3,8 @@ package it.pagopa.interop.common.infrastructure.cucumber.step;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.kernel.DPoPProofGateway;
-import it.pagopa.interop.common.kernel.domain.KeyAlgorithm;
-import it.pagopa.interop.common.kernel.utils.jwt.JwtBuilder;
+import it.pagopa.utils.jwt.JwtBuilder;
+import it.pagopa.utils.kernel.KeyAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
