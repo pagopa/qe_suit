@@ -1,13 +1,13 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
-import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
+import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
-import it.pagopa.interop.common.kernel.context.EntityStore;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
+import it.pagopa.interop.common.kernel.context.EntityStore;
 import it.pagopa.interop.common.kernel.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -30,7 +30,8 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     @Override
     public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {
-        EService draftEService = eServiceUseCase.createEService(cmd -> {});
+        EService draftEService = eServiceUseCase.createEService(cmd -> {
+        });
         return processLifecycle(draftEService, draftEService.getLastDraftDescriptor(), targetState);
     }
 
@@ -49,8 +50,15 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     @Override
     public EServiceJourneyImpl waitUntilEService(Predicate<EService> predicate) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+
         PollingUtils.pollUntil(
-                () -> eServiceUseCase.getEService(entityStore.getLastOrThrow(EService.class)),
+                () -> {
+                    eService.getDescriptors().forEach(
+                            descriptor -> eServiceDescriptorUseCase.getDescriptor(eService, descriptor)
+                    );
+                    return eServiceUseCase.getEService(eService);
+                },
                 predicate
         );
 
