@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MSG_FILE="${1:-}"
+
+if [[ -z "$MSG_FILE" || ! -f "$MSG_FILE" ]]; then
+  echo "Commit message file not found" >&2
+  exit 1
+fi
+
+MSG="$(head -n1 "$MSG_FILE")"
+
+# Ignore auto-generated merge commits.
+if [[ "$MSG" =~ ^Merge\  ]]; then
+  exit 0
+fi
+
+if [[ ! "$MSG" =~ ^(feat|fix|chore|docs|refactor|test|ci)(\(.+\))?:\ \[[A-Z]+\-[0-9]+\]\ .+ ]]; then
+  echo "" >&2
+  echo "========================================" >&2
+  echo "Invalid commit message format" >&2
+  echo "========================================" >&2
+  echo "Message: '$MSG'" >&2
+  echo "" >&2
+  echo "Expected one of these formats:" >&2
+  echo "  1) type(AFFECTED-SCOPE): [TICKET-ID] message" >&2
+  echo "     Example: feat(payment): [QA-123] add retry on timeout" >&2
+  echo "" >&2
+  echo "  2) type: [TICKET-ID] message" >&2
+  echo "     Example: feat: [PROJ-123] add retry on timeout" >&2
+  echo "========================================" >&2
+  exit 1
+fi
+

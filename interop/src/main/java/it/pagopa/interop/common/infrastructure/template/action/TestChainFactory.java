@@ -1,0 +1,23 @@
+package it.pagopa.interop.common.infrastructure.template.action;
+
+import it.pagopa.interop.common.infrastructure.response.RawResponse;
+import it.pagopa.interop.common.infrastructure.template.action.context.BaseActionContext;
+import lombok.Setter;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.function.Supplier;
+
+@Service
+public class TestChainFactory {
+
+    @Setter(onMethod_ = {@Autowired})
+    private ObjectProvider<TestChain> testActionChainProvider;
+
+    @SuppressWarnings("unchecked")
+    public <Response> TestChain<Response> build(Supplier<RawResponse> responseSupplier, Class<?> responseClass) {
+        var baseActionContext = new BaseActionContext(responseSupplier, responseClass);
+        return testActionChainProvider.getObject().handle(baseActionContext);
+    }
+}

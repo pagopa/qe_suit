@@ -54,7 +54,7 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
         try {
             if (method.isDefault()) return handleDefaultMethod(proxy, method, args);
             if (TypeUtils.isOptionalReturn(method)) return WrapperBinder.bindOptional(this, method, args);
-            if (TypeUtils.isListReturn(method)) return bindListProxy(method);
+            if (TypeUtils.isListReturn(method)) return resolveListReturn(method, args);
 
             Class<?> rt = method.getReturnType();
             if (isBindableType(rt)) return bindRecursive(method, rt, shouldSuppressExceptionForOptionalWrapper);
@@ -100,24 +100,66 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
         }
 
         CapabilityScope scope = new CapabilityScope(fullSel, ctx.getScope().location(), false);
+
+        BindContext childContext = new BindContext(
+                scope,
+                method.getGenericReturnType()
+        );
+
         logger.logInfo("Binding recursive element: " + returnType.getSimpleName() +
                 " | From: " + method.getDeclaringClass().getSimpleName() +
                 " | Selector: " + fullSel);
         return Proxy.newProxyInstance(
                 returnType.getClassLoader(),
                 new Class<?>[]{returnType},
-                new DefaultBinderInvocationHandler(this.dispatcher, new BindContext(scope), optionalBestEffort)
+                new DefaultBinderInvocationHandler(this.dispatcher, childContext, optionalBestEffort)
         );
     }
 
-    private Object bindListProxy(Method method) {
-        Class<?> itemType = TypeUtils.getListGenericType(method);
+    private Object resolveListReturn(Method method, Object[] args) {
+
+        Class<?> itemType = TypeUtils.getListGenericType(
+                method,
+                ctx.getBoundType()
+        );
+
+        /*
+         * Se la List contiene un tipo "semplice", ad esempio:
+         *
+         * List<String>
+         * List<Integer>
+         * List<Boolean>
+         *
+         * non bisogna creare proxy per gli elementi.
+         * La chiamata va delegata normalmente al dispatcher.
+         */
+        if (!isBindableType(itemType)) {
+            return resolveCapabilityMethod(
+                    method,
+                    args,
+                    ctx
+            );
+        }
+
+        /*
+         * Se invece la List contiene DomainElement/Capability,
+         * allora creiamo la PresentationElementList.
+         */
+        return bindListProxy(
+                method,
+                itemType
+        );
+    }
+
+    private Object bindListProxy(Method method, Class<?> itemType) {
 
         String childSel = XPathResolver.resolve(method, itemType);
-
         String fullSel = XPathResolver.isAbsolute(childSel)
                 ? childSel
-                : XPathResolver.compose(ctx.getScope().selector(), childSel);
+                : XPathResolver.compose(
+                ctx.getScope().selector(),
+                childSel
+        );
 
         CapabilityScope collectionScope = new CapabilityScope(
                 fullSel,
@@ -135,10 +177,6 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
     public boolean isBindableType(Class<?> type) {
         return DomainElement.class.isAssignableFrom(type) || Capability.class.isAssignableFrom(type);
     }
-
-    /**
-     * Getters
-     */
 
     public BindContext getCtx() {
         return ctx;

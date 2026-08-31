@@ -20,16 +20,27 @@
 
     <properties>
         <java.version>17</java.version>
-        <cucumber.version>7.14.0</cucumber.version>
+        <cucumber.version>7.34.6</cucumber.version>
         <jjwt.version>0.12.6</jjwt.version>
         <spring-plugin.version>4.1.0</spring-plugin.version>
         <rest-assured.version>6.0.1</rest-assured.version>
         <swagger-request-validator.version>2.46.1</swagger-request-validator.version>
-        <bff.openapi.url>https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/heads/develop/packages/api-clients/open-api/bffApi.yml</bff.openapi.url>
+        <bff.openapi.url>
+            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.22.0-RC2/packages/api-clients/open-api/bffApi.yml
+        </bff.openapi.url>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>${cucumber.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>rest-assured-bom</artifactId>
@@ -47,30 +58,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <!-- ========================= -->
-    <!-- TODO: DA ELIMINARE, SEZIONE UTILE DURANTE IL REFACTOR PER EVITARE ERRORI DI COMPILAZIONE SUL PREGRESSO -->
-    <!-- ========================= -->
-    <profiles>
-        <profile>
-            <id>refactor</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <excludes>
-                                <exclude>it/pagopa/interop/bff/**</exclude>
-                                <exclude>it/pagopa/interop/common/**</exclude>
-                                <exclude>it/pagopa/interop/web/**</exclude>
-                            </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
     <dependencies>
 
@@ -97,19 +84,16 @@
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
-            <version>${cucumber.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-spring</artifactId>
-            <version>${cucumber.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit-platform-engine</artifactId>
-            <version>${cucumber.version}</version>
         </dependency>
 
         <!-- ========================= -->
@@ -119,6 +103,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
         </dependency>
 
         <dependency>
@@ -142,12 +131,8 @@
 
         <dependency>
             <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-suite-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-suite-engine</artifactId>
+            <artifactId>junit-platform-suite</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- ========================= -->
@@ -210,7 +195,7 @@
             <version>${rest-assured.version}</version>
         </dependency>
 
-               <dependency>
+        <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>xml-path</artifactId>
             <version>${rest-assured.version}</version>
@@ -221,6 +206,7 @@
             <artifactId>groovy</artifactId>
             <version>3.0.21</version>
         </dependency>
+
         <dependency>
             <groupId>com.atlassian.oai</groupId>
             <artifactId>swagger-request-validator-core</artifactId>
@@ -272,6 +258,17 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>kms</artifactId>
+        </dependency>
+
+        <!-- ========================= -->
+        <!-- ArchUnit: Architecture Testing Dependency -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <version>1.3.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -342,7 +339,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <useModulePath>false</useModulePath>
-                    <testClassesDirectory>${project.build.outputDirectory}</testClassesDirectory>
+                    <testClassesDirectory>${project.build.testOutputDirectory}</testClassesDirectory>
                     <includes>
                         <include>**/suite/**</include>
                     </includes>
@@ -352,7 +349,7 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.19.0</version>
+                <version>7.24.0</version>
                 <executions>
                     <!-- Bff API -->
                     <execution>
@@ -385,13 +382,277 @@
                                 <additionalModelTypeAnnotations>
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
+                                <legacyDiscriminatorBehavior>false</legacyDiscriminatorBehavior>
                             </configOptions>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
+            <!-- TODO: le patch al codice generato sono necessarie per far sì che i modelli LinkableEService e LinkableEServiceTemplate estendano LinkableResource, in modo da poter essere trattati in maniera polimorfica. Altri file sono modificati per avere coerenza con ResourceKindEnum. In futuro, quando sarà possibile aggiornare la versione di openapi-generator, è auspicabile che queste patch non siano più necessarie. -->
+            <plugin>
+                <groupId>com.google.code.maven-replacer-plugin</groupId>
+                <artifactId>replacer</artifactId>
+                <version>1.5.3</version>
+                <executions>
+
+                    <execution>
+                        <id>patch-linkable-eservice</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEService.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>public class LinkableEService implements Serializable \{</token>
+                                    <value>public class LinkableEService extends LinkableResource implements Serializable {</value>
+                                </replacement>
+                                <replacement>
+                                    <token>/\*\*\s*\*\s*Get resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}</token>
+                                    <value></value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>patch-linkable-eservice-template</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableEServiceTemplate.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>public class LinkableEServiceTemplate implements Serializable \{</token>
+                                    <value>public class LinkableEServiceTemplate extends LinkableResource implements Serializable {</value>
+                                </replacement>
+                                <replacement>
+                                    <token>/\*\*\s*\*\s*Get resourceKind[\s\S]*?public\s+ResourceKindEnum\s+getResourceKind\(\)\s*\{[\s\S]*?\}</token>
+                                    <value></value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>patch-linked-resource</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkedResource.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>@JsonIgnoreProperties\([\s\S]*?value\s*=\s*"resourceKind"[\s\S]*?\)\s*\n?</token>
+                                    <value></value>
+                                </replacement>
+                                <replacement>
+                                    <token>JsonTypeInfo\.Id\.NAME</token>
+                                    <value>JsonTypeInfo.Id.NONE</value>
+                                </replacement>
+                                <replacement>
+                                    <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
+                                    <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
+    ESERVICE(String.valueOf("ESERVICE"));]]></value>
+                                </replacement>
+                                <replacement>
+                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID getEservice</token>
+                                    <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
+                                        public UUID getEservice</value>
+                                </replacement>
+                                <replacement>
+                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void setEservice</token>
+                                    <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
+                                        public void setEservice</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>patch-linkable-resource</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableResource.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
+                                    <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
+    ESERVICE(String.valueOf("ESERVICE"));]]></value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>patch-linkable-resource-request</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/LinkableResourceRequest.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>@JsonIgnoreProperties\([\s\S]*?value\s*=\s*"resourceKind"[\s\S]*?\)\s*\n?</token>
+                                    <value></value>
+                                </replacement>
+                                <replacement>
+                                    <token>JsonTypeInfo\.Id\.NAME</token>
+                                    <value>JsonTypeInfo.Id.NONE</value>
+                                </replacement>
+                                <replacement>
+                                    <token>ESERVICE_TEMPLATE\(String\.valueOf\("ESERVICE_TEMPLATE"\)\);</token>
+                                    <value><![CDATA[ESERVICE_TEMPLATE(String.valueOf("ESERVICE_TEMPLATE")),
+    ESERVICE(String.valueOf("ESERVICE"));]]></value>
+                                </replacement>
+                                <replacement>
+                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public UUID getEservice</token>
+                                    <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
+                                        public UUID getEservice</value>
+                                </replacement>
+                                <replacement>
+                                    <token>@JsonInclude\(value = JsonInclude.Include.ALWAYS\)[\s\n\r]+public void setEservice</token>
+                                    <value>@JsonInclude(value = JsonInclude.Include.NON_NULL)
+                                        public void setEservice</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+
+                    <!-- TODO: le patch al codice generato sono necessarie per far sì che il modello StandardCertifiedTenantAttribute estenda CertifiedTenantAttribute, in modo da poter essere trattati in maniera polimorfica.-->
+
+                    <execution>
+                        <id>patch-StandardCertifiedTenantAttribute</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>
+                                ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/StandardCertifiedTenantAttribute.java
+                            </file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>public class StandardCertifiedTenantAttribute implements Serializable \{</token>
+                                    <value>public class StandardCertifiedTenantAttribute extends CertifiedTenantAttribute implements Serializable {
+                                    </value>
+                                </replacement>
+                                <replacement>
+                                    <token>/\*\*\s*\*\s*Get kind[\s\S]*?public\s+KindEnum\s+getKind\(\)\s*\{[\s\S]*?\}\s*\n?</token>
+                                    <value></value>
+                                </replacement>
+
+                                <replacement>
+                                    <token>\s*public static final String JSON_PROPERTY_KIND = "kind";\s*@javax.annotation.Nonnull\s*private KindEnum kind;</token>
+                                    <value></value>
+                                </replacement>
+
+                                <replacement>
+                                    <token>public\s+enum\s+KindEnum\s*\{[\s\S]*?(?=public\s+static\s+final\s+String\s+JSON_PROPERTY_ID\s*=\s*"id";)</token>
+                                    <value></value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>patch-certified-discrete-tenant-attribute</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/CertifiedDiscreteTenantAttribute.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>public class CertifiedDiscreteTenantAttribute implements Serializable \{</token>
+                                    <value>public class CertifiedDiscreteTenantAttribute extends CertifiedTenantAttribute implements Serializable {</value>
+                                </replacement>
+
+                                <replacement>
+                                    <token>/\*\*\s*\*\s*Get kind[\s\S]*?public\s+KindEnum\s+getKind\(\)\s*\{[\s\S]*?\}\s*\n?</token>
+                                    <value></value>
+                                </replacement>
+
+                                <replacement>
+                                    <token>\s*public static final String JSON_PROPERTY_KIND = "kind";\s*@javax.annotation.Nonnull\s*private KindEnum kind;</token>
+                                    <value></value>
+                                </replacement>
+
+                                <replacement>
+                                    <token>public\s+enum\s+KindEnum\s*\{[\s\S]*?(?=public\s+static\s+final\s+String\s+JSON_PROPERTY_ID\s*=\s*"id";)</token>
+                                    <value></value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>patch-tenant-attribute</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <file>${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/bff/model/CertifiedTenantAttribute.java</file>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>CERTIFIED_DISCRETE\(String\.valueOf\("CERTIFIED_DISCRETE"\)\);</token>
+                                    <value><![CDATA[CERTIFIED_DISCRETE(String.valueOf("CERTIFIED_DISCRETE")),
+    CERTIFIED(String.valueOf("CERTIFIED"));]]></value>
+                                </replacement>
+                                <replacement>
+                                    <token>private KindEnum kind;</token>
+                                    <value>protected KindEnum kind;</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>ci-rules</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/suite/**</exclude>
+                                <exclude>**/architecture/**</exclude>
+                                <exclude>**/ci/**</exclude>
+                            </excludes>
+                            <failIfNoTests>true</failIfNoTests>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
