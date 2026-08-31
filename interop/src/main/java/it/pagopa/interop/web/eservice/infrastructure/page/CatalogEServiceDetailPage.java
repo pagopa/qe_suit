@@ -4,8 +4,8 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.web.infrastructure.suit.component.Breadcrumb;
-import it.pagopa.interop.web.infrastructure.suit.component.Button;
+import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumb;
+import it.pagopa.interop.web.infrastructure.config.suit.component.Button;
 import org.assertj.core.api.SoftAssertions;
 
 import java.util.List;
