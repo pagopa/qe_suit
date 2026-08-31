@@ -1,9 +1,6 @@
 package it.pagopa.send.legalnotification.application;
 
-import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
+import it.pagopa.send.generated.openapi.clients.bff.model.*;
 import it.pagopa.send.legalnotification.infrastructure.LegalNotificationGateway;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,15 +17,15 @@ public class LegalNotificationUseCase {
         return gateway.create(request);
     }
 
-    /**
-     * Il notificationRequestId restituito dalla creazione è il base64 dello IUN, riutilizzabile
-     * per interrogare la GET della notifica.
-     */
-    public String extractIun(BffNewNotificationResponse response) {
-        return new String(Base64.getDecoder().decode(response.getNotificationRequestId()));
+    public BffRequestStatus deleteNotification(String iun) {
+        return gateway.delete(iun);
     }
 
-    public BffFullNotificationV1 waitForStatus(String iun, BffNotificationStatus targetStatus) {
-        return gateway.waitForStatus(iun, targetStatus);
+    public BffFullNotificationV1 readNotification(String iun, BffNotificationStatus targetStatus) {
+        return gateway.readNotification(iun, targetStatus);
     }
+
+//    public boolean assertNotificationStatus() {
+//        return gateway.ass
+//    }
 }

@@ -5,12 +5,15 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.send.common.kernel.domain.Recipient;
 import it.pagopa.send.common.kernel.domain.Tenant;
+import it.pagopa.send.controller.creazione_notifica.NotificationContext;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
 import it.pagopa.send.legalnotification.application.LegalNotificationJourney;
 import it.pagopa.send.legalnotification.application.LegalNotificationUseCase;
 import it.pagopa.send.model.LegalNotificationType;
 import it.pagopa.send.model.RecipientSpec;
+import it.pagopa.send.utils.IUNHelper;
+import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -24,6 +27,8 @@ public class LegalNotificationSteps {
 
     private final LegalNotificationJourney journey;
     private final LegalNotificationUseCase legalNotificationUseCase;
+    private final WebBrowserContext webBrowserContext;
+    private final NotificationContext notificationContext;
 
     @When("l'ente {string} crea una notifica di tipo {legalNotificationType} per il destinatario {string}")
     public void enteCreaNotifica(String enteName, LegalNotificationType type, String destinatarioName) {
@@ -39,8 +44,8 @@ public class LegalNotificationSteps {
         createNotification(tenant, type, destinatarioName, Map.of());
     }
 
-    @When("l'ente {string} crea una notifica di tipo {legalNotificationType} per il destinatario {string} con i seguenti valori")
-    public void enteCreaNotificaConOverride(String enteName, LegalNotificationType type, String destinatarioName, DataTable overrides) {
+    @When("l'ente {string} crea una notifica di tipo {legalNotificationType} per il destinatario {string} con i seguenti valori:")
+    public void createNotificationWithOverride(String enteName, LegalNotificationType type, String destinatarioName, DataTable overrides) {
         createNotification(Tenant.fromOrganization(enteName), type, destinatarioName, overrides.asMap(String.class, String.class));
     }
 
@@ -56,13 +61,16 @@ public class LegalNotificationSteps {
         log.info("Request di notifica legale generata: {}", journey.getLastRequest());
     }
 
-    @Then("la richiesta di notifica è stata accettata")
-    public void assertRequestAccepted() {
-        Assertions.assertThat(journey.getLastResponse()).isNotNull();
+    @Then("la notifica legale creata è in stato {string}")
+    @Then("la richiesta di notifica è in stato {string}")
+    public void assertRequestAccepted(String status) {
+        BffNotificationStatus expectedStatus = BffNotificationStatus.valueOf(status.toUpperCase());
+        Assertions.assertThat(notificationContext.getBffNewNotificationResponse()).isNotNull();
 
-        String iun = legalNotificationUseCase.extractIun(journey.getLastResponse());
-        BffFullNotificationV1 notification = legalNotificationUseCase.waitForStatus(iun, BffNotificationStatus.ACCEPTED);
+        //String iun = legalNotificationUseCase.extractIun(journey.getLastResponse());
+        String iun = IUNHelper.extractFromBffNewNotificationResponse(notificationContext.getBffNewNotificationResponse());
+        BffFullNotificationV1 notification = legalNotificationUseCase.readNotification(iun, expectedStatus);
 
-        Assertions.assertThat(notification.getNotificationStatus()).isEqualTo(BffNotificationStatus.ACCEPTED);
+        Assertions.assertThat(notification.getNotificationStatus()).isEqualTo(expectedStatus);
     }
 }
