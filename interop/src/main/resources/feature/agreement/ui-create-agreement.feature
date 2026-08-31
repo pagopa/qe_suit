@@ -15,5 +15,7 @@ Feature: Creazione di una richiesta di fruizione verso un EService (Frontend) - 
   quando un Fruitore tenta di inoltrare una richiesta di fruizione per tale versione,
   allora il sistema impedisce l'inoltro della richiesta
 
+    Given una sessione HTTP programmatica su BFF
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
+    And l'utente si collega al portale Interop dal Browser
     Then il sistema impedisce al Comune di Pozzallo di inoltrare una richiesta di fruizione per la versione deprecata dell'EService
