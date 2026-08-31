@@ -65,6 +65,10 @@ selettore:
 token:
   mittente: ${pn.external.bearer-token.tokentestMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
+  session:
+    grossini: eyJhbGciOiAiUlMyNTYiLCJ0eXAiOiAiSldUIiwia2lkIjogImU0ZjJhYTIyLTE5MDctNDIyNC1iYWViLTExYzZiY2RkZDNkYSJ9.eyJpYXQiOiAxNzg3OTAwODIwLCJleHAiOiAxODE5NDM2ODIwLCAidWlkIjogImU5ZTRhOWM3LTk1ODYtNGI5Mi1hN2RkLWVlMWEwZTc3ZDM5OCIsImlzcyI6ICJodHRwczovL3dlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwiYXVkIjogIndlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwgIm9yZ2FuaXphdGlvbiI6IHsgImlkIjogIjViOTk0ZDRhLTBmYTgtNDdhYy05YzdiLTM1NGYxZDQ0YTFjZSIsICJyb2xlIjogImFkbWluIiwiZmlzY2FsX2NvZGUiOiAiODAwMTYzNTA4MjE4MDAxNjM1MDgyMSJ9fQ.XQA1tHP7LQVDUvgYStO22gDmnyUUTwLCG-RWRKXzcze8KeAz-sPErsAnID-AXFyPSTrn6quo2mLdjWwxwbGLfMJI_gGf3j4d-Pl5npnxI5qSuXJrwYEHN4P3YvHD7WIdxBhRCrAqqzjKf4eZmi7J6OOO300jymoxiE6OEYlnm0zTJmy1HRqJNbuMOjRxeHQBNVUox9db10787pZkcKqbkj9t0pUjVfWRdL4jHtCtuHUQfwvNtrZq64KbASY9yViY4JXiLFDGe4ucZDL2g6glCpu3OVViZtfbAiqkO_SXm7HoMOI0gvK3sBnOJRY2nrI7CCIw2qx5HgvAK9gVwW2jRA
+    francescopetrarca: REPLACE_ME
+    lucrezia: REPLACE_ME
 
 # ============================================================================
 # BFF API Configuration (notifiche legali via API)

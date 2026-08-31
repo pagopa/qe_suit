@@ -65,6 +65,10 @@ selettore:
 token:
   mittente: ${pn.external.bearer-token.tokentestMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
+  session:
+    grossini: REPLACE_ME
+    francescopetrarca: REPLACE_ME
+    lucrezia: REPLACE_ME
 
 # ============================================================================
 # BFF API Configuration (notifiche legali via API)
