@@ -41,7 +41,7 @@ public class BffAgreementGateway implements AgreementGateway {
         AgreementPayload payload = agreementRequestFactory.creationRequest(eService, descriptor, delegation);
 
         int expectedStatus = switch (reason) {
-            case ESERVICE_INVALID_STATE -> 400;
+            case ESERVICE_INVALID_STATE, DEPRECATED_VERSION -> 400;
         };
 
         restClient.create(payload)
