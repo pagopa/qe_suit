@@ -8,6 +8,10 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.send.domain.web.pages.destinatario.pf.login.DowntimeItem;
 import it.pagopa.send.web.infrastructure.suit.component.Chip;
 import it.pagopa.send.web.notification_details.infrastructure.suit.NotificationDetailsPage;
+import it.pagopa.send.web.notification_details.infrastructure.suit.section.AttachmentSection;
+import it.pagopa.send.web.notification_details.infrastructure.suit.section.NotificationStatusSection;
+import it.pagopa.send.web.notification_details.infrastructure.suit.section.NotificationSummarySection;
+import it.pagopa.send.web.notification_details.infrastructure.suit.section.PaymentSection;
 import org.assertj.core.api.Assertions;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Questa pagina rappresenta la pagina dei dettagli di una notifica per il cittadino, accessibile dal portale delle notifiche.
  * La pagina mostra informazioni dettagliate sulla notifica selezionata.
  */
-@Url("www.google.com")
+@Url("about:blank")
 public interface NotificationDetailsPFPage extends NotificationDetailsPage {
 
     @XPath("//*[@id=\"title-of-page\"]")
@@ -25,7 +29,7 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
     @XPath("//*[@id=\"title-of-page\"]")
     Chip notificationCancelledMessage();
 
-    interface NotificationDetailsSection extends Component {
+    interface NotificationDetailsSection extends NotificationSummarySection {
 
         @XPath("//*[@id=\"item\"]")
         Chip type();
@@ -54,7 +58,7 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
         }
     }
 
-    interface AttachmentDocumentSection extends Component {
+    interface AttachmentDocumentSection extends AttachmentSection {
         @XPath("//*[@id=\"notification-detail-document-attached\"]")
         Readable<String> header();
 
@@ -68,7 +72,7 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
         Chip raddMessage();
     }
 
-    interface PaymentSection extends Component {
+    interface PfPaymentSection extends PaymentSection {
         @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/div/div[2]/div[2]/div/h2")
         Readable<String> header();
 
@@ -91,16 +95,20 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
         Clickable downloadButton();
     }
 
-    interface NotificationStatusSection extends Component {
+    interface PfNotificationStatusSection extends NotificationStatusSection {
+        @Override
         @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/aside/div[1]/div/h2")
         Readable<String> header();
 
+        @Override
         @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/aside/div[1]/div/div")
-        Chip status();
+        Chip statusChip();
 
+        @Override
         @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/aside/div[1]/div/p")
-        Readable<String> message();
+        Readable<String> detailsMessage();
 
+        @Override
         @XPath("//*[@id=\"root\"]/div[1]/div/main/div/div[2]/aside/div[1]/div/button")
         Clickable detailsButton();
 
@@ -139,13 +147,13 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
     NotificationDetailsSection notificationSummarySection();
 
     @Override
-    PaymentSection paymentSection();
+    PfPaymentSection paymentSection();
 
     @Override
     AttachmentDocumentSection attachmentSection();
 
     @Override
-    NotificationStatusSection notificationStatusSection();
+    PfNotificationStatusSection notificationStatusSection();
 
     NotificationAARDetailsSection notificationAARDetailsSection();
 

@@ -4,10 +4,13 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
-import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.send.web.infrastructure.suit.component.Chip;
 import it.pagopa.send.web.notification_details.infrastructure.suit.NotificationDetailsPage;
 import it.pagopa.send.web.notification_details.infrastructure.suit.component.NotificationStatusDrawer;
+import it.pagopa.send.web.notification_details.infrastructure.suit.section.AttachmentSection;
+import it.pagopa.send.web.notification_details.infrastructure.suit.section.NotificationStatusSection;
+import it.pagopa.send.web.notification_details.infrastructure.suit.section.NotificationSummarySection;
+import it.pagopa.send.web.notification_details.infrastructure.suit.section.PaymentSection;
 import org.assertj.core.api.Assertions;
 
 @Url("${url.notifiche.mittente.dashboard}#selfCareToken=${token.mittente}")
@@ -21,7 +24,7 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
 
     @XPath("//div[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-root ')]"+
     "[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-root ')]")
-    interface NotificationSummarySection extends Component {
+    interface MittenteNotificationSummarySection extends NotificationSummarySection {
 //        @XPath("header iun")
         @XPath(".//h1")
         Readable<String> iunHeader();
@@ -58,7 +61,7 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
 
     }
 
-    interface PaymentSection extends Component {
+    interface MittentePaymentSection extends PaymentSection {
 //        @XPath("header notice code")
         @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> noticeCodeHeader();
@@ -68,7 +71,7 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
         Readable<String> noticeCodeValue();
     }
 
-    interface AttachmentSection extends Component {
+    interface MittenteAttachmentSection extends AttachmentSection {
 //        @XPath("header")
         @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> header();
@@ -79,34 +82,38 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
     }
 
     @XPath(".//div[@data-testid='NotificationDetailTimeline']")
-    interface NotificationStatusSection extends Component {
+    interface MittenteNotificationStatusSection extends NotificationStatusSection {
 //        @XPath("header")
+        @Override
         @XPath("//*[@id=\"title-of-page\"]")
         Readable<String> header();
 
-        //"chip stato notifica"
-        Chip notificationStatusChip();
+        @Override
+        @XPath("//*[@data-testid='NotificationDetailTimeline']//div[contains(@class, 'MuiChip-root')]")
+        Chip statusChip();
 
 //        @XPath("dettaglio stato notifica")
+        @Override
         @XPath("//*[@id=\"title-of-page\"]")
-        Readable<String> detailsText();
+        Readable<String> detailsMessage();
 
 //        @XPath("griglia contenuti")
+        @Override
         @XPath("//*[@id=\"title-of-page\"]")
-        Clickable details();
+        Clickable detailsButton();
     }
 
     @Override
-    NotificationSummarySection notificationSummarySection();
+    MittenteNotificationSummarySection notificationSummarySection();
 
     @Override
-    PaymentSection paymentSection();
+    MittentePaymentSection paymentSection();
 
     @Override
-    AttachmentSection attachmentSection();
+    MittenteAttachmentSection attachmentSection();
 
     @Override
-    NotificationStatusSection notificationStatusSection();
+    MittenteNotificationStatusSection notificationStatusSection();
 
     @Override
     default void assertLoaded() {
