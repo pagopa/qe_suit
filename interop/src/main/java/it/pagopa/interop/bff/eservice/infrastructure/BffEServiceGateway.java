@@ -64,7 +64,18 @@ public class BffEServiceGateway implements EServiceGateway {
 
     @Override
     public void addDescriptor(EService eService) {
-        throw new UnsupportedOperationException("addDescriptor non supportata al momento in bff...");
+        final EServiceRef eServiceRef = eService.getRef();
+
+        restClient.addDescriptor(eServiceRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdResource -> {
+                    final EServiceDescriptorRef descriptorRef = EServiceDescriptorRef.of(createdResource.getId());
+                    final EServiceDescriptor createdDescriptor = descriptorGateway.getEServiceDescriptor(eServiceRef, descriptorRef);
+                    eService.addDescriptor(createdDescriptor);
+                    return eService;
+                })
+                .updateContext()
+                .get();
     }
 
     @Override

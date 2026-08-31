@@ -5,9 +5,16 @@ Feature: Creazione di nuova versione di un e-service - Validazione dello step di
   ***
   @WEB
   Scenario Outline: [VALIDATE_FE_ESERVICE_DETAILS_PAGE]
-    Given un EService creato dal <erogatore> con una richiesta di fruizione associata dal <fruitore>
+#    Given un EService creato dal <erogatore> con una richiesta di fruizione associata dal <fruitore>
+#    When <erogatore> crea una nuova versione del EService
+#    Then il <potenzialeFruitore> consulta la pagina dell'eservice e trova il pulsante di richiesta di fruizione disabilitato per tutte le versioni antecedenti l'ultima
+    Given una sessione HTTP programmatica su BFF
+    And un EService creato dal <erogatore> con una richiesta di fruizione associata dal <fruitore>
     When <erogatore> crea una nuova versione del EService
-    Then il <potenzialeFruitore> consulta la pagina dell'eservice e trova il pulsante di richiesta di fruizione disabilitato per tutte le versioni antecedenti l'ultima
+
+    # --- switch di canale: da qui in poi si usa il browser ---
+    Given il <potenzialeFruitore> consulta la pagina dell'eservice
+    Then  il <potenzialeFruitore> trova il pulsante di richiesta di fruizione disabilitato per tutte le versioni antecedenti l'ultima
 
     Examples:
       | erogatore           |           fruitore          |       potenzialeFruitore        |
