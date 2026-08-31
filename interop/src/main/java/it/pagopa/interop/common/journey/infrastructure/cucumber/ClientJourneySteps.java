@@ -3,7 +3,7 @@ package it.pagopa.interop.common.journey.infrastructure.cucumber;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.client.application.command.ClientKeyCreationCommand;
 import it.pagopa.interop.common.client.domain.ClientKind;
-import it.pagopa.interop.common.kernel.utils.RandomUtils;
+import it.pagopa.utils.RandomUtils;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;

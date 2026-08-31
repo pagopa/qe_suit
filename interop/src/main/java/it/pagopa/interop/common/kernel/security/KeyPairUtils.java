@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.kernel.security;
 
-import it.pagopa.interop.common.kernel.domain.KeyAlgorithm;
+import it.pagopa.utils.kernel.KeyAlgorithm;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;

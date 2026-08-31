@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.kernel.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.interop.common.kernel.utils.jwt.JwtBuilder;
+import it.pagopa.utils.jwt.JwtBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;

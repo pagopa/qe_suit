@@ -5,7 +5,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.utils.RandomUtils;
+import it.pagopa.utils.RandomUtils;
 import it.pagopa.interop.common.purpose.application.PurposeCommandFactory;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
