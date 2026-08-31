@@ -12,7 +12,7 @@ public class NotificationType {
     @ParameterType("precedentemente creata")
     public BffNewNotificationResponse notification(String raw) {
         return switch (raw) {
-            case "creata" -> notificationContext.getBffNewNotificationResponse();
+            case "precedentemente creata" -> notificationContext.getBffNewNotificationResponse();
             default -> throw new IllegalArgumentException("Notifica non trovata: " + raw);
         };
     }

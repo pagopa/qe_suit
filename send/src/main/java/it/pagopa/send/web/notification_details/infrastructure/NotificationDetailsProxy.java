@@ -1,6 +1,5 @@
 package it.pagopa.send.web.notification_details.infrastructure;
 
-import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.send.common.kernel.domain.UserType;
 import it.pagopa.send.domain.web.pages.destinatario.pf.NotificationDetailsPFPage;
 import it.pagopa.send.domain.web.pages.destinatario.pf.NotificationPFPage;
@@ -8,6 +7,10 @@ import it.pagopa.send.domain.web.pages.mittente.DashboardPage;
 import it.pagopa.send.domain.web.pages.mittente.MittenteNotificationDetailsPage;
 import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import it.pagopa.send.web.notification_details.infrastructure.suit.NotificationDetailsPage;
+import it.pagopa.send.web.notification_details.infrastructure.suit.section.AttachmentSection;
+import it.pagopa.send.web.notification_details.infrastructure.suit.section.NotificationStatusSection;
+import it.pagopa.send.web.notification_details.infrastructure.suit.section.NotificationSummarySection;
+import it.pagopa.send.web.notification_details.infrastructure.suit.section.PaymentSection;
 import it.pagopa.send.web.notification_search.infrastructure.suit.NotificationSearchPage;
 import lombok.RequiredArgsConstructor;
 
@@ -39,39 +42,39 @@ public class NotificationDetailsProxy implements NotificationDetailsPage, Notifi
                 : notificationPFPage;
     }
 
-    private NotificationDetailsPage current() {
+    private NotificationDetailsPage currentDetailsPage() {
         return webBrowserContext.getCurrentUser().getType() == UserType.PA
                 ? mittenteNotificationDetailsPage
                 : notificationDetailsPFPage;
     }
 
     @Override
-    public Component notificationSummarySection() {
-        return current().notificationSummarySection();
+    public NotificationSummarySection notificationSummarySection() {
+        return currentDetailsPage().notificationSummarySection();
     }
 
     @Override
-    public Component paymentSection() {
-        return current().paymentSection();
+    public PaymentSection paymentSection() {
+        return currentDetailsPage().paymentSection();
     }
 
     @Override
-    public Component attachmentSection() {
-        return current().attachmentSection();
+    public AttachmentSection attachmentSection() {
+        return currentDetailsPage().attachmentSection();
     }
 
     @Override
-    public Component notificationStatusSection() {
-        return current().notificationStatusSection();
+    public NotificationStatusSection notificationStatusSection() {
+        return currentDetailsPage().notificationStatusSection();
     }
 
     @Override
     public void assertLoaded() {
-        current().assertLoaded();
+        currentDetailsPage().assertLoaded();
     }
 
     @Override
     public void navigateTo() {
-        current().navigateTo();
+        currentDetailsPage().navigateTo();
     }
 }

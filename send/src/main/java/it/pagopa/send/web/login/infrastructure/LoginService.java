@@ -26,7 +26,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RequiredArgsConstructor
-public class LoginActions {
+public class LoginService {
     private static final String SESSION_STORAGE_KEY = "user";
     private static final String SESSION_TOKEN_PROPERTY = "token.session.%s";
 
