@@ -1,10 +1,10 @@
-package it.pagopa.interop.common.kernel.utils.jwt;
+package it.pagopa.utils.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.security.Jwks;
 import io.jsonwebtoken.security.PublicJwk;
-import it.pagopa.interop.common.kernel.domain.KeyAlgorithm;
+import it.pagopa.utils.kernel.KeyAlgorithm;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
