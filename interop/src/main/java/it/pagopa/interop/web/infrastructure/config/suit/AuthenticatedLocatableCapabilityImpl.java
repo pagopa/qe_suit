@@ -42,7 +42,7 @@ public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImp
     }
 
     @Override
-    public void navigateTo() {
+    public void navigateTo(String... pathParams) {
         User currentUser = currentUserSession.getUser();
         Tenant currentTenant = currentUserSession.getTenant();
         String sessionToken = bearerAuthProvider.getToken(currentUser, currentTenant);
@@ -56,7 +56,8 @@ public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImp
         // Il browser è ora sull'origin corretto del portale
         adapter.setLocalStorageItem("token", sessionToken);
 
-        Url targetUrl = urlSupplier.get();
+        Url targetUrl = resolveUrl(pathParams, urlSupplier.get().getUrl());
+
         adapter.navigateTo(targetUrl);
         webBrowserContext.setCurrentUrl(targetUrl);
     }
