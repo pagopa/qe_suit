@@ -19,7 +19,15 @@ public interface Button extends Component, Clickable, Readable<String> {
     }
 
     default boolean isSelected() {
-        return this.get()                .map(we -> we.getClasses().contains(SELECTED_CLASS))
+        return this.get().map(we -> we.getClasses().contains(SELECTED_CLASS))
+                .orElseThrow(() -> new java.util.NoSuchElementException(
+                        "Impossibile verificare lo stato del button: l'elemento UI non è presente nella pagina."
+                ));
+    }
+
+    @Override
+    default void assertLoaded() {
+        this.get()
                 .orElseThrow(() -> new java.util.NoSuchElementException(
                         "Impossibile verificare lo stato del button: l'elemento UI non è presente nella pagina."
                 ));
