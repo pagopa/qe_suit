@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.kernel.domain;
+package it.pagopa.utils.kernel;
 
 public enum KeyAlgorithm {
     RSA,

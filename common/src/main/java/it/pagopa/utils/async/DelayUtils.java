@@ -1,7 +1,8 @@
-package it.pagopa.interop.common.kernel.utils.async;
+package it.pagopa.utils.async;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.time.Duration;
 
 /**
