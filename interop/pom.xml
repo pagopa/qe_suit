@@ -66,7 +66,7 @@
         <!-- ========================= -->
 
         <dependency>
-            <groupId>it.pagopa</groupId>
+            <groupId>it.pagopa.send</groupId>
             <artifactId>common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
@@ -196,16 +196,25 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>json-path</artifactId>
+            <version>${rest-assured.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>xml-path</artifactId>
+            <version>${rest-assured.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy</artifactId>
+            <version>3.0.21</version>
         </dependency>
 
         <dependency>
@@ -280,16 +289,6 @@
                 <filtering>true</filtering>
             </resource>
         </resources>
-
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-            <!-- Generated expanded feature files -->
-            <testResource>
-                <directory>${project.build.directory}/generated-test-resources</directory>
-            </testResource>
-        </testResources>
 
         <plugins>
 
@@ -634,43 +633,6 @@
                                     <value>protected KindEnum kind;</value>
                                 </replacement>
                             </replacements>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Channel feature expansion: duplicate multi-channel scenarios before Cucumber discovery -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.5.1</version>
-
-                <executions>
-                    <execution>
-                        <id>expand-channel-features</id>
-                        <phase>generate-test-resources</phase>
-
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-
-                        <configuration>
-                            <mainClass>
-                                it.pagopa.interop.common.infrastructure.cucumber.channel.InteropChannelFeatureGenerator
-                            </mainClass>
-
-                            <arguments>
-                                <argument>
-                                    ${project.basedir}/src/main/resources/feature
-                                </argument>
-
-                                <argument>
-                                    ${project.build.directory}/generated-test-resources/feature-expanded
-                                </argument>
-                            </arguments>
-
-                            <includeProjectDependencies>true</includeProjectDependencies>
-                            <includePluginDependencies>false</includePluginDependencies>
                         </configuration>
                     </execution>
                 </executions>
