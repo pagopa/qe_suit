@@ -18,7 +18,7 @@ public interface DashboardPage extends NotificationSearchPage {
     @XPath("//*[@data-testid=\"titleBox\"]")
     Readable<String> header();
 
-    @XPath("//*[@id=\"notificationsTable.body.row\"]/td[7]/div/button")
+    @XPath("//*[@id='notifications-table']/tbody/tr[1]//button[@data-testid='goToNotificationDetail']")
     Clickable notificationDetails();
 
     @XPath("//*[@id=\"iunMatch\"]")
