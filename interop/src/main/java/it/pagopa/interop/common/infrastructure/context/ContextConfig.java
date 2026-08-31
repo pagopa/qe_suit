@@ -2,7 +2,10 @@ package it.pagopa.interop.common.infrastructure.context;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.infrastructure.context.cucumber.*;
+import it.pagopa.interop.common.infrastructure.cucumber.channel.ChannelScenarioHook;
+import it.pagopa.interop.common.infrastructure.cucumber.channel.ChannelStepListener;
 import it.pagopa.interop.common.kernel.context.*;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -51,5 +54,29 @@ public class ContextConfig {
     @Primary
     LastApiResponseStore lastApiResponseStore() {
         return new ApiContext();
+    }
+
+    @Bean
+    @ScenarioScope
+    ScenarioChannelContext scenarioChannelContext() {
+        return new ScenarioChannelContext();
+    }
+
+    @Bean
+    ChannelScenarioHook channelScenarioHook(ScenarioChannelContext scenarioChannelContext) {
+        return new ChannelScenarioHook(scenarioChannelContext);
+    }
+
+    /**
+     * The listener is a singleton but accesses scenario-scoped beans via {@link ObjectProvider}
+     * so it obtains the correct instance per scenario in concurrent execution.
+     */
+    @Bean
+    ChannelStepListener channelStepListener(
+            ObjectProvider<ScenarioChannelContext> scenarioChannelContextProvider,
+            ObjectProvider<CurrentChannel> currentChannelProvider) {
+        return new ChannelStepListener(
+                scenarioChannelContextProvider::getObject,
+                currentChannelProvider::getObject);
     }
 }
