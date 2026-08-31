@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.pagopa.send.domain.web.commons.pages.login.AbstractComunePickerPage;
 import it.pagopa.send.domain.web.component.login.OneTrustBanner;
-import it.pagopa.send.web.infrastructure.suit.component.Button;
+import it.pagopa.suit.component.Button;
 
 import java.util.Optional;
 
