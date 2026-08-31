@@ -42,17 +42,13 @@ public class LegalNotificationGateway {
 
     public BffRequestStatus delete(String iun) {
         return restClient.delete(iun)
-                .withoutPolling()
+                .withPolling(matchesStatus(BffNotificationStatus.CANCELLED), DEFAULT_STATUS_TIMEOUT, DEFAULT_STATUS_INTERVAL)
                 .get();
     }
 
-    public BffFullNotificationV1 waitForStatus(String iun, BffNotificationStatus targetStatus) {
-        return waitForStatus(iun, targetStatus, DEFAULT_STATUS_TIMEOUT, DEFAULT_STATUS_INTERVAL);
-    }
-
-    public BffFullNotificationV1 waitForStatus(String iun, BffNotificationStatus targetStatus, Duration timeout, Duration interval) {
+    public BffFullNotificationV1 readNotification(String iun, BffNotificationStatus targetStatus) {
         return restClient.read(iun)
-                .withPolling(matchesStatus(targetStatus), timeout, interval)
+                .withPolling(matchesStatus(targetStatus), DEFAULT_STATUS_TIMEOUT, DEFAULT_STATUS_INTERVAL)
                 .get();
     }
 

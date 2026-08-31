@@ -21,16 +21,8 @@ public class LegalNotificationUseCase {
         return gateway.delete(iun);
     }
 
-    /**
-     * Il notificationRequestId restituito dalla creazione è il base64 dello IUN, riutilizzabile
-     * per interrogare la GET della notifica.
-     */
-    public String extractIun(BffNewNotificationResponse response) {
-        return new String(Base64.getDecoder().decode(response.getNotificationRequestId()));
-    }
-
-    public BffFullNotificationV1 waitForStatus(String iun, BffNotificationStatus targetStatus) {
-        return gateway.waitForStatus(iun, targetStatus);
+    public BffFullNotificationV1 readNotification(String iun, BffNotificationStatus targetStatus) {
+        return gateway.readNotification(iun, targetStatus);
     }
 
 //    public boolean assertNotificationStatus() {

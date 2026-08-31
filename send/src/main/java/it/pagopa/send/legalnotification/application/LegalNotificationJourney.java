@@ -1,6 +1,7 @@
 package it.pagopa.send.legalnotification.application;
 
 import io.cucumber.spring.ScenarioScope;
+import it.pagopa.send.controller.creazione_notifica.NotificationContext;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
 import it.pagopa.send.common.kernel.domain.Tenant;
@@ -42,7 +43,7 @@ public class LegalNotificationJourney {
     @Getter
     private BffNewNotificationRequest lastRequest;
     @Getter
-    private BffNewNotificationResponse lastResponse;
+    private NotificationContext notificationContext;
 
     public LegalNotificationJourney withSender(Tenant sender) {
         this.sender = sender;
@@ -71,8 +72,8 @@ public class LegalNotificationJourney {
 
     public LegalNotificationJourney send() {
         lastRequest = requestFactory.build(type, sender, List.copyOf(recipients), overrides);
-        lastResponse = legalNotificationUseCase.sendNotification(lastRequest);
-        log.info("Notifica legale inviata: {}", lastResponse);
+        notificationContext.setBffNewNotificationResponse(legalNotificationUseCase.sendNotification(lastRequest));
+        log.info("Notifica legale inviata: {}", notificationContext.getBffNewNotificationResponse());
         return this;
     }
 

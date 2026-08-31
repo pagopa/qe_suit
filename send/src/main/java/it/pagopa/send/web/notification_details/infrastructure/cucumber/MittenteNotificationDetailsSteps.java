@@ -31,7 +31,7 @@ public class MittenteNotificationDetailsSteps {
 
     @And("visualizza il dettaglio dello stato della notifica")
     public void openNotificationStatusDetails() {
-        mittenteNotificationDetailsPage.notificationStatusSection().details().click();
+        mittenteNotificationDetailsPage.notificationStatusSection().detailsButton().click();
         notificationStatusDetailsPage.assertLoaded();
 
         webBrowserContext.setPreviousPage(mittenteNotificationDetailsPage);

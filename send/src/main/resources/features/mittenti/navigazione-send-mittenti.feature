@@ -25,9 +25,11 @@ Feature: Navigazione portale SEND Mittenti
 
 
   Scenario: [BFF_NOTIFICA_1] Lato mittente viene controllato la pagina di dettaglio di una notifica legale
-#    When l'ente "Comune di palermo" crea una notifica di tipo singolo destinatario con bollettino pagoPA per il destinatario "Mario Gherkin"
-#    Then la richiesta di notifica è stata accettata
-    Given l'utente è un "admin" di "Comune di Verona"
+    When l'ente "Comune di palermo" crea una notifica di tipo singolo destinatario con bollettino pagoPA per il destinatario "lucrezia"
+    Then la richiesta di notifica è stata accettata
+    Given la PA Grossini effettua l'accesso a SelfCare con autenticazione SPID
+
+#    Given l'utente è un "admin" di "Comune di Verona"
     And naviga alla pagina Dashboard
     And viene aperto il dettaglio di una notifica
     And la pagina di dettaglio della notifica contiene la sezione relativa al sommario della notifica
