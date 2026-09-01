@@ -3,7 +3,7 @@ package it.pagopa.interop.common.infrastructure.cucumber.hooks;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import it.pagopa.infrastructure.cucumber.hook.channel.ChannelConfig;
-import it.pagopa.infrastructure.cucumber.hook.channel.ChannelScenarioInitializer;
+import it.pagopa.infrastructure.cucumber.hook.channel.ChannelRuntime;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,18 +13,18 @@ public final class ChannelScenarioHook {
     private static final Logger LOG =
             LoggerFactory.getLogger(ChannelScenarioHook.class);
 
-    private final ChannelScenarioInitializer<Channel> initializer;
+    private final ChannelRuntime<Channel> channelRuntime;
 
     public ChannelScenarioHook(
-            ChannelScenarioInitializer<Channel> initializer
+            ChannelRuntime<Channel> channelRuntime
     ) {
-        this.initializer = initializer;
+        this.channelRuntime = channelRuntime;
     }
 
     @Before(order = Integer.MIN_VALUE)
     public void beforeScenario(Scenario scenario) {
         ChannelConfig<Channel> config =
-                initializer.initialize(
+                channelRuntime.initializeScenario(
                         scenario.getSourceTagNames()
                 );
 

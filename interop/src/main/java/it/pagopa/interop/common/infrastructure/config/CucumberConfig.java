@@ -63,72 +63,34 @@ public class CucumberConfig {
         return new CucumberLastApiResponseStore();
     }
 
-
     @Bean
-    ChannelGherkinMapping<Channel> channelGherkinMapping() {
-        return new ChannelGherkinMapping<>(
-                Map.of(
-                        "BFF", Channel.BFF,
-                        "WEB", Channel.WEB_BROWSER,
-                        "WEB_BROWSER", Channel.WEB_BROWSER
+    ChannelModule<Channel> channelModule() {
+        return ChannelModule.of(
+                new ChannelGherkinMapping<>(
+                        Map.of(
+                                "BFF", Channel.BFF,
+                                "WEB", Channel.WEB_BROWSER,
+                                "WEB_BROWSER", Channel.WEB_BROWSER
+                        ),
+                        Map.of(
+                                Channel.BFF, "BFF",
+                                Channel.WEB_BROWSER, "WEB"
+                        )
                 ),
-                Map.of(
-                        Channel.BFF, "BFF",
-                        Channel.WEB_BROWSER, "WEB"
+                new ChannelConfig<>(
+                        Channel.BFF,
+                        Channel.BFF,
+                        Channel.BFF
                 )
         );
     }
 
     @Bean
-    ChannelTagParser<Channel> channelTagParser(ChannelGherkinMapping<Channel> mapping) {
-        return new ChannelTagParser<>(mapping);
-    }
-
-    @Bean
     @ScenarioScope
-    ScenarioChannelContext scenarioChannelContext() {
-        return new ScenarioChannelContext();
-    }
-
-    @Bean
-    ChannelConfig<Channel> defaultChannelConfig() {
-        return new ChannelConfig<>(
-                Channel.BFF,
-                Channel.BFF,
-                Channel.BFF
-        );
-    }
-
-    @Bean
-    @ScenarioScope
-    ChannelScenarioContext<Channel> channelChannelScenarioContext() {
-        return new ChannelScenarioContext<>();
-    }
-
-    @Bean
-    @ScenarioScope
-    ChannelStepInitializer<Channel> channelStepInitializer(
-            ChannelScenarioContext<Channel> scenarioChannelContext,
+    ChannelRuntime<Channel> channelRuntime(
+            ChannelModule<Channel> channelModule,
             CurrentChannel currentChannel
     ) {
-        return new ChannelStepInitializer<>(
-                scenarioChannelContext,
-                currentChannel
-        );
-    }
-
-    @Bean
-    ChannelScenarioInitializer<Channel> channelScenarioInitializer(
-            ChannelScenarioContext<Channel> scenarioChannelContext,
-            CurrentChannel currentChannel,
-            ChannelTagParser<Channel> channelTagParser,
-            ChannelConfig<Channel> defaultConfig
-    ) {
-        return new ChannelScenarioInitializer<>(
-                scenarioChannelContext,
-                currentChannel,
-                channelTagParser,
-                defaultConfig
-        );
+        return channelModule.newRuntime(currentChannel);
     }
 }
