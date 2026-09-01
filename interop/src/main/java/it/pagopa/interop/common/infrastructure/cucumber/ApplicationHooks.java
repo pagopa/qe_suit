@@ -3,7 +3,7 @@ package it.pagopa.interop.common.infrastructure.cucumber;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
-import it.pagopa.kernel.context.CurrentChannel;
+import it.pagopa.interop.common.kernel.context.CurrentChannel;
 import it.pagopa.kernel.context.TestContext;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.kernel.TestKind;

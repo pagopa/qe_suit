@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.context.inmemory;
 
-import it.pagopa.kernel.context.CurrentChannel;
+import it.pagopa.interop.common.kernel.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 
 import java.util.concurrent.atomic.AtomicReference;

@@ -3,7 +3,7 @@ package it.pagopa.interop.common.infrastructure.config;
 import it.pagopa.interop.common.infrastructure.context.inmemory.*;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.kernel.context.BrowserContext;
-import it.pagopa.kernel.context.CurrentChannel;
+import it.pagopa.interop.common.kernel.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.kernel.context.EntityStore;
 import it.pagopa.kernel.context.LastApiResponseStore;
