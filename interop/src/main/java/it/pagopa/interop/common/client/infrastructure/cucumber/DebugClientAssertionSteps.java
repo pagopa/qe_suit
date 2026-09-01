@@ -86,14 +86,4 @@ public class DebugClientAssertionSteps {
             case dpopValidation, dpopProofValidation -> validation.getDpopValidation();
         };
     }
-
-    //TODO: questo è un test di contratto a va gestito diversamente
-//    @Then("il text field Client assertion viene evidenziato come errore e viene mostrato il messaggio di validazione {string}")
-//    public void assertClientAssertionInput(String errorMessage) {
-//        String actualErrorMessage = debugClientAssertionGateway.getClientAssertionInputErrorMessage();
-//
-//        assertThat(actualErrorMessage)
-//                .as("Messaggio di errore visualizzato nel campo Client Assertion")
-//                .isEqualTo(errorMessage);
-//    }
 }
