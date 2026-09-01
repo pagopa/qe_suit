@@ -69,9 +69,11 @@ public class BffEServiceGateway implements EServiceGateway {
         restClient.addDescriptor(eServiceRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> {
-                    final EServiceDescriptorRef descriptorRef = EServiceDescriptorRef.of(createdResource.getId());
-                    final EServiceDescriptor createdDescriptor = descriptorGateway.getEServiceDescriptor(eServiceRef, descriptorRef);
-                    eService.addDescriptor(createdDescriptor);
+                    final EServiceDescriptorRef descriptorRef =
+                            EServiceDescriptorRef.of(createdResource.getId());
+                    final EServiceDescriptor createdDescriptor =
+                            descriptorGateway.getEServiceDescriptor(eServiceRef, descriptorRef);
+                    eService.addDescriptor(createdDescriptor); // real DRAFT descriptor
                     return eService;
                 })
                 .updateContext()
