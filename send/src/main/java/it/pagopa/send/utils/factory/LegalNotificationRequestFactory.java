@@ -1,7 +1,7 @@
 package it.pagopa.send.utils.factory;
 
-import it.pagopa.send.common.kernel.domain.Recipient;
-import it.pagopa.send.common.kernel.domain.Tenant;
+import it.pagopa.send.common.domain.Recipient;
+import it.pagopa.send.common.domain.Tenant;
 import it.pagopa.send.controller.notifica_legale.RequestOverrideApplier;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
 import it.pagopa.send.generated.openapi.clients.bff.model.F24Payment;

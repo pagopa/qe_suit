@@ -3,10 +3,10 @@ package it.pagopa.send.web.login.infrastructure;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.send.common.kernel.domain.OrganizationRole;
-import it.pagopa.send.common.kernel.domain.Recipient;
-import it.pagopa.send.common.kernel.domain.Tenant;
-import it.pagopa.send.common.kernel.domain.User;
+import it.pagopa.send.common.domain.OrganizationRole;
+import it.pagopa.send.common.domain.Recipient;
+import it.pagopa.send.common.domain.Tenant;
+import it.pagopa.send.common.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

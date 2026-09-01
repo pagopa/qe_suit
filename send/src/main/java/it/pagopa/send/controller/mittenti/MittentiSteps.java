@@ -33,6 +33,7 @@ public class MittentiSteps {
     public void navigateTo(Class<? extends Page> page) {
         currentPage = browser.bind(page);
         currentPage.navigateTo();
+        currentPage.assertLoaded();
         webBrowserContext.setCurrentPage(currentPage);
     }
 

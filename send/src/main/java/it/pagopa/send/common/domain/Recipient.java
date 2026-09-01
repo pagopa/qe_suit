@@ -1,10 +1,10 @@
-package it.pagopa.send.common.kernel.domain;
+package it.pagopa.send.common.domain;
 
 import it.pagopa.send.generated.openapi.clients.bff.model.NotificationRecipientV24;
 import lombok.Getter;
 
-import static it.pagopa.send.common.kernel.domain.UserType.PF;
-import static it.pagopa.send.common.kernel.domain.UserType.PG;
+import static it.pagopa.send.common.domain.UserType.PF;
+import static it.pagopa.send.common.domain.UserType.PG;
 
 public enum Recipient implements User {
     PETRARCA(
