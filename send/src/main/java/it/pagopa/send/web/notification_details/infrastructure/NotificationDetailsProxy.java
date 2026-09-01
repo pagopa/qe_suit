@@ -1,6 +1,6 @@
 package it.pagopa.send.web.notification_details.infrastructure;
 
-import it.pagopa.send.common.kernel.domain.UserType;
+import it.pagopa.send.common.domain.UserType;
 import it.pagopa.send.domain.web.pages.destinatario.pf.NotificationDetailsPFPage;
 import it.pagopa.send.domain.web.pages.destinatario.pf.NotificationPFPage;
 import it.pagopa.send.domain.web.pages.mittente.DashboardPage;

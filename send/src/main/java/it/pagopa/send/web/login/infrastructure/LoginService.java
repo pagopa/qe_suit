@@ -2,9 +2,9 @@ package it.pagopa.send.web.login.infrastructure;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.send.common.kernel.domain.Recipient;
-import it.pagopa.send.common.kernel.domain.Tenant;
-import it.pagopa.send.common.kernel.domain.User;
+import it.pagopa.send.common.domain.Recipient;
+import it.pagopa.send.common.domain.Tenant;
+import it.pagopa.send.common.domain.User;
 import it.pagopa.send.domain.web.commons.pages.login.AbstractOneIdPage;
 import it.pagopa.send.domain.web.commons.pages.login.OneIdPage;
 import it.pagopa.send.domain.web.pages.destinatario.pf.NotificationPFPage;

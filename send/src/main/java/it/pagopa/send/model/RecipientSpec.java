@@ -1,13 +1,14 @@
 package it.pagopa.send.model;
 
-import it.pagopa.send.common.kernel.domain.Recipient;
+import it.pagopa.send.common.domain.Recipient;
+import it.pagopa.send.common.journey.infrastructure.LegalNotificationJourneyImpl;
 
 import java.util.List;
 
 /**
  * Un destinatario da inserire in una {@code BffNewNotificationRequest}, insieme agli avvisi di
  * pagamento (pagoPA e/o F24, zero o più) che gli vanno associati. Una notifica può avere più
- * destinatari: {@link it.pagopa.send.legalnotification.application.LegalNotificationJourney}
+ * destinatari: {@link LegalNotificationJourneyImpl}
  * accumula uno o più {@code RecipientSpec}, la factory li traduce ciascuno nel proprio
  * {@code NotificationRecipientV24}.
  */

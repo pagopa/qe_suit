@@ -3,12 +3,12 @@ package it.pagopa.send.controller.notifica_legale;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.send.common.kernel.domain.Recipient;
-import it.pagopa.send.common.kernel.domain.Tenant;
+import it.pagopa.send.common.domain.Recipient;
+import it.pagopa.send.common.domain.Tenant;
 import it.pagopa.send.controller.creazione_notifica.NotificationContext;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
-import it.pagopa.send.legalnotification.application.LegalNotificationJourney;
+import it.pagopa.send.common.journey.infrastructure.LegalNotificationJourneyImpl;
 import it.pagopa.send.legalnotification.application.LegalNotificationUseCase;
 import it.pagopa.send.model.LegalNotificationType;
 import it.pagopa.send.model.RecipientSpec;
@@ -25,7 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class LegalNotificationSteps {
 
-    private final LegalNotificationJourney journey;
+    private final LegalNotificationJourneyImpl journey;
     private final LegalNotificationUseCase legalNotificationUseCase;
     private final WebBrowserContext webBrowserContext;
     private final NotificationContext notificationContext;
@@ -56,9 +56,9 @@ public class LegalNotificationSteps {
                 .withType(type)
                 .withRecipient(RecipientSpec.of(recipient))
                 .withOverrides(overrides)
-                .send();
+                .sendNotification(BffNotificationStatus.ACCEPTED);
 
-        log.info("Request di notifica legale generata: {}", journey.getLastRequest());
+        log.info("Request di notifica legale generata: {}", notificationContext.getBffNewNotificationResponse());
     }
 
     @Then("la notifica legale creata è in stato {string}")
@@ -69,7 +69,7 @@ public class LegalNotificationSteps {
 
         //String iun = legalNotificationUseCase.extractIun(journey.getLastResponse());
         String iun = IUNHelper.extractFromBffNewNotificationResponse(notificationContext.getBffNewNotificationResponse());
-        BffFullNotificationV1 notification = legalNotificationUseCase.readNotification(iun, expectedStatus);
+        BffFullNotificationV1 notification = legalNotificationUseCase.readNotification(iun);
 
         Assertions.assertThat(notification.getNotificationStatus()).isEqualTo(expectedStatus);
     }

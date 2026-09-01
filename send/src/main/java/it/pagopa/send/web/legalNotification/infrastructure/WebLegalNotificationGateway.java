@@ -2,11 +2,15 @@ package it.pagopa.send.web.legalNotification.infrastructure;
 
 import it.pagopa.send.b2b.delivery.infrastructure.B2BDeliveryRestClient;
 import it.pagopa.send.common.kernel.domain.Channel;
-import it.pagopa.send.common.notification.domain.LegalNotificationDomain;
 import it.pagopa.send.controller.creazione_notifica.NotificationContext;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
+import it.pagopa.send.generated.openapi.clients.bff.model.BffLegalNotificationsResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
+import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
+import it.pagopa.send.infrastructure.template.ApiResponse;
+import it.pagopa.send.infrastructure.template.PollingStrategy;
+import it.pagopa.send.infrastructure.template.PollingUtils;
 import it.pagopa.send.legalnotification.application.LegalNotificationGateway;
 import it.pagopa.send.legalnotification.infrastructure.LegalNotificationRestClient;
 import it.pagopa.send.web.notification_details.infrastructure.NotificationDetailsProxy;
@@ -42,21 +46,17 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
     }
 
     @Override
-    public LegalNotificationDomain readNotification(String iun) {
+    public BffFullNotificationV1 readNotification(String iun) {
         notificationDetailsProxy.searchNotification(Map.of("iun", iun));
         notificationDetailsProxy.goToNotificationDetails();
-        LegalNotificationDomain.builder()
-//                .status()
-                .build();
-        return LegalNotificationDomain.builder().build();
+        return null;
     }
 
     @Override
-    public LegalNotificationDomain searchNotification(Map<String, String> overrides) {
-//        restClient.search(overrides)
-//                .withoutPolling()
-//                .get();
-        return LegalNotificationDomain.builder().build();
+    public BffLegalNotificationsResponse searchNotification(Map<String, String> overrides) {
+        return restClient.search(overrides)
+                .withoutPolling()
+                .get();
     }
 
 

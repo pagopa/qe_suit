@@ -1,8 +1,8 @@
 package it.pagopa.send.config.parameter_type;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.send.common.kernel.domain.Recipient;
-import it.pagopa.send.common.kernel.domain.Tenant;
+import it.pagopa.send.common.domain.Recipient;
+import it.pagopa.send.common.domain.Tenant;
 
 public class UserType {
 
