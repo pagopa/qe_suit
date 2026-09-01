@@ -13,3 +13,11 @@ Feature: Creazione di una richiesta di fruizione verso un EService
 
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     Then il sistema impedisce al Comune di Pozzallo di inoltrare una richiesta di fruizione per la versione deprecata dell'EService
+
+  Scenario: [AGREEMENT_DEPRECATED_DESCRIPTOR_2] - Impossibilità di richiedere la fruizione di una versione obsoleta dell'EService
+  Dato un EService pubblicato, con agreement attivo, con successiva pubblicazione di una sua nuova versione ed in seguito con l'archiviazione dell'eservice,
+  quando un Fruitore tenta di inoltrare una richiesta di fruizione per tale versione,
+  allora il sistema impedisce l'inoltro della richiesta
+
+    Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA ed EService archiviato
+    Then il sistema impedisce al Comune di Pozzallo di inoltrare una richiesta di fruizione per la versione deprecata dell'EService
