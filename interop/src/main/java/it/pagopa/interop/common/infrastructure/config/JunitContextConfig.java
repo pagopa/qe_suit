@@ -3,7 +3,7 @@ package it.pagopa.interop.common.infrastructure.config;
 import it.pagopa.interop.common.infrastructure.context.inmemory.*;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.application.context.BrowserContext;
-import it.pagopa.interop.common.infrastructure.channel.CurrentChannel;
+import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
@@ -29,7 +29,7 @@ public class JunitContextConfig {
     }
 
     @Bean
-    CurrentChannel currentChannel() {
+    CurrentChannel<Channel> currentChannel() {
         InMemoryCurrentChannel currentChannel = new InMemoryCurrentChannel();
         currentChannel.setCurrentChannel(Channel.BFF);
         return currentChannel;
