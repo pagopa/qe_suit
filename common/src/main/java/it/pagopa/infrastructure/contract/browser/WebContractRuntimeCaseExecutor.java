@@ -9,11 +9,11 @@ import java.util.function.Supplier;
 final class WebContractRuntimeCaseExecutor {
 
     private final Supplier<WebPresentationGateway> webPresentationGatewayProvider;
-    private final WebContractContextConfigurer contextConfigurer;
+    private final WebSessionProvider contextConfigurer;
 
     WebContractRuntimeCaseExecutor(
             Supplier<WebPresentationGateway> webPresentationGatewayProvider,
-            WebContractContextConfigurer contextConfigurer
+            WebSessionProvider contextConfigurer
     ) {
         this.webPresentationGatewayProvider = Objects.requireNonNull(
                 webPresentationGatewayProvider,
@@ -32,7 +32,7 @@ final class WebContractRuntimeCaseExecutor {
         Objects.requireNonNull(pageType, "pageType must not be null");
         Objects.requireNonNull(scenario, "scenario must not be null");
 
-        contextConfigurer.configure();
+        contextConfigurer.provide();
 
         WebPresentationGateway gateway = webPresentationGatewayProvider.get();
 
