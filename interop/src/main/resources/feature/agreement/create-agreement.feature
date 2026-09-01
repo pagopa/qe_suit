@@ -1,6 +1,6 @@
 @agreement
 @channel:Given=BFF,When=WEB,Then=WEB
-Feature: Creazione di una richiesta di fruizione verso un EService (Frontend) - Test di Flusso Funzionale
+Feature: Creazione di una richiesta di fruizione verso un EService
 
   Come Aderente interessato alla fruizione di un EService in catalogo
   Voglio inoltrare una richiesta di fruizione verso l'erogatore del servizio
