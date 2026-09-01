@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.DefaultDataTableEntryTransformer;
 
-import it.pagopa.interop.common.infrastructure.cucumber.resolver.DataTableExpressionResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,7 +16,7 @@ import java.util.Set;
 public class DataTableMapper {
 
     private static final ThreadLocal<Set<String>> CURRENT_GHERKIN_KEYS = new ThreadLocal<>();
-    private final DataTableExpressionResolver expressionResolver;
+
 
     private final ObjectMapper objectMapper = new ObjectMapper()
             .enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
@@ -26,7 +25,6 @@ public class DataTableMapper {
     public Object transform(Map<String, String> entry, Type toValueType) {
         Map<String, String> modifiableEntry = new HashMap<>(entry);
         CURRENT_GHERKIN_KEYS.set(entry.keySet());
-        modifiableEntry.replaceAll((key, value) -> expressionResolver.resolve(value));
 
         return objectMapper.convertValue(modifiableEntry, objectMapper.constructType(toValueType));
     }
