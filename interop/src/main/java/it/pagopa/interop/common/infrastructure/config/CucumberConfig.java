@@ -8,6 +8,7 @@ import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngine;
 import it.pagopa.interop.common.infrastructure.context.cucumber.*;
 import it.pagopa.application.context.BrowserContext;
 import it.pagopa.interop.common.infrastructure.channel.CurrentChannel;
+import it.pagopa.interop.common.infrastructure.cucumber.channel.InteropChannelEngineConfigs;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
@@ -68,24 +69,7 @@ public class CucumberConfig {
 
     @Bean
     GherkinChannelEngineConfig<Channel> channelModule() {
-        return GherkinChannelEngineConfig.of(
-                new ChannelGherkinMapping<>(
-                        Map.of(
-                                "BFF", Channel.BFF,
-                                "WEB", Channel.WEB_BROWSER,
-                                "WEB_BROWSER", Channel.WEB_BROWSER
-                        ),
-                        Map.of(
-                                Channel.BFF, "BFF",
-                                Channel.WEB_BROWSER, "WEB"
-                        )
-                ),
-                new ChannelConfig<>(
-                        Channel.BFF,
-                        Channel.BFF,
-                        Channel.BFF
-                )
-        );
+        return InteropChannelEngineConfigs.interopChannelModule();
     }
 
     @Bean
