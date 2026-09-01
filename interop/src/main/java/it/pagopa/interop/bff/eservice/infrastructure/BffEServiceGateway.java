@@ -10,6 +10,8 @@ import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingS
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +56,17 @@ public class BffEServiceGateway implements EServiceGateway {
                     return mapper.toEServicePreservingDescriptors(eServiceDetails, maybeEService.orElse(null));
                 })
                 .updateContext()
+                .get();
+    }
+
+    @Override
+    public void archiveEService(EServiceRef eServiceRef) {
+        EServiceArchivingSeed payload = new EServiceArchivingSeed()
+                .archivingReason("lorem ipsum dolor sit amet")
+                .gracePeriodDays(GracePeriodDays.NUMBER_60);
+
+        restClient.scheduleArchiveEservice(eServiceRef.id(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
     }
 
