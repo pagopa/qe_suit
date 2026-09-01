@@ -70,8 +70,10 @@ public class ContextConfig {
     ChannelStepListener channelStepListener(
             ObjectProvider<ScenarioChannelContext> scenarioChannelContextProvider,
             ObjectProvider<CurrentChannel> currentChannelProvider) {
-        return new ChannelStepListener(
+        ChannelStepListener listener = new ChannelStepListener(
                 scenarioChannelContextProvider::getObject,
                 currentChannelProvider::getObject);
+        ChannelStepListener.setLiveInstance(listener);
+        return listener;
     }
 }
