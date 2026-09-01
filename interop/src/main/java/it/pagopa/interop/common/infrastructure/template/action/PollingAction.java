@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.template.action;
 
-import it.pagopa.kernel.context.EntityStore;
-import it.pagopa.kernel.context.LastApiResponseStore;
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.interop.common.infrastructure.template.action.context.PollingActionContext;

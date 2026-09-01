@@ -1,4 +1,4 @@
-package it.pagopa.kernel.domain;
+package it.pagopa.domain;
 
 import java.util.UUID;
 

@@ -2,12 +2,12 @@ package it.pagopa.interop.common.infrastructure.config;
 
 import it.pagopa.interop.common.infrastructure.context.inmemory.*;
 import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.kernel.context.BrowserContext;
+import it.pagopa.application.context.BrowserContext;
 import it.pagopa.interop.common.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.kernel.context.EntityStore;
-import it.pagopa.kernel.context.LastApiResponseStore;
-import it.pagopa.kernel.context.TestContext;
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.application.context.TestContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;

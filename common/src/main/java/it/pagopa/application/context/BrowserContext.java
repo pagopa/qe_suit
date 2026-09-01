@@ -1,4 +1,4 @@
-package it.pagopa.kernel.context;
+package it.pagopa.application.context;
 
 import it.frontend.e2e.framework.web.model.location.Url;
 

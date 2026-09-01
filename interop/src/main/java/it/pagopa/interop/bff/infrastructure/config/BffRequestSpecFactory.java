@@ -5,7 +5,7 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.filter.Filter;
 import io.restassured.specification.RequestSpecification;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
-import it.pagopa.kernel.context.TestContext;
+import it.pagopa.application.context.TestContext;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.infrastructure.restassured.HttpLoggingFilter;
 import org.springframework.beans.factory.ObjectProvider;

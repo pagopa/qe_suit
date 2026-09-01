@@ -1,9 +1,9 @@
 package it.pagopa.interop.common.infrastructure.template.action;
 
-import it.pagopa.kernel.context.EntityStore;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.response.RawResponse;
-import it.pagopa.kernel.domain.Identifiable;
+import it.pagopa.domain.Identifiable;
 import org.assertj.core.api.Assertions;
 
 import java.util.function.Function;

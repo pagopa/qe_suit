@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.context.cucumber;
 
-import it.pagopa.kernel.context.LastApiResponseStore;
+import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.response.ApiResponse;
 import lombok.Getter;
 import lombok.Setter;

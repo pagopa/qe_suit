@@ -1,4 +1,4 @@
-package it.pagopa.kernel.context;
+package it.pagopa.application.context;
 
 import it.pagopa.infrastructure.response.ApiResponse;
 

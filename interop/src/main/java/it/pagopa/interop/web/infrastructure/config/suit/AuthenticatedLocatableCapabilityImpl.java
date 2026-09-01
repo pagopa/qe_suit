@@ -4,7 +4,7 @@ import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.capability.impl.LocatableCapabilityImpl;
 import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
-import it.pagopa.kernel.context.BrowserContext;
+import it.pagopa.application.context.BrowserContext;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;

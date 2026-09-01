@@ -4,7 +4,7 @@ import it.pagopa.interop.common.agreement.application.AgreementUseCase;
 import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.kernel.context.EntityStore;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.journey.application.AgreementJourney;
 import it.pagopa.interop.common.kernel.domain.Delegation;
 import jakarta.annotation.Nullable;

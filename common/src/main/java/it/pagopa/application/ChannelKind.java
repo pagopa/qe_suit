@@ -1,4 +1,4 @@
-package it.pagopa.kernel;
+package it.pagopa.application;
 
 public interface ChannelKind {
 }
