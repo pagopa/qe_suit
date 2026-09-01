@@ -1,8 +1,8 @@
 package it.pagopa.interop.common.infrastructure.template.action;
 
 import io.restassured.response.Response;
-import it.pagopa.interop.common.infrastructure.context.inmemory.InMemoryEntityStore;
-import it.pagopa.interop.common.infrastructure.context.inmemory.InMemoryLastApiResponseStore;
+import it.pagopa.infrastructure.context.InMemoryEntityStore;
+import it.pagopa.infrastructure.context.InMemoryLastApiResponseStore;
 import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.interop.common.infrastructure.template.action.context.BaseActionContext;
