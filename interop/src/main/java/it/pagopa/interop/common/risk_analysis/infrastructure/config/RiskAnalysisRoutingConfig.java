@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.risk_analysis.infrastructure.config;
 
-import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
+import it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;

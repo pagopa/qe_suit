@@ -2,7 +2,7 @@ package it.pagopa.interop.common.client.infrastructure.config;
 
 import it.pagopa.interop.common.client.application.ClientCommandFactory;
 import it.pagopa.interop.common.client.application.ClientGateway;
-import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
+import it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package it.pagopa.interop.bff.purpose.infrastructure;
 
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
-import it.pagopa.interop.common.infrastructure.mapping.SharedMapper;
+import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import org.mapstruct.Mapper;

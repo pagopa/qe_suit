@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.contract;
+package it.pagopa.interop.common.infrastructure;
 
 import it.pagopa.infrastructure.contract.browser.WebContractStages;
 import it.pagopa.infrastructure.contract.browser.WebContractValidator;

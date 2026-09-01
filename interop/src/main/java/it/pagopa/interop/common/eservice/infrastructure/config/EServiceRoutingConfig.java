@@ -4,7 +4,7 @@ import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisGateway;
-import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
+import it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;

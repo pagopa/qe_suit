@@ -2,7 +2,7 @@ package it.pagopa.interop.common.agreement.infrastructure.config;
 
 import it.pagopa.interop.common.agreement.application.AgreementGateway;
 import it.pagopa.infrastructure.channel.CurrentChannel;
-import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
+import it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.framework.ProxyFactory;
