@@ -22,10 +22,6 @@ public final class ChannelRouter<T, C extends Enum<C> & ChannelKind> {
 
     public Object invoke(Object proxy, Method method, Object[] arguments) throws Throwable {
 
-        if (isSupportsMethod(method)) {
-            return false;
-        }
-
         if (isObjectMethod(method)) {
             return handleObjectMethod(proxy, method, arguments);
         }
@@ -48,11 +44,6 @@ public final class ChannelRouter<T, C extends Enum<C> & ChannelKind> {
         } catch (InvocationTargetException e) {
             throw e.getTargetException();
         }
-    }
-
-    private static boolean isSupportsMethod(Method method) {
-        return method.getName().equals("supports")
-                && method.getParameterCount() == 1;
     }
 
     private static boolean isObjectMethod(Method method) {
