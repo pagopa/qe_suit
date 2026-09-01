@@ -5,13 +5,13 @@ import it.pagopa.infrastructure.channel.CurrentChannel;
 
 import java.util.Objects;
 
-public final class ChannelModule<C extends Enum<C> & ChannelKind> {
+public final class GherkinChannelEngineConfig<C extends Enum<C> & ChannelKind> {
 
     private final ChannelGherkinMapping<C> mapping;
     private final ChannelConfig<C> defaultConfig;
     private final ChannelTagParser<C> tagParser;
 
-    private ChannelModule(
+    private GherkinChannelEngineConfig(
             ChannelGherkinMapping<C> mapping,
             ChannelConfig<C> defaultConfig
     ) {
@@ -20,15 +20,15 @@ public final class ChannelModule<C extends Enum<C> & ChannelKind> {
         this.tagParser = new ChannelTagParser<>(mapping);
     }
 
-    public static <C extends Enum<C> & ChannelKind> ChannelModule<C> of(
+    public static <C extends Enum<C> & ChannelKind> GherkinChannelEngineConfig<C> of(
             ChannelGherkinMapping<C> mapping,
             ChannelConfig<C> defaultConfig
     ) {
-        return new ChannelModule<>(mapping, defaultConfig);
+        return new GherkinChannelEngineConfig<>(mapping, defaultConfig);
     }
 
-    public ChannelRuntime<C> newRuntime(CurrentChannel<C> currentChannel) {
-        return new ChannelRuntime<>(tagParser, defaultConfig, currentChannel);
+    public GherkinChannelEngine<C> newRuntime(CurrentChannel<C> currentChannel) {
+        return new GherkinChannelEngine<>(tagParser, defaultConfig, currentChannel);
     }
 
     public ChannelGherkinMapping<C> mapping() {
