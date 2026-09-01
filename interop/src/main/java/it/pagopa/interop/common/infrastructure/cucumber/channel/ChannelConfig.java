@@ -11,5 +11,5 @@ public record ChannelConfig(
         Channel when,
         Channel then
 ) {
-    public static ChannelConfig DEFAULT = new ChannelConfig(Channel.BFF, Channel.BFF, Channel.BFF);
+    public final static ChannelConfig DEFAULT = new ChannelConfig(Channel.BFF, Channel.BFF, Channel.BFF);
 }

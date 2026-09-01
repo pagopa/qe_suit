@@ -2,10 +2,12 @@ package it.pagopa.interop.common.infrastructure.context;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.infrastructure.context.cucumber.*;
-import it.pagopa.interop.common.infrastructure.cucumber.channel.ChannelScenarioHook;
-import it.pagopa.interop.common.infrastructure.cucumber.channel.ChannelStepListener;
-import it.pagopa.interop.common.kernel.context.*;
-import org.springframework.beans.factory.ObjectProvider;
+import it.pagopa.interop.common.kernel.context.BrowserContext;
+import it.pagopa.interop.common.kernel.context.CurrentChannel;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.EntityStore;
+import it.pagopa.interop.common.kernel.context.LastApiResponseStore;
+import it.pagopa.interop.common.kernel.context.TestContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -14,6 +16,7 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @Profile("cucumber")
 public class ContextConfig {
+
     @Bean
     @ScenarioScope
     @Primary
@@ -24,7 +27,7 @@ public class ContextConfig {
     @Bean
     @ScenarioScope
     @Primary
-    BrowserContext browserContext(){
+    BrowserContext browserContext() {
         return new CucumberBrowserContext();
     }
 
@@ -60,20 +63,5 @@ public class ContextConfig {
     @ScenarioScope
     ScenarioChannelContext scenarioChannelContext() {
         return new ScenarioChannelContext();
-    }
-
-    /**
-     * The listener is a singleton but accesses scenario-scoped beans via {@link ObjectProvider}
-     * so it obtains the correct instance per scenario in concurrent execution.
-     */
-    @Bean
-    ChannelStepListener channelStepListener(
-            ObjectProvider<ScenarioChannelContext> scenarioChannelContextProvider,
-            ObjectProvider<CurrentChannel> currentChannelProvider) {
-        ChannelStepListener listener = new ChannelStepListener(
-                scenarioChannelContextProvider::getObject,
-                currentChannelProvider::getObject);
-        ChannelStepListener.setLiveInstance(listener);
-        return listener;
     }
 }

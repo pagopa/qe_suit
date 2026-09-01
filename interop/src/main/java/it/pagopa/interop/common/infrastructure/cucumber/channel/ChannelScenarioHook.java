@@ -11,7 +11,8 @@ import java.util.List;
 
 /**
  * Cucumber {@code @Before} hook responsible solely for populating
- * {@link ScenarioChannelContext} from the scenario's {@code @channel:…} tags.
+ * {@link ScenarioChannelContext} from the scenario's {@code @channel:…} tags
+ * and initializing {@link CurrentChannel} to the Given-phase channel.
  * <p>
  * Responsibility chain:
  * <pre>
@@ -19,10 +20,10 @@ import java.util.List;
  *       → ChannelTagParser   (parse tags into configs)
  *       → ChannelConfigResolver (pick one config)
  *       → ScenarioChannelContext (store it)
+ *       → CurrentChannel (initialize to config.given())
  * </pre>
  *
- * This hook does NOT change the active channel.  That is the responsibility
- * of {@link ChannelStepListener}, which fires before each Gherkin step.
+ * Per-step channel switching is handled by {@link ChannelStepHook}.
  */
 @RequiredArgsConstructor
 @Slf4j
@@ -31,24 +32,23 @@ public class ChannelScenarioHook {
     private final ScenarioChannelContext scenarioChannelContext;
     private final CurrentChannel currentChannel;
 
-    @Before
+    @Before(order = Integer.MIN_VALUE)
     public void beforeScenario(Scenario scenario) {
-        List<ChannelConfig> configs = ChannelTagParser.parse(scenario.getSourceTagNames());
 
-        ChannelConfigResolver.resolve(configs)
-                .ifPresentOrElse(
-                        config -> {
-                            scenarioChannelContext.setConfig(config);
-                            currentChannel.setCurrentChannel(config.given());
-                            log.debug("Scenario '{}': resolved channel config {}",
-                                    scenario.getName(), config);
-                        },
-                        () -> {
-                            scenarioChannelContext.setConfig(ChannelConfig.DEFAULT);
-                            currentChannel.setCurrentChannel(ChannelConfig.DEFAULT.given());
-                            log.debug("Scenario '{}': default channel config {}",
-                                    scenario.getName(), ChannelConfig.DEFAULT);
-                        }
-                );
+        List<ChannelConfig> configs =
+                ChannelTagParser.parse(scenario.getSourceTagNames());
+
+        ChannelConfig config =
+                ChannelConfigResolver.resolve(configs)
+                        .orElse(ChannelConfig.DEFAULT);
+
+        scenarioChannelContext.setConfig(config);
+        currentChannel.setCurrentChannel(config.given());
+
+        log.debug(
+                "Scenario '{}': channel config {}",
+                scenario.getName(),
+                config
+        );
     }
 }
