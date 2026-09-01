@@ -1,18 +1,17 @@
 package it.pagopa.interop.web.debug_client_assertion.infrastructure;
 
+import it.pagopa.infrastructure.template.BrowserClient;
+import it.pagopa.infrastructure.template.action.TestChain;
+import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.common.client.domain.ClientKind;
 import it.pagopa.interop.common.client.domain.DebugClientAssertionValidation;
-import it.pagopa.interop.common.infrastructure.template.BrowserClient;
-import it.pagopa.interop.common.infrastructure.template.action.TestChain;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.web.debug_client_assertion.infrastructure.page.DebugClientAssertionPage;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class WebDebugClientAssertionClient extends BrowserClient {
     @Value("${interop.auth.client-assertion.grant_type}")
     private String clientAssertionGrantType;
@@ -22,6 +21,11 @@ public class WebDebugClientAssertionClient extends BrowserClient {
 
     @Getter
     private final DebugClientAssertionPage debugPage;
+
+    public WebDebugClientAssertionClient(TestChainFactory chainFactory, DebugClientAssertionPage debugPage) {
+        super(chainFactory);
+        this.debugPage = debugPage;
+    }
 
     public TestChain<DebugClientAssertionValidation> submitClientAssertionValidationRequest(String clientAssertion, ClientKind clientKind, String clientId, String dPoPProof) {
         return navigateAndExecute(

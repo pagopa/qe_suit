@@ -1,21 +1,18 @@
-package it.pagopa.interop.common.infrastructure.template;
+package it.pagopa.infrastructure.template;
 
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.response.UiResponse;
-import it.pagopa.interop.common.infrastructure.template.action.TestChain;
-import it.pagopa.interop.common.infrastructure.template.action.TestChainFactory;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import it.pagopa.infrastructure.template.action.TestChain;
+import it.pagopa.infrastructure.template.action.TestChainFactory;
 
 import java.util.function.Supplier;
 
-@Component
 public class BrowserClient {
-    @Getter
-    @Setter(onMethod_ = {@Autowired})
-    protected TestChainFactory chainFactory;
+    protected final TestChainFactory chainFactory;
+
+    public BrowserClient(TestChainFactory chainFactory) {
+        this.chainFactory = chainFactory;
+    }
 
     protected <RESPONSE> TestChain<RESPONSE> execute(
             Supplier<?> uiAction,
@@ -43,7 +40,7 @@ public class BrowserClient {
         return chainFactory.build(() -> new UiResponse(null), Void.class);
     }
 
-    protected TestChain<Void> navigateAndExecute(Page page, Runnable uiAction){
+    protected TestChain<Void> navigateAndExecute(Page page, Runnable uiAction) {
         Runnable navigateAndAction = () -> {
             page.navigateTo();
             page.assertLoaded();

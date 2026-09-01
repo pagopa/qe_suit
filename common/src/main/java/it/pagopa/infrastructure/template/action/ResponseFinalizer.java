@@ -1,28 +1,27 @@
-package it.pagopa.interop.common.infrastructure.template.action;
+package it.pagopa.infrastructure.template.action;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.domain.Identifiable;
 import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.response.RawResponse;
-import it.pagopa.domain.Identifiable;
-import org.assertj.core.api.Assertions;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 public interface ResponseFinalizer<Response> {
-
     <T> ResponseFinalizer<T> map(Function<? super Response, ? extends T> mapper);
 
     EntityStore getEntityStore();
 
-    default ResponseFinalizer<Response> updateContext(){
+    default ResponseFinalizer<Response> updateContext() {
         Response response = get();
 
-        if(response instanceof Identifiable identifiable)
+        if (response instanceof Identifiable identifiable) {
             getEntityStore().upsert(identifiable);
-        else throw new IllegalStateException("Response is not Identifiable");
+            return this;
+        }
 
-        return this;
+        throw new IllegalStateException("Response is not Identifiable");
     }
 
     Response get();
@@ -32,11 +31,18 @@ public interface ResponseFinalizer<Response> {
     default ResponseFinalizer<Response> assertStatusCode(int expectedStatusCode) {
         RawResponse rawResponse = getRaw();
 
-        if(!(rawResponse instanceof ApiResponse apiResponse)){
+        if (!(rawResponse instanceof ApiResponse apiResponse)) {
             throw new IllegalStateException("Response is not ApiResponse");
         }
 
-        Assertions.assertThat(apiResponse.getStatusCode()).isEqualTo(expectedStatusCode);
+        int actualStatusCode = apiResponse.getStatusCode();
+        if (actualStatusCode != expectedStatusCode) {
+            throw new AssertionError(
+                    "Expected status code %d but was %d"
+                            .formatted(expectedStatusCode, actualStatusCode)
+            );
+        }
+
         return this;
     }
 
