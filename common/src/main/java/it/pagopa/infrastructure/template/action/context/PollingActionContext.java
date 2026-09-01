@@ -1,13 +1,10 @@
-package it.pagopa.interop.common.infrastructure.template.action.context;
+package it.pagopa.infrastructure.template.action.context;
 
-import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;
-import lombok.Getter;
+import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 
 import java.time.Duration;
 
-@Getter
 public class PollingActionContext<Response> extends BaseActionContext {
-
     private final PollingStrategy pollingStrategy;
     private final Duration timeout;
     private final Duration interval;
@@ -21,5 +18,17 @@ public class PollingActionContext<Response> extends BaseActionContext {
         this.pollingStrategy = pollingStrategy;
         this.timeout = timeout;
         this.interval = interval;
+    }
+
+    public PollingStrategy getPollingStrategy() {
+        return pollingStrategy;
+    }
+
+    public Duration getTimeout() {
+        return timeout;
+    }
+
+    public Duration getInterval() {
+        return interval;
     }
 }
