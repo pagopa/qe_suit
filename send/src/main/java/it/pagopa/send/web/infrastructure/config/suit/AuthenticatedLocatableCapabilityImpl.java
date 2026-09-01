@@ -36,7 +36,7 @@ public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImp
     }
 
     @Override
-    public void navigateTo() {
+    public void navigateTo(String... pathParams) {
         User currentUser = webBrowserContext.getCurrentUser();
         Url targetUrl = urlSupplier.get();
 

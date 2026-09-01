@@ -20,7 +20,8 @@ public final class PollingUtils {
             Supplier<T> supplier,
             Predicate<T> condition,
             Duration timeout,
-            Duration interval
+            Duration interval,
+            String errorMessage
     ) {
         Objects.requireNonNull(supplier, "supplier non può essere null");
         Objects.requireNonNull(condition, "condition non può essere null");
@@ -63,10 +64,26 @@ public final class PollingUtils {
             throw new IllegalStateException(
                     "Polling in timeout dopo "
                             + timeout.toSeconds()
-                            + " secondi.",
+                            + " secondi.\n"
+                            + (errorMessage != null ? errorMessage : ""),
                     e
             );
         }
+    }
+
+    public static <T> T pollUntil(
+            Supplier<T> supplier,
+            Predicate<T> condition,
+            Duration timeout,
+            Duration interval
+            ) {
+        return pollUntil(
+                supplier,
+                condition,
+                timeout,
+                interval,
+                null
+        );
     }
 
     public static <T> T pollUntil(
@@ -77,7 +94,22 @@ public final class PollingUtils {
                 supplier,
                 condition,
                 DEFAULT_TIMEOUT,
-                DEFAULT_INTERVAL
+                DEFAULT_INTERVAL,
+                null
+        );
+    }
+
+    public static <T> T pollUntil(
+            Supplier<T> supplier,
+            Predicate<T> condition,
+            String errorMessage
+    ) {
+        return pollUntil(
+                supplier,
+                condition,
+                DEFAULT_TIMEOUT,
+                DEFAULT_INTERVAL,
+                errorMessage
         );
     }
 }

@@ -128,21 +128,37 @@ public class BearerAuthProvider {
 
     private static @NonNull StringBuilder getStringBuilder(String url) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.setRequestMethod("GET");
 
-        if (connection.getResponseCode() != 200) {
-            throw new IllegalStateException("Failed to fetch well-known: " + connection.getResponseCode());
-        }
+        try {
+            connection.setRequestMethod("GET");
+            connection.setConnectTimeout(10_000);
+            connection.setReadTimeout(10_000);
 
-        StringBuilder response = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                response.append(line);
+            int status = connection.getResponseCode();
+
+            if (status != HttpURLConnection.HTTP_OK) {
+                throw new IllegalStateException(
+                        "Failed to fetch well-known from " + url + ", HTTP status: " + status
+                );
             }
+
+            StringBuilder response = new StringBuilder();
+
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+            }
+
+            return response;
+        } catch (IOException e) {
+            throw new IOException("Unable to fetch well-known URL: " + url, e);
+        } finally {
+            connection.disconnect();
         }
-        return response;
     }
 
     private static String b64Url(String value) {

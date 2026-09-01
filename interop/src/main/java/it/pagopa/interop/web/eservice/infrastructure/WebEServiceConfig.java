@@ -4,6 +4,7 @@ import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCatalogPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreationPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDetailPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.GeneralDataWizard;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.ThresholdAndAttributeWizard;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.technical.TechnicalSpecWizard;
@@ -45,6 +46,12 @@ public class WebEServiceConfig {
     @ScenarioScope
     public EServiceCreationPage eServiceCreationPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(EServiceCreationPage.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public EServiceDetailPage eServiceDetailPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(EServiceDetailPage.class);
     }
 
 }

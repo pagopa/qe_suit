@@ -1,6 +1,5 @@
 package it.pagopa.interop.common.agreement.application;
 
-import it.pagopa.interop.common.agreement.application.validator.AgreementFailureValidator;
 import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -10,13 +9,10 @@ import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class AgreementUseCase {
     private final AgreementGateway agreementGateway;
-    private final List<AgreementFailureValidator> failureValidators;
 
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         return agreementGateway.createAgreement(eService, descriptor, delegation);
@@ -27,11 +23,6 @@ public class AgreementUseCase {
     }
 
     public void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation, AgreementCreationFailureReason reason) {
-        failureValidators.stream()
-                .filter(validator -> validator.supports(reason))
-                .findFirst()
-                .ifPresent(validator -> validator.validate(eService, descriptor, delegation));
-
         agreementGateway.shouldFailToCreateAgreement(eService, descriptor, delegation, reason);
     }
 
