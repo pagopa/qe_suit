@@ -3,7 +3,7 @@ package it.pagopa.interop.common.client.infrastructure.config;
 import it.pagopa.interop.common.client.application.ClientCommandFactory;
 import it.pagopa.interop.common.client.application.ClientGateway;
 import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
-import it.pagopa.interop.common.infrastructure.channel.CurrentChannel;
+import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.framework.ProxyFactory;
@@ -19,7 +19,7 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 @EnablePluginRegistries({ClientGateway.class, ClientCommandFactory.class})
 public class ClientRoutingConfig {
 
-    private final ObjectProvider<CurrentChannel> currentChannelProvider;
+    private final ObjectProvider<CurrentChannel<Channel>> currentChannelProvider;
 
     @Bean
     @Primary

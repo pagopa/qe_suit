@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.infrastructure.channel;
 
+import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.infrastructure.channel.ChannelPluginRegistry;
 import it.pagopa.infrastructure.channel.ChannelRouter;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -21,7 +22,7 @@ public final class ChannelRoutingInterceptor<
 
     public ChannelRoutingInterceptor(
             PluginRegistry<T, Channel> registry,
-            ObjectProvider<CurrentChannel> currentChannelProvider
+            ObjectProvider<CurrentChannel<Channel>> currentChannelProvider
     ) {
         this.router = new ChannelRouter<>(
                 adapt(registry),
