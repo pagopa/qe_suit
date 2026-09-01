@@ -49,7 +49,7 @@ public class DashboardPageSteps {
 
             softly.assertThat(statusChip.text().read())
                     .as("Il messaggio dell'alert")
-                    .isIn("Annullata", "Canceled", "Cancelled");
+                    .isIn("Annullata");
         });
     }
 
