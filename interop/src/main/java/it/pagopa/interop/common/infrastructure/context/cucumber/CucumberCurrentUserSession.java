@@ -4,7 +4,7 @@ import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 
-public class UserContext implements CurrentUserSession {
+public class CucumberCurrentUserSession implements CurrentUserSession {
     private User currentUser;
     private Tenant currentTenant;
 

@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-public class DomainContext implements EntityStore {
+public class CucumberEntityStore implements EntityStore {
 
     @Getter
     @RequiredArgsConstructor
