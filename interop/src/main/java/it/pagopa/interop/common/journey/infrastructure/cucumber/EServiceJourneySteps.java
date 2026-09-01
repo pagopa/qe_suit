@@ -2,18 +2,12 @@ package it.pagopa.interop.common.journey.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
-import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
-import it.pagopa.interop.common.eservice.application.EServiceUseCase;
-import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.common.kernel.utils.async.PollingUtils;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
-import org.assertj.core.api.Assertions;
 
 @RequiredArgsConstructor
 public class EServiceJourneySteps {
