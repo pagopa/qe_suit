@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
-import it.pagopa.interop.common.infrastructure.mapping.SharedMapper;
+import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;

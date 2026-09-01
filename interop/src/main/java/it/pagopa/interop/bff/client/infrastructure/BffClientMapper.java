@@ -3,7 +3,7 @@ package it.pagopa.interop.bff.client.infrastructure;
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
-import it.pagopa.interop.common.infrastructure.mapping.SharedMapper;
+import it.pagopa.interop.common.infrastructure.SharedMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

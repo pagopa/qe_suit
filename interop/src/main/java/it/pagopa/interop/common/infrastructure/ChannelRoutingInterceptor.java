@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.channel;
+package it.pagopa.interop.common.infrastructure;
 
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.infrastructure.channel.ChannelPluginRegistry;

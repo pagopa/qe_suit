@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.agreement.infrastructure;
 
-import it.pagopa.interop.common.infrastructure.mapping.SharedMapper;
+import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementDelegation;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementsEService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization;
