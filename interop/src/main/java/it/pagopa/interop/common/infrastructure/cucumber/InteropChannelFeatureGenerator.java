@@ -1,9 +1,9 @@
 package it.pagopa.interop.common.infrastructure.cucumber;
 
-import it.pagopa.infrastructure.cucumber.hook.channel.ChannelConfig;
-import it.pagopa.infrastructure.cucumber.hook.channel.ChannelFeatureGenerator;
-import it.pagopa.infrastructure.cucumber.hook.channel.ChannelGherkinMapping;
-import it.pagopa.infrastructure.cucumber.hook.channel.ChannelScenarioExpander;
+import it.pagopa.infrastructure.cucumber.channel.ChannelConfig;
+import it.pagopa.infrastructure.cucumber.channel.ChannelFeatureGenerator;
+import it.pagopa.infrastructure.cucumber.channel.ChannelGherkinMapping;
+import it.pagopa.infrastructure.cucumber.channel.ChannelScenarioExpander;
 import it.pagopa.interop.common.kernel.domain.Channel;
 
 import java.nio.file.Path;

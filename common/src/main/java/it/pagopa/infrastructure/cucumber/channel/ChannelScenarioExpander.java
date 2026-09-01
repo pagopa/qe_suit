@@ -1,4 +1,4 @@
-package it.pagopa.infrastructure.cucumber.hook.channel;
+package it.pagopa.infrastructure.cucumber.channel;
 
 import io.cucumber.gherkin.GherkinParser;
 import io.cucumber.messages.types.Envelope;

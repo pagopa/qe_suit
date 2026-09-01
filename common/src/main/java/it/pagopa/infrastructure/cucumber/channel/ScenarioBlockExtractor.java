@@ -1,4 +1,4 @@
-package it.pagopa.infrastructure.cucumber.hook.channel;
+package it.pagopa.infrastructure.cucumber.channel;
 
 import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.FeatureChild;
