@@ -1,13 +1,12 @@
 package it.pagopa.interop.common.infrastructure.cucumber;
 
-import it.pagopa.infrastructure.cucumber.channel.ChannelConfig;
 import it.pagopa.infrastructure.cucumber.channel.ChannelFeatureGenerator;
-import it.pagopa.infrastructure.cucumber.channel.ChannelGherkinMapping;
 import it.pagopa.infrastructure.cucumber.channel.ChannelScenarioExpander;
+import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngineConfig;
+import it.pagopa.interop.common.infrastructure.cucumber.channel.InteropChannelEngineConfigs;
 import it.pagopa.interop.common.kernel.domain.Channel;
 
 import java.nio.file.Path;
-import java.util.Map;
 
 public final class InteropChannelFeatureGenerator {
 
@@ -21,30 +20,12 @@ public final class InteropChannelFeatureGenerator {
             );
         }
 
-        ChannelGherkinMapping<Channel> mapping =
-                new ChannelGherkinMapping<>(
-                        Map.of(
-                                "BFF", Channel.BFF,
-                                "WEB", Channel.WEB_BROWSER,
-                                "WEB_BROWSER", Channel.WEB_BROWSER
-                        ),
-                        Map.of(
-                                Channel.BFF, "BFF",
-                                Channel.WEB_BROWSER, "WEB"
-                        )
-                );
-
-        ChannelConfig<Channel> defaultConfig =
-                new ChannelConfig<>(
-                        Channel.BFF,
-                        Channel.BFF,
-                        Channel.BFF
-                );
+        GherkinChannelEngineConfig<Channel> config = InteropChannelEngineConfigs.interopChannelModule();
 
         ChannelScenarioExpander<Channel> expander =
                 new ChannelScenarioExpander<>(
-                        mapping,
-                        defaultConfig
+                        config.mapping(),
+                        config.defaultConfig()
                 );
 
         new ChannelFeatureGenerator(
