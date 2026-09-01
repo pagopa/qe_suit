@@ -19,5 +19,5 @@ Feature: Creazione di una richiesta di fruizione verso un EService
   quando un Fruitore tenta di inoltrare una richiesta di fruizione per tale versione,
   allora il sistema impedisce l'inoltro della richiesta
 
-    Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA ed EService archiviato
+    Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA ed EService in archiviazione
     Then il sistema impedisce al Comune di Pozzallo di inoltrare una richiesta di fruizione per la versione deprecata dell'EService
