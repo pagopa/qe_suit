@@ -6,16 +6,13 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.pagopa.infrastructure.objectgraph.NodePath;
-import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 
-@Component
-class JacksonFuzzMutationApplier implements FuzzMutationApplier {
-
+public final class JacksonFuzzMutationApplier implements FuzzMutationApplier {
     private final ObjectMapper objectMapper;
 
-    JacksonFuzzMutationApplier(ObjectMapper objectMapper) {
+    public JacksonFuzzMutationApplier(ObjectMapper objectMapper) {
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
     }
 
@@ -26,9 +23,7 @@ class JacksonFuzzMutationApplier implements FuzzMutationApplier {
         Objects.requireNonNull(mutation, "mutation must not be null");
 
         try {
-            if (path.isRoot()) {
-                return applyRoot(mutation);
-            }
+            if (path.isRoot()) return applyRoot(mutation);
             return applyNested(target, path, mutation);
         } catch (FuzzingException exception) {
             throw exception;
@@ -38,53 +33,60 @@ class JacksonFuzzMutationApplier implements FuzzMutationApplier {
     }
 
     private JsonNode applyRoot(FuzzMutation mutation) {
-        if (mutation.kind() == FuzzMutationKind.REMOVE) {
-            return null;
-        }
-        if (mutation.value() == null) {
-            return NullNode.getInstance();
-        }
+        if (mutation.kind() == FuzzMutationKind.REMOVE) return null;
+        if (mutation.value() == null) return NullNode.getInstance();
         return objectMapper.valueToTree(mutation.value());
     }
 
     private JsonNode applyNested(JsonNode target, NodePath path, FuzzMutation mutation) {
-        NodePath parentPath = path.parent().orElseThrow(() -> new FuzzingException("Missing parent for path: " + path));
+        NodePath parentPath = path.parent()
+                .orElseThrow(() -> new FuzzingException("Missing parent for path: " + path));
+
         JsonNode parentNode = target.at(parentPath.toString());
         if (parentNode.isMissingNode()) {
             throw new FuzzingException("Parent path not found: " + parentPath);
         }
 
-        String childToken = lastToken(path.toString());
+        String token = lastToken(path.toString());
+
         if (parentNode instanceof ObjectNode objectNode) {
-            mutateObjectChild(objectNode, childToken, mutation, path);
+            mutateObjectChild(objectNode, token, mutation);
             return target;
         }
         if (parentNode instanceof ArrayNode arrayNode) {
-            mutateArrayChild(arrayNode, childToken, mutation, path);
+            mutateArrayChild(arrayNode, token, mutation, path);
             return target;
         }
-        throw new FuzzingException("Unsupported parent node type at path " + parentPath + ": " + parentNode.getNodeType());
+
+        throw new FuzzingException(
+                "Unsupported parent node type at path " + parentPath + ": " + parentNode.getNodeType()
+        );
     }
 
-    private void mutateObjectChild(ObjectNode objectNode, String escapedToken, FuzzMutation mutation, NodePath path) {
-        String field = unescape(escapedToken);
+    private void mutateObjectChild(ObjectNode node, String token, FuzzMutation mutation) {
+        String field = unescape(token);
         if (mutation.kind() == FuzzMutationKind.REMOVE) {
-            objectNode.remove(field);
-            return;
+            node.remove(field);
+        } else {
+            node.set(field, mutation.value() == null
+                    ? NullNode.getInstance()
+                    : objectMapper.valueToTree(mutation.value()));
         }
-        objectNode.set(field, mutation.value() == null ? NullNode.getInstance() : objectMapper.valueToTree(mutation.value()));
     }
 
-    private void mutateArrayChild(ArrayNode arrayNode, String token, FuzzMutation mutation, NodePath path) {
+    private void mutateArrayChild(ArrayNode node, String token, FuzzMutation mutation, NodePath path) {
         int index = parseArrayIndex(token, path);
-        if (index < 0 || index >= arrayNode.size()) {
+        if (index < 0 || index >= node.size()) {
             throw new FuzzingException("Array index out of bounds for path: " + path);
         }
+
         if (mutation.kind() == FuzzMutationKind.REMOVE) {
-            arrayNode.remove(index);
-            return;
+            node.remove(index);
+        } else {
+            node.set(index, mutation.value() == null
+                    ? NullNode.getInstance()
+                    : objectMapper.valueToTree(mutation.value()));
         }
-        arrayNode.set(index, mutation.value() == null ? NullNode.getInstance() : objectMapper.valueToTree(mutation.value()));
     }
 
     private String lastToken(String pointer) {
