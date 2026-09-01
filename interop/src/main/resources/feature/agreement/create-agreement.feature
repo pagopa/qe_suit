@@ -1,6 +1,5 @@
 @agreement
 @channel:Given=BFF,When=WEB,Then=WEB
-@channel:Given=BFF,When=WEB,Then=BFF
 Feature: Creazione di una richiesta di fruizione verso un EService
 
   Come Aderente interessato alla fruizione di un EService in catalogo
