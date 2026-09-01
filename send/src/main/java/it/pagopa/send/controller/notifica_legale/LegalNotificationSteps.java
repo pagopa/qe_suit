@@ -5,6 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.send.common.domain.Recipient;
 import it.pagopa.send.common.domain.Tenant;
+import it.pagopa.send.common.notification.domain.LegalNotificationDomain;
 import it.pagopa.send.controller.creazione_notifica.NotificationContext;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
@@ -69,8 +70,8 @@ public class LegalNotificationSteps {
 
         //String iun = legalNotificationUseCase.extractIun(journey.getLastResponse());
         String iun = IUNHelper.extractFromBffNewNotificationResponse(notificationContext.getBffNewNotificationResponse());
-        BffFullNotificationV1 notification = legalNotificationUseCase.readNotification(iun);
+        LegalNotificationDomain notification = legalNotificationUseCase.readNotification(iun);
 
-        Assertions.assertThat(notification.getNotificationStatus()).isEqualTo(expectedStatus);
+        Assertions.assertThat(notification.getStatus()).isEqualTo(expectedStatus);
     }
 }

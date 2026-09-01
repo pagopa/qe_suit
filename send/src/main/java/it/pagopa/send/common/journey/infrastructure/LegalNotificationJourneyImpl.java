@@ -3,6 +3,7 @@ package it.pagopa.send.common.journey.infrastructure;
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.send.common.journey.application.LegalNotificationJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
+import it.pagopa.send.common.notification.domain.LegalNotificationDomain;
 import it.pagopa.send.controller.creazione_notifica.NotificationContext;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
@@ -97,7 +98,7 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
     public LegalNotificationJourneyImpl readNotification() {
 //        String iun = IUNHelper.extractFromBffNewNotificationResponse(notificationContext.getBffNewNotificationResponse());
         String iun = "WTXW-MNDW-JQLK-202609-W-1";
-        BffFullNotificationV1 response = legalNotificationUseCase.readNotification(iun);
+        LegalNotificationDomain response = legalNotificationUseCase.readNotification(iun);
         log.info("Notifica legale con IUN {} letta: {}", iun, response);
         return this;
     }
