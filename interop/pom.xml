@@ -656,7 +656,7 @@
 
                         <configuration>
                             <mainClass>
-                                it.pagopa.interop.common.infrastructure.cucumber.InteropChannelFeatureGenerator
+                                it.pagopa.interop.common.infrastructure.cucumber.channel.InteropChannelFeatureGenerator
                             </mainClass>
 
                             <arguments>
