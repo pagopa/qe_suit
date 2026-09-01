@@ -1,36 +1,25 @@
-package it.pagopa.interop.common.infrastructure.template.action;
+package it.pagopa.infrastructure.template.action;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.response.RawResponse;
-import it.pagopa.interop.common.infrastructure.template.action.context.PollingActionContext;
+import it.pagopa.infrastructure.template.action.context.PollingActionContext;
 import it.pagopa.utils.async.PollingUtils;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.util.function.Function;
 
-@Component
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class PollingAction<Response> implements ResponseFinalizer<Response> {
+public final class PollingAction<Response> implements ResponseFinalizer<Response> {
+    private final LastApiResponseStore lastApiResponseStore;
+    private final EntityStore entityStore;
 
-    @Setter(onMethod_ = {@Autowired})
-    private LastApiResponseStore lastApiResponseStore;
-
-    @Getter
-    @Setter(onMethod_ = {@Autowired})
-    private EntityStore entityStore;
-
-    @Getter
     private RawResponse raw;
-
-    @Getter
     private PollingActionContext<? super Response> context;
+
+    public PollingAction(LastApiResponseStore lastApiResponseStore, EntityStore entityStore) {
+        this.lastApiResponseStore = lastApiResponseStore;
+        this.entityStore = entityStore;
+    }
 
     PollingAction<Response> handle(PollingActionContext<? super Response> context) {
         this.context = context;
@@ -87,15 +76,25 @@ public class PollingAction<Response> implements ResponseFinalizer<Response> {
         return (Response) raw.as(context.getResponseClass());
     }
 
+    @Override
+    public RawResponse getRaw() {
+        return raw;
+    }
+
+    @Override
+    public EntityStore getEntityStore() {
+        return entityStore;
+    }
+
+    public PollingActionContext<? super Response> getContext() {
+        return context;
+    }
+
     private boolean isSatisfied(RawResponse response) {
         if (response instanceof ApiResponse apiResponse) {
             return context.getPollingStrategy().isSatisfied(apiResponse);
         }
 
-        /*
-         * Una risposta non HTTP non ha status code da valutare.
-         * Se è stata prodotta correttamente, viene considerata valida.
-         */
         return response != null;
     }
 

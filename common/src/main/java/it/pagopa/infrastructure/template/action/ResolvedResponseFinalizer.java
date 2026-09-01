@@ -1,13 +1,11 @@
-package it.pagopa.interop.common.infrastructure.template.action;
+package it.pagopa.infrastructure.template.action;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.response.RawResponse;
 
 import java.util.function.Function;
 
-public class ResolvedResponseFinalizer<Response>
-        implements ResponseFinalizer<Response> {
-
+public class ResolvedResponseFinalizer<Response> implements ResponseFinalizer<Response> {
     private final Response response;
     private final RawResponse raw;
     private final EntityStore entityStore;

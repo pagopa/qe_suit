@@ -1,7 +1,7 @@
 package it.pagopa.interop.bff.purpose.infrastructure;
 
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
-import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.PurposeRef;

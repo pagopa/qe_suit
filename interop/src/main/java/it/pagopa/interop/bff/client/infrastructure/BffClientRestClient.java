@@ -1,7 +1,8 @@
 package it.pagopa.interop.bff.client.infrastructure;
 
-import it.pagopa.interop.common.infrastructure.template.RestClient;
-import it.pagopa.interop.common.infrastructure.template.action.TestChain;
+import it.pagopa.infrastructure.template.RestClient;
+import it.pagopa.infrastructure.template.action.TestChain;
+import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
@@ -16,7 +17,8 @@ public class BffClientRestClient extends RestClient {
 
     private final ClientsApi clientsApi;
 
-    public BffClientRestClient(ApiClient apiClient) {
+    public BffClientRestClient(TestChainFactory chainFactory, ApiClient apiClient) {
+        super(chainFactory);
         this.clientsApi = apiClient.clients();
     }
 
