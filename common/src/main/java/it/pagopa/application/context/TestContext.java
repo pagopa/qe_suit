@@ -1,6 +1,6 @@
-package it.pagopa.kernel.context;
+package it.pagopa.application.context;
 
-import it.pagopa.kernel.TestKind;
+import it.pagopa.application.TestKind;
 
 import java.util.List;
 

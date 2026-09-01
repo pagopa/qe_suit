@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.context.inmemory;
 
-import it.pagopa.kernel.context.TestContext;
-import it.pagopa.kernel.TestKind;
+import it.pagopa.application.context.TestContext;
+import it.pagopa.application.TestKind;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;

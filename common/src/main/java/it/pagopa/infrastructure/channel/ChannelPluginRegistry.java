@@ -1,6 +1,6 @@
 package it.pagopa.infrastructure.channel;
 
-import it.pagopa.kernel.ChannelKind;
+import it.pagopa.application.ChannelKind;
 
 import java.util.List;
 import java.util.Optional;

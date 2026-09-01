@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.eservice.domain;
 
-import it.pagopa.kernel.domain.Identifiable;
+import it.pagopa.domain.Identifiable;
 import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import lombok.Builder;

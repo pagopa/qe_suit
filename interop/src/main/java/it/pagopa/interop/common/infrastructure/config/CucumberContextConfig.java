@@ -2,12 +2,12 @@ package it.pagopa.interop.common.infrastructure.config;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.infrastructure.context.cucumber.*;
-import it.pagopa.kernel.context.BrowserContext;
+import it.pagopa.application.context.BrowserContext;
 import it.pagopa.interop.common.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.kernel.context.EntityStore;
-import it.pagopa.kernel.context.LastApiResponseStore;
-import it.pagopa.kernel.context.TestContext;
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.application.context.TestContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

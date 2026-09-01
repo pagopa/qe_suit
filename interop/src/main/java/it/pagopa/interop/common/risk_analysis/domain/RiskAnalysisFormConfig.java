@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.risk_analysis.domain;
 
-import it.pagopa.kernel.domain.Identifiable;
+import it.pagopa.domain.Identifiable;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;

@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.kernel;
 
-import it.pagopa.kernel.context.EntityStore;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.kernel.domain.Key;
 import it.pagopa.interop.common.kernel.security.DPoPProof;
 import it.pagopa.interop.common.kernel.security.DPoPProofService;

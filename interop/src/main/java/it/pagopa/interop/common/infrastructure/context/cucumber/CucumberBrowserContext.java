@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.context.cucumber;
 
 import it.frontend.e2e.framework.web.model.location.Url;
-import it.pagopa.kernel.context.BrowserContext;
+import it.pagopa.application.context.BrowserContext;
 import lombok.Getter;
 import lombok.Setter;
 
