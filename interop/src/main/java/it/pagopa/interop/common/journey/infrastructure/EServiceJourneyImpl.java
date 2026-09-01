@@ -49,6 +49,13 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
+    public EServiceJourneyImpl archiveEService() {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        eServiceUseCase.archiveEService(eService);
+        return this;
+    }
+
+    @Override
     public EServiceJourneyImpl waitUntilEService(Predicate<EService> predicate) {
         EService eService = entityStore.getLastOrThrow(EService.class);
 

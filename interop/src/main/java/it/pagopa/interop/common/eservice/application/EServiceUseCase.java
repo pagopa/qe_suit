@@ -27,4 +27,8 @@ public class EServiceUseCase {
     public EService getEService(EService eService) {
         return eServiceGateway.getEService(eService.getRef());
     }
+
+    public void archiveEService(EService eService) {
+        eServiceGateway.archiveEService(eService.getRef());
+    }
 }

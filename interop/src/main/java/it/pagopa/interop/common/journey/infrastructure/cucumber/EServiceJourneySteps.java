@@ -2,18 +2,12 @@ package it.pagopa.interop.common.journey.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
-import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
-import it.pagopa.interop.common.eservice.application.EServiceUseCase;
-import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.common.kernel.utils.async.PollingUtils;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
-import org.assertj.core.api.Assertions;
 
 @RequiredArgsConstructor
 public class EServiceJourneySteps {
@@ -60,5 +54,18 @@ public class EServiceJourneySteps {
                 .withProducer(producer, UserRole.ADMIN)
                 .addDescriptor(EServiceDescriptorState.PUBLISHED)
                 .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
+    }
+
+    @Given("un EService creato dal {tenant} con una versione divenuta deprecata dopo la fruizione di {tenant} ed EService in archiviazione")
+    public void createDeprecatedAndArchivedEserviceDescriptor(Tenant producer, Tenant consumer){
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .withProducer(producer, UserRole.ADMIN)
+                .addDescriptor(EServiceDescriptorState.PUBLISHED)
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED)
+                .archiveEService();
     }
 }

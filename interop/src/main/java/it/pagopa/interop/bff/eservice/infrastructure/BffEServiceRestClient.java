@@ -60,6 +60,16 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
+    public TestChain<Void> scheduleArchiveEservice(@Nonnull UUID eserviceId, @Nonnull EServiceArchivingSeed payload) {
+        return execute(
+                () -> eservicesApi.scheduleArchiveEservice()
+                        .eServiceIdPath(eserviceId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<Void> publishDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
         return execute(
                 () -> eservicesApi.publishDescriptor()
