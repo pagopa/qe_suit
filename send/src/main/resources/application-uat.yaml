@@ -96,8 +96,21 @@ external-registries:
     # REPLACE_ME: host reale per l'ambiente uat
     base-url: REPLACE_ME
 
+# ============================================================================
+# Pn Delivery B2B API Configuration (lettura notifiche via SenderReadB2BApi)
+# ============================================================================
+delivery:
+  api:
+    # REPLACE_ME: host reale per l'ambiente uat
+    base-url: REPLACE_ME
+
 # api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
 # ogni costante di Tenant, univoca per PA e per ambiente (qui: uat)
 pa:
   groups-api-key:
+    GROSSINI: REPLACE_ME
+
+# api-key per le API B2B delivery (header x-api-key), una entry per ogni costante di Tenant,
+# univoca per PA e per ambiente (qui: uat)
+  delivery-api-key:
     GROSSINI: REPLACE_ME

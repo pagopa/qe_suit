@@ -5,7 +5,23 @@ Feature: Tramite nuova interfaccia di notifica
 
   Scenario: [NUI_DETTAGLIO_NOTIFICA_ANNULLO_NOTIFICA] Viene controllato che, a seguito di annullamento, la pagina
     riporti correttamente l'informazione tramite apposita chip
-    Given la PA Grossini è loggata a SEND
+#    Given una sessione HTTP programmatica su B2B
+   And una notifica di tipo semplice creata dalla PA Grossini per il destinatario "Lucrezia" in stato "ACCEPTED"
+#    And la PA Grossini ha creato ed annullato una notifica di tipo semplice per il destinatario "Lucrezia"
+    And la PA Grossini è loggata al portale SEND tramite Browser
+    And naviga alla pagina Dashboard
+    And viene ricercata e aperta una notifica che rispetta i seguenti criteri:
+      | iun   | $currentNotificationIUN |
+    And la pagina di dettaglio della notifica contiene la sezione relativa al sommario della notifica
+    And la pagina di dettaglio della notifica contiene la sezione relativa al documenti allegati
+    And la pagina di dettaglio della notifica contiene la sezione relativa al stato della notifica
+    Then la notifica è in stato annullata
+
+
+
+
+
+    And la PA Grossini è loggata a SEND
     And l'ente crea una notifica di tipo semplice per il destinatario "Lucrezia"
     And la richiesta di notifica è in stato "ACCEPTED"
     When l'ente annulla la notifica precedentemente creata

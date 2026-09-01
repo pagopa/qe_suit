@@ -3,6 +3,7 @@ package it.pagopa.send.infrastructure.config;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
+import it.pagopa.send.common.domain.Tenant;
 import it.pagopa.send.generated.openapi.clients.externalregistries.ApiClient;
 import it.pagopa.send.generated.openapi.clients.externalregistries.JacksonObjectMapper;
 import it.pagopa.send.generated.openapi.clients.externalregistries.api.InfoPaApi;
@@ -35,7 +36,7 @@ public class ExternalRegistriesClientConfig {
     /**
      * L'api-key per /ext-registry-b2b/pa/v1/groups è unica per PA e per ambiente (a differenza,
      * es., della subscription-key di GPD): non può quindi essere un singolo valore iniettato nel
-     * bean del client, va risolta per {@link it.pagopa.send.common.kernel.domain.Tenant} al momento
+     * bean del client, va risolta per {@link Tenant} al momento
      * della chiamata. Bind diretto del prefisso su una Map, valorizzata da {@code pa.groups-api-key}
      * negli application-{profilo}.yaml (chiave = nome della costante enum Tenant).
      */

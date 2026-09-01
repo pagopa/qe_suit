@@ -94,8 +94,20 @@ external-registries:
   api:
     base-url: https://api.test.notifichedigitali.it
 
+# ============================================================================
+# Pn Delivery B2B API Configuration (lettura notifiche via SenderReadB2BApi)
+# ============================================================================
+delivery:
+  api:
+    base-url: https://api.test.notifichedigitali.it
+
 # api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
 # ogni costante di Tenant, univoca per PA e per ambiente (qui: test)
 pa:
   groups-api-key:
     GROSSINI: 2a36ad69-fce0-416b-b94e-7242773e638b
+
+# api-key per le API B2B delivery (header x-api-key), una entry per ogni costante di Tenant,
+# univoca per PA e per ambiente (qui: test)
+  delivery-api-key:
+    GROSSINI: 5df3a854-110c-46e9-a94b-274e2e74132d

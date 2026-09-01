@@ -1,6 +1,6 @@
 package it.pagopa.send.service;
 
-import it.pagopa.send.common.kernel.domain.Tenant;
+import it.pagopa.send.common.domain.Tenant;
 import it.pagopa.send.generated.openapi.clients.externalregistries.api.InfoPaApi;
 import it.pagopa.send.generated.openapi.clients.externalregistries.model.PaGroup;
 import it.pagopa.send.generated.openapi.clients.externalregistries.model.PaGroupStatus;

@@ -1,4 +1,4 @@
-package it.pagopa.send.common.kernel.domain;
+package it.pagopa.send.common.domain;
 
 public interface User {
     UserType getType();

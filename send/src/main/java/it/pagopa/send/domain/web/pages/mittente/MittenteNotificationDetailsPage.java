@@ -22,8 +22,7 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
     @XPath("//*[@id=\"notificationsTable.body.row\"]/td[7]/button")
     Readable<String> alertMessage();
 
-    @XPath("//div[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-root ')]"+
-    "[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-root ')]")
+    @XPath("//div[@id=\"page-header-container\"]/parent::div")
     interface MittenteNotificationSummarySection extends NotificationSummarySection {
 //        @XPath("header iun")
         @XPath(".//h1")
@@ -59,6 +58,30 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
 
         NotificationStatusDrawer notificationStatusDrawer();
 
+        @Override
+        default void assertLoaded() {
+            iunHeader().readAndAssert((h) -> {
+                Assertions.assertThat(h).isNotNull();
+            });
+            protocolNumberHeader().readAndAssert((h) -> {
+                Assertions.assertThat(h).isNotNull();
+            });
+            protocolNumberValue().readAndAssert((v) -> {
+                Assertions.assertThat(v).isNotNull();
+            });
+            senderHeader().readAndAssert((h) -> {
+                Assertions.assertThat(h).isNotNull();
+            });
+            senderValue().readAndAssert((v) -> {
+                Assertions.assertThat(v).isNotNull();
+            });
+            recipientHeader().readAndAssert((h) -> {
+                Assertions.assertThat(h).isNotNull();
+            });
+            recipientValue().readAndAssert((v) -> {
+                Assertions.assertThat(v).isNotNull();
+            });
+        }
     }
 
     interface MittentePaymentSection extends PaymentSection {
@@ -71,14 +94,25 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
         Readable<String> noticeCodeValue();
     }
 
+    @XPath("//h2[@id=\"notification-detail-document-attached\"]/ancestor::div[.//button[@data-testid=\"cancelNotificationBtn\"]][1]")
     interface MittenteAttachmentSection extends AttachmentSection {
 //        @XPath("header")
-        @XPath("//*[@id=\"title-of-page\"]")
+        @XPath("//h2[@id=\"notification-detail-document-attached\"]")
         Readable<String> header();
 
 //        @XPath("griglia contenuti")
-        @XPath("//*[@id=\"title-of-page\"]")
+        @XPath("//div[@data-testid=\"notificationDetailDocuments\"]//button[@data-testid=\"documentButton\"]/div/span")
         Readable<String> attachmentGrid();
+
+        @Override
+        default void assertLoaded() {
+            header().readAndAssert((h) -> {
+                Assertions.assertThat(h).isNotNull();
+            });
+            attachmentGrid().readAndAssert((g) -> {
+                Assertions.assertThat(g).isNotNull();
+            });
+        }
     }
 
     @XPath(".//div[@data-testid='NotificationDetailTimeline']")
@@ -101,6 +135,19 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
         @Override
         @XPath("//*[@id=\"title-of-page\"]")
         Clickable detailsButton();
+
+        @Override
+        default void assertLoaded() {
+            header().readAndAssert((h) -> {
+                Assertions.assertThat(h).isNotNull();
+            });
+            statusChip().text().readAndAssert((t) -> {
+                Assertions.assertThat(t).isNotNull();
+            });
+            detailsMessage().readAndAssert((m) -> {
+                Assertions.assertThat(m).isNotNull();
+            });
+        }
     }
 
     @Override

@@ -3,10 +3,12 @@ package it.pagopa.send.domain.web.config;
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.core.model.selector.XPathSelector;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
+import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
 import it.frontend.e2e.framework.web.adapter.selenium.SeleniumApiAdapter;
 import it.frontend.e2e.framework.web.config.WebSuiteBuilder;
 import it.frontend.e2e.framework.web.model.location.Url;
+import it.pagopa.send.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityHandler;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -28,11 +30,22 @@ public class WebConfig {
 
     @Bean
     @ScenarioScope
-    public WebPresentationGateway webPresentationGateway(Environment environment) {
+    public IWebPresentationApiAdapter webAdapter() {
         BrowserSettings settings = BrowserSettings.of(browser, headless, arguments);
 
+        return new SeleniumApiAdapter(settings);
+    }
+
+    @Bean
+    @ScenarioScope
+    public WebPresentationGateway webPresentationGateway(
+            Environment environment,
+            IWebPresentationApiAdapter adapter,
+            AuthenticatedLocatableCapabilityHandler authenticatedLocatableCapabilityHandler
+    ) {
         return WebSuiteBuilder.builder()
-                .withAdapter(() -> new SeleniumApiAdapter(settings))
+                .withAdapter(() -> adapter)
+                .addHandlers(authenticatedLocatableCapabilityHandler)
                 .withLocationResolver((location) -> {
                     // Risolvo le variabili d'ambiente nella URL
                     String resolvedUrl = environment.resolvePlaceholders(location);

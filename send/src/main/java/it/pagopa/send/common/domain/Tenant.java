@@ -1,4 +1,4 @@
-package it.pagopa.send.common.kernel.domain;
+package it.pagopa.send.common.domain;
 
 import lombok.AccessLevel;
 import lombok.Getter;

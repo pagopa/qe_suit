@@ -4,7 +4,7 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.send.common.kernel.domain.User;
+import it.pagopa.send.common.domain.User;
 import it.pagopa.send.domain.web.commons.pages.login.AbstractOneIdPage;
 
 @Url("${url.notifiche.persona-giuridica.base}")
