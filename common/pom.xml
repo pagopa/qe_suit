@@ -26,11 +26,6 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-
         <!-- ========================= -->
         <!-- FE FRAMEWORK -->
         <!-- ========================= -->
@@ -47,16 +42,28 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+        <!-- ========================= -->
+        <!-- Logging -->
+        <!-- ========================= -->
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>2.0.17</version>
         </dependency>
 
+        <!-- ========================= -->
+        <!-- Jackson -->
+        <!-- ========================= -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
+
+        <!-- ========================= -->
+        <!-- JSON Web Token -->
+        <!-- ========================= -->
 
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -77,6 +84,10 @@
             <version>${jjwt.version}</version>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- ========================= -->
+        <!-- Instancio -->
+        <!-- ========================= -->
 
         <dependency>
             <groupId>org.instancio</groupId>
@@ -109,6 +120,57 @@
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
 
+        <!-- ========================= -->
+        <!-- Mockito -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.20.0</version>
+        </dependency>
+
+        <!-- ========================= -->
+        <!-- JUnit -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+
+        <!-- ========================= -->
+        <!-- Jakarta Validation -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+
+        <!-- ========================= -->
+        <!-- Jakarta Validation -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+        </dependency>
+
+        <!-- ========================= -->
+        <!-- AssertJ -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

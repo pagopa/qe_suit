@@ -3,20 +3,20 @@ package it.pagopa.infrastructure.contract.browser;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
 import org.junit.jupiter.api.DynamicTest;
-import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 final class WebContractInvocationBuilder implements WebContractStages.UserStage {
 
-    private final ObjectProvider<WebPresentationGateway> webPresentationGatewayProvider;
+    private final Supplier<WebPresentationGateway> webPresentationGatewayProvider;
     private final WebContractContextConfigurer contextConfigurer;
 
     WebContractInvocationBuilder(
-            ObjectProvider<WebPresentationGateway> webPresentationGatewayProvider,
+            Supplier<WebPresentationGateway> webPresentationGatewayProvider,
             WebContractContextConfigurer contextConfigurer
     ) {
         this.webPresentationGatewayProvider = Objects.requireNonNull(

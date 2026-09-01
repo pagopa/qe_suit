@@ -30,7 +30,7 @@ public class WebJUnitSuitConfig {
             @Qualifier("junitWebPresentationGateway")
             ObjectProvider<WebPresentationGateway> webPresentationGatewayProvider
     ) {
-        return new WebContractValidator(webPresentationGatewayProvider);
+        return new WebContractValidator(webPresentationGatewayProvider::getObject);
     }
 
     @Bean

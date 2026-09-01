@@ -2,17 +2,17 @@ package it.pagopa.infrastructure.contract.browser;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
-import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 final class WebContractRuntimeCaseExecutor {
 
-    private final ObjectProvider<WebPresentationGateway> webPresentationGatewayProvider;
+    private final Supplier<WebPresentationGateway> webPresentationGatewayProvider;
     private final WebContractContextConfigurer contextConfigurer;
 
     WebContractRuntimeCaseExecutor(
-            ObjectProvider<WebPresentationGateway> webPresentationGatewayProvider,
+            Supplier<WebPresentationGateway> webPresentationGatewayProvider,
             WebContractContextConfigurer contextConfigurer
     ) {
         this.webPresentationGatewayProvider = Objects.requireNonNull(
@@ -34,7 +34,7 @@ final class WebContractRuntimeCaseExecutor {
 
         contextConfigurer.configure();
 
-        WebPresentationGateway gateway = webPresentationGatewayProvider.getObject();
+        WebPresentationGateway gateway = webPresentationGatewayProvider.get();
 
         try {
             P page = gateway.bind(pageType);

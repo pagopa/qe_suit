@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.infrastructure.objectgraph.Node;
 import it.pagopa.infrastructure.objectgraph.ObjectGraph;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;

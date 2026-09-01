@@ -4,20 +4,21 @@ import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
 class WebContractRuntimeCaseExecutorTest {
 
     @Test
     void shouldConfigureContextAndExecuteScenarioLifecycleInOrder() {
-        ObjectProvider<WebPresentationGateway> gatewayProvider = mock(ObjectProvider.class);
+        Supplier<WebPresentationGateway> gatewayProvider = mock(Supplier.class);
         WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
@@ -28,19 +29,22 @@ class WebContractRuntimeCaseExecutorTest {
             return null;
         }).when(contextConfigurer).configure();
 
-        when(gatewayProvider.getObject()).thenReturn(gateway);
+        when(gatewayProvider.get()).thenReturn(gateway);
         doAnswer(invocation -> {
             events.add("bind");
             return page;
         }).when(gateway).bind(TestPage.class);
+
         doAnswer(invocation -> {
             events.add("navigateTo");
             return null;
         }).when(page).navigateTo();
+
         doAnswer(invocation -> {
             events.add("assertLoaded");
             return null;
         }).when(page).assertLoaded();
+
         doAnswer(invocation -> {
             events.add("close");
             return null;
@@ -56,6 +60,7 @@ class WebContractRuntimeCaseExecutorTest {
                 .execute(TestPage.class, scenario);
 
         verify(contextConfigurer).configure();
+
         assertThat(events).containsExactly(
                 "configure",
                 "bind",
@@ -69,24 +74,29 @@ class WebContractRuntimeCaseExecutorTest {
 
     @Test
     void shouldCloseGatewayWhenNavigateToFails() {
-        ObjectProvider<WebPresentationGateway> gatewayProvider = mock(ObjectProvider.class);
+        Supplier<WebPresentationGateway> gatewayProvider = mock(Supplier.class);
         WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
         List<String> events = new ArrayList<>();
 
-        when(gatewayProvider.getObject()).thenReturn(gateway);
+        when(gatewayProvider.get()).thenReturn(gateway);
+
         doAnswer(invocation -> {
             events.add("bind");
             return page;
         }).when(gateway).bind(TestPage.class);
-        doThrow(new RuntimeException("navigate failure")).when(page).navigateTo();
+
+        doThrow(new RuntimeException("navigate failure"))
+                .when(page).navigateTo();
+
         doAnswer(invocation -> {
             events.add("close");
             return null;
         }).when(gateway).close();
 
-        WebScenario<TestPage> scenario = new WebScenario<>("scenario", p -> {}, p -> {});
+        WebScenario<TestPage> scenario =
+                new WebScenario<>("scenario", p -> {}, p -> {});
 
         assertThatThrownBy(() ->
                 new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer)
@@ -95,33 +105,42 @@ class WebContractRuntimeCaseExecutorTest {
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("navigate failure");
 
-        assertThat(events).containsExactly("bind", "close");
+        assertThat(events).containsExactly(
+                "bind",
+                "close"
+        );
     }
 
     @Test
     void shouldCloseGatewayWhenAssertLoadedFails() {
-        ObjectProvider<WebPresentationGateway> gatewayProvider = mock(ObjectProvider.class);
+        Supplier<WebPresentationGateway> gatewayProvider = mock(Supplier.class);
         WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
         List<String> events = new ArrayList<>();
 
-        when(gatewayProvider.getObject()).thenReturn(gateway);
+        when(gatewayProvider.get()).thenReturn(gateway);
+
         doAnswer(invocation -> {
             events.add("bind");
             return page;
         }).when(gateway).bind(TestPage.class);
+
         doAnswer(invocation -> {
             events.add("navigateTo");
             return null;
         }).when(page).navigateTo();
-        doThrow(new RuntimeException("assertLoaded failure")).when(page).assertLoaded();
+
+        doThrow(new RuntimeException("assertLoaded failure"))
+                .when(page).assertLoaded();
+
         doAnswer(invocation -> {
             events.add("close");
             return null;
         }).when(gateway).close();
 
-        WebScenario<TestPage> scenario = new WebScenario<>("scenario", p -> {}, p -> {});
+        WebScenario<TestPage> scenario =
+                new WebScenario<>("scenario", p -> {}, p -> {});
 
         assertThatThrownBy(() ->
                 new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer)
@@ -130,30 +149,34 @@ class WebContractRuntimeCaseExecutorTest {
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("assertLoaded failure");
 
-        assertThat(events).containsExactly("bind", "navigateTo", "close");
+        assertThat(events).containsExactly(
+                "bind",
+                "navigateTo",
+                "close"
+        );
     }
 
     @Test
     void shouldCloseGatewayWhenActionFails() {
-        ObjectProvider<WebPresentationGateway> gatewayProvider = mock(ObjectProvider.class);
+        Supplier<WebPresentationGateway> gatewayProvider = mock(Supplier.class);
         WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
         List<String> events = new ArrayList<>();
 
-        when(gatewayProvider.getObject()).thenReturn(gateway);
-        doAnswer(invocation -> {
-            events.add("bind");
-            return page;
-        }).when(gateway).bind(TestPage.class);
+        when(gatewayProvider.get()).thenReturn(gateway);
+        when(gateway.bind(TestPage.class)).thenReturn(page);
+
         doAnswer(invocation -> {
             events.add("navigateTo");
             return null;
         }).when(page).navigateTo();
+
         doAnswer(invocation -> {
             events.add("assertLoaded");
             return null;
         }).when(page).assertLoaded();
+
         doAnswer(invocation -> {
             events.add("close");
             return null;
@@ -161,7 +184,9 @@ class WebContractRuntimeCaseExecutorTest {
 
         WebScenario<TestPage> scenario = new WebScenario<>(
                 "scenario",
-                p -> { throw new RuntimeException("action failure"); },
+                p -> {
+                    throw new RuntimeException("action failure");
+                },
                 p -> events.add("assertion")
         );
 
@@ -173,7 +198,6 @@ class WebContractRuntimeCaseExecutorTest {
                 .hasMessage("action failure");
 
         assertThat(events).containsExactly(
-                "bind",
                 "navigateTo",
                 "assertLoaded",
                 "close"
@@ -182,25 +206,25 @@ class WebContractRuntimeCaseExecutorTest {
 
     @Test
     void shouldCloseGatewayWhenAssertionFails() {
-        ObjectProvider<WebPresentationGateway> gatewayProvider = mock(ObjectProvider.class);
+        Supplier<WebPresentationGateway> gatewayProvider = mock(Supplier.class);
         WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
         List<String> events = new ArrayList<>();
 
-        when(gatewayProvider.getObject()).thenReturn(gateway);
-        doAnswer(invocation -> {
-            events.add("bind");
-            return page;
-        }).when(gateway).bind(TestPage.class);
+        when(gatewayProvider.get()).thenReturn(gateway);
+        when(gateway.bind(TestPage.class)).thenReturn(page);
+
         doAnswer(invocation -> {
             events.add("navigateTo");
             return null;
         }).when(page).navigateTo();
+
         doAnswer(invocation -> {
             events.add("assertLoaded");
             return null;
         }).when(page).assertLoaded();
+
         doAnswer(invocation -> {
             events.add("close");
             return null;
@@ -209,7 +233,9 @@ class WebContractRuntimeCaseExecutorTest {
         WebScenario<TestPage> scenario = new WebScenario<>(
                 "scenario",
                 p -> events.add("action"),
-                p -> { throw new RuntimeException("assertion failure"); }
+                p -> {
+                    throw new RuntimeException("assertion failure");
+                }
         );
 
         assertThatThrownBy(() ->
@@ -220,7 +246,6 @@ class WebContractRuntimeCaseExecutorTest {
                 .hasMessage("assertion failure");
 
         assertThat(events).containsExactly(
-                "bind",
                 "navigateTo",
                 "assertLoaded",
                 "action",
@@ -230,25 +255,42 @@ class WebContractRuntimeCaseExecutorTest {
 
     @Test
     void shouldAcquireFreshGatewayForEachScenario() {
-        ObjectProvider<WebPresentationGateway> gatewayProvider = mock(ObjectProvider.class);
+        Supplier<WebPresentationGateway> gatewayProvider = mock(Supplier.class);
         WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
+
         WebPresentationGateway firstGateway = mock(WebPresentationGateway.class);
         WebPresentationGateway secondGateway = mock(WebPresentationGateway.class);
+
         TestPage firstPage = mock(TestPage.class);
         TestPage secondPage = mock(TestPage.class);
 
-        when(gatewayProvider.getObject()).thenReturn(firstGateway, secondGateway);
-        when(firstGateway.bind(TestPage.class)).thenReturn(firstPage);
-        when(secondGateway.bind(TestPage.class)).thenReturn(secondPage);
+        when(gatewayProvider.get())
+                .thenReturn(firstGateway, secondGateway);
+
+        when(firstGateway.bind(TestPage.class))
+                .thenReturn(firstPage);
+
+        when(secondGateway.bind(TestPage.class))
+                .thenReturn(secondPage);
 
         WebContractRuntimeCaseExecutor executor =
-                new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer);
+                new WebContractRuntimeCaseExecutor(
+                        gatewayProvider,
+                        contextConfigurer
+                );
 
-        executor.execute(TestPage.class, new WebScenario<>("first", p -> {}, p -> {}));
-        executor.execute(TestPage.class, new WebScenario<>("second", p -> {}, p -> {}));
+        executor.execute(
+                TestPage.class,
+                new WebScenario<>("first", p -> {}, p -> {})
+        );
 
-        verify(contextConfigurer, Mockito.times(2)).configure();
-        verify(gatewayProvider, Mockito.times(2)).getObject();
+        executor.execute(
+                TestPage.class,
+                new WebScenario<>("second", p -> {}, p -> {})
+        );
+
+        verify(contextConfigurer, times(2)).configure();
+        verify(gatewayProvider, times(2)).get();
         verify(firstGateway).close();
         verify(secondGateway).close();
     }
