@@ -1,4 +1,4 @@
-package it.pagopa.utils.kernel;
+package it.pagopa.kernel.security;
 
 public enum KeyAlgorithm {
     RSA,

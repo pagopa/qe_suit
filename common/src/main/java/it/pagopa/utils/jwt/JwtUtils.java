@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.security.Jwks;
 import io.jsonwebtoken.security.PublicJwk;
-import it.pagopa.utils.kernel.KeyAlgorithm;
+import it.pagopa.kernel.security.KeyAlgorithm;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
