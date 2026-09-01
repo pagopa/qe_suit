@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.cucumber;
+package it.pagopa.interop.common.infrastructure.cucumber.hooks;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;

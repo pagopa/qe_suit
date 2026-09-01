@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.context.cucumber;
 
-import it.pagopa.interop.common.infrastructure.cucumber.channel.ChannelConfig;
+import it.pagopa.infrastructure.cucumber.hook.channel.ChannelConfig;
 import lombok.Getter;
 import lombok.Setter;
 
