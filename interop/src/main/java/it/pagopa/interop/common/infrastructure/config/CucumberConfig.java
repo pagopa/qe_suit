@@ -1,7 +1,10 @@
 package it.pagopa.interop.common.infrastructure.config;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.infrastructure.cucumber.hook.channel.*;
+import it.pagopa.infrastructure.cucumber.channel.ChannelConfig;
+import it.pagopa.infrastructure.cucumber.channel.ChannelGherkinMapping;
+import it.pagopa.infrastructure.cucumber.channel.ChannelModule;
+import it.pagopa.infrastructure.cucumber.channel.ChannelRuntime;
 import it.pagopa.interop.common.infrastructure.context.cucumber.*;
 import it.pagopa.application.context.BrowserContext;
 import it.pagopa.interop.common.infrastructure.channel.CurrentChannel;

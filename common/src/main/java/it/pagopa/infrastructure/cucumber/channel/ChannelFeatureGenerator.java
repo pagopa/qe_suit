@@ -1,4 +1,4 @@
-package it.pagopa.infrastructure.cucumber.hook.channel;
+package it.pagopa.infrastructure.cucumber.channel;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

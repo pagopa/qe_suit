@@ -2,8 +2,8 @@ package it.pagopa.interop.common.infrastructure.cucumber.hooks;
 
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
-import it.pagopa.infrastructure.cucumber.hook.channel.ChannelConfig;
-import it.pagopa.infrastructure.cucumber.hook.channel.ChannelRuntime;
+import it.pagopa.infrastructure.cucumber.channel.ChannelConfig;
+import it.pagopa.infrastructure.cucumber.channel.ChannelRuntime;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
