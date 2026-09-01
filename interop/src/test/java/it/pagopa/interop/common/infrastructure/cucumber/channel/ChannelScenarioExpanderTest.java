@@ -15,14 +15,25 @@ class ChannelScenarioExpanderTest {
     // ------------------------------------------------------------------
 
     @Test
-    void noChannelTag_returnsSourceUnchanged() {
+    void noChannelTag_materializesDefaultChannelConfig() {
         String source = """
                 @eservice
                 Feature: F
                   Scenario: X
                     Given a
                 """;
-        assertThat(ChannelScenarioExpander.expand(DUMMY_PATH, source)).isEqualTo(source);
+        // No @channel declared at either Feature or Scenario level: the generator now
+        // materialises ChannelConfig.DEFAULT explicitly, mirroring the same runtime default
+        // applied by ChannelScenarioHook, so the scenario stays self-contained.
+        String expanded = ChannelScenarioExpander.expand(DUMMY_PATH, source);
+        assertThat(expanded).isEqualTo("""
+                @eservice
+                Feature: F
+                  @channel:Given=BFF,When=BFF,Then=BFF
+                  Scenario: X [Given=BFF,When=BFF,Then=BFF]
+                    Given a
+
+                """);
     }
 
     @Test
@@ -38,11 +49,25 @@ class ChannelScenarioExpanderTest {
                 """;
 
         String expanded = ChannelScenarioExpander.expand(DUMMY_PATH, source);
-        assertThat(expanded).isEqualTo(source);
+
+        // Each scenario materialises the single inherited Feature-level config directly,
+        // with its own @channel: tag and the [Given=...,When=...,Then=...] name suffix.
+        assertThat(expanded).isEqualTo("""
+                @channel:Given=BFF,When=WEB,Then=WEB
+                Feature: F
+                  @channel:Given=BFF,When=WEB,Then=WEB
+                  Scenario: A [Given=BFF,When=WEB,Then=WEB]
+                    Given a
+
+                  @channel:Given=BFF,When=WEB,Then=WEB
+                  Scenario: B [Given=BFF,When=WEB,Then=WEB]
+                    Given b
+
+                """);
     }
 
     @Test
-    void singleChannelTag_returnsSourceUnchanged() {
+    void singleChannelTag_materializesTagAndSuffix() {
         String source = """
                 @eservice
                 Feature: F
@@ -50,7 +75,17 @@ class ChannelScenarioExpanderTest {
                   Scenario: X
                     Given a
                 """;
-        assertThat(ChannelScenarioExpander.expand(DUMMY_PATH, source)).isEqualTo(source);
+
+        String expanded = ChannelScenarioExpander.expand(DUMMY_PATH, source);
+
+        assertThat(expanded).isEqualTo("""
+                @eservice
+                Feature: F
+                  @channel:Given=BFF,When=WEB,Then=WEB
+                  Scenario: X [Given=BFF,When=WEB,Then=WEB]
+                    Given a
+
+                """);
     }
 
     // ------------------------------------------------------------------
@@ -81,7 +116,7 @@ class ChannelScenarioExpanderTest {
     void featureMultipleChannels_expandScenarioWithoutOwnChannel() {
         String source = """
                 @channel:Given=BFF,When=WEB,Then=WEB
-                @channel:Given=BFF,When=WEB_BROWSER,Then=WEB_BROWSER
+                @channel:Given=BFF,When=BFF,Then=BFF
                 Feature: F
                   @eservice
                   Scenario: A
@@ -90,8 +125,10 @@ class ChannelScenarioExpanderTest {
         String expanded = ChannelScenarioExpander.expand(DUMMY_PATH, source);
         assertThat(countOccurrences(expanded, "Scenario: A")).isEqualTo(2);
         assertThat(countOccurrences(expanded, "@eservice")).isEqualTo(2);
-        assertThat(countOccurrences(expanded, "@channel:Given=BFF,When=WEB,Then=WEB")).isEqualTo(1);
-        assertThat(countOccurrences(expanded, "@channel:Given=BFF,When=WEB,Then=WEB")).isEqualTo(1);
+        // 1 occurrence per generated scenario copy + 1 on the (untouched) Feature-level tag line
+        assertThat(countOccurrences(expanded, "@channel:Given=BFF,When=WEB,Then=WEB")).isEqualTo(2);
+        // ditto for the second Feature-level channel
+        assertThat(countOccurrences(expanded, "@channel:Given=BFF,When=BFF,Then=BFF")).isEqualTo(2);
     }
 
     @Test
@@ -188,6 +225,25 @@ class ChannelScenarioExpanderTest {
 
         assertThat(expanded).contains("MyScenario [Given=BFF,When=WEB,Then=WEB]");
         assertThat(expanded).contains("MyScenario [Given=BFF,When=BFF,Then=BFF]");
+    }
+
+    @Test
+    void outlineWithoutChannel_materializesDefaultChannelConfig() {
+        String source = """
+                Feature: F
+                  Scenario Outline: Test <value>
+                    Given <value>
+
+                  Examples:
+                    | value |
+                    | 1     |
+                """;
+
+        String expanded = ChannelScenarioExpander.expand(DUMMY_PATH, source);
+
+        assertThat(countOccurrences(expanded, "Scenario Outline:")).isEqualTo(1);
+        assertThat(countOccurrences(expanded, "@channel:Given=BFF,When=BFF,Then=BFF")).isEqualTo(1);
+        assertThat(expanded).contains("Test <value> [Given=BFF,When=BFF,Then=BFF]");
     }
 
     // ------------------------------------------------------------------

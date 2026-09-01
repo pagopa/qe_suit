@@ -10,4 +10,6 @@ public record ChannelConfig(
         Channel given,
         Channel when,
         Channel then
-) {}
+) {
+    public static ChannelConfig DEFAULT = new ChannelConfig(Channel.BFF, Channel.BFF, Channel.BFF);
+}
