@@ -1,28 +1,20 @@
 @debug-client-assertion-page-ui-flow
-Feature: Debugger della request di tipo bearer per un voucher spendibile presso le API della piattaforma Interop (Frontend) - Test di Flusso Funzionale
+@channel:Given=BFF,When=WEB,Then=WEB
+Feature: Debugger della request di tipo bearer per un voucher spendibile presso le API della piattaforma Interop
 
   Come Aderente in possesso di un client di tipo API
   Voglio validare la mia Client Assertion facente parte di una request di tipo bearer utile al recupero di un Voucher spendibile presso le API della piattaforma Interop
   Al fine di identificare errori strutturali, temporali o crittografici nelle tre fasi di validazione (Client assertion, Recupero Chiave, Firma)
-
-  ***
-  OBIETTIVI DEL TEST FRONTEND:
-  1. Verificare che il flusso utente sia completabile con l'esito atteso e con fluidità.
-  2. Validare il mapping tra le risposte API (BE) e i componenti grafici della pagina.
-  ***
-
+  
   Scenario: DEBUG_INTEROP_VOUCHER_BEARER_REQ_1
   Dato un client API ed una Client assertion valida,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora tutte le fasi di validazione risultano in stato PASSED
-
-    Given una sessione HTTP programmatica su BFF
-    And un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un client API creato da PagoPA in cui è presente un utente admin e una coppia di chiavi crittografiche
     And una client assertion valida generata usando il client creato
-    And un admin di PagoPA collegato al portale Interop dal Browser
-    When l'utente naviga alla pagina Debug Client Assertion
-    And l'utente inoltra la richiesta di validazione specificando client assertion e client
+    When l'utente inoltra la richiesta di validazione specificando client assertion e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result | errors |
       | clientAssertionValidation            | PASSED |        |
@@ -35,16 +27,13 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   allora la fase di validazione della Client Assertion risulta in stato FAILED
   e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
   e le restanti risultano in stato SKIPPED
-
-    Given una sessione HTTP programmatica su BFF
-    And un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un client API creato da PagoPA in cui è presente un utente admin e una coppia di chiavi crittografiche
     And una client assertion generata usando il client creato e:
       | claim | value            |
       | aud   | invalid_audience |
-    And un admin di PagoPA collegato al portale Interop dal Browser
-    When l'utente naviga alla pagina Debug Client Assertion
-    And l'utente inoltra la richiesta di validazione specificando client assertion e client
+    When l'utente inoltra la richiesta di validazione specificando client assertion e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result  | errors                                                 |
       | clientAssertionValidation            | FAILED  | Unexpected client assertion audience: invalid_audience |
@@ -57,9 +46,8 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   allora la fase di validazione della Client Assertion risulta in stato FAILED
   e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
   e le restanti risultano in stato SKIPPED
-
-    Given una sessione HTTP programmatica su BFF
-    And un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un client API creato da PagoPA in cui è presente un utente admin e una coppia di chiavi crittografiche
     And una client assertion generata usando il client creato e:
       | claim    | value |
@@ -68,9 +56,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | __remove | exp   |
       | __remove | iss   |
       | __remove | sub   |
-    And un admin di PagoPA collegato al portale Interop dal Browser
-    When l'utente naviga alla pagina Debug Client Assertion
-    And l'utente inoltra la richiesta di validazione specificando client assertion e client
+    When l'utente inoltra la richiesta di validazione specificando client assertion e client
     Then i risultati della validazione della client assertion creata sono:
       | step                                 | result  | errors                                                                                                                                                                               |
       | clientAssertionValidation            | FAILED  | JTI not found in client assertion, IAT not found in client assertion, EXP not found in client assertion, Issuer not found in client assertion, Subject not found in client assertion |
@@ -83,16 +69,13 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   allora la fase di validazione della Client Assertion risulta in stato FAILED
   e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
   e le restanti risultano in stato SKIPPED
-
-    Given una sessione HTTP programmatica su BFF
-    And un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un client API creato da PagoPA in cui è presente un utente admin e una coppia di chiavi crittografiche
     And una client assertion generata usando il client creato e:
       | claim    | value |
       | __remove | aud   |
-    And un admin di PagoPA collegato al portale Interop dal Browser
-    When l'utente naviga alla pagina Debug Client Assertion
-    And l'utente inoltra la richiesta di validazione specificando client assertion e client
+    When l'utente inoltra la richiesta di validazione specificando client assertion e client
     Then i risultati della validazione della client assertion creata sono:
       | step                                 | result  | errors                                 |
       | clientAssertionValidation            | FAILED  | Audience not found in client assertion |
@@ -105,16 +88,13 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   allora la fase di validazione della Client Assertion risulta in stato FAILED
   e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
   e le restanti risultano in stato SKIPPED
-
-    Given una sessione HTTP programmatica su BFF
-    And un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un client API creato da PagoPA in cui è presente un utente admin e una coppia di chiavi crittografiche
     And una client assertion generata usando il client creato e:
       | claim      | value                  |
       | header.kid | not-a-valid-kid-format |
-    And un admin di PagoPA collegato al portale Interop dal Browser
-    When l'utente naviga alla pagina Debug Client Assertion
-    And l'utente inoltra la richiesta di validazione specificando client assertion e client
+    When l'utente inoltra la richiesta di validazione specificando client assertion e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result  | errors                    |
       | clientAssertionValidation            | FAILED  | Unexpected format for kid |
@@ -128,16 +108,13 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   e la fase di validazione della Firma risulta in stato FAILED con errore di token scaduto
   e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
   e le restanti risultano in stato SKIPPED
-
-    Given una sessione HTTP programmatica su BFF
-    And un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un client API creato da PagoPA in cui è presente un utente admin e una coppia di chiavi crittografiche
     And una client assertion generata usando il client creato e:
       | claim | value     |
       | exp   | now-10800 |
-    And un admin di PagoPA collegato al portale Interop dal Browser
-    When l'utente naviga alla pagina Debug Client Assertion
-    And l'utente inoltra la richiesta di validazione specificando client assertion e client
+    When l'utente inoltra la richiesta di validazione specificando client assertion e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result | errors                                                 |
       | clientAssertionValidation            | PASSED |                                                        |
