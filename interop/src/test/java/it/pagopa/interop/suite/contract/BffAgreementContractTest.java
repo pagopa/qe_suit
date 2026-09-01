@@ -5,7 +5,7 @@ import it.pagopa.interop.bff.agreement.infrastructure.BffAgreementRequestFactory
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
-import it.pagopa.interop.common.infrastructure.config.JunitSupportConfig;
+import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -22,7 +22,7 @@ import org.springframework.test.context.TestConstructor;
 import java.util.stream.Stream;
 
 @Execution(ExecutionMode.CONCURRENT)
-@SpringBootTest(classes = {TestBootApp.class, JunitSupportConfig.class, BffApiContractConfig.class})
+@SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class BffAgreementContractTest {

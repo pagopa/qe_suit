@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.context;
+package it.pagopa.interop.common.infrastructure.config;
 
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.interop.common.infrastructure.context.cucumber.*;
@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @Profile("cucumber")
-public class ContextConfig {
+public class CucumberContextConfig {
 
     @Bean
     @ScenarioScope

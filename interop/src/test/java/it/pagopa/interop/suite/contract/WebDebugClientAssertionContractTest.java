@@ -2,7 +2,7 @@ package it.pagopa.interop.suite.contract;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
-import it.pagopa.interop.common.infrastructure.config.JunitSupportConfig;
+import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.infrastructure.contract.WebBrowserContractValidator;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 @SpringBootTest(
         classes = {
                 TestBootApp.class,
-                JunitSupportConfig.class,
+                JunitContextConfig.class,
                 WebJUnitSuitConfig.class
         },
         properties = "spring.profiles.include=junit"
