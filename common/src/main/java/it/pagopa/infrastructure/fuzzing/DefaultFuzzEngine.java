@@ -5,19 +5,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.infrastructure.objectgraph.Node;
 import it.pagopa.infrastructure.objectgraph.ObjectGraph;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class DefaultFuzzEngine implements FuzzEngine {
+@Component
+class DefaultFuzzEngine implements FuzzEngine {
 
     private final ObjectGraphDecomposer objectGraphDecomposer;
     private final ObjectMapper objectMapper;
     private final FuzzMutationApplier mutationApplier;
     private final List<FuzzRule> rules;
 
-    public DefaultFuzzEngine(
+    DefaultFuzzEngine(
             ObjectGraphDecomposer objectGraphDecomposer,
             ObjectMapper objectMapper,
             FuzzMutationApplier mutationApplier,

@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.purpose.infrastructure.config;
 
-import it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor;
-import it.pagopa.infrastructure.channel.CurrentChannel;
+import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
+import it.pagopa.kernel.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 @EnablePluginRegistries({PurposeGateway.class})
 public class PurposeRoutingConfig {
 
-    private final ObjectProvider<CurrentChannel<Channel>> currentChannelProvider;
+    private final ObjectProvider<CurrentChannel> currentChannelProvider;
 
     @Bean
     @Primary

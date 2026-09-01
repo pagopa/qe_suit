@@ -2,14 +2,14 @@ package it.pagopa.interop.bff.infrastructure.config;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.filter.Filter;
 import io.restassured.specification.RequestSpecification;
-import it.pagopa.application.TestKind;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
-import it.pagopa.application.context.TestContext;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.infrastructure.http.restassured.HttpLoggingFilter;
-import it.pagopa.infrastructure.http.restassured.TestPolicyFilterResolver;
+import it.pagopa.kernel.context.TestContext;
+import it.pagopa.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.infrastructure.restassured.HttpLoggingFilter;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +23,8 @@ public class BffRequestSpecFactory {
     private final BearerAuthProvider bearerAuthProvider;
     private final ObjectProvider<TestContext> testKindProvider;
     private final ObjectProvider<CurrentUserSession> currentUserSessionProvider;
-    private final TestPolicyFilterResolver testPolicyFilterResolver;
+    private final Filter contractTestFilter;
+    private final Filter businessTestFilter;
 
     @Value("${interop.api.base-url.bff}")
     private String basePath;
@@ -32,12 +33,14 @@ public class BffRequestSpecFactory {
             BearerAuthProvider bearerAuthProvider,
             ObjectProvider<TestContext> testKindProvider,
             ObjectProvider<CurrentUserSession> currentUserSessionProvider,
-            TestPolicyFilterResolver testPolicyFilterResolver
+            @Qualifier("contractTestFilter") Filter contractTestFilter,
+            @Qualifier("businessTestFilter") Filter businessTestFilter
     ) {
         this.bearerAuthProvider = bearerAuthProvider;
         this.testKindProvider = testKindProvider;
         this.currentUserSessionProvider = currentUserSessionProvider;
-        this.testPolicyFilterResolver = testPolicyFilterResolver;
+        this.contractTestFilter = contractTestFilter;
+        this.businessTestFilter = businessTestFilter;
     }
 
     public RequestSpecBuilder create() {
@@ -59,8 +62,10 @@ public class BffRequestSpecFactory {
                 )
                 .addHeader("Authorization", "Bearer " + token);
 
-        TestKind testKind = testContext.getCurrentTestKind();
-        builder.addFilter(testPolicyFilterResolver.resolve(testKind));
+        switch (testContext.getCurrentTestKind()) {
+            case CONTRACT -> builder.addFilter(contractTestFilter);
+            case FLOW -> builder.addFilter(businessTestFilter);
+        }
         
         // HttpLoggingFilter deve essere ULTIMO nella catena (primo eseguito)
         // per loggare la response PRIMA che i validatori la elaborino

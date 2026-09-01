@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.kernel.context;
+package it.pagopa.kernel.context;
 
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;

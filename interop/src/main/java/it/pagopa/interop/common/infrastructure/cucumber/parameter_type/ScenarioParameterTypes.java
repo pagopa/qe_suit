@@ -5,7 +5,7 @@ import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.application.context.EntityStore;
+import it.pagopa.kernel.context.EntityStore;
 import it.pagopa.interop.common.kernel.security.DPoPProof;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;
@@ -46,11 +46,5 @@ public class ScenarioParameterTypes {
     public EServiceDescriptor currentDeprecatedEServiceDescriptor(String token) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         return eService.getLastDeprecatedDescriptor();
-    }
-
-    @ParameterType("versione archiviata")
-    public EServiceDescriptor currentArchivedEServiceDescriptor(String token) {
-        EService eService = entityStore.getLastOrThrow(EService.class);
-        return eService.getLastArchivedDescriptor();
     }
 }

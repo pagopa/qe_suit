@@ -1,16 +1,16 @@
-package it.pagopa.infrastructure.template.action;
+package it.pagopa.interop.common.infrastructure.template.action;
 
-import it.pagopa.application.context.EntityStore;
-import it.pagopa.infrastructure.response.RawResponse;
+import it.pagopa.kernel.context.EntityStore;
+import it.pagopa.interop.common.infrastructure.response.RawResponse;
 
 import java.util.function.Function;
 
 public class MappedResponseFinalizer<SourceResponse, TargetResponse> implements ResponseFinalizer<TargetResponse> {
+
     private final ResponseFinalizer<SourceResponse> source;
     private final Function<? super SourceResponse, ? extends TargetResponse> mapper;
 
-    public MappedResponseFinalizer(ResponseFinalizer<SourceResponse> source,
-                                  Function<? super SourceResponse, ? extends TargetResponse> mapper) {
+    public MappedResponseFinalizer(ResponseFinalizer<SourceResponse> source, Function<? super SourceResponse, ? extends TargetResponse> mapper) {
         this.source = source;
         this.mapper = mapper;
     }

@@ -4,10 +4,12 @@ import it.pagopa.infrastructure.objectgraph.Node;
 import it.pagopa.infrastructure.objectgraph.NodeSelector;
 import it.pagopa.infrastructure.objectgraph.NodeSelectors;
 import it.pagopa.infrastructure.objectgraph.ObjectGraph;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-public class NullAndMissingRule implements FuzzRule {
+@Component
+class NullAndMissingRule implements FuzzRule {
 
     private static final List<FuzzMutation> MUTATIONS = List.of(
             new FuzzMutation(FuzzScenario.REPLACED_WITH_NULL, FuzzMutationKind.REPLACE, null),

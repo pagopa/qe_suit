@@ -1,7 +1,7 @@
-package it.pagopa.infrastructure.context;
+package it.pagopa.interop.common.infrastructure.context.inmemory;
 
-import it.pagopa.application.context.LastApiResponseStore;
-import it.pagopa.infrastructure.response.ApiResponse;
+import it.pagopa.kernel.context.LastApiResponseStore;
+import it.pagopa.interop.common.infrastructure.response.ApiResponse;
 
 public class InMemoryLastApiResponseStore implements LastApiResponseStore {
     private final ThreadLocal<ApiResponse> lastResponse = new ThreadLocal<>();

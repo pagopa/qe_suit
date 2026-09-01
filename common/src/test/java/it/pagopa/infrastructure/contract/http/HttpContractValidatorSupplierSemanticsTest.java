@@ -11,6 +11,7 @@ import it.pagopa.infrastructure.fuzzing.FuzzMutationKind;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.infrastructure.objectgraph.NodePath;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
+import it.pagopa.interop.generated.openapi.clients.bff.api.Oper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -327,12 +328,12 @@ class HttpContractValidatorSupplierSemanticsTest {
 
     private ObjectGraphDecomposer createDecomposer() {
         try {
-            Class<?> jackson = Class.forName("it.pagopa.infrastructure.objectgraph.JacksonObjectDecomposer");
+            Class<?> jackson = Class.forName("it.pagopa.interop.common.infrastructure.objectgraph.JacksonObjectDecomposer");
             Constructor<?> jacksonCtor = jackson.getDeclaredConstructor(ObjectMapper.class);
             jacksonCtor.setAccessible(true);
             Object objectDecomposer = jacksonCtor.newInstance(objectMapper);
-            Class<?> defaultCls = Class.forName("it.pagopa.infrastructure.objectgraph.DefaultObjectGraphDecomposer");
-            Constructor<?> defaultCtor = defaultCls.getDeclaredConstructor(Class.forName("it.pagopa.infrastructure.objectgraph.ObjectDecomposer"));
+            Class<?> defaultCls = Class.forName("it.pagopa.interop.common.infrastructure.objectgraph.DefaultObjectGraphDecomposer");
+            Constructor<?> defaultCtor = defaultCls.getDeclaredConstructor(Class.forName("it.pagopa.interop.common.infrastructure.objectgraph.ObjectDecomposer"));
             defaultCtor.setAccessible(true);
             return (ObjectGraphDecomposer) defaultCtor.newInstance(objectDecomposer);
         } catch (Exception exception) {
@@ -349,18 +350,19 @@ class HttpContractValidatorSupplierSemanticsTest {
     record PathParams(String agreementId, String descriptorId) {
     }
 
-    static class SimpleOper {
+    static class SimpleOper implements Oper {
         public SimpleOper reqSpec(Consumer<RequestSpecBuilder> customizer) {
             customizer.accept(new RequestSpecBuilder());
             return this;
         }
 
+        @Override
         public <T> T execute(Function<Response, T> handler) {
             return handler.apply(Mockito.mock(Response.class));
         }
     }
 
-    static class CapturingOper {
+    static class CapturingOper implements Oper {
         final String id;
         String bodyJson;
         String pathAgreementId;
@@ -385,6 +387,7 @@ class HttpContractValidatorSupplierSemanticsTest {
             return this;
         }
 
+        @Override
         public <T> T execute(Function<Response, T> handler) {
             return handler.apply(Mockito.mock(Response.class));
         }

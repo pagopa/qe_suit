@@ -1,5 +1,5 @@
 package it.pagopa.infrastructure.objectgraph;
 
-public interface ObjectDecomposer {
+interface ObjectDecomposer {
     ObjectGraph decompose(Object source);
 }

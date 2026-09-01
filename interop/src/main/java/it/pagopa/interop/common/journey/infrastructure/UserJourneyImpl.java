@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.journey.application.UserJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;

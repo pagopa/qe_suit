@@ -1,8 +1,8 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
-import it.pagopa.application.context.EntityStore;
+import it.pagopa.kernel.context.EntityStore;
 import it.pagopa.interop.common.journey.application.FinalizerJourney;
-import it.pagopa.domain.Identifiable;
+import it.pagopa.interop.common.kernel.Identifiable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

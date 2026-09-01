@@ -6,7 +6,7 @@ import it.pagopa.infrastructure.objectgraph.ObjectGraph;
 
 import java.util.List;
 
-public interface FuzzRule {
+interface FuzzRule {
 
     NodeSelector selector();
 
