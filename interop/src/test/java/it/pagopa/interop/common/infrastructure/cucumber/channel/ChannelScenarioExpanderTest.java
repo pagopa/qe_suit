@@ -26,6 +26,22 @@ class ChannelScenarioExpanderTest {
     }
 
     @Test
+    void featureSingleChannel_isInheritedByAllScenarios() {
+        String source = """
+                @channel:Given=BFF,When=WEB,Then=WEB
+                Feature: F
+                  Scenario: A
+                    Given a
+
+                  Scenario: B
+                    Given b
+                """;
+
+        String expanded = ChannelScenarioExpander.expand(DUMMY_PATH, source);
+        assertThat(expanded).isEqualTo(source);
+    }
+
+    @Test
     void singleChannelTag_returnsSourceUnchanged() {
         String source = """
                 @eservice
@@ -59,6 +75,56 @@ class ChannelScenarioExpanderTest {
 
         // Two scenario blocks
         assertThat(countOccurrences(expanded, "Scenario:")).isEqualTo(2);
+    }
+
+    @Test
+    void featureMultipleChannels_expandScenarioWithoutOwnChannel() {
+        String source = """
+                @channel:Given=BFF,When=WEB,Then=WEB
+                @channel:Given=BFF,When=WEB_BROWSER,Then=WEB_BROWSER
+                Feature: F
+                  @eservice
+                  Scenario: A
+                    Given a
+                """;
+        String expanded = ChannelScenarioExpander.expand(DUMMY_PATH, source);
+        assertThat(countOccurrences(expanded, "Scenario: A")).isEqualTo(2);
+        assertThat(countOccurrences(expanded, "@eservice")).isEqualTo(2);
+        assertThat(countOccurrences(expanded, "@channel:Given=BFF,When=WEB,Then=WEB")).isEqualTo(1);
+        assertThat(countOccurrences(expanded, "@channel:Given=BFF,When=WEB,Then=WEB")).isEqualTo(1);
+    }
+
+    @Test
+    void scenarioChannelOverridesFeatureChannels() {
+        String source = """
+                @channel:Given=BFF,When=WEB,Then=WEB
+                @channel:Given=BFF,When=WEB_BROWSER,Then=WEB_BROWSER
+                Feature: F
+                  @channel:Given=BFF,When=WEB,Then=BFF
+                  Scenario: A
+                    Given a
+                """;
+        String expanded = ChannelScenarioExpander.expand(DUMMY_PATH, source);
+        assertThat(countOccurrences(expanded, "Scenario: A")).isEqualTo(1);
+        assertThat(countOccurrences(expanded, "@channel:Given=BFF,When=WEB,Then=BFF")).isEqualTo(1);
+        assertThat(expanded).doesNotContain("@channel:Given=BFF,When=WEB,Then=WEB\n  Scenario: A");
+        assertThat(expanded).doesNotContain("@channel:Given=BFF,When=WEB,Then=WEB\n  Scenario: A");
+    }
+
+    @Test
+    void scenarioMultipleChannelsOverrideFeatureChannels() {
+        String source = """
+                @channel:Given=BFF,When=WEB,Then=WEB
+                @channel:Given=BFF,When=WEB_BROWSER,Then=WEB_BROWSER
+                Feature: F
+                  @channel:Given=BFF,When=WEB,Then=BFF
+                  @channel:Given=BFF,When=WEB,Then=BFF
+                  Scenario: A
+                    Given a
+                """;
+        String expanded = ChannelScenarioExpander.expand(DUMMY_PATH, source);
+        assertThat(countOccurrences(expanded, "Scenario: A")).isEqualTo(2);
+        assertThat(countOccurrences(expanded, "@channel:Given=BFF,When=WEB,Then=BFF")).isEqualTo(2);
     }
 
     @Test
