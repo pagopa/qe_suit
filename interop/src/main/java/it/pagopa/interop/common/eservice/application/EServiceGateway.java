@@ -10,4 +10,6 @@ public interface EServiceGateway extends Plugin<Channel> {
     EService createEService(EServiceCreationCommand command);
 
     EService getEService(EServiceRef eServiceRef);
+
+    void archiveEService(EServiceRef eServiceRef);
 }

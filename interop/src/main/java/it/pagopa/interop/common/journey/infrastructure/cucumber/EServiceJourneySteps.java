@@ -55,4 +55,17 @@ public class EServiceJourneySteps {
                 .addDescriptor(EServiceDescriptorState.PUBLISHED)
                 .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
     }
+
+    @Given("un EService creato dal {tenant} con una versione divenuta deprecata dopo la fruizione di {tenant} ed EService in archiviazione")
+    public void createDeprecatedAndArchivedEserviceDescriptor(Tenant producer, Tenant consumer){
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .withProducer(producer, UserRole.ADMIN)
+                .addDescriptor(EServiceDescriptorState.PUBLISHED)
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED)
+                .archiveEService();
+    }
 }

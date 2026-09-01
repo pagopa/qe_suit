@@ -36,6 +36,11 @@ public class WebEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void archiveEService(EServiceRef eServiceRef) {
+        throw new UnsupportedOperationException("Archiving an EService is not supported on the WEB_BROWSER channel");
+    }
+
+    @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.WEB_BROWSER;
     }
