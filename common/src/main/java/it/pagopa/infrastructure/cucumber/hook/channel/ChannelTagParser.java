@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-public final class ChannelTagParser<C extends Enum<C> & ChannelKind> {
+final class ChannelTagParser<C extends Enum<C> & ChannelKind> {
 
     static final String CHANNEL_TAG_PREFIX = "@channel:";
     private static final Set<String> KNOWN_KEYS = Set.of("Given", "When", "Then");
