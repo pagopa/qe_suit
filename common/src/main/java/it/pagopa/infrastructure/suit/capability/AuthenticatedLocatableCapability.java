@@ -1,4 +1,4 @@
-package it.pagopa.infrastructure.browser;
+package it.pagopa.infrastructure.suit.capability;
 
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.capability.impl.LocatableCapabilityImpl;

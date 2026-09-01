@@ -6,6 +6,7 @@ import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.application.context.BrowserContext;
 import it.pagopa.infrastructure.contract.browser.WebSessionProvider;
+import it.pagopa.infrastructure.suit.capability.AuthenticatedLocatableCapability;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 

@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
 import it.frontend.e2e.framework.web.adapter.selenium.SeleniumApiAdapter;
-import it.pagopa.infrastructure.browser.AuthenticatedLocatableCapabilityHandler;
+import it.pagopa.infrastructure.suit.capability.AuthenticatedLocatableCapabilityHandler;
 import it.pagopa.interop.web.infrastructure.config.suit.WebSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

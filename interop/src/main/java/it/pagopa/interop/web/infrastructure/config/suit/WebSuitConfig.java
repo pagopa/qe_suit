@@ -4,7 +4,7 @@ import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.config.WebSuiteBuilder;
 import it.frontend.e2e.framework.web.model.location.Url;
-import it.pagopa.infrastructure.browser.AuthenticatedLocatableCapabilityHandler;
+import it.pagopa.infrastructure.suit.capability.AuthenticatedLocatableCapabilityHandler;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

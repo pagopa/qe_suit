@@ -6,7 +6,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.send.domain.web.pages.destinatario.pf.login.DowntimeItem;
-import it.pagopa.suit.component.Chip;
+import it.pagopa.infrastructure.suit.component.Chip;
 import it.pagopa.send.web.notification_details.infrastructure.suit.NotificationDetailsPage;
 import it.pagopa.send.web.notification_details.infrastructure.suit.section.AttachmentSection;
 import it.pagopa.send.web.notification_details.infrastructure.suit.section.NotificationStatusSection;

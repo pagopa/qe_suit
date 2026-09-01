@@ -4,9 +4,9 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.interop.web.infrastructure.config.suit.component.InterfaceComponent;
-import it.pagopa.suit.component.Alert;
-import it.pagopa.suit.component.Checkbox;
-import it.pagopa.suit.component.TextField;
+import it.pagopa.infrastructure.suit.component.Alert;
+import it.pagopa.infrastructure.suit.component.Checkbox;
+import it.pagopa.infrastructure.suit.component.TextField;
 import org.assertj.core.api.SoftAssertions;
 
 public interface TechnicalAsyncSection extends Component {
