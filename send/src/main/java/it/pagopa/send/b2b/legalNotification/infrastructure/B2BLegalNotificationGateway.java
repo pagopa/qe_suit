@@ -2,19 +2,17 @@ package it.pagopa.send.b2b.legalNotification.infrastructure;
 
 import it.pagopa.send.b2b.delivery.infrastructure.B2BDeliveryRestClient;
 import it.pagopa.send.common.kernel.domain.Channel;
+import it.pagopa.send.common.notification.domain.LegalNotificationDomain;
 import it.pagopa.send.controller.creazione_notifica.NotificationContext;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffLegalNotificationsResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffRequestStatus;
 import it.pagopa.send.infrastructure.template.ApiResponse;
 import it.pagopa.send.infrastructure.template.PollingStrategy;
 import it.pagopa.send.infrastructure.template.PollingUtils;
 import it.pagopa.send.legalnotification.application.LegalNotificationGateway;
 import it.pagopa.send.legalnotification.infrastructure.LegalNotificationRestClient;
-import it.pagopa.send.utils.IUNHelper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -62,24 +60,26 @@ public class B2BLegalNotificationGateway implements LegalNotificationGateway {
                 .get();
         PollingUtils.pollUntil(
                 () -> readNotification(iun),
-                response -> response.getNotificationStatus().equals(BffNotificationStatus.CANCELLED),
+                response -> response.getStatus().equals(BffNotificationStatus.CANCELLED),
                 DEFAULT_STATUS_TIMEOUT,
                 DEFAULT_STATUS_INTERVAL
         );
     }
 
     @Override
-    public BffFullNotificationV1 readNotification(String iun) {
-        return restClient.read(iun)
+    public LegalNotificationDomain readNotification(String iun) {
+        restClient.read(iun)
                 .withoutPolling()
                 .get();
+        return LegalNotificationDomain.builder().build();
     }
 
     @Override
-    public BffLegalNotificationsResponse searchNotification(Map<String, String> overrides) {
-        return restClient.search(overrides)
+    public LegalNotificationDomain searchNotification(Map<String, String> overrides) {
+        restClient.search(overrides)
                 .withoutPolling()
                 .get();
+        return LegalNotificationDomain.builder().build();
     }
 
     private PollingStrategy matchesStatus(BffNotificationStatus targetStatus) {

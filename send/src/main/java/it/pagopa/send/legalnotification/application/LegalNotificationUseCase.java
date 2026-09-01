@@ -1,5 +1,6 @@
 package it.pagopa.send.legalnotification.application;
 
+import it.pagopa.send.common.notification.domain.LegalNotificationDomain;
 import it.pagopa.send.generated.openapi.clients.bff.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,11 +20,11 @@ public class LegalNotificationUseCase {
         legalNotificationGateway.deleteNotification(iun);
     }
 
-    public BffFullNotificationV1 readNotification(String iun) {
+    public LegalNotificationDomain readNotification(String iun) {
         return legalNotificationGateway.readNotification(iun);
     }
 
-    public BffLegalNotificationsResponse searchNotification(Map<String, String> overrides) {
+    public LegalNotificationDomain searchNotification(Map<String, String> overrides) {
         return legalNotificationGateway.searchNotification(overrides);
     }
 
