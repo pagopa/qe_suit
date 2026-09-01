@@ -2,11 +2,12 @@ package it.pagopa.interop.web.eservice.infrastructure;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCatalogPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.component.catalog.EServiceCatalogPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreationPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.GeneralDataWizard;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.ThresholdAndAttributeWizard;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.technical.TechnicalSpecWizard;
+import it.pagopa.interop.web.eservice.infrastructure.page.component.provision.EServiceProvisionCatalogPage;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Bean;
@@ -45,6 +46,12 @@ public class WebEServiceConfig {
     @ScenarioScope
     public EServiceCreationPage eServiceCreationPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(EServiceCreationPage.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public EServiceProvisionCatalogPage eServiceProvisionCatalogPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(EServiceProvisionCatalogPage.class);
     }
 
 }

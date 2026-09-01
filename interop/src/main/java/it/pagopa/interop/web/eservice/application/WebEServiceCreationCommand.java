@@ -1,14 +1,27 @@
 package it.pagopa.interop.web.eservice.application;
 
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import lombok.Getter;
 
 public class WebEServiceCreationCommand implements EServiceCreationCommand {
     @Getter
-    private final WebEServiceGeneralData webEServiceGeneralData = new WebEServiceGeneralData(new EServiceSeed());
+    private final WebEServiceGeneralData webEServiceGeneralData;
+
+    private WebEServiceCreationCommand(EServiceSeed webCreationPayload) {
+        this.webEServiceGeneralData = new WebEServiceGeneralData(webCreationPayload);
+    }
+
+    public WebEServiceCreationCommand() {
+        EServiceSeed seed = new EServiceSeed();
+        this.webEServiceGeneralData = new WebEServiceGeneralData(seed);
+    }
+
+    public static WebEServiceCreationCommand from(EServiceSeed creationSeed) {
+        return new WebEServiceCreationCommand(creationSeed);
+    }
 
     @Override
     public EServiceCreationCommand name(String name) {
@@ -18,7 +31,9 @@ public class WebEServiceCreationCommand implements EServiceCreationCommand {
 
     @Override
     public EServiceCreationCommand mode(EServiceMode mode) {
-        webEServiceGeneralData.eservice().setMode(it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.fromValue(mode.name()));
+        webEServiceGeneralData.eservice().setMode(
+                it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.fromValue(mode.name())
+        );
         return this;
     }
 

@@ -50,7 +50,9 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     private EServiceJourneyImpl publishPipeline(EService eService) {
         EServiceDescriptor descriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eService.getLastDraftDescriptor());
-        eServiceDescriptorUseCase.publishDescriptor(eService, descriptor);
+        EServiceDescriptor published = eServiceDescriptorUseCase.publishDescriptor(eService, descriptor);
+        eService.addDescriptor(published);
+        entityStore.upsert(eService);
         return this;
     }
 }

@@ -20,7 +20,7 @@ public interface GeneralDataWizard extends Component {
     @XPath(".//div[contains(@class, 'MuiRadioGroup-root') and .//*[text()='Sincrono (standard)'] and .//*[text()='Asincrono / massivo (in differita)']]")
     RadioGroup asyncExchange();
 
-    @XPath(".//div[contains(@class, 'MuiRadioGroup-root') and .//*[text()='REST'] and .//*[text()='SOAP']]")
+    @XPath(".//div[contains(@class, 'MuiRadioGroup-root') and .//*[normalize-space()='REST'] and .//*[normalize-space()='SOAP']]")
     RadioGroup technology();
 
     @XPath(".//div[contains(@class, 'MuiRadioGroup-root') and .//*[text()='Eroga'] and .//*[text()='Riceve']]")
@@ -55,9 +55,9 @@ public interface GeneralDataWizard extends Component {
     }
 
     default Boolean getPersonalData() {
-        String val = personalData().getSelected();
-        if (val == null || val.isBlank()) return null;
-        return val.contains("Eroga") && !val.contains("Non eroga");
+        String val1 = personalData().getSelected();
+        if (val1 == null || val1.isBlank()) return null;
+        return val1.contains("Eroga") && !val1.contains("Non eroga");
     }
 
     default GeneralDataWizard setName(String eserviceName) {

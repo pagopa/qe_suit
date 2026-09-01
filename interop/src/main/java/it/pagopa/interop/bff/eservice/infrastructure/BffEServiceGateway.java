@@ -58,6 +58,29 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void verifySubscribeButtonDisabledForPreviousVersions(EService eService) {
+        throw new UnsupportedOperationException("verifySubscribeButtonDisabledForPreviousVersions non supportata al momento in bff...");
+    }
+
+    @Override
+    public void addDescriptor(EService eService) {
+        final EServiceRef eServiceRef = eService.getRef();
+
+        restClient.addDescriptor(eServiceRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdResource -> {
+                    final EServiceDescriptorRef descriptorRef =
+                            EServiceDescriptorRef.of(createdResource.getId());
+                    final EServiceDescriptor createdDescriptor =
+                            descriptorGateway.getEServiceDescriptor(eServiceRef, descriptorRef);
+                    eService.addDescriptor(createdDescriptor); // real DRAFT descriptor
+                    return eService;
+                })
+                .updateContext()
+                .get();
+    }
+
+    @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
     }

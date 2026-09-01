@@ -30,7 +30,10 @@ public class BffEServiceRestClient extends RestClient {
 
     public TestChain<CreatedResource> addDescriptor(@Nonnull UUID eserviceId) {
         return execute(
-                () -> eservicesApi.createDescriptor().eServiceIdPath(eserviceId).execute(Function.identity()),
+                () -> eservicesApi.createDescriptor()
+                        .eServiceIdPath(eserviceId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
+                        .execute(Function.identity()),
                 CreatedResource.class
         );
     }

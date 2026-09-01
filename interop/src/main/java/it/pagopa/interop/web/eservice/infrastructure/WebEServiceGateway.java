@@ -7,6 +7,8 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.web.eservice.application.WebEServiceCreationCommand;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreationPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.component.catalog.EServiceCatalogPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.component.provision.EServiceProvisionCatalogPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WebEServiceGateway implements EServiceGateway {
 
+    private final EServiceProvisionCatalogPage eserviceProvisionCatalogPage;
+    private final EServiceCatalogPage eserviceCatalogPage;
     private final EServiceCreationPage eServiceCreationPage;
     private final WebEServiceGeneralDataGateway generalDataGateway;
 
@@ -25,14 +29,36 @@ public class WebEServiceGateway implements EServiceGateway {
         eServiceCreationPage.navigateTo();
         eServiceCreationPage.assertLoaded();
 
-        generalDataGateway.fillEServiceGeneralData(creationCommand.getWebEServiceGeneralData());
-
-        return generalDataGateway.readEServiceGeneralData();
+        return generalDataGateway.fillEServiceGeneralData(creationCommand.getWebEServiceGeneralData());
     }
 
     @Override
     public EService getEService(EServiceRef eServiceRef) {
         return null;
+    }
+
+    @Override
+    public void verifySubscribeButtonDisabledForPreviousVersions(EService eService) {
+        // 1) vai a pagina catalogo eservice
+        eserviceCatalogPage.navigateTo();
+        eserviceCatalogPage.assertLoaded();
+
+        // 2) visualizza specifica pagina eservice
+//        eserviceCatalogPage.navigateToEService(eService);
+
+
+        // 3) verifica presenza del button
+    }
+
+    @Override
+    public void addDescriptor(EService eService) {
+        // 1) vai a pagina dei eservice erogati
+        //  e visualizza l'eservice in questione
+        eserviceProvisionCatalogPage.navigateToEService(eService);
+        eserviceProvisionCatalogPage.assertLoaded();
+
+        // 2) crea nuovo eservice
+
     }
 
     @Override
