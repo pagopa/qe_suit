@@ -1,11 +1,11 @@
 package it.pagopa.interop.bff.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.interop.common.infrastructure.contract.http.HttpContractValidator;
-import it.pagopa.interop.common.infrastructure.contract.http.HttpContractPolicy;
-import it.pagopa.interop.common.infrastructure.fuzzing.FuzzEngine;
-import it.pagopa.interop.common.infrastructure.fuzzing.FuzzScenario;
-import it.pagopa.interop.common.infrastructure.objectgraph.ObjectGraphDecomposer;
+import it.pagopa.infrastructure.contract.http.HttpContractValidator;
+import it.pagopa.infrastructure.contract.http.HttpContractPolicy;
+import it.pagopa.infrastructure.fuzzing.FuzzEngine;
+import it.pagopa.infrastructure.fuzzing.FuzzScenario;
+import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

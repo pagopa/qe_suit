@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.context.inmemory;
 
-import it.pagopa.interop.common.kernel.context.LastApiResponseStore;
+import it.pagopa.kernel.context.LastApiResponseStore;
 import it.pagopa.interop.common.infrastructure.response.ApiResponse;
 
 public class InMemoryLastApiResponseStore implements LastApiResponseStore {

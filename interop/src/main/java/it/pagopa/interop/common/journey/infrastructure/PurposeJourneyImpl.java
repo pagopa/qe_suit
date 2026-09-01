@@ -2,7 +2,7 @@ package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.PurposeJourney;
-import it.pagopa.interop.common.kernel.context.EntityStore;
+import it.pagopa.kernel.context.EntityStore;
 import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;

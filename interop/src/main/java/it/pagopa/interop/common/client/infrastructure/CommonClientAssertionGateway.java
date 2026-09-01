@@ -6,7 +6,7 @@ import it.pagopa.interop.common.client.application.ClientAssertionGateway;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.client.domain.ClientAssertionClaimOverride;
-import it.pagopa.interop.common.kernel.context.EntityStore;
+import it.pagopa.kernel.context.EntityStore;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

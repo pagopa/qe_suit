@@ -5,7 +5,7 @@ import com.atlassian.oai.validator.report.LevelResolver;
 import com.atlassian.oai.validator.report.ValidationReport;
 import com.atlassian.oai.validator.restassured.OpenApiValidationFilter;
 import io.restassured.filter.Filter;
-import it.pagopa.interop.common.kernel.context.TestContext;
+import it.pagopa.kernel.context.TestContext;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

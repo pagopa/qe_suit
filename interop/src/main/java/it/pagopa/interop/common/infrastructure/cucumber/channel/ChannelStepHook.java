@@ -4,7 +4,7 @@ import io.cucumber.java.BeforeStep;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.Step;
 import it.pagopa.interop.common.infrastructure.context.cucumber.ScenarioChannelContext;
-import it.pagopa.interop.common.kernel.context.CurrentChannel;
+import it.pagopa.kernel.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

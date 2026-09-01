@@ -8,7 +8,7 @@ import it.pagopa.interop.common.client.application.command.ClientKeyCreationComm
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.infrastructure.template.action.TestChain;
 import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.common.kernel.context.EntityStore;
+import it.pagopa.kernel.context.EntityStore;
 import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AddUsersToClientRequest;

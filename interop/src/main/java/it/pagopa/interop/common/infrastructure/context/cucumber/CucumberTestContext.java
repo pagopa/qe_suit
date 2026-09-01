@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.context.cucumber;
 
-import it.pagopa.interop.common.kernel.context.TestContext;
-import it.pagopa.interop.common.kernel.domain.TestKind;
+import it.pagopa.kernel.context.TestContext;
+import it.pagopa.kernel.domain.TestKind;
 import lombok.Getter;
 import lombok.Setter;
 

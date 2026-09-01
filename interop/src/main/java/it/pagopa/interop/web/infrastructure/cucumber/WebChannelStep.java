@@ -1,8 +1,8 @@
 package it.pagopa.interop.web.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.common.kernel.context.CurrentChannel;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.kernel.context.CurrentChannel;
+import it.pagopa.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;

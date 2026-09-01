@@ -2,8 +2,8 @@ package it.pagopa.interop.suite.contract;
 
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.infrastructure.config.JunitSupportConfig;
-import it.pagopa.interop.common.infrastructure.contract.browser.WebContractValidator;
-import it.pagopa.interop.common.infrastructure.contract.browser.WebScenario;
+import it.pagopa.infrastructure.contract.browser.WebContractValidator;
+import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.web.debug_client_assertion.infrastructure.page.DebugClientAssertionPage;

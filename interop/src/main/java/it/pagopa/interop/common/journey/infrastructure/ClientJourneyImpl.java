@@ -3,7 +3,7 @@ package it.pagopa.interop.common.journey.infrastructure;
 import it.pagopa.interop.common.client.application.ClientUseCase;
 import it.pagopa.interop.common.client.application.command.ClientCreationCommand;
 import it.pagopa.interop.common.client.domain.Client;
-import it.pagopa.interop.common.kernel.context.EntityStore;
+import it.pagopa.kernel.context.EntityStore;
 import it.pagopa.interop.common.journey.application.ClientJourney;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;

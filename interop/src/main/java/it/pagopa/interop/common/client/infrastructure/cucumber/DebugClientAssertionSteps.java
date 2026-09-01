@@ -6,7 +6,7 @@ import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.application.command.DebugClientAssertionCommand;
 import it.pagopa.interop.common.client.application.DebugClientAssertionUseCase;
 import it.pagopa.interop.common.client.domain.DebugClientAssertionValidation;
-import it.pagopa.interop.common.kernel.context.EntityStore;
+import it.pagopa.kernel.context.EntityStore;
 import it.pagopa.interop.common.kernel.security.DPoPProof;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import lombok.RequiredArgsConstructor;
