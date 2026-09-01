@@ -62,11 +62,6 @@ public class ContextConfig {
         return new ScenarioChannelContext();
     }
 
-    @Bean
-    ChannelScenarioHook channelScenarioHook(ScenarioChannelContext scenarioChannelContext) {
-        return new ChannelScenarioHook(scenarioChannelContext);
-    }
-
     /**
      * The listener is a singleton but accesses scenario-scoped beans via {@link ObjectProvider}
      * so it obtains the correct instance per scenario in concurrent execution.
