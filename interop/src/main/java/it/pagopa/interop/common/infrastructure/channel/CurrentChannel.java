@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.kernel.context;
+package it.pagopa.interop.common.infrastructure.channel;
 
 import it.pagopa.interop.common.kernel.domain.Channel;
 

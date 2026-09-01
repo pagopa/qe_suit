@@ -2,7 +2,6 @@ package it.pagopa.interop.common.infrastructure.channel;
 
 import it.pagopa.infrastructure.channel.ChannelPluginRegistry;
 import it.pagopa.infrastructure.channel.ChannelRouter;
-import it.pagopa.interop.common.kernel.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
