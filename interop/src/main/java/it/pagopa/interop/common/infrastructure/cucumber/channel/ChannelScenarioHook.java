@@ -41,9 +41,9 @@ public class ChannelScenarioHook {
                                     scenario.getName(), config);
                         },
                         () -> {
-                            scenarioChannelContext.setConfig(null);
-                            log.debug("Scenario '{}': no @channel tag – legacy/default behaviour",
-                                    scenario.getName());
+                            scenarioChannelContext.setConfig(ChannelConfig.DEFAULT);
+                            log.debug("Scenario '{}': default channel config {}",
+                                    scenario.getName(), ChannelConfig.DEFAULT);
                         }
                 );
     }
