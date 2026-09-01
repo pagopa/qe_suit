@@ -23,6 +23,7 @@
         <cucumber.version>7.34.6</cucumber.version>
         <jjwt.version>0.12.6</jjwt.version>
         <rest-assured.version>6.0.1</rest-assured.version>
+        <swagger-request-validator.version>2.46.1</swagger-request-validator.version>
     </properties>
 
     <dependencyManagement>
@@ -116,6 +117,18 @@
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <version>${rest-assured.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.oai</groupId>
+            <artifactId>swagger-request-validator-core</artifactId>
+            <version>${swagger-request-validator.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.oai</groupId>
+            <artifactId>swagger-request-validator-restassured</artifactId>
+            <version>${swagger-request-validator.version}</version>
         </dependency>
 
         <dependency>
