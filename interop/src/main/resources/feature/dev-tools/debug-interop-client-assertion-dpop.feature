@@ -1,29 +1,21 @@
 @debug-client-assertion-page-ui-flow
-Feature: Debugger della request di tipo DPoP per un voucher spendibile presso le API della piattaforma Interop (Frontend) - Test di Flusso Funzionale
+@channel:Given=BFF,When=WEB,Then=WEB
+Feature: Debugger della request di tipo DPoP per un voucher spendibile presso le API della piattaforma Interop
 
   Come Aderente in possesso di un client di tipo API
   Voglio validare la mia Client Assertion facente parte di una request di tipo DPoP utile al recupero di un Voucher spendibile presso le API della piattaforma Interop
   Al fine di identificare errori strutturali, temporali o crittografici nelle cinque fasi di validazione (Client assertion, Recupero Chiave, Firma, Stato Piattaforma, DPoP)
 
-  ***
-  OBIETTIVI DEL TEST FRONTEND:
-  1. Verificare che il flusso utente sia completabile con l'esito atteso e con fluidità.
-  2. Validare il mapping tra le risposte API (BE) e i componenti grafici della pagina.
-  ***
-
-  Scenario: DEBUG_INTEROP_VOUCHER_DPOP_REQ_1
+  Scenario: [DEBUG_INTEROP_CLIENT_ASSERTION_DPOP_1]
   Dato un client API, una DPoP Proof ed una Client assertion valida,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora tutte le fasi di validazione risultano in stato PASSED
 
-    Given una sessione HTTP programmatica su BFF
-    And un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
+    Given un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un client API creato da PagoPA in cui è presente un admin e una coppia di chiavi crittografiche
     And una client assertion valida generata usando il client creato
     And una dpop proof valida generata con una chiave RSA
-    And un admin di PagoPA collegato al portale Interop dal Browser
-    When l'utente naviga alla pagina Debug Client Assertion
-    And l'utente inoltra la richiesta di validazione specificando client assertion, dpop proof e client
+    When l'utente inoltra la richiesta di validazione specificando client assertion, dpop proof e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result | errors |
       | clientAssertionValidation            | PASSED |      |
@@ -31,23 +23,20 @@ Feature: Debugger della request di tipo DPoP per un voucher spendibile presso le
       | clientAssertionSignatureVerification | PASSED |      |
       | dpopProofValidation                  | PASSED |      |
 
-  Scenario: DEBUG_INTEROP_VOUCHER_DPOP_REQ_2
+  Scenario: [DEBUG_INTEROP_CLIENT_ASSERTION_DPOP_2]
   Dato un client API, una DPoP Proof valida ed una Client assertion avente claim audiance invalido,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora la fase di validazione della Client Assertion risulta in stato FAILED
   e la fase di Stato Piattaforma non viene visualizzata (rif. /PIN-10056?focusedCommentId=317150)
   e le restanti risultano in stato SKIPPED
 
-    Given una sessione HTTP programmatica su BFF
-    And un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
+    Given un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un client API creato da PagoPA in cui è presente un admin e una coppia di chiavi crittografiche
     And una client assertion generata usando il client e:
       | claim | value            |
       | aud   | invalid_audience |
     And una dpop proof valida generata con una chiave RSA
-    And un admin di PagoPA collegato al portale Interop dal Browser
-    When l'utente naviga alla pagina Debug Client Assertion
-    And l'utente inoltra la richiesta di validazione specificando client assertion, dpop proof e client
+    When l'utente inoltra la richiesta di validazione specificando client assertion, dpop proof e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result  | errors                                                   |
       | clientAssertionValidation            | FAILED  | Unexpected client assertion audience: invalid_audience |
@@ -55,22 +44,20 @@ Feature: Debugger della request di tipo DPoP per un voucher spendibile presso le
       | clientAssertionSignatureVerification | SKIPPED |                                                        |
       | dpopProofValidation                  | PASSED  |                                                        |
 
-  Scenario Outline: DEBUG_INTEROP_VOUCHER_DPOP_REQ_3
+  Scenario Outline: [DEBUG_INTEROP_CLIENT_ASSERTION_DPOP_3]
   Dato un client API, una Client Assertion valida ed una DPoP Proof con un claim obbligatorio mancante,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora tutte le fasi di validazione di Client assertion, Recupero chiave, Firma e Stato della piattaforma risultano in stato PASSED
   e la fase di validazione della DPoP Proof risulta in stato FAILED con il messaggio di errore specifico al claim mancante
 
     Given una sessione HTTP programmatica su BFF
-    And un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
+    Given un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un client API creato da PagoPA in cui è presente un admin e una coppia di chiavi crittografiche
     And una client assertion valida generata usando il client creato
     And una dpop proof generata con una chiave RSA e:
       | claim    | value           |
       | __remove | <claimToRemove> |
-    And un admin di PagoPA collegato al portale Interop dal Browser
-    When l'utente naviga alla pagina Debug Client Assertion
-    And l'utente inoltra la richiesta di validazione specificando client assertion, dpop proof e client
+    When l'utente inoltra la richiesta di validazione specificando client assertion, dpop proof e client
     Then i risultati della validazione della client assertion sono:
       | step                                 | result | errors            |
       | clientAssertionValidation            | PASSED |                 |
