@@ -1,16 +1,16 @@
 package it.pagopa.infrastructure.contract.browser;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public final class WebContractValidator {
 
-    private final ObjectProvider<WebPresentationGateway> webPresentationGatewayProvider;
+    private final Supplier<WebPresentationGateway> webPresentationGatewayProvider;
 
     public WebContractValidator(
-            ObjectProvider<WebPresentationGateway> webPresentationGatewayProvider
+            Supplier<WebPresentationGateway> webPresentationGatewayProvider
     ) {
         this.webPresentationGatewayProvider = Objects.requireNonNull(
                 webPresentationGatewayProvider,

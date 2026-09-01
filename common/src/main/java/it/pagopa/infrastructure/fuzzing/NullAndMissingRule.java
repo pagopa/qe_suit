@@ -4,7 +4,6 @@ import it.pagopa.infrastructure.objectgraph.Node;
 import it.pagopa.infrastructure.objectgraph.NodeSelector;
 import it.pagopa.infrastructure.objectgraph.NodeSelectors;
 import it.pagopa.infrastructure.objectgraph.ObjectGraph;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
