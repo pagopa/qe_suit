@@ -10,7 +10,7 @@ import it.pagopa.send.web.notification_details.infrastructure.suit.section.Attac
 import it.pagopa.send.web.notification_details.infrastructure.suit.section.NotificationStatusSection;
 import it.pagopa.send.web.notification_details.infrastructure.suit.section.NotificationSummarySection;
 import it.pagopa.send.web.notification_details.infrastructure.suit.section.PaymentSection;
-import it.pagopa.suit.component.Chip;
+import it.pagopa.infrastructure.suit.component.Chip;
 import org.assertj.core.api.Assertions;
 
 @Url("${url.notifiche.mittente.dashboard}#selfCareToken=${token.mittente}")

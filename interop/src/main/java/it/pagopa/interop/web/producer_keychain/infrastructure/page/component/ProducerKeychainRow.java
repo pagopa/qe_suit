@@ -3,8 +3,8 @@ package it.pagopa.interop.web.producer_keychain.infrastructure.page.component;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.suit.component.Button;
-import it.pagopa.suit.component.Dialog;
+import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.Dialog;
 
 @XPath(".//tr[contains(@class, 'MuiTableRow-root')]")
 public interface ProducerKeychainRow extends Component {

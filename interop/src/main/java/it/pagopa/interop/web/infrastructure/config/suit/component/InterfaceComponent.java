@@ -3,7 +3,7 @@ package it.pagopa.interop.web.infrastructure.config.suit.component;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Uploadable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.Button;
 
 public interface InterfaceComponent extends Component {
     @XPath(".//button[contains(., 'Carica il file')]/..//input[@type='file']")

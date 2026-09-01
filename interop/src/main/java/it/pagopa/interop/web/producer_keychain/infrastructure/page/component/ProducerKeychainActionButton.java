@@ -3,7 +3,7 @@ package it.pagopa.interop.web.producer_keychain.infrastructure.page.component;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.pagopa.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.Button;
 
 public interface ProducerKeychainActionButton extends Button {
 

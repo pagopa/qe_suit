@@ -2,7 +2,7 @@ package it.pagopa.send.web.notification_details.infrastructure.suit.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
-import it.pagopa.suit.component.Drawer;
+import it.pagopa.infrastructure.suit.component.Drawer;
 import org.assertj.core.api.SoftAssertions;
 
 @XPath("//div[contains(@class, 'MuiDrawer-root')][1]")
