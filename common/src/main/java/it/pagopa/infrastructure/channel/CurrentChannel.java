@@ -1,4 +1,4 @@
-package it.pagopa.kernel.context;
+package it.pagopa.infrastructure.channel;
 
 import it.pagopa.kernel.ChannelKind;
 
