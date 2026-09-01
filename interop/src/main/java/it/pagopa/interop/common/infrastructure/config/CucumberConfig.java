@@ -3,8 +3,8 @@ package it.pagopa.interop.common.infrastructure.config;
 import io.cucumber.spring.ScenarioScope;
 import it.pagopa.infrastructure.cucumber.channel.ChannelConfig;
 import it.pagopa.infrastructure.cucumber.channel.ChannelGherkinMapping;
-import it.pagopa.infrastructure.cucumber.channel.ChannelModule;
-import it.pagopa.infrastructure.cucumber.channel.ChannelRuntime;
+import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngineConfig;
+import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngine;
 import it.pagopa.interop.common.infrastructure.context.cucumber.*;
 import it.pagopa.application.context.BrowserContext;
 import it.pagopa.interop.common.infrastructure.channel.CurrentChannel;
@@ -67,8 +67,8 @@ public class CucumberConfig {
     }
 
     @Bean
-    ChannelModule<Channel> channelModule() {
-        return ChannelModule.of(
+    GherkinChannelEngineConfig<Channel> channelModule() {
+        return GherkinChannelEngineConfig.of(
                 new ChannelGherkinMapping<>(
                         Map.of(
                                 "BFF", Channel.BFF,
@@ -90,10 +90,10 @@ public class CucumberConfig {
 
     @Bean
     @ScenarioScope
-    ChannelRuntime<Channel> channelRuntime(
-            ChannelModule<Channel> channelModule,
+    GherkinChannelEngine<Channel> channelRuntime(
+            GherkinChannelEngineConfig<Channel> gherkinChannelEngineConfig,
             CurrentChannel currentChannel
     ) {
-        return channelModule.newRuntime(currentChannel);
+        return gherkinChannelEngineConfig.newRuntime(currentChannel);
     }
 }

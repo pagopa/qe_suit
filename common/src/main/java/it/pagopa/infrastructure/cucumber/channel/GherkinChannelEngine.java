@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class ChannelRuntime<C extends Enum<C> & ChannelKind> {
+public class GherkinChannelEngine<C extends Enum<C> & ChannelKind> {
 
     private final ChannelTagParser<C> tagParser;
     private final ChannelConfig<C> defaultConfig;
@@ -17,7 +17,7 @@ public class ChannelRuntime<C extends Enum<C> & ChannelKind> {
     private ChannelConfig<C> scenarioConfig;
     private SemanticStepType lastSemanticType;
 
-    ChannelRuntime(
+    GherkinChannelEngine(
             ChannelTagParser<C> tagParser,
             ChannelConfig<C> defaultConfig,
             CurrentChannel<C> currentChannel

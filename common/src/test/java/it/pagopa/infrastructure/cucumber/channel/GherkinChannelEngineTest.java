@@ -10,7 +10,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ChannelRuntimeTest {
+class GherkinChannelEngineTest {
 
     private static final ChannelConfig<TestChannel> DEFAULT_CONFIG =
             new ChannelConfig<>(
@@ -19,13 +19,13 @@ class ChannelRuntimeTest {
                     TestChannel.BFF
             );
 
-    private ChannelModule<TestChannel> module;
+    private GherkinChannelEngineConfig<TestChannel> module;
     private TestCurrentChannel currentChannel;
-    private ChannelRuntime<TestChannel> runtime;
+    private GherkinChannelEngine<TestChannel> runtime;
 
     @BeforeEach
     void setUp() {
-        module = ChannelModule.of(
+        module = GherkinChannelEngineConfig.of(
                 new ChannelGherkinMapping<>(
                         Map.of(
                                 "BFF", TestChannel.BFF,
@@ -101,8 +101,8 @@ class ChannelRuntimeTest {
     void distinctRuntimesDoNotShareState() {
         TestCurrentChannel channelA = new TestCurrentChannel();
         TestCurrentChannel channelB = new TestCurrentChannel();
-        ChannelRuntime<TestChannel> runtimeA = module.newRuntime(channelA);
-        ChannelRuntime<TestChannel> runtimeB = module.newRuntime(channelB);
+        GherkinChannelEngine<TestChannel> runtimeA = module.newRuntime(channelA);
+        GherkinChannelEngine<TestChannel> runtimeB = module.newRuntime(channelB);
 
         runtimeA.initializeScenario(List.of("@channel:Given=BFF,When=WEB,Then=WEB"));
         runtimeB.initializeScenario(List.of("@channel:Given=BFF,When=BFF,Then=BFF"));

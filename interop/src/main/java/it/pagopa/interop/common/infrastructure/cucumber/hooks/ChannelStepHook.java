@@ -3,7 +3,7 @@ package it.pagopa.interop.common.infrastructure.cucumber.hooks;
 import io.cucumber.java.BeforeStep;
 import io.cucumber.java.Scenario;
 import io.cucumber.java.Step;
-import it.pagopa.infrastructure.cucumber.channel.ChannelRuntime;
+import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngine;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +13,12 @@ public final class ChannelStepHook {
     private static final Logger LOG =
             LoggerFactory.getLogger(ChannelStepHook.class);
 
-    private final ChannelRuntime<Channel> channelRuntime;
+    private final GherkinChannelEngine<Channel> gherkinChannelEngine;
 
     public ChannelStepHook(
-            ChannelRuntime<Channel> channelRuntime
+            GherkinChannelEngine<Channel> gherkinChannelEngine
     ) {
-        this.channelRuntime = channelRuntime;
+        this.gherkinChannelEngine = gherkinChannelEngine;
     }
 
     @BeforeStep(order = Integer.MIN_VALUE)
@@ -27,7 +27,7 @@ public final class ChannelStepHook {
             Step step
     ) {
         String keyword = step.getKeyword().trim();
-        Channel channel = channelRuntime.initializeStep(keyword);
+        Channel channel = gherkinChannelEngine.initializeStep(keyword);
 
         if (channel == null) {
             return;
