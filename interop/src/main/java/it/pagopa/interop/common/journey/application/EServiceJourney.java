@@ -19,6 +19,8 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
 
     SELF addDescriptor(EService eService, EServiceDescriptorState state);
 
+    SELF archiveEService();
+
     SELF waitUntilEService(Predicate<EService> predicate);
 
     default SELF createEService() {
