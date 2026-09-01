@@ -74,7 +74,7 @@ public class NotificationDetailsProxy implements NotificationDetailsPage, Notifi
     }
 
     @Override
-    public void navigateTo() {
+    public void navigateTo(String... pathParams) {
         currentDetailsPage().navigateTo();
     }
 }

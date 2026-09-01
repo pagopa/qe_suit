@@ -6,7 +6,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 
 @Suite
 @IncludeEngines({"cucumber", "junit-jupiter"})
-@SelectClasspathResource("feature")
+@SelectClasspathResource("feature-expanded")
 @SelectPackages("it.pagopa.interop.suite.contract")
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),

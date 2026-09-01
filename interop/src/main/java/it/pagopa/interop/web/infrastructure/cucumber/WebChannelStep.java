@@ -25,7 +25,7 @@ public class WebChannelStep {
     }
 
     @Given("l'utente {userRole} di {tenant} si collega al portale Interop dal Browser/browser")
-    @Given("un( utente) {userRole} di {tenant} collegato al portale Interop dal Browser/browser")
+    @Given("un( utente) {userRole} di/del {tenant} collegato al portale Interop dal Browser/browser")
     public void setWebChannel(UserRole userRole, Tenant tenant) {
         log.debug("Inizializzazione canale Web");
         currentUserSession.set(User.getTenantUser(tenant, userRole), tenant);

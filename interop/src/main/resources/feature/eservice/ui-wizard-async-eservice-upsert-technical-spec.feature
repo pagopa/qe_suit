@@ -1,4 +1,5 @@
 @ignore
+#TODO: spostare nei test di contratto
 Feature: Creazione di un e-service asincrono - Validazione dello step Specifiche Tecniche (Frontend) - Test Comportamentale
 
   Come Ente Erogatore autenticato nel portale Interop

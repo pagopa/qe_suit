@@ -1,7 +1,10 @@
 package it.pagopa.interop.common.journey.application;
 
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+
+import java.util.function.Predicate;
 
 public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends JourneyModule {
     SELF createEService(EServiceCreationCommand command, EServiceDescriptorState state);
@@ -11,6 +14,12 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
     }
 
     SELF createEService(EServiceDescriptorState state);
+
+    SELF addDescriptor(EServiceDescriptorState state);
+
+    SELF addDescriptor(EService eService, EServiceDescriptorState state);
+
+    SELF waitUntilEService(Predicate<EService> predicate);
 
     default SELF createEService() {
         return createEService(EServiceDescriptorState.DRAFT);

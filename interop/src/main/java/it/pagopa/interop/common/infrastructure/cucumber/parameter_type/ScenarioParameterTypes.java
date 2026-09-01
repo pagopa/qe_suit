@@ -4,6 +4,8 @@ import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.kernel.context.EntityStore;
 import it.pagopa.interop.common.kernel.security.DPoPProof;
 import it.pagopa.interop.common.purpose.domain.Purpose;
@@ -41,4 +43,9 @@ public class ScenarioParameterTypes {
         return entityStore.getLastOrThrow(EService.class);
     }
 
+    @ParameterType("versione deprecata")
+    public EServiceDescriptor currentDeprecatedEServiceDescriptor(String token) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        return eService.getLastDeprecatedDescriptor();
+    }
 }
