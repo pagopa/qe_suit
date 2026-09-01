@@ -6,8 +6,9 @@ import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
 import it.frontend.e2e.framework.web.adapter.selenium.SeleniumApiAdapter;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
 import it.pagopa.infrastructure.contract.browser.WebContractValidator;
+import it.pagopa.interop.common.infrastructure.contract.WebBrowserContractValidator;
 import it.pagopa.kernel.context.BrowserContext;
-import it.pagopa.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityHandler;
 import it.pagopa.interop.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityImpl;
 import it.pagopa.interop.web.infrastructure.config.suit.WebSuitConfig;
@@ -27,10 +28,17 @@ public class WebJUnitSuitConfig {
     @Bean
     WebContractValidator webContractValidator(
             @Qualifier("junitWebPresentationGateway")
-            ObjectProvider<WebPresentationGateway> webPresentationGatewayProvider,
+            ObjectProvider<WebPresentationGateway> webPresentationGatewayProvider
+    ) {
+        return new WebContractValidator(webPresentationGatewayProvider);
+    }
+
+    @Bean
+    WebBrowserContractValidator webBrowserContractValidator(
+            WebContractValidator webContractValidator,
             CurrentUserSession currentUserSession
     ) {
-        return new WebContractValidator(webPresentationGatewayProvider, currentUserSession);
+        return new WebBrowserContractValidator(webContractValidator, currentUserSession);
     }
 
     @Bean("junitWebPresentationGateway")

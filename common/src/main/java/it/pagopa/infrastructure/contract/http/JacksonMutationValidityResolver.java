@@ -6,9 +6,14 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import it.pagopa.infrastructure.fuzzing.FuzzMutation;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.infrastructure.objectgraph.Node;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 
 import java.util.ArrayList;
 import java.util.List;

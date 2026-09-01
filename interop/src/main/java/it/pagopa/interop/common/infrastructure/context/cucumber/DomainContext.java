@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.context.cucumber;
 
 import it.pagopa.kernel.context.EntityStore;
-import it.pagopa.interop.common.kernel.Identifiable;
+import it.pagopa.kernel.domain.Identifiable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.context.inmemory;
 
 import it.pagopa.kernel.context.EntityStore;
-import it.pagopa.interop.common.kernel.Identifiable;
+import it.pagopa.kernel.domain.Identifiable;
 
 import java.util.ArrayList;
 import java.util.List;

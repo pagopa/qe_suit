@@ -1,4 +1,4 @@
-package it.pagopa.kernel.domain;
+package it.pagopa.kernel;
 
 public enum TestKind {
     CONTRACT,

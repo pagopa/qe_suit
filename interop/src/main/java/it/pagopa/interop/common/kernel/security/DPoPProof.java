@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.kernel.security;
 
 import it.pagopa.interop.common.kernel.domain.Key;
-import it.pagopa.interop.common.kernel.Identifiable;
+import it.pagopa.kernel.domain.Identifiable;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;

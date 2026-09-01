@@ -1,9 +1,9 @@
 package it.pagopa.kernel.context;
 
-import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.kernel.ChannelKind;
 
-public interface CurrentChannel {
-    Channel getCurrentChannel();
+public interface CurrentChannel<C extends ChannelKind> {
+    C getCurrentChannel();
 
-    void setCurrentChannel(Channel currentChannel);
+    void setCurrentChannel(C currentChannel);
 }

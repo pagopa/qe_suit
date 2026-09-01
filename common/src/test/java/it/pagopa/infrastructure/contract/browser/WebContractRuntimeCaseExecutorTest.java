@@ -2,9 +2,6 @@ package it.pagopa.infrastructure.contract.browser;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.kernel.context.CurrentUserSession;
-import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.ObjectProvider;
@@ -14,26 +11,24 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class WebContractRuntimeCaseExecutorTest {
 
     @Test
-    void shouldExecuteScenarioLifecycleInOrder() {
+    void shouldConfigureContextAndExecuteScenarioLifecycleInOrder() {
         ObjectProvider<WebPresentationGateway> gatewayProvider = mock(ObjectProvider.class);
-        CurrentUserSession currentUserSession = mock(CurrentUserSession.class);
+        WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
-        User user = User.getTenantAdmin(Tenant.COMUNE_DI_MILANO);
-        Tenant tenant = Tenant.COMUNE_DI_MILANO;
         List<String> events = new ArrayList<>();
 
+        doAnswer(invocation -> {
+            events.add("configure");
+            return null;
+        }).when(contextConfigurer).configure();
+
         when(gatewayProvider.getObject()).thenReturn(gateway);
-        when(gateway.bind(TestPage.class)).thenReturn(page);
         doAnswer(invocation -> {
             events.add("bind");
             return page;
@@ -57,25 +52,30 @@ class WebContractRuntimeCaseExecutorTest {
                 p -> events.add("assertion")
         );
 
-        new WebContractRuntimeCaseExecutor(gatewayProvider, currentUserSession)
-                .execute(user, tenant, TestPage.class, scenario);
+        new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer)
+                .execute(TestPage.class, scenario);
 
-        verify(currentUserSession).set(user, tenant);
-        assertThat(events).containsExactly("bind", "navigateTo", "assertLoaded", "action", "assertion", "close");
+        verify(contextConfigurer).configure();
+        assertThat(events).containsExactly(
+                "configure",
+                "bind",
+                "navigateTo",
+                "assertLoaded",
+                "action",
+                "assertion",
+                "close"
+        );
     }
 
     @Test
     void shouldCloseGatewayWhenNavigateToFails() {
         ObjectProvider<WebPresentationGateway> gatewayProvider = mock(ObjectProvider.class);
-        CurrentUserSession currentUserSession = mock(CurrentUserSession.class);
+        WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
-        User user = User.getTenantAdmin(Tenant.COMUNE_DI_MILANO);
-        Tenant tenant = Tenant.COMUNE_DI_MILANO;
         List<String> events = new ArrayList<>();
 
         when(gatewayProvider.getObject()).thenReturn(gateway);
-        when(gateway.bind(TestPage.class)).thenReturn(page);
         doAnswer(invocation -> {
             events.add("bind");
             return page;
@@ -86,10 +86,12 @@ class WebContractRuntimeCaseExecutorTest {
             return null;
         }).when(gateway).close();
 
-        WebScenario<TestPage> scenario = new WebScenario<>("scenario", p -> events.add("action"), p -> events.add("assertion"));
+        WebScenario<TestPage> scenario = new WebScenario<>("scenario", p -> {}, p -> {});
 
-        assertThatThrownBy(() -> new WebContractRuntimeCaseExecutor(gatewayProvider, currentUserSession)
-                .execute(user, tenant, TestPage.class, scenario))
+        assertThatThrownBy(() ->
+                new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer)
+                        .execute(TestPage.class, scenario)
+        )
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("navigate failure");
 
@@ -99,15 +101,12 @@ class WebContractRuntimeCaseExecutorTest {
     @Test
     void shouldCloseGatewayWhenAssertLoadedFails() {
         ObjectProvider<WebPresentationGateway> gatewayProvider = mock(ObjectProvider.class);
-        CurrentUserSession currentUserSession = mock(CurrentUserSession.class);
+        WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
-        User user = User.getTenantAdmin(Tenant.COMUNE_DI_MILANO);
-        Tenant tenant = Tenant.COMUNE_DI_MILANO;
         List<String> events = new ArrayList<>();
 
         when(gatewayProvider.getObject()).thenReturn(gateway);
-        when(gateway.bind(TestPage.class)).thenReturn(page);
         doAnswer(invocation -> {
             events.add("bind");
             return page;
@@ -122,10 +121,12 @@ class WebContractRuntimeCaseExecutorTest {
             return null;
         }).when(gateway).close();
 
-        WebScenario<TestPage> scenario = new WebScenario<>("scenario", p -> events.add("action"), p -> events.add("assertion"));
+        WebScenario<TestPage> scenario = new WebScenario<>("scenario", p -> {}, p -> {});
 
-        assertThatThrownBy(() -> new WebContractRuntimeCaseExecutor(gatewayProvider, currentUserSession)
-                .execute(user, tenant, TestPage.class, scenario))
+        assertThatThrownBy(() ->
+                new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer)
+                        .execute(TestPage.class, scenario)
+        )
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("assertLoaded failure");
 
@@ -135,15 +136,12 @@ class WebContractRuntimeCaseExecutorTest {
     @Test
     void shouldCloseGatewayWhenActionFails() {
         ObjectProvider<WebPresentationGateway> gatewayProvider = mock(ObjectProvider.class);
-        CurrentUserSession currentUserSession = mock(CurrentUserSession.class);
+        WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
-        User user = User.getTenantAdmin(Tenant.COMUNE_DI_MILANO);
-        Tenant tenant = Tenant.COMUNE_DI_MILANO;
         List<String> events = new ArrayList<>();
 
         when(gatewayProvider.getObject()).thenReturn(gateway);
-        when(gateway.bind(TestPage.class)).thenReturn(page);
         doAnswer(invocation -> {
             events.add("bind");
             return page;
@@ -161,30 +159,36 @@ class WebContractRuntimeCaseExecutorTest {
             return null;
         }).when(gateway).close();
 
-        WebScenario<TestPage> scenario = new WebScenario<>("scenario", p -> {
-            throw new RuntimeException("action failure");
-        }, p -> events.add("assertion"));
+        WebScenario<TestPage> scenario = new WebScenario<>(
+                "scenario",
+                p -> { throw new RuntimeException("action failure"); },
+                p -> events.add("assertion")
+        );
 
-        assertThatThrownBy(() -> new WebContractRuntimeCaseExecutor(gatewayProvider, currentUserSession)
-                .execute(user, tenant, TestPage.class, scenario))
+        assertThatThrownBy(() ->
+                new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer)
+                        .execute(TestPage.class, scenario)
+        )
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("action failure");
 
-        assertThat(events).contains("bind", "navigateTo", "assertLoaded", "close");
+        assertThat(events).containsExactly(
+                "bind",
+                "navigateTo",
+                "assertLoaded",
+                "close"
+        );
     }
 
     @Test
     void shouldCloseGatewayWhenAssertionFails() {
         ObjectProvider<WebPresentationGateway> gatewayProvider = mock(ObjectProvider.class);
-        CurrentUserSession currentUserSession = mock(CurrentUserSession.class);
+        WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
-        User user = User.getTenantAdmin(Tenant.COMUNE_DI_MILANO);
-        Tenant tenant = Tenant.COMUNE_DI_MILANO;
         List<String> events = new ArrayList<>();
 
         when(gatewayProvider.getObject()).thenReturn(gateway);
-        when(gateway.bind(TestPage.class)).thenReturn(page);
         doAnswer(invocation -> {
             events.add("bind");
             return page;
@@ -202,24 +206,32 @@ class WebContractRuntimeCaseExecutorTest {
             return null;
         }).when(gateway).close();
 
-        WebScenario<TestPage> scenario = new WebScenario<>("scenario", p -> events.add("action"), p -> {
-            throw new RuntimeException("assertion failure");
-        });
+        WebScenario<TestPage> scenario = new WebScenario<>(
+                "scenario",
+                p -> events.add("action"),
+                p -> { throw new RuntimeException("assertion failure"); }
+        );
 
-        assertThatThrownBy(() -> new WebContractRuntimeCaseExecutor(gatewayProvider, currentUserSession)
-                .execute(user, tenant, TestPage.class, scenario))
+        assertThatThrownBy(() ->
+                new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer)
+                        .execute(TestPage.class, scenario)
+        )
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("assertion failure");
 
-        assertThat(events).contains("bind", "navigateTo", "assertLoaded", "action", "close");
+        assertThat(events).containsExactly(
+                "bind",
+                "navigateTo",
+                "assertLoaded",
+                "action",
+                "close"
+        );
     }
 
     @Test
     void shouldAcquireFreshGatewayForEachScenario() {
         ObjectProvider<WebPresentationGateway> gatewayProvider = mock(ObjectProvider.class);
-        CurrentUserSession currentUserSession = mock(CurrentUserSession.class);
-        User user = User.getTenantAdmin(Tenant.COMUNE_DI_MILANO);
-        Tenant tenant = Tenant.COMUNE_DI_MILANO;
+        WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
         WebPresentationGateway firstGateway = mock(WebPresentationGateway.class);
         WebPresentationGateway secondGateway = mock(WebPresentationGateway.class);
         TestPage firstPage = mock(TestPage.class);
@@ -229,11 +241,13 @@ class WebContractRuntimeCaseExecutorTest {
         when(firstGateway.bind(TestPage.class)).thenReturn(firstPage);
         when(secondGateway.bind(TestPage.class)).thenReturn(secondPage);
 
-        WebContractRuntimeCaseExecutor executor = new WebContractRuntimeCaseExecutor(gatewayProvider, currentUserSession);
+        WebContractRuntimeCaseExecutor executor =
+                new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer);
 
-        executor.execute(user, tenant, TestPage.class, new WebScenario<>("first", p -> {}, p -> {}));
-        executor.execute(user, tenant, TestPage.class, new WebScenario<>("second", p -> {}, p -> {}));
+        executor.execute(TestPage.class, new WebScenario<>("first", p -> {}, p -> {}));
+        executor.execute(TestPage.class, new WebScenario<>("second", p -> {}, p -> {}));
 
+        verify(contextConfigurer, Mockito.times(2)).configure();
         verify(gatewayProvider, Mockito.times(2)).getObject();
         verify(firstGateway).close();
         verify(secondGateway).close();

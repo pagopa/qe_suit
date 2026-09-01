@@ -2,7 +2,7 @@ package it.pagopa.interop.common.eservice.domain;
 
 import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.attribute.domain.Attributes;
-import it.pagopa.interop.common.kernel.Identifiable;
+import it.pagopa.kernel.domain.Identifiable;
 import it.pagopa.interop.common.kernel.domain.Delegation;
 import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;

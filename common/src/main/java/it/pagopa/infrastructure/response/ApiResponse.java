@@ -1,12 +1,11 @@
-package it.pagopa.interop.common.infrastructure.response;
+package it.pagopa.infrastructure.response;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.restassured.response.Response;
-import lombok.Getter;
+
 
 public class ApiResponse extends RawResponse {
 
-    @Getter
     private final int statusCode;
     private final Response apiResponse;
 
@@ -32,5 +31,9 @@ public class ApiResponse extends RawResponse {
 
     private static boolean is2xxSuccessful(Response apiResponse) {
         return apiResponse.getStatusCode() >= 200 && apiResponse.getStatusCode() < 300;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
     }
 }

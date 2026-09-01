@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.purpose_template.domain;
 
-import it.pagopa.interop.common.kernel.Identifiable;
+import it.pagopa.kernel.domain.Identifiable;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
