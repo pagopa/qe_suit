@@ -3,8 +3,9 @@ package it.pagopa.interop.bff.agreement.infrastructure;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-import it.pagopa.interop.common.infrastructure.template.RestClient;
-import it.pagopa.interop.common.infrastructure.template.action.TestChain;
+import it.pagopa.infrastructure.template.RestClient;
+import it.pagopa.infrastructure.template.action.TestChain;
+import it.pagopa.infrastructure.template.action.TestChainFactory;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,8 @@ public class BffAgreementRestClient extends RestClient {
 
     private final AgreementsApi agreementsApi;
 
-    public BffAgreementRestClient(ApiClient apiClient) {
+    public BffAgreementRestClient(TestChainFactory chainFactory, ApiClient apiClient) {
+        super(chainFactory);
         this.agreementsApi = apiClient.agreements();
     }
 

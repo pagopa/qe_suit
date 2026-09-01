@@ -1,7 +1,7 @@
 package it.pagopa.interop.bff.risk_analysis.infrastructure;
 
 import it.pagopa.interop.bff.purpose.infrastructure.BffPurposeRestClient;
-import it.pagopa.interop.common.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
