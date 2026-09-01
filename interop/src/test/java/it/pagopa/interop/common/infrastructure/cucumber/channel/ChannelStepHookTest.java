@@ -2,7 +2,7 @@ package it.pagopa.interop.common.infrastructure.cucumber.channel;
 
 import io.cucumber.java.Scenario;
 import io.cucumber.java.Step;
-import it.pagopa.interop.common.infrastructure.context.cucumber.ChannelContext;
+import it.pagopa.interop.common.infrastructure.context.cucumber.CucumberCurrentChannel;
 import it.pagopa.interop.common.infrastructure.context.cucumber.ScenarioChannelContext;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,14 +15,14 @@ import static org.mockito.Mockito.when;
 class ChannelStepHookTest {
 
     private ScenarioChannelContext scenarioChannelContext;
-    private ChannelContext channelContext;
+    private CucumberCurrentChannel channelContext;
     private ChannelStepHook hook;
     private Scenario scenario;
 
     @BeforeEach
     void setUp() {
         scenarioChannelContext = new ScenarioChannelContext();
-        channelContext = new ChannelContext();
+        channelContext = new CucumberCurrentChannel();
         hook = new ChannelStepHook(scenarioChannelContext, channelContext);
         scenario = mock(Scenario.class);
 

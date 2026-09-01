@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ChannelContext implements CurrentChannel {
+public class CucumberCurrentChannel implements CurrentChannel {
     private Channel currentChannel;
 }

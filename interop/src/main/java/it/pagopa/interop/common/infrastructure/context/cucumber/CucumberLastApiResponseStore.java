@@ -7,6 +7,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ApiContext implements LastApiResponseStore {
+public class CucumberLastApiResponseStore implements LastApiResponseStore {
     private ApiResponse lastResponse;
 }

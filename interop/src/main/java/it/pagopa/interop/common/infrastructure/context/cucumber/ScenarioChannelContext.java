@@ -12,7 +12,7 @@ import lombok.Setter;
  * mutated during step execution. It answers the question:
  * <em>"What is the complete channel configuration for this scenario?"</em>
  * <p>
- * Compare with {@link ChannelContext}, which answers:
+ * Compare with {@link CucumberCurrentChannel}, which answers:
  * <em>"Which channel is active right now for the current step?"</em>
  */
 @Getter

@@ -35,28 +35,28 @@ public class ContextConfig {
     @ScenarioScope
     @Primary
     CurrentUserSession currentUserSession() {
-        return new UserContext();
+        return new CucumberCurrentUserSession();
     }
 
     @Bean
     @ScenarioScope
     @Primary
     CurrentChannel currentChannel() {
-        return new ChannelContext();
+        return new CucumberCurrentChannel();
     }
 
     @Bean
     @ScenarioScope
     @Primary
     EntityStore entityStore() {
-        return new DomainContext();
+        return new CucumberEntityStore();
     }
 
     @Bean
     @ScenarioScope
     @Primary
     LastApiResponseStore lastApiResponseStore() {
-        return new ApiContext();
+        return new CucumberLastApiResponseStore();
     }
 
     @Bean
