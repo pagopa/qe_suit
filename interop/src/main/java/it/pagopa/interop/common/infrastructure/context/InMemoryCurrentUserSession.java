@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.context.inmemory;
+package it.pagopa.interop.common.infrastructure.context;
 
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;

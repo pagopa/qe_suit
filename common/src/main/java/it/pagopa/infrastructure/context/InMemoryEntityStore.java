@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.context.inmemory;
+package it.pagopa.infrastructure.context;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.domain.Identifiable;

@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.context.inmemory;
+package it.pagopa.infrastructure.context;
 
 import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.application.context.BrowserContext;

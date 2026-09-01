@@ -1,22 +1,33 @@
-package it.pagopa.interop.common.infrastructure.context.cucumber;
+package it.pagopa.infrastructure.context;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.domain.Identifiable;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Slf4j
 public class CucumberEntityStore implements EntityStore {
 
-    @Getter
-    @RequiredArgsConstructor
+    private static final Logger log = LoggerFactory.getLogger(CucumberEntityStore.class);
+
     public static class ContextEntry<Model extends Identifiable> {
         private final Model item;
         private final String alias;
+
+        public ContextEntry(Model item, String alias) {
+            this.alias = alias;
+            this.item = item;
+        }
+
+        public String getAlias() {
+            return alias;
+        }
+
+        public Model getItem() {
+            return item;
+        }
     }
 
     private final Map<Class<? extends Identifiable>, List<ContextEntry<? extends Identifiable>>> storage = new ConcurrentHashMap<>();

@@ -1,16 +1,23 @@
-package it.pagopa.interop.common.infrastructure.context.cucumber;
+package it.pagopa.infrastructure.context;
 
 import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.application.context.BrowserContext;
-import lombok.Getter;
-import lombok.Setter;
 
 public class CucumberBrowserContext implements BrowserContext {
-    @Getter
-    @Setter
+
     private Url currentUrl;
 
     public void reset(){
         currentUrl = null;
+    }
+
+    @Override
+    public Url getCurrentUrl() {
+        return currentUrl;
+    }
+
+    @Override
+    public void setCurrentUrl(Url currentUrl) {
+        this.currentUrl = currentUrl;
     }
 }

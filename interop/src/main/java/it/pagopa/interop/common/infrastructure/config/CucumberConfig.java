@@ -6,9 +6,10 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.application.context.TestContext;
 import it.pagopa.infrastructure.channel.CurrentChannel;
+import it.pagopa.infrastructure.context.*;
 import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngine;
 import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngineConfig;
-import it.pagopa.interop.common.infrastructure.context.cucumber.*;
+import it.pagopa.interop.common.infrastructure.context.CucumberCurrentUserSession;
 import it.pagopa.interop.common.infrastructure.cucumber.channel.InteropChannelEngineConfigs;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -46,7 +47,7 @@ public class CucumberConfig {
     @ScenarioScope
     @Primary
     CurrentChannel<Channel> currentChannel() {
-        return new CucumberCurrentChannel();
+        return new CucumberCurrentChannel<>();
     }
 
     @Bean
