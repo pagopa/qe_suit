@@ -4,13 +4,15 @@ import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
 import it.frontend.e2e.framework.web.adapter.selenium.SeleniumApiAdapter;
-import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
-import it.pagopa.infrastructure.contract.browser.WebContractValidator;
-import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
+import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.application.context.BrowserContext;
+import it.pagopa.infrastructure.browser.AuthenticatedLocatableCapability;
+import it.pagopa.infrastructure.browser.AuthenticatedLocatableCapabilityHandler;
+import it.pagopa.infrastructure.contract.browser.WebContractValidator;
+import it.pagopa.infrastructure.contract.browser.WebSessionProvider;
+import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
+import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityHandler;
-import it.pagopa.interop.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityImpl;
 import it.pagopa.interop.web.infrastructure.config.suit.WebSuitConfig;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -59,13 +61,23 @@ public class WebJUnitSuitConfig {
         IWebPresentationApiAdapter adapter =
                 new SeleniumApiAdapter(settings);
 
-        AuthenticatedLocatableCapabilityImpl capability =
-                new AuthenticatedLocatableCapabilityImpl(
+        WebSessionProvider webSessionConfigurer = () -> {
+            var currentUser = currentUserSession.getUser();
+            var currentTenant = currentUserSession.getTenant();
+            String sessionToken = bearerAuthProvider.getToken(currentUser, currentTenant);
+
+            if (browserContext.getCurrentUrl() == null) {
+                adapter.navigateTo(Url.of(environment.getRequiredProperty("interop.web.catalog")));
+            }
+
+            adapter.setLocalStorageItem("token", sessionToken);
+        };
+
+        AuthenticatedLocatableCapability capability =
+                new AuthenticatedLocatableCapability(
                         adapter,
                         browserContext,
-                        currentUserSession,
-                        bearerAuthProvider,
-                        environment.getRequiredProperty("interop.web.catalog")
+                        webSessionConfigurer
                 );
 
         AuthenticatedLocatableCapabilityHandler handler =

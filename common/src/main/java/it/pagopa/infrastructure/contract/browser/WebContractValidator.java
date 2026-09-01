@@ -19,16 +19,16 @@ public final class WebContractValidator {
     }
 
     public WebContractStages.UserStage withContext(
-            WebContractContextConfigurer contextConfigurer
+            WebSessionProvider webSessionProvider
     ) {
         Objects.requireNonNull(
-                contextConfigurer,
-                "contextConfigurer must not be null"
+                webSessionProvider,
+                "webSessionProvider must not be null"
         );
 
         return new WebContractInvocationBuilder(
                 webPresentationGatewayProvider,
-                contextConfigurer
+                webSessionProvider
         );
     }
 }

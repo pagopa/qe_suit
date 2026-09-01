@@ -3,7 +3,6 @@ package it.pagopa.infrastructure.contract.browser;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ class WebContractRuntimeCaseExecutorTest {
     @Test
     void shouldConfigureContextAndExecuteScenarioLifecycleInOrder() {
         Supplier<WebPresentationGateway> gatewayProvider = mock(Supplier.class);
-        WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
+        WebSessionProvider contextConfigurer = mock(WebSessionProvider.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
         List<String> events = new ArrayList<>();
@@ -27,7 +26,7 @@ class WebContractRuntimeCaseExecutorTest {
         doAnswer(invocation -> {
             events.add("configure");
             return null;
-        }).when(contextConfigurer).configure();
+        }).when(contextConfigurer).provide();
 
         when(gatewayProvider.get()).thenReturn(gateway);
         doAnswer(invocation -> {
@@ -59,7 +58,7 @@ class WebContractRuntimeCaseExecutorTest {
         new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer)
                 .execute(TestPage.class, scenario);
 
-        verify(contextConfigurer).configure();
+        verify(contextConfigurer).provide();
 
         assertThat(events).containsExactly(
                 "configure",
@@ -75,7 +74,7 @@ class WebContractRuntimeCaseExecutorTest {
     @Test
     void shouldCloseGatewayWhenNavigateToFails() {
         Supplier<WebPresentationGateway> gatewayProvider = mock(Supplier.class);
-        WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
+        WebSessionProvider contextConfigurer = mock(WebSessionProvider.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
         List<String> events = new ArrayList<>();
@@ -114,7 +113,7 @@ class WebContractRuntimeCaseExecutorTest {
     @Test
     void shouldCloseGatewayWhenAssertLoadedFails() {
         Supplier<WebPresentationGateway> gatewayProvider = mock(Supplier.class);
-        WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
+        WebSessionProvider contextConfigurer = mock(WebSessionProvider.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
         List<String> events = new ArrayList<>();
@@ -159,7 +158,7 @@ class WebContractRuntimeCaseExecutorTest {
     @Test
     void shouldCloseGatewayWhenActionFails() {
         Supplier<WebPresentationGateway> gatewayProvider = mock(Supplier.class);
-        WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
+        WebSessionProvider contextConfigurer = mock(WebSessionProvider.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
         List<String> events = new ArrayList<>();
@@ -207,7 +206,7 @@ class WebContractRuntimeCaseExecutorTest {
     @Test
     void shouldCloseGatewayWhenAssertionFails() {
         Supplier<WebPresentationGateway> gatewayProvider = mock(Supplier.class);
-        WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
+        WebSessionProvider contextConfigurer = mock(WebSessionProvider.class);
         WebPresentationGateway gateway = mock(WebPresentationGateway.class);
         TestPage page = mock(TestPage.class);
         List<String> events = new ArrayList<>();
@@ -256,7 +255,7 @@ class WebContractRuntimeCaseExecutorTest {
     @Test
     void shouldAcquireFreshGatewayForEachScenario() {
         Supplier<WebPresentationGateway> gatewayProvider = mock(Supplier.class);
-        WebContractContextConfigurer contextConfigurer = mock(WebContractContextConfigurer.class);
+        WebSessionProvider contextConfigurer = mock(WebSessionProvider.class);
 
         WebPresentationGateway firstGateway = mock(WebPresentationGateway.class);
         WebPresentationGateway secondGateway = mock(WebPresentationGateway.class);
@@ -289,7 +288,7 @@ class WebContractRuntimeCaseExecutorTest {
                 new WebScenario<>("second", p -> {}, p -> {})
         );
 
-        verify(contextConfigurer, times(2)).configure();
+        verify(contextConfigurer, times(2)).provide();
         verify(gatewayProvider, times(2)).get();
         verify(firstGateway).close();
         verify(secondGateway).close();

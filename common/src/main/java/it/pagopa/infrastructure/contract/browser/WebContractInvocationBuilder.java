@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 final class WebContractInvocationBuilder implements WebContractStages.UserStage {
 
     private final Supplier<WebPresentationGateway> webPresentationGatewayProvider;
-    private final WebContractContextConfigurer contextConfigurer;
+    private final WebSessionProvider contextConfigurer;
 
     WebContractInvocationBuilder(
             Supplier<WebPresentationGateway> webPresentationGatewayProvider,
-            WebContractContextConfigurer contextConfigurer
+            WebSessionProvider contextConfigurer
     ) {
         this.webPresentationGatewayProvider = Objects.requireNonNull(
                 webPresentationGatewayProvider,
