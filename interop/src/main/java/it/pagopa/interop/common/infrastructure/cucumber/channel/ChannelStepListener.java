@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 /**
@@ -23,11 +24,23 @@ import java.util.function.Supplier;
  *   <li>If the scenario has no {@link ChannelConfig} (legacy), the channel is not changed.</li>
  * </ul>
  * <p>
- * This class is injected with providers ({@link Supplier}) for the two scenario-scoped
- * beans so that Cucumber can build the listener once while the beans are re-created per scenario.
+ * Cucumber instantiates plugins via a no-arg constructor before Spring is ready.
+ * Spring then registers itself as the live instance via {@link #setLiveInstance}.
+ * The Cucumber-created instance delegates all event handling to the live Spring-managed instance.
  */
 @Slf4j
 public class ChannelStepListener implements ConcurrentEventListener {
+
+    /**
+     * Holds the Spring-managed instance. Set by {@link #setLiveInstance} from {@code ContextConfig}.
+     * The Cucumber-created plugin instance delegates to this.
+     */
+    private static final AtomicReference<ChannelStepListener> LIVE_INSTANCE = new AtomicReference<>();
+
+    /** Called by Spring's {@code ContextConfig} after creating the bean. */
+    public static void setLiveInstance(ChannelStepListener instance) {
+        LIVE_INSTANCE.set(instance);
+    }
 
     private final Supplier<ScenarioChannelContext> scenarioChannelContextProvider;
     private final Supplier<CurrentChannel> currentChannelProvider;
@@ -35,6 +48,15 @@ public class ChannelStepListener implements ConcurrentEventListener {
     /** Tracks the last explicit Given/When/Then keyword per test-case UUID. */
     private final ConcurrentHashMap<UUID, SemanticStepType> lastSemanticType =
             new ConcurrentHashMap<>();
+
+    /**
+     * No-arg constructor used by Cucumber when loading this class as a plugin.
+     * All event calls on this instance delegate to the live Spring-managed instance.
+     */
+    public ChannelStepListener() {
+        this.scenarioChannelContextProvider = null;
+        this.currentChannelProvider = null;
+    }
 
     public ChannelStepListener(
             Supplier<ScenarioChannelContext> scenarioChannelContextProvider,
@@ -45,8 +67,25 @@ public class ChannelStepListener implements ConcurrentEventListener {
 
     @Override
     public void setEventPublisher(EventPublisher publisher) {
-        publisher.registerHandlerFor(TestStepStarted.class, this::onTestStepStarted);
-        publisher.registerHandlerFor(TestCaseFinished.class, this::onTestCaseFinished);
+        if (scenarioChannelContextProvider != null) {
+            // Spring-managed instance (o test diretto): registra i propri handler
+            publisher.registerHandlerFor(TestStepStarted.class, this::onTestStepStarted);
+            publisher.registerHandlerFor(TestCaseFinished.class, this::onTestCaseFinished);
+        } else {
+            // Istanza no-arg creata da Cucumber come plugin: delega alla live instance
+            // I lambda leggono LIVE_INSTANCE al momento dell'evento (non ora),
+            // così Spring ha il tempo di inizializzarsi prima che gli step girino.
+            publisher.registerHandlerFor(TestStepStarted.class,
+                    event -> {
+                        ChannelStepListener live = LIVE_INSTANCE.get();
+                        if (live != null) live.onTestStepStarted(event);
+                    });
+            publisher.registerHandlerFor(TestCaseFinished.class,
+                    event -> {
+                        ChannelStepListener live = LIVE_INSTANCE.get();
+                        if (live != null) live.onTestCaseFinished(event);
+                    });
+        }
     }
 
     // -------------------------------------------------------------------------
