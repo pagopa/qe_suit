@@ -6,7 +6,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   Voglio validare la mia Client Assertion facente parte di una request di tipo bearer utile al recupero di un Voucher spendibile presso un erogatore di un EService sincrono
   Al fine di identificare errori strutturali, temporali o crittografici nelle quattro fasi di validazione (Client assertion, Recupero Chiave, Firma, Stato Piattaforma)
   
-  Scenario: DEBUG_ESERVICE_VOUCHER_BEARER_REQ_1
+  Scenario: [DEBUG_ESERVICE_CLIENT_ASSERTION_BEARER_1]
   Dato un client CONSUMER ed una Client assertion valida,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora tutte le fasi di validazione risultano in stato PASSED
@@ -22,7 +22,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | clientAssertionSignatureVerification | PASSED |      |
       | platformStatesVerification           | PASSED |      |
 
-  Scenario: DEBUG_ESERVICE_VOUCHER_BEARER_REQ_2
+  Scenario: [DEBUG_ESERVICE_CLIENT_ASSERTION_BEARER_2]
   Dato un client CONSUMER ed una Client assertion avente claim audiance invalido,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora la fase di validazione della Client Assertion risulta in stato FAILED
@@ -41,7 +41,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | publicKeyRetrieve                    | SKIPPED |                                                        |
       | clientAssertionSignatureVerification | SKIPPED |                                                        |
 
-  Scenario: DEBUG_ESERVICE_VOUCHER_BEARER_REQ_3
+  Scenario: [DEBUG_ESERVICE_CLIENT_ASSERTION_BEARER_3]
   Dato un client CONSUMER ed una Client assertion non contenete claim obbligatori,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora la fase di validazione della Client Assertion risulta in stato FAILED
@@ -65,7 +65,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | publicKeyRetrieve                    | SKIPPED |                                                                                                                                                                                                                              |
       | clientAssertionSignatureVerification | SKIPPED |                                                                                                                                                                                                                              |
 
-  Scenario: DEBUG_ESERVICE_VOUCHER_BEARER_REQ_4
+  Scenario: [DEBUG_ESERVICE_CLIENT_ASSERTION_BEARER_4]
   Dato un client CONSUMER ed una Client assertion avente claim kid invalido,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora la fase di validazione della Client Assertion risulta in stato FAILED
@@ -84,7 +84,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | publicKeyRetrieve                    | SKIPPED |                           |
       | clientAssertionSignatureVerification | SKIPPED |                           |
 
-  Scenario: DEBUG_ESERVICE_VOUCHER_BEARER_REQ_5
+  Scenario: [DEBUG_ESERVICE_CLIENT_ASSERTION_BEARER_5]
   Dato un client CONSUMER ed una Client assertion scaduta,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora la fasi di validazione Client Assertion e Recupero Chiave risultano in stato PASSED
@@ -104,7 +104,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | clientAssertionSignatureVerification | FAILED  | Token expired in client assertion signature validation |
       | platformStatesVerification           | SKIPPED |                                                        |
 
-  Scenario: DEBUG_ESERVICE_VOUCHER_BEARER_REQ_6
+  Scenario: [DEBUG_ESERVICE_CLIENT_ASSERTION_BEARER_6]
   Dato un client CONSUMER valido, una PURPOSE associata in stato SUSPENDED ed una Client assertion valida,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora la fasi di validazione Client Assertion, Recupero Chiave e Firma risultano in stato PASSED

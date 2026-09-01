@@ -6,7 +6,7 @@ Feature: Debugger della request di tipo DPoP per un voucher spendibile presso un
   Voglio validare la mia Client Assertion facente parte di una request di tipo DPoP utile al recupero di un Voucher spendibile presso un erogatore di un EService sincrono
   Al fine di identificare errori strutturali, temporali o crittografici nelle cinque fasi di validazione (Client assertion, Recupero Chiave, Firma, Stato Piattaforma, DPoP)
   
-  Scenario: DEBUG_ESERVICE_VOUCHER_DPOP_REQ_1
+  Scenario: [DEBUG_ESERVICE_CLIENT_ASSERTION_DPOP_1]
   Dato un client CONSUMER, una DPoP Proof valida ed una Client assertion valida,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora tutte le fasi di validazione risultano in stato PASSED
@@ -24,7 +24,7 @@ Feature: Debugger della request di tipo DPoP per un voucher spendibile presso un
       | platformStatesVerification           | PASSED |      |
       | dpopProofValidation                  | PASSED |      |
 
-  Scenario: DEBUG_ESERVICE_VOUCHER_DPOP_REQ_2
+  Scenario: [DEBUG_ESERVICE_CLIENT_ASSERTION_DPOP_2]
   Dato un client CONSUMER, DPoP Proof valida ed una Client assertion avente claim audiance invalido,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora la fase di validazione della Client Assertion risulta in stato FAILED
@@ -45,7 +45,7 @@ Feature: Debugger della request di tipo DPoP per un voucher spendibile presso un
       | clientAssertionSignatureVerification | SKIPPED |                                                        |
       | dpopProofValidation                  | PASSED  |                                                        |
 
-  Scenario Outline: DEBUG_ESERVICE_VOUCHER_DPOP_REQ_3
+  Scenario Outline: [DEBUG_ESERVICE_CLIENT_ASSERTION_DPOP_3]
   Dato un client CONSUMER, una Client assertion valida ed una DPoP Proof invalida,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora tutte le fasi di validazione di Client assertion, Recupero chiave, Firma e Stato della piattaforma risultano in stato PASSED

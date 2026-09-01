@@ -6,7 +6,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
   Voglio validare la mia Client Assertion facente parte di una request di tipo bearer utile al recupero di un Voucher spendibile presso le API della piattaforma Interop
   Al fine di identificare errori strutturali, temporali o crittografici nelle tre fasi di validazione (Client assertion, Recupero Chiave, Firma)
   
-  Scenario: DEBUG_INTEROP_VOUCHER_BEARER_REQ_1
+  Scenario: [DEBUG_INTEROP_CLIENT_ASSERTION_BEARER_1]
   Dato un client API ed una Client assertion valida,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora tutte le fasi di validazione risultano in stato PASSED
@@ -21,7 +21,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | publicKeyRetrieve                    | PASSED |        |
       | clientAssertionSignatureVerification | PASSED |        |
 
-  Scenario: DEBUG_INTEROP_VOUCHER_BEARER_REQ_2
+  Scenario: [DEBUG_INTEROP_CLIENT_ASSERTION_BEARER_2]
   Dato un client API ed una Client assertion avente claim audiance invalido,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora la fase di validazione della Client Assertion risulta in stato FAILED
@@ -40,7 +40,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | publicKeyRetrieve                    | SKIPPED |                                                        |
       | clientAssertionSignatureVerification | SKIPPED |                                                        |
 
-  Scenario: DEBUG_INTEROP_VOUCHER_BEARER_REQ_3
+  Scenario: [DEBUG_INTEROP_CLIENT_ASSERTION_BEARER_3]
   Dato un client API ed una Client assertion non contenete claim obbligatori,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora la fase di validazione della Client Assertion risulta in stato FAILED
@@ -63,7 +63,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | publicKeyRetrieve                    | SKIPPED |                                                                                                                                                                                      |
       | clientAssertionSignatureVerification | SKIPPED |                                                                                                                                                                                      |
 
-  Scenario: DEBUG_INTEROP_VOUCHER_BEARER_REQ_4
+  Scenario: [DEBUG_INTEROP_CLIENT_ASSERTION_BEARER_4]
   Dato un client API ed una Client assertion non contenete il claim aud obbligatorio,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora la fase di validazione della Client Assertion risulta in stato FAILED
@@ -82,7 +82,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | publicKeyRetrieve                    | SKIPPED |                                        |
       | clientAssertionSignatureVerification | SKIPPED |                                        |
 
-  Scenario: DEBUG_INTEROP_VOUCHER_BEARER_REQ_5
+  Scenario: [DEBUG_INTEROP_CLIENT_ASSERTION_BEARER_5]
   Dato un client API ed una Client assertion avente claim kid invalido,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora la fase di validazione della Client Assertion risulta in stato FAILED
@@ -101,7 +101,7 @@ Feature: Debugger della request di tipo bearer per un voucher spendibile presso 
       | publicKeyRetrieve                    | SKIPPED |                           |
       | clientAssertionSignatureVerification | SKIPPED |                           |
 
-  Scenario: DEBUG_INTEROP_VOUCHER_BEARER_REQ_6
+  Scenario: [DEBUG_INTEROP_CLIENT_ASSERTION_BEARER_6]
   Dato un client API ed una Client assertion scaduta,
   quando l'utente sottomette le informazioni nella form di debugging,
   allora la fasi di validazione Client Assertion e Recupero Chiave risultano in stato PASSED
