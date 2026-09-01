@@ -1,6 +1,8 @@
 package it.pagopa.infrastructure.contract.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.response.Response;
 import it.pagopa.infrastructure.fuzzing.FuzzCase;
 import it.pagopa.infrastructure.fuzzing.FuzzEngine;
 import it.pagopa.infrastructure.fuzzing.FuzzMutation;
@@ -8,15 +10,16 @@ import it.pagopa.infrastructure.fuzzing.FuzzMutationKind;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.infrastructure.objectgraph.NodePath;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
-import it.pagopa.interop.generated.openapi.clients.bff.api.Oper;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.mock;
 
 class HttpContractValidatorPrecedenceTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -27,11 +30,14 @@ class HttpContractValidatorPrecedenceTest {
                 fuzzCase("/legacyField", ""),
                 fuzzCase("/otherField", "")
         );
+
         AtomicInteger targetOverrideCount = new AtomicInteger();
         AtomicInteger scenarioOverrideCount = new AtomicInteger();
         AtomicInteger policyCount = new AtomicInteger();
 
-        HttpContractPolicy.Builder builder = HttpContractPolicy.builder().success(response -> policyCount.incrementAndGet());
+        HttpContractPolicy.Builder builder = HttpContractPolicy.builder()
+                .success(response -> policyCount.incrementAndGet());
+
         for (FuzzScenario scenario : FuzzScenario.values()) {
             builder.scenario(scenario, response -> policyCount.incrementAndGet());
         }
@@ -45,8 +51,15 @@ class HttpContractValidatorPrecedenceTest {
 
         var tests = contract.apiCall(EmptyOper::new)
                 .payload(new Payload("legacy", "other"))
-                .scenario(FuzzScenario.REPLACED_WITH_EMPTY_STRING, response -> scenarioOverrideCount.incrementAndGet())
-                .targets(FuzzScenario.REPLACED_WITH_EMPTY_STRING, response -> targetOverrideCount.incrementAndGet(), List.of(Payload::getLegacyField))
+                .scenario(
+                        FuzzScenario.REPLACED_WITH_EMPTY_STRING,
+                        response -> scenarioOverrideCount.incrementAndGet()
+                )
+                .targets(
+                        FuzzScenario.REPLACED_WITH_EMPTY_STRING,
+                        response -> targetOverrideCount.incrementAndGet(),
+                        List.of(Payload::getLegacyField)
+                )
                 .tests()
                 .toList();
 
@@ -60,13 +73,23 @@ class HttpContractValidatorPrecedenceTest {
 
     private ObjectGraphDecomposer createDecomposer() {
         try {
-            Class<?> jackson = Class.forName("it.pagopa.interop.common.infrastructure.objectgraph.JacksonObjectDecomposer");
+            Class<?> jackson = Class.forName(
+                    "it.pagopa.infrastructure.objectgraph.JacksonObjectDecomposer"
+            );
             Constructor<?> jacksonCtor = jackson.getDeclaredConstructor(ObjectMapper.class);
             jacksonCtor.setAccessible(true);
             Object objectDecomposer = jacksonCtor.newInstance(objectMapper);
-            Class<?> defaultCls = Class.forName("it.pagopa.interop.common.infrastructure.objectgraph.DefaultObjectGraphDecomposer");
-            Constructor<?> defaultCtor = defaultCls.getDeclaredConstructor(Class.forName("it.pagopa.interop.common.infrastructure.objectgraph.ObjectDecomposer"));
+
+            Class<?> objectDecomposerType = Class.forName(
+                    "it.pagopa.infrastructure.objectgraph.ObjectDecomposer"
+            );
+            Class<?> defaultType = Class.forName(
+                    "it.pagopa.infrastructure.objectgraph.DefaultObjectGraphDecomposer"
+            );
+
+            Constructor<?> defaultCtor = defaultType.getDeclaredConstructor(objectDecomposerType);
             defaultCtor.setAccessible(true);
+
             return (ObjectGraphDecomposer) defaultCtor.newInstance(objectDecomposer);
         } catch (Exception exception) {
             throw new AssertionError(exception);
@@ -76,7 +99,11 @@ class HttpContractValidatorPrecedenceTest {
     private FuzzCase fuzzCase(String pointer, String value) {
         return new FuzzCase(
                 path(pointer),
-                new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, value),
+                new FuzzMutation(
+                        FuzzScenario.REPLACED_WITH_EMPTY_STRING,
+                        FuzzMutationKind.REPLACE,
+                        value
+                ),
                 objectMapper.createObjectNode()
                         .put("legacyField", value)
                         .put("otherField", value)
@@ -111,15 +138,14 @@ class HttpContractValidatorPrecedenceTest {
         }
     }
 
-    static class EmptyOper implements Oper {
-        public EmptyOper reqSpec(java.util.function.Consumer<io.restassured.builder.RequestSpecBuilder> customizer) {
-            customizer.accept(new io.restassured.builder.RequestSpecBuilder());
+    public static class EmptyOper {
+        public EmptyOper reqSpec(Consumer<RequestSpecBuilder> customizer) {
+            customizer.accept(new RequestSpecBuilder());
             return this;
         }
 
-        @Override
-        public <T> T execute(Function<io.restassured.response.Response, T> handler) {
-            return handler.apply(org.mockito.Mockito.mock(io.restassured.response.Response.class));
+        public <T> T execute(Function<Response, T> handler) {
+            return handler.apply(mock(Response.class));
         }
     }
 }

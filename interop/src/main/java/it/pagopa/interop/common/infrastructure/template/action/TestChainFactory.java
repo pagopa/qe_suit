@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.infrastructure.template.action;
 
-import it.pagopa.interop.common.infrastructure.response.RawResponse;
+import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.interop.common.infrastructure.template.action.context.BaseActionContext;
 import lombok.Setter;
 import org.springframework.beans.factory.ObjectProvider;

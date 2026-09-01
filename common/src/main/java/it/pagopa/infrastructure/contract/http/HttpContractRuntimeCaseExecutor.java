@@ -3,9 +3,8 @@ package it.pagopa.infrastructure.contract.http;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
-import it.pagopa.interop.common.infrastructure.fuzzing.FuzzCase;
-import it.pagopa.interop.common.infrastructure.fuzzing.FuzzEngine;
-import it.pagopa.interop.generated.openapi.clients.bff.api.Oper;
+import it.pagopa.infrastructure.fuzzing.FuzzCase;
+import it.pagopa.infrastructure.fuzzing.FuzzEngine;
 import org.slf4j.MDC;
 
 import java.util.List;
@@ -31,14 +30,15 @@ final class HttpContractRuntimeCaseExecutor {
             GeneratedContractCase testCase,
             ScopeState<?> payloadState,
             ScopeState<?> pathState,
-            Supplier<? extends Oper> operationSupplier
+            Supplier<?> operationSupplier
     ) {
         MDC.put("scenario", testName);
         try {
             RuntimeScope payloadRuntime = materializeRuntimeScope(payloadState, RequestScope.PAYLOAD, testCase);
             RuntimeScope pathRuntime = materializeRuntimeScope(pathState, RequestScope.PATH_PARAMS, testCase);
-            Oper operation = materializeOperation(operationSupplier, testCase);
+            Object operation = materializeOperation(operationSupplier, testCase);
             HttpContractRequest request = buildRuntimeRequest(testCase, payloadRuntime, pathRuntime);
+
             Response response = operationAdapter.execute(operation, request);
             try {
                 testCase.expectation().accept(response);
@@ -50,66 +50,108 @@ final class HttpContractRuntimeCaseExecutor {
         }
     }
 
-    Object materializeSource(Supplier<?> supplier, RequestScope scope, String phase, GeneratedContractCase testCase) {
-        Object source;
+    Object materializeSource(
+            Supplier<?> supplier,
+            RequestScope scope,
+            String phase,
+            GeneratedContractCase testCase
+    ) {
         try {
-            source = supplier.get();
+            Object source = supplier.get();
+            if (source == null) {
+                throw new ContractHttpException(
+                        scopeLabel(scope) + " supplier returned null during " + phase + suffix(testCase)
+                );
+            }
+            return source;
+        } catch (ContractHttpException exception) {
+            throw exception;
         } catch (RuntimeException exception) {
-            throw new ContractHttpException(scopeLabel(scope) + " supplier failed during " + phase + suffix(testCase), exception);
+            throw new ContractHttpException(
+                    scopeLabel(scope) + " supplier failed during " + phase + suffix(testCase),
+                    exception
+            );
         }
-        if (source == null) {
-            throw new ContractHttpException(scopeLabel(scope) + " supplier returned null during " + phase + suffix(testCase));
-        }
-        return source;
     }
 
-    private HttpContractRequest buildRuntimeRequest(GeneratedContractCase testCase, RuntimeScope payloadRuntime, RuntimeScope pathRuntime) {
+    private HttpContractRequest buildRuntimeRequest(
+            GeneratedContractCase testCase,
+            RuntimeScope payloadRuntime,
+            RuntimeScope pathRuntime
+    ) {
         JsonNode payloadBaseline = payloadRuntime == null ? null : payloadRuntime.baseline();
         JsonNode pathBaseline = pathRuntime == null ? null : pathRuntime.baseline();
         FuzzCase runtimeCase = resolveRuntimeCase(testCase, payloadRuntime, pathRuntime);
         JsonNode mutated = runtimeCase.result();
+
         if (testCase.scope() == RequestScope.PAYLOAD) {
             return new HttpContractRequest(mutated, mutated != null, pathBaseline);
         }
         return new HttpContractRequest(payloadBaseline, payloadRuntime != null, mutated);
     }
 
-    private FuzzCase resolveRuntimeCase(GeneratedContractCase testCase, RuntimeScope payloadRuntime, RuntimeScope pathRuntime) {
+    private FuzzCase resolveRuntimeCase(
+            GeneratedContractCase testCase,
+            RuntimeScope payloadRuntime,
+            RuntimeScope pathRuntime
+    ) {
         RuntimeScope mutatedScope = testCase.scope() == RequestScope.PAYLOAD ? payloadRuntime : pathRuntime;
         if (mutatedScope == null) {
-            throw new ContractHttpException("Missing configured scope for case " + formatDescriptor(testCase.descriptor()));
+            throw new ContractHttpException(
+                    "Missing configured scope for case " + formatDescriptor(testCase.descriptor())
+            );
         }
-        List<FuzzCase> freshCases = fuzzEngine.generate(mutatedScope.source());
-        List<FuzzCase> matches = freshCases.stream()
+
+        List<FuzzCase> matches = fuzzEngine.generate(mutatedScope.source()).stream()
                 .filter(candidate -> candidate.target().equals(testCase.target()))
                 .filter(candidate -> candidate.mutation().scenario() == testCase.mutation().scenario())
                 .toList();
+
         if (matches.isEmpty()) {
-            throw new ContractHttpException("Cannot rebuild planned case on fresh baseline: " + formatDescriptor(testCase.descriptor()));
+            throw new ContractHttpException(
+                    "Cannot rebuild planned case on fresh baseline: " + formatDescriptor(testCase.descriptor())
+            );
         }
         if (matches.size() > 1) {
-            throw new ContractHttpException("Non-deterministic runtime case rebuild (multiple matches): " + formatDescriptor(testCase.descriptor()));
+            throw new ContractHttpException(
+                    "Non-deterministic runtime case rebuild (multiple matches): "
+                            + formatDescriptor(testCase.descriptor())
+            );
         }
         return matches.get(0);
     }
 
-    private RuntimeScope materializeRuntimeScope(ScopeState<?> state, RequestScope scope, GeneratedContractCase testCase) {
+    private RuntimeScope materializeRuntimeScope(
+            ScopeState<?> state,
+            RequestScope scope,
+            GeneratedContractCase testCase
+    ) {
         if (state == null) return null;
+
         Object source = materializeSource(state.sourceSupplier(), scope, "execution", testCase);
         return new RuntimeScope(source, objectMapper.valueToTree(source));
     }
 
-    private Oper materializeOperation(Supplier<? extends Oper> operationSupplier, GeneratedContractCase testCase) {
-        Oper operation;
+    private Object materializeOperation(
+            Supplier<?> operationSupplier,
+            GeneratedContractCase testCase
+    ) {
         try {
-            operation = operationSupplier.get();
+            Object operation = operationSupplier.get();
+            if (operation == null) {
+                throw new ContractHttpException(
+                        "operation supplier returned null for " + formatDescriptor(testCase.descriptor())
+                );
+            }
+            return operation;
+        } catch (ContractHttpException exception) {
+            throw exception;
         } catch (RuntimeException exception) {
-            throw new ContractHttpException("operation supplier failed for " + formatDescriptor(testCase.descriptor()), exception);
+            throw new ContractHttpException(
+                    "operation supplier failed for " + formatDescriptor(testCase.descriptor()),
+                    exception
+            );
         }
-        if (operation == null) {
-            throw new ContractHttpException("operation supplier returned null for " + formatDescriptor(testCase.descriptor()));
-        }
-        return operation;
     }
 
     private String suffix(GeneratedContractCase testCase) {
@@ -125,9 +167,6 @@ final class HttpContractRuntimeCaseExecutor {
         return descriptor.scope() + " " + descriptor.scenario() + " @ " + target;
     }
 
-    private record RuntimeScope(
-            Object source,
-            JsonNode baseline
-    ) {
+    private record RuntimeScope(Object source, JsonNode baseline) {
     }
 }

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.response.Response;
-import it.pagopa.interop.generated.openapi.clients.bff.api.Oper;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -63,7 +62,7 @@ class OpenApiOperationAdapterTest {
         assertEquals(true, exception.getMessage().contains("Cannot bind path parameter 'agreementId'"));
     }
 
-    static class FakeOperation implements Oper {
+    static class FakeOperation  {
         final RequestSpecBuilder requestSpecBuilder = Mockito.spy(new RequestSpecBuilder());
         final Response response = Mockito.mock(Response.class);
         final Map<String, Object> boundPathParams = new LinkedHashMap<>();
@@ -84,19 +83,17 @@ class OpenApiOperationAdapterTest {
             return this;
         }
 
-        @Override
         public <T> T execute(Function<Response, T> handler) {
             return handler.apply(response);
         }
     }
 
-    static class NoPathOperation implements Oper {
+    static class NoPathOperation  {
         public NoPathOperation reqSpec(Consumer<RequestSpecBuilder> customizer) {
             customizer.accept(new RequestSpecBuilder());
             return this;
         }
 
-        @Override
         public <T> T execute(Function<Response, T> handler) {
             return handler.apply(Mockito.mock(Response.class));
         }

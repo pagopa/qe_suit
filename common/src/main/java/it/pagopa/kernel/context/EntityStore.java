@@ -1,6 +1,6 @@
 package it.pagopa.kernel.context;
 
-import it.pagopa.interop.common.kernel.Identifiable;
+import it.pagopa.kernel.domain.Identifiable;
 
 import java.util.Optional;
 import java.util.UUID;

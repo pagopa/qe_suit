@@ -3,7 +3,7 @@ package it.pagopa.interop.common.eservice_template.domain;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
-import it.pagopa.interop.common.kernel.Identifiable;
+import it.pagopa.kernel.domain.Identifiable;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;

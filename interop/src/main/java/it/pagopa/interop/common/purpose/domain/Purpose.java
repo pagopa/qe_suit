@@ -1,13 +1,12 @@
 package it.pagopa.interop.common.purpose.domain;
 
-import it.pagopa.interop.common.kernel.Identifiable;
+import it.pagopa.kernel.domain.Identifiable;
 import it.pagopa.interop.common.kernel.domain.PurposeRef;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
-import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;

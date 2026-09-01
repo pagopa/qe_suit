@@ -2,7 +2,7 @@ package it.pagopa.interop.common.infrastructure.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.client.domain.ClientKind;
-import it.pagopa.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;

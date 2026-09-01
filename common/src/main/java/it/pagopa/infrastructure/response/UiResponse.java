@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.response;
+package it.pagopa.infrastructure.response;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 

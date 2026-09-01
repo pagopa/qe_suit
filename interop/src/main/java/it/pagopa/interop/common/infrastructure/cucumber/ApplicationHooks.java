@@ -6,7 +6,7 @@ import io.cucumber.java.Scenario;
 import it.pagopa.kernel.context.CurrentChannel;
 import it.pagopa.kernel.context.TestContext;
 import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.kernel.domain.TestKind;
+import it.pagopa.kernel.TestKind;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;

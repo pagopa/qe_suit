@@ -1,11 +1,7 @@
-package it.pagopa.interop.common.infrastructure.response;
+package it.pagopa.infrastructure.response;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-@Getter
 public abstract class RawResponse {
     protected boolean isSuccess = true;
     protected final String rawContent;
@@ -15,7 +11,19 @@ public abstract class RawResponse {
         this.rawContent = rawContent;
     }
 
+    public RawResponse(String rawContent) {
+        this.rawContent = rawContent;
+    }
+
     public abstract <T> T as(Class<T> clazz);
 
     public abstract <T> T as(TypeReference<T> typeReference);
+
+    public boolean isSuccess() {
+        return isSuccess;
+    }
+
+    public String getRawContent() {
+        return rawContent;
+    }
 }

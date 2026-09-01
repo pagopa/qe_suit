@@ -1,6 +1,6 @@
 package it.pagopa.kernel.context;
 
-import it.pagopa.interop.common.infrastructure.response.ApiResponse;
+import it.pagopa.infrastructure.response.ApiResponse;
 
 public interface LastApiResponseStore {
     ApiResponse getLastResponse();

@@ -2,8 +2,8 @@ package it.pagopa.interop.common.infrastructure.template.action;
 
 import it.pagopa.kernel.context.EntityStore;
 import it.pagopa.kernel.context.LastApiResponseStore;
-import it.pagopa.interop.common.infrastructure.response.ApiResponse;
-import it.pagopa.interop.common.infrastructure.response.RawResponse;
+import it.pagopa.infrastructure.response.ApiResponse;
+import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.interop.common.infrastructure.template.action.context.PollingActionContext;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.Getter;

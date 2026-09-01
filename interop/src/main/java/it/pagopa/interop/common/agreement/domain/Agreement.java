@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.agreement.domain;
 
-import it.pagopa.interop.common.kernel.Identifiable;
+import it.pagopa.kernel.domain.Identifiable;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;

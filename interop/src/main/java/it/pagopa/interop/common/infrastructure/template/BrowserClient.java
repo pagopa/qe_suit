@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.template;
 
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.common.infrastructure.response.UiResponse;
+import it.pagopa.infrastructure.response.UiResponse;
 import it.pagopa.interop.common.infrastructure.template.action.TestChain;
 import it.pagopa.interop.common.infrastructure.template.action.TestChainFactory;
 import lombok.Getter;
