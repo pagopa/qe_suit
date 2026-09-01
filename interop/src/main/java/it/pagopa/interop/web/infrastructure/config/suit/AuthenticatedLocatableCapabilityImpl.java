@@ -4,15 +4,12 @@ import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.capability.impl.LocatableCapabilityImpl;
 import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
-import it.pagopa.interop.common.kernel.context.BrowserContext;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.kernel.context.BrowserContext;
+import it.pagopa.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
-import it.pagopa.interop.web.infrastructure.cucumber.WebBrowserContext;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component

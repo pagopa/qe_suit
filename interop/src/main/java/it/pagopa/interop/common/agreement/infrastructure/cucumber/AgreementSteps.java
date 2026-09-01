@@ -6,7 +6,7 @@ import it.pagopa.interop.common.agreement.application.AgreementUseCase;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import lombok.RequiredArgsConstructor;

@@ -2,7 +2,7 @@ package it.pagopa.interop.common.client.infrastructure.config;
 
 import it.pagopa.interop.common.client.application.DebugClientAssertionGateway;
 import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
-import it.pagopa.interop.common.kernel.context.CurrentChannel;
+import it.pagopa.kernel.context.CurrentChannel;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.framework.ProxyFactory;

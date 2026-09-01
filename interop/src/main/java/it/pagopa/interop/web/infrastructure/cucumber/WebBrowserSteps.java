@@ -2,7 +2,7 @@ package it.pagopa.interop.web.infrastructure.cucumber;
 
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;

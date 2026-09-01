@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.cucumber.resolver;
 
 import it.pagopa.interop.common.client.domain.Client;
-import it.pagopa.interop.common.kernel.context.EntityStore;
+import it.pagopa.kernel.context.EntityStore;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

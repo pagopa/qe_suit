@@ -6,13 +6,11 @@ import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.config.JunitSupportConfig;
-import it.pagopa.interop.common.infrastructure.contract.http.HttpContractValidator;
-import it.pagopa.interop.common.infrastructure.fuzzing.FuzzScenario;
+import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -21,7 +19,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 @Execution(ExecutionMode.CONCURRENT)
