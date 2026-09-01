@@ -13,8 +13,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.UUID;
 
-@Component
-class ScalarRule implements FuzzRule {
+public class ScalarRule implements FuzzRule {
 
     private static final Logger logger = LoggerFactory.getLogger(ScalarRule.class);
 

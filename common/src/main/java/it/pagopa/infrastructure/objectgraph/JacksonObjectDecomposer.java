@@ -6,12 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Objects;
 
-final class JacksonObjectDecomposer implements ObjectDecomposer {
+public final class JacksonObjectDecomposer implements ObjectDecomposer {
 
     private final ObjectMapper objectMapper;
     private final JacksonGraphWalker graphWalker;
 
-    JacksonObjectDecomposer(ObjectMapper objectMapper) {
+    public JacksonObjectDecomposer(ObjectMapper objectMapper) {
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
         this.graphWalker = new JacksonGraphWalker(objectMapper);
     }

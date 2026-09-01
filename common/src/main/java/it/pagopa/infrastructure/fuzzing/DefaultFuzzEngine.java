@@ -11,15 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-@Component
-class DefaultFuzzEngine implements FuzzEngine {
+public class DefaultFuzzEngine implements FuzzEngine {
 
     private final ObjectGraphDecomposer objectGraphDecomposer;
     private final ObjectMapper objectMapper;
     private final FuzzMutationApplier mutationApplier;
     private final List<FuzzRule> rules;
 
-    DefaultFuzzEngine(
+    public DefaultFuzzEngine(
             ObjectGraphDecomposer objectGraphDecomposer,
             ObjectMapper objectMapper,
             FuzzMutationApplier mutationApplier,
