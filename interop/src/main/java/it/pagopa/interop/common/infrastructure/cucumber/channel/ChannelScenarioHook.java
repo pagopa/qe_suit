@@ -3,7 +3,7 @@ package it.pagopa.interop.common.infrastructure.cucumber.channel;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
 import it.pagopa.interop.common.infrastructure.context.cucumber.ScenarioChannelContext;
-import it.pagopa.interop.common.kernel.context.CurrentChannel;
+import it.pagopa.interop.common.infrastructure.channel.CurrentChannel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
