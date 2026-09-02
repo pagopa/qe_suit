@@ -6,20 +6,21 @@ import io.cucumber.java.en.When;
 import it.pagopa.send.common.domain.Recipient;
 import it.pagopa.send.common.domain.Tenant;
 import it.pagopa.send.common.notification.domain.LegalNotificationDomain;
+import it.pagopa.send.common.notification.domain.NotificationStatus;
 import it.pagopa.send.controller.creazione_notifica.NotificationContext;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
 import it.pagopa.send.common.journey.infrastructure.LegalNotificationJourneyImpl;
 import it.pagopa.send.legalnotification.application.LegalNotificationUseCase;
 import it.pagopa.send.model.LegalNotificationType;
 import it.pagopa.send.model.RecipientSpec;
 import it.pagopa.send.utils.IUNHelper;
+import it.pagopa.send.utils.factory.RecipientSpecFactory;
 import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -28,6 +29,7 @@ public class LegalNotificationSteps {
 
     private final LegalNotificationJourneyImpl journey;
     private final LegalNotificationUseCase legalNotificationUseCase;
+    private final RecipientSpecFactory recipientSpecFactory;
     private final WebBrowserContext webBrowserContext;
     private final NotificationContext notificationContext;
 
@@ -50,14 +52,16 @@ public class LegalNotificationSteps {
         createNotification(Tenant.fromOrganization(enteName), type, destinatarioName, overrides.asMap(String.class, String.class));
     }
 
-    private void createNotification(Tenant sender, LegalNotificationType type, String destinatarioName, Map<String, String> overrides) {
+    private void createNotification(Tenant sender, LegalNotificationType type, String destinatarioName, Map<String, String> recipientOverrides) {
         Recipient recipient = Recipient.fromUsername(destinatarioName);
 
-        journey.withSender(sender)
-                .withType(type)
-                .withRecipient(RecipientSpec.of(recipient))
-                .withOverrides(overrides)
-                .sendNotification(BffNotificationStatus.ACCEPTED);
+        Map<String, String> overrides = new HashMap<>(type.recipientOverrides());
+        overrides.putAll(recipientOverrides);
+        RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, overrides);
+
+        journey.prepareNotification(Map.of())
+                .withRecipient(recipientSpec)
+                .sendNotification(sender, NotificationStatus.ACCEPTED);
 
         log.info("Request di notifica legale generata: {}", notificationContext.getBffNewNotificationResponse());
     }
@@ -65,7 +69,7 @@ public class LegalNotificationSteps {
     @Then("la notifica legale creata è in stato {string}")
     @Then("la richiesta di notifica è in stato {string}")
     public void assertRequestAccepted(String status) {
-        BffNotificationStatus expectedStatus = BffNotificationStatus.valueOf(status.toUpperCase());
+        NotificationStatus expectedStatus = NotificationStatus.valueOf(status.toUpperCase());
         Assertions.assertThat(notificationContext.getBffNewNotificationResponse()).isNotNull();
 
         //String iun = legalNotificationUseCase.extractIun(journey.getLastResponse());
