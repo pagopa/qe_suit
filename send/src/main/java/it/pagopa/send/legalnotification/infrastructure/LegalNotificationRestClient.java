@@ -1,13 +1,14 @@
 package it.pagopa.send.legalnotification.infrastructure;
 
+import it.pagopa.infrastructure.template.RestClient;
+import it.pagopa.infrastructure.template.action.TestChain;
+import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.send.generated.openapi.clients.bff.api.NotificationSentApi;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffLegalNotificationsResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffRequestStatus;
-import it.pagopa.send.infrastructure.template.RestClient;
-import it.pagopa.send.infrastructure.template.TestChain;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -18,7 +19,8 @@ public class LegalNotificationRestClient extends RestClient {
 
     private final NotificationSentApi notificationSentApi;
 
-    public LegalNotificationRestClient(NotificationSentApi notificationSentApi) {
+    public LegalNotificationRestClient(TestChainFactory chainFactory, NotificationSentApi notificationSentApi) {
+        super(chainFactory);
         this.notificationSentApi = notificationSentApi;
     }
 
