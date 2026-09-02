@@ -1,6 +1,5 @@
 package it.pagopa.send.common.domain;
 
-import it.pagopa.send.generated.openapi.clients.bff.model.NotificationRecipientV24;
 import lombok.Getter;
 
 import static it.pagopa.send.common.domain.UserType.PF;
@@ -12,7 +11,7 @@ public enum Recipient implements User {
             "FrancescoPetrarca",
             "test",
             "Le Epistolae srl",
-            "LELPTR04A01C352E",
+            "12666810299",
             "Francesco Petrarca",
             null,
             null
@@ -64,18 +63,6 @@ public enum Recipient implements User {
     @Override
     public String getFiscalNumber() {
         return this.taxId;
-    }
-
-    /**
-     * Tipo destinatario nel formato richiesto da {@code NotificationRecipientV24}: un {@link Recipient}
-     * usato come destinatario di una notifica è per costruzione PF o PG, mai PA.
-     */
-    public NotificationRecipientV24.RecipientTypeEnum recipientType() {
-        return switch (type) {
-            case PF -> NotificationRecipientV24.RecipientTypeEnum.PF;
-            case PG -> NotificationRecipientV24.RecipientTypeEnum.PG;
-            case PA -> throw new IllegalStateException(this + " è un utente PA, non può essere destinatario di una notifica");
-        };
     }
 
     public static Recipient fromUsername(String username) {

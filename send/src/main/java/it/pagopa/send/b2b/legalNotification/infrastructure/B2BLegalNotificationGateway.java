@@ -1,18 +1,21 @@
 package it.pagopa.send.b2b.legalNotification.infrastructure;
 
 import it.pagopa.send.b2b.delivery.infrastructure.B2BDeliveryRestClient;
+import it.pagopa.send.common.domain.Tenant;
 import it.pagopa.send.common.kernel.domain.Channel;
+import it.pagopa.send.common.notification.domain.LegalNotificationCreationRequest;
 import it.pagopa.send.common.notification.domain.LegalNotificationDomain;
+import it.pagopa.send.common.notification.domain.NotificationStatus;
 import it.pagopa.send.controller.creazione_notifica.NotificationContext;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
-import it.pagopa.send.infrastructure.template.ApiResponse;
-import it.pagopa.send.infrastructure.template.PollingStrategy;
-import it.pagopa.send.infrastructure.template.PollingUtils;
 import it.pagopa.send.legalnotification.application.LegalNotificationGateway;
 import it.pagopa.send.legalnotification.infrastructure.LegalNotificationRestClient;
+import it.pagopa.send.model.RecipientSpec;
+import it.pagopa.send.utils.factory.LegalNotificationRequestFactory;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +23,14 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.Map;
 
+/**
+ * Unica implementazione di {@link LegalNotificationGateway} per il canale B2B. La notifica in
+ * preparazione per lo scenario corrente ({@link LegalNotificationCreationRequest}, bean
+ * {@code @ScenarioScope}) viene popolata progressivamente da {@link #prepareNotification} e
+ * {@link #addRecipient}; {@link #sendNotification} completa i campi noti solo al mittente e la
+ * invia. Solo qui (e nel {@link B2BLegalNotificationMapper} co-locato) si fa riferimento al DTO
+ * OpenAPI del BFF: l'interfaccia e i chiamanti conoscono solo il dominio interno.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,12 +42,31 @@ public class B2BLegalNotificationGateway implements LegalNotificationGateway {
     private final LegalNotificationRestClient restClient;
     private final B2BDeliveryRestClient deliveryRestClient;
     private final NotificationContext notificationContext;
+    private final B2BLegalNotificationMapper mapper;
+    private final LegalNotificationRequestFactory requestFactory;
+    private final LegalNotificationCreationRequest request;
 
     @Override
-    public void sendNotification(BffNewNotificationRequest request, BffNotificationStatus targetStatus) {
-        BffNewNotificationResponse response = restClient.create(request)
-                .withoutPolling()
-                .get();
+    public void prepareNotification(Map<String, String> data) {
+        requestFactory.applyPreliminaryData(request, data);
+    }
+
+    @Override
+    public void addRecipient(RecipientSpec recipient) {
+        request.addRecipient(requestFactory.resolveRecipient(recipient));
+    }
+
+    @Override
+    public void sendNotification(Tenant sender, NotificationStatus targetStatus) {
+        requestFactory.applySender(request, sender);
+
+        BffNewNotificationRequest bffRequest = mapper.toBffRequest(request);
+        BffNotificationStatus bffTargetStatus = mapper.toBffStatus(targetStatus);
+
+//        var creationCall = restClient.create(bffRequest).withoutPolling();
+//        log.info("Risposta creazione notifica: {}", creationCall.getRaw().getRawContent());
+//        BffNewNotificationResponse response = restClient.create(bffRequest).withoutPolling().get();
+        BffNewNotificationResponse response = restClient.create(bffRequest).withoutPolling().get();
         notificationContext.setBffNewNotificationResponse(response);
 
         PollingUtils.pollUntil(
@@ -46,7 +76,7 @@ public class B2BLegalNotificationGateway implements LegalNotificationGateway {
                     return responseRe;
 
                 },
-                statusResponse -> statusResponse.getNotificationRequestStatus().equals(targetStatus.getValue()),
+                statusResponse -> statusResponse.getNotificationRequestStatus().equals(bffTargetStatus.getValue()),
                 DEFAULT_STATUS_TIMEOUT,
                 DEFAULT_STATUS_INTERVAL
         );
@@ -60,7 +90,7 @@ public class B2BLegalNotificationGateway implements LegalNotificationGateway {
                 .get();
         PollingUtils.pollUntil(
                 () -> readNotification(iun),
-                response -> response.getStatus().equals(BffNotificationStatus.CANCELLED),
+                response -> response.getStatus().equals(NotificationStatus.CANCELLED),
                 DEFAULT_STATUS_TIMEOUT,
                 DEFAULT_STATUS_INTERVAL
         );
@@ -68,23 +98,21 @@ public class B2BLegalNotificationGateway implements LegalNotificationGateway {
 
     @Override
     public LegalNotificationDomain readNotification(String iun) {
-        restClient.read(iun)
+        return restClient.read(iun)
                 .withoutPolling()
+                .map(mapper::toDomain)
                 .get();
-        return LegalNotificationDomain.builder().build();
     }
 
     @Override
     public LegalNotificationDomain searchNotification(Map<String, String> overrides) {
+        // TODO: BffLegalNotificationsResponse è una lista di risultati sintetici (resultsPage),
+        // non un singolo BffFullNotificationV1: da mappare quando questo metodo avrà un caso
+        // d'uso reale (oggi non è esercitato da nessuno step).
         restClient.search(overrides)
                 .withoutPolling()
                 .get();
         return LegalNotificationDomain.builder().build();
-    }
-
-    private PollingStrategy matchesStatus(BffNotificationStatus targetStatus) {
-        return (ApiResponse response) -> response.is2xxSuccessful()
-                && targetStatus.equals(response.as(BffFullNotificationV1.class).getNotificationStatus());
     }
 
     @Override

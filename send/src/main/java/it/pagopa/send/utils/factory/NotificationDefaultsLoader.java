@@ -1,6 +1,5 @@
 package it.pagopa.send.utils.factory;
 
-import it.pagopa.send.model.LegalNotificationType;
 import it.pagopa.send.model.NotificationDefaults;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -11,21 +10,18 @@ import java.io.InputStream;
 import java.util.Map;
 
 /**
- * Carica i default statici di un {@link LegalNotificationType} da
- * {@code notifications/templates/<nome-tipo>.yaml}. Aggiungere un tipo di notifica con una base di
- * default diversa richiede solo un nuovo file YAML e un nuovo case in {@link #templateFileName};
- * non tocca {@link LegalNotificationRequestFactory}.
+ * Carica i default statici della notifica da {@code notifications/templates/default.yaml}: un
+ * unico baseline, sovrascrivibile puntualmente in fase di preparazione della notifica (vedi
+ * {@link LegalNotificationRequestFactory#applyPreliminaryData}).
  */
 @Component
 public class NotificationDefaultsLoader {
 
-    private static final String TEMPLATE_PATH = "notifications/templates/%s.yaml";
+    private static final String TEMPLATE_PATH = "notifications/templates/default.yaml";
 
     @SuppressWarnings("unchecked")
-    public NotificationDefaults load(LegalNotificationType type) {
-        String path = String.format(TEMPLATE_PATH, templateFileName(type));
-
-        try (InputStream is = new ClassPathResource(path).getInputStream()) {
+    public NotificationDefaults load() {
+        try (InputStream is = new ClassPathResource(TEMPLATE_PATH).getInputStream()) {
             Map<String, Object> root = new Yaml().load(is);
             Map<String, Object> address = (Map<String, Object>) root.get("physicalAddress");
 
@@ -51,15 +47,7 @@ public class NotificationDefaultsLoader {
                     )
             );
         } catch (IOException e) {
-            throw new RuntimeException("Impossibile caricare il template di default per " + type, e);
+            throw new RuntimeException("Impossibile caricare il template di default della notifica", e);
         }
-    }
-
-    private String templateFileName(LegalNotificationType type) {
-        return switch (type) {
-            case SIMPLE -> "simple";
-            case SINGLE_RECIPIENT_WITH_PAGOPA_PAYMENT -> "single-recipient-pagopa";
-            case SINGLE_RECIPIENT_WITH_F24_PAYMENT -> "single-recipient-f24";
-        };
     }
 }
