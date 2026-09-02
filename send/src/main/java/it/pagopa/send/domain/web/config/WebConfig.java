@@ -14,6 +14,7 @@ import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 
 import java.util.List;
@@ -38,6 +39,7 @@ public class WebConfig {
 
     @Bean
     @ScenarioScope
+    @Primary
     public WebPresentationGateway webPresentationGateway(
             Environment environment,
             IWebPresentationApiAdapter adapter,
