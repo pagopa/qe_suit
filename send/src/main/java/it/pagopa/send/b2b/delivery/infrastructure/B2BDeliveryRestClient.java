@@ -1,10 +1,10 @@
 package it.pagopa.send.b2b.delivery.infrastructure;
 
+import it.pagopa.infrastructure.template.RestClient;
+import it.pagopa.infrastructure.template.action.TestChain;
+import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.send.generated.openapi.clients.delivery.api.SenderReadB2BApi;
-import it.pagopa.send.generated.openapi.clients.delivery.model.NewNotificationRequestStatusResponse;
 import it.pagopa.send.generated.openapi.clients.delivery.model.NewNotificationRequestStatusResponseV26;
-import it.pagopa.send.infrastructure.template.RestClient;
-import it.pagopa.send.infrastructure.template.TestChain;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Function;
@@ -13,7 +13,8 @@ import java.util.function.Function;
 public class B2BDeliveryRestClient extends RestClient {
     private final SenderReadB2BApi senderReadB2BApi;
 
-    public B2BDeliveryRestClient(SenderReadB2BApi senderReadB2BApi) {
+    public B2BDeliveryRestClient(TestChainFactory testChainFactory, SenderReadB2BApi senderReadB2BApi) {
+        super(testChainFactory);
         this.senderReadB2BApi = senderReadB2BApi;
     }
 
