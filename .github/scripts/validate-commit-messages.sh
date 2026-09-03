@@ -1,7 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+VALIDATOR="$ROOT_DIR/.github/scripts/validate-commit-message.sh"
+
 RANGE="${1:-}"
+MAX_COMMITS="${MAX_COMMITS:-50}"
 
 resolve_default_base_branch() {
   if [[ -n "${GITHUB_BASE_REF:-}" ]]; then
@@ -22,6 +26,11 @@ resolve_default_base_branch() {
   echo ""
 }
 
+if [[ ! -f "$VALIDATOR" ]]; then
+  echo "Commit message validator not found: $VALIDATOR" >&2
+  exit 1
+fi
+
 if [[ -z "$RANGE" ]]; then
   if [[ "${GITHUB_EVENT_NAME:-}" == "pull_request" ]]; then
     BASE_SHA="${GITHUB_BASE_SHA:-}"
@@ -34,19 +43,17 @@ if [[ -z "$RANGE" ]]; then
 
     MERGE_BASE="$(git merge-base "$BASE_SHA" "$HEAD_SHA")"
     RANGE="$MERGE_BASE..$HEAD_SHA"
-
   else
     BEFORE_SHA="${GITHUB_BEFORE_SHA:-${GITHUB_BEFORE:-}}"
     AFTER_SHA="${GITHUB_AFTER_SHA:-${GITHUB_SHA:-HEAD}}"
-
     ZERO_SHA="0000000000000000000000000000000000000000"
 
     if [[ -n "$BEFORE_SHA" && "$BEFORE_SHA" != "$ZERO_SHA" ]]; then
-      # Push normale: valida solo i commit inclusi nel push
+      # Push normale: valida solo i commit inclusi nel push corrente.
       RANGE="$BEFORE_SHA..$AFTER_SHA"
     else
-      # Branch nuovo / primo push:
-      # non usare semplicemente "$AFTER_SHA", perché includerebbe tutta la history.
+      # Nuovo branch / primo push:
+      # evita di validare tutta la history.
       BASE_BRANCH="$(resolve_default_base_branch)"
 
       if [[ -z "$BASE_BRANCH" ]]; then
@@ -65,7 +72,12 @@ if [[ -z "$RANGE" ]]; then
   exit 1
 fi
 
-echo "Validating commits in range: $RANGE"
+if ! git rev-list "$RANGE" >/dev/null 2>&1; then
+  echo "Invalid or unavailable commit range: $RANGE" >&2
+  exit 1
+fi
+
+echo "Validating up to $MAX_COMMITS commits in range: $RANGE"
 
 COMMITS_FOUND=false
 
@@ -76,27 +88,15 @@ while IFS= read -r msg || [[ -n "$msg" ]]; do
 
   COMMITS_FOUND=true
 
-  if [[ ! "$msg" =~ ^(feat|fix|chore|docs|refactor|test|ci)(\([^)]*\))?[[:space:]]*:[[:space:]]+\[[A-Z][A-Z0-9]*-[0-9]+\][[:space:]]+.+$ ]]; then
-    echo "" >&2
-    echo "========================================" >&2
-    echo "Invalid commit message format" >&2
-    echo "========================================" >&2
-    echo "Message: $msg" >&2
-    echo "" >&2
-    echo "Expected formats:" >&2
-    echo "  type(scope): [TICKET-ID] message" >&2
-    echo "  type(scope) : [TICKET-ID] message" >&2
-    echo "  type: [TICKET-ID] message" >&2
-    echo "  type : [TICKET-ID] message" >&2
-    echo "" >&2
-    echo "Examples:" >&2
-    echo "  feat(payment): [QA-123] add retry on timeout" >&2
-    echo "  fix : [QA-15533] fix title assertion" >&2
-    echo "========================================" >&2
-    exit 1
-  fi
+  bash "$VALIDATOR" "$msg"
 
-done < <(git log --no-merges --pretty=format:%s "$RANGE")
+done < <(
+  git log \
+    --no-merges \
+    -n "$MAX_COMMITS" \
+    --pretty=format:%s \
+    "$RANGE"
+)
 
 if [[ "$COMMITS_FOUND" == false ]]; then
   echo "No commits to validate in range: $RANGE"
