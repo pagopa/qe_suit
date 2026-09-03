@@ -7,11 +7,12 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
+import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
 import org.springframework.stereotype.Service;
@@ -63,9 +64,10 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
-    public void archiveEService(EServiceRef eServiceRef) {
+    public void archiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
         EServiceArchivingSeed payload = Instancio.of(EServiceArchivingSeed.class)
-                .set(field(EServiceArchivingSeed::getGracePeriodDays), GracePeriodDays.NUMBER_60)
+                .set(field(EServiceArchivingSeed::getGracePeriodDays), it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays.fromValue(gracePeriodDays.getDays()))
+                .set(field(EServiceArchivingSeed::getArchivingReason), RandomUtils.randomAlphanumericName("archiving-reason"))
                 .create();
 
         restClient.scheduleArchiveEservice(eServiceRef.id(), payload)

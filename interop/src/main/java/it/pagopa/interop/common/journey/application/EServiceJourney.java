@@ -3,6 +3,7 @@ package it.pagopa.interop.common.journey.application;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 
 import java.util.function.Predicate;
 
@@ -19,7 +20,7 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
 
     SELF addDescriptor(EService eService, EServiceDescriptorState state);
 
-    SELF archiveEService();
+    SELF archiveEService(GracePeriodDays gracePeriodDays);
 
     SELF waitUntilEService(Predicate<EService> predicate);
 
