@@ -48,4 +48,10 @@ public class ScenarioParameterTypes {
         EService eService = entityStore.getLastOrThrow(EService.class);
         return eService.getLastDeprecatedDescriptor();
     }
+
+    @ParameterType("versione archiviata")
+    public EServiceDescriptor currentArchivedEServiceDescriptor(String token) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        return eService.getLastArchivedDescriptor();
+    }
 }
