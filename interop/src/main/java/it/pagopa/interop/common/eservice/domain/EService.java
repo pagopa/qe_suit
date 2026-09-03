@@ -56,6 +56,10 @@ public class EService implements Identifiable {
         return getUniqueDescriptorByState(EServiceDescriptorState.DEPRECATED);
     }
 
+    public EServiceDescriptor getLastArchivedDescriptor() {
+        return getUniqueDescriptorByState(EServiceDescriptorState.ARCHIVED);
+    }
+
     public EServiceDescriptor getActiveDescriptor() {
         return descriptorsByState(EServiceDescriptorState.PUBLISHED)
                 .max(Comparator.comparing(
