@@ -42,6 +42,10 @@ jobs:
         working-directory: frontend-e2e-framework
         run: bash ./mvnw -DskipTests install
 
+      - name: Run install COMMON
+        working-directory: common
+        run: bash ./mvnw -DskipTests install
+
       - name: Run interop tests (ci-rules profile)
         working-directory: interop
         run: bash ./mvnw -Pci-rules test
