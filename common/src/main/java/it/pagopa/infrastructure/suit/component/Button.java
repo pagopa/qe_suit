@@ -13,14 +13,15 @@ public interface Button extends Component, Clickable, Readable<String> {
 
     default boolean isDisabled() {
         return this.get(FindPolicy.PRESENT)
-                .map(we -> we.getAttributes().containsKey(DISABLED_CLASS))
+                .map(we -> we.getClasses().contains(DISABLED_CLASS))
                 .orElseThrow(() -> new java.util.NoSuchElementException(
                         "Impossibile verificare lo stato del button: l'elemento UI non è presente nella pagina."
                 ));
     }
 
     default boolean isSelected() {
-        return this.get(FindPolicy.PRESENT).map(we -> we.getClasses().contains(SELECTED_CLASS))
+        return this.get(FindPolicy.PRESENT)
+                .map(we -> we.getClasses().contains(SELECTED_CLASS))
                 .orElseThrow(() -> new java.util.NoSuchElementException(
                         "Impossibile verificare lo stato del button: l'elemento UI non è presente nella pagina."
                 ));
