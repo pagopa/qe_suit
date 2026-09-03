@@ -13,9 +13,12 @@ import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays;
 import lombok.RequiredArgsConstructor;
+import org.instancio.Instancio;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static org.instancio.Select.field;
 
 @Service
 @RequiredArgsConstructor
@@ -61,9 +64,9 @@ public class BffEServiceGateway implements EServiceGateway {
 
     @Override
     public void archiveEService(EServiceRef eServiceRef) {
-        EServiceArchivingSeed payload = new EServiceArchivingSeed()
-                .archivingReason("lorem ipsum dolor sit amet")
-                .gracePeriodDays(GracePeriodDays.NUMBER_60);
+        EServiceArchivingSeed payload = Instancio.of(EServiceArchivingSeed.class)
+                .set(field(EServiceArchivingSeed::getGracePeriodDays), GracePeriodDays.NUMBER_60)
+                .create();
 
         restClient.scheduleArchiveEservice(eServiceRef.id(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
