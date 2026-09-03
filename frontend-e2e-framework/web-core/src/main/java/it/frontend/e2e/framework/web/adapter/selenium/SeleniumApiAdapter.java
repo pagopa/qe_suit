@@ -74,8 +74,13 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public Optional<List<WebPresentationElement>> findElements(XPathSelector selector) {
+        return findElements(selector, FindPolicy.CLICKABLE);
+    }
+
+    @Override
+    public Optional<List<WebPresentationElement>> findElements(XPathSelector selector, FindPolicy policy) {
         try {
-            List<WebElement> webElements = findWebElements(selector);
+            List<WebElement> webElements = findWebElements(selector, policy);
             List<WebPresentationElement> elements = webElements.stream()
                     .map(webElement -> toPresentationElement(selector, webElement))
                     .toList();
@@ -385,13 +390,40 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
         return findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, policy);
     }
 
-    private List<WebElement> findWebElements(XPathSelector selector, long timeoutSeconds) {
-        return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
-                .until(ExpectedConditions.presenceOfAllElementsLocatedBy(toBy(selector)));
+    private List<WebElement> findWebElements(XPathSelector selector, long timeoutSeconds, FindPolicy policy) {
+
+        By by = toBy(selector);
+        WebDriverWait wait = new WebDriverWait(
+                driver,
+                Duration.ofSeconds(timeoutSeconds)
+        );
+
+        return switch (policy) {
+            case VISIBLE ->
+                    wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
+
+            case PRESENT ->
+                    wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
+
+            case CLICKABLE ->
+                    wait.until(driver -> {
+                        List<WebElement> elements =
+                                ExpectedConditions.presenceOfAllElementsLocatedBy(by)
+                                        .apply(driver);
+
+                        if (elements == null || elements.isEmpty()) {
+                            return null;
+                        }
+
+                        return elements.stream().allMatch(WebElement::isEnabled)
+                                ? elements
+                                : null;
+                    });
+        };
     }
 
-    private List<WebElement> findWebElements(XPathSelector selector) {
-        return findWebElements(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+    private List<WebElement> findWebElements(XPathSelector selector, FindPolicy policy) {
+        return findWebElements(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, policy);
     }
 
     private By toBy(XPathSelector selector) {

@@ -6,6 +6,7 @@ import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IWebPresentationApiAdapter
@@ -13,6 +14,7 @@ public interface IWebPresentationApiAdapter
 
     Optional<String> getCookieValue(String name);
     Optional<WebPresentationElement> findElement(XPathSelector selector, FindPolicy findPolicy);
+    Optional<List<WebPresentationElement>> findElements(XPathSelector selector, FindPolicy policy);
     Optional<String> getLocalStorageItem(String key);
     Optional<String> getSessionStorageItem(String key);
     void setLocalStorageItem(String key, String value);

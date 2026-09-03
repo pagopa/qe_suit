@@ -7,6 +7,7 @@ import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
 
+import java.util.List;
 import java.util.Optional;
 
 public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<XPathSelector, Url, WebPresentationElement> implements IWebPresentationApiAdapter {
@@ -28,6 +29,12 @@ public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<
     public Optional<WebPresentationElement> findElement(XPathSelector selector, FindPolicy findPolicy) {
         logger.logDebug("Find element by selector: " + selector + " with find policy: " + findPolicy);
         return webAdapter.findElement(selector, findPolicy);
+    }
+
+    @Override
+    public Optional<List<WebPresentationElement>> findElements(XPathSelector selector, FindPolicy policy) {
+        logger.logDebug("Find elements by selector: " + selector + " with find policy: " + policy);
+        return webAdapter.findElements(selector, policy);
     }
 
     @Override
