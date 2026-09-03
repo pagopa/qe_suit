@@ -30,24 +30,13 @@ jobs:
 
       - name: Validate commit messages
         shell: bash
-        run: |
-          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
-            BASE_SHA="${{ github.event.pull_request.base.sha }}"
-            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
-            RANGE="$BASE_SHA..$HEAD_SHA"
-          else
-            BEFORE_SHA="${{ github.event.before }}"
-            AFTER_SHA="${{ github.sha }}"
-
-            # caso primo commit / evento non standard
-            if [[ -z "$BEFORE_SHA" || "$BEFORE_SHA" == "0000000000000000000000000000000000000000" ]]; then
-              RANGE="$AFTER_SHA"
-            else
-              RANGE="$BEFORE_SHA..$AFTER_SHA"
-            fi
-          fi
-
-          bash .github/scripts/validate-commit-messages.sh "$RANGE"
+        env:
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_BEFORE_SHA: ${{ github.event.before }}
+          GITHUB_AFTER_SHA: ${{ github.sha }}
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: bash .github/scripts/validate-commit-messages.sh
 
       - name: Run install SUIT
         working-directory: frontend-e2e-framework
