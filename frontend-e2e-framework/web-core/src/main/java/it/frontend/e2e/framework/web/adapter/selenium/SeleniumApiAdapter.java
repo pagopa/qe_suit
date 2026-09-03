@@ -50,7 +50,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     public Optional<WebPresentationElement> findElement(XPathSelector selector) {
         try {
             WebPresentationElement webPresentationElement = withRetry(() -> {
-                WebElement webElement = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+                WebElement webElement = findVisibleWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
                 return toPresentationElement(selector, webElement);
             });
             return Optional.of(webPresentationElement);
@@ -171,7 +171,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public boolean isDisplayed(XPathSelector selector) {
         try {
-            return findWebElement(selector).isDisplayed();
+            return findVisibleWebElement(selector).isDisplayed();
         } catch (Exception e) {
             return false;
         }
@@ -180,7 +180,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public boolean isEnabled(XPathSelector selector) {
         try {
-            return findWebElement(selector).isEnabled();
+            return findVisibleWebElement(selector).isEnabled();
         } catch (Exception e) {
             return false;
         }
@@ -190,7 +190,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     public Optional<String> getText(XPathSelector selector) {
         try {
             String text = withRetry(() -> {
-                WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+                WebElement element = findVisibleWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
                 return resolveElementText(element);
             });
             return Optional.of(text);
@@ -208,7 +208,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void waitForElement(XPathSelector selector, long timeoutSeconds) {
-        findWebElement(selector, timeoutSeconds);
+        findVisibleWebElement(selector, timeoutSeconds);
     }
 
     @Override
@@ -339,13 +339,26 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
                 .until(ExpectedConditions.elementToBeClickable(toBy(selector)));
     }
 
+    /**
+     * Come {@link #findWebElement(XPathSelector, long)} ma non richiede che l'elemento sia
+     * "clickable" (cioè abilitato). Da usare per le operazioni di sola lettura (findElement,
+     * getText, isDisplayed, isEnabled, waitForElement), in modo da poter individuare e ispezionare
+     * anche elementi disabilitati (es. bottoni con attributo HTML "disabled" o classe
+     * "Mui-disabled"), che con elementToBeClickable non verrebbero mai trovati e causerebbero
+     * un timeout seguito da Optional.empty().
+     */
+    private WebElement findVisibleWebElement(XPathSelector selector, long timeoutSeconds) {
+        return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
+                .until(ExpectedConditions.visibilityOfElementLocated(toBy(selector)));
+    }
+
+    private WebElement findVisibleWebElement(XPathSelector selector) {
+        return findVisibleWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+    }
+
     private List<WebElement> findWebElements(XPathSelector selector, long timeoutSeconds) {
         return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
                 .until(ExpectedConditions.presenceOfAllElementsLocatedBy(toBy(selector)));
-    }
-
-    private WebElement findWebElement(XPathSelector selector) {
-        return findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
     }
 
     private List<WebElement> findWebElements(XPathSelector selector) {
