@@ -1,6 +1,6 @@
 @agreement
 @channel:Given=BFF,When=WEB,Then=WEB
-Feature: Creazione di una richiesta di fruizione verso un EService
+Feature: La consultazione della pagina di fruizione di un eservice deve restituire messaggi idonei caso per caso
 
   Come Aderente interessato alla fruizione di un EService in catalogo
   Voglio inoltrare una richiesta di fruizione verso l'erogatore del servizio
