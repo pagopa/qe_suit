@@ -6,6 +6,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.utils.async.PollingUtils;
@@ -46,6 +47,13 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     public EServiceJourneyImpl addDescriptor(EService eService, EServiceDescriptorState state) {
         EServiceDescriptor eServiceDescriptor = eServiceDescriptorUseCase.addDescriptor(eService);
         return processLifecycle(eService, eServiceDescriptor, state);
+    }
+
+    @Override
+    public EServiceJourneyImpl archiveEService(GracePeriodDays gracePeriodDays) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        eServiceUseCase.archiveEService(eService, gracePeriodDays);
+        return this;
     }
 
     @Override
