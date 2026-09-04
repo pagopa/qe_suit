@@ -80,6 +80,11 @@ public class BffAgreementGateway implements AgreementGateway {
                 .get();
     }
 
+    @Override
+    public void shouldSeeBannerAdvisingTheUpdateOfTheAgreement(EService eService) {
+        throw new UnsupportedOperationException("[BFF] shouldSeeBannerAdvisingTheUpdateOfTheAgreement Not supported yet.");
+    }
+
 
     @Override
     public boolean supports(Channel delimiter) {

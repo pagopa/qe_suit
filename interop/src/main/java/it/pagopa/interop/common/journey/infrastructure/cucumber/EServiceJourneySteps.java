@@ -2,6 +2,7 @@ package it.pagopa.interop.common.journey.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
+import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -53,6 +54,33 @@ public class EServiceJourneySteps {
                 .linkAgreement(AgreementState.ACTIVE)
                 .withProducer(producer, UserRole.ADMIN)
                 .addDescriptor(EServiceDescriptorState.PUBLISHED)
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
+    }
+
+    @Given("un EService/eservice creato dal {tenant} con versione v2 attiva e con fruizione attiva di {tenant}")
+    public void createEserviceToBeArchivedWithNewVersionAndActiveAgreement(Tenant producer, Tenant consumer) {
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .addDescriptor(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .withProducer(producer, UserRole.ADMIN)
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
+    }
+
+    @Given("un EService/eservice in archiviazione creato dal {tenant} con una versione in archiviazione dopo la fruizione di {tenant}")
+    public void createEserviceToBeArchivedWithArchivedVersionAndActiveAgreement(Tenant producer, Tenant consumer) {
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .withProducer(producer, UserRole.ADMIN)
+                // ARCHIVE descriptor
+                // ARCHIVE eservice
+
+                // wait until eservice descriptor is ARCHIVED
                 .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
     }
 }
