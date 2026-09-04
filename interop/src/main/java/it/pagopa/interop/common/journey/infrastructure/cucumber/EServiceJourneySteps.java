@@ -74,11 +74,13 @@ public class EServiceJourneySteps {
         interopJourney
                 .withProducer(producer, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
-                // ARCHIVE descriptor
-                // ARCHIVE eservice
                 .withConsumer(consumer, UserRole.ADMIN)
                 .linkAgreement(AgreementState.ACTIVE)
                 .withProducer(producer, UserRole.ADMIN)
+                // ARCHIVE descriptor
+                // ARCHIVE eservice
+
+                // wait until eservice descriptor is ARCHIVED
                 .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
     }
 }
