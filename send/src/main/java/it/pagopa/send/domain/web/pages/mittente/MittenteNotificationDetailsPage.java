@@ -13,7 +13,7 @@ import it.pagopa.send.web.notification_details.infrastructure.suit.section.Payme
 import it.pagopa.infrastructure.suit.component.Chip;
 import org.assertj.core.api.Assertions;
 
-@Url("${url.notifiche.mittente.dashboard}#selfCareToken=${token.mittente}")
+@Url("${url.notifiche.mittente.dashboard}/${iun}/dettaglio")
 public interface MittenteNotificationDetailsPage extends NotificationDetailsPage {
 
     @XPath("//*[@id=\"title-of-page\"]")
@@ -165,10 +165,13 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
     @Override
     default void assertLoaded() {
 //        seeDetailsButton().click();
-        breadcrumbs().readAndAssert((h) -> {
+       /* breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
             Assertions.assertThat(h).isIn("Dettaglio notifica", "Notification details");
-        });
+        });*/
+
+        notificationSummarySection().assertLoaded();
+
     }
 
 
