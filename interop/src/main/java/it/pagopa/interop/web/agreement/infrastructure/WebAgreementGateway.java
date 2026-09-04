@@ -50,6 +50,11 @@ public class WebAgreementGateway implements AgreementGateway {
     }
 
     @Override
+    public void shouldSeeBannerAdvisingTheUpdateOfTheAgreement(EService eService) {
+
+    }
+
+    @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.WEB_BROWSER;
     }
