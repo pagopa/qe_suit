@@ -20,7 +20,7 @@ public interface EServiceDetailPage extends Page {
 
     Breadcrumbs breadcrumbs();
 
-    @XPath(".//button[contains(text(),'Richiedi fruizione')]")
+    @XPath(".//button[normalize-space()='Richiedi fruizione']")
     Button agreementButton();
 
     @Override
