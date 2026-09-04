@@ -45,4 +45,8 @@ public class AgreementUseCase {
     public Agreement submitAgreement(Agreement agreement) {
         return agreementGateway.submitAgreement(agreement);
     }
+
+    public void shouldSeeBannerAdvisingTheUpdateOfTheAgreement(EService eService) {
+        agreementGateway.shouldSeeBannerAdvisingTheUpdateOfTheAgreement(eService);
+    }
 }
