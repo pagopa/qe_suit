@@ -22,16 +22,6 @@ public class AgreementSteps {
         agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor());
     }
 
-    @Given("un {currentEService} creato dal {tenant} con versione v2 attiva e con fruizione attiva di {tenant}")
-    public void createEserviceToBeArchivedWithNewVersionAndActiveAgreement(EService eService, Tenant producer, Tenant consumer) {
-        throw new UnsupportedOperationException("createEserviceToBeArchivedWithNewVersionAndActiveAgreement Not supported yet.");
-    }
-
-    @Given("un {currentEService} in archiviazione creato dal {tenant} con una versione in archiviazione dopo la fruizione di {tenant}")
-    public void createEserviceToBeArchivedWithArchivedVersionAndActiveAgreement(EService eService, Tenant producer, Tenant consumer) {
-        throw new UnsupportedOperationException("createEserviceToBeArchivedWithActiveAgreement Not supported yet.");
-    }
-
     @When("il sistema impedisce a/al {tenant} di inoltrare una richiesta di fruizione per la {currentDeprecatedEServiceDescriptor} dell'{currentEService}")
     public void createAgreement(Tenant consumer, EServiceDescriptor eServiceDescriptor, EService eService) {
         currentUserSession.set(User.getTenantAdmin(consumer), consumer);
