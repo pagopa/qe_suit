@@ -2,6 +2,7 @@ package it.frontend.e2e.framework.web.adapter.selenium;
 
 import it.frontend.e2e.framework.core.assertion.AssertionAction;
 import it.frontend.e2e.framework.core.model.selector.XPathSelector;
+import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
 import org.junit.jupiter.api.DisplayName;
@@ -164,7 +165,7 @@ class SeleniumApiAdapterTest {
         when(js.executeScript(anyString(), eq(second))).thenReturn(Map.of("data-id", "2"));
 
         SeleniumApiAdapter adapter = new SeleniumApiAdapter(driver);
-        Optional<List<WebPresentationElement>> elements = adapter.findElements(XPathSelector.of("//li[@class='item']"));
+        Optional<List<WebPresentationElement>> elements = adapter.findElements(XPathSelector.of("//li[@class='item']"), FindPolicy.PRESENT);
 
         assertTrue(elements.isPresent());
         assertEquals(2, elements.get().size());
