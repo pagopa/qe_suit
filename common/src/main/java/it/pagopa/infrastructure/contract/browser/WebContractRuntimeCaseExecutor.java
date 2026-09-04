@@ -25,11 +25,13 @@ final class WebContractRuntimeCaseExecutor {
             User user,
             Tenant tenant,
             Class<P> pageType,
+            String[] pathParams,
             WebScenario<P> scenario
     ) {
         Objects.requireNonNull(user, "user must not be null");
         Objects.requireNonNull(tenant, "tenant must not be null");
         Objects.requireNonNull(pageType, "pageType must not be null");
+        Objects.requireNonNull(pathParams, "pathParams must not be null");
         Objects.requireNonNull(scenario, "scenario must not be null");
 
         currentUserSession.set(user, tenant);
@@ -38,7 +40,7 @@ final class WebContractRuntimeCaseExecutor {
         try {
             P page = gateway.bind(pageType);
 
-            page.navigateTo();
+            page.navigateTo(pathParams);
             page.assertLoaded();
 
             scenario.action().accept(page);
