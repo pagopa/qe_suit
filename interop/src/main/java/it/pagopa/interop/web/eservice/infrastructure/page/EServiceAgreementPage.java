@@ -10,7 +10,7 @@ import org.assertj.core.api.SoftAssertions;
 
 import java.util.Optional;
 
-@Url("${interop.web.catalog}/${agreementId}")
+@Url("${interop.web.agreement}/${agreementId}")
 public interface EServiceAgreementPage extends Page {
 
     @XPath(".//h1")
