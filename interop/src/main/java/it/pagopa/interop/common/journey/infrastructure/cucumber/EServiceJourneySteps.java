@@ -85,6 +85,33 @@ public class EServiceJourneySteps {
                 .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
     }
 
+    @Given("un EService/eservice creato dal {tenant} con versione v2 attiva e con fruizione attiva di {tenant}")
+    public void createEserviceToBeArchivedWithNewVersionAndActiveAgreement(Tenant producer, Tenant consumer) {
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .addDescriptor(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .withProducer(producer, UserRole.ADMIN)
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
+    }
+
+    @Given("un EService/eservice in archiviazione creato dal {tenant} con una versione in archiviazione dopo la fruizione di {tenant}")
+    public void createEserviceToBeArchivedWithArchivedVersionAndActiveAgreement(Tenant producer, Tenant consumer) {
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .withProducer(producer, UserRole.ADMIN)
+                // ARCHIVE descriptor
+                // ARCHIVE eservice
+
+                // wait until eservice descriptor is ARCHIVED
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
+    }
+
     @Given("un EService creato dal {tenant} con una versione divenuta deprecata dopo la fruizione di {tenant} ed EService in archiviazione")
     public void createDeprecatedAndArchivedEserviceDescriptor(Tenant producer, Tenant consumer){
         interopJourney
