@@ -12,7 +12,7 @@ public interface Button extends Component, Clickable, Readable<String> {
     String SELECTED_CLASS = "Mui-selected";
 
     default boolean isDisabled() {
-        return this.get()
+        return this.get(FindPolicy.PRESENT)
                 .map(we -> we.getClasses().contains(DISABLED_CLASS))
                 .orElseThrow(() -> new java.util.NoSuchElementException(
                         "Impossibile verificare lo stato del button: l'elemento UI non è presente nella pagina."
@@ -20,7 +20,8 @@ public interface Button extends Component, Clickable, Readable<String> {
     }
 
     default boolean isSelected() {
-        return this.get().map(we -> we.getClasses().contains(SELECTED_CLASS))
+        return this.get(FindPolicy.PRESENT)
+                .map(we -> we.getClasses().contains(SELECTED_CLASS))
                 .orElseThrow(() -> new java.util.NoSuchElementException(
                         "Impossibile verificare lo stato del button: l'elemento UI non è presente nella pagina."
                 ));
@@ -28,7 +29,7 @@ public interface Button extends Component, Clickable, Readable<String> {
 
     @Override
     default void assertLoaded() {
-        this.get(FindPolicy.VISIBLE)
+        this.get(FindPolicy.PRESENT)
                 .orElseThrow(() -> new java.util.NoSuchElementException(
                         "Impossibile verificare lo stato del button: l'elemento UI non è presente nella pagina."
                 ));
