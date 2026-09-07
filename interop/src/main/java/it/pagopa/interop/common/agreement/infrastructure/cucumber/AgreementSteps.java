@@ -34,7 +34,6 @@ public class AgreementSteps {
 
     @Given("un {currentEService} in archiviazione creato dal {tenant} con una versione in archiviazione dopo la fruizione di {tenant}")
     public void createEserviceToBeArchivedWithArchivedVersionAndActiveAgreement(EService eService, Tenant producer, Tenant consumer) {
-        throw new UnsupportedOperationException("createEserviceToBeArchivedWithActiveAgreement Not supported yet.");
         Agreement agreement = agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor());
         entityStore.upsert(agreement);
     }
@@ -60,26 +59,8 @@ public class AgreementSteps {
     @Then("il sistema mostra a {tenant} un banner di informazioni che denota la versione obsoleta dell'{currentEService}")
     public void consultAgreementPageAndSeeBanner2(Tenant consumer, EService eService){
         currentUserSession.set(User.getTenantAdmin(consumer), consumer);
-        agreementUseCase.shouldSeeBannerAdvisingTheUpdateOfTheAgreement(eService);
+        agreementUseCase.shouldSeeBannerNotifyingThatAgreementIsLinkedToOldVersion(eService);
     }
-
-    @Then("il sistema mostra a {tenant} un banner di informazioni che denota la versione obsoleta dell'{currentEService} con possibilità di aggiornare ad una nuova versione")
-    public void consultAgreementPageAndSeeBanner1(Tenant consumer, EService eService){
-        currentUserSession.set(User.getTenantAdmin(consumer), consumer);
-        agreementUseCase.shouldSeeBannerAdvisingTheUpdateOfTheAgreement(eService);
-    }
-
-    @Then("il sistema mostra a {tenant} un banner di informazioni che denota la versione obsoleta dell'{currentEService}")
-    public void consultAgreementPageAndSeeBanner2(Tenant consumer, EService eService){
-        currentUserSession.set(User.getTenantAdmin(consumer), consumer);
-        agreementUseCase.shouldSeeBannerAdvisingTheUpdateOfTheAgreement(eService);
-    }
-
-    @Then("il sistema non mostra alcun banner al {tenant}")
-    public void consultAgreementPageAndSeeNoBanner(Tenant consumer){
-        throw new UnsupportedOperationException("consultAgreementPageAndSeeNoBanner Not supported yet.");
-    }
-
 
     @Then("il sistema non mostra alcun banner al {tenant}")
     public void consultAgreementPageAndSeeNoBanner(Tenant consumer){

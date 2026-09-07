@@ -43,11 +43,14 @@ public interface EServiceAgreementPage extends Page {
                     banner1().isPresent()
             );
 
+
+            final String message = "Questa versione dell’e-service è obsoleta, ma è ancora attiva. È disponibile una nuova versione.";
             softly.assertThat(
                     banner1().get().readAndAssert(text ->
                             Assertions.assertThat(text)
                                     .as("Banner1 text")
-                                    .contains("Questa versione dell’e-service è obsoleta, ma è ancora attiva. È disponibile una nuova versione.")
+                                    .contains(message)
+                                    .hasSize(message.length())
                     )
             );
         });
@@ -63,11 +66,13 @@ public interface EServiceAgreementPage extends Page {
                     banner2().isPresent()
             );
 
+            final String message = "Questa versione dell’e-service è obsoleta, ma è ancora attiva.";
             softly.assertThat(
                     banner2().get().readAndAssert(text ->
                             Assertions.assertThat(text)
                                     .as("Banner1 text")
-                                    .contains("Questa versione dell’e-service è obsoleta, ma è ancora attiva.")
+                                    .contains(message)
+                                    .hasSize(message.length())
                     )
             );
         });

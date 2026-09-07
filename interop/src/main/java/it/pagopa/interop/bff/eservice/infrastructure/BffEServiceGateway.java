@@ -76,6 +76,18 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void archiveEServiceDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays) {
+        EServiceArchivingSeed payload = Instancio.of(EServiceArchivingSeed.class)
+                .set(field(EServiceArchivingSeed::getGracePeriodDays), it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays.fromValue(gracePeriodDays.getDays()))
+                .set(field(EServiceArchivingSeed::getArchivingReason), RandomUtils.randomAlphanumericName("archiving-reason"))
+                .create();
+
+        restClient.scheduleArchiveEservice(eServiceRef.id(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
     }
