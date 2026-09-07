@@ -87,6 +87,12 @@ public class BffAgreementGateway implements AgreementGateway {
 
 
     @Override
+    public void shouldSeeBannerNotifyingThatAgreementIsLinkedToOldVersion(EService eService) {
+        throw new UnsupportedOperationException("[BFF] shouldSeeBannerNotifyingThatAgreementIsLinkedToOldVersion Not supported yet.");
+    }
+
+
+    @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
     }
