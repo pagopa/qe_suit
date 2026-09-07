@@ -57,7 +57,8 @@ public class AgreementSteps {
 
     @Then("il sistema mostra a {tenant} un banner di informazioni che denota la versione obsoleta dell'{currentEService}")
     public void consultAgreementPageAndSeeBanner2(Tenant consumer, EService eService){
-        throw new UnsupportedOperationException("consultAgreementPageAndSeeBanner2 Not supported yet.");
+        currentUserSession.set(User.getTenantAdmin(consumer), consumer);
+        agreementUseCase.shouldSeeBannerAdvisingTheUpdateOfTheAgreement(eService);
     }
 
     @Then("il sistema non mostra alcun banner al {tenant}")

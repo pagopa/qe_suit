@@ -49,4 +49,8 @@ public class AgreementUseCase {
     public void shouldSeeBannerAdvisingTheUpdateOfTheAgreement(EService eService) {
         agreementGateway.shouldSeeBannerAdvisingTheUpdateOfTheAgreement(eService);
     }
+
+    public void shouldSeeBannerNotifyingThatAgreementIsLinkedToOldVersion(EService eService) {
+        agreementGateway.shouldSeeBannerNotifyingThatAgreementIsLinkedToOldVersion(eService);
+    }
 }
