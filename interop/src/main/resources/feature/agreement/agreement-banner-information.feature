@@ -30,8 +30,8 @@ Feature: La consultazione della pagina di fruizione di un eservice deve restitui
   quando il Fruitore tenta di consultare la pagina relativa alla sua richiesta di fruizione,
   allora il Fruitore non vede alcun banner
 
-    Given un EService creato dal Comune di Milano con versione v2 attiva e con fruizione attiva di PagoPA
-    Then il sistema non mostra alcun banner al Comune di Pozzallo
+    Given un EService in archiviazione creato dal Comune di Milano con versione v2 attiva e con fruizione attiva di PagoPA
+    Then il sistema non mostra alcun banner al PagoPA per l'agreement del EService
 
 
   Scenario: [AGREEMENT_BANNER_INFORMATION_4] - Assenza banner per v1 in archiviazione con eservice in archiviazione con richiesta di fruizione **non** aggiornabile
@@ -40,5 +40,5 @@ Feature: La consultazione della pagina di fruizione di un eservice deve restitui
   allora il Fruitore non vede alcun banner
 
     Given un EService in archiviazione creato dal Comune di Milano con una versione in archiviazione dopo la fruizione di PagoPA
-    Then il sistema non mostra alcun banner al Comune di Pozzallo
+    Then il sistema non mostra alcun banner al PagoPA per l'agreement del EService
 
