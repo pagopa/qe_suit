@@ -33,4 +33,6 @@ public interface AgreementGateway extends Plugin<Channel> {
     void shouldSeeBannerAdvisingTheUpdateOfTheAgreement(EService eService);
 
     void shouldSeeBannerNotifyingThatAgreementIsLinkedToOldVersion(EService eService);
+
+    void shouldNotSeeAnyBanner(EService currentEService);
 }

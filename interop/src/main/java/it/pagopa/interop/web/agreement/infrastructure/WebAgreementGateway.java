@@ -88,6 +88,21 @@ public class WebAgreementGateway implements AgreementGateway {
     }
 
     @Override
+    public void shouldNotSeeAnyBanner(EService eService) {
+        Agreement agreement = entityStore.find(
+                Agreement.class,
+                currentAgreement -> currentAgreement.getEserviceId().equals(eService.getId())
+                        && currentAgreement.getConsumerId().equals(currentUserSession.getTenant().getOrganizationId())
+        ).orElseThrow(() -> new IllegalStateException(
+                "No agreement found in scenario context for e-service %s and consumer %s"
+                        .formatted(eService.getId(), currentUserSession.getTenant())
+        ));
+
+        eServiceAgreementPage.navigateTo(agreement.getId().toString());
+        eServiceAgreementPage.assertLoadedNoBanners();
+    }
+
+    @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.WEB_BROWSER;
     }

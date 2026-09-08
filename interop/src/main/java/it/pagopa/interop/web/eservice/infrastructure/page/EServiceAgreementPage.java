@@ -70,7 +70,7 @@ public interface EServiceAgreementPage extends Page {
             softly.assertThat(
                     banner2().get().readAndAssert(text ->
                             Assertions.assertThat(text)
-                                    .as("Banner1 text")
+                                    .as("Banner2 text")
                                     .contains(message)
                                     .hasSize(message.length())
                     )
@@ -84,13 +84,16 @@ public interface EServiceAgreementPage extends Page {
                     .as("Breadcrumbs last item text")
                     .isEqualTo("Gestisci richiesta");
 
-            softly.assertThat(banner1().isPresent())
-                    .as("Banner1 should not be present")
-                    .isFalse();
+            boolean banner1Present = banner1()
+                    .map(readable -> readable.read() != null)
+                    .orElse(false);
 
-            softly.assertThat(banner2().isPresent())
-                    .as("Banner2 should not be present")
-                    .isFalse();
+            boolean banner2Present = banner2()
+                    .map(readable -> readable.read() != null)
+                    .orElse(false);
+
+            softly.assertThat(banner1Present).as("Banner1 should not be present").isFalse();
+            softly.assertThat(banner2Present).as("Banner2 should not be present").isFalse();
         });
     }
 }

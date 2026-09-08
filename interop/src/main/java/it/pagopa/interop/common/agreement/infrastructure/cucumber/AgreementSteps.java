@@ -26,18 +26,13 @@ public class AgreementSteps {
         entityStore.upsert(agreement);
     }
 
-    @When("il sistema impedisce a/al {tenant} di inoltrare una richiesta di fruizione per la {currentArchivedEServiceDescriptor} dell'{currentEService}")
-    @Given("un {currentEService} creato dal {tenant} con versione v2 attiva e con fruizione attiva di {tenant}")
-    public void createEserviceToBeArchivedWithNewVersionAndActiveAgreement(EService eService, Tenant producer, Tenant consumer) {
-        throw new UnsupportedOperationException("createEserviceToBeArchivedWithNewVersionAndActiveAgreement Not supported yet.");
-    }
-
     @Given("un {currentEService} in archiviazione creato dal {tenant} con una versione in archiviazione dopo la fruizione di {tenant}")
     public void createEserviceToBeArchivedWithArchivedVersionAndActiveAgreement(EService eService, Tenant producer, Tenant consumer) {
         Agreement agreement = agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor());
         entityStore.upsert(agreement);
     }
 
+    @When("il sistema impedisce a/al {tenant} di inoltrare una richiesta di fruizione per la {currentArchivedEServiceDescriptor} dell'{currentEService}")
     @When("il sistema impedisce a/al {tenant} di inoltrare una richiesta di fruizione per la {currentDeprecatedEServiceDescriptor} dell'{currentEService}")
     public void createAgreement(Tenant consumer, EServiceDescriptor eServiceDescriptor, EService eService) {
         currentUserSession.set(User.getTenantAdmin(consumer), consumer);
@@ -62,9 +57,10 @@ public class AgreementSteps {
         agreementUseCase.shouldSeeBannerNotifyingThatAgreementIsLinkedToOldVersion(eService);
     }
 
-    @Then("il sistema non mostra alcun banner al {tenant}")
-    public void consultAgreementPageAndSeeNoBanner(Tenant consumer){
-        throw new UnsupportedOperationException("consultAgreementPageAndSeeNoBanner Not supported yet.");
+    @Then("il sistema non mostra alcun banner al {tenant} per l'agreement del {currentEService}")
+    public void consultAgreementPageAndSeeNoBanner(Tenant consumer, EService currentEService){
+        currentUserSession.set(User.getTenantAdmin(consumer), consumer);
+        agreementUseCase.shouldNotSeeAnyBanner(currentEService);
     }
 
 }
