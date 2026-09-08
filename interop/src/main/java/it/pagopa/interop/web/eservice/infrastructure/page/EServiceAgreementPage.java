@@ -39,20 +39,14 @@ public interface EServiceAgreementPage extends Page {
                     .as("Breadcrumbs last item text")
                     .isEqualTo("Gestisci richiesta");
 
-            softly.assertThat(
-                    banner1().isPresent()
-            );
-
+            softly.assertThat(banner1())
+                    .as("Banner1 should be present")
+                    .isPresent();
 
             final String message = "Questa versione dell’e-service è obsoleta, ma è ancora attiva. È disponibile una nuova versione.";
-            softly.assertThat(
-                    banner1().get().readAndAssert(text ->
-                            Assertions.assertThat(text)
-                                    .as("Banner1 text")
-                                    .contains(message)
-                                    .hasSize(message.length())
-                    )
-            );
+            softly.assertThat(banner1().map(Readable::read).orElse(null))
+                    .as("Banner1 text")
+                    .isEqualTo(message);
         });
     }
 
