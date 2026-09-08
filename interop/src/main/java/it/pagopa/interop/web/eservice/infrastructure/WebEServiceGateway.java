@@ -5,6 +5,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.web.eservice.application.WebEServiceCreationCommand;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreationPage;
@@ -39,6 +40,11 @@ public class WebEServiceGateway implements EServiceGateway {
     @Override
     public void archiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
         throw new UnsupportedOperationException("Archiving an EService is not supported on the WEB_BROWSER channel");
+    }
+
+    @Override
+    public void archiveEServiceDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays) {
+        throw new UnsupportedOperationException("archiveEServiceDescriptor is not supported on the WEB_BROWSER channel");
     }
 
     @Override

@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice.application;
 
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,5 +32,9 @@ public class EServiceUseCase {
 
     public void archiveEService(EService eService, GracePeriodDays gracePeriodDays) {
         eServiceGateway.archiveEService(eService.getRef(), gracePeriodDays);
+    }
+
+    public void archiveEServiceDescriptor(EService eService, EServiceDescriptor descriptor, GracePeriodDays gracePeriodDays) {
+        eServiceGateway.archiveEServiceDescriptor(eService.getRef(), descriptor.getRef(), gracePeriodDays);
     }
 }

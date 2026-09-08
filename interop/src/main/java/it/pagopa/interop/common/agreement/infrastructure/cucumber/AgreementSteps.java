@@ -1,8 +1,11 @@
 package it.pagopa.interop.common.agreement.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.agreement.application.AgreementUseCase;
+import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
@@ -15,10 +18,12 @@ import lombok.RequiredArgsConstructor;
 public class AgreementSteps {
     private final AgreementUseCase agreementUseCase;
     private final CurrentUserSession currentUserSession;
+    private final EntityStore entityStore;
 
     @Given("associa un Agreement in stato DRAFT all'{currentEService}")
     public void createAgreement(EService eService) {
-        agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor());
+        Agreement agreement = agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor());
+        entityStore.upsert(agreement);
     }
 
     @When("il sistema impedisce a/al {tenant} di inoltrare una richiesta di fruizione per la {currentArchivedEServiceDescriptor} dell'{currentEService}")
@@ -33,4 +38,23 @@ public class AgreementSteps {
         };
         agreementUseCase.shouldFailToCreateAgreement(eService, eServiceDescriptor, reason);
     }
+
+    @Then("il sistema mostra a {tenant} un banner di informazioni che denota la versione obsoleta dell'{currentEService} con possibilità di aggiornare ad una nuova versione")
+    public void consultAgreementPageAndSeeBanner1(Tenant consumer, EService eService){
+        currentUserSession.set(User.getTenantAdmin(consumer), consumer);
+        agreementUseCase.shouldSeeBannerAdvisingTheUpdateOfTheAgreement(eService);
+    }
+
+    @Then("il sistema mostra a {tenant} un banner di informazioni che denota la versione obsoleta dell'{currentEService}")
+    public void consultAgreementPageAndSeeBanner2(Tenant consumer, EService eService){
+        currentUserSession.set(User.getTenantAdmin(consumer), consumer);
+        agreementUseCase.shouldSeeBannerNotifyingThatAgreementIsLinkedToOldVersion(eService);
+    }
+
+    @Then("il sistema non mostra alcun banner al {tenant} per l'agreement del {currentEService}")
+    public void consultAgreementPageAndSeeNoBanner(Tenant consumer, EService currentEService){
+        currentUserSession.set(User.getTenantAdmin(consumer), consumer);
+        agreementUseCase.shouldNotSeeAnyBanner(currentEService);
+    }
+
 }

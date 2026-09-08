@@ -44,6 +44,19 @@ public class EServiceJourneySteps {
                 .linkAgreement(AgreementState.ACTIVE);
     }
 
+    @Given("un EService/eservice in archiviazione creato da/dal {tenant} con una versione divenuta DEPRECATED/deprecata dopo la fruizione di/del {tenant}")
+    public void createDeprecatedEServiceDescriptorInArchivingEService(Tenant producer, Tenant consumer) {
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .withProducer(producer, UserRole.ADMIN)
+                .addDescriptor(EServiceDescriptorState.PUBLISHED)
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED)
+                .archiveEService(GracePeriodDays.NUMBER_60);
+    }
+
     @Given("un EService/eservice creato da/dal {tenant} con un descrittore divenuto DEPRECATED/deprecato dopo la fruizione di/del {tenant}")
     @Given("un EService/eservice creato da/dal {tenant} con una versione divenuta DEPRECATED/deprecata dopo la fruizione di/del {tenant}")
     public void createDeprecatedEServiceDescriptor(Tenant producer, Tenant consumer) {
@@ -55,6 +68,31 @@ public class EServiceJourneySteps {
                 .withProducer(producer, UserRole.ADMIN)
                 .addDescriptor(EServiceDescriptorState.PUBLISHED)
                 .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
+    }
+
+    @Given("un EService in archiviazione creato dal {tenant} con versione v2 attiva e con fruizione attiva di {tenant}")
+    public void createEserviceToBeArchivedWithNewVersionAndActiveAgreement(Tenant producer, Tenant consumer) {
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .addDescriptor(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .withProducer(producer, UserRole.ADMIN)
+                .archiveEService(GracePeriodDays.NUMBER_60)
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVED);
+    }
+
+    @Given("un EService/eservice in archiviazione creato dal {tenant} con una versione in archiviazione dopo la fruizione di {tenant}")
+    public void createEserviceToBeArchivedWithArchivedVersionAndActiveAgreement(Tenant producer, Tenant consumer) {
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .withProducer(producer, UserRole.ADMIN)
+                .archiveEService(GracePeriodDays.NUMBER_60)
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVING);
     }
 
     @Given("un EService creato dal {tenant} con una versione divenuta deprecata dopo la fruizione di {tenant} ed EService in archiviazione")

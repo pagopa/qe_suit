@@ -13,6 +13,7 @@ import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Component
@@ -71,6 +72,19 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         );
 
         return this;
+    }
+    @Override
+    public EServiceJourneyImpl archiveEServiceDescriptor(Function<EService, EServiceDescriptor> descriptorSelector,
+                                                         GracePeriodDays gracePeriodDays) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        EServiceDescriptor descriptor = descriptorSelector.apply(eService);
+        eServiceUseCase.archiveEServiceDescriptor(eService, descriptor, gracePeriodDays);
+        return this;
+    }
+
+    @Override
+    public EServiceJourneyImpl archiveEServiceDescriptor(GracePeriodDays gracePeriodDays) {
+        return archiveEServiceDescriptor(EService::getLastDeprecatedDescriptor, gracePeriodDays);
     }
 
     private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState targetState) {
