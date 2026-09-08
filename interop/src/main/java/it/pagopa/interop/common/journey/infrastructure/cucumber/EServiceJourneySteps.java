@@ -2,7 +2,6 @@ package it.pagopa.interop.common.journey.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
-import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.journey.application.InteropJourney;
@@ -80,8 +79,8 @@ public class EServiceJourneySteps {
                 .withConsumer(consumer, UserRole.ADMIN)
                 .linkAgreement(AgreementState.ACTIVE)
                 .withProducer(producer, UserRole.ADMIN)
-                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVED)
-                .archiveEService(GracePeriodDays.NUMBER_60);
+                .archiveEService(GracePeriodDays.NUMBER_60)
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVED);
     }
 
     @Given("un EService/eservice in archiviazione creato dal {tenant} con una versione in archiviazione dopo la fruizione di {tenant}")
