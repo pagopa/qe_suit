@@ -6,7 +6,7 @@ Feature: La consultazione della pagina di fruizione di un eservice deve restitui
   Voglio inoltrare una richiesta di fruizione verso l'erogatore del servizio
   Al fine di instaurare un Agreement che abiliti alle fasi successive necessarie a raggiungere la fruizione dell'EService.
 
-  # OK
+
   Scenario: [AGREEMENT_BANNER_INFORMATION_1] - Presenza banner per v1 obsoleta con richiesta di fruizione aggiornabile
   Dato un EService con una versione in stato DEPRECATED,
   quando il Fruitore tenta di consultare la pagina relativa alla sua richiesta di fruizione,
@@ -15,7 +15,7 @@ Feature: La consultazione della pagina di fruizione di un eservice deve restitui
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     Then il sistema mostra a PagoPA un banner di informazioni che denota la versione obsoleta dell'EService con possibilità di aggiornare ad una nuova versione
 
-  # OK
+
   Scenario: [AGREEMENT_BANNER_INFORMATION_2] - Presenza banner per v1 obsoleta con eservice in archiviazione e richiesta di fruizione **non** aggiornabile
   Dato un EService in fase di archiviazione con una versione in stato DEPRECATED,
   quando il Fruitore tenta di consultare la pagina relativa alla sua richiesta di fruizione,
@@ -24,7 +24,7 @@ Feature: La consultazione della pagina di fruizione di un eservice deve restitui
     Given un EService in archiviazione creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     Then il sistema mostra a PagoPA un banner di informazioni che denota la versione obsoleta dell'EService
 
-  # OK
+
   Scenario: [AGREEMENT_BANNER_INFORMATION_3] - Assenza banner per agreement verso v2 di un eservice in archiviazione con richiesta di fruizione **non** aggiornabile
   Dato un EService in fase di archiviazione con la sua v2 avente una richiesta di fruizione attiva non aggiornabile,
   quando il Fruitore tenta di consultare la pagina relativa alla sua richiesta di fruizione,
