@@ -83,7 +83,7 @@ public class BffEServiceGateway implements EServiceGateway {
         GracePeriodDaysSeed payload = Instancio.of(GracePeriodDaysSeed.class)
                 .set(
                         field(GracePeriodDaysSeed::getGracePeriodDays),
-                        GracePeriodDays.valueOf(String.valueOf(gracePeriodDays.getDays()))
+                        it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays.fromValue(gracePeriodDays.getDays())
                 )
                 .create();
 

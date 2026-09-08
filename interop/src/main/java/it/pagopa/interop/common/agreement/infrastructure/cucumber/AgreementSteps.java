@@ -26,12 +26,6 @@ public class AgreementSteps {
         entityStore.upsert(agreement);
     }
 
-    @Given("un {currentEService} in archiviazione creato dal {tenant} con una versione in archiviazione dopo la fruizione di {tenant}")
-    public void createEserviceToBeArchivedWithArchivedVersionAndActiveAgreement(EService eService, Tenant producer, Tenant consumer) {
-        Agreement agreement = agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor());
-        entityStore.upsert(agreement);
-    }
-
     @When("il sistema impedisce a/al {tenant} di inoltrare una richiesta di fruizione per la {currentArchivedEServiceDescriptor} dell'{currentEService}")
     @When("il sistema impedisce a/al {tenant} di inoltrare una richiesta di fruizione per la {currentDeprecatedEServiceDescriptor} dell'{currentEService}")
     public void createAgreement(Tenant consumer, EServiceDescriptor eServiceDescriptor, EService eService) {

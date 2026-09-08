@@ -92,7 +92,6 @@ public class EServiceJourneySteps {
                 .withConsumer(consumer, UserRole.ADMIN)
                 .linkAgreement(AgreementState.ACTIVE)
                 .withProducer(producer, UserRole.ADMIN)
-                .archiveEServiceDescriptor(GracePeriodDays.NUMBER_60)
                 .archiveEService(GracePeriodDays.NUMBER_60)
                 .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVING);
     }

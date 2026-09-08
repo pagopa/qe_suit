@@ -24,7 +24,7 @@ Feature: La consultazione della pagina di fruizione di un eservice deve restitui
     Given un EService in archiviazione creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     Then il sistema mostra a PagoPA un banner di informazioni che denota la versione obsoleta dell'EService
 
-
+  # OK
   Scenario: [AGREEMENT_BANNER_INFORMATION_3] - Assenza banner per agreement verso v2 di un eservice in archiviazione con richiesta di fruizione **non** aggiornabile
   Dato un EService in fase di archiviazione con la sua v2 avente una richiesta di fruizione attiva non aggiornabile,
   quando il Fruitore tenta di consultare la pagina relativa alla sua richiesta di fruizione,
