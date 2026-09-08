@@ -16,7 +16,7 @@ I moduli `common`, `interop` e `send` possono essere compilati anche in modo sel
 L’approccio consigliato è partire dal POM root e usare `-pl` insieme a `-am`:
 
 ```powershell
-mvn -f "C:\Users\vmassaro\Devel\PagoPa\qe_suit\qe_suit\pom.xml" -pl :interop-suite -am clean install -DskipTests
+mvn -f "C:\path\to\qe_suit\pom.xml" -pl :interop-suite -am clean install -DskipTests
 ```
 
 In questo esempio:
