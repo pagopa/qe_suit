@@ -8,4 +8,4 @@ Feature: Gestione ambito sicurezza relativo alle pagine delle richieste di fruiz
   allora il sistema blocca l'accesso al Fruitore alla pagina in sezione Erogazione da esso richiesta in quanto non autorizzato
 
     Given un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
-    Then il sistema impedisce l'accesso a PagoPA alla pagina indicata del Comune di Milano
+    Then il sistema impedisce l'accesso a PagoPA per la pagina indicata del Comune di Milano per la fruizione del EService
