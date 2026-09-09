@@ -8,6 +8,8 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
+import it.pagopa.interop.web.agreement.infrastructure.page.AgreementCatalogErogatorePage;
+import it.pagopa.interop.web.agreement.infrastructure.page.AgreementDetailErogatorePage;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDetailPage;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
 public class WebAgreementGateway implements AgreementGateway {
 
     private final EServiceDetailPage eServiceDetailPage;
+    private final AgreementCatalogErogatorePage agreementCatalogErogatorePage;
+    private final AgreementDetailErogatorePage agreementDetailErogatorePage;
 
     @Override
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
@@ -47,6 +51,18 @@ public class WebAgreementGateway implements AgreementGateway {
     @Override
     public Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support activateAgreement operation");
+    }
+
+    @Override
+    public void blockUnauthorizedAccessToErogazioneSection(String agreementRequestId) {
+        agreementDetailErogatorePage.navigateTo(agreementRequestId);
+        // assicurarsi di vedere che venga preso un 403 Forbidden
+    }
+
+    @Override
+    public String accessToErogazioneSection(EService eService) {
+        agreementCatalogErogatorePage.navigateTo();
+        return agreementCatalogErogatorePage.getFruitionRequestId(eService);
     }
 
     @Override

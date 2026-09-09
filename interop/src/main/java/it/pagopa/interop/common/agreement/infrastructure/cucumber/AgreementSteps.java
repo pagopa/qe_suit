@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.agreement.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.agreement.application.AgreementUseCase;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
@@ -15,6 +16,18 @@ import lombok.RequiredArgsConstructor;
 public class AgreementSteps {
     private final AgreementUseCase agreementUseCase;
     private final CurrentUserSession currentUserSession;
+
+    @Then("il sistema impedisce l'accesso a {tenant} per la pagina indicata del {tenant} per la fruizione del {currentEService}")
+    public void blockUnauthorizedAccessToErogazioneSection(Tenant consumer, Tenant producer, EService eService) {
+        if(consumer.getName().equals(producer.getName())){
+            throw new IllegalArgumentException("Consumer and Producer are the same; for this test they must be different");
+        }
+
+        currentUserSession.set(User.getTenantAdmin(producer), producer);
+        String agreementRequestId = agreementUseCase.accessToErogazioneSection(eService);
+        currentUserSession.set(User.getTenantAdmin(consumer), consumer);
+        agreementUseCase.blockUnauthorizedAccessToErogazioneSection(agreementRequestId);
+    }
 
     @Given("associa un Agreement in stato DRAFT all'{currentEService}")
     public void createAgreement(EService eService) {
