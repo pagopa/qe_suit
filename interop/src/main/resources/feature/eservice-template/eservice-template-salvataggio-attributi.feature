@@ -8,4 +8,5 @@ Feature: Gestione del salvataggio degli attributi nella pagina di configurazione
   allora il sistema non deve mostrare un messaggio di errore a video ma terminare piuttosto in maniera "soft" la richiesta
 
     Given un EService Template creato dal Comune di Milano
-    Then il Comune di Milano quando tenta di salvare attributi vuoti, il sistema non ritorna un messaggio di errore
+    When il Comune di Milano tenta di salvare attributi vuoti
+    Then il sistema non ritorna un messaggio di errore
