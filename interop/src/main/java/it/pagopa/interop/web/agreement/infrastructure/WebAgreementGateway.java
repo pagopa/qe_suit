@@ -56,7 +56,7 @@ public class WebAgreementGateway implements AgreementGateway {
     @Override
     public void blockUnauthorizedAccessToErogazioneSection(String agreementRequestId) {
         agreementDetailErogatorePage.navigateTo(agreementRequestId);
-        // assicurarsi di vedere che venga preso un 403 Forbidden
+        agreementDetailErogatorePage.assertNotLoaded();
     }
 
     @Override
