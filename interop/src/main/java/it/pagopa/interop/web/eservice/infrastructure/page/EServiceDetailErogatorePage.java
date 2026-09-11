@@ -23,7 +23,7 @@ public interface EServiceDetailErogatorePage extends Page {
     @XPath(".//button[normalize-space()='Salva modifiche']")
     Button saveAttribute();
 
-    @XPath("//*[normalize-space()='Inserisci le informazioni di contesto e il codice riportato sotto.']")
+    @XPath(".//p[contains(normalize-space(), 'Inserisci le informazioni di contesto e il codice riportato sotto')]")
     Readable<String> errorNotification();
 
     default String getErrorNotificationAfterAttemptingSaveOfEmptyAttribute() {
