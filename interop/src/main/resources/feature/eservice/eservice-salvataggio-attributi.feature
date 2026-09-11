@@ -9,4 +9,4 @@ Feature: Gestione del salvataggio degli attributi nella pagina di configurazione
 
     Given un EService creato dal Comune di Milano con un attributo dichiarato
     When il Comune di Milano tenta di salvare attributi vuoti per l'EService
-    Then il sistema non ritorna un messaggio di errore
+    Then il sistema non ritorna un messaggio di errore per l'EService
