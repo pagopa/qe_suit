@@ -19,7 +19,7 @@ public class EServiceSteps {
         eServiceDetailErogatorePage.assertLoaded();
     }
 
-    @Then("il sistema non ritorna un messaggio di errore")
+    @Then("il sistema non ritorna un messaggio di errore per l'EService")
     public void ilSistemaNonRitornaUnMessaggioDiErrore() {
         eServiceDetailErogatorePage.assertNoErrorNotification();
     }
