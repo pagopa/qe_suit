@@ -1,0 +1,43 @@
+package it.pagopa.interop.suite.contract;
+
+import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.bff.attribute.infrastructure.BffDeclaredAttributeRequestFactory;
+import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
+import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.infrastructure.contract.http.HttpContractValidator;
+import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestConstructor;
+
+import java.util.stream.Stream;
+
+@Execution(ExecutionMode.CONCURRENT)
+@SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+@RequiredArgsConstructor
+public class BffDeclaredAttributeContractTest {
+
+    private final ApiClient apiClient;
+    private final HttpContractValidator httpContractValidator;
+    private final InteropJourney interopJourney;
+    private final BffDeclaredAttributeRequestFactory requestFactory;
+
+    @TestFactory
+    Stream<DynamicTest> createDeclaredAttribute() {
+        return httpContractValidator
+                .apiCall(() -> {
+                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
+                    return apiClient.attributes().createDeclaredAttribute();
+                })
+                .payload(requestFactory::creationRequest)
+                .tests();
+    }
+}
