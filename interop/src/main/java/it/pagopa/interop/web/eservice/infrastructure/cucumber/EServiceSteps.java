@@ -1,11 +1,9 @@
 package it.pagopa.interop.web.eservice.infrastructure.cucumber;
 
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDetailErogatorePage;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDetailPage;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
