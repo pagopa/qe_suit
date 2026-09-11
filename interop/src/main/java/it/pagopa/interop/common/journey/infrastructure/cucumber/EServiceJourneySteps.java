@@ -16,7 +16,7 @@ public class EServiceJourneySteps {
     private final InteropJourney interopJourney;
 
     @Given("un EService creato dal {tenant}")
-    public void createEservice(Tenant producer) {
+    public void createEserviceWithAttributes(Tenant producer) {
         interopJourney
                 .withProducer(producer, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED);
