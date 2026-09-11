@@ -39,6 +39,7 @@ public class BffApiContractConfig {
                         FuzzScenario.REPLACED_WITH_BLANK_STRING,
                         FuzzScenario.REPLACED_WITH_LONG_STRING,
                         FuzzScenario.REPLACED_WITH_SQL_INJECTION,
+                        FuzzScenario.REPLACED_WITH_URL_INJECTION,
                         FuzzScenario.REPLACED_WITH_WRONG_TYPE_STRING,
                         FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER,
                         FuzzScenario.REPLACED_WITH_WRONG_TYPE_DECIMAL,
