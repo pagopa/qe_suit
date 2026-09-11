@@ -7,6 +7,6 @@ Feature: Gestione del salvataggio degli attributi nella pagina di configurazione
   quando l'Erogatore tenta di aggiungere un attributo vuoto (solo campi non inizializzati)
   allora il sistema non deve mostrare un messaggio di errore a video ma terminare piuttosto in maniera "soft" la richiesta
 
-    Given un EService creato dal Comune di Milano
+    Given un EService creato dal Comune di Milano con un attributo dichiarato
     When il Comune di Milano tenta di salvare attributi vuoti per l'EService
     Then il sistema non ritorna un messaggio di errore
