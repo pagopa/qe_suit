@@ -7,12 +7,10 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDetailPage;
 import lombok.RequiredArgsConstructor;
 
-import java.util.UUID;
-
 @RequiredArgsConstructor
 public class EServiceSteps {
 
-    EServiceDetailPage eServiceDetailPage;
+    final private EServiceDetailPage eServiceDetailPage;
 
     @When("il Comune di Milano tenta di salvare attributi vuoti per l'{currentEService}")
     public void ilComuneDiMilanoTentaDiSalvareAttributiVuotiPerLEService(EService eService) {

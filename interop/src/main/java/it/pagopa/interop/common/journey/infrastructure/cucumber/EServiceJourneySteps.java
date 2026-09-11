@@ -15,10 +15,11 @@ public class EServiceJourneySteps {
 
     private final InteropJourney interopJourney;
 
-    @Given("un EService creato dal {tenant}")
-    public void createEserviceWithAttributes(Tenant producer) {
+    @Given("un EService creato dal {tenant} con un attributo dichiarato")
+    public void createEserviceWithDeclaredAttribute(Tenant producer) {
         interopJourney
                 .withProducer(producer, UserRole.ADMIN)
+                .createDeclaredAttribute()
                 .createEService(EServiceDescriptorState.PUBLISHED);
     }
 
