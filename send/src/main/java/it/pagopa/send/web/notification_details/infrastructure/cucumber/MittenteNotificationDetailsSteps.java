@@ -2,7 +2,7 @@ package it.pagopa.send.web.notification_details.infrastructure.cucumber;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
-import it.pagopa.send.domain.web.pages.mittente.MittenteNotificationDetailsPage;
+import it.pagopa.send.web.notification_details.infrastructure.page.MittenteNotificationDetailsPage;
 import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import it.pagopa.send.web.notification_details.infrastructure.suit.NotificationStatusDetailsPage;
 import lombok.RequiredArgsConstructor;
