@@ -1,4 +1,4 @@
-package it.pagopa.send.b2b.delivery.infrastructure;
+package it.pagopa.send.bff.delivery.infrastructure;
 
 import it.pagopa.infrastructure.template.RestClient;
 import it.pagopa.infrastructure.template.action.TestChain;
@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 import java.util.function.Function;
 
 @Component
-public class B2BDeliveryRestClient extends RestClient {
+public class BffDeliveryRestClient extends RestClient {
     private final SenderReadB2BApi senderReadB2BApi;
 
-    public B2BDeliveryRestClient(TestChainFactory testChainFactory, SenderReadB2BApi senderReadB2BApi) {
+    public BffDeliveryRestClient(TestChainFactory testChainFactory, SenderReadB2BApi senderReadB2BApi) {
         super(testChainFactory);
         this.senderReadB2BApi = senderReadB2BApi;
     }

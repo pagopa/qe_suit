@@ -1,9 +1,9 @@
-package it.pagopa.send.b2b.delivery.infrastructure.config;
+package it.pagopa.send.bff.delivery.infrastructure.config;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
-import it.pagopa.send.common.domain.Tenant;
+import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.generated.openapi.clients.delivery.JacksonObjectMapper;
 import org.springframework.beans.factory.ObjectProvider;
