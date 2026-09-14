@@ -1,4 +1,4 @@
-package it.pagopa.send.service;
+package it.pagopa.send.bff.infrastructure;
 
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.Response;
@@ -6,7 +6,7 @@ import it.pagopa.send.generated.openapi.clients.bff.api.NotificationSentApi;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffPreLoadRequest;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffPreLoadResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.Problem;
-import it.pagopa.send.model.PreloadedDocument;
+import it.pagopa.send.common.legal_notification.domain.PreloadedDocument;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;

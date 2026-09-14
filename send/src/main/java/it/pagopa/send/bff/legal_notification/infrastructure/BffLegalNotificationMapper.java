@@ -1,19 +1,19 @@
-package it.pagopa.send.b2b.legalNotification.infrastructure;
+package it.pagopa.send.bff.legal_notification.infrastructure;
 
-import it.pagopa.send.common.domain.UserType;
+import it.pagopa.send.common.user.domain.UserType;
 import it.pagopa.send.common.infrastructure.config.SendMapperConfig;
-import it.pagopa.send.common.notification.domain.DocumentRef;
-import it.pagopa.send.common.notification.domain.FeePolicy;
-import it.pagopa.send.common.notification.domain.LegalNotificationCreationRequest;
-import it.pagopa.send.common.notification.domain.LegalNotificationDomain;
-import it.pagopa.send.common.notification.domain.NotificationRecipientSummary;
-import it.pagopa.send.common.notification.domain.NotificationStatus;
-import it.pagopa.send.common.notification.domain.PagoPaIntMode;
-import it.pagopa.send.common.notification.domain.PhysicalCommunicationType;
-import it.pagopa.send.common.notification.domain.ResolvedF24Payment;
-import it.pagopa.send.common.notification.domain.ResolvedPagoPaPayment;
-import it.pagopa.send.common.notification.domain.ResolvedPayment;
-import it.pagopa.send.common.notification.domain.ResolvedRecipient;
+import it.pagopa.send.common.legal_notification.domain.DocumentRef;
+import it.pagopa.send.common.legal_notification.domain.FeePolicy;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
+import it.pagopa.send.common.legal_notification.domain.NotificationRecipientSummary;
+import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
+import it.pagopa.send.common.legal_notification.domain.PagoPaIntMode;
+import it.pagopa.send.common.legal_notification.domain.PhysicalCommunicationType;
+import it.pagopa.send.common.legal_notification.domain.ResolvedF24Payment;
+import it.pagopa.send.common.legal_notification.domain.ResolvedPagoPaPayment;
+import it.pagopa.send.common.legal_notification.domain.ResolvedPayment;
+import it.pagopa.send.common.legal_notification.domain.ResolvedRecipient;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
@@ -29,13 +29,13 @@ import it.pagopa.send.generated.openapi.clients.bff.model.NotificationPaymentIte
 import it.pagopa.send.generated.openapi.clients.bff.model.NotificationPhysicalAddress;
 import it.pagopa.send.generated.openapi.clients.bff.model.NotificationRecipientV24;
 import it.pagopa.send.generated.openapi.clients.bff.model.PagoPaPayment;
-import it.pagopa.send.model.NotificationDefaults;
+import it.pagopa.send.common.legal_notification.domain.NotificationDefaults;
 import org.mapstruct.Mapper;
 
 import java.util.List;
 
 /**
- * Unico punto del canale B2B che conosce sia il dominio interno ({@link
+ * Unico punto del canale BFF che conosce sia il dominio interno ({@link
  * LegalNotificationCreationRequest}/{@link LegalNotificationDomain}) sia il DTO OpenAPI del BFF.
  * Le conversioni enum-to-enum a nomi allineati ({@link #toBffStatus}, {@link #toDomainStatus},
  * {@link #toBffFeePolicy}, ecc.) e la lista di {@link NotificationRecipientSummary} (campi
@@ -44,7 +44,7 @@ import java.util.List;
  * compongono quelle generate.
  */
 @Mapper(config = SendMapperConfig.class)
-public interface B2BLegalNotificationMapper {
+public interface BffLegalNotificationMapper {
 
     NotificationStatus toDomainStatus(BffNotificationStatus status);
 

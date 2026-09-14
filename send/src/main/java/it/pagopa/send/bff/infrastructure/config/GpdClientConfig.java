@@ -1,4 +1,4 @@
-package it.pagopa.send.infrastructure.config;
+package it.pagopa.send.bff.infrastructure.config;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.ObjectMapperConfig;

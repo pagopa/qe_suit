@@ -1,4 +1,4 @@
-package it.pagopa.send.b2b.delivery.infrastructure.cucumber;
+package it.pagopa.send.bff.delivery.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.infrastructure.channel.CurrentChannel;
@@ -8,13 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-public class B2BChannelSteps {
+public class BffChannelSteps {
 
     private final CurrentChannel<Channel> currentChannel;
 
-    @Given("una sessione HTTP programmatica su B2B")
+    @Given("una sessione HTTP programmatica su BFF")
     public void setB2BChannel() {
-        log.debug("Inizializzazione canale B2B");
-        currentChannel.setCurrentChannel(Channel.B2B);
+        log.debug("Inizializzazione canale BFF");
+        currentChannel.setCurrentChannel(Channel.BFF);
     }
 }
