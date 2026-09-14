@@ -44,6 +44,8 @@ public interface PurposeTemplateGeneralInfoPage extends Page {
 
     @Override
     default void assertLoaded() {
+        // TODO : adapt this page to the final version coming in version 2.24
+        //  this assertLoaded is for the current, still not correct version
         title().readAndAssert("Informazioni generali");
 
         SoftAssertions.assertSoftly(softly -> {
