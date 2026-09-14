@@ -1,4 +1,4 @@
-package it.pagopa.send.legalnotification.infrastructure;
+package it.pagopa.send.bff.legal_notification.infrastructure;
 
 import it.pagopa.infrastructure.template.RestClient;
 import it.pagopa.infrastructure.template.action.TestChain;
@@ -8,6 +8,7 @@ import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffLegalNotificationsResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
+import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationTimelineResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffRequestStatus;
 import org.springframework.stereotype.Component;
 
@@ -42,6 +43,13 @@ public class LegalNotificationRestClient extends RestClient {
         return execute(
                 () -> notificationSentApi.getSentNotificationV1().iunPath(iun).execute(Function.identity()),
                 BffFullNotificationV1.class
+        );
+    }
+
+    public TestChain<BffNotificationTimelineResponse> readTimeline(String iun) {
+        return execute(
+                () -> notificationSentApi.getSentNotificationTimelineV1().iunPath(iun).execute(Function.identity()),
+                BffNotificationTimelineResponse.class
         );
     }
 

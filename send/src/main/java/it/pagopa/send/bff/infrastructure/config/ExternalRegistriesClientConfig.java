@@ -1,9 +1,9 @@
-package it.pagopa.send.infrastructure.config;
+package it.pagopa.send.bff.infrastructure.config;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
-import it.pagopa.send.common.domain.Tenant;
+import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.generated.openapi.clients.externalregistries.ApiClient;
 import it.pagopa.send.generated.openapi.clients.externalregistries.JacksonObjectMapper;
 import it.pagopa.send.generated.openapi.clients.externalregistries.api.InfoPaApi;

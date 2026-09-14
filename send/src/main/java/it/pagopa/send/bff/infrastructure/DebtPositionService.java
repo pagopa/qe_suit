@@ -1,10 +1,10 @@
-package it.pagopa.send.service;
+package it.pagopa.send.bff.infrastructure;
 
 import it.pagopa.send.generated.openapi.clients.gpd.api.DebtPositionsApiApi;
 import it.pagopa.send.generated.openapi.clients.gpd.model.PaymentOptionModel;
 import it.pagopa.send.generated.openapi.clients.gpd.model.PaymentPositionModel;
 import it.pagopa.send.generated.openapi.clients.gpd.model.TransferModel;
-import it.pagopa.send.utils.RandomNumericGenerator;
+import it.pagopa.send.common.infrastructure.RandomNumericGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
