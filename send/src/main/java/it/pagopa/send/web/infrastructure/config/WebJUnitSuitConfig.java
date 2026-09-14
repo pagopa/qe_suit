@@ -10,7 +10,7 @@ import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.infrastructure.contract.browser.WebContractValidator;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
-import it.pagopa.send.domain.web.config.WebConfig;
+import it.pagopa.send.web.infrastructure.config.WebConfig;
 import it.pagopa.send.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityHandler;
 import it.pagopa.send.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityImpl;
 import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
@@ -34,8 +34,9 @@ import org.springframework.core.env.Environment;
  * usato da Cucumber, invariato) usando un {@link WebBrowserContext} semplice (oggetto Java, non
  * bean Spring: registrarlo come bean con lo stesso nome/tipo di quello scansionato farebbe fallire
  * l'avvio del contesto per bean duplicati) il cui {@code currentUser} viene letto da
- * {@link CurrentUserSession#getSender()}, già popolato a quel punto da
- * {@code LegalNotificationJourneyImpl.sendNotification}.
+ * {@link CurrentUserSession#getCurrentActor()} (sender se presente, altrimenti il primo
+ * recipient), già popolato a quel punto da {@code LegalNotificationJourneyImpl.sendNotification}
+ * oppure esplicitamente da {@code WebBrowserContractValidator#as}/{@code #asRecipient}.
  */
 @Configuration(proxyBeanMethods = false)
 @Profile("junit")
@@ -73,7 +74,7 @@ public class WebJUnitSuitConfig {
         IWebPresentationApiAdapter adapter = new SeleniumApiAdapter(settings);
 
         WebBrowserContext webBrowserContext = new WebBrowserContext();
-        webBrowserContext.setCurrentUser(currentUserSession.getSender());
+        webBrowserContext.setCurrentUser(currentUserSession.getCurrentActor());
 
         AuthenticatedLocatableCapabilityImpl capability = new AuthenticatedLocatableCapabilityImpl(
                 adapter, webBrowserContext, sessionPayloadFactory, environment);
