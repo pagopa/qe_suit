@@ -3,9 +3,9 @@ package it.pagopa.send.web.infrastructure.config.suit;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.capability.impl.LocatableCapabilityImpl;
 import it.frontend.e2e.framework.web.model.location.Url;
-import it.pagopa.send.common.domain.Recipient;
-import it.pagopa.send.common.domain.Tenant;
-import it.pagopa.send.common.domain.User;
+import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import it.pagopa.send.web.login.infrastructure.SelfCareSessionPayloadFactory;
 import org.springframework.core.env.Environment;
@@ -38,7 +38,7 @@ public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImp
     @Override
     public void navigateTo(String... pathParams) {
         User currentUser = webBrowserContext.getCurrentUser();
-        Url targetUrl = urlSupplier.get();
+        Url targetUrl = resolveUrl(pathParams, urlSupplier.get().getUrl());
 
         // Nessun utente noto: pagine del flusso SPID reale (OneIdPage, PfLoginPage, ...),
         // navigazione semplice senza toccare il sessionStorage.
