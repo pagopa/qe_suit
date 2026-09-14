@@ -12,8 +12,8 @@ import it.pagopa.infrastructure.context.InMemoryTestContext;
 import it.pagopa.send.common.infrastructure.context.InMemoryCurrentUserSession;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.kernel.domain.Channel;
-import it.pagopa.send.common.notification.domain.LegalNotificationCreationRequest;
-import it.pagopa.send.controller.creazione_notifica.NotificationContext;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
+import it.pagopa.send.web.notification_creation.infrastructure.cucumber.NotificationContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
@@ -46,7 +46,7 @@ public class JunitContextConfig {
     @Bean
     CurrentChannel<Channel> currentChannel() {
         InMemoryCurrentChannel<Channel> currentChannel = new InMemoryCurrentChannel<>();
-        currentChannel.setCurrentChannel(Channel.B2B);
+        currentChannel.setCurrentChannel(Channel.BFF);
         return currentChannel;
     }
 
@@ -78,7 +78,7 @@ public class JunitContextConfig {
     /**
      * Equivalente non scoped del bean {@code @ScenarioScope} di {@code
      * LegalNotificationRoutingConfig}, usato dalle implementazioni di {@code
-     * LegalNotificationGateway} (es. {@code B2BLegalNotificationGateway}) fuori da uno scenario
+     * LegalNotificationGateway} (es. {@code BffLegalNotificationGateway}) fuori da uno scenario
      * Cucumber.
      */
     @Bean
