@@ -1,15 +1,13 @@
 package it.pagopa.send.common.journey.infrastructure;
 
-import it.pagopa.send.common.domain.Tenant;
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.journey.application.LegalNotificationJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
-import it.pagopa.send.common.notification.domain.LegalNotificationDomain;
-import it.pagopa.send.common.notification.domain.NotificationStatus;
-import it.pagopa.send.controller.creazione_notifica.NotificationContext;
-import it.pagopa.send.legalnotification.application.LegalNotificationUseCase;
-import it.pagopa.send.model.RecipientSpec;
-import it.pagopa.send.utils.IUNHelper;
-import lombok.Getter;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
+import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
+import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
+import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,12 +20,12 @@ import java.util.Map;
  * {@link LegalNotificationUseCase} in un solo step Cucumber (es. "crea e annulla una notifica"),
  * sul modello dei Journey di interop. Bean singleton semplice, non {@code @ScenarioScope}: non ha
  * campi di stato propri, solo dipendenze iniettate ({@link LegalNotificationUseCase},
- * {@link CurrentUserSession}, {@link NotificationContext}), che sono loro a essere scoped in modo
- * diverso per Cucumber (scenario) o JUnit (singleton in-memory) — lo stesso identico pattern dei
- * Journey di interop. Grazie a questo, la stessa istanza funziona sia dentro uno scenario Cucumber
- * sia in un test JUnit puro (es. un contract test). Quando un flusso richiede più step Cucumber
- * distinti (es. il flusso multi-destinatario) gli step chiamano {@link LegalNotificationUseCase}
- * direttamente, senza passare da qui.
+ * {@link CurrentUserSession}, {@link EntityStore}), che sono loro a essere scoped in modo diverso
+ * per Cucumber (scenario) o JUnit (singleton in-memory) — lo stesso identico pattern dei Journey di
+ * interop. Grazie a questo, la stessa istanza funziona sia dentro uno scenario Cucumber sia in un
+ * test JUnit puro (es. un contract test). Quando un flusso richiede più step Cucumber distinti (es.
+ * il flusso multi-destinatario) gli step chiamano {@link LegalNotificationUseCase} direttamente,
+ * senza passare da qui.
  */
 @Slf4j
 @Component
@@ -36,9 +34,7 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
 
     private final LegalNotificationUseCase legalNotificationUseCase;
     private final CurrentUserSession currentUserSession;
-
-    @Getter
-    private final NotificationContext notificationContext;
+    private final EntityStore entityStore;
 
     @Override
     public LegalNotificationJourneyImpl withSender(Tenant tenant) {
@@ -63,13 +59,21 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
     public LegalNotificationJourneyImpl sendNotification(Tenant sender, NotificationStatus targetStatus) {
         currentUserSession.setSender(sender);
         legalNotificationUseCase.sendNotification(sender, targetStatus);
-        log.info("Notifica legale inviata: {}", notificationContext.getBffNewNotificationResponse());
+        log.info("Notifica legale inviata, stato raggiunto: {}", targetStatus);
+        return this;
+    }
+
+    @Override
+    public LegalNotificationJourneyImpl waitForNotificationStatus(NotificationStatus targetStatus) {
+        String iun = entityStore.getLastOrThrow(LegalNotificationDomain.class).getIun();
+        legalNotificationUseCase.waitForNotificationStatus(targetStatus);
+        log.info("Notifica legale con IUN {} ha raggiunto lo stato: {}", iun, targetStatus);
         return this;
     }
 
     @Override
     public LegalNotificationJourneyImpl deleteNotification() {
-        String iun = IUNHelper.extractFromBffNewNotificationResponse(notificationContext.getBffNewNotificationResponse());
+        String iun = entityStore.getLastOrThrow(LegalNotificationDomain.class).getIun();
         legalNotificationUseCase.deleteNotification(iun);
         log.info("Notifica legale con IUN {} eliminata", iun);
         return this;
@@ -77,8 +81,7 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
 
     @Override
     public LegalNotificationJourneyImpl readNotification() {
-//        String iun = IUNHelper.extractFromBffNewNotificationResponse(notificationContext.getBffNewNotificationResponse());
-        String iun = "WTXW-MNDW-JQLK-202609-W-1";
+        String iun = entityStore.getLastOrThrow(LegalNotificationDomain.class).getIun();
         LegalNotificationDomain response = legalNotificationUseCase.readNotification(iun);
         log.info("Notifica legale con IUN {} letta: {}", iun, response);
         return this;
