@@ -2,7 +2,7 @@ package it.pagopa.send.web.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.infrastructure.channel.CurrentChannel;
-import it.pagopa.send.common.domain.Tenant;
+import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;

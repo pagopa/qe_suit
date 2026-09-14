@@ -1,10 +1,10 @@
 package it.pagopa.send.web.notification_details.infrastructure;
 
-import it.pagopa.send.common.domain.UserType;
-import it.pagopa.send.domain.web.pages.destinatario.pf.NotificationDetailsPFPage;
-import it.pagopa.send.domain.web.pages.destinatario.pf.NotificationPFPage;
-import it.pagopa.send.domain.web.pages.mittente.DashboardPage;
-import it.pagopa.send.domain.web.pages.mittente.MittenteNotificationDetailsPage;
+import it.pagopa.send.common.user.domain.UserType;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationDetailsPFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationPFPage;
+import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
+import it.pagopa.send.web.notification_details.infrastructure.page.MittenteNotificationDetailsPage;
 import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import it.pagopa.send.web.notification_details.infrastructure.suit.NotificationDetailsPage;
 import it.pagopa.send.web.notification_details.infrastructure.suit.section.AttachmentSection;
