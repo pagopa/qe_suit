@@ -2,17 +2,17 @@ package it.pagopa.send.common.journey.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import it.pagopa.send.common.domain.Recipient;
-import it.pagopa.send.common.domain.Tenant;
+import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.kernel.domain.Channel;
-import it.pagopa.send.common.notification.domain.NotificationStatus;
-import it.pagopa.send.legalnotification.application.LegalNotificationUseCase;
-import it.pagopa.send.model.LegalNotificationType;
-import it.pagopa.send.model.RecipientSpec;
-import it.pagopa.send.utils.factory.RecipientSpecFactory;
+import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
+import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationType;
+import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
+import it.pagopa.send.common.legal_notification.infrastructure.factory.RecipientSpecFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
@@ -50,7 +50,7 @@ public class LegalNotificationJourneySteps {
      * (Lucrezia e Petrarca), utile per scenari che non hanno bisogno di destinatari/dati
      * configurabili. Per scenari che richiedono destinatari/dati variabili, usare invece i tre
      * step separati ({@link #prepareNotification}, {@link #addRecipientToNotification},
-     * {@link #sendNotificationViaB2b}).
+     * {@link #sendNotificationViaBff}).
      */
     @Given("una notifica di tipo multidestinatario creata dalla PA {tenant}")
     public void createMultiRecipientNotification(Tenant sender) {
@@ -92,7 +92,7 @@ public class LegalNotificationJourneySteps {
      * Primo step del flusso di creazione notifica multi-destinatario: compila i campi base della
      * notifica (mittente escluso: viene impostato dallo step di invio). Agnostico dal channel;
      * ripetibile in combinazione con {@link #addRecipientToNotification} e concluso da
-     * {@link #sendNotificationViaB2b}. A differenza degli step sopra, che compongono un unico
+     * {@link #sendNotificationViaBff}. A differenza degli step sopra, che compongono un unico
      * step tramite {@link SendJourney}, questi tre step chiamano {@link LegalNotificationUseCase}
      * direttamente: devono per forza restare su step Cucumber separati.
      */
@@ -107,20 +107,19 @@ public class LegalNotificationJourneySteps {
      * ({@link Recipient}) alla notifica in preparazione, con default sensati (1 pagoPA + 1 F24,
      * indirizzo fisico di default) sovrascrivibili puntualmente da {@link RecipientSpecFactory}.
      */
-    @Given("viene aggiunto {string} come destinatario con i seguenti dati:")
-    public void addRecipientToNotification(String recipientUsername, Map<String, String> data) {
-        RecipientSpec recipientSpec = recipientSpecFactory.build(Recipient.fromUsername(recipientUsername), data);
+    @Given("viene aggiunto {recipient} come destinatario con i seguenti dati:")
+    public void addRecipientToNotification(Recipient recipient, Map<String, String> data) {
+        RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, data);
         legalNotificationUseCase.addRecipient(recipientSpec);
     }
 
     /**
-     * Terzo e ultimo step: invia la notifica predisposta tramite il canale B2B e attende che
+     * Terzo e ultimo step: invia la notifica predisposta tramite il canale BFF e attende che
      * raggiunga lo stato indicato. Quando verrà implementato il canale WEB si aggiungerà un
      * secondo metodo analogo con testo letterale "tramite interfaccia web".
      */
-    @When("la notifica viene inviata dalla PA {tenant} tramite api b2b e si attende che lo stato diventi {string}")
-    public void sendNotificationViaB2b(Tenant sender, String targetStatus) {
-        currentChannel.setCurrentChannel(Channel.B2B);
+    @When("la notifica viene sottomessa e si attende che lo stato diventi {string}")
+    public void sendNotificationViaBff(Tenant sender, String targetStatus) {
         legalNotificationUseCase.sendNotification(sender, NotificationStatus.fromValue(targetStatus));
     }
 }
