@@ -1,7 +1,8 @@
 package it.pagopa.send.common.infrastructure.context;
 
-import it.pagopa.send.common.domain.Recipient;
-import it.pagopa.send.common.domain.Tenant;
+import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 
 import java.util.List;
@@ -32,5 +33,16 @@ public class InMemoryCurrentUserSession implements CurrentUserSession {
         List<Recipient> recipients = currentRecipient.get();
         if (recipients == null) throw new IllegalStateException("Current recipients are not set");
         return recipients;
+    }
+
+    @Override
+    public User getCurrentActor() {
+        Tenant tenant = currentTenant.get();
+        if (tenant != null) return tenant;
+
+        List<Recipient> recipients = currentRecipient.get();
+        if (recipients != null && !recipients.isEmpty()) return recipients.get(0);
+
+        return null;
     }
 }

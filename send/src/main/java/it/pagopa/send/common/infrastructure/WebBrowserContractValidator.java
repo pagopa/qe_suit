@@ -2,8 +2,8 @@ package it.pagopa.send.common.infrastructure;
 
 import it.pagopa.infrastructure.contract.browser.WebContractStages;
 import it.pagopa.infrastructure.contract.browser.WebContractValidator;
-import it.pagopa.send.common.domain.Recipient;
-import it.pagopa.send.common.domain.Tenant;
+import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 
 import java.util.List;
@@ -31,6 +31,19 @@ public class WebBrowserContractValidator {
                     currentUserSession.setSender(tenant);
                     currentUserSession.setRecipients(recipients);
                 }
+        );
+    }
+
+    /**
+     * Come {@link #as(Tenant, List)}, ma per gli scenari "come destinatario PF/PG": nessun
+     * tenant mittente, un solo destinatario che diventa anche l'attore autenticato lato UI
+     * (vedi {@code CurrentUserSession#getCurrentActor()}).
+     */
+    public WebContractStages.UserStage asRecipient(Recipient recipient) {
+        Objects.requireNonNull(recipient);
+
+        return delegate.withContext(
+                () -> currentUserSession.setRecipients(List.of(recipient))
         );
     }
 }
