@@ -1,8 +1,8 @@
 package it.pagopa.interop.common.agreement.infrastructure.config;
 
 import it.pagopa.interop.common.agreement.application.AgreementGateway;
-import it.pagopa.kernel.context.CurrentChannel;
-import it.pagopa.interop.common.infrastructure.channel.ChannelRoutingInterceptor;
+import it.pagopa.infrastructure.channel.CurrentChannel;
+import it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.aop.framework.ProxyFactory;
@@ -18,7 +18,7 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 @EnablePluginRegistries({AgreementGateway.class})
 public class AgreementRoutingConfig {
 
-    private final ObjectProvider<CurrentChannel> currentChannelProvider;
+    private final ObjectProvider<CurrentChannel<Channel>> currentChannelProvider;
 
     @Bean
     @Primary

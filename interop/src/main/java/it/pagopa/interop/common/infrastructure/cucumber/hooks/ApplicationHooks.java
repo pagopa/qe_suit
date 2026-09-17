@@ -1,12 +1,12 @@
-package it.pagopa.interop.common.infrastructure.cucumber;
+package it.pagopa.interop.common.infrastructure.cucumber.hooks;
 
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
-import it.pagopa.kernel.context.CurrentChannel;
-import it.pagopa.kernel.context.TestContext;
+import it.pagopa.infrastructure.channel.CurrentChannel;
+import it.pagopa.application.context.TestContext;
 import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.kernel.domain.TestKind;
+import it.pagopa.application.TestKind;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class ApplicationHooks {
 
     private final TestContext testContext;
-    private final CurrentChannel currentChannel;
+    private final CurrentChannel<Channel> currentChannel;
 
     @Before
     public void beforeScenario(Scenario scenario) {

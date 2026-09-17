@@ -1,12 +1,12 @@
 package it.pagopa.interop.common.kernel;
 
-import it.pagopa.kernel.context.EntityStore;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.kernel.domain.Key;
 import it.pagopa.interop.common.kernel.security.DPoPProof;
 import it.pagopa.interop.common.kernel.security.DPoPProofService;
 import it.pagopa.interop.common.kernel.security.KeyPairUtils;
 import it.pagopa.utils.jwt.JwtBuilder;
-import it.pagopa.utils.kernel.KeyAlgorithm;
+import it.pagopa.kernel.security.KeyAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

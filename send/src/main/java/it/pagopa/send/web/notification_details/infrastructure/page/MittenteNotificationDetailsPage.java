@@ -12,7 +12,7 @@ import it.pagopa.send.web.notification_details.infrastructure.suit.section.Attac
 import it.pagopa.send.web.notification_details.infrastructure.suit.section.NotificationStatusSection;
 import it.pagopa.send.web.notification_details.infrastructure.suit.section.NotificationSummarySection;
 import it.pagopa.send.web.notification_details.infrastructure.suit.section.PaymentSection;
-import it.pagopa.suit.component.Chip;
+import it.pagopa.infrastructure.suit.component.Chip;
 import org.assertj.core.api.Assertions;
 
 import java.util.List;
@@ -29,35 +29,35 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
 
     @XPath("//div[@id=\"page-header-container\"]/parent::div")
     interface MittenteNotificationSummarySection extends NotificationSummarySection {
-//        @XPath("header iun")
+        //        @XPath("header iun")
         @XPath("//h1[@data-testid=\"titleBox\" and @role=\"heading\"]")
         Readable<String> iunHeader();
 
-//        @XPath("header protocol number")
+        //        @XPath("header protocol number")
         @XPath(".//p[normalize-space()='Numero protocollo']")
         Readable<String> protocolNumberHeader();
 
-//        @XPath("protocol number value")
+        //        @XPath("protocol number value")
         @XPath(".//p[normalize-space()='Numero protocollo']/following-sibling::div[1]")
         Readable<String> protocolNumberValue();
 
-//        @XPath("header sender")
+        //        @XPath("header sender")
         @XPath(".//p[normalize-space()='Mittente']")
         Readable<String> senderHeader();
 
-//        @XPath("sender value")
+        //        @XPath("sender value")
         @XPath(".//p[normalize-space()='Mittente']/following-sibling::div[1]")
         Readable<String> senderValue();
 
-//        @XPath("header recipient")
+        //        @XPath("header recipient")
         @XPath(".//p[normalize-space()='Persona destinataria']")
         Readable<String> recipientHeader();
 
-//        @XPath("recipient value")
+        //        @XPath("recipient value")
         @XPath(".//p[normalize-space()='Persona destinataria']/following-sibling::div[1]")
         Readable<String> recipientValue();
 
-//        @XPath("open details sidebar")
+        //        @XPath("open details sidebar")
         @XPath(".//div[@id=\"page-header-container\"]/following::button[.//text()[contains(., \"Vai al dettaglio\")]][1]")
         Clickable openDetailsSidebarButton();
 
@@ -90,11 +90,11 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
     }
 
     interface MittentePaymentSection extends PaymentSection {
-//        @XPath("header notice code")
+        //        @XPath("header notice code")
         @XPath("//h2[normalize-space(text())=\"Pagamenti\"]")
         Readable<String> noticeCodeHeader();
 
-//        @XPath("notice code value")
+        //        @XPath("notice code value")
         @XPath("//div[@data-testid=\"paymentInfoBox\"]/p")
         Readable<String> noticeCodeValue();
 
@@ -115,11 +115,11 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
 
     @XPath("//h2[@id=\"notification-detail-document-attached\"]/ancestor::div[.//button[@data-testid=\"cancelNotificationBtn\"]][1]")
     interface MittenteAttachmentSection extends AttachmentSection {
-//        @XPath("header")
+        //        @XPath("header")
         @XPath("//h2[@id=\"notification-detail-document-attached\"]")
         Readable<String> header();
 
-//        @XPath("griglia contenuti")
+        //        @XPath("griglia contenuti")
         @XPath("//div[@data-testid=\"notificationDetailDocuments\"]//button[@data-testid=\"documentButton\"]/div/span")
         Readable<String> attachmentGrid();
 
@@ -136,7 +136,7 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
 
     @XPath(".//div[@data-testid='NotificationDetailTimeline']")
     interface MittenteNotificationStatusSection extends NotificationStatusSection {
-//        @XPath("header")
+        //        @XPath("header")
         @Override
         @XPath("//div[@data-testid=\"NotificationDetailTimeline\"]//h2")
         Readable<String> header();
@@ -145,12 +145,12 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
         @XPath("//div[@data-testid='NotificationDetailTimeline']")
         Chip statusChip();
 
-//        @XPath("dettaglio stato notifica")
+        //        @XPath("dettaglio stato notifica")
         @Override
         @XPath("//div[@data-testid=\"NotificationDetailTimeline\"]//p")
         Readable<String> detailsMessage();
 
-//        @XPath("griglia contenuti")
+        //        @XPath("griglia contenuti")
         @Override
         @XPath("//button[@aria-label=\"Vai alla timeline della notifica\"]")
         Clickable detailsButton();

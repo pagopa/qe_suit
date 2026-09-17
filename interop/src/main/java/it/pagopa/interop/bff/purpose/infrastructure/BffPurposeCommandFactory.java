@@ -2,7 +2,7 @@ package it.pagopa.interop.bff.purpose.infrastructure;
 
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.utils.RandomUtils;
