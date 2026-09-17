@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>it.pagopa</groupId>
+    <groupId>it.pagopa.send</groupId>
     <artifactId>common</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -19,46 +19,14 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <cucumber.version>7.34.6</cucumber.version>
         <jjwt.version>0.12.6</jjwt.version>
-        <rest-assured.version>6.0.1</rest-assured.version>
-        <swagger-request-validator.version>2.46.1</swagger-request-validator.version>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>io.cucumber</groupId>
-                <artifactId>cucumber-bom</artifactId>
-                <version>${cucumber.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
-
-        <!-- ========================= -->
-        <!-- FE FRAMEWORK -->
-        <!-- ========================= -->
-
         <dependency>
-            <groupId>it.frontend.e2e.framework</groupId>
-            <artifactId>web-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>it.frontend.e2e.framework</groupId>
-            <artifactId>annotations</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <!-- ========================= -->
-        <!-- Logging -->
-        <!-- ========================= -->
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -66,18 +34,10 @@
             <version>2.0.17</version>
         </dependency>
 
-        <!-- ========================= -->
-        <!-- Jackson -->
-        <!-- ========================= -->
-
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
-
-        <!-- ========================= -->
-        <!-- JSON Web Token -->
-        <!-- ========================= -->
 
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -99,125 +59,11 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- ========================= -->
-        <!-- Instancio -->
-        <!-- ========================= -->
-
         <dependency>
             <groupId>org.instancio</groupId>
             <artifactId>instancio-junit</artifactId>
             <version>5.6.0</version>
         </dependency>
-
-        <!-- ========================= -->
-        <!-- Rest-Assured -->
-        <!-- ========================= -->
-
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <version>${rest-assured.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.oai</groupId>
-            <artifactId>swagger-request-validator-core</artifactId>
-            <version>${swagger-request-validator.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.atlassian.oai</groupId>
-            <artifactId>swagger-request-validator-restassured</artifactId>
-            <version>${swagger-request-validator.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-
-
-        <!-- ========================= -->
-        <!-- Jakarta Validation -->
-        <!-- ========================= -->
-
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-
-        <!-- ========================= -->
-        <!-- Mockito -->
-        <!-- ========================= -->
-
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>5.20.0</version>
-        </dependency>
-
-        <!-- ========================= -->
-        <!-- JUnit -->
-        <!-- ========================= -->
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- ========================= -->
-        <!-- Jakarta Validation -->
-        <!-- ========================= -->
-
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-        </dependency>
-
-        <!-- ========================= -->
-        <!-- Jakarta Validation -->
-        <!-- ========================= -->
-
-        <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-        </dependency>
-
-        <!-- ========================= -->
-        <!-- AssertJ -->
-        <!-- ========================= -->
-
-        <dependency>
-            <groupId>org.assertj</groupId>
-            <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- ========================= -->
-        <!-- Cucumber -->
-        <!-- ========================= -->
-
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>gherkin</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>messages</artifactId>
-        </dependency>
-
     </dependencies>
 
 </project>
