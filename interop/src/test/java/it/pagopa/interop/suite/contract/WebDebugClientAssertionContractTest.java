@@ -11,6 +11,7 @@ import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -44,6 +45,15 @@ public class WebDebugClientAssertionContractTest {
                 .on(DebugClientAssertionPage.class)
                 .tests(scenarios());
     }
+
+    @Test
+    void shouldSeeBannerForUpdate(){}
+
+    @Test
+    void shouldSeeBanner(){}
+
+    @Test
+    void shouldSeeNoBanner(){}
 
     private Stream<WebScenario<DebugClientAssertionPage>> scenarios() {
         return Stream.of(
