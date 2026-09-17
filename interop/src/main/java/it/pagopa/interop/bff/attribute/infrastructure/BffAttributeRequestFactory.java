@@ -7,11 +7,11 @@ import org.springframework.stereotype.Component;
 import static org.instancio.Select.field;
 
 @Component
-public class BffDeclaredAttributeRequestFactory {
+public class BffAttributeRequestFactory {
 
     public AttributeSeed creationRequest() {
         return Instancio.of(AttributeSeed.class)
-                .generate(field(AttributeSeed::getName), gen -> gen.string().prefix("declared-attr-").length(24))
+                .generate(field(AttributeSeed::getName), gen -> gen.string().prefix("name-").length(24))
                 .generate(field(AttributeSeed::getDescription), gen -> gen.string().prefix("description-").length(32))
                 .create();
     }

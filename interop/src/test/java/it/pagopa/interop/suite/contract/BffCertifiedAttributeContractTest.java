@@ -1,5 +1,6 @@
 package it.pagopa.interop.suite.contract;
 
+import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.attribute.infrastructure.BffAttributeRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
@@ -7,7 +8,6 @@ import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
-public class BffDeclaredAttributeContractTest {
+public class BffCertifiedAttributeContractTest {
 
     private final ApiClient apiClient;
     private final HttpContractValidator httpContractValidator;
@@ -31,13 +31,14 @@ public class BffDeclaredAttributeContractTest {
     private final BffAttributeRequestFactory requestFactory;
 
     @TestFactory
-    Stream<DynamicTest> createDeclaredAttribute() {
+    Stream<DynamicTest> createCertifiedAttribute() {
         return httpContractValidator
                 .apiCall(() -> {
                     interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return apiClient.attributes().createDeclaredAttribute();
+                    return apiClient.attributes().createCertifiedAttribute();
                 })
                 .payload(requestFactory::creationRequest)
                 .tests();
     }
 }
+
