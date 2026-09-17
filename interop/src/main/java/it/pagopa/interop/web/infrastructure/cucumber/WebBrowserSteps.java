@@ -1,5 +1,6 @@
 package it.pagopa.interop.web.infrastructure.cucumber;
 
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
@@ -14,6 +15,18 @@ public class WebBrowserSteps {
 
     private final WebBrowserContext browserContext;
     private final CurrentUserSession currentUserSession;
+
+    @Given("un {userRole} di {tenant} autenticato sul portale Interop")
+    @Given("un {userRole} del {tenant} autenticato sul portale Interop")
+    @Given("un utente {userRole} di {tenant} autenticato sul portale Interop")
+    @Given("un utente {userRole} del {tenant} autenticato sul portale Interop")
+    public void authenticate(UserRole userRole, Tenant tenant) {
+        User user = User.getTenantUser(tenant, userRole);
+
+        if (!currentUserSession.isLoggedIn(user, tenant)) {
+            currentUserSession.set(user, tenant);
+        }
+    }
 
     @When("un {userRole} di {tenant} si trova alla pagina {page} del portale Interop( e verifica che tutti gli elementi siano visibili)")
     @When("un {userRole} del {tenant} si trova alla pagina {page} del portale Interop( e verifica che tutti gli elementi siano visibili)")
