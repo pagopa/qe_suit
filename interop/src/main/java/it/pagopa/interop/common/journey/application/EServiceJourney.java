@@ -2,9 +2,11 @@ package it.pagopa.interop.common.journey.application;
 
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends JourneyModule {
@@ -27,4 +29,9 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
     default SELF createEService() {
         return createEService(EServiceDescriptorState.DRAFT);
     }
+
+    SELF archiveEServiceDescriptor(Function<EService, EServiceDescriptor> descriptorSelector,
+                                   GracePeriodDays gracePeriodDays);
+
+    SELF archiveEServiceDescriptor(GracePeriodDays gracePeriodDays);
 }

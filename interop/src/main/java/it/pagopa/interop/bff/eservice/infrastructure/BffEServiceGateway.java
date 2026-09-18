@@ -12,6 +12,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDaysSeed;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
@@ -71,6 +72,22 @@ public class BffEServiceGateway implements EServiceGateway {
                 .create();
 
         restClient.scheduleArchiveEservice(eServiceRef.id(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    @Override
+    public void archiveEServiceDescriptor(EServiceRef eServiceRef,
+                                          EServiceDescriptorRef descriptorRef,
+                                          GracePeriodDays gracePeriodDays) {
+        GracePeriodDaysSeed payload = Instancio.of(GracePeriodDaysSeed.class)
+                .set(
+                        field(GracePeriodDaysSeed::getGracePeriodDays),
+                        it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays.fromValue(gracePeriodDays.getDays())
+                )
+                .create();
+
+        restClient.scheduleArchiveEserviceDescriptor(eServiceRef.id(), descriptorRef.id(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
     }

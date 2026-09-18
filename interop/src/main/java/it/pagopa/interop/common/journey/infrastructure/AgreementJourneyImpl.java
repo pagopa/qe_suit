@@ -22,9 +22,8 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
         Agreement agreement = agreementUseCase.createAgreement(eService, eService.getActiveDescriptor(), delegation);
 
         switch (agreementState) {
-            case DRAFT -> {
-            }
-            case ACTIVE, PENDING -> agreementUseCase.submitAgreement(agreement);
+            case DRAFT -> entityStore.upsert(agreement);
+            case ACTIVE, PENDING -> entityStore.upsert(agreementUseCase.submitAgreement(agreement));
             default -> throw new UnsupportedOperationException("Not implemented yet: " + agreementState);
         }
 
