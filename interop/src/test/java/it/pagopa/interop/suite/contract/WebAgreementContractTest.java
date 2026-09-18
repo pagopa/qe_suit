@@ -5,6 +5,7 @@ import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.journey.application.InteropJourney;
@@ -48,35 +49,27 @@ public class WebAgreementContractTest {
     private final String DESIRED_MESSAGE_BANNER_1 = "Questa versione dell’e-service è obsoleta, ma è ancora attiva. È disponibile una nuova versione.";
     private final String DESIRED_MESSAGE_BANNER_2 = "Questa versione dell’e-service è obsoleta, ma è ancora attiva.";
 
-    @Test
-    void shouldSeeBanner1() throws Throwable {
-        // Given: an eservice whose first descriptor has an agreement, and a newer
-        // descriptor has since been published, making the first one DEPRECATED.
-        interopJourney
-                .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
-                .createEService(EServiceDescriptorState.PUBLISHED)
-                .withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
-                .linkAgreement(AgreementState.ACTIVE)
-//                .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
-                .addDescriptor(EServiceDescriptorState.PUBLISHED)
-                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
-
-        Agreement agreement = interopJourney.get(Agreement.class);
-        System.setProperty("agreementId", agreement.getId().toString());
-
+    private void assertAgreementBannerIsVisible(final String webScenarioMessage, final String message, final Tenant producer, final Tenant consumer) throws Throwable {
         try {
             WebScenario<AgreementPage> scenario = new WebScenario<>(
-                    "Should see banner for agreement update to newer version",
+                    webScenarioMessage,
                     page -> {},
                     page -> {
-                        Assertions.assertThat(DESIRED_MESSAGE_BANNER_1.equals(page.banner1().get().read())).isTrue();
+                        final boolean[] bannerPresent = {false};
+                        page.alerts().forEach(
+                                alert -> {
+                                    if (message.equals(alert.message().read()))
+                                        bannerPresent[0] = true;
+                                }
+                        );
+                        Assertions.assertThat(bannerPresent[0]).isTrue();
                     }
             );
 
             List<DynamicTest> tests = webContractValidator
                     .as(
-                            User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
-                            Tenant.COMUNE_DI_MILANO
+                            User.getTenantAdmin(consumer),
+                            consumer
                     )
                     .on(AgreementPage.class)
                     .tests(Stream.of(scenario))
@@ -86,6 +79,30 @@ public class WebAgreementContractTest {
         } finally {
             System.clearProperty("agreementId");
         }
+    }
+
+    @Test
+    void shouldSeeBanner1() throws Throwable {
+        // Given: an eservice whose first descriptor has an agreement, and a newer
+        // descriptor has since been published, making the first one DEPRECATED.
+        interopJourney
+                .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
+                .addDescriptor(EServiceDescriptorState.PUBLISHED)
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
+
+        Agreement agreement = interopJourney.get(Agreement.class);
+        System.setProperty("agreementId", agreement.getId().toString());
+
+        assertAgreementBannerIsVisible(
+                "Should see banner for agreement update to newer version",
+                DESIRED_MESSAGE_BANNER_1,
+                Tenant.PAGO_PA,
+                Tenant.COMUNE_DI_MILANO
+        );
     }
 
     @Test
@@ -99,33 +116,17 @@ public class WebAgreementContractTest {
                 .linkAgreement(AgreementState.ACTIVE)
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
                 .addDescriptor(EServiceDescriptorState.PUBLISHED)
-                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
+                .archiveEService(GracePeriodDays.NUMBER_60)
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVING);
 
         Agreement agreement = interopJourney.get(Agreement.class);
         System.setProperty("agreementId", agreement.getId().toString());
-
-        try {
-            WebScenario<AgreementPage> scenario = new WebScenario<>(
-                    "Should see banner for agreement update to newer version",
-                    page -> {},
-                    page -> {
-                        Assertions.assertThat(DESIRED_MESSAGE_BANNER_1.equals(page.banner1().get().read())).isTrue();
-                    }
-            );
-
-            List<DynamicTest> tests = webContractValidator
-                    .as(
-                            User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
-                            Tenant.COMUNE_DI_MILANO
-                    )
-                    .on(AgreementPage.class)
-                    .tests(Stream.of(scenario))
-                    .toList();
-
-            tests.get(0).getExecutable().execute();
-        } finally {
-            System.clearProperty("agreementId");
-        }
+        assertAgreementBannerIsVisible(
+                "Should see banner agreement",
+                DESIRED_MESSAGE_BANNER_2,
+                Tenant.PAGO_PA,
+                Tenant.COMUNE_DI_MILANO
+        );
     }
 
     @Disabled
