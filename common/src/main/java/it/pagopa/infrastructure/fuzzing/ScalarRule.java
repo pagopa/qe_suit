@@ -50,6 +50,7 @@ public class ScalarRule implements FuzzRule {
                 replace(FuzzScenario.REPLACED_WITH_BLANK_STRING, "   "),
                 replace(FuzzScenario.REPLACED_WITH_LONG_STRING, "A".repeat(5000)),
                 replace(FuzzScenario.REPLACED_WITH_SQL_INJECTION, "' OR '1'='1"),
+                replace(FuzzScenario.REPLACED_WITH_URL_INJECTION, "http://injected.example.test"),
                 replace(FuzzScenario.REPLACED_WITH_XSS, "<script>alert(1)</script>"),
                 replace(FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER, 124)
         );
