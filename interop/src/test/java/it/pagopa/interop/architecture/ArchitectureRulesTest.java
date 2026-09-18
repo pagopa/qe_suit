@@ -216,7 +216,7 @@ public class ArchitectureRulesTest {
         boolean isCorePattern = COMMON_ALLOWED_PATTERNS.stream().anyMatch(simpleName::endsWith);
         if (!isCorePattern) return;
 
-        String expectedPrefix = capitalize(channel);
+        String expectedPrefix = expectedPrefixForChannel(channel);
         if (!simpleName.startsWith(expectedPrefix)) {
             violations.add(fullName + " (expected prefix: " + expectedPrefix + ")");
         }
@@ -234,6 +234,16 @@ public class ArchitectureRulesTest {
             return value;
         }
         return Character.toUpperCase(value.charAt(0)) + value.substring(1);
+    }
+
+    private static String expectedPrefixForChannel(String channel) {
+        if (channel == null || channel.isBlank()) {
+            return channel;
+        }
+        if (channel.chars().anyMatch(Character::isDigit)) {
+            return channel.toUpperCase();
+        }
+        return capitalize(channel);
     }
 
     private static Optional<List<JavaClass>> findPathToCucumber(JavaClass sourceClass, Set<String> visited) {
