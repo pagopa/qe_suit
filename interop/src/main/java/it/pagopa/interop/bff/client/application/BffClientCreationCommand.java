@@ -18,6 +18,7 @@ public class BffClientCreationCommand implements ClientCreationCommand {
 
     @NotNull
     private final ClientSeed clientSeed = new ClientSeed();
+    private UserRef admin;
     private final List<UserRef> users = new ArrayList<>();
     private final List<BffClientKeyCreationCommand> keysCommands = new ArrayList<>();
 
@@ -55,6 +56,12 @@ public class BffClientCreationCommand implements ClientCreationCommand {
                         .toList()
         );
 
+        return this;
+    }
+
+    @Override
+    public ClientCreationCommand admin(UserRef adminRef) {
+        this.admin = adminRef;
         return this;
     }
 }
