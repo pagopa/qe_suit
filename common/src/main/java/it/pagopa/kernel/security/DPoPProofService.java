@@ -39,87 +39,91 @@ public class DPoPProofService {
     }
 
     public DPoPProof buildDPoPProofWithOverrides(KeyPair keyPair, HttpMethod method, String htu, List<JwtBuilder.JwtClaimOverride> overrides) {
-       return buildDPoPProofWithOverrides(keyPair, method, htu, null, overrides);
+        return buildDPoPProofWithOverrides(keyPair, method, htu, null, overrides);
     }
 
-    public void verifyDpopProof(DPoPProof dpopProof) {
-        try {
-            // 1. Parsing del JWT
-            SignedJWT signedJWT = SignedJWT.parse(dpopJwtRaw);
-            JWSHeader header = signedJWT.getHeader();
+//    public void verifyDpopProof(DPoPProof dpopProof) {
+//        try {
+//            // 1. Parsing del JWT
+//            SignedJWT signedJWT = SignedJWT.parse(dpopJwtRaw);
+//            JWSHeader header = signedJWT.getHeader();
+//
+//            // 2. Controllo 'typ' = 'dpop+jwt'
+//            if (header.getType() == null || !"dpop+jwt".equalsIgnoreCase(header.getType().toString())) {
+//                throw new IllegalArgumentException("Header 'typ' must be 'dpop+jwt'");
+//            }
+//
+//            // 3. Estrazione JWK (chiave pubblica)
+//            JWK jwk = header.getJWK();
+//            if (jwk == null) {
+//                throw new IllegalArgumentException("Missing JWK in DPoP header");
+//            }
+//
+//            // 4. Costruzione del verificatore
+//            JWSVerifier verifier;
+//            if (jwk instanceof ECKey ecKey) {
+//                verifier = new ECDSAVerifier(ecKey);
+//            } else if (jwk instanceof RSAKey rsaKey) {
+//                verifier = new RSASSAVerifier(rsaKey);
+//            } else {
+//                throw new IllegalArgumentException("Unsupported key type: " + jwk.getKeyType());
+//            }
+//
+//            // 5. Verifica della firma
+//            if (!signedJWT.verify(verifier)) {
+//                throw new SecurityException("DPoP proof signature is invalid");
+//            }
+//
+//            // 6. Parsing del payload
+//            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+//
+//            // 7. Verifica htm = POST
+//            String htm = (String) claims.getClaim("htm");
+//            if (!"POST".equalsIgnoreCase(htm)) {
+//                throw new IllegalArgumentException("Invalid 'htm' claim: expected POST");
+//            }
+//
+//            // 8. Verifica htu = expected URL
+//            String htu = (String) claims.getClaim("htu");
+//            String expectedHtu = dpopHtu;
+//            if (!expectedHtu.equalsIgnoreCase(htu)) {
+//                throw new IllegalArgumentException("Invalid 'htu' claim: unexpected URI");
+//            }
+//
+//            // 9. Verifica iat (entro 60 secondi)
+//            Date issuedAt = claims.getIssueTime();
+//            if (issuedAt == null) {
+//                throw new IllegalArgumentException("Missing 'iat' claim");
+//            }
+//            long now = System.currentTimeMillis();
+//            long issuedAtTime = issuedAt.getTime();
+//            if (Math.abs(now - issuedAtTime) > 60_000) {
+//                throw new IllegalArgumentException("DPoP proof is outside the valid time window (60s)");
+//            }
+//
+//            // 10. Presenza del jti
+//            String jti = claims.getJWTID();
+//            if (jti == null) {
+//                throw new IllegalArgumentException("Missing 'jti' claim");
+//            }
+//
+//        } catch (Exception e) {
+//            throw new RuntimeException("Errore nella verifica della firma DPoP: " + e.getMessage(), e);
+//        }
+//    }
 
-            // 2. Controllo 'typ' = 'dpop+jwt'
-            if (header.getType() == null || !"dpop+jwt".equalsIgnoreCase(header.getType().toString())) {
-                throw new IllegalArgumentException("Header 'typ' must be 'dpop+jwt'");
-            }
-
-            // 3. Estrazione JWK (chiave pubblica)
-            JWK jwk = header.getJWK();
-            if (jwk == null) {
-                throw new IllegalArgumentException("Missing JWK in DPoP header");
-            }
-
-            // 4. Costruzione del verificatore
-            JWSVerifier verifier;
-            if (jwk instanceof ECKey ecKey) {
-                verifier = new ECDSAVerifier(ecKey);
-            } else if (jwk instanceof RSAKey rsaKey) {
-                verifier = new RSASSAVerifier(rsaKey);
-            } else {
-                throw new IllegalArgumentException("Unsupported key type: " + jwk.getKeyType());
-            }
-
-            // 5. Verifica della firma
-            if (!signedJWT.verify(verifier)) {
-                throw new SecurityException("DPoP proof signature is invalid");
-            }
-
-            // 6. Parsing del payload
-            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
-
-            // 7. Verifica htm = POST
-            String htm = (String) claims.getClaim("htm");
-            if (!"POST".equalsIgnoreCase(htm)) {
-                throw new IllegalArgumentException("Invalid 'htm' claim: expected POST");
-            }
-
-            // 8. Verifica htu = expected URL
-            String htu = (String) claims.getClaim("htu");
-            String expectedHtu = dpopHtu;
-            if (!expectedHtu.equalsIgnoreCase(htu)) {
-                throw new IllegalArgumentException("Invalid 'htu' claim: unexpected URI");
-            }
-
-            // 9. Verifica iat (entro 60 secondi)
-            Date issuedAt = claims.getIssueTime();
-            if (issuedAt == null) {
-                throw new IllegalArgumentException("Missing 'iat' claim");
-            }
-            long now = System.currentTimeMillis();
-            long issuedAtTime = issuedAt.getTime();
-            if (Math.abs(now - issuedAtTime) > 60_000) {
-                throw new IllegalArgumentException("DPoP proof is outside the valid time window (60s)");
-            }
-
-            // 10. Presenza del jti
-            String jti = claims.getJWTID();
-            if (jti == null) {
-                throw new IllegalArgumentException("Missing 'jti' claim");
-            }
-
-        } catch (Exception e) {
-            throw new RuntimeException("Errore nella verifica della firma DPoP: " + e.getMessage(), e);
-        }
-    }
-
-    private String internalBuildDPoPProof(KeyPair keyPair, HttpMethod method, String htu, String accessToken) {
+    private DPoPProof internalBuildDPoPProof(KeyPair keyPair, HttpMethod method, String htu, String accessToken) {
         try {
             long now = System.currentTimeMillis() / 1000;
 
             Map<String, Object> header = buildHeader(keyPair.getPublic());
             Map<String, Object> payload = buildPayload(method, htu, now, accessToken);
 
-            return sign(header, payload, keyPair.getPrivate());
+            String jwt = sign(header, payload, keyPair.getPrivate());
+            return DPoPProof.builder()
+                    .key(Key.builder().pair(keyPair).build())
+                    .jwt(jwt)
+                    .build();
         } catch (Exception e) {
             throw new IllegalStateException("Errore nella creazione del DPoP proof", e);
         }
