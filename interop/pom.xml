@@ -26,7 +26,7 @@
         <rest-assured.version>6.0.1</rest-assured.version>
         <swagger-request-validator.version>2.46.1</swagger-request-validator.version>
         <bff.openapi.url>
-            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.22.0-RC2/packages/api-clients/open-api/bffApi.yml
+             https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.22.0-RC3/packages/api-clients/open-api/bffApi.yml
         </bff.openapi.url>
     </properties>
 
