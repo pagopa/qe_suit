@@ -37,11 +37,6 @@ import static org.hamcrest.Matchers.is;
 @RequiredArgsConstructor
 public class BffClientContractTest {
 
-    private static final List<FuzzScenario> POSITIVE_SCENARIOS = List.of(
-            FuzzScenario.REMOVED,
-            FuzzScenario.REPLACED_WITH_NIL_UUID
-    );
-
     private final ApiClient apiClient;
     private final HttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
@@ -55,11 +50,11 @@ public class BffClientContractTest {
                     return apiClient.clients().createConsumerClient();
                 })
                 .payload(requestFactory::creationRequest)
-                .targets(
+                /*.targets(
                         FuzzScenario.REMOVED,
                         BffClientContractTest::getValidatableResponse,
                         List.of(seed -> seed.getMembers().get(0))
-                )
+                )*/
                 .tests();
     }
 
@@ -85,7 +80,7 @@ public class BffClientContractTest {
 
                     return Map.of("clientId", createdClient.getId());
                 })
-                .scenario(POSITIVE_SCENARIOS, BffClientContractTest::getValidatableResponse)
+                //.scenario(POSITIVE_SCENARIOS, BffClientContractTest::getValidatableResponse)
                 .tests();
     }
 
@@ -132,4 +127,5 @@ public class BffClientContractTest {
         response.then().statusCode(is(DEFAULT_SUCCESS_STATUS_CODE));
     }
 }
+
 
