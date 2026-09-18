@@ -1,21 +1,14 @@
-package it.pagopa.interop.common.kernel;
+package it.pagopa.kernel.security;
 
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.interop.common.kernel.domain.Key;
-import it.pagopa.interop.common.kernel.security.DPoPProof;
-import it.pagopa.interop.common.kernel.security.DPoPProofService;
-import it.pagopa.interop.common.kernel.security.KeyPairUtils;
 import it.pagopa.utils.jwt.JwtBuilder;
-import it.pagopa.kernel.security.KeyAlgorithm;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.security.KeyPair;
 import java.util.Base64;
 import java.util.List;
 
-@Service
 @RequiredArgsConstructor
 @Slf4j
 public class DPoPProofGateway {
@@ -23,11 +16,12 @@ public class DPoPProofGateway {
     private final DPoPProofService dPoPProofService;
     private final EntityStore entityStore;
 
-    public DPoPProof generateDPoPProof(KeyAlgorithm keyAlgorithm, List<JwtBuilder.JwtClaimOverride> overrides) {
+    public DPoPProof generateDPoPProof(KeyAlgorithm keyAlgorithm, DPoPProofService.HttpMethod httpMethod, String htu, List<JwtBuilder.JwtClaimOverride> overrides) {
         KeyPair keyPair = KeyPairUtils.generate(keyAlgorithm, 2048);
+
         String proof = (overrides == null)
-                ? dPoPProofService.buildProof(keyPair)
-                : dPoPProofService.buildProofWithOverrides(keyPair, overrides);
+                ? dPoPProofService.buildDPoPProof(keyPair, httpMethod, htu)
+                : dPoPProofService.buildDPoPProofWithOverrides(keyPair, httpMethod, htu, overrides);
 
         log.info("Generated DPoP proof: {}", proof);
         String publicPem = "-----BEGIN PUBLIC KEY-----\n" +

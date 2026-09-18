@@ -1,6 +1,5 @@
-package it.pagopa.interop.common.kernel.security;
+package it.pagopa.kernel.security;
 
-import it.pagopa.interop.common.kernel.domain.Key;
 import it.pagopa.domain.Identifiable;
 import lombok.Builder;
 import lombok.Value;

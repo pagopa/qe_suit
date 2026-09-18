@@ -1,11 +1,9 @@
-package it.pagopa.interop.common.kernel.security;
+package it.pagopa.kernel.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.utils.jwt.JwtBuilder;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Service;
 
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -15,34 +13,106 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.*;
 
 @Slf4j
-@Service
+@RequiredArgsConstructor
 public class DPoPProofService {
-    @Value("${interop.auth.oauth.server}")
-    private String defaultHtu;
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    public String buildProof(KeyPair keyPair) {
-        return buildProof(keyPair, HttpMethod.POST, defaultHtu, null);
+    public enum HttpMethod {
+        GET, POST, PUT, PATCH, DELETE, HEAD, OPTIONS
     }
 
-    public String buildProof(KeyPair keyPair, HttpMethod method, String htu) {
-        return buildProof(keyPair, method, htu, null);
+    public DPoPProof buildDPoPProof(KeyPair keyPair, HttpMethod method, String htu) {
+        return internalBuildDPoPProof(keyPair, method, htu, null);
     }
 
-    public String buildProofWithAth(KeyPair keyPair, HttpMethod method, String htu, String accessToken) {
-        return buildProof(keyPair, method, htu, accessToken);
+    public DPoPProof buildDPoPProof(KeyPair keyPair, HttpMethod method, String htu, String accessToken) {
+        return internalBuildDPoPProof(keyPair, method, htu, accessToken);
     }
 
-    public String buildProofWithOverrides(KeyPair keyPair, List<JwtBuilder.JwtClaimOverride> overrides) {
-        String baseProof = buildProof(keyPair);
+    public DPoPProof buildDPoPProofWithOverrides(KeyPair keyPair, HttpMethod method, String htu, String accessToken, List<JwtBuilder.JwtClaimOverride> overrides) {
+        String baseProof = internalBuildDPoPProof(keyPair, method, htu, accessToken);
         if (overrides == null || overrides.isEmpty()) {
             return baseProof;
         }
         return applyOverridesAndResign(baseProof, keyPair, overrides);
     }
 
-    private String buildProof(KeyPair keyPair, HttpMethod method, String htu, String accessToken) {
+    public DPoPProof buildDPoPProofWithOverrides(KeyPair keyPair, HttpMethod method, String htu, List<JwtBuilder.JwtClaimOverride> overrides) {
+       return buildDPoPProofWithOverrides(keyPair, method, htu, null, overrides);
+    }
+
+    public void verifyDpopProof(DPoPProof dpopProof) {
+        try {
+            // 1. Parsing del JWT
+            SignedJWT signedJWT = SignedJWT.parse(dpopJwtRaw);
+            JWSHeader header = signedJWT.getHeader();
+
+            // 2. Controllo 'typ' = 'dpop+jwt'
+            if (header.getType() == null || !"dpop+jwt".equalsIgnoreCase(header.getType().toString())) {
+                throw new IllegalArgumentException("Header 'typ' must be 'dpop+jwt'");
+            }
+
+            // 3. Estrazione JWK (chiave pubblica)
+            JWK jwk = header.getJWK();
+            if (jwk == null) {
+                throw new IllegalArgumentException("Missing JWK in DPoP header");
+            }
+
+            // 4. Costruzione del verificatore
+            JWSVerifier verifier;
+            if (jwk instanceof ECKey ecKey) {
+                verifier = new ECDSAVerifier(ecKey);
+            } else if (jwk instanceof RSAKey rsaKey) {
+                verifier = new RSASSAVerifier(rsaKey);
+            } else {
+                throw new IllegalArgumentException("Unsupported key type: " + jwk.getKeyType());
+            }
+
+            // 5. Verifica della firma
+            if (!signedJWT.verify(verifier)) {
+                throw new SecurityException("DPoP proof signature is invalid");
+            }
+
+            // 6. Parsing del payload
+            JWTClaimsSet claims = signedJWT.getJWTClaimsSet();
+
+            // 7. Verifica htm = POST
+            String htm = (String) claims.getClaim("htm");
+            if (!"POST".equalsIgnoreCase(htm)) {
+                throw new IllegalArgumentException("Invalid 'htm' claim: expected POST");
+            }
+
+            // 8. Verifica htu = expected URL
+            String htu = (String) claims.getClaim("htu");
+            String expectedHtu = dpopHtu;
+            if (!expectedHtu.equalsIgnoreCase(htu)) {
+                throw new IllegalArgumentException("Invalid 'htu' claim: unexpected URI");
+            }
+
+            // 9. Verifica iat (entro 60 secondi)
+            Date issuedAt = claims.getIssueTime();
+            if (issuedAt == null) {
+                throw new IllegalArgumentException("Missing 'iat' claim");
+            }
+            long now = System.currentTimeMillis();
+            long issuedAtTime = issuedAt.getTime();
+            if (Math.abs(now - issuedAtTime) > 60_000) {
+                throw new IllegalArgumentException("DPoP proof is outside the valid time window (60s)");
+            }
+
+            // 10. Presenza del jti
+            String jti = claims.getJWTID();
+            if (jti == null) {
+                throw new IllegalArgumentException("Missing 'jti' claim");
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Errore nella verifica della firma DPoP: " + e.getMessage(), e);
+        }
+    }
+
+    private String internalBuildDPoPProof(KeyPair keyPair, HttpMethod method, String htu, String accessToken) {
         try {
             long now = System.currentTimeMillis() / 1000;
 

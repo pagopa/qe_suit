@@ -1,7 +1,5 @@
-package it.pagopa.interop.common.kernel.domain;
+package it.pagopa.kernel.security;
 
-import it.pagopa.interop.common.kernel.security.KeyPairUtils;
-import it.pagopa.kernel.security.KeyAlgorithm;
 import lombok.Builder;
 import lombok.extern.jackson.Jacksonized;
 
