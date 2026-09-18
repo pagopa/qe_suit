@@ -26,6 +26,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.anyOf;
@@ -60,6 +62,32 @@ public class BffClientContractTest {
     }
 
     @TestFactory
+    Stream<DynamicTest> getClient() {
+        return httpContractValidator
+                .apiCall(() -> {
+                    interopJourney.withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
+                    return apiClient.clients().getClient();
+                })
+                .pathParams(() -> {
+                    Client createdClient = interopJourney
+                            .withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                            .createClient(clientConfig -> clientConfig
+                                    .name(RandomUtils.randomAlphanumericName("client"))
+                                    .kind(ClientKind.API)
+                                    .users(UserRef.of(
+                                            User.getTenantUser(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN),
+                                            Tenant.COMUNE_DI_MILANO
+                                    ))
+                            )
+                            .get(Client.class);
+
+                    return Map.of("clientId", createdClient.getId());
+                })
+                .scenario(POSITIVE_SCENARIOS, BffClientContractTest::getValidatableResponse)
+                .tests();
+    }
+
+    @TestFactory
     Stream<DynamicTest> createApiClient() {
         return httpContractValidator
                 .apiCall(() -> {
@@ -74,17 +102,21 @@ public class BffClientContractTest {
     @TestFactory
     Stream<DynamicTest> createKey() {
         return httpContractValidator
-                .apiCall(() -> {
+                .apiCall(() -> apiClient.clients().createKey())
+                .pathParams(() -> {
                     Client createdClient = interopJourney
                             .withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                             .createClient(clientConfig -> clientConfig
                                     .name(RandomUtils.randomAlphanumericName("client"))
                                     .kind(ClientKind.API)
-                                    .users(UserRef.of(User.getTenantUser(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN), Tenant.COMUNE_DI_MILANO))
+                                    .users(UserRef.of(
+                                            User.getTenantUser(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN),
+                                            Tenant.COMUNE_DI_MILANO
+                                    ))
                             )
                             .get(Client.class);
 
-                    return apiClient.clients().createKey().clientIdPath(createdClient.getId());
+                    return Map.of("clientId", createdClient.getId());
                 })
                 .payload(requestFactory::keyCreationRequest)
                 .scenario(POSITIVE_SCENARIOS, BffClientContractTest::getValidatableResponse)
