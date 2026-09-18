@@ -6,6 +6,7 @@ import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.infrastructure.fuzzing.FuzzEngine;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,7 +20,7 @@ public class M2Mv3ApiContractConfig {
             ObjectMapper objectMapper,
             FuzzEngine fuzzEngine,
             ObjectGraphDecomposer objectGraphDecomposer,
-            HttpContractPolicy m2mV3ApiContractPolicy
+            @Qualifier("m2mV3ApiContractPolicy") HttpContractPolicy m2mV3ApiContractPolicy
     ) {
         return new HttpContractValidator(
                 objectMapper,
@@ -29,7 +30,7 @@ public class M2Mv3ApiContractConfig {
         );
     }
 
-    @Bean
+    @Bean(name = "m2mV3ApiContractPolicy")
     HttpContractPolicy m2mV3ApiContractPolicy() {
         return HttpContractPolicy.builder()
                 .successStatus(201)

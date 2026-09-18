@@ -1,8 +1,8 @@
 package it.pagopa.interop.m2m.infrastructure.config;
 
 import io.cucumber.spring.ScenarioScope;
-import it.pagopa.interop.m2m.infrastructure.context.CucumberCurrentApiClientSession;
-import it.pagopa.interop.m2m.kernel.context.CurrentApiClientSession;
+import it.pagopa.interop.m2m.infrastructure.context.CucumberCurrentM2MSession;
+import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -15,7 +15,7 @@ public class M2MCucumberConfig {
     @Bean
     @ScenarioScope
     @Primary
-    CurrentApiClientSession currentApiClientSession() {
-        return new CucumberCurrentApiClientSession();
+    CurrentM2MSession currentApiClientSession() {
+        return new CucumberCurrentM2MSession();
     }
 }
