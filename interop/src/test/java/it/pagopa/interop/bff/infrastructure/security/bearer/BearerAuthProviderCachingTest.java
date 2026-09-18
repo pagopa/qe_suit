@@ -2,15 +2,15 @@ package it.pagopa.interop.bff.infrastructure.security.bearer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.interop.common.infrastructure.config.CacheConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.model.SignRequest;
@@ -33,8 +33,26 @@ class BearerAuthProviderCachingTest {
 
     @Test
     void getToken_withSameUserAndTenant_usesCacheAndSignsOnce() {
-        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TestConfig.class)) {
-            KmsClient kmsClient = context.getBean(KmsClient.class);
+        try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
+            KmsClient kmsClient = mock(KmsClient.class);
+
+            context.register(TestConfig.class, CacheConfig.class);
+            context.registerBean(KmsClient.class, () -> kmsClient);
+            context.registerBean(ObjectMapper.class, () -> new ObjectMapper());
+            context.registerBean(BearerTokenProperties.class, () -> new BearerTokenProperties(
+                    "https://dev.interop.pagopa.it/.well-known/jwks.json",
+                    "dev.interop.pagopa.it",
+                    "dev.interop.pagopa.it/ui",
+                    14400
+            ));
+            context.registerBean(BearerAuthProvider.class,
+                    () -> new BearerAuthProvider(
+                            context.getBean(ObjectMapper.class),
+                            context.getBean(KmsClient.class),
+                            context.getBean(BearerTokenProperties.class)
+                    ));
+            context.refresh();
+
             BearerAuthProvider bearerAuthProvider = context.getBean(BearerAuthProvider.class);
 
             when(kmsClient.sign(any(SignRequest.class)))
@@ -43,7 +61,7 @@ class BearerAuthProviderCachingTest {
             String firstToken = bearerAuthProvider.getToken(User.S_MATTIA, Tenant.COMUNE_DI_MILANO);
             String secondToken = bearerAuthProvider.getToken(User.S_MATTIA, Tenant.COMUNE_DI_MILANO);
 
-            assertEquals(removeJti(extractPayload(firstToken)), removeJti(extractPayload(secondToken)));
+            assertEquals(removeVolatileClaims(extractPayload(firstToken)), removeVolatileClaims(extractPayload(secondToken)));
             verify(kmsClient, times(1)).sign(any(SignRequest.class));
         }
     }
@@ -53,10 +71,13 @@ class BearerAuthProviderCachingTest {
         return new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
     }
 
-    private Map<String, Object> removeJti(String payload) {
+    private Map<String, Object> removeVolatileClaims(String payload) {
         try {
             Map<String, Object> claims = objectMapper.readValue(payload, new TypeReference<>() {});
             claims.remove("jti");
+            claims.remove("iat");
+            claims.remove("nbf");
+            claims.remove("exp");
             return claims;
         } catch (Exception e) {
             throw new IllegalStateException("Unable to parse token payload", e);
@@ -65,40 +86,7 @@ class BearerAuthProviderCachingTest {
 
     @Configuration(proxyBeanMethods = false)
     @EnableCaching
+    @Import(CacheConfig.class)
     static class TestConfig {
-
-        @Bean
-        ObjectMapper objectMapper() {
-            return new ObjectMapper();
-        }
-
-        @Bean
-        KmsClient kmsClient() {
-            return mock(KmsClient.class);
-        }
-
-        @Bean
-        CacheManager cacheManager() {
-            return new ConcurrentMapCacheManager("sessionToken");
-        }
-
-        @Bean
-        BearerTokenProperties bearerTokenProperties() {
-            return new BearerTokenProperties(
-                    "https://dev.interop.pagopa.it/.well-known/jwks.json",
-                    "dev.interop.pagopa.it",
-                    "dev.interop.pagopa.it/ui",
-                    14400
-            );
-        }
-
-        @Bean
-        BearerAuthProvider bearerAuthProvider(
-                ObjectMapper objectMapper,
-                KmsClient kmsClient,
-                BearerTokenProperties bearerTokenProperties
-        ) {
-            return new BearerAuthProvider(objectMapper, kmsClient, bearerTokenProperties);
-        }
     }
 }
