@@ -15,13 +15,13 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-class M2MApiClientProvider {
+class M2Mv3ApiClientProvider {
 
     private final InteropJourney interopJourney;
 
     @Cacheable(
             cacheNames = "m2mApiClient",
-            key = "@m2MApiClientProvider.cacheKey(#tenant, #role)",
+            key = "@m2Mv3ApiClientProvider.cacheKey(#tenant, #role)",
             sync = true
     )
     public Client getOrCreate(Tenant tenant, M2MRole role) {

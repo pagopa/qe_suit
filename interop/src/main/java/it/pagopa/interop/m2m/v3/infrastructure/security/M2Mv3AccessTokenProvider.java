@@ -32,7 +32,7 @@ public class M2Mv3AccessTokenProvider {
     private String syncHtu;
 
     private final CacheManager cacheManager;
-    private final M2MApiClientProvider apiClientProvider;
+    private final M2Mv3ApiClientProvider apiClientProvider;
     private final AccessTokenProvider accessTokenProvider;
     private final DPoPProofService dPoPProofService;
 
