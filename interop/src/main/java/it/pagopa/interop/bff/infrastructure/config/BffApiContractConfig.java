@@ -14,8 +14,8 @@ import java.util.List;
 @Configuration(proxyBeanMethods = false)
 public class BffApiContractConfig {
 
-    @Bean("bffApiContract")
-    HttpContractValidator bffApiContract(
+    @Bean("bffApiContractValidator")
+    HttpContractValidator bffApiContractValidator(
             ObjectMapper objectMapper,
             FuzzEngine fuzzEngine,
             ObjectGraphDecomposer objectGraphDecomposer,

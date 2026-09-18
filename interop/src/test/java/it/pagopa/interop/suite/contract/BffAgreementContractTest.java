@@ -16,6 +16,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -24,13 +25,24 @@ import java.util.stream.Stream;
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-@RequiredArgsConstructor
 public class BffAgreementContractTest {
 
     private final ApiClient apiClient;
     private final HttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final BffAgreementRequestFactory requestFactory;
+
+    public BffAgreementContractTest(
+            ApiClient apiClient,
+            @Qualifier("bffApiContractValidator") HttpContractValidator httpContractValidator,
+            InteropJourney interopJourney,
+            BffAgreementRequestFactory requestFactory
+    ) {
+        this.apiClient = apiClient;
+        this.httpContractValidator = httpContractValidator;
+        this.interopJourney = interopJourney;
+        this.requestFactory = requestFactory;
+    }
 
     @TestFactory
     Stream<DynamicTest> createAgreement() {
