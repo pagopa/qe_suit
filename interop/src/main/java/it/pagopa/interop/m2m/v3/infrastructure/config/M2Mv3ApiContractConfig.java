@@ -15,8 +15,8 @@ import java.util.List;
 @Configuration(proxyBeanMethods = false)
 public class M2Mv3ApiContractConfig {
 
-    @Bean("m2mV3ApiContract")
-    HttpContractValidator m2mV3ApiContract(
+    @Bean("m2Mv3ApiContractValidator")
+    HttpContractValidator m2mV3ApiContractValidator(
             ObjectMapper objectMapper,
             FuzzEngine fuzzEngine,
             ObjectGraphDecomposer objectGraphDecomposer,

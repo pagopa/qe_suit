@@ -12,6 +12,7 @@ import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.application.context.TestContext;
+import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
@@ -62,5 +63,10 @@ public class JunitContextConfig {
     @Bean
     LastApiResponseStore lastApiResponseStore() {
         return new it.pagopa.infrastructure.context.InMemoryLastApiResponseStore();
+    }
+
+    @Bean
+    CurrentM2MSession currentM2MSession() {
+        return new it.pagopa.interop.m2m.kernel.infrastructure.context.InMemoryCurrentM2MSession();
     }
 }
