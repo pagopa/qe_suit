@@ -26,13 +26,6 @@ public class CucumberCurrentUserSession implements CurrentUserSession {
         return currentTenant;
     }
 
-    public boolean isLoggedIn(User user, Tenant tenant) {
-        return this.currentUser != null
-                && this.currentTenant != null
-                && this.currentUser == user
-                && this.currentTenant == tenant;
-    }
-
     public void reset() {
         this.currentUser = null;
         this.currentTenant = null;

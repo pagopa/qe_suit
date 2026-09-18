@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nullable;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -24,7 +25,7 @@ public class ClientAssertionUseCase {
         return clientAssertionGateway.createClientAssertion(client, null, null, List.of());
     }
 
-    public ClientAssertion createClientAssertion(Client client, Purpose purpose) throws NoSuchAlgorithmException, JsonProcessingException {
+    public ClientAssertion createClientAssertion(Client client, @Nullable Purpose purpose) throws NoSuchAlgorithmException, JsonProcessingException {
         return clientAssertionGateway.createClientAssertion(client, purpose, null, List.of());
     }
 
@@ -32,11 +33,11 @@ public class ClientAssertionUseCase {
         return clientAssertionGateway.createClientAssertion(client, null, null, overrides);
     }
 
-    public ClientAssertion createClientAssertion(Client client, Purpose purpose, List<ClientAssertionClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
+    public ClientAssertion createClientAssertion(Client client, @Nullable Purpose purpose, List<ClientAssertionClaimOverride> overrides) throws NoSuchAlgorithmException, JsonProcessingException {
         return clientAssertionGateway.createClientAssertion(client, purpose, null, overrides);
     }
 
-    public ClientAssertion createClientAssertion(Client client, Purpose purpose, KeyPair keyPair) throws NoSuchAlgorithmException, JsonProcessingException {
+    public ClientAssertion createClientAssertion(Client client, @Nullable Purpose purpose, KeyPair keyPair) throws NoSuchAlgorithmException, JsonProcessingException {
         return clientAssertionGateway.createClientAssertion(client, purpose, keyPair, List.of());
     }
 }

@@ -10,6 +10,10 @@ public class CacheConfig {
 
     @Bean
     CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("sessionToken");
+        return new ConcurrentMapCacheManager(
+                "sessionToken",
+                "m2mApiClient",
+                "m2mAuthSession"
+        );
     }
 }
