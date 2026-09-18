@@ -115,6 +115,7 @@ public class WebAgreementContractTest {
         }
     }
 
+    // case 1
     @Test
     void shouldSeeBanner1() throws Throwable {
         interopJourney
@@ -137,6 +138,7 @@ public class WebAgreementContractTest {
         );
     }
 
+    // case 2
     @Test
     void shouldSeeBanner2() throws Throwable {
         interopJourney
@@ -161,6 +163,7 @@ public class WebAgreementContractTest {
         );
     }
 
+    // case 3
     @Test
     void shouldSeeNoBannerWhenEserviceInArchivingStateAndAgreementIsNonUpdatable() throws Throwable {
         // Given: an eservice whose first descriptor has an agreement, and a newer
@@ -176,6 +179,33 @@ public class WebAgreementContractTest {
                 .waitUntilEService(eservice ->
                         (eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVING ||
                         eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVED));
+
+        Agreement agreement = interopJourney.get(Agreement.class);
+        System.setProperty("agreementId", agreement.getId().toString());
+        assertNoBannerIsVisible(
+                "should see no banner when e-service is in archiving state and the agreement is non-updatable",
+                Tenant.PAGO_PA,
+                Tenant.COMUNE_DI_MILANO
+        );
+    }
+
+    // case 4
+    @Test
+    void shouldSeeNoBannerWhenDescriptorInArchivingStateAndEserviceInArchivingStateAndAgreementIsNonUpdatable() throws Throwable {
+        // Given: an eservice whose first descriptor has an agreement, and a newer
+        // descriptor has since been published, making the first one DEPRECATED.
+        interopJourney
+                .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .addDescriptor(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
+                // TODO : AGGIUNGI FUNZIONALITA' DI ARCHIVIAZIONE DESCRITTORE ESERVICE
+                .archiveEService(GracePeriodDays.NUMBER_60)
+                .waitUntilEService(eservice ->
+                        (eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVING ||
+                                eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVED));
 
         Agreement agreement = interopJourney.get(Agreement.class);
         System.setProperty("agreementId", agreement.getId().toString());
