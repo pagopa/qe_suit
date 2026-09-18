@@ -31,11 +31,11 @@ public class DPoPProofService {
     }
 
     public DPoPProof buildDPoPProofWithOverrides(KeyPair keyPair, HttpMethod method, String htu, String accessToken, List<JwtBuilder.JwtClaimOverride> overrides) {
-        String baseProof = internalBuildDPoPProof(keyPair, method, htu, accessToken);
+        DPoPProof baseProof = internalBuildDPoPProof(keyPair, method, htu, accessToken);
         if (overrides == null || overrides.isEmpty()) {
             return baseProof;
         }
-        return applyOverridesAndResign(baseProof, keyPair, overrides);
+        return applyOverridesAndResign(baseProof.getJwt(), keyPair, overrides);
     }
 
     public DPoPProof buildDPoPProofWithOverrides(KeyPair keyPair, HttpMethod method, String htu, List<JwtBuilder.JwtClaimOverride> overrides) {
@@ -198,7 +198,7 @@ public class DPoPProofService {
         }
     }
 
-    private String applyOverridesAndResign(String jwt, KeyPair keyPair, List<JwtBuilder.JwtClaimOverride> overrides) {
+    private DPoPProof applyOverridesAndResign(String jwt, KeyPair keyPair, List<JwtBuilder.JwtClaimOverride> overrides) {
         try {
             String[] parts = jwt.split("\\.");
             if (parts.length != 3) throw new IllegalArgumentException("JWT malformato");
@@ -220,7 +220,11 @@ public class DPoPProofService {
                 }
             }
 
-            return sign(header, payload, keyPair.getPrivate());
+            String rawDpop = sign(header, payload, keyPair.getPrivate());
+            return DPoPProof.builder()
+                    .key(Key.builder().pair(keyPair).build())
+                    .jwt(rawDpop)
+                    .build();
 
         } catch (Exception e) {
             throw new IllegalStateException("Errore nell'applicazione degli override al DPoP proof", e);
