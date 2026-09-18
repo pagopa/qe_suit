@@ -20,8 +20,8 @@ public class DPoPProofGateway {
         KeyPair keyPair = KeyPairUtils.generate(keyAlgorithm, 2048);
 
         String proof = (overrides == null)
-                ? dPoPProofService.buildDPoPProof(keyPair, httpMethod, htu)
-                : dPoPProofService.buildDPoPProofWithOverrides(keyPair, httpMethod, htu, overrides);
+                ? dPoPProofService.buildDPoPProof(keyPair, httpMethod, htu).getJwt()
+                : dPoPProofService.buildDPoPProofWithOverrides(keyPair, httpMethod, htu, overrides).getJwt();
 
         log.info("Generated DPoP proof: {}", proof);
         String publicPem = "-----BEGIN PUBLIC KEY-----\n" +
