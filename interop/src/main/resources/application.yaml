@@ -32,3 +32,5 @@ interop:
   api:
     openapi-url:
       bff: @bff.openapi.url@
+      m2m:
+        v3: @m2m.v3.openapi.url@
