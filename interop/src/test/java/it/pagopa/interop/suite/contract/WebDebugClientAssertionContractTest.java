@@ -46,15 +46,6 @@ public class WebDebugClientAssertionContractTest {
                 .tests(scenarios());
     }
 
-    @Test
-    void shouldSeeBannerForUpdate(){}
-
-    @Test
-    void shouldSeeBanner(){}
-
-    @Test
-    void shouldSeeNoBanner(){}
-
     private Stream<WebScenario<DebugClientAssertionPage>> scenarios() {
         return Stream.of(
                 new WebScenario<>(
