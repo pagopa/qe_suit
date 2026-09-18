@@ -714,6 +714,50 @@
                             </replacements>
                         </configuration>
                     </execution>
+
+                    <execution>
+                        <id>patch-m2m-v3-file-download-multipart</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>
+                                    ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/m2m/v3/api/AgreementsApi.java
+                                </include>
+                                <include>
+                                    ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/m2m/v3/api/EservicesApi.java
+                                </include>
+                                <include>
+                                    ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/m2m/v3/api/EserviceTemplatesApi.java
+                                </include>
+                                <include>
+                                    ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/m2m/v3/api/PurposesApi.java
+                                </include>
+                                <include>
+                                    ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/m2m/v3/api/PurposeTemplatesApi.java
+                                </include>
+                            </includes>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>import it\.pagopa\.interop\.generated\.openapi\.clients\.m2m\.v3\.model\.FileDownloadMultipart;\s*\n</token>
+                                    <value></value>
+                                </replacement>
+                                <replacement>
+                                    <token>(package it\.pagopa\.interop\.generated\.openapi\.clients\.m2m\.v3\.api;\s*\n)</token>
+                                    <value>$1
+import java.io.File;
+</value>
+                                </replacement>
+                                <replacement>
+                                    <token>FileDownloadMultipart</token>
+                                    <value>File</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 
