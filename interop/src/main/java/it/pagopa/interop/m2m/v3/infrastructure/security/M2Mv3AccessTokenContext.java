@@ -6,7 +6,7 @@ import java.security.KeyPair;
 import java.time.Duration;
 import java.time.Instant;
 
-record M2Mv3AccessTokenContext(
+public record M2Mv3AccessTokenContext(
         AccessToken accessToken,
         KeyPair dpopKeyPair,
         Instant expiresAt

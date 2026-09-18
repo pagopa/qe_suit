@@ -4,10 +4,7 @@ import it.pagopa.interop.common.client.application.command.ClientKeyCreationComm
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientKind;
 import it.pagopa.interop.common.journey.application.InteropJourney;
-import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
-import it.pagopa.interop.common.kernel.domain.UserRef;
-import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +40,7 @@ class M2MApiClientProvider {
 
         return interopJourney
                 .withProducer(tenant, tenantAdmin)
+                .switchChannel(Channel.BFF)
                 .createClient(clientConfig -> {
                     clientConfig
                             .name(RandomUtils.randomAlphanumericName("client"))
@@ -54,6 +52,7 @@ class M2MApiClientProvider {
 
                     if (role == M2MRole.M2M_ADMIN) clientConfig.admin(tenantAdminRef);
                 })
+                .switchChannel(Channel.M2M_V3)
                 .get(Client.class);
     }
 }
