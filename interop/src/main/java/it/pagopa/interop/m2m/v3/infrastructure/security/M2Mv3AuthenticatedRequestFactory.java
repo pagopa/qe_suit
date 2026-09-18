@@ -47,7 +47,15 @@ public class M2Mv3AuthenticatedRequestFactory {
         this.dPoPProofService = dPoPProofService;
     }
 
-    public RequestSpecBuilder create() throws NoSuchAlgorithmException, JsonProcessingException {
+    public RequestSpecBuilder create() {
+        try {
+            return createInternal();
+        } catch (NoSuchAlgorithmException | JsonProcessingException e) {
+            throw new IllegalStateException("Unable to create M2M v3 request specification", e);
+        }
+    }
+
+    private RequestSpecBuilder createInternal() throws NoSuchAlgorithmException, JsonProcessingException {
 
         TestContext testContext = testKindProvider.getObject();
         CurrentM2MSession currentSession = currentApiClientSessions.getObject();
@@ -84,7 +92,7 @@ public class M2Mv3AuthenticatedRequestFactory {
         return builder;
     }
 
-    public RequestSpecification given() throws NoSuchAlgorithmException, JsonProcessingException {
+    public RequestSpecification given() {
         return RestAssured.given()
                 .spec(create().build());
     }

@@ -9,7 +9,6 @@ import it.pagopa.infrastructure.http.restassured.flow.FlowValidationFilterFactor
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
 import it.pagopa.interop.m2m.v3.infrastructure.security.M2Mv3AuthenticatedRequestFactory;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +25,6 @@ public class M2MV3RestApiClientConfig {
 
     private final TestContext testContext;
 
-    @SneakyThrows
     @Bean
     public ApiClient m2mV3ApiClient(M2Mv3AuthenticatedRequestFactory requestSpecFactory) {
         ApiClient.Config apiConfig = ApiClient.Config.apiConfig()
