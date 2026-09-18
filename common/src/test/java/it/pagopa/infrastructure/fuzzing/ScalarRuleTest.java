@@ -31,6 +31,7 @@ class ScalarRuleTest {
         assertEquals("   ", byScenario.get(FuzzScenario.REPLACED_WITH_BLANK_STRING).value());
         assertEquals("A".repeat(5000), byScenario.get(FuzzScenario.REPLACED_WITH_LONG_STRING).value());
         assertEquals("' OR '1'='1", byScenario.get(FuzzScenario.REPLACED_WITH_SQL_INJECTION).value());
+        assertEquals("http://injected.example.test", byScenario.get(FuzzScenario.REPLACED_WITH_URL_INJECTION).value());
         assertEquals("<script>alert(1)</script>", byScenario.get(FuzzScenario.REPLACED_WITH_XSS).value());
         assertEquals(124, byScenario.get(FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER).value());
     }
