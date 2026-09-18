@@ -7,7 +7,7 @@ import it.pagopa.interop.common.client.application.command.DebugClientAssertionC
 import it.pagopa.interop.common.client.application.DebugClientAssertionUseCase;
 import it.pagopa.interop.common.client.domain.DebugClientAssertionValidation;
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.interop.common.kernel.security.DPoPProof;
+import it.pagopa.kernel.security.DPoPProof;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

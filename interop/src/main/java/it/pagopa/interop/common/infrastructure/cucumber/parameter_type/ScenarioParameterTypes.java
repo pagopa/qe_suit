@@ -6,7 +6,7 @@ import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.interop.common.kernel.security.DPoPProof;
+import it.pagopa.kernel.security.DPoPProof;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
