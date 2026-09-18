@@ -5,6 +5,7 @@ import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.infrastructure.contract.http.HttpContractPolicy;
 import it.pagopa.infrastructure.fuzzing.*;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,7 +19,7 @@ public class BffApiContractConfig {
             ObjectMapper objectMapper,
             FuzzEngine fuzzEngine,
             ObjectGraphDecomposer objectGraphDecomposer,
-            HttpContractPolicy bffApiContractPolicy
+            @Qualifier("bffApiContractPolicy") HttpContractPolicy bffApiContractPolicy
     ) {
         return new HttpContractValidator(
                 objectMapper,
@@ -28,7 +29,7 @@ public class BffApiContractConfig {
         );
     }
 
-    @Bean
+    @Bean("bffApiContractPolicy")
     HttpContractPolicy bffApiContractPolicy() {
         return HttpContractPolicy.builder()
                 .successStatus(200)

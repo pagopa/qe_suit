@@ -25,8 +25,9 @@ interop:
       duration-sec: 14400
     oauth:
       server:
-        sync: https://auth.qa.interop.pagopa.it/token.oauth2
-        async: https://auth.qa.interop.pagopa.it/token.oauth2.async
+        base-url: https://auth.qa.interop.pagopa.it
+        sync: ${interop.auth.oauth.server.base-url}/token.oauth2
+        async: ${interop.auth.oauth.server.base-url}/token.oauth2.async
     client-assertion:
       audience: auth.qa.interop.pagopa.it/client-assertion
       grant_type: client_credentials
