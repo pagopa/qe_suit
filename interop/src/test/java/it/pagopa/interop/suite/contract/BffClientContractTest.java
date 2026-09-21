@@ -1,8 +1,6 @@
 package it.pagopa.interop.suite.contract;
 
-import io.restassured.response.Response;
 import it.pagopa.infrastructure.contract.http.HttpContractValidator;
-import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.client.infrastructure.BffClientRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
@@ -24,12 +22,8 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-
-import static it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig.DEFAULT_SUCCESS_STATUS_CODE;
-import static org.hamcrest.Matchers.is;
 
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
@@ -50,11 +44,6 @@ public class BffClientContractTest {
                     return apiClient.clients().createConsumerClient();
                 })
                 .payload(requestFactory::creationRequest)
-                /*.targets(
-                        FuzzScenario.REMOVED,
-                        BffClientContractTest::getValidatableResponse,
-                        List.of(seed -> seed.getMembers().get(0))
-                )*/
                 .tests();
     }
 
@@ -80,7 +69,6 @@ public class BffClientContractTest {
 
                     return Map.of("clientId", createdClient.getId());
                 })
-                //.scenario(POSITIVE_SCENARIOS, BffClientContractTest::getValidatableResponse)
                 .tests();
     }
 
@@ -92,11 +80,6 @@ public class BffClientContractTest {
                     return apiClient.clients().createApiClient();
                 })
                 .payload(requestFactory::creationRequest)
-                .targets(
-                        FuzzScenario.REMOVED,
-                        BffClientContractTest::getValidatableResponse,
-                        List.of(seed -> seed.getMembers().get(0))
-                )
                 .tests();
     }
 
@@ -123,9 +106,4 @@ public class BffClientContractTest {
                 .tests();
     }
 
-    private static void getValidatableResponse(Response response) {
-        response.then().statusCode(is(DEFAULT_SUCCESS_STATUS_CODE));
-    }
 }
-
-

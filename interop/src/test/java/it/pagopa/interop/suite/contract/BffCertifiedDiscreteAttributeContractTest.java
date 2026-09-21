@@ -17,6 +17,9 @@ import java.util.function.Supplier;
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+/*21/09/2026: al momento il test per URL injection fallisce, coerentemente con il fatto che
+ * qui https://pagopa.atlassian.net/browse/PIN-6881 l'api non risulta coperta per
+ * questo rilascio. Presumibilmente verrà coperta in futuro. */
 public class BffCertifiedDiscreteAttributeContractTest extends AbstractBffAttributeContractTest {
 
     public BffCertifiedDiscreteAttributeContractTest(
