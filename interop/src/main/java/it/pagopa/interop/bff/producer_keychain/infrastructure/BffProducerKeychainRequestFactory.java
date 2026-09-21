@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.UUID;
 
+import static it.pagopa.utils.RandomUtils.randomAlphanumericName;
 import static org.instancio.Select.field;
 
 @Component
@@ -19,8 +20,8 @@ public class BffProducerKeychainRequestFactory {
 
     public ProducerKeychainSeed creationRequest() {
         return Instancio.of(ProducerKeychainSeed.class)
-                .generate(field(ProducerKeychainSeed::getName), gen -> gen.string().prefix("producer-keychain-").length(24))
-                .generate(field(ProducerKeychainSeed::getDescription), gen -> gen.string().prefix("description-").length(32))
+                .set(field(ProducerKeychainSeed::getName), randomAlphanumericName("producer-keychain", 24))
+                .set(field(ProducerKeychainSeed::getDescription), randomAlphanumericName("description", 32))
                 .set(field(ProducerKeychainSeed::getMembers), List.of(DEFAULT_MEMBER_ID))
                 .create();
     }
