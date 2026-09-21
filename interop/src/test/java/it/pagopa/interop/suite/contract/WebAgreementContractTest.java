@@ -28,16 +28,8 @@ import java.util.stream.Stream;
 
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(
-        classes = {
-                TestBootApp.class,
-                JunitContextConfig.class,
-                WebJUnitSuitConfig.class
-        },
-        properties = {
-                "spring.profiles.include=junit",
-                "channel.web.browser=chrome",
-                "channel.web.headless=false",
-        }
+        classes = {TestBootApp.class,JunitContextConfig.class,WebJUnitSuitConfig.class},
+        properties = {"spring.profiles.include=junit", "channel.web.browser=chrome", "channel.web.headless=false",}
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
@@ -130,12 +122,7 @@ public class WebAgreementContractTest {
         Agreement agreement = interopJourney.get(Agreement.class);
         System.setProperty("agreementId", agreement.getId().toString());
 
-        assertBannerIsVisible(
-                "Should see banner for agreement update to newer version",
-                DESIRED_MESSAGE_BANNER_1,
-                Tenant.PAGO_PA,
-                Tenant.COMUNE_DI_MILANO
-        );
+        assertBannerIsVisible("Should see banner for agreement update to newer version", DESIRED_MESSAGE_BANNER_1, Tenant.PAGO_PA, Tenant.COMUNE_DI_MILANO);
     }
 
     // case 2
@@ -155,19 +142,12 @@ public class WebAgreementContractTest {
 
         Agreement agreement = interopJourney.get(Agreement.class);
         System.setProperty("agreementId", agreement.getId().toString());
-        assertBannerIsVisible(
-                "Should see banner agreement",
-                DESIRED_MESSAGE_BANNER_2,
-                Tenant.PAGO_PA,
-                Tenant.COMUNE_DI_MILANO
-        );
+        assertBannerIsVisible("Should see banner agreement", DESIRED_MESSAGE_BANNER_2, Tenant.PAGO_PA, Tenant.COMUNE_DI_MILANO);
     }
 
     // case 3
     @Test
     void shouldSeeNoBannerWhenEserviceInArchivingStateAndAgreementIsNonUpdatable() throws Throwable {
-        // Given: an eservice whose first descriptor has an agreement, and a newer
-        // descriptor has since been published, making the first one DEPRECATED.
         interopJourney
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
@@ -184,24 +164,22 @@ public class WebAgreementContractTest {
         System.setProperty("agreementId", agreement.getId().toString());
         assertNoBannerIsVisible(
                 "should see no banner when e-service is in archiving state and the agreement is non-updatable",
-                Tenant.PAGO_PA,
-                Tenant.COMUNE_DI_MILANO
+                Tenant.PAGO_PA, Tenant.COMUNE_DI_MILANO
         );
     }
 
     // case 4
     @Test
     void shouldSeeNoBannerWhenDescriptorInArchivingStateAndEserviceInArchivingStateAndAgreementIsNonUpdatable() throws Throwable {
-        // Given: an eservice whose first descriptor has an agreement, and a newer
-        // descriptor has since been published, making the first one DEPRECATED.
         interopJourney
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
-                .addDescriptor(EServiceDescriptorState.PUBLISHED)
                 .withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .linkAgreement(AgreementState.ACTIVE)
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
-                // TODO : AGGIUNGI FUNZIONALITA' DI ARCHIVIAZIONE DESCRITTORE ESERVICE
+                .addDescriptor(EServiceDescriptorState.PUBLISHED)
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED)
+                .archiveFirstEServiceDescriptor(GracePeriodDays.NUMBER_60)
                 .archiveEService(GracePeriodDays.NUMBER_60)
                 .waitUntilEService(eservice ->
                         (eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVING ||
@@ -211,8 +189,7 @@ public class WebAgreementContractTest {
         System.setProperty("agreementId", agreement.getId().toString());
         assertNoBannerIsVisible(
                 "should see no banner when e-service is in archiving state and the agreement is non-updatable",
-                Tenant.PAGO_PA,
-                Tenant.COMUNE_DI_MILANO
+                Tenant.PAGO_PA, Tenant.COMUNE_DI_MILANO
         );
     }
 }
