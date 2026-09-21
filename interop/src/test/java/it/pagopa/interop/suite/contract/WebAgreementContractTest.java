@@ -24,12 +24,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(
         classes = {TestBootApp.class,JunitContextConfig.class,WebJUnitSuitConfig.class},
-        properties = {"spring.profiles.include=junit", "channel.web.browser=chrome", "channel.web.headless=false",}
+        properties = {"spring.profiles.include=junit", "channel.web.browser=chrome", }  // "channel.web.headless=false",
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
@@ -40,7 +41,7 @@ public class WebAgreementContractTest {
     private final String DESIRED_MESSAGE_BANNER_1 = "Questa versione dell’e-service è obsoleta, ma è ancora attiva. È disponibile una nuova versione.";
     private final String DESIRED_MESSAGE_BANNER_2 = "Questa versione dell’e-service è obsoleta, ma è ancora attiva.";
 
-    private void assertBannerIsVisible(final String webScenarioMessage, final String message, final Tenant producer, final Tenant consumer) throws Throwable {
+    private void assertBannerIsVisible(final String webScenarioMessage, final String message, final Tenant consumer, final UUID agreementId) throws Throwable {
         try {
             WebScenario<AgreementPage> scenario = new WebScenario<>(
                     webScenarioMessage,
@@ -62,7 +63,7 @@ public class WebAgreementContractTest {
                             User.getTenantAdmin(consumer),
                             consumer
                     )
-                    .on(AgreementPage.class)
+                    .on(AgreementPage.class, agreementId.toString())
                     .tests(Stream.of(scenario))
                     .toList();
 
@@ -72,7 +73,7 @@ public class WebAgreementContractTest {
         }
     }
 
-    private void assertNoBannerIsVisible(final String webScenarioMessage, final Tenant producer, final Tenant consumer) throws Throwable {
+    private void assertNoBannerIsVisible(final String webScenarioMessage, final Tenant consumer, final UUID agreementId) throws Throwable {
         try {
             WebScenario<AgreementPage> scenario = new WebScenario<>(
                     webScenarioMessage,
@@ -97,7 +98,7 @@ public class WebAgreementContractTest {
                             User.getTenantAdmin(consumer),
                             consumer
                     )
-                    .on(AgreementPage.class)
+                    .on(AgreementPage.class, agreementId.toString())
                     .tests(Stream.of(scenario))
                     .toList();
 
@@ -123,10 +124,7 @@ public class WebAgreementContractTest {
                         (eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVING ||
                                 eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVED));
 
-        Agreement agreement = interopJourney.get(Agreement.class);
-        System.setProperty("agreementId", agreement.getId().toString());
-
-        assertBannerIsVisible("Should see banner for agreement update to newer version", DESIRED_MESSAGE_BANNER_1, Tenant.PAGO_PA, Tenant.COMUNE_DI_MILANO);
+        doAssertion(true, "Should see banner for agreement update to newer version", Tenant.COMUNE_DI_MILANO, DESIRED_MESSAGE_BANNER_1);
     }
 
     // case 2
@@ -144,9 +142,7 @@ public class WebAgreementContractTest {
                         (eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVING ||
                         eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVED));
 
-        Agreement agreement = interopJourney.get(Agreement.class);
-        System.setProperty("agreementId", agreement.getId().toString());
-        assertBannerIsVisible("Should see banner agreement", DESIRED_MESSAGE_BANNER_2, Tenant.PAGO_PA, Tenant.COMUNE_DI_MILANO);
+        doAssertion(true, "Should see banner agreement", Tenant.COMUNE_DI_MILANO, DESIRED_MESSAGE_BANNER_2);
     }
 
     // case 3
@@ -164,12 +160,7 @@ public class WebAgreementContractTest {
                         (eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVING ||
                         eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVED));
 
-        Agreement agreement = interopJourney.get(Agreement.class);
-        System.setProperty("agreementId", agreement.getId().toString());
-        assertNoBannerIsVisible(
-                "should see no banner when e-service is in archiving state and the agreement is non-updatable",
-                Tenant.PAGO_PA, Tenant.COMUNE_DI_MILANO
-        );
+        doAssertion(false, "should see no banner when e-service is in archiving state and the agreement is non-updatable", Tenant.COMUNE_DI_MILANO, null);
     }
 
     // case 4
@@ -189,11 +180,15 @@ public class WebAgreementContractTest {
                         (eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVING ||
                                 eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVED));
 
+        doAssertion(false, "should see no banner when e-service is in archiving state and the agreement is non-updatable", Tenant.COMUNE_DI_MILANO, null);
+    }
+
+    private void doAssertion(final boolean assertBannerPresence, final String webScenarioMessage, final Tenant consumer, final String bannerMessage) throws Throwable {
         Agreement agreement = interopJourney.get(Agreement.class);
-        System.setProperty("agreementId", agreement.getId().toString());
-        assertNoBannerIsVisible(
-                "should see no banner when e-service is in archiving state and the agreement is non-updatable",
-                Tenant.PAGO_PA, Tenant.COMUNE_DI_MILANO
-        );
+        if (assertBannerPresence) {
+            assertBannerIsVisible(webScenarioMessage, bannerMessage, consumer, agreement.getId());
+        } else {
+            assertNoBannerIsVisible(webScenarioMessage, consumer, agreement.getId());
+        }
     }
 }
