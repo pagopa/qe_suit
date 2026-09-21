@@ -117,7 +117,11 @@ public class WebAgreementContractTest {
                 .linkAgreement(AgreementState.ACTIVE)
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
                 .addDescriptor(EServiceDescriptorState.PUBLISHED)
-                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED);
+                .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED)
+                .archiveFirstEServiceDescriptor(GracePeriodDays.NUMBER_60)
+                .waitUntilEService(eservice ->
+                        (eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVING ||
+                                eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.ARCHIVED));
 
         Agreement agreement = interopJourney.get(Agreement.class);
         System.setProperty("agreementId", agreement.getId().toString());
