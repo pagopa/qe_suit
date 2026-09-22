@@ -85,7 +85,8 @@ public class WebPurposeTemplateContractTest {
                     .as("Free-of-charge switch is unchecked by default")
                     .isFalse();
 
-            softly.assertThat(purposeTemplateCreationPage.freeOfChargeExplanationField())
+            softly.assertThat(purposeTemplateCreationPage.freeOfChargeExplanationField()
+                    .flatMap(field -> field.get()))
                     .as("Free-of-charge explanation field is absent when switch is off")
                     .isEmpty();
         });
