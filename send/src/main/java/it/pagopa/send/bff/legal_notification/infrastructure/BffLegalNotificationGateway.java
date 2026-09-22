@@ -12,14 +12,12 @@ import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequ
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
 import it.pagopa.send.common.legal_notification.application.LegalNotificationGateway;
-import it.pagopa.send.bff.legal_notification.infrastructure.LegalNotificationRestClient;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import it.pagopa.send.common.infrastructure.IUNHelper;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.LegalNotificationRequestFactory;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.Minutes;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
