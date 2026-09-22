@@ -29,7 +29,7 @@ public interface PurposeTemplateCreationPage extends Page {
 
     // TODO selettore best-effort basato sul testo della label, in assenza di un id/data-testid noto.
     //  Da verificare/adattare confrontando con il markup reale della pagina quando verrà sviluppata.
-    @XPath(".//*[.//span[contains(normalize-space(.), \"Ho diritto all'utilizzo dell'e-service a titolo gratuito\")]]")
+@XPath(".//label[.//span[contains(normalize-space(.), \"Ho diritto all'utilizzo dell'e-service a titolo gratuito\")]]//span[contains(@class, 'MuiSwitch-switchBase')]")
     Switch freeOfChargeSwitch();
 
     // TODO selettore best-effort basato sul testo della label, in assenza di un id/data-testid noto.
