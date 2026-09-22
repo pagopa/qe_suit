@@ -34,7 +34,7 @@ public interface PurposeTemplateCreationPage extends Page {
 
     // TODO selettore best-effort basato sul testo della label, in assenza di un id/data-testid noto.
     //  Da verificare/adattare confrontando con il markup reale della pagina quando verrà sviluppata.
-    @XPath(".//*[contains(normalize-space(.), \"Spiega perché puoi usare l'eservice a titolo gratuito\")]")
+@XPath(".//div[contains(@class, 'MuiTextField-root')][.//label[contains(normalize-space(.), \"Spiega perché puoi usare l'eservice a titolo gratuito\")]]")
     Optional<TextField> freeOfChargeExplanationField();
 
     @Override
