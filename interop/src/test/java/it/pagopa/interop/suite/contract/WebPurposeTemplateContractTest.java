@@ -1,6 +1,5 @@
 package it.pagopa.interop.suite.contract;
 
-import it.frontend.e2e.framework.core.capability.core.Gettable;
 import it.frontend.e2e.framework.web.binder.WebBinder;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
@@ -86,8 +85,8 @@ public class WebPurposeTemplateContractTest {
                     .as("Free-of-charge switch is unchecked by default")
                     .isFalse();
 
-            softly.assertThat(purposeTemplateCreationPage.freeOfChargeExplanationField()
-                    .flatMap(Gettable::get))
+            softly.assertThat(purposeTemplateCreationPage.freeOfChargeExplanationField())
+                    //.flatMap(Gettable::get))
                     .as("Free-of-charge explanation field is absent when switch is off")
                     .isEmpty();
         });

@@ -29,12 +29,12 @@ public interface PurposeTemplateCreationPage extends Page {
 
     // TODO selettore best-effort basato sul testo della label, in assenza di un id/data-testid noto.
     //  Da verificare/adattare confrontando con il markup reale della pagina quando verrà sviluppata.
-@XPath(".//label[.//span[contains(normalize-space(.), \"Ho diritto all'utilizzo dell'e-service a titolo gratuito\")]]//span[contains(@class, 'MuiSwitch-switchBase')]")
+    @XPath(".//*[.//span[contains(normalize-space(.), \"Ho diritto all'utilizzo dell'e-service a titolo gratuito\")]]")
     Switch freeOfChargeSwitch();
 
     // TODO selettore best-effort basato sul testo della label, in assenza di un id/data-testid noto.
     //  Da verificare/adattare confrontando con il markup reale della pagina quando verrà sviluppata.
-@XPath(".//div[contains(@class, 'MuiTextField-root')][.//label[contains(normalize-space(.), \"Spiega perché puoi usare l'eservice a titolo gratuito\")]]")
+    @XPath(".//*[contains(normalize-space(.), \"Spiega perché puoi usare l'eservice a titolo gratuito\")]")
     Optional<TextField> freeOfChargeExplanationField();
 
     @Override
