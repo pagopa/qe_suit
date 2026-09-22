@@ -1,5 +1,6 @@
 package it.pagopa.interop.suite.contract;
 
+import it.frontend.e2e.framework.web.binder.WebBinder;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
@@ -8,8 +9,10 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.interop.web.purpose_template.infrastructure.page.PurposeTemplateCatalogPage;
+import it.pagopa.interop.web.purpose_template.infrastructure.page.PurposeTemplateCreationPage;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Execution;
@@ -62,6 +65,30 @@ public class WebPurposeTemplateContractTest {
         Assertions.assertThat(templateId)
                 .as("Landed on the created purpose template's page")
                 .isNotNull();
+
+        PurposeTemplateCreationPage purposeTemplateCreationPage = new WebBinder().bind(PurposeTemplateCreationPage.class);
+        purposeTemplateCreationPage.assertLoaded();
+
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(purposeTemplateCreationPage.nameField().read())
+                    .as("Purpose template name starts with 'Template finalità'")
+                    .startsWith("Template finalità");
+
+            softly.assertThat(purposeTemplateCreationPage.descriptionField().read())
+                    .as("Purpose template description is readable")
+                    .isNotNull();
+
+            softly.assertThat(purposeTemplateCreationPage.freeOfChargeSwitch().get())
+                    .as("Free-of-charge switch is present")
+                    .isPresent();
+            softly.assertThat(purposeTemplateCreationPage.freeOfChargeSwitch().isChecked())
+                    .as("Free-of-charge switch is unchecked by default")
+                    .isFalse();
+
+            softly.assertThat(purposeTemplateCreationPage.freeOfChargeExplanationField())
+                    .as("Free-of-charge explanation field is absent when switch is off")
+                    .isEmpty();
+        });
     }
 
     @Test
