@@ -165,13 +165,20 @@ Whenever possible, use an existing request factory instead of constructing techn
 
 Path parameters are supplied through `pathParams(...)`.
 
-`pathParams` expects a JSON-like object with named properties.
+The public contract is intentionally simple: pass a map keyed by the OpenAPI path-parameter name, or provide a POJO/record whose property names match the path-parameter names.
 
-Do not pass an unnamed list of values.
+Preferred form for readability and clarity:
 
-The property names must correspond to the endpoint path-parameter names.
+```java
+.pathParams(() -> Map.of(
+        "agreementId", agreementId,
+        "descriptorId", descriptorId
+))
+```
 
-Example:
+This is the recommended style for contract tests because the mapping is explicit and mirrors the generated OpenAPI operation signature (`agreementIdPath(...)`, `descriptorIdPath(...)`).
+
+The framework also supports POJO/record usage:
 
 ```java
 record AgreementPathParams(
@@ -183,12 +190,10 @@ record AgreementPathParams(
 Usage:
 
 ```java
-.pathParams(() ->
-        new AgreementPathParams(
-                agreementId,
-                descriptorId
-        )
-)
+.pathParams(() -> new AgreementPathParams(
+        agreementId,
+        descriptorId
+))
 ```
 
 Conceptually:
@@ -199,7 +204,15 @@ POJO / record property name
 OpenAPI path parameter name
 ```
 
-This allows path parameters to participate in the same structural mutation model used for payloads.
+The framework converts the supplied values to the concrete generated setter type before invoking the operation. For example, a UUID path parameter is bound to a method like:
+
+```java
+clientIdPath(UUID clientId)
+```
+
+not to `clientIdPath(Object)`. This is what makes the binding reliable for generated OpenAPI clients.
+
+This allows path parameters to participate in the same structural mutation model used for payloads, while keeping the API ergonomic for the test author.
 
 ## Scenarios
 
