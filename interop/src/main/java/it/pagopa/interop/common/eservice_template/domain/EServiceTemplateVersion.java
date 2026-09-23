@@ -3,6 +3,7 @@ package it.pagopa.interop.common.eservice_template.domain;
 import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.kernel.domain.DocumentRef;
+import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
 import it.pagopa.domain.Identifiable;
 import lombok.Builder;
 import lombok.Singular;
@@ -39,5 +40,9 @@ public class EServiceTemplateVersion implements Identifiable {
 
     @Singular("serverUrl")
     List<String> serverUrls;
+
+    public EServiceTemplateVersionRef getRef() {
+        return EServiceTemplateVersionRef.of(this.id);
+    }
 }
 
