@@ -33,17 +33,17 @@ import it.pagopa.send.generated.openapi.clients.bff.model.NotificationStatusV26;
 import it.pagopa.send.generated.openapi.clients.bff.model.PagoPaPayment;
 import it.pagopa.send.common.legal_notification.domain.NotificationDefaults;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
 /**
  * Unico punto del canale BFF che conosce sia il dominio interno ({@link
  * LegalNotificationCreationRequest}/{@link LegalNotificationDomain}) sia il DTO OpenAPI del BFF.
- * Le conversioni enum-to-enum a nomi allineati ({@link #toBffStatus}, {@link #toDomainStatus},
- * {@link #toBffFeePolicy}, ecc.) e la lista di {@link NotificationRecipientSummary} (campi
- * identici a {@code NotificationRecipientV24}) sono generate da MapStruct; le due traduzioni
- * strutturalmente più complesse ({@link #toBffRequest}, {@link #toDomain}) sono metodi default che
- * compongono quelle generate.
+ * Le conversioni di puro field-copy ({@link #toBffStatus}, {@link #toDomainStatus},
+ * {@link #toBffFeePolicy}, i due {@link #toDomain}, ecc.) sono generate da MapStruct via
+ * annotazioni; le traduzioni con logica reale ({@link #toBffRequest}, {@link #toRecipient},
+ * {@link #toPaymentItem}) restano metodi default.
  */
 @Mapper(config = SendMapperConfig.class)
 public interface BffLegalNotificationMapper {
@@ -64,38 +64,18 @@ public interface BffLegalNotificationMapper {
 
     List<NotificationRecipientSummary> toRecipientSummaries(List<NotificationRecipientV24> recipients);
 
-    default LegalNotificationDomain toDomain(BffFullNotificationV1 source) {
-        if (source == null) {
-            return null;
-        }
-        return LegalNotificationDomain.builder()
-                .iun(source.getIun())
-                .senderTaxId(source.getSenderTaxId())
-                .senderDenomination(source.getSenderDenomination())
-                .subject(source.getSubject())
-                .status(toDomainStatus(source.getNotificationStatus()))
-                .recipients(toRecipientSummaries(source.getRecipients()))
-                .build();
+    default NotificationRecipientSummary toRecipientSummary(String denomination) {
+        return new NotificationRecipientSummary(null, denomination);
     }
 
-    default LegalNotificationDomain toDomain(BffLegalNotificationSearchRow source) {
-        if (source == null) {
-            return null;
-        }
-        return LegalNotificationDomain.builder()
-                .iun(source.getIun())
-                .senderDenomination(source.getSender())
-                .subject(source.getSubject())
-                .status(toDomainStatus(source.getNotificationStatus()))
-                .recipients(source.getRecipients().stream()
-                        .map(denomination -> new NotificationRecipientSummary(null, denomination))
-                        .toList())
-                .build();
-    }
+    @Mapping(target = "status", source = "notificationStatus")
+    LegalNotificationDomain toDomain(BffFullNotificationV1 source);
 
-    default List<LegalNotificationDomain> toDomainList(List<BffLegalNotificationSearchRow> source) {
-        return source.stream().map(this::toDomain).toList();
-    }
+    @Mapping(target = "senderDenomination", source = "sender")
+    @Mapping(target = "status", source = "notificationStatus")
+    LegalNotificationDomain toDomain(BffLegalNotificationSearchRow source);
+
+    List<LegalNotificationDomain> toDomainList(List<BffLegalNotificationSearchRow> source);
 
     default BffNewNotificationRequest toBffRequest(LegalNotificationCreationRequest source) {
         BffNewNotificationRequest request = new BffNewNotificationRequest()

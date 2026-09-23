@@ -36,43 +36,37 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
 
     @Override
     public void prepareNotification(Map<String, String> data) {
-        // TODO: implement the logic to prepare notification for web channel, similar to BffLegalNotificationGateway
+        throw new UnsupportedOperationException("prepareNotification non è stato ancora implementato per il canale Web");
     }
 
     @Override
     public void addRecipient(RecipientSpec recipient) {
-        // TODO: implement the logic to add a recipient for web channel, similar to BffLegalNotificationGateway
+        throw new UnsupportedOperationException("addRecipient non è stato ancora implementato per il canale Web");
     }
 
     @Override
     public void sendNotification(Tenant sender, NotificationStatus targetStatus) {
-        // TODO: implement the logic to send notification for web channel, similar to BffLegalNotificationGateway
+        throw new UnsupportedOperationException("sendNotification non è stato ancora implementato per il canale Web");
     }
 
     @Override
     public void waitForNotificationStatus(NotificationStatus targetStatus) {
-        // TODO: implement the logic to wait for notification status for web channel, similar to BffLegalNotificationGateway
+        throw new UnsupportedOperationException("waitForNotificationStatus non è stato ancora implementato per il canale Web");
     }
 
     @Override
     public void deleteNotification(String iun) {
-        // TODO: implement the logic to delete notification for web channel, similar to BffLegalNotificationGateway
+        throw new UnsupportedOperationException("deleteNotification non è stato ancora implementato per il canale Web");
     }
 
     @Override
     public LegalNotificationDomain readNotification(String iun) {
-        notificationDetailsProxy.searchNotification(Map.of("iun", iun));
-        notificationDetailsProxy.goToNotificationDetails();
-        LegalNotificationDomain.builder()
-//                .status()
-                .build();
-        return LegalNotificationDomain.builder().build();
+        throw new UnsupportedOperationException("readNotification non è stato ancora implementato per il canale Web");
     }
 
     @Override
     public List<LegalNotificationDomain> searchNotification(Map<String, String> overrides) {
-        // TODO: implement the logic to search notifications for web channel, similar to BffLegalNotificationGateway
-        return List.of();
+        throw new UnsupportedOperationException("searchNotification non è stato ancora implementato per il canale Web");
     }
 
     @Override

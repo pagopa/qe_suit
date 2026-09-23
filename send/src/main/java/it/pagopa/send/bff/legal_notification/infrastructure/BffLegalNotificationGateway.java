@@ -19,7 +19,6 @@ import it.pagopa.send.common.legal_notification.infrastructure.factory.LegalNoti
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.joda.time.Minutes;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
