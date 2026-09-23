@@ -66,9 +66,9 @@ token:
   mittente: ${pn.external.bearer-token.tokentestMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
   session:
-    grossini: eyJhbGciOiAiUlMyNTYiLCJ0eXAiOiAiSldUIiwia2lkIjogImU0ZjJhYTIyLTE5MDctNDIyNC1iYWViLTExYzZiY2RkZDNkYSJ9.eyJpYXQiOiAxNzg3OTAwODIwLCJleHAiOiAxODE5NDM2ODIwLCAidWlkIjogImU5ZTRhOWM3LTk1ODYtNGI5Mi1hN2RkLWVlMWEwZTc3ZDM5OCIsImlzcyI6ICJodHRwczovL3dlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwiYXVkIjogIndlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwgIm9yZ2FuaXphdGlvbiI6IHsgImlkIjogIjViOTk0ZDRhLTBmYTgtNDdhYy05YzdiLTM1NGYxZDQ0YTFjZSIsICJyb2xlIjogImFkbWluIiwiZmlzY2FsX2NvZGUiOiAiODAwMTYzNTA4MjE4MDAxNjM1MDgyMSJ9fQ.XQA1tHP7LQVDUvgYStO22gDmnyUUTwLCG-RWRKXzcze8KeAz-sPErsAnID-AXFyPSTrn6quo2mLdjWwxwbGLfMJI_gGf3j4d-Pl5npnxI5qSuXJrwYEHN4P3YvHD7WIdxBhRCrAqqzjKf4eZmi7J6OOO300jymoxiE6OEYlnm0zTJmy1HRqJNbuMOjRxeHQBNVUox9db10787pZkcKqbkj9t0pUjVfWRdL4jHtCtuHUQfwvNtrZq64KbASY9yViY4JXiLFDGe4ucZDL2g6glCpu3OVViZtfbAiqkO_SXm7HoMOI0gvK3sBnOJRY2nrI7CCIw2qx5HgvAK9gVwW2jRA
+    grossini: ${pn.external.session-token.grossini:REPLACE_ME}
     francescopetrarca: REPLACE_ME
-    lucrezia: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImU0ZjJhYTIyLTE5MDctNDIyNC1iYWViLTExYzZiY2RkZDNkYSJ9.eyJpYXQiOjE3ODk0MDMzNzMsImV4cCI6MTc4OTQwNjU3MywidWlkIjoiZGYyYTEyNjgtZWNmZS00MzMwLWI2NTAtNTE4NGE3ZWIwNzU2IiwiaXNzIjoiaHR0cHM6Ly93ZWJhcGkudGVzdC5ub3RpZmljaGVkaWdpdGFsaS5pdCIsImF1ZCI6IndlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwianRpIjoiZjlmYmZkN2QtN2M5YS00NDg1LWJiMzktYWI0YTM3ZTEyNjRiIn0.XCPtYleEhmJC7WKxqCXgb2F9mxwqwpXM5xrmhSzRE8Dn71t6X41LcFPtw2wOjSDyU3qKw-GgFoTuandS_wY2h-EUKv_yUz24U_od9tQcgw8KGZdXqqkY80W7nsQ2zh5a5GYMHvdP6qbNFi1hfVnhl-SYMTeU-DRIGmGxGdAWLj61KeUCgoCwVoDt97TG6GqnnHDy3BOD2aKyWzIfeyzelsgDXsVlStyAuqTa2s0u8agfjW0Oy5tLDr8bx6-FpN15kAhxexwPZzUQUwvMOhHL1m8Mst5RwcMxBOT-PKmxCDdQIsOY3fpwNW34gUdMx01m82YQkSDUBiz-kY8tcbDBvw
+    lucrezia: ${pn.external.session-token.lucrezia:REPLACE_ME}
 
 # ============================================================================
 # BFF API Configuration (notifiche legali via API)
@@ -76,7 +76,7 @@ token:
 bff:
   api:
     base-url: https://webapi.test.notifichedigitali.it
-    bearer-token: eyJhbGciOiAiUlMyNTYiLCJ0eXAiOiAiSldUIiwia2lkIjogImU0ZjJhYTIyLTE5MDctNDIyNC1iYWViLTExYzZiY2RkZDNkYSJ9.eyJpYXQiOiAxNzg0Mjc3MzAyLCJleHAiOiAxODE1ODEzMzAyLCAidWlkIjogImU5ZTRhOWM3LTk1ODYtNGI5Mi1hN2RkLWVlMWEwZTc3ZDM5OCIsImlzcyI6ICJodHRwczovL3dlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwiYXVkIjogIndlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwgIm9yZ2FuaXphdGlvbiI6IHsgImlkIjogIjViOTk0ZDRhLTBmYTgtNDdhYy05YzdiLTM1NGYxZDQ0YTFjZSIsICJyb2xlIjogImFkbWluIiwiZmlzY2FsX2NvZGUiOiAiODAwMTYzNTA4MjEifX0.tdN2Y140EdEZQEUqROd5KmkpnQTLXlgoNPWjaaolod0Yo7FsNIGbL4Tjtg1yyKFFdQXiJxP9FuzIQq_ky_6a5HKgfp-o8ffXywA_PkkJ2KAlSi4hcxQty82M0-thSauYGA1BGdeMB9bmkMzrpYAQGDrRkvFjjx0ZCPobP4o9X9UsbNGXRr_--9xxAe8DAqaDEqb7hi2Igp6v6_-v3uapm7NCT8O3X4TbqqESCAyU42DrW3EIHuvzuFqF2lAh-OQDSjGwIkWINZWG8qV7ycwA6J6123cE-ZhOl3GWIGL2EVbmdSygVpIKcAxMclV-smT-pG6b1aZ2XL5CiXF4PKiVnQ
+    bearer-token: ${pn.external.bearer-token.tokenBffApiTest:REPLACE_ME}
 
 # ============================================================================
 # GPD API Configuration (posizioni debitorie)
