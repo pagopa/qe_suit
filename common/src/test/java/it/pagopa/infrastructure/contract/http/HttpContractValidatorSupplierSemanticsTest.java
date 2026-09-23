@@ -15,7 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
@@ -212,6 +214,48 @@ class HttpContractValidatorSupplierSemanticsTest {
     }
 
     @Test
+    void mapPathParamsAreBoundToConcreteOpenApiPathMethods() throws Exception {
+        OpenApiOperationAdapter adapter = new OpenApiOperationAdapter(objectMapper);
+        UUID clientId = UUID.fromString("9d4d6f29-22d3-4e05-8077-ea9c7d7b32aa");
+        TypedPathParamOperation operation = new TypedPathParamOperation();
+
+        Method bind = OpenApiOperationAdapter.class.getDeclaredMethod("bindPathParams", Object.class, JsonNode.class);
+        bind.setAccessible(true);
+
+        bind.invoke(
+                adapter,
+                operation,
+                objectMapper.createObjectNode()
+                        .put("clientId", clientId.toString())
+                        .put("agreementId", "agreement-123")
+        );
+
+        assertEquals(clientId, operation.clientId);
+        assertEquals("agreement-123", operation.agreementId);
+    }
+
+    @Test
+    void payloadAndMapPathParamsCanBeBoundTogether() throws Exception {
+        OpenApiOperationAdapter adapter = new OpenApiOperationAdapter(objectMapper);
+        PayloadAndPathParamOperation operation = new PayloadAndPathParamOperation();
+
+        HttpContractRequest request = new HttpContractRequest(
+                objectMapper.valueToTree(new Payload("payload-1", "valid-name", List.of(new Contact("x@y")))),
+                true,
+                objectMapper.valueToTree(Map.of(
+                        "agreementId", "agreement-123",
+                        "descriptorId", "descriptor-456"
+                ))
+        );
+
+        adapter.execute(operation, request);
+
+        assertTrue(operation.bodyJson.contains("payload-1"));
+        assertEquals("agreement-123", operation.agreementId);
+        assertEquals("descriptor-456", operation.descriptorId);
+    }
+
+    @Test
     void supplierExceptionsKeepOriginalCauseAndContext() {
         AtomicInteger counter = new AtomicInteger();
         FuzzEngine fuzzEngine = source -> List.of(payloadNameCase(""));
@@ -360,6 +404,55 @@ class HttpContractValidatorSupplierSemanticsTest {
         }
     }
 
+    static class TypedPathParamOperation {
+        UUID clientId;
+        String agreementId;
+
+        public TypedPathParamOperation reqSpec(Consumer<RequestSpecBuilder> customizer) {
+            customizer.accept(new RequestSpecBuilder());
+            return this;
+        }
+
+        public TypedPathParamOperation clientIdPath(UUID value) {
+            this.clientId = value;
+            return this;
+        }
+
+        public TypedPathParamOperation agreementIdPath(String value) {
+            this.agreementId = value;
+            return this;
+        }
+
+        public <T> T execute(Function<Response, T> handler) {
+            return handler.apply(Mockito.mock(Response.class));
+        }
+    }
+
+    static class PayloadAndPathParamOperation {
+        String bodyJson;
+        String agreementId;
+        String descriptorId;
+
+        public PayloadAndPathParamOperation reqSpec(Consumer<RequestSpecBuilder> customizer) {
+            customizer.accept(new PayloadAndPathParamBuilder(this));
+            return this;
+        }
+
+        public PayloadAndPathParamOperation agreementIdPath(String value) {
+            this.agreementId = value;
+            return this;
+        }
+
+        public PayloadAndPathParamOperation descriptorIdPath(String value) {
+            this.descriptorId = value;
+            return this;
+        }
+
+        public <T> T execute(Function<Response, T> handler) {
+            return handler.apply(Mockito.mock(Response.class));
+        }
+    }
+
     static class CapturingOper {
         final String id;
         String bodyJson;
@@ -387,6 +480,26 @@ class HttpContractValidatorSupplierSemanticsTest {
 
         public <T> T execute(Function<Response, T> handler) {
             return handler.apply(Mockito.mock(Response.class));
+        }
+    }
+
+    static class PayloadAndPathParamBuilder extends RequestSpecBuilder {
+        private final PayloadAndPathParamOperation owner;
+
+        PayloadAndPathParamBuilder(PayloadAndPathParamOperation owner) {
+            this.owner = owner;
+        }
+
+        @Override
+        public RequestSpecBuilder setBody(String body) {
+            owner.bodyJson = body;
+            return this;
+        }
+
+        @Override
+        public RequestSpecBuilder setBody(Object body) {
+            owner.bodyJson = String.valueOf(body);
+            return this;
         }
     }
 
