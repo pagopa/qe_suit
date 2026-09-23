@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -69,11 +70,9 @@ public class WebLegalNotificationGateway implements LegalNotificationGateway {
     }
 
     @Override
-    public LegalNotificationDomain searchNotification(Map<String, String> overrides) {
-//        restClient.search(overrides)
-//                .withoutPolling()
-//                .get();
-        return LegalNotificationDomain.builder().build();
+    public List<LegalNotificationDomain> searchNotification(Map<String, String> overrides) {
+        // TODO: implement the logic to search notifications for web channel, similar to BffLegalNotificationGateway
+        return List.of();
     }
 
     @Override
