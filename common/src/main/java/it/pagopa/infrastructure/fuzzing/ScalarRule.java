@@ -4,6 +4,7 @@ import it.pagopa.infrastructure.objectgraph.Node;
 import it.pagopa.infrastructure.objectgraph.NodeSelector;
 import it.pagopa.infrastructure.objectgraph.NodeSelectors;
 import it.pagopa.infrastructure.objectgraph.ObjectGraph;
+import it.pagopa.utils.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ public class ScalarRule implements FuzzRule {
                 replace(FuzzScenario.REPLACED_WITH_BLANK_STRING, "   "),
                 replace(FuzzScenario.REPLACED_WITH_LONG_STRING, "A".repeat(5000)),
                 replace(FuzzScenario.REPLACED_WITH_SQL_INJECTION, "' OR '1'='1"),
-                replace(FuzzScenario.REPLACED_WITH_URL_INJECTION, "http://injected.example.test"),
+                replace(FuzzScenario.REPLACED_WITH_URL_INJECTION, "A URL injected http://injected.example.test with id " + RandomUtils.randomAlphanumericName("URL", 5)),
                 replace(FuzzScenario.REPLACED_WITH_XSS, "<script>alert(1)</script>"),
                 replace(FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER, 124)
         );
