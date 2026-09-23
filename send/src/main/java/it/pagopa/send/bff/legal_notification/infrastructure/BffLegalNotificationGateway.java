@@ -23,17 +23,13 @@ import org.joda.time.Minutes;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Unica implementazione di {@link LegalNotificationGateway} per il canale BFF. La notifica in
- * preparazione per lo scenario corrente ({@link LegalNotificationCreationRequest}, bean
- * {@code @ScenarioScope}) viene popolata progressivamente da {@link #prepareNotification} e
- * {@link #addRecipient}; {@link #sendNotification} completa i campi noti solo al mittente, la
- * invia e salva la notifica creata in {@link EntityStore} (recuperabile via
- * {@code FinalizerJourney.get(LegalNotificationDomain.class)}), non in un context ad-hoc. Solo qui
- * (e nel {@link BffLegalNotificationMapper} co-locato) si fa riferimento al DTO OpenAPI del BFF:
- * l'interfaccia e i chiamanti conoscono solo il dominio interno.
+ * Implementazione BFF di {@link LegalNotificationGateway}. Solo questa classe (e il co-locato
+ * {@link BffLegalNotificationMapper}) conosce il DTO OpenAPI del BFF: l'interfaccia e i chiamanti
+ * lavorano solo con il dominio interno.
  */
 @Service
 @RequiredArgsConstructor
@@ -71,7 +67,6 @@ public class BffLegalNotificationGateway implements LegalNotificationGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
         String iun = IUNHelper.extractFromBffNewNotificationResponse(response);
-//
         PollingUtils.pollUntil(
                 () -> {
                     var responseRe = deliveryRestClient.retrieveNotificationRequestStatusV26(response.getNotificationRequestId()).withoutPolling().get();
@@ -130,14 +125,11 @@ public class BffLegalNotificationGateway implements LegalNotificationGateway {
     }
 
     @Override
-    public LegalNotificationDomain searchNotification(Map<String, String> overrides) {
-        // TODO: BffLegalNotificationsResponse è una lista di risultati sintetici (resultsPage),
-        // non un singolo BffFullNotificationV1: da mappare quando questo metodo avrà un caso
-        // d'uso reale (oggi non è esercitato da nessuno step).
-        restClient.search(overrides)
+    public List<LegalNotificationDomain> searchNotification(Map<String, String> overrides) {
+        return restClient.search(overrides)
                 .withoutPolling()
+                .map(response -> mapper.toDomainList(response.getResultsPage()))
                 .get();
-        return LegalNotificationDomain.builder().build();
     }
 
     @Override

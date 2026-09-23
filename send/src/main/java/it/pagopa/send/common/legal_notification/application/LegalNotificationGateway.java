@@ -7,6 +7,7 @@ import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import org.springframework.plugin.core.Plugin;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,5 +24,5 @@ public interface LegalNotificationGateway extends Plugin<Channel> {
     void waitForNotificationStatus(NotificationStatus targetStatus);
     void deleteNotification(String iun);
     LegalNotificationDomain readNotification(String iun);
-    LegalNotificationDomain searchNotification(Map<String, String> overrides);
+    List<LegalNotificationDomain> searchNotification(Map<String, String> overrides);
 }

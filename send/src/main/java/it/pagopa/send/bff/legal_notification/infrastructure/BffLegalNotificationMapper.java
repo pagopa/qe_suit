@@ -15,6 +15,7 @@ import it.pagopa.send.common.legal_notification.domain.ResolvedPagoPaPayment;
 import it.pagopa.send.common.legal_notification.domain.ResolvedPayment;
 import it.pagopa.send.common.legal_notification.domain.ResolvedRecipient;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
+import it.pagopa.send.generated.openapi.clients.bff.model.BffLegalNotificationSearchRow;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
 import it.pagopa.send.generated.openapi.clients.bff.model.F24Payment;
@@ -28,6 +29,7 @@ import it.pagopa.send.generated.openapi.clients.bff.model.NotificationPaymentAtt
 import it.pagopa.send.generated.openapi.clients.bff.model.NotificationPaymentItem;
 import it.pagopa.send.generated.openapi.clients.bff.model.NotificationPhysicalAddress;
 import it.pagopa.send.generated.openapi.clients.bff.model.NotificationRecipientV24;
+import it.pagopa.send.generated.openapi.clients.bff.model.NotificationStatusV26;
 import it.pagopa.send.generated.openapi.clients.bff.model.PagoPaPayment;
 import it.pagopa.send.common.legal_notification.domain.NotificationDefaults;
 import org.mapstruct.Mapper;
@@ -47,6 +49,8 @@ import java.util.List;
 public interface BffLegalNotificationMapper {
 
     NotificationStatus toDomainStatus(BffNotificationStatus status);
+
+    NotificationStatus toDomainStatus(NotificationStatusV26 status);
 
     BffNotificationStatus toBffStatus(NotificationStatus status);
 
@@ -72,6 +76,25 @@ public interface BffLegalNotificationMapper {
                 .status(toDomainStatus(source.getNotificationStatus()))
                 .recipients(toRecipientSummaries(source.getRecipients()))
                 .build();
+    }
+
+    default LegalNotificationDomain toDomain(BffLegalNotificationSearchRow source) {
+        if (source == null) {
+            return null;
+        }
+        return LegalNotificationDomain.builder()
+                .iun(source.getIun())
+                .senderDenomination(source.getSender())
+                .subject(source.getSubject())
+                .status(toDomainStatus(source.getNotificationStatus()))
+                .recipients(source.getRecipients().stream()
+                        .map(denomination -> new NotificationRecipientSummary(null, denomination))
+                        .toList())
+                .build();
+    }
+
+    default List<LegalNotificationDomain> toDomainList(List<BffLegalNotificationSearchRow> source) {
+        return source.stream().map(this::toDomain).toList();
     }
 
     default BffNewNotificationRequest toBffRequest(LegalNotificationCreationRequest source) {
