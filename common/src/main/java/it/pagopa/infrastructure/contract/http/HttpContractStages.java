@@ -5,6 +5,7 @@ import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import org.junit.jupiter.api.DynamicTest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -26,6 +27,10 @@ public interface HttpContractStages {
             return pathParams(() -> pathParams);
         }
 
+        default PathParamsStage<Map<String, ?>> pathParams(Map<String, ?> pathParams) {
+            return pathParams(() -> pathParams);
+        }
+
         <T> PathParamsStage<T> pathParams(Supplier<T> pathParamsSupplier);
     }
 
@@ -39,6 +44,10 @@ public interface HttpContractStages {
         PayloadStage<T> targets(List<FuzzScenario> scenarios, Consumer<Response> expectation, List<TargetExpression<T>> targets);
 
         default <P> PathParamsStage<P> pathParams(P pathParams) {
+            return pathParams(() -> pathParams);
+        }
+
+        default PathParamsStage<Map<String, ?>> pathParams(Map<String, ?> pathParams) {
             return pathParams(() -> pathParams);
         }
 
