@@ -14,7 +14,6 @@ import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.utils.RandomUtils;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -31,8 +30,6 @@ import java.util.stream.Stream;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class BffClientContractTest {
-    public record ClientPathParams(UUID clientId) {}
-
     private final ApiClient apiClient;
     private final HttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
@@ -69,7 +66,7 @@ public class BffClientContractTest {
                             )
                             .get(Client.class);
 
-                    return new ClientPathParams(createdClient.getId());
+                    return Map.of("clientId", createdClient.getId());
                 })
                 .tests();
     }
