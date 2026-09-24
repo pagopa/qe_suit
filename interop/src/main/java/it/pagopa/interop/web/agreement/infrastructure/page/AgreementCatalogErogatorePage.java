@@ -23,10 +23,15 @@ public interface AgreementCatalogErogatorePage extends Page {
         cercaPerEService().write(Keys.ENTER.toString());
 
         // URL corrente della pagina caricata dopo il click
-        String[] tokens = visualizza().get()
-                .map(el -> el.getAttributes().get("href"))
-                .orElse("").split("/");
-        return tokens[tokens.length-1];
+String href = visualizza().get()
+        .map(el -> el.getAttributes().get("href"))
+        .filter(value -> !value.isBlank())
+        .orElseThrow(() -> new IllegalStateException("Visualizza link for the e-service was not found"));
+String requestId = href.substring(href.lastIndexOf('/') + 1);
+if (requestId.isBlank()) {
+    throw new IllegalStateException("Visualizza link does not contain a request ID");
+}
+return requestId;
     }
 }
 
