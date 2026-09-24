@@ -7,5 +7,8 @@ import java.util.UUID;
 
 @Builder(toBuilder = true)
 @Jacksonized
-public record EServiceTemplateVersionRef(UUID templateId) {
+public record EServiceTemplateVersionRef(UUID id) {
+	public static EServiceTemplateVersionRef of(UUID id) {
+		return new EServiceTemplateVersionRef(id);
+	}
 }

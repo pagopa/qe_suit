@@ -30,7 +30,6 @@ import java.util.stream.Stream;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class BffClientContractTest {
-
     private final ApiClient apiClient;
     private final HttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;

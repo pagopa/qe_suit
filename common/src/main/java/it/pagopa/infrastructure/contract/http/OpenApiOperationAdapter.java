@@ -7,8 +7,10 @@ import io.restassured.response.Response;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -95,36 +97,144 @@ final class OpenApiOperationAdapter {
         while (fields.hasNext()) {
             Map.Entry<String, JsonNode> field = fields.next();
 
-            String methodName = field.getKey() + "Path";
+            String parameterName = field.getKey();
+            String methodName = parameterName + "Path";
+            Method method = resolvePathParamMethod(operation, methodName, field.getValue());
 
-            try {
-                Method method = operation
-                        .getClass()
-                        .getMethod(methodName, Object.class);
-
-                Object value = asJavaValue(field.getValue());
-
-                method.invoke(operation, value);
-
-            } catch (NoSuchMethodException exception) {
+            if (method == null) {
                 throw new ContractHttpException(
                         "Cannot bind path parameter '"
-                                + field.getKey()
+                                + parameterName
                                 + "': expected method "
                                 + methodName
-                                + "(Object) on "
-                                + operation.getClass().getSimpleName(),
-                        exception
+                                + "(...) on "
+                                + operation.getClass().getSimpleName()
                 );
+            }
 
+            try {
+                Object value = convertValueForParameter(field.getValue(), method.getParameterTypes()[0]);
+                method.invoke(operation, value);
             } catch (InvocationTargetException | IllegalAccessException exception) {
                 throw new ContractHttpException(
                         "Failed to bind path parameter '"
-                                + field.getKey() + "'",
+                                + parameterName + "'",
                         exception
                 );
             }
         }
+    }
+
+    private Method resolvePathParamMethod(Object operation, String methodName, JsonNode valueNode) {
+        Method candidate = null;
+        int bestScore = Integer.MIN_VALUE;
+
+        for (Method method : operation.getClass().getMethods()) {
+            if (!method.getName().equals(methodName)) {
+                continue;
+            }
+            if (method.getParameterCount() != 1) {
+                continue;
+            }
+
+            Class<?> parameterType = method.getParameterTypes()[0];
+            int score = scoreParameterType(parameterType, valueNode);
+            if (score > bestScore) {
+                bestScore = score;
+                candidate = method;
+            }
+        }
+
+        return candidate;
+    }
+
+    private int scoreParameterType(Class<?> parameterType, JsonNode valueNode) {
+        if (parameterType == Object.class) {
+            return 1;
+        }
+        if (valueNode == null || valueNode.isNull()) {
+            return parameterType.isPrimitive() ? 0 : 2;
+        }
+
+        if (parameterType == UUID.class && valueNode.isTextual() && isValidUuid(valueNode.asText())) {
+            return 100;
+        }
+        if (parameterType == String.class && valueNode.isTextual()) {
+            return 90;
+        }
+        if ((parameterType == Integer.class || parameterType == int.class) && valueNode.isIntegralNumber()) {
+            return 80;
+        }
+        if ((parameterType == Long.class || parameterType == long.class) && valueNode.isIntegralNumber()) {
+            return 80;
+        }
+        if ((parameterType == Double.class || parameterType == double.class
+                || parameterType == Float.class || parameterType == float.class)
+                && valueNode.isNumber()) {
+            return 70;
+        }
+        if ((parameterType == Boolean.class || parameterType == boolean.class)
+                && (valueNode.isBoolean()
+                || "true".equalsIgnoreCase(valueNode.asText())
+                || "false".equalsIgnoreCase(valueNode.asText()))) {
+            return 60;
+        }
+        if (parameterType == BigDecimal.class && valueNode.isNumber()) {
+            return 50;
+        }
+        if (parameterType.isEnum() && valueNode.isTextual()) {
+            return 40;
+        }
+
+        return 0;
+    }
+
+    private boolean isValidUuid(String value) {
+        try {
+            UUID.fromString(value);
+            return true;
+        } catch (IllegalArgumentException exception) {
+            return false;
+        }
+    }
+
+    private Object convertValueForParameter(JsonNode valueNode, Class<?> parameterType) {
+        if (valueNode == null || valueNode.isNull()) {
+            return null;
+        }
+
+        if (parameterType == Object.class) {
+            return asJavaValue(valueNode);
+        }
+        if (parameterType == String.class) {
+            return valueNode.isTextual() ? valueNode.textValue() : valueNode.toString();
+        }
+        if (parameterType == UUID.class) {
+            return UUID.fromString(valueNode.asText());
+        }
+        if (parameterType == Integer.class || parameterType == int.class) {
+            return valueNode.isNumber() ? valueNode.intValue() : Integer.valueOf(valueNode.asText());
+        }
+        if (parameterType == Long.class || parameterType == long.class) {
+            return valueNode.isNumber() ? valueNode.longValue() : Long.valueOf(valueNode.asText());
+        }
+        if (parameterType == Double.class || parameterType == double.class) {
+            return valueNode.isNumber() ? valueNode.doubleValue() : Double.valueOf(valueNode.asText());
+        }
+        if (parameterType == Float.class || parameterType == float.class) {
+            return valueNode.isNumber() ? valueNode.floatValue() : Float.valueOf(valueNode.asText());
+        }
+        if (parameterType == Boolean.class || parameterType == boolean.class) {
+            return valueNode.isBoolean() ? valueNode.booleanValue() : Boolean.valueOf(valueNode.asText());
+        }
+        if (parameterType == BigDecimal.class) {
+            return new BigDecimal(valueNode.asText());
+        }
+        if (parameterType.isEnum()) {
+            return Enum.valueOf((Class<? extends Enum>) parameterType, valueNode.asText());
+        }
+
+        return asJavaValue(valueNode);
     }
 
     private void applyReqSpec(
@@ -181,7 +291,6 @@ final class OpenApiOperationAdapter {
         if (node.isBoolean()) {
             return node.booleanValue();
         }
-
         return node.toString();
     }
 }
