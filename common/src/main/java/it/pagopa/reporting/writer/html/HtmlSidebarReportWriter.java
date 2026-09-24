@@ -81,7 +81,7 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
         appendSummary(report.summary(), html);
         appendFilters(html);
         appendClassSections(report.testClasses(), slugger, html);
-        appendEnvironmentProperties(report.environmentProperties(), html);
+        appendEnvironmentProperties(report.environmentProperties(), report.excludedEnvironmentPropertyKeys(), html);
         appendWarnings(report.warnings(), html);
 
         if (includeDtoDump) {
@@ -144,29 +144,57 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                 .append("</section>");
     }
 
-    private void appendEnvironmentProperties(List<EnvironmentProperty> properties, StringBuilder html) {
+    private void appendEnvironmentProperties(
+            List<EnvironmentProperty> properties,
+            List<String> excludedPropertyKeys,
+            StringBuilder html
+    ) {
         html.append("<section class=\"panel\" id=\"properties\">")
-                .append("<h2>Environment properties (safe subset)</h2>");
+                .append("<h2>Environment properties (safe subset)</h2>")
+                .append("<p class=\"muted\">Only non-sensitive values are shown to avoid exposing local paths, user-specific directories, classpaths and machine-private runtime details.</p>")
+                .append("<details class=\"collapsible-block\">")
+                .append("<summary>Show safe properties (")
+                .append(properties.size())
+                .append(")</summary>");
 
         if (properties.isEmpty()) {
             html.append("<p>No safe property available.</p>")
-                    .append("</section>");
-            return;
+                    .append("</details>");
+        } else {
+            html.append("<table>")
+                    .append("<thead><tr><th>Key</th><th>Value</th></tr></thead>")
+                    .append("<tbody>");
+
+            for (EnvironmentProperty property : properties) {
+                html.append("<tr><td>")
+                        .append(escape(property.key()))
+                        .append("</td><td>")
+                        .append(escape(property.value()))
+                        .append("</td></tr>");
+            }
+
+            html.append("</tbody></table>")
+                    .append("</details>");
         }
 
-        html.append("<table>")
-                .append("<thead><tr><th>Key</th><th>Value</th></tr></thead>")
-                .append("<tbody>");
+        html.append("<details class=\"collapsible-block\">")
+                .append("<summary>Excluded property keys for this run (")
+                .append(excludedPropertyKeys.size())
+                .append(")</summary>");
 
-        for (EnvironmentProperty property : properties) {
-            html.append("<tr><td>")
-                    .append(escape(property.key()))
-                    .append("</td><td>")
-                    .append(escape(property.value()))
-                    .append("</td></tr>");
+        if (excludedPropertyKeys.isEmpty()) {
+            html.append("<p>No property key was excluded in this run.</p>");
+        } else {
+            html.append("<ul class=\"excluded-property-keys\">");
+            for (String excludedKey : excludedPropertyKeys) {
+                html.append("<li>")
+                        .append(escape(excludedKey))
+                        .append("</li>");
+            }
+            html.append("</ul>");
         }
 
-        html.append("</tbody></table>")
+        html.append("</details>")
                 .append("</section>");
     }
 
@@ -881,6 +909,20 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                 .dto-dump ul,
                 .dto-dump ol {
                     padding-left: 1.2rem;
+                }
+
+                .collapsible-block {
+                    margin-top: 0.7rem;
+                }
+
+                .collapsible-block > summary {
+                    cursor: pointer;
+                    font-weight: 600;
+                    color: #264869;
+                }
+
+                .excluded-property-keys {
+                    margin: 0.55rem 0 0;
                 }
 
                 .dto-key {

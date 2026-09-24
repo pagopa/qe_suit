@@ -36,6 +36,10 @@ class SurefireXmlReportParserTest {
                 .contains("java.version", "os.name", "test")
                 .doesNotContain("user.home");
 
+        assertThat(report.excludedEnvironmentPropertyKeys())
+                .contains("user.home")
+                .doesNotContain("java.version", "os.name", "test");
+
         assertThat(report.testClasses()).hasSize(1);
         TestClassReport classReport = report.testClasses().get(0);
         assertThat(classReport.className()).isEqualTo("it.pagopa.reporting.SampleContractTest");

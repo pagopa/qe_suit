@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -110,6 +111,7 @@ public final class SurefireXmlReportParser implements ReportParser {
         List<String> warnings = new ArrayList<>();
         List<ParsedTestcase> parsedTestcases = new ArrayList<>();
         Map<String, String> safeProperties = new LinkedHashMap<>();
+        Set<String> excludedPropertyKeys = new LinkedHashSet<>();
 
         for (Path reportFile : reportFiles) {
             Element suite = parseTestsuite(reportFile);
@@ -120,7 +122,7 @@ public final class SurefireXmlReportParser implements ReportParser {
             skipped += parseLongAttribute(suite, "skipped");
             durationSeconds += parseDoubleAttribute(suite, "time");
 
-            extractSafeProperties(suite, safeProperties, warnings, reportFile);
+            extractSafeProperties(suite, safeProperties, excludedPropertyKeys, warnings, reportFile);
             parsedTestcases.addAll(parseTestcases(suite));
         }
 
@@ -128,9 +130,12 @@ public final class SurefireXmlReportParser implements ReportParser {
         List<EnvironmentProperty> properties = safeProperties.entrySet().stream()
                 .map(entry -> new EnvironmentProperty(entry.getKey(), entry.getValue()))
                 .toList();
+        List<String> excludedProperties = excludedPropertyKeys.stream()
+                .sorted()
+                .toList();
 
         RunSummary summary = new RunSummary(tests, failures, errors, skipped, durationSeconds);
-        return new ReportDocument(summary, properties, classReports, warnings);
+        return new ReportDocument(summary, properties, excludedProperties, classReports, warnings);
     }
 
     private List<Path> resolveReportFiles(Path inputPath) throws ReportParsingException {
@@ -190,6 +195,7 @@ public final class SurefireXmlReportParser implements ReportParser {
     private void extractSafeProperties(
             Element suite,
             Map<String, String> safeProperties,
+            Set<String> excludedPropertyKeys,
             List<String> warnings,
             Path reportFile
     ) {
@@ -203,7 +209,7 @@ public final class SurefireXmlReportParser implements ReportParser {
             String key = property.getAttribute("name");
             String value = property.getAttribute("value");
 
-            if (!shouldKeepProperty(key, value)) {
+            if (!shouldKeepProperty(key, value, excludedPropertyKeys)) {
                 continue;
             }
 
@@ -215,12 +221,13 @@ public final class SurefireXmlReportParser implements ReportParser {
         }
     }
 
-    private boolean shouldKeepProperty(String key, String value) {
+    private boolean shouldKeepProperty(String key, String value, Set<String> excludedPropertyKeys) {
         if (key == null || key.isBlank()) {
             return false;
         }
 
         if (!ALLOWED_PROPERTY_KEYS.contains(key)) {
+            excludedPropertyKeys.add(key);
             return false;
         }
 
@@ -228,7 +235,11 @@ public final class SurefireXmlReportParser implements ReportParser {
             return true;
         }
 
-        return !PRIVATE_PATH_PATTERN.matcher(value).find();
+        boolean containsPrivatePath = PRIVATE_PATH_PATTERN.matcher(value).find();
+        if (containsPrivatePath) {
+            excludedPropertyKeys.add(key);
+        }
+        return !containsPrivatePath;
     }
 
     private List<ParsedTestcase> parseTestcases(Element suite) {

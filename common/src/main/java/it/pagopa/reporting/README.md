@@ -52,6 +52,8 @@ Options:
 - Report title is `QE SUIT Contract Test HTML Report`.
 - Top section order is: `Run summary`, `Filters`, `Navigation`.
 - Factory details render concrete cases in a 2-column table (`test/case`, `status`) with inline expansion by clicking the whole case row.
+- The `Environment properties (safe subset)` panel keeps a short always-visible security note and uses collapsible blocks (closed by default) for both safe properties and excluded keys.
+- The report exposes the exact environment property keys excluded in the specific run, under a dedicated collapsible section (`Excluded property keys for this run`).
 - Aggregate color precedence for class/factory nodes: dark red if any `ERROR`, red if any `FAILED` (and no `ERROR`), yellow if no `FAILED`/`ERROR` but at least one `UNKNOWN` or `SKIPPED`, green only if all `PASSED`; with compact `F/E/U/S` badge.
 - Status colors are applied to badges only, keeping case names readable against the row background.
 

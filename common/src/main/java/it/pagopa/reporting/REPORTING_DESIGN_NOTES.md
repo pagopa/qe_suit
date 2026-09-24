@@ -1,6 +1,6 @@
 # Reporting Tool - Design Notes
 
-Last update: 2026-09-24 (architecture + implementation decisions v1.8)
+Last update: 2026-09-24 (architecture + implementation decisions v1.9)
 
 ## Goal
 Build a reporting tool in `common` that reads Surefire XML reports and generates a human-readable HTML report.
@@ -233,6 +233,10 @@ Status: implemented in current HTML writer behavior.
   - hide navigation/class/factory nodes when no visible child case remains after filter.
 - Row-level expandable details for stacktrace and case log.
 - Status color CSS is scoped to badge elements (`.status-tag.*`) so case names remain readable on light row backgrounds.
+- Environment properties panel behavior:
+  - shows a short always-visible security rationale text
+  - keeps safe properties inside a collapsible block, closed by default
+  - adds a second collapsible block listing the exact property keys excluded in that specific run
 - Optional annotation-driven recursive DTO dump panel for deep debug.
 
 ### HTML UX revision status

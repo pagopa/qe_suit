@@ -38,6 +38,11 @@ class HtmlSidebarReportWriterTest {
         assertThat(html).contains("class=\"case-expander\"");
         assertThat(html).contains("REMOVED @ /name");
         assertThat(html).contains("DTO debug dump");
+        assertThat(html).contains("Environment properties (safe subset)");
+        assertThat(html).contains("Only non-sensitive values are shown");
+        assertThat(html).contains("<summary>Show safe properties (");
+        assertThat(html).contains("<summary>Excluded property keys for this run (");
+        assertThat(html).contains("<li>user.home</li>");
         assertThat(html).doesNotContain("Class -> Factory -> Concrete case");
 
         assertThat(html.indexOf("Run summary")).isLessThan(html.indexOf("Filters"));
