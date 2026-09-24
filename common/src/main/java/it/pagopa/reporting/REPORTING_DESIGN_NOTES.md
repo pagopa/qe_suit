@@ -257,5 +257,13 @@ Status: implemented in current HTML writer behavior.
   - without `--output` and file input, write next to input file using the same base name and `.html` extension
 - On successful generation, the CLI prints the resolved output path (`Report generated: ...`).
 
+### DTO annotation retrospective (2026-09-24)
+- Initial intent: make DTO metadata (`@ReportNode`, `@ReportField`) a declarative layer for rendering semantics and filtering, reducing direct field-by-field writer coupling.
+- Confirmed retained value: `@ReportField` metadata is actively useful for the recursive DTO debug dump (label/order/format), with low upkeep and better technical readability.
+- Current non-adopted scope: the main UX writer flow remains explicit and does not consume `@ReportNode` / `ReportNodeRole` or `filterable` to drive navigation, aggregate color policy, or filter behavior.
+- Decision for current phase: keep annotations, because benefits are concrete for debug and maintenance cost is low.
+- Decision on dynamic writer direction: do not migrate to a fully reflection-driven writer now; current UX has domain-specific behavior where explicit rendering is clearer and safer.
+- Preferred evolution path: hybrid approach (explicit primary writer + annotation-driven technical/debug sections), with optional incremental reuse where complexity stays controlled.
+
 ## Maintenance note
 This file is the running source of truth and must be updated during this conversation whenever requirements/design choices change.

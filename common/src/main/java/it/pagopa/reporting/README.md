@@ -59,4 +59,12 @@ Options:
 
 - Once functional and UX behavior is stable, optimize report size by adding compressed output support to reduce disk footprint.
 
+### DTO annotations retrospective
+
+- Original purpose: use DTO annotations as declarative metadata for rendering semantics (role, labels, order, format, filtering hints), with the option to reduce hardcoded writer logic.
+- What is retained and useful today: `@ReportField` metadata is effectively used by the recursive DTO debug dump (`label`, `order`, `format`) and improves deep-debug readability with low maintenance cost.
+- What is not applied yet in the primary UX path: `@ReportNode` / `ReportNodeRole` and `filterable` metadata do not currently drive main HTML navigation, filters, or aggregate behavior.
+- Current decision: keep annotations because they provide concrete debug value at low cost, while preserving an explicit main writer for domain-specific UX rules.
+- Near-term direction: prefer a hybrid approach (explicit primary writer plus annotation-driven technical/debug sections) instead of a fully dynamic reflection-only writer.
+
 
