@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="it.pagopa.reporting.SampleContractTest" tests="2" failures="1" errors="0" skipped="0" time="1.500">
+    <properties>
+        <property name="java.version" value="17.0.13"/>
+        <property name="os.name" value="Windows 11"/>
+        <property name="test" value="it.pagopa.reporting.SampleContractTest"/>
+        <property name="user.home" value="C:\\Users\\someone"/>
+    </properties>
+
+    <testcase name="createSomething()[1]" classname="it.pagopa.reporting.SampleContractTest" time="0.500">
+        <system-out><![CDATA[
+2026-09-24 10:00:00.001 [ForkJoinPool-1-worker-1] INFO HttpLoggingFilter [payload] REPLACED_WITH_NULL @ <root> : Request Method: POST
+2026-09-24 10:00:00.010 [ForkJoinPool-1-worker-1] INFO HttpLoggingFilter payload line for first case
+        ]]></system-out>
+    </testcase>
+
+    <testcase name="createSomething()[2]" classname="it.pagopa.reporting.SampleContractTest" time="1.000">
+        <failure type="java.lang.AssertionError" message="HTTP contract expectation failed"><![CDATA[
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REMOVED
+- targetPath: /name
+Expected status code <400> but was <200>
+        ]]></failure>
+        <system-out><![CDATA[
+2026-09-24 10:00:01.001 [ForkJoinPool-1-worker-2] INFO HttpLoggingFilter [payload] REPLACED_WITH_NULL @ <root> : Request Method: POST
+2026-09-24 10:00:01.002 [ForkJoinPool-1-worker-3] INFO HttpLoggingFilter [payload] REMOVED @ /name : Request Method: POST
+2026-09-24 10:00:01.100 [ForkJoinPool-1-worker-3] INFO HttpLoggingFilter response line for removed case
+        ]]></system-out>
+    </testcase>
+</testsuite>
+
