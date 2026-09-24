@@ -66,10 +66,7 @@ public class EServiceTemplateVersionUseCase {
             EServiceTemplate eServiceTemplate,
             EServiceTemplateVersion version
     ) {
-        UpdateEServiceTemplateVersionCommand command = requestFactory.defaultUpdateTemplateVersionCommand();
-        EServiceTemplateVersion updatedVersion = updateDraftVersion(eServiceTemplate, version, command);
-
-        return linkOpenApiInterface(eServiceTemplate, updatedVersion, "assets/origin-interface.yaml");
+        return linkOpenApiInterface(eServiceTemplate, version, "assets/origin-interface.yaml");
     }
 }
 
