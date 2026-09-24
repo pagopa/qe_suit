@@ -4,6 +4,8 @@ import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.agreement.infrastructure.BffAgreementRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
+import it.pagopa.interop.common.agreement.domain.Agreement;
+import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
@@ -17,6 +19,7 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.Map;
 import java.util.stream.Stream;
 
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
@@ -45,6 +48,23 @@ public class BffAgreementContractTest {
 
                     return requestFactory.creationRequest(createdEservice, createdEservice.getActiveDescriptor(), null);
                 })
+                .tests();
+    }
+
+    @TestFactory
+    Stream<DynamicTest> getAgreementById() {
+        Agreement agreement = interopJourney
+                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .linkAgreement(AgreementState.DRAFT)
+                .get(Agreement.class);
+
+        return httpContractValidator
+                .apiCall(() -> {
+                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
+                    return apiClient.agreements().getAgreementById();
+                })
+                .pathParams(() -> Map.of("agreementId", agreement.getId()))
                 .tests();
     }
 }
