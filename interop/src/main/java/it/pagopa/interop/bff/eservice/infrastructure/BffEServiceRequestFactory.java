@@ -10,6 +10,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.instancio.Instancio;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.instancio.Select.field;
@@ -45,9 +46,9 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 .set(field(UpdateEServiceDescriptorSeed::getDescription), "default description")
                 .set(field(UpdateEServiceDescriptorSeed::getAttributes),
                         new DescriptorAttributesSeed()
-                                .certified(List.of())
-                                .declared(List.of())
-                                .verified(List.of())
+                                .certified(new ArrayList<>())
+                                .declared(new ArrayList<>())
+                                .verified(new ArrayList<>())
                 )
                 .ignore(field(UpdateEServiceDescriptorSeed::getAsyncExchangeProperties))
                 .create();

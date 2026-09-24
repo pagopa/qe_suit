@@ -6,6 +6,7 @@ import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.kernel.security.DPoPProof;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,11 @@ public class ScenarioParameterTypes {
     @ParameterType("e-service|EService|e-service creato|EService creato")
     public EService currentEService(String token) {
         return entityStore.getLastOrThrow(EService.class);
+    }
+
+    @ParameterType("Template-EService|Template EService|Template-EService creato|Template EService creato")
+    public EServiceTemplate currentEServiceTemplate(String token) {
+        return entityStore.getLastOrThrow(EServiceTemplate.class);
     }
 
     @ParameterType("versione deprecata")
