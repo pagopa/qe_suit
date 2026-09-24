@@ -8,7 +8,7 @@ import java.util.stream.Stream;
 public interface WebContractStages {
 
     interface UserStage {
-        <P extends Page> PageStage<P> on(Class<P> pageType);
+        <P extends Page> PageStage<P> on(Class<P> pageType, String... pathParams);
     }
 
     interface PageStage<P extends Page> {
