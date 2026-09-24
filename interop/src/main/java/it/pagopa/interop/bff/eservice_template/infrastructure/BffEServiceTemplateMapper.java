@@ -20,8 +20,7 @@ public interface BffEServiceTemplateMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "versions", ignore = true)
-    @Mapping(target = "riskAnalysis", ignore = true)
-    @Mapping(target = "riskAnalyses", ignore = true)
+        @Mapping(target = "riskAnalyses", ignore = true)
     EServiceTemplate toEServiceTemplateBase(EServiceTemplateDetails source);
 }
 
