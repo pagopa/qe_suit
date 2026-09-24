@@ -20,7 +20,7 @@ import org.springframework.test.context.TestConstructor;
 import java.util.List;
 import java.util.stream.Stream;
 
-@ActiveProfiles({"test", "junit"})
+@ActiveProfiles({"dev", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
@@ -35,8 +35,8 @@ public class WebComboDetailsContractTest {
 
     @TestFactory
     Stream<DynamicTest> shouldValidateComboDetailsPageLayout() {
-        String dummyCampaignId = "CAMP_TEST_001";
-        String dummyIun = "IUN_COMBO_TEST_890";
+        String dummyCampaignId = "FattOrd";
+        String dummyIun = "GLAM-ZTPT-NZQG-202609-K-A";
 
         return webContractValidator.as(Tenant.GROSSINI, List.of(Recipient.LUCREZIA))
                 .on(MittenteComboDetailsPage.class, dummyCampaignId, dummyIun)
