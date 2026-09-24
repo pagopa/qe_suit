@@ -1,10 +1,12 @@
 package it.pagopa.interop.bff.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.infrastructure.contract.http.HttpContractPolicy;
+import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.infrastructure.fuzzing.*;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
+import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +31,14 @@ public class BffApiContractConfig {
                 objectGraphDecomposer,
                 bffApiContractPolicy
         );
+    }
+
+    @Bean
+    InteropHttpContractValidator interopHttpContractValidator(
+            HttpContractValidator bffApiContract,
+            CurrentUserSession currentUserSession
+    ) {
+        return new InteropHttpContractValidator(bffApiContract, currentUserSession);
     }
 
     @Bean

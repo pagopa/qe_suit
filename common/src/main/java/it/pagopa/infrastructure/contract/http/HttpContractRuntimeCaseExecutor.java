@@ -8,6 +8,7 @@ import it.pagopa.infrastructure.fuzzing.FuzzEngine;
 import org.slf4j.MDC;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 final class HttpContractRuntimeCaseExecutor {
@@ -15,17 +16,20 @@ final class HttpContractRuntimeCaseExecutor {
     private final FuzzEngine payloadFuzzEngine;
     private final FuzzEngine pathParamsFuzzEngine;
     private final OpenApiOperationAdapter operationAdapter;
+    private final HttpContractAuthentication authentication;
 
     HttpContractRuntimeCaseExecutor(
             ObjectMapper objectMapper,
             FuzzEngine payloadFuzzEngine,
             FuzzEngine pathParamsFuzzEngine,
-            OpenApiOperationAdapter operationAdapter
+            OpenApiOperationAdapter operationAdapter,
+            HttpContractAuthentication authentication
     ) {
         this.objectMapper = objectMapper;
         this.payloadFuzzEngine = payloadFuzzEngine;
         this.pathParamsFuzzEngine = pathParamsFuzzEngine;
         this.operationAdapter = operationAdapter;
+        this.authentication = Objects.requireNonNull(authentication, "authentication must not be null");
     }
 
     void execute(
@@ -39,6 +43,7 @@ final class HttpContractRuntimeCaseExecutor {
         try {
             RuntimeScope payloadRuntime = materializeRuntimeScope(payloadState, RequestScope.PAYLOAD, testCase);
             RuntimeScope pathRuntime = materializeRuntimeScope(pathState, RequestScope.PATH_PARAMS, testCase);
+            authentication.authenticate();
             Object operation = materializeOperation(operationSupplier, testCase);
             HttpContractRequest request = buildRuntimeRequest(testCase, payloadRuntime, pathRuntime);
 

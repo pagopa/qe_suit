@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -309,6 +310,126 @@ class HttpContractValidatorSupplierSemanticsTest {
         List<String> bodies = operations.stream().map(operation -> operation.bodyJson).toList();
         assertEquals(2, bodies.size());
         assertEquals(2, bodies.stream().distinct().count());
+    }
+
+    @Test
+    void authenticationRunsAfterPayloadAndPathSuppliersAndBeforeOperation() throws Throwable {
+        AtomicInteger payloadInvocations = new AtomicInteger();
+        AtomicInteger pathInvocations = new AtomicInteger();
+        AtomicInteger authenticationInvocations = new AtomicInteger();
+        ConcurrentLinkedQueue<String> events = new ConcurrentLinkedQueue<>();
+        FuzzEngine fuzzEngine = source -> source instanceof Payload
+                ? List.of(payloadNameCase("", "id"))
+                : List.of(pathAgreementCase("malformed-agreement"));
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, fuzzEngine, createDecomposer(), completePolicy());
+
+        var tests = contract.apiCall(
+                        () -> {
+                            authenticationInvocations.incrementAndGet();
+                            events.add("auth");
+                        },
+                        () -> {
+                            events.add("operation");
+                            return new CapturingOper("op");
+                        }
+                )
+                .payload(() -> {
+                    payloadInvocations.incrementAndGet();
+                    events.add("payload");
+                    return new Payload("id", "name", List.of(new Contact("x@y")));
+                })
+                .pathParams(() -> {
+                    pathInvocations.incrementAndGet();
+                    events.add("path");
+                    return new PathParams("agreement", "descriptor");
+                })
+                .tests()
+                .toList();
+
+        tests.get(0).getExecutable().execute();
+        tests.get(1).getExecutable().execute();
+
+        List<String> sequence = List.copyOf(events);
+        int payloadIndex = sequence.indexOf("payload");
+        int pathIndex = sequence.indexOf("path");
+        int authIndex = sequence.indexOf("auth");
+        int operationIndex = sequence.indexOf("operation");
+
+        assertTrue(payloadIndex >= 0);
+        assertTrue(pathIndex > payloadIndex);
+        assertTrue(authIndex > pathIndex);
+        assertTrue(operationIndex > authIndex);
+    }
+
+    @Test
+    void authenticationIsInvokedPerRuntimeCase() throws Throwable {
+        AtomicInteger authenticationInvocations = new AtomicInteger();
+        FuzzEngine fuzzEngine = source -> source instanceof Payload
+                ? List.of(
+                        payloadNameCase("", "id"),
+                        new FuzzCase(
+                                path("/name"),
+                                new FuzzMutation(FuzzScenario.REPLACED_WITH_NULL, FuzzMutationKind.REPLACE, null),
+                                objectMapper.createObjectNode()
+                                        .put("id", "id")
+                                        .putNull("name")
+                                        .putArray("contacts")
+                                        .add(objectMapper.createObjectNode().put("email", "x@y"))
+                        )
+                )
+                : List.of();
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, fuzzEngine, createDecomposer(), completePolicy());
+
+        var tests = contract.apiCall(
+                        () -> authenticationInvocations.incrementAndGet(),
+                        () -> new CapturingOper("op")
+                )
+                .payload(() -> new Payload("id", "name", List.of(new Contact("x@y"))))
+                .tests()
+                .toList();
+
+        tests.get(0).getExecutable().execute();
+        tests.get(1).getExecutable().execute();
+
+        assertEquals(2, authenticationInvocations.get());
+    }
+
+    @Test
+    void authenticationCanBeOverriddenByPayloadAndPathSuppliersBeforeOperation() throws Throwable {
+        AtomicReference<String> session = new AtomicReference<>("initial");
+        FuzzEngine fuzzEngine = source -> source instanceof Payload
+                ? List.of(payloadNameCase("", "id"))
+                : List.of(pathAgreementCase("agreement-1"));
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, fuzzEngine, createDecomposer(), completePolicy());
+
+        var tests = contract.apiCall(
+                        () -> session.set("A"),
+                        () -> {
+                            assertEquals("A", session.get());
+                            return new CapturingOper("op");
+                        }
+                )
+                .payload(() -> {
+                    session.set("B");
+                    return new Payload("id", "name", List.of(new Contact("x@y")));
+                })
+                .pathParams(() -> {
+                    session.set("C");
+                    return new PathParams("agreement", "descriptor");
+                })
+                .tests()
+                .toList();
+
+        tests.get(0).getExecutable().execute();
+        assertEquals("A", session.get());
+    }
+
+    @Test
+    void nullAuthenticationAndNullOperationSupplierAreRejected() {
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, source -> List.of(), source -> List.of(), createDecomposer(), completePolicy());
+
+        assertThrows(NullPointerException.class, () -> contract.apiCall(null, SimpleOper::new));
+        assertThrows(ContractHttpException.class, () -> contract.apiCall(HttpContractAuthentication.noOp(), null));
     }
 
     private void executeUnchecked(org.junit.jupiter.api.DynamicTest test) {

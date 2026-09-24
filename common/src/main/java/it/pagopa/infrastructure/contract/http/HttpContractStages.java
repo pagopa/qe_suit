@@ -16,6 +16,10 @@ public interface HttpContractStages {
         Stream<DynamicTest> tests();
     }
 
+    interface ApiCallSelectionStage {
+        ApiCallStage apiCall(Supplier<?> operationSupplier);
+    }
+
     interface ApiCallStage extends TestsStage {
         default <T> PayloadStage<T> payload(T payload) {
             return payload(() -> payload);

@@ -40,7 +40,11 @@ public final class HttpContractValidator {
         this.operationAdapter = new OpenApiOperationAdapter(objectMapper);
     }
 
-    public HttpContractStages.ApiCallStage apiCall(Supplier<?> operationSupplier) {
+    public HttpContractStages.ApiCallStage apiCall(
+            HttpContractAuthentication authentication,
+            Supplier<?> operationSupplier
+    ) {
+        Objects.requireNonNull(authentication, "authentication must not be null");
         if (operationSupplier == null) {
             throw new ContractHttpException("operation supplier must not be null");
         }
@@ -52,7 +56,12 @@ public final class HttpContractValidator {
                 objectGraphDecomposer,
                 casePlanner,
                 operationAdapter,
+                authentication,
                 operationSupplier
         );
+    }
+
+    public HttpContractStages.ApiCallStage apiCall(Supplier<?> operationSupplier) {
+        return apiCall(HttpContractAuthentication.noOp(), operationSupplier);
     }
 }

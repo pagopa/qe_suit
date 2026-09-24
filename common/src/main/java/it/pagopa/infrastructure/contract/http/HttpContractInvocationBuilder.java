@@ -7,6 +7,7 @@ import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
 import org.junit.jupiter.api.DynamicTest;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -18,6 +19,7 @@ final class HttpContractInvocationBuilder implements HttpContractStages.ApiCallS
     private final ObjectGraphDecomposer objectGraphDecomposer;
     private final ContractCasePlanner casePlanner;
     private final Supplier<?> operationSupplier;
+    private final HttpContractAuthentication authentication;
     private final HttpContractRuntimeCaseExecutor runtimeCaseExecutor;
 
     private ScopeState<?> payloadState;
@@ -30,6 +32,7 @@ final class HttpContractInvocationBuilder implements HttpContractStages.ApiCallS
             ObjectGraphDecomposer objectGraphDecomposer,
             ContractCasePlanner casePlanner,
             OpenApiOperationAdapter operationAdapter,
+            HttpContractAuthentication authentication,
             Supplier<?> operationSupplier
     ) {
         this.payloadFuzzEngine = payloadFuzzEngine;
@@ -37,11 +40,13 @@ final class HttpContractInvocationBuilder implements HttpContractStages.ApiCallS
         this.objectGraphDecomposer = objectGraphDecomposer;
         this.casePlanner = casePlanner;
         this.operationSupplier = operationSupplier;
+        this.authentication = Objects.requireNonNull(authentication, "authentication must not be null");
         this.runtimeCaseExecutor = new HttpContractRuntimeCaseExecutor(
                 objectMapper,
                 payloadFuzzEngine,
                 pathParamsFuzzEngine,
-                operationAdapter
+                operationAdapter,
+                authentication
         );
     }
 
