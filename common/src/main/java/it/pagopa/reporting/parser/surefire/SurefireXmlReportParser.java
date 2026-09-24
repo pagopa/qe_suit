@@ -281,7 +281,8 @@ public final class SurefireXmlReportParser implements ReportParser {
     private FactoryIdentity extractFactoryIdentity(String testcaseName) {
         Matcher matcher = FACTORY_PATTERN.matcher(testcaseName);
         if (!matcher.matches()) {
-            return new FactoryIdentity("UNKNOWN_FACTORY", null);
+            // Non-dynamic testcase names (without [index]) represent factory-level execution nodes.
+            return new FactoryIdentity(testcaseName, null, false);
         }
 
         Integer index = null;
@@ -291,7 +292,7 @@ public final class SurefireXmlReportParser implements ReportParser {
             // ignore malformed index and keep null
         }
 
-        return new FactoryIdentity(matcher.group("factory"), index);
+        return new FactoryIdentity(matcher.group("factory"), index, true);
     }
 
     private List<ConcreteCaseReport> extractConcreteCases(
@@ -302,22 +303,30 @@ public final class SurefireXmlReportParser implements ReportParser {
             FailureData failureData,
             String systemOut
     ) {
+        if (!factoryIdentity.dynamicCase()) {
+            // Preserve factory-level failures/errors as explicit cases, without marker splitting.
+            return List.of(buildSingleCase(
+                    testcaseName,
+                    testcaseName,
+                    factoryIdentity,
+                    testcaseDuration,
+                    testcaseStatus,
+                    failureData,
+                    systemOut
+            ));
+        }
+
         String failureKey = failureCaseKey(failureData);
         List<ConcreteCaseReport> concreteCases = new ArrayList<>();
 
         if (systemOut == null || systemOut.isBlank()) {
-            concreteCases.add(new ConcreteCaseReport(
-                    testcaseName + "#1",
-                    "UNKNOWN_CASE",
-                    "UNKNOWN_CASE",
-                    null,
-                    testcaseStatus,
+            concreteCases.add(buildSingleCase(
                     testcaseName,
-                    factoryIdentity.index,
+                    "UNKNOWN_CASE",
+                    factoryIdentity,
                     testcaseDuration,
-                    failureData.failureType,
-                    failureData.failureMessage,
-                    failureData.stackTrace,
+                    testcaseStatus,
+                    failureData,
                     ""
             ));
             return concreteCases;
@@ -348,18 +357,13 @@ public final class SurefireXmlReportParser implements ReportParser {
         }
 
         if (logsByCase.isEmpty()) {
-            concreteCases.add(new ConcreteCaseReport(
-                    testcaseName + "#1",
-                    "UNKNOWN_CASE",
-                    "UNKNOWN_CASE",
-                    null,
-                    testcaseStatus,
+            concreteCases.add(buildSingleCase(
                     testcaseName,
-                    factoryIdentity.index,
+                    "UNKNOWN_CASE",
+                    factoryIdentity,
                     testcaseDuration,
-                    failureData.failureType,
-                    failureData.failureMessage,
-                    failureData.stackTrace,
+                    testcaseStatus,
+                    failureData,
                     systemOut
             ));
             return concreteCases;
@@ -407,6 +411,33 @@ public final class SurefireXmlReportParser implements ReportParser {
         }
 
         return concreteCases;
+    }
+
+    private ConcreteCaseReport buildSingleCase(
+            String testcaseName,
+            String displayName,
+            FactoryIdentity factoryIdentity,
+            double testcaseDuration,
+            ExecutionStatus testcaseStatus,
+            FailureData failureData,
+            String caseLog
+    ) {
+        String normalizedLog = caseLog == null ? "" : caseLog.trim();
+
+        return new ConcreteCaseReport(
+                testcaseName + "#1",
+                displayName,
+                displayName,
+                null,
+                testcaseStatus,
+                testcaseName,
+                factoryIdentity.index,
+                testcaseDuration,
+                failureData.failureType,
+                failureData.failureMessage,
+                failureData.stackTrace,
+                normalizedLog
+        );
     }
 
     private Optional<String> threadName(String line) {
@@ -612,7 +643,7 @@ public final class SurefireXmlReportParser implements ReportParser {
     private record FailureData(String failureType, String failureMessage, String stackTrace) {
     }
 
-    private record FactoryIdentity(String factoryName, Integer index) {
+    private record FactoryIdentity(String factoryName, Integer index, boolean dynamicCase) {
     }
 
     private record ParsedTestcase(

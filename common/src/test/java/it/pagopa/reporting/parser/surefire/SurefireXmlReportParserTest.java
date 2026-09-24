@@ -10,8 +10,10 @@ import org.junit.jupiter.api.Test;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -59,6 +61,46 @@ class SurefireXmlReportParserTest {
 
         assertThat(rootCase).isPresent();
         assertThat(rootCase.orElseThrow().caseLog()).contains("Request Method: POST");
+    }
+
+    @Test
+    void parseShouldExposeFactoryLevelErrorsAsStandaloneFactories() throws Exception {
+        SurefireXmlReportParser parser = new SurefireXmlReportParser();
+
+        Path realXml = resourcePath("it/pagopa/reporting/TEST-it.pagopa.interop.suite.contract.BffEServiceTemplateContractTest.xml");
+        ReportDocument report = parser.parse(realXml);
+
+        TestClassReport classReport = report.testClasses().stream()
+                .filter(testClass -> "it.pagopa.interop.suite.contract.BffEServiceTemplateContractTest".equals(testClass.className()))
+                .findFirst()
+                .orElseThrow();
+
+        Map<String, TestFactoryReport> factoriesByName = classReport.factories().stream()
+                .collect(Collectors.toMap(TestFactoryReport::factoryName, factory -> factory));
+
+        assertThat(factoriesByName.keySet()).contains(
+                "createEServiceTemplate",
+                "updateEServiceTemplateName",
+                "updateEServiceTemplateDescription",
+                "updateEServiceTemplateIntendedTarget"
+        );
+
+        assertFactoryError(factoriesByName.get("updateEServiceTemplateName"), "updateEServiceTemplateName");
+        assertFactoryError(factoriesByName.get("updateEServiceTemplateDescription"), "updateEServiceTemplateDescription");
+        assertFactoryError(factoriesByName.get("updateEServiceTemplateIntendedTarget"), "updateEServiceTemplateIntendedTarget");
+    }
+
+    private void assertFactoryError(TestFactoryReport factoryReport, String testcaseName) {
+        assertThat(factoryReport).isNotNull();
+        assertThat(factoryReport.counts().total()).isEqualTo(1);
+        assertThat(factoryReport.counts().errors()).isEqualTo(1);
+
+        assertThat(factoryReport.concreteCases()).hasSize(1);
+        ConcreteCaseReport concreteCase = factoryReport.concreteCases().get(0);
+        assertThat(concreteCase.displayName()).isEqualTo(testcaseName);
+        assertThat(concreteCase.sourceTestcaseName()).isEqualTo(testcaseName);
+        assertThat(concreteCase.status()).isEqualTo(ExecutionStatus.ERROR);
+        assertThat(concreteCase.failureMessage()).contains("pathParams supplier failed during discovery");
     }
 
     private Path resourcePath(String resource) throws URISyntaxException {

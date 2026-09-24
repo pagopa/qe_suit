@@ -70,11 +70,7 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                 .append("</style>")
                 .append("</head>")
                 .append("<body>")
-                .append("<div class=\"layout\">");
-
-        appendSidebar(report, slugger, html);
-
-        html.append("<main class=\"main\">")
+                .append("<main class=\"main\">")
                 .append("<header class=\"page-header\">")
                 .append("<h1>Surefire HTML Report</h1>")
                 .append("<p class=\"generated-at\">Generated at ")
@@ -82,6 +78,7 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                 .append("</p>")
                 .append("</header>");
 
+        appendInPageNavigation(report.testClasses(), slugger, html);
         appendFilters(html);
         appendSummary(report.summary(), html);
         appendEnvironmentProperties(report.environmentProperties(), html);
@@ -98,7 +95,6 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
         }
 
         html.append("</main>")
-                .append("</div>")
                 .append("<script>")
                 .append(js())
                 .append("</script>")
@@ -167,6 +163,90 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
 
         html.append("</ul>")
                 .append("</aside>");
+    }
+
+    private void appendInPageNavigation(List<TestClassReport> classes, Slugger slugger, StringBuilder html) {
+        html.append("<section class=\"panel\" id=\"navigation\">")
+                .append("<h2>Navigation</h2>")
+                .append("<p class=\"muted\">Expand classes and factories to browse concrete cases.</p>")
+                .append("<ul class=\"nav-tree\">");
+
+        for (TestClassReport classReport : classes) {
+            String classKey = "class|" + classReport.className();
+            String classId = slugger.idFor(classKey, classReport.className());
+            String classAggregateClass = aggregateCssClass(classReport.counts());
+
+            html.append("<li class=\"nav-class-item ")
+                    .append(classAggregateClass)
+                    .append("\">")
+                    .append("<details>")
+                    .append("<summary>")
+                    .append("<span class=\"nav-entry\">")
+                    .append("<a href=\"#")
+                    .append(classId)
+                    .append("\">")
+                    .append(escape(shortName(classReport.className())))
+                    .append("</a>")
+                    .append(renderAggregateBadge(classReport.counts()))
+                    .append(renderCountsBadge(classReport.counts()))
+                    .append("</span>")
+                    .append("</summary>")
+                    .append("<ul>");
+
+            for (TestFactoryReport factoryReport : classReport.factories()) {
+                String factoryKey = "factory|" + classReport.className() + "|" + factoryReport.factoryName();
+                String factoryId = slugger.idFor(factoryKey, factoryReport.factoryName());
+                String factoryAggregateClass = aggregateCssClass(factoryReport.counts());
+
+                html.append("<li class=\"nav-factory-item ")
+                        .append(factoryAggregateClass)
+                        .append("\">")
+                        .append("<details>")
+                        .append("<summary>")
+                        .append("<span class=\"nav-entry\">")
+                        .append("<a href=\"#")
+                        .append(factoryId)
+                        .append("\">")
+                        .append(escape(factoryReport.factoryName()))
+                        .append("</a>")
+                        .append(renderAggregateBadge(factoryReport.counts()))
+                        .append(renderCountsBadge(factoryReport.counts()))
+                        .append("</span>")
+                        .append("</summary>")
+                        .append("<ul>");
+
+                for (ConcreteCaseReport concreteCase : factoryReport.concreteCases()) {
+                    String caseKey = "case|" + classReport.className() + "|" + factoryReport.factoryName() + "|" + concreteCase.id();
+                    String caseId = slugger.idFor(caseKey, concreteCase.displayName());
+
+                    html.append("<li class=\"nav-case-item\" data-case-ref=\"")
+                            .append(caseId)
+                            .append("\">")
+                            .append("<a href=\"#")
+                            .append(caseId)
+                            .append("\">")
+                            .append(escape(concreteCase.displayName()))
+                            .append("</a>")
+                            .append("<span class=\"status-tag status-")
+                            .append(concreteCase.status().cssClass())
+                            .append("\">")
+                            .append(escape(concreteCase.status().name()))
+                            .append("</span>")
+                            .append("</li>");
+                }
+
+                html.append("</ul>")
+                        .append("</details>")
+                        .append("</li>");
+            }
+
+            html.append("</ul>")
+                    .append("</details>")
+                    .append("</li>");
+        }
+
+        html.append("</ul>")
+                .append("</section>");
     }
 
     private void appendFilters(StringBuilder html) {
@@ -260,32 +340,61 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
         for (TestClassReport classReport : classes) {
             String classKey = "class|" + classReport.className();
             String classId = slugger.idFor(classKey, classReport.className());
+            String classAggregateClass = aggregateCssClass(classReport.counts());
 
             html.append("<section class=\"class-section\" id=\"")
                     .append(classId)
                     .append("\">")
+                    .append("<div class=\"section-header\">")
                     .append("<h3>")
                     .append(escape(classReport.className()))
                     .append("</h3>")
+                    .append("<div class=\"section-header-badges\">")
+                    .append(renderAggregateBadge(classReport.counts()))
+                    .append(renderCountsBadge(classReport.counts()))
+                    .append("</div>")
+                    .append("</div>")
+                    .append("<p class=\"aggregate-hint ")
+                    .append(classAggregateClass)
+                    .append("\">Overall status: ")
+                    .append(escape(aggregateLabel(classReport.counts())))
+                    .append("</p>")
                     .append(renderCounts(classReport.counts(), classReport.totalDurationSeconds()));
 
             for (TestFactoryReport factoryReport : classReport.factories()) {
                 String factoryKey = "factory|" + classReport.className() + "|" + factoryReport.factoryName();
                 String factoryId = slugger.idFor(factoryKey, factoryReport.factoryName());
+                String factoryAggregateClass = aggregateCssClass(factoryReport.counts());
 
                 html.append("<section class=\"factory-block\" id=\"")
                         .append(factoryId)
                         .append("\">")
+                        .append("<div class=\"section-header\">")
                         .append("<h4>")
                         .append(escape(factoryReport.factoryName()))
                         .append("</h4>")
+                        .append("<div class=\"section-header-badges\">")
+                        .append(renderAggregateBadge(factoryReport.counts()))
+                        .append(renderCountsBadge(factoryReport.counts()))
+                        .append("</div>")
+                        .append("</div>")
+                        .append("<p class=\"aggregate-hint ")
+                        .append(factoryAggregateClass)
+                        .append("\">Factory status: ")
+                        .append(escape(aggregateLabel(factoryReport.counts())))
+                        .append("</p>")
                         .append(renderCounts(factoryReport.counts(), factoryReport.totalDurationSeconds()));
+
+                html.append("<table class=\"cases-table\">")
+                        .append("<thead><tr><th>Test case</th><th>Status</th></tr></thead>")
+                        .append("<tbody>");
 
                 for (ConcreteCaseReport concreteCase : factoryReport.concreteCases()) {
                     String caseKey = "case|" + classReport.className() + "|" + factoryReport.factoryName() + "|" + concreteCase.id();
                     String caseId = slugger.idFor(caseKey, concreteCase.displayName());
+                    String detailsRowId = caseId + "-details";
 
-                    html.append("<article class=\"case-card status-")
+                    html.append("<tr class=\"case-row status-")
                             .append(concreteCase.status().cssClass())
                             .append("\" id=\"")
                             .append(caseId)
@@ -293,60 +402,35 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                             .append(concreteCase.status().name())
                             .append("\" data-search=\"")
                             .append(escape(caseSearchText(classReport, factoryReport, concreteCase)))
+                            .append("\" data-details-row-id=\"")
+                            .append(detailsRowId)
                             .append("\">")
-                            .append("<div class=\"case-header\">")
-                            .append("<h5>")
+                            .append("<td class=\"case-name-cell\">")
+                            .append("<button type=\"button\" class=\"case-toggle\" data-target=\"")
+                            .append(detailsRowId)
+                            .append("\" aria-expanded=\"false\" aria-label=\"Toggle details\">+</button>")
+                            .append("<span class=\"case-name\">")
                             .append(escape(concreteCase.displayName()))
-                            .append("</h5>")
+                            .append("</span>")
+                            .append("</td>")
+                            .append("<td>")
                             .append("<span class=\"status-tag status-")
                             .append(concreteCase.status().cssClass())
                             .append("\">")
                             .append(escape(concreteCase.status().name()))
                             .append("</span>")
-                            .append("</div>")
-                            .append("<p class=\"meta\">Testcase: ")
-                            .append(escape(concreteCase.sourceTestcaseName()))
-                            .append(" | index: ")
-                            .append(concreteCase.sourceIndex() == null ? "n/a" : concreteCase.sourceIndex())
-                            .append(" | duration: ")
-                            .append(formatSeconds(concreteCase.durationSeconds()))
-                            .append(" s")
-                            .append("</p>");
-
-                    if (concreteCase.failureMessage() != null || concreteCase.stackTrace() != null) {
-                        html.append("<details>")
-                                .append("<summary>Failure/Error details</summary>");
-
-                        if (concreteCase.failureType() != null) {
-                            html.append("<p><strong>Type:</strong> ")
-                                    .append(escape(concreteCase.failureType()))
-                                    .append("</p>");
-                        }
-                        if (concreteCase.failureMessage() != null) {
-                            html.append("<p><strong>Message:</strong> ")
-                                    .append(escape(concreteCase.failureMessage()))
-                                    .append("</p>");
-                        }
-                        if (concreteCase.stackTrace() != null) {
-                            html.append("<pre>")
-                                    .append(escape(concreteCase.stackTrace()))
-                                    .append("</pre>");
-                        }
-                        html.append("</details>");
-                    }
-
-                    if (concreteCase.caseLog() != null && !concreteCase.caseLog().isBlank()) {
-                        html.append("<details>")
-                                .append("<summary>Case log</summary>")
-                                .append("<pre>")
-                                .append(escape(concreteCase.caseLog()))
-                                .append("</pre>")
-                                .append("</details>");
-                    }
-
-                    html.append("</article>");
+                            .append("</td>")
+                            .append("</tr>")
+                            .append("<tr class=\"case-details-row hidden-by-toggle\" id=\"")
+                            .append(detailsRowId)
+                            .append("\">")
+                            .append("<td colspan=\"2\">")
+                            .append(renderCaseDetails(concreteCase))
+                            .append("</td>")
+                            .append("</tr>");
                 }
 
+                html.append("</tbody></table>");
                 html.append("</section>");
             }
 
@@ -364,6 +448,84 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
         ).toLowerCase(Locale.ROOT);
     }
 
+    private String renderCaseDetails(ConcreteCaseReport concreteCase) {
+        StringBuilder details = new StringBuilder(2048);
+        details.append("<div class=\"case-details\">")
+                .append("<p class=\"meta\">Testcase: ")
+                .append(escape(concreteCase.sourceTestcaseName()))
+                .append(" | index: ")
+                .append(concreteCase.sourceIndex() == null ? "n/a" : concreteCase.sourceIndex())
+                .append(" | duration: ")
+                .append(formatSeconds(concreteCase.durationSeconds()))
+                .append(" s</p>");
+
+        if (concreteCase.failureMessage() != null || concreteCase.stackTrace() != null) {
+            details.append("<div class=\"detail-block\">")
+                    .append("<h5>Failure/Error details</h5>");
+
+            if (concreteCase.failureType() != null) {
+                details.append("<p><strong>Type:</strong> ")
+                        .append(escape(concreteCase.failureType()))
+                        .append("</p>");
+            }
+            if (concreteCase.failureMessage() != null) {
+                details.append("<p><strong>Message:</strong></p><pre>")
+                        .append(escape(concreteCase.failureMessage()))
+                        .append("</pre>");
+            }
+            if (concreteCase.stackTrace() != null) {
+                details.append("<p><strong>Stacktrace:</strong></p><pre>")
+                        .append(escape(concreteCase.stackTrace()))
+                        .append("</pre>");
+            }
+
+            details.append("</div>");
+        }
+
+        if (concreteCase.caseLog() != null && !concreteCase.caseLog().isBlank()) {
+            details.append("<div class=\"detail-block\">")
+                    .append("<h5>Case log</h5>")
+                    .append("<pre>")
+                    .append(escape(concreteCase.caseLog()))
+                    .append("</pre>")
+                    .append("</div>");
+        }
+
+        details.append("</div>");
+        return details.toString();
+    }
+
+    private String aggregateCssClass(StatusCounts counts) {
+        if (counts.errors() > 0) {
+            return "aggregate-error";
+        }
+        if (counts.failed() > 0) {
+            return "aggregate-failed";
+        }
+        if (counts.unknown() > 0 || counts.skipped() > 0) {
+            return "aggregate-warning";
+        }
+        return "aggregate-passed";
+    }
+
+    private String aggregateLabel(StatusCounts counts) {
+        String cssClass = aggregateCssClass(counts);
+        return switch (cssClass) {
+            case "aggregate-error" -> "ERROR";
+            case "aggregate-failed" -> "FAILED";
+            case "aggregate-warning" -> "WARNING";
+            default -> "PASSED";
+        };
+    }
+
+    private String renderAggregateBadge(StatusCounts counts) {
+        return " <span class=\"aggregate-tag "
+                + aggregateCssClass(counts)
+                + "\">"
+                + aggregateLabel(counts)
+                + "</span>";
+    }
+
     private String renderCounts(StatusCounts counts, double durationSeconds) {
         return "<p class=\"counts\">"
                 + "Total: " + counts.total()
@@ -378,9 +540,10 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
 
     private String renderCountsBadge(StatusCounts counts) {
         return " <span class=\"mini-counts\">"
-                + counts.total() + "T/"
-                + counts.failed() + "F/"
-                + counts.errors() + "E"
+                + "F:" + counts.failed() + " "
+                + "E:" + counts.errors() + " "
+                + "U:" + counts.unknown() + " "
+                + "S:" + counts.skipped()
                 + "</span>";
     }
 
@@ -408,16 +571,21 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
     private String css() {
         return """
                 :root {
-                    --bg: #f7f7f9;
+                    --bg: #f4f6f8;
                     --panel: #ffffff;
-                    --text: #1f2328;
-                    --muted: #5b6470;
-                    --accent: #0969da;
-                    --pass: #1a7f37;
-                    --fail: #cf222e;
-                    --error: #bc4c00;
-                    --skip: #6e7781;
-                    --unknown: #8250df;
+                    --text: #1f2937;
+                    --muted: #667085;
+                    --border: #d5dce5;
+                    --link: #355e8a;
+                    --pass: #4f8a5b;
+                    --pass-soft: #eaf3ec;
+                    --failed: #c85a5a;
+                    --failed-soft: #fbeeee;
+                    --error: #8f2d2d;
+                    --error-soft: #f8eaea;
+                    --warning: #b08a2e;
+                    --warning-soft: #fbf6ea;
+                    --skipped: #7f8794;
                 }
 
                 * {
@@ -432,53 +600,37 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                 }
 
                 .layout {
-                    display: grid;
-                    grid-template-columns: 360px 1fr;
                     min-height: 100vh;
                 }
 
+                /* Keep the old sidebar markup for fallback, but hide it by default. */
                 .sidebar {
-                    background: #111827;
-                    color: #f9fafb;
-                    padding: 1rem;
-                    overflow-y: auto;
-                }
-
-                .sidebar h2 {
-                    margin-top: 0;
-                    font-size: 1.1rem;
-                }
-
-                .sidebar a {
-                    color: #dbeafe;
-                    text-decoration: none;
-                }
-
-                .sidebar a:hover {
-                    text-decoration: underline;
-                }
-
-                .sidebar ul {
-                    padding-left: 1rem;
-                    margin: 0.3rem 0;
-                }
-
-                .sidebar-tree {
-                    list-style: none;
-                    padding-left: 0;
-                }
-
-                .sidebar-tree li {
-                    margin: 0.3rem 0;
+                    display: none;
                 }
 
                 .mini-counts {
-                    color: #93c5fd;
                     font-size: 0.75rem;
+                    color: var(--muted);
+                    border: 1px solid var(--border);
+                    background: #eef2f6;
+                    border-radius: 999px;
+                    padding: 0.1rem 0.45rem;
+                    font-weight: 600;
                 }
 
                 .main {
                     padding: 1rem 1.5rem 2rem;
+                    max-width: 1600px;
+                    margin: 0 auto;
+                }
+
+                a {
+                    color: var(--link);
+                    text-decoration: none;
+                }
+
+                a:hover {
+                    text-decoration: underline;
                 }
 
                 .page-header h1 {
@@ -490,10 +642,15 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                     margin-top: 0.35rem;
                 }
 
+                .muted {
+                    color: var(--muted);
+                    margin: 0.2rem 0 0.8rem;
+                }
+
                 .panel {
                     background: var(--panel);
                     border-radius: 8px;
-                    border: 1px solid #d0d7de;
+                    border: 1px solid var(--border);
                     margin: 1rem 0;
                     padding: 1rem;
                 }
@@ -505,7 +662,7 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                 }
 
                 .summary-card {
-                    border: 1px solid #d0d7de;
+                    border: 1px solid var(--border);
                     border-radius: 8px;
                     padding: 0.6rem;
                     background: #f6f8fa;
@@ -534,7 +691,7 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                 .filters input[type="text"] {
                     width: min(700px, 100%);
                     padding: 0.5rem;
-                    border: 1px solid #d0d7de;
+                    border: 1px solid var(--border);
                     border-radius: 6px;
                 }
 
@@ -545,11 +702,128 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
 
                 th,
                 td {
-                    border: 1px solid #d0d7de;
+                    border: 1px solid var(--border);
                     padding: 0.4rem 0.5rem;
                     text-align: left;
                     vertical-align: top;
                     word-break: break-word;
+                }
+
+                .nav-tree,
+                .nav-tree ul {
+                    list-style: none;
+                    margin: 0.35rem 0;
+                    padding-left: 1rem;
+                }
+
+                .nav-tree {
+                    padding-left: 0;
+                }
+
+                .nav-tree details > summary {
+                    cursor: pointer;
+                    padding: 0.42rem 0.55rem;
+                    border-radius: 8px;
+                    border: 1px solid var(--border);
+                    background: #f8fafc;
+                }
+
+                .nav-tree details > summary:hover {
+                    background: #f2f5f9;
+                }
+
+                .nav-entry {
+                    display: inline-flex;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    gap: 0.45rem;
+                }
+
+                .nav-case-item {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    gap: 0.6rem;
+                    border: 1px solid #e9edf3;
+                    border-radius: 8px;
+                    padding: 0.25rem 0.45rem;
+                    margin: 0.3rem 0;
+                    background: #ffffff;
+                }
+
+                .nav-case-item a {
+                    flex: 1;
+                    min-width: 0;
+                    word-break: break-word;
+                }
+
+                .aggregate-tag {
+                    border-radius: 999px;
+                    padding: 0.13rem 0.48rem;
+                    font-size: 0.71rem;
+                    font-weight: 700;
+                    letter-spacing: 0.01em;
+                }
+
+                .aggregate-passed {
+                    color: var(--pass);
+                }
+
+                .aggregate-failed {
+                    color: var(--failed);
+                }
+
+                .aggregate-error {
+                    color: var(--error);
+                }
+
+                .aggregate-warning {
+                    color: #7a6021;
+                }
+
+                .aggregate-tag.aggregate-passed {
+                    background: var(--pass);
+                    color: #ffffff;
+                }
+
+                .aggregate-tag.aggregate-failed {
+                    background: var(--failed);
+                    color: #ffffff;
+                }
+
+                .aggregate-tag.aggregate-error {
+                    background: var(--error);
+                    color: #ffffff;
+                }
+
+                .aggregate-tag.aggregate-warning {
+                    background: var(--warning-soft);
+                    color: #7a6021;
+                    border: 1px solid #d7bf82;
+                }
+
+                .nav-class-item.aggregate-passed > details > summary,
+                .nav-factory-item.aggregate-passed > details > summary {
+                    background: var(--pass-soft);
+                    border-color: #bfd6c3;
+                }
+
+                .nav-class-item.aggregate-failed > details > summary,
+                .nav-factory-item.aggregate-failed > details > summary {
+                    background: var(--failed-soft);
+                    border-color: #e9bebe;
+                }
+
+                .nav-class-item.aggregate-error > details > summary,
+                .nav-factory-item.aggregate-error > details > summary {
+                    background: var(--error-soft);
+                    border-color: #ddb2b2;
+                }
+
+                .nav-class-item.aggregate-warning > details > summary,
+                .nav-factory-item.aggregate-warning > details > summary {
+                    background: var(--warning-soft);
+                    border-color: #e5d19c;
                 }
 
                 .class-section {
@@ -559,16 +833,37 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                 }
 
                 .factory-block {
-                    border: 1px solid #d0d7de;
+                    border: 1px solid var(--border);
                     border-radius: 8px;
                     padding: 0.6rem;
                     margin: 0.8rem 0;
                     background: #fcfcfd;
                 }
 
+                .section-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    gap: 0.7rem;
+                    flex-wrap: wrap;
+                }
+
+                .section-header-badges {
+                    display: flex;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    gap: 0.35rem;
+                }
+
+                .aggregate-hint {
+                    margin: 0.2rem 0 0.4rem;
+                    font-size: 0.84rem;
+                    font-weight: 600;
+                }
+
                 .factory-block h4,
                 .class-section h3,
-                .case-card h5 {
+                .detail-block h5 {
                     margin: 0 0 0.35rem 0;
                 }
 
@@ -578,40 +873,75 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                     font-size: 0.88rem;
                 }
 
-                .case-card {
-                    border: 1px solid #d0d7de;
-                    border-left: 5px solid #9ca3af;
-                    border-radius: 8px;
-                    padding: 0.6rem;
-                    margin: 0.7rem 0;
-                    background: #fff;
+                .cases-table {
+                    margin-top: 0.6rem;
                 }
 
-                .case-card.status-passed {
-                    border-left-color: var(--pass);
+                .cases-table th {
+                    background: #f5f8fb;
+                    font-size: 0.87rem;
                 }
 
-                .case-card.status-failed {
-                    border-left-color: var(--fail);
+                .case-row td {
+                    background: #ffffff;
                 }
 
-                .case-card.status-error {
-                    border-left-color: var(--error);
+                .case-row.status-passed td:first-child {
+                    border-left: 4px solid var(--pass);
                 }
 
-                .case-card.status-skipped {
-                    border-left-color: var(--skip);
+                .case-row.status-failed td:first-child {
+                    border-left: 4px solid var(--failed);
                 }
 
-                .case-card.status-unknown {
-                    border-left-color: var(--unknown);
+                .case-row.status-error td:first-child {
+                    border-left: 4px solid var(--error);
                 }
 
-                .case-header {
+                .case-row.status-skipped td:first-child {
+                    border-left: 4px solid var(--skipped);
+                }
+
+                .case-row.status-unknown td:first-child {
+                    border-left: 4px solid var(--warning);
+                }
+
+                .case-name-cell {
                     display: flex;
-                    justify-content: space-between;
-                    align-items: baseline;
-                    gap: 0.8rem;
+                    align-items: center;
+                    gap: 0.55rem;
+                }
+
+                .case-name {
+                    font-weight: 600;
+                }
+
+                .case-toggle {
+                    width: 1.45rem;
+                    height: 1.45rem;
+                    border-radius: 4px;
+                    border: 1px solid var(--border);
+                    background: #f4f7fb;
+                    color: #3b4e68;
+                    font-weight: 700;
+                    line-height: 1;
+                    cursor: pointer;
+                }
+
+                .case-toggle:hover {
+                    background: #eaf0f7;
+                }
+
+                .case-details-row td {
+                    background: #f9fbfc;
+                }
+
+                .case-details {
+                    padding: 0.2rem 0;
+                }
+
+                .detail-block {
+                    margin-top: 0.65rem;
                 }
 
                 .status-tag {
@@ -619,39 +949,47 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                     padding: 0.15rem 0.5rem;
                     font-size: 0.72rem;
                     font-weight: 700;
-                    color: #fff;
+                    display: inline-block;
                 }
 
                 .status-passed {
                     background: var(--pass);
+                    color: #ffffff;
                 }
 
                 .status-failed {
-                    background: var(--fail);
+                    background: var(--failed);
+                    color: #ffffff;
                 }
 
                 .status-error {
                     background: var(--error);
+                    color: #ffffff;
                 }
 
                 .status-skipped {
-                    background: var(--skip);
+                    background: #e9edf2;
+                    color: #4b5563;
                 }
 
                 .status-unknown {
-                    background: var(--unknown);
+                    background: var(--warning-soft);
+                    color: #6f5515;
+                    border: 1px solid #d7bf82;
                 }
 
                 pre {
                     white-space: pre-wrap;
-                    background: #0f172a;
-                    color: #e2e8f0;
+                    background: #eef3f8;
+                    color: #1f2937;
+                    border: 1px solid var(--border);
                     border-radius: 6px;
                     padding: 0.6rem;
                     overflow-x: auto;
                 }
 
-                .hidden-by-filter {
+                .hidden-by-filter,
+                .hidden-by-toggle {
                     display: none !important;
                 }
 
@@ -661,7 +999,7 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                 }
 
                 .dto-key {
-                    color: #0f766e;
+                    color: #356674;
                     font-weight: 600;
                 }
 
@@ -672,13 +1010,15 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                     color: #b91c1c;
                 }
 
-                @media (max-width: 1100px) {
-                    .layout {
-                        grid-template-columns: 1fr;
+                @media (max-width: 900px) {
+                    .main {
+                        padding: 0.8rem;
                     }
 
-                    .sidebar {
-                        max-height: 320px;
+                    .nav-entry,
+                    .section-header,
+                    .section-header-badges {
+                        align-items: flex-start;
                     }
                 }
                 """;
@@ -690,13 +1030,14 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                     const searchInput = document.getElementById('search-input');
                     const statusCheckboxes = Array.from(document.querySelectorAll('.status-filter'));
 
-                    const caseCards = Array.from(document.querySelectorAll('.case-card'));
+                    const caseRows = Array.from(document.querySelectorAll('.case-row'));
+                    const caseToggles = Array.from(document.querySelectorAll('.case-toggle'));
                     const factoryBlocks = Array.from(document.querySelectorAll('.factory-block'));
                     const classSections = Array.from(document.querySelectorAll('.class-section'));
 
-                    const sidebarCaseItems = Array.from(document.querySelectorAll('.sidebar-case'));
-                    const sidebarFactoryItems = Array.from(document.querySelectorAll('.sidebar-factory'));
-                    const sidebarClassItems = Array.from(document.querySelectorAll('.sidebar-class'));
+                    const navCaseItems = Array.from(document.querySelectorAll('.nav-case-item'));
+                    const navFactoryItems = Array.from(document.querySelectorAll('.nav-factory-item'));
+                    const navClassItems = Array.from(document.querySelectorAll('.nav-class-item'));
 
                     const selectedStatuses = () => new Set(
                         statusCheckboxes.filter(input => input.checked).map(input => input.value)
@@ -704,25 +1045,74 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
 
                     const normalize = value => (value || '').toLowerCase();
 
+                    function collapseDetailsForRow(row) {
+                        const detailsId = row.dataset.detailsRowId;
+                        if (!detailsId) {
+                            return;
+                        }
+
+                        const detailsRow = document.getElementById(detailsId);
+                        if (detailsRow) {
+                            detailsRow.classList.add('hidden-by-toggle');
+                        }
+
+                        const toggle = row.querySelector('.case-toggle');
+                        if (toggle) {
+                            toggle.setAttribute('aria-expanded', 'false');
+                            toggle.textContent = '+';
+                        }
+                    }
+
+                    caseToggles.forEach(toggle => {
+                        toggle.addEventListener('click', () => {
+                            const detailsId = toggle.dataset.target;
+                            if (!detailsId) {
+                                return;
+                            }
+
+                            const detailsRow = document.getElementById(detailsId);
+                            if (!detailsRow || detailsRow.classList.contains('hidden-by-filter')) {
+                                return;
+                            }
+
+                            const expanded = toggle.getAttribute('aria-expanded') === 'true';
+                            toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+                            toggle.textContent = expanded ? '+' : '-';
+                            detailsRow.classList.toggle('hidden-by-toggle', expanded);
+                        });
+                    });
+
                     function applyFilters() {
                         const text = normalize(searchInput.value.trim());
                         const statuses = selectedStatuses();
                         const visibleCaseIds = new Set();
 
-                        caseCards.forEach(card => {
-                            const status = card.dataset.status;
-                            const searchable = normalize(card.dataset.search);
+                        caseRows.forEach(row => {
+                            const status = row.dataset.status;
+                            const searchable = normalize(row.dataset.search);
                             const statusMatch = statuses.has(status);
                             const textMatch = !text || searchable.includes(text);
                             const visible = statusMatch && textMatch;
-                            card.classList.toggle('hidden-by-filter', !visible);
+
+                            row.classList.toggle('hidden-by-filter', !visible);
+
+                            const detailsRowId = row.dataset.detailsRowId;
+                            const detailsRow = detailsRowId ? document.getElementById(detailsRowId) : null;
+                            if (detailsRow) {
+                                detailsRow.classList.toggle('hidden-by-filter', !visible);
+                            }
+
+                            if (!visible) {
+                                collapseDetailsForRow(row);
+                            }
+
                             if (visible) {
-                                visibleCaseIds.add(card.id);
+                                visibleCaseIds.add(row.id);
                             }
                         });
 
                         factoryBlocks.forEach(factory => {
-                            const hasVisibleCase = !!factory.querySelector('.case-card:not(.hidden-by-filter)');
+                            const hasVisibleCase = !!factory.querySelector('.case-row:not(.hidden-by-filter)');
                             factory.classList.toggle('hidden-by-filter', !hasVisibleCase);
                         });
 
@@ -731,19 +1121,19 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                             section.classList.toggle('hidden-by-filter', !hasVisibleFactory);
                         });
 
-                        sidebarCaseItems.forEach(item => {
+                        navCaseItems.forEach(item => {
                             const ref = item.dataset.caseRef;
                             const visible = visibleCaseIds.has(ref);
                             item.classList.toggle('hidden-by-filter', !visible);
                         });
 
-                        sidebarFactoryItems.forEach(factory => {
-                            const hasVisibleCase = !!factory.querySelector('.sidebar-case:not(.hidden-by-filter)');
+                        navFactoryItems.forEach(factory => {
+                            const hasVisibleCase = !!factory.querySelector('.nav-case-item:not(.hidden-by-filter)');
                             factory.classList.toggle('hidden-by-filter', !hasVisibleCase);
                         });
 
-                        sidebarClassItems.forEach(clazz => {
-                            const hasVisibleFactory = !!clazz.querySelector('.sidebar-factory:not(.hidden-by-filter)');
+                        navClassItems.forEach(clazz => {
+                            const hasVisibleFactory = !!clazz.querySelector('.nav-factory-item:not(.hidden-by-filter)');
                             clazz.classList.toggle('hidden-by-filter', !hasVisibleFactory);
                         });
                     }

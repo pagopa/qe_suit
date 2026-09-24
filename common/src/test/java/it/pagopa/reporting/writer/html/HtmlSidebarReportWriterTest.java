@@ -33,6 +33,9 @@ class HtmlSidebarReportWriterTest {
         assertThat(html).contains("Surefire HTML Report");
         assertThat(html).contains("Navigation");
         assertThat(html).contains("createSomething");
+        assertThat(html).contains("F:");
+        assertThat(html).contains("class=\"cases-table\"");
+        assertThat(html).contains("class=\"case-toggle\"");
         assertThat(html).contains("REMOVED @ /name");
         assertThat(html).contains("DTO debug dump");
     }

@@ -1,6 +1,6 @@
 # Reporting Tool - Design Notes
 
-Last update: 2026-09-24 (architecture + implementation decisions v1)
+Last update: 2026-09-24 (architecture + implementation decisions v1.5)
 
 ## Goal
 Build a reporting tool in `common` that reads Surefire XML reports and generates a human-readable HTML report.
@@ -141,6 +141,40 @@ Keep only non-sensitive properties useful for debug.
 ## Open decisions (to confirm)
 - Whether to include optional JSON side output in first version.
 
+## UX decisions agreed on 2026-09-24 (implemented)
+- Keep current sidebar code path available, but hide/collapse it by default in the UI.
+- Move primary navigation to the main page panel with explicit hierarchical expansion:
+  1. class
+  2. factory
+  3. concrete case
+- Navigation must be fully expandable (class -> factories -> cases) and visible without requiring a side column.
+- Introduce aggregate status coloring at class/factory level:
+  - green only if **all** nested items are `PASSED`
+  - dark red if at least one nested item is `ERROR`
+  - red (lighter than ERROR) if there is at least one `FAILED` and no `ERROR`
+  - yellow if there are no `FAILED`/`ERROR` and at least one `UNKNOWN` or `SKIPPED`
+  - precedence: `ERROR` > `FAILED` > `UNKNOWN|SKIPPED` > `PASSED`
+- Keep a compact per-node status badge (e.g. `F:x E:y U:z S:w`) to make aggregate color decisions explicit.
+- In details area, render concrete cases by factory using a 2-column table:
+  - column 1: test/case name
+  - column 2: status
+- Keep filters unchanged (`Search` + status checkboxes).
+- Use a softer, less saturated palette for status and navigation colors.
+
+Status: implemented in current HTML writer behavior.
+
+## UX corrections agreed on 2026-09-24 (design phase, pending implementation)
+- Concrete case interaction must be inline-only:
+  - clicking a concrete case expands/collapses details in place
+  - no anchor jump to another page position for case details
+- Case-level links in navigation can be removed/replaced with direct inline toggle behavior.
+- Remove duplicated detailed section currently rendered below navigation (`Class -> Factory -> Concrete case`) and keep a single primary expandable view.
+- Section order after header must be:
+  1. `Run summary`
+  2. `Filters`
+  3. `Navigation`
+- Page/report title must be renamed from `Surefire HTML Report` to `QE SUIT Contract Test HTML Report`.
+
 ## Implementation decisions v1
 
 ### Minimal annotation set
@@ -152,6 +186,7 @@ Keep only non-sensitive properties useful for debug.
 ### Regex strategy (implemented)
 - Factory extraction from testcase name:
   - `^(?<factory>.+)\(\)\[(?<idx>\d+)]$`
+  - fallback for non-matching names: treat testcase name as factory name (factory-level testcase)
 - Concrete case marker extraction from testcase log:
   - `(?<scenario>[A-Z][A-Z0-9_]+)\s+@\s+(?<target><root>|/[^\s:]+)`
 - Thread extraction for interleaving support:
@@ -166,19 +201,32 @@ Keep only non-sensitive properties useful for debug.
 - Append lines to the active thread-case stream.
 - Non-attributed lines are preserved in `UNKNOWN_CASE`.
 - If no case marker is found, create a single `UNKNOWN_CASE` with full testcase log.
+- For non-dynamic testcase names (without `[index]`), do not split by marker: create one explicit concrete case bound to that testcase/factory. This preserves `@TestFactory` discovery/runtime errors as visible red entries instead of grouping them under `UNKNOWN_FACTORY`.
 
 ### HTML output format (implemented)
 - Self-contained single HTML file.
-- Two-column layout:
-  - left sidebar: navigable tree `class -> factory -> concrete case`
-  - right main panel: summary, filters, properties, detailed sections
+- Main panel includes expandable navigation tree `class -> factory -> concrete case`.
+- Legacy sidebar renderer is preserved in code path for fallback and is not active by default.
+- Detailed section renders concrete cases per factory in a 2-column table:
+  - column 1: test/case name with expandable row toggle
+  - column 2: status
+- Aggregate class/factory color semantics with precedence:
+  - dark red when `ERROR` exists
+  - red when `FAILED` exists and no `ERROR`
+  - yellow when no `FAILED`/`ERROR` but `UNKNOWN` or `SKIPPED` exists
+  - green only when all nested items are `PASSED`
+- Compact aggregate counts badge (`F/E/U/S`) shown near class/factory labels.
+- Softer visual palette for status and hierarchy styling.
 - Global filters (client-side JS):
   - free text search
   - status checkboxes (`PASSED`, `FAILED`, `ERROR`, `SKIPPED`, `UNKNOWN`)
 - Hierarchical visibility propagation:
-  - hide factory/class when no visible child case remains after filter.
-- Collapsible details for stacktrace and case log.
+  - hide navigation/class/factory nodes when no visible child case remains after filter.
+- Row-level expandable details for stacktrace and case log.
 - Optional annotation-driven recursive DTO dump panel for deep debug.
+
+### HTML UX revision status
+- Completed and merged into current writer implementation.
 
 ### CLI and orchestration (implemented)
 - Entry point: `ReportingMain`.
@@ -189,6 +237,15 @@ Keep only non-sensitive properties useful for debug.
 - V1 orchestration policy:
   - fixed parser: `SurefireXmlReportParser`
   - fixed writer: `HtmlSidebarReportWriter`
+
+### Operational usage and output path behavior (implemented)
+- Typical invocation:
+  - `java it.pagopa.reporting.app.ReportingMain --input <surefire-xml-or-directory> --output <report.html>`
+- Output resolution:
+  - with explicit `--output`, write to that exact path
+  - without `--output` and directory input, write `<input>/surefire-html-report.html`
+  - without `--output` and file input, write next to input file using the same base name and `.html` extension
+- On successful generation, the CLI prints the resolved output path (`Report generated: ...`).
 
 ## Maintenance note
 This file is the running source of truth and must be updated during this conversation whenever requirements/design choices change.
