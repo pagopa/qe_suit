@@ -1,6 +1,5 @@
 package it.pagopa.interop.suite.contract;
 
-import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.agreement.infrastructure.BffAgreementRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
@@ -9,6 +8,7 @@ import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -28,7 +28,7 @@ import java.util.stream.Stream;
 public class BffAgreementContractTest {
 
     private final ApiClient apiClient;
-    private final HttpContractValidator httpContractValidator;
+    private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final BffAgreementRequestFactory requestFactory;
 
@@ -36,10 +36,8 @@ public class BffAgreementContractTest {
     Stream<DynamicTest> createAgreement() {
 
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return apiClient.agreements().createAgreement();
-                })
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.agreements().createAgreement())
                 .payload(() -> {
                     EService createdEservice = interopJourney
                             .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
@@ -60,10 +58,8 @@ public class BffAgreementContractTest {
                 .get(Agreement.class);
 
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return apiClient.agreements().getAgreementById();
-                })
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.agreements().getAgreementById())
                 .pathParams(() -> Map.of("agreementId", agreement.getId()))
                 .tests();
     }
