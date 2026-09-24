@@ -6,11 +6,10 @@ import org.assertj.core.api.SoftAssertions;
 
 import java.util.List;
 
-// TODO: Confirm locator against FE implementation
-@XPath(".//*[@data-testid='combo-timeline-container']")
+@XPath(".//div[contains(@class, 'MuiTimeline-root') or contains(@class, 'NotificationTimelineBox') or @id='timeline-container']")
 public interface ComboTimelineComponent extends Component {
 
-    @XPath(".//*[contains(@class, 'MuiTimelineItem-root') or @data-testid='combo-timeline-item']")
+    @XPath(".//*[contains(@class, 'MuiTimelineItem-root') or contains(@class, 'timeline-item')]")
     List<ComboTimelineItemComponent> items();
 
     @Override

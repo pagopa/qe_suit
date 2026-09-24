@@ -7,17 +7,16 @@ import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Chip;
 import org.assertj.core.api.SoftAssertions;
 
-// TODO: Confirm locator against FE implementation
-@XPath(".//*[@data-testid='combo-status-section']")
+@XPath(".//div[contains(@class, 'NotificationStatusBox') or (contains(@class, 'MuiPaper-root') and .//button[contains(., 'cronologia') or contains(., 'timeline')])]")
 public interface ComboStatusSection extends Component {
 
-    @XPath(".//h2[contains(text(), 'Stato')]")
+    @XPath(".//h5 | .//h2")
     Readable<String> header();
 
-    @XPath(".//*[contains(@class, 'MuiChip-root')] | .//*[@data-testid='combo-status-chip']")
+    @XPath(".//*[contains(@class, 'MuiChip-root')] | .//span[contains(@class, 'status')]")
     Chip statusChip();
 
-    @XPath(".//a[contains(., 'Vai alla timeline')] | .//button[contains(., 'Vai alla timeline')]")
+    @XPath(".//button[contains(., 'Vai alla cronologia') or contains(., 'timeline') or contains(., 'Cronologia')]")
     Button openTimelineButton();
 
     @Override

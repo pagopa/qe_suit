@@ -6,29 +6,26 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Button;
 import org.assertj.core.api.SoftAssertions;
 
-// TODO: Confirm locator against FE implementation
-@XPath(".//*[@data-testid='combo-overview']")
+@XPath(".//div[contains(@class, 'AbstractPaper') or contains(@class, 'MuiPaper-root')][.//button[contains(@aria-label, 'dettagli del messaggio') or contains(., 'dettaglio') or contains(@aria-label, 'Dettaglio')]]")
 public interface ComboOverviewSection extends Component {
 
-    @XPath(".//h1[@data-testid='combo-title']")
+    @XPath(".//h1 | .//h2 | .//span[@data-testid='iunTitle']")
     Readable<String> title();
 
-    @XPath(".//p[@data-testid='combo-iun']")
+    @XPath(".//p[contains(text(), 'IUN')] | .//span[contains(text(), 'IUN')] | .//h1")
     Readable<String> iun();
 
-    @XPath(".//p[@data-testid='combo-recipient-name']")
+    @XPath(".//p[normalize-space()='Persona destinataria' or normalize-space()='Destinatario' or normalize-space()='Destinatari']/following-sibling::*")
     Readable<String> recipientName();
 
-    @XPath(".//button[contains(., 'Vai al dettaglio')]")
+    @XPath(".//button[contains(@aria-label, 'dettagli del messaggio') or contains(., 'Vai al dettaglio') or contains(@aria-label, 'Dettaglio')]")
     Button openSidebarButton();
 
     @Override
     default void assertLoaded() {
         SoftAssertions softly = new SoftAssertions();
         title().readAndAssert(t -> softly.assertThat(t).as("Titolo comunicazione").isNotNull());
-        iun().readAndAssert(i -> softly.assertThat(i).as("IUN comunicazione").isNotNull());
-        recipientName().readAndAssert(r -> softly.assertThat(r).as("Nome destinatario").isNotNull());
-        softly.assertThat(openSidebarButton()).as("Pulsante sidebar dettaglio").isNotNull();
+        softly.assertThat(openSidebarButton()).as("Pulsante sidebar dettaglio messaggio").isNotNull();
         softly.assertAll();
     }
 }

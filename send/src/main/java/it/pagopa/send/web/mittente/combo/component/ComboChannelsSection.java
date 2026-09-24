@@ -7,24 +7,22 @@ import org.assertj.core.api.SoftAssertions;
 
 import java.util.List;
 
-// TODO: Confirm locator against FE implementation
-@XPath(".//*[@data-testid='combo-channels-section']")
+@XPath(".//div[contains(@class, 'MuiPaper-root')][.//h5[contains(text(), 'Dettaglio invio per canale') or contains(text(), 'Canali')]]")
 public interface ComboChannelsSection extends Component {
 
-    @XPath(".//h2[contains(text(), 'Canali Abilitati')]")
+    @XPath(".//h5 | .//h2")
     Readable<String> header();
 
-    @XPath(".//div[@data-testid='channel-item']")
+    @XPath(".//ul/li | .//ol/li | .//div[@component='li']")
     List<ChannelItemComponent> channelItems();
 
-    // TODO: Confirm locator against FE implementation
-    @XPath(".//div[@data-testid='channel-item']")
+    @XPath(".//li | .//div[contains(@class, 'channel-item')]")
     interface ChannelItemComponent extends Component {
 
-        @XPath(".//span[@data-testid='channel-name']")
+        @XPath(".//p | .//span[contains(@class, 'channel-name')] | .//div[contains(@class, 'MuiTypography')]")
         Readable<String> name();
 
-        @XPath(".//*[self::span or self::div][contains(text(), 'IN ATTESA') or contains(text(), 'DEPOSITATA') or contains(text(), 'INVIATA') or contains(text(), 'NON DISPONIBILE') or contains(text(), 'CONSEGNATA') or contains(text(), 'LETTA')]")
+        @XPath(".//*[self::span or self::div or self::p][contains(text(), 'IN ATTESA') or contains(text(), 'DEPOSITATA') or contains(text(), 'INVIATA') or contains(text(), 'NON DISPONIBILE') or contains(text(), 'CONSEGNATA') or contains(text(), 'LETTA') or contains(text(), 'NON CONSEGNATA') or contains(text(), 'In attesa') or contains(text(), 'Depositata') or contains(text(), 'Inviata') or contains(text(), 'Consegnata') or contains(text(), 'Letta') or contains(text(), 'Non disponibile')]")
         Readable<String> statusBadge();
 
         @Override
