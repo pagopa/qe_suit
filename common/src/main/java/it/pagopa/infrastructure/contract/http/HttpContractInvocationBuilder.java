@@ -13,7 +13,8 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 final class HttpContractInvocationBuilder implements HttpContractStages.ApiCallStage {
-    private final FuzzEngine fuzzEngine;
+    private final FuzzEngine payloadFuzzEngine;
+    private final FuzzEngine pathParamsFuzzEngine;
     private final ObjectGraphDecomposer objectGraphDecomposer;
     private final ContractCasePlanner casePlanner;
     private final Supplier<?> operationSupplier;
@@ -24,19 +25,22 @@ final class HttpContractInvocationBuilder implements HttpContractStages.ApiCallS
 
     HttpContractInvocationBuilder(
             ObjectMapper objectMapper,
-            FuzzEngine fuzzEngine,
+            FuzzEngine payloadFuzzEngine,
+            FuzzEngine pathParamsFuzzEngine,
             ObjectGraphDecomposer objectGraphDecomposer,
             ContractCasePlanner casePlanner,
             OpenApiOperationAdapter operationAdapter,
             Supplier<?> operationSupplier
     ) {
-        this.fuzzEngine = fuzzEngine;
+        this.payloadFuzzEngine = payloadFuzzEngine;
+        this.pathParamsFuzzEngine = pathParamsFuzzEngine;
         this.objectGraphDecomposer = objectGraphDecomposer;
         this.casePlanner = casePlanner;
         this.operationSupplier = operationSupplier;
         this.runtimeCaseExecutor = new HttpContractRuntimeCaseExecutor(
                 objectMapper,
-                fuzzEngine,
+                payloadFuzzEngine,
+                pathParamsFuzzEngine,
                 operationAdapter
         );
     }
@@ -97,9 +101,13 @@ final class HttpContractInvocationBuilder implements HttpContractStages.ApiCallS
                 source,
                 (Class<Object>) source.getClass(),
                 graph,
-                fuzzEngine.generate(source),
+                fuzzEngine(scope).generate(source),
                 state.overrides()
         );
+    }
+
+    private FuzzEngine fuzzEngine(RequestScope scope) {
+        return scope == RequestScope.PAYLOAD ? payloadFuzzEngine : pathParamsFuzzEngine;
     }
 
     private <T> ScopeState<T> createScope(Supplier<T> supplier, String scopeName) {

@@ -9,19 +9,22 @@ import java.util.function.Supplier;
 
 public final class HttpContractValidator {
     private final ObjectMapper objectMapper;
-    private final FuzzEngine fuzzEngine;
+    private final FuzzEngine payloadFuzzEngine;
+    private final FuzzEngine pathParamsFuzzEngine;
     private final ObjectGraphDecomposer objectGraphDecomposer;
     private final ContractCasePlanner casePlanner;
     private final OpenApiOperationAdapter operationAdapter;
 
     public HttpContractValidator(
             ObjectMapper objectMapper,
-            FuzzEngine fuzzEngine,
+            FuzzEngine payloadFuzzEngine,
+            FuzzEngine pathParamsFuzzEngine,
             ObjectGraphDecomposer objectGraphDecomposer,
             HttpContractPolicy policy
     ) {
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
-        this.fuzzEngine = Objects.requireNonNull(fuzzEngine, "fuzzEngine must not be null");
+        this.payloadFuzzEngine = Objects.requireNonNull(payloadFuzzEngine, "payloadFuzzEngine must not be null");
+        this.pathParamsFuzzEngine = Objects.requireNonNull(pathParamsFuzzEngine, "pathParamsFuzzEngine must not be null");
         this.objectGraphDecomposer = Objects.requireNonNull(
                 objectGraphDecomposer,
                 "objectGraphDecomposer must not be null"
@@ -44,7 +47,8 @@ public final class HttpContractValidator {
 
         return new HttpContractInvocationBuilder(
                 objectMapper,
-                fuzzEngine,
+                payloadFuzzEngine,
+                pathParamsFuzzEngine,
                 objectGraphDecomposer,
                 casePlanner,
                 operationAdapter,

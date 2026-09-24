@@ -288,10 +288,40 @@ class DefaultFuzzEngineTest {
         assertNull(byKey.get("#REMOVED").result());
     }
 
+    @Test
+    void map_of_object_preserves_runtime_uuid_type_for_scalar_mutations() {
+        ObjectMapper mapper = new ObjectMapper();
+        UUID agreementId = UUID.fromString("c0d9f3c0-9a43-4d8f-9a36-c97c870b13b9");
+        Map<String, Object> source = Map.of("agreementId", agreementId);
+
+        DefaultFuzzEngine engine = new DefaultFuzzEngine(
+                createRealDecomposer(mapper),
+                mapper,
+                new JacksonFuzzMutationApplier(mapper),
+                List.of(new ScalarRule())
+        );
+
+        List<FuzzCase> cases = engine.generate(source);
+        Map<FuzzScenario, FuzzCase> byScenario = cases.stream()
+                .filter(fuzzCase -> "/agreementId".equals(fuzzCase.target().toString()))
+                .collect(Collectors.toMap(c -> c.mutation().scenario(), Function.identity()));
+
+        assertEquals("not-a-valid-uuid-12345", byScenario.get(FuzzScenario.REPLACED_WITH_MALFORMED_UUID).result().at("/agreementId").asText());
+        assertEquals("00000000-0000-0000-0000-000000000000", byScenario.get(FuzzScenario.REPLACED_WITH_NIL_UUID).result().at("/agreementId").asText());
+        assertFalse(byScenario.containsKey(FuzzScenario.REPLACED_WITH_NULL));
+        assertFalse(byScenario.containsKey(FuzzScenario.REMOVED));
+    }
+
     private ObjectGraphDecomposer mockReturningGraph(ObjectGraph graph) {
         ObjectGraphDecomposer decomposer = mock(ObjectGraphDecomposer.class);
         when(decomposer.decompose(any())).thenReturn(graph);
         return decomposer;
+    }
+
+    private ObjectGraphDecomposer createRealDecomposer(ObjectMapper mapper) {
+        return new it.pagopa.infrastructure.objectgraph.DefaultObjectGraphDecomposer(
+                new it.pagopa.infrastructure.objectgraph.JacksonObjectDecomposer(mapper)
+        );
     }
 
     @SuppressWarnings("unchecked")

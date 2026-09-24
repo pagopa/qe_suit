@@ -6,6 +6,7 @@ import it.pagopa.infrastructure.objectgraph.DefaultObjectGraphDecomposer;
 import it.pagopa.infrastructure.objectgraph.JacksonObjectDecomposer;
 import it.pagopa.infrastructure.objectgraph.ObjectDecomposer;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,28 +30,44 @@ public class FuzzingConfig {
         return new JacksonFuzzMutationApplier(objectMapper);
     }
 
-    @Bean
-    FuzzEngine fuzzEngine(
+    @Bean("payloadFuzzEngine")
+    FuzzEngine payloadFuzzEngine(
             ObjectGraphDecomposer objectGraphDecomposer,
             ObjectMapper objectMapper,
             FuzzMutationApplier mutationApplier,
-            List<FuzzRule> rules
+            NullAndMissingRule nullAndMissingRule,
+            ScalarRule scalarRule
     ) {
         return new DefaultFuzzEngine(
                 objectGraphDecomposer,
                 objectMapper,
                 mutationApplier,
-                rules
+                List.of(nullAndMissingRule, scalarRule)
+        );
+    }
+
+    @Bean("pathParamsFuzzEngine")
+    FuzzEngine pathParamsFuzzEngine(
+            ObjectGraphDecomposer objectGraphDecomposer,
+            ObjectMapper objectMapper,
+            FuzzMutationApplier mutationApplier,
+            @Qualifier("scalarRule") ScalarRule scalarRule
+    ) {
+        return new DefaultFuzzEngine(
+                objectGraphDecomposer,
+                objectMapper,
+                mutationApplier,
+                List.of(scalarRule)
         );
     }
 
     @Bean
-    FuzzRule nullAndMissingRule() {
+    NullAndMissingRule nullAndMissingRule() {
         return new NullAndMissingRule();
     }
 
     @Bean
-    FuzzRule scalarRule() {
+    ScalarRule scalarRule() {
         return new ScalarRule();
     }
 }
