@@ -12,7 +12,7 @@ import org.assertj.core.api.SoftAssertions;
 
 import java.util.Optional;
 
-@Url("${url.notifiche.mittente.dashboard}/campagne/{campaignId}/comunicazioni/{iun}")
+@Url("${url.notifiche.mittente.dashboard}/campaigns/${campaignId}/communications/${iun}")
 public interface MittenteComboDetailsPage extends Page {
 
     ComboOverviewSection overviewSection();

@@ -7,14 +7,13 @@ import org.assertj.core.api.SoftAssertions;
 
 import java.util.List;
 
-// TODO: Confirm locator against FE implementation
-@XPath(".//*[@data-testid='combo-payments-section']")
+@XPath(".//div[contains(@class, 'MuiPaper-root')][.//h5[contains(text(), 'Avviso di pagamento') or contains(text(), 'Pagamenti')]]")
 public interface ComboPaymentsSection extends Component {
 
-    @XPath(".//h2[contains(text(), 'Pagamenti')]")
+    @XPath(".//h5 | .//h2")
     Readable<String> header();
 
-    @XPath(".//div[@data-testid='payment-item']")
+    @XPath(".//div[contains(@class, 'MuiCard-root') or contains(@class, 'payment-item')]")
     List<Readable<String>> paymentList();
 
     @Override
