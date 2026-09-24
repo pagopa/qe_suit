@@ -202,7 +202,7 @@ public class ArchitectureRulesTest {
         }
 
         if (!violations.isEmpty()) {
-            fail("Le classi ContractTest non devono dichiarare @Execution. Per gestire i log in maniera deterministica in locale utilizziamo SAME_THREAD (config di default) ed impostiamo il parallelismo massimo nella classe Suite: " + violations);
+            fail("Le classi ContractTest non devono dichiarare @Execution. La configurazione deve passare esclusivamente per il file junit-platform.properties: " + violations);
         }
     }
 
