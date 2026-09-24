@@ -30,14 +30,18 @@ class HtmlSidebarReportWriterTest {
         assertThat(Files.exists(output)).isTrue();
 
         String html = Files.readString(output);
-        assertThat(html).contains("Surefire HTML Report");
+        assertThat(html).contains("QE SUIT Contract Test HTML Report");
         assertThat(html).contains("Navigation");
         assertThat(html).contains("createSomething");
         assertThat(html).contains("F:");
         assertThat(html).contains("class=\"cases-table\"");
-        assertThat(html).contains("class=\"case-toggle\"");
+        assertThat(html).contains("class=\"case-expander\"");
         assertThat(html).contains("REMOVED @ /name");
         assertThat(html).contains("DTO debug dump");
+        assertThat(html).doesNotContain("Class -> Factory -> Concrete case");
+
+        assertThat(html.indexOf("Run summary")).isLessThan(html.indexOf("Filters"));
+        assertThat(html.indexOf("Filters")).isLessThan(html.indexOf("Navigation"));
     }
 
     private Path resourcePath(String resource) throws URISyntaxException {

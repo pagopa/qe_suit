@@ -1,6 +1,6 @@
 # Reporting Tool - Design Notes
 
-Last update: 2026-09-24 (architecture + implementation decisions v1.5)
+Last update: 2026-09-24 (architecture + implementation decisions v1.8)
 
 ## Goal
 Build a reporting tool in `common` that reads Surefire XML reports and generates a human-readable HTML report.
@@ -141,8 +141,11 @@ Keep only non-sensitive properties useful for debug.
 ## Open decisions (to confirm)
 - Whether to include optional JSON side output in first version.
 
+## Low-priority objective (post-stabilization)
+- After functional/UX behavior is stable, introduce output-size optimization by compressing the generated report artifact to reduce disk usage.
+
 ## UX decisions agreed on 2026-09-24 (implemented)
-- Keep current sidebar code path available, but hide/collapse it by default in the UI.
+- Use a single main-panel navigation view (no sidebar rendering path).
 - Move primary navigation to the main page panel with explicit hierarchical expansion:
   1. class
   2. factory
@@ -163,11 +166,11 @@ Keep only non-sensitive properties useful for debug.
 
 Status: implemented in current HTML writer behavior.
 
-## UX corrections agreed on 2026-09-24 (design phase, pending implementation)
+## UX corrections agreed on 2026-09-24 (implemented)
 - Concrete case interaction must be inline-only:
   - clicking a concrete case expands/collapses details in place
   - no anchor jump to another page position for case details
-- Case-level links in navigation can be removed/replaced with direct inline toggle behavior.
+- Case-level links in navigation were removed in favor of direct inline toggle behavior.
 - Remove duplicated detailed section currently rendered below navigation (`Class -> Factory -> Concrete case`) and keep a single primary expandable view.
 - Section order after header must be:
   1. `Run summary`
@@ -205,11 +208,17 @@ Status: implemented in current HTML writer behavior.
 
 ### HTML output format (implemented)
 - Self-contained single HTML file.
+- Report page title: `QE SUIT Contract Test HTML Report`.
+- Top section order after header:
+  1. `Run summary`
+  2. `Filters`
+  3. `Navigation`
 - Main panel includes expandable navigation tree `class -> factory -> concrete case`.
-- Legacy sidebar renderer is preserved in code path for fallback and is not active by default.
+- Legacy sidebar renderer was removed to keep a single authoritative rendering path.
 - Detailed section renders concrete cases per factory in a 2-column table:
   - column 1: test/case name with expandable row toggle
   - column 2: status
+- Clicking the whole case row expands/collapses details inline.
 - Aggregate class/factory color semantics with precedence:
   - dark red when `ERROR` exists
   - red when `FAILED` exists and no `ERROR`
@@ -223,6 +232,7 @@ Status: implemented in current HTML writer behavior.
 - Hierarchical visibility propagation:
   - hide navigation/class/factory nodes when no visible child case remains after filter.
 - Row-level expandable details for stacktrace and case log.
+- Status color CSS is scoped to badge elements (`.status-tag.*`) so case names remain readable on light row backgrounds.
 - Optional annotation-driven recursive DTO dump panel for deep debug.
 
 ### HTML UX revision status

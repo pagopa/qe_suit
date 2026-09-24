@@ -64,7 +64,7 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                 .append("<head>")
                 .append("<meta charset=\"UTF-8\">")
                 .append("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">")
-                .append("<title>Surefire HTML Report</title>")
+                .append("<title>QE SUIT Contract Test HTML Report</title>")
                 .append("<style>")
                 .append(css())
                 .append("</style>")
@@ -72,18 +72,17 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                 .append("<body>")
                 .append("<main class=\"main\">")
                 .append("<header class=\"page-header\">")
-                .append("<h1>Surefire HTML Report</h1>")
+                .append("<h1>QE SUIT Contract Test HTML Report</h1>")
                 .append("<p class=\"generated-at\">Generated at ")
                 .append(escape(LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .append("</p>")
                 .append("</header>");
 
-        appendInPageNavigation(report.testClasses(), slugger, html);
-        appendFilters(html);
         appendSummary(report.summary(), html);
+        appendFilters(html);
+        appendClassSections(report.testClasses(), slugger, html);
         appendEnvironmentProperties(report.environmentProperties(), html);
         appendWarnings(report.warnings(), html);
-        appendClassSections(report.testClasses(), slugger, html);
 
         if (includeDtoDump) {
             html.append("<section class=\"panel\">")
@@ -102,151 +101,6 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                 .append("</html>");
 
         return html.toString();
-    }
-
-    private void appendSidebar(ReportDocument report, Slugger slugger, StringBuilder html) {
-        html.append("<aside class=\"sidebar\">")
-                .append("<h2>Navigation</h2>")
-                .append("<ul class=\"sidebar-tree\">");
-
-        for (TestClassReport classReport : report.testClasses()) {
-            String classKey = "class|" + classReport.className();
-            String classId = slugger.idFor(classKey, classReport.className());
-
-            html.append("<li class=\"sidebar-class\" data-sidebar-level=\"class\">")
-                    .append("<a href=\"#")
-                    .append(classId)
-                    .append("\">")
-                    .append(escape(shortName(classReport.className())))
-                    .append("</a>")
-                    .append(renderCountsBadge(classReport.counts()))
-                    .append("<ul>");
-
-            for (TestFactoryReport factoryReport : classReport.factories()) {
-                String factoryKey = "factory|" + classReport.className() + "|" + factoryReport.factoryName();
-                String factoryId = slugger.idFor(factoryKey, factoryReport.factoryName());
-
-                html.append("<li class=\"sidebar-factory\" data-sidebar-level=\"factory\">")
-                        .append("<a href=\"#")
-                        .append(factoryId)
-                        .append("\">")
-                        .append(escape(factoryReport.factoryName()))
-                        .append("</a>")
-                        .append(renderCountsBadge(factoryReport.counts()))
-                        .append("<ul>");
-
-                for (ConcreteCaseReport concreteCase : factoryReport.concreteCases()) {
-                    String caseKey = "case|" + classReport.className() + "|" + factoryReport.factoryName() + "|" + concreteCase.id();
-                    String caseId = slugger.idFor(caseKey, concreteCase.displayName());
-
-                    html.append("<li class=\"sidebar-case\" data-sidebar-level=\"case\" data-case-ref=\"")
-                            .append(caseId)
-                            .append("\">")
-                            .append("<a href=\"#")
-                            .append(caseId)
-                            .append("\">")
-                            .append(escape(concreteCase.displayName()))
-                            .append("</a>")
-                            .append("<span class=\"status-tag status-")
-                            .append(concreteCase.status().cssClass())
-                            .append("\">")
-                            .append(escape(concreteCase.status().name()))
-                            .append("</span>")
-                            .append("</li>");
-                }
-
-                html.append("</ul></li>");
-            }
-
-            html.append("</ul></li>");
-        }
-
-        html.append("</ul>")
-                .append("</aside>");
-    }
-
-    private void appendInPageNavigation(List<TestClassReport> classes, Slugger slugger, StringBuilder html) {
-        html.append("<section class=\"panel\" id=\"navigation\">")
-                .append("<h2>Navigation</h2>")
-                .append("<p class=\"muted\">Expand classes and factories to browse concrete cases.</p>")
-                .append("<ul class=\"nav-tree\">");
-
-        for (TestClassReport classReport : classes) {
-            String classKey = "class|" + classReport.className();
-            String classId = slugger.idFor(classKey, classReport.className());
-            String classAggregateClass = aggregateCssClass(classReport.counts());
-
-            html.append("<li class=\"nav-class-item ")
-                    .append(classAggregateClass)
-                    .append("\">")
-                    .append("<details>")
-                    .append("<summary>")
-                    .append("<span class=\"nav-entry\">")
-                    .append("<a href=\"#")
-                    .append(classId)
-                    .append("\">")
-                    .append(escape(shortName(classReport.className())))
-                    .append("</a>")
-                    .append(renderAggregateBadge(classReport.counts()))
-                    .append(renderCountsBadge(classReport.counts()))
-                    .append("</span>")
-                    .append("</summary>")
-                    .append("<ul>");
-
-            for (TestFactoryReport factoryReport : classReport.factories()) {
-                String factoryKey = "factory|" + classReport.className() + "|" + factoryReport.factoryName();
-                String factoryId = slugger.idFor(factoryKey, factoryReport.factoryName());
-                String factoryAggregateClass = aggregateCssClass(factoryReport.counts());
-
-                html.append("<li class=\"nav-factory-item ")
-                        .append(factoryAggregateClass)
-                        .append("\">")
-                        .append("<details>")
-                        .append("<summary>")
-                        .append("<span class=\"nav-entry\">")
-                        .append("<a href=\"#")
-                        .append(factoryId)
-                        .append("\">")
-                        .append(escape(factoryReport.factoryName()))
-                        .append("</a>")
-                        .append(renderAggregateBadge(factoryReport.counts()))
-                        .append(renderCountsBadge(factoryReport.counts()))
-                        .append("</span>")
-                        .append("</summary>")
-                        .append("<ul>");
-
-                for (ConcreteCaseReport concreteCase : factoryReport.concreteCases()) {
-                    String caseKey = "case|" + classReport.className() + "|" + factoryReport.factoryName() + "|" + concreteCase.id();
-                    String caseId = slugger.idFor(caseKey, concreteCase.displayName());
-
-                    html.append("<li class=\"nav-case-item\" data-case-ref=\"")
-                            .append(caseId)
-                            .append("\">")
-                            .append("<a href=\"#")
-                            .append(caseId)
-                            .append("\">")
-                            .append(escape(concreteCase.displayName()))
-                            .append("</a>")
-                            .append("<span class=\"status-tag status-")
-                            .append(concreteCase.status().cssClass())
-                            .append("\">")
-                            .append(escape(concreteCase.status().name()))
-                            .append("</span>")
-                            .append("</li>");
-                }
-
-                html.append("</ul>")
-                        .append("</details>")
-                        .append("</li>");
-            }
-
-            html.append("</ul>")
-                    .append("</details>")
-                    .append("</li>");
-        }
-
-        html.append("</ul>")
-                .append("</section>");
     }
 
     private void appendFilters(StringBuilder html) {
@@ -334,55 +188,56 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
     }
 
     private void appendClassSections(List<TestClassReport> classes, Slugger slugger, StringBuilder html) {
-        html.append("<section class=\"panel\" id=\"classes\">")
-                .append("<h2>Class -> Factory -> Concrete case</h2>");
+        html.append("<section class=\"panel\" id=\"navigation\">")
+                .append("<h2>Navigation</h2>")
+                .append("<p class=\"muted\">Expand classes, factories and cases to inspect details inline.</p>")
+                .append("<ul class=\"nav-tree\">");
 
         for (TestClassReport classReport : classes) {
             String classKey = "class|" + classReport.className();
             String classId = slugger.idFor(classKey, classReport.className());
             String classAggregateClass = aggregateCssClass(classReport.counts());
 
-            html.append("<section class=\"class-section\" id=\"")
+            html.append("<li class=\"nav-class-item class-section ")
+                    .append(classAggregateClass)
+                    .append("\" id=\"")
                     .append(classId)
                     .append("\">")
-                    .append("<div class=\"section-header\">")
-                    .append("<h3>")
-                    .append(escape(classReport.className()))
-                    .append("</h3>")
-                    .append("<div class=\"section-header-badges\">")
+                    .append("<details open>")
+                    .append("<summary>")
+                    .append("<span class=\"nav-entry\">")
+                    .append("<span class=\"title-text\">")
+                    .append(escape(shortName(classReport.className())))
+                    .append("</span>")
                     .append(renderAggregateBadge(classReport.counts()))
                     .append(renderCountsBadge(classReport.counts()))
-                    .append("</div>")
-                    .append("</div>")
-                    .append("<p class=\"aggregate-hint ")
-                    .append(classAggregateClass)
-                    .append("\">Overall status: ")
-                    .append(escape(aggregateLabel(classReport.counts())))
-                    .append("</p>")
-                    .append(renderCounts(classReport.counts(), classReport.totalDurationSeconds()));
+                    .append("</span>")
+                    .append("</summary>")
+                    .append("<div class=\"node-body\">")
+                    .append(renderCounts(classReport.counts(), classReport.totalDurationSeconds()))
+                    .append("<ul>");
 
             for (TestFactoryReport factoryReport : classReport.factories()) {
                 String factoryKey = "factory|" + classReport.className() + "|" + factoryReport.factoryName();
                 String factoryId = slugger.idFor(factoryKey, factoryReport.factoryName());
                 String factoryAggregateClass = aggregateCssClass(factoryReport.counts());
 
-                html.append("<section class=\"factory-block\" id=\"")
+                html.append("<li class=\"nav-factory-item factory-block ")
+                        .append(factoryAggregateClass)
+                        .append("\" id=\"")
                         .append(factoryId)
                         .append("\">")
-                        .append("<div class=\"section-header\">")
-                        .append("<h4>")
+                        .append("<details open>")
+                        .append("<summary>")
+                        .append("<span class=\"nav-entry\">")
+                        .append("<span class=\"title-text\">")
                         .append(escape(factoryReport.factoryName()))
-                        .append("</h4>")
-                        .append("<div class=\"section-header-badges\">")
+                        .append("</span>")
                         .append(renderAggregateBadge(factoryReport.counts()))
                         .append(renderCountsBadge(factoryReport.counts()))
-                        .append("</div>")
-                        .append("</div>")
-                        .append("<p class=\"aggregate-hint ")
-                        .append(factoryAggregateClass)
-                        .append("\">Factory status: ")
-                        .append(escape(aggregateLabel(factoryReport.counts())))
-                        .append("</p>")
+                        .append("</span>")
+                        .append("</summary>")
+                        .append("<div class=\"node-body\">")
                         .append(renderCounts(factoryReport.counts(), factoryReport.totalDurationSeconds()));
 
                 html.append("<table class=\"cases-table\">")
@@ -404,11 +259,10 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                             .append(escape(caseSearchText(classReport, factoryReport, concreteCase)))
                             .append("\" data-details-row-id=\"")
                             .append(detailsRowId)
+                            .append("\" tabindex=\"0\" aria-expanded=\"false\"")
                             .append("\">")
                             .append("<td class=\"case-name-cell\">")
-                            .append("<button type=\"button\" class=\"case-toggle\" data-target=\"")
-                            .append(detailsRowId)
-                            .append("\" aria-expanded=\"false\" aria-label=\"Toggle details\">+</button>")
+                            .append("<span class=\"case-expander\" aria-hidden=\"true\">+</span>")
                             .append("<span class=\"case-name\">")
                             .append(escape(concreteCase.displayName()))
                             .append("</span>")
@@ -430,14 +284,20 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                             .append("</tr>");
                 }
 
-                html.append("</tbody></table>");
-                html.append("</section>");
+                html.append("</tbody></table>")
+                        .append("</div>")
+                        .append("</details>")
+                        .append("</li>");
             }
 
-            html.append("</section>");
+            html.append("</ul>")
+                    .append("</div>")
+                    .append("</details>")
+                    .append("</li>");
         }
 
-        html.append("</section>");
+        html.append("</ul>")
+                .append("</section>");
     }
 
     private String caseSearchText(TestClassReport classReport, TestFactoryReport factoryReport, ConcreteCaseReport concreteCase) {
@@ -720,6 +580,10 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                     padding-left: 0;
                 }
 
+                .nav-tree li {
+                    margin: 0.45rem 0;
+                }
+
                 .nav-tree details > summary {
                     cursor: pointer;
                     padding: 0.42rem 0.55rem;
@@ -737,6 +601,14 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                     align-items: center;
                     flex-wrap: wrap;
                     gap: 0.45rem;
+                }
+
+                .title-text {
+                    font-weight: 600;
+                }
+
+                .node-body {
+                    padding: 0.35rem 0.15rem 0.2rem;
                 }
 
                 .nav-case-item {
@@ -827,17 +699,17 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                 }
 
                 .class-section {
-                    border-top: 2px solid #d8dee4;
-                    padding-top: 0.7rem;
-                    margin-top: 0.7rem;
+                    border: 0;
+                    padding: 0;
+                    margin: 0;
                 }
 
                 .factory-block {
-                    border: 1px solid var(--border);
-                    border-radius: 8px;
-                    padding: 0.6rem;
-                    margin: 0.8rem 0;
-                    background: #fcfcfd;
+                    border: 0;
+                    border-radius: 0;
+                    padding: 0;
+                    margin: 0.55rem 0;
+                    background: transparent;
                 }
 
                 .section-header {
@@ -884,6 +756,20 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
 
                 .case-row td {
                     background: #ffffff;
+                    color: var(--text);
+                }
+
+                .case-row {
+                    cursor: pointer;
+                }
+
+                .case-row:hover td {
+                    background: #f7fafd;
+                }
+
+                .case-row:focus-visible td {
+                    outline: 2px solid #8fb0cf;
+                    outline-offset: -2px;
                 }
 
                 .case-row.status-passed td:first-child {
@@ -914,9 +800,10 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
 
                 .case-name {
                     font-weight: 600;
+                    color: var(--text);
                 }
 
-                .case-toggle {
+                .case-expander {
                     width: 1.45rem;
                     height: 1.45rem;
                     border-radius: 4px;
@@ -924,12 +811,10 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                     background: #f4f7fb;
                     color: #3b4e68;
                     font-weight: 700;
-                    line-height: 1;
-                    cursor: pointer;
-                }
-
-                .case-toggle:hover {
-                    background: #eaf0f7;
+                    line-height: 1.25rem;
+                    text-align: center;
+                    display: inline-block;
+                    flex: 0 0 auto;
                 }
 
                 .case-details-row td {
@@ -952,27 +837,27 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                     display: inline-block;
                 }
 
-                .status-passed {
+                .status-tag.status-passed {
                     background: var(--pass);
                     color: #ffffff;
                 }
 
-                .status-failed {
+                .status-tag.status-failed {
                     background: var(--failed);
                     color: #ffffff;
                 }
 
-                .status-error {
+                .status-tag.status-error {
                     background: var(--error);
                     color: #ffffff;
                 }
 
-                .status-skipped {
+                .status-tag.status-skipped {
                     background: #e9edf2;
                     color: #4b5563;
                 }
 
-                .status-unknown {
+                .status-tag.status-unknown {
                     background: var(--warning-soft);
                     color: #6f5515;
                     border: 1px solid #d7bf82;
@@ -1031,13 +916,8 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                     const statusCheckboxes = Array.from(document.querySelectorAll('.status-filter'));
 
                     const caseRows = Array.from(document.querySelectorAll('.case-row'));
-                    const caseToggles = Array.from(document.querySelectorAll('.case-toggle'));
                     const factoryBlocks = Array.from(document.querySelectorAll('.factory-block'));
                     const classSections = Array.from(document.querySelectorAll('.class-section'));
-
-                    const navCaseItems = Array.from(document.querySelectorAll('.nav-case-item'));
-                    const navFactoryItems = Array.from(document.querySelectorAll('.nav-factory-item'));
-                    const navClassItems = Array.from(document.querySelectorAll('.nav-class-item'));
 
                     const selectedStatuses = () => new Set(
                         statusCheckboxes.filter(input => input.checked).map(input => input.value)
@@ -1056,36 +936,54 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                             detailsRow.classList.add('hidden-by-toggle');
                         }
 
-                        const toggle = row.querySelector('.case-toggle');
-                        if (toggle) {
-                            toggle.setAttribute('aria-expanded', 'false');
-                            toggle.textContent = '+';
+                        row.setAttribute('aria-expanded', 'false');
+
+                        const expander = row.querySelector('.case-expander');
+                        if (expander) {
+                            expander.textContent = '+';
                         }
                     }
 
-                    caseToggles.forEach(toggle => {
-                        toggle.addEventListener('click', () => {
-                            const detailsId = toggle.dataset.target;
-                            if (!detailsId) {
+                    function toggleDetailsForRow(row) {
+                        const detailsId = row.dataset.detailsRowId;
+                        if (!detailsId) {
+                            return;
+                        }
+
+                        const detailsRow = document.getElementById(detailsId);
+                        if (!detailsRow || detailsRow.classList.contains('hidden-by-filter')) {
+                            return;
+                        }
+
+                        const expanded = row.getAttribute('aria-expanded') === 'true';
+                        row.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+                        detailsRow.classList.toggle('hidden-by-toggle', expanded);
+
+                        const expander = row.querySelector('.case-expander');
+                        if (expander) {
+                            expander.textContent = expanded ? '+' : '-';
+                        }
+                    }
+
+                    caseRows.forEach(row => {
+                        row.addEventListener('click', event => {
+                            if (event.target.closest('a,button,input,label')) {
                                 return;
                             }
+                            toggleDetailsForRow(row);
+                        });
 
-                            const detailsRow = document.getElementById(detailsId);
-                            if (!detailsRow || detailsRow.classList.contains('hidden-by-filter')) {
-                                return;
+                        row.addEventListener('keydown', event => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                toggleDetailsForRow(row);
                             }
-
-                            const expanded = toggle.getAttribute('aria-expanded') === 'true';
-                            toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-                            toggle.textContent = expanded ? '+' : '-';
-                            detailsRow.classList.toggle('hidden-by-toggle', expanded);
                         });
                     });
 
                     function applyFilters() {
                         const text = normalize(searchInput.value.trim());
                         const statuses = selectedStatuses();
-                        const visibleCaseIds = new Set();
 
                         caseRows.forEach(row => {
                             const status = row.dataset.status;
@@ -1105,10 +1003,6 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                             if (!visible) {
                                 collapseDetailsForRow(row);
                             }
-
-                            if (visible) {
-                                visibleCaseIds.add(row.id);
-                            }
                         });
 
                         factoryBlocks.forEach(factory => {
@@ -1119,22 +1013,6 @@ public final class HtmlSidebarReportWriter implements ReportWriter {
                         classSections.forEach(section => {
                             const hasVisibleFactory = !!section.querySelector('.factory-block:not(.hidden-by-filter)');
                             section.classList.toggle('hidden-by-filter', !hasVisibleFactory);
-                        });
-
-                        navCaseItems.forEach(item => {
-                            const ref = item.dataset.caseRef;
-                            const visible = visibleCaseIds.has(ref);
-                            item.classList.toggle('hidden-by-filter', !visible);
-                        });
-
-                        navFactoryItems.forEach(factory => {
-                            const hasVisibleCase = !!factory.querySelector('.nav-case-item:not(.hidden-by-filter)');
-                            factory.classList.toggle('hidden-by-filter', !hasVisibleCase);
-                        });
-
-                        navClassItems.forEach(clazz => {
-                            const hasVisibleFactory = !!clazz.querySelector('.nav-factory-item:not(.hidden-by-filter)');
-                            clazz.classList.toggle('hidden-by-filter', !hasVisibleFactory);
                         });
                     }
 

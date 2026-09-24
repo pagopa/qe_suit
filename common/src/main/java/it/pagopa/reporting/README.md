@@ -48,15 +48,15 @@ Options:
 
 - Input can be a single Surefire XML file or a directory containing multiple `TEST-*.xml` files.
 - The output HTML includes hierarchical navigation and client-side filters.
-- Current implementation shows primary expandable navigation in the main panel (`class -> factory -> case`) and keeps the legacy sidebar renderer as fallback (not active by default).
-- Factory details render concrete cases in a 2-column table (`test/case`, `status`) with expandable detail rows.
+- Current implementation uses a single primary expandable navigation in the main panel (`class -> factory -> case`) without legacy sidebar rendering.
+- Report title is `QE SUIT Contract Test HTML Report`.
+- Top section order is: `Run summary`, `Filters`, `Navigation`.
+- Factory details render concrete cases in a 2-column table (`test/case`, `status`) with inline expansion by clicking the whole case row.
 - Aggregate color precedence for class/factory nodes: dark red if any `ERROR`, red if any `FAILED` (and no `ERROR`), yellow if no `FAILED`/`ERROR` but at least one `UNKNOWN` or `SKIPPED`, green only if all `PASSED`; with compact `F/E/U/S` badge.
+- Status colors are applied to badges only, keeping case names readable against the row background.
 
-### Agreed UX corrections (pending implementation)
+### Low-priority objective
 
-- Concrete case click must expand details inline (no jump to another section of the page).
-- Case-level links will be removed/replaced by direct inline expansion behavior.
-- The duplicated lower detailed section (`Class -> Factory -> Concrete case`) will be removed.
-- Top section order will be: `Run summary`, then `Filters`, then `Navigation`.
-- Report title will be updated to `QE SUIT Contract Test HTML Report`.
+- Once functional and UX behavior is stable, optimize report size by adding compressed output support to reduce disk footprint.
+
 
