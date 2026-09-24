@@ -63,7 +63,7 @@ Example:
 public class BffAgreementContractTest {
 
     private final ApiClient apiClient;
-    private final HttpContractValidator httpContractValidator;
+    private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final BffAgreementRequestFactory requestFactory;
 
@@ -71,20 +71,19 @@ public class BffAgreementContractTest {
     Stream<DynamicTest> createAgreement() {
 
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withProducer(
-                            Tenant.COMUNE_DI_MILANO,
-                            UserRole.ADMIN
-                    );
-
-                    return apiClient
-                            .agreements()
-                            .createAgreement();
-                })
+                .as(
+                        Tenant.COMUNE_DI_MILANO,
+                        UserRole.ADMIN
+                )
+                .apiCall(() ->
+                        apiClient
+                                .agreements()
+                                .createAgreement()
+                )
                 .payload(() -> {
                     EService createdEservice = interopJourney
                             .withProducer(
-                                    Tenant.COMUNE_DI_MILANO,
+                                    Tenant.COMUNE_DI_TORINO,
                                     UserRole.ADMIN
                             )
                             .createEService(
@@ -127,6 +126,109 @@ This code creates valid test data.
 
 The contract test still validates the API contract rather than the business flow used to create the precondition.
 
+## Authentication and final API-call identity
+
+The final identity of the HTTP request is declared explicitly in the DSL through:
+
+```java
+.as(Tenant, User)
+```
+
+or:
+
+```java
+.as(Tenant, UserRole)
+```
+
+This is the identity that the generated API call must execute with.
+
+It is not just an initial setup step. It represents the final API-call identity for the generated `DynamicTest` execution.
+
+The recommended pattern is:
+
+```java
+return httpContractValidator
+        .as(
+                Tenant.COMUNE_DI_MILANO,
+                UserRole.ADMIN
+        )
+        .apiCall(() ->
+                apiClient
+                        .agreements()
+                        .createAgreement()
+        )
+        .payload(...)
+        .tests();
+```
+
+The authentication declared through `as(...)` is reapplied for every generated `DynamicTest` immediately before the corresponding API operation is materialized and executed.
+
+### Temporary session used by a precondition
+
+`payload(...)` and `pathParams(...)` are runtime suppliers. They can execute setup logic and temporarily switch session context.
+
+This is useful when a precondition needs a different user or tenant than the one used by the final API call.
+
+Example:
+
+```java
+return httpContractValidator
+        .as(
+                Tenant.COMUNE_DI_MILANO,
+                UserRole.ADMIN
+        )
+        .apiCall(() ->
+                apiClient
+                        .agreements()
+                        .createAgreement()
+        )
+        .payload(() -> {
+            EService createdEservice = interopJourney
+                    .withProducer(
+                            Tenant.COMUNE_DI_TORINO,
+                            UserRole.ADMIN
+                    )
+                    .createEService(
+                            EServiceDescriptorState.PUBLISHED
+                    )
+                    .get(EService.class);
+
+            return requestFactory.creationRequest(
+                    createdEservice,
+                    createdEservice.getActiveDescriptor(),
+                    null
+            );
+        })
+        .tests();
+```
+
+In this case:
+
+- `COMUNE_DI_TORINO` is the temporary session used only for the setup step;
+- that session does not become the authentication of the API call;
+- before the actual request is executed, the framework restores the identity declared in `as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)`;
+- the final HTTP request is executed as `COMUNE_DI_MILANO / ADMIN`.
+
+This is the fundamental semantic rule: the supplier used to build the valid request may authenticate differently during setup, but the request itself is always executed with the final identity declared in `as(...)`.
+
+### Anti-pattern: authenticating manually inside apiCall
+
+Avoid patterns like this:
+
+```java
+.apiCall(() -> {
+    interopJourney.withProducer(
+            Tenant.COMUNE_DI_MILANO,
+            UserRole.ADMIN
+    );
+    return apiClient.agreements().createAgreement();
+})
+```
+
+This is an anti-pattern for a contract test. The authentication of the final request must be declared with `as(...)`.
+
+The framework applies it automatically for each generated test case.
+
 ## API call definition
 
 Use `apiCall(...)` to provide the generated OpenAPI operation used by the test.
@@ -164,6 +266,22 @@ Whenever possible, use an existing request factory instead of constructing techn
 ## Path parameters
 
 Path parameters are supplied through `pathParams(...)`.
+
+The same principle applies here: if a `pathParams(...)` supplier changes the session temporarily during precondition setup, that temporary session does not become the final API-call identity.
+
+Example:
+
+```java
+.pathParams(() -> {
+    // temporary session changes are allowed here
+    return Map.of(
+            "agreementId", agreementId,
+            "descriptorId", descriptorId
+    );
+})
+```
+
+The final request still uses the identity declared through `as(...)`.
 
 The public contract is intentionally simple: pass a map keyed by the OpenAPI path-parameter name, or provide a POJO/record whose property names match the path-parameter names.
 
