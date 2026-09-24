@@ -80,7 +80,9 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
             UpdateEServiceTemplateVersionCommand command
     ) {
         if (!(command instanceof BffUpdateEServiceTemplateVersionCommand bffCommand)) {
-            throw new IllegalArgumentException("Command must be an instance of BffUpdateEServiceTemplateVersionCommand");
+            throw new IllegalArgumentException(
+                    "Command must be an instance of " + BffUpdateEServiceTemplateVersionCommand.class.getSimpleName()
+            );
         }
 
         return restClient.updateDraftVersion(templateRef.id(), versionRef.id(), bffCommand.getBffPayload())
