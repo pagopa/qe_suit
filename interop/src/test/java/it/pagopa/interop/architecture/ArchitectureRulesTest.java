@@ -181,6 +181,31 @@ public class ArchitectureRulesTest {
         }
     }
 
+    @Test
+    void contract_test_classes_must_not_declare_junit_execution_annotation() {
+        var imported = new ClassFileImporter()
+                .importPackages("it.pagopa.interop");
+
+        Set<String> violations = new TreeSet<>();
+
+        for (JavaClass javaClass : imported) {
+            if (!javaClass.getSimpleName().endsWith("ContractTest")) {
+                continue;
+            }
+
+            boolean hasExecutionAnnotation = javaClass.getAnnotations().stream()
+                    .anyMatch(annotation -> annotation.getRawType().getFullName().equals("org.junit.jupiter.api.parallel.Execution"));
+
+            if (hasExecutionAnnotation) {
+                violations.add(javaClass.getFullName());
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            fail("Le classi ContractTest non devono dichiarare @Execution. Per gestire i log in maniera deterministica in locale utilizziamo SAME_THREAD (config di default) ed impostiamo il parallelismo massimo nella classe Suite: " + violations);
+        }
+    }
+
     private static void checkNamingConvention(JavaClass javaClass, Set<String> violations) {
         String packageName = javaClass.getPackageName();
         String fullName = javaClass.getFullName();
