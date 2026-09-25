@@ -68,7 +68,7 @@ token:
   session:
     grossini: ${pn.external.session-token.grossini:REPLACE_ME}
     francescopetrarca: REPLACE_ME
-    lucrezia: REPLACE_ME
+    lucrezia: ${pn.external.session-token.lucrezia:REPLACE_ME}
 
 # ============================================================================
 # BFF API Configuration (notifiche legali via API)
