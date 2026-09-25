@@ -79,9 +79,14 @@ public class WebEServiceDocumentUploadContractTest {
                                     .setAsyncExchange(false)
                                     .setMode(EServiceMode.DELIVER)
                                     .setPersonalData(false);
-                            page.saveDraftButton().click(); // step 1 -> step ? (probe)
+                            page.saveDraftButton().click(); // step 1 -> step 2 (soglie e attributi)
+                            page.saveDraftButton().click(); // step 2 -> step 3 (interfaccia)
 
-                            probeCurrentStep(page, "after 1 click");
+                            page.technicalSpecificationStep()
+                                    .voucherComponent()
+                                    .audience()
+                                    .fill("audience-" + UUID.randomUUID());
+                            page.saveDraftButton().click(); // step 3 -> step 4 ( descrizione e documentazione )
 
                             page.technicalSpecificationStep()
                                     .interfaceComponent()
@@ -95,27 +100,6 @@ public class WebEServiceDocumentUploadContractTest {
                         ).isEqualTo(DOCUMENT_FORMATS_HINT)
                 )
         );
-    }
-
-    private void probeCurrentStep(EServiceCreationPage page, String label) {
-        try {
-            String t = page.thresholdAndAttributeStep().title().read();
-            System.out.println("PROBE[" + label + "] threshold title = " + t);
-        } catch (Exception e) {
-            System.out.println("PROBE[" + label + "] threshold NOT present: " + e.getClass().getSimpleName());
-        }
-        try {
-            String h = page.technicalSpecificationStep().voucherComponent().getAudienceHelperText();
-            System.out.println("PROBE[" + label + "] technicalSpec/voucher audience helper = " + h);
-        } catch (Exception e) {
-            System.out.println("PROBE[" + label + "] technicalSpec/voucher NOT present: " + e.getClass().getSimpleName());
-        }
-        try {
-            String hint = page.additionalInformationStep().documentFormatsHint().read();
-            System.out.println("PROBE[" + label + "] additionalInformation hint = " + hint);
-        } catch (Exception e) {
-            System.out.println("PROBE[" + label + "] additionalInformation NOT present: " + e.getClass().getSimpleName());
-        }
     }
 }
 
