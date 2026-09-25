@@ -145,16 +145,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-launcher</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-engine</artifactId>
-        </dependency>
-
         <!-- ========================= -->
         <!-- INSTANCIO -->
         <!-- ========================= -->
@@ -290,23 +280,6 @@
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-reporting</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.thymeleaf</groupId>
-            <artifactId>thymeleaf</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.github.javaparser</groupId>
-            <artifactId>javaparser-core</artifactId>
-            <version>3.26.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.swagger.parser.v3</groupId>
-            <artifactId>swagger-parser-v3</artifactId>
-            <version>2.1.31</version>
         </dependency>
     </dependencies>
 
