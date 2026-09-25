@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -57,7 +58,7 @@ class ContractTargetRegressionTest {
             return stream.filter(path -> path.toString().endsWith("ContractTest.java"))
                     .map(this::toClassName)
                     .map(this::loadClass)
-                    .toList();
+                    .collect(Collectors.toList());
         }
     }
 
