@@ -31,18 +31,26 @@ final class WebContractInvocationBuilder implements WebContractStages.UserStage 
 
     @Override
     public <P extends Page> WebContractStages.PageStage<P> on(Class<P> pageType) {
+        return on(pageType, new String[0]);
+    }
+
+    @Override
+    public <P extends Page> WebContractStages.PageStage<P> on(Class<P> pageType, String... pathParams) {
         Objects.requireNonNull(pageType, "pageType must not be null");
-        return new PageStageImpl<>(pageType);
+        Objects.requireNonNull(pathParams, "pathParams must not be null");
+        return new PageStageImpl<>(pageType, pathParams);
     }
 
     private final class PageStageImpl<P extends Page>
             implements WebContractStages.PageStage<P> {
 
         private final Class<P> pageType;
+        private final String[] pathParams;
         private final WebContractRuntimeCaseExecutor runtimeCaseExecutor;
 
-        private PageStageImpl(Class<P> pageType) {
+        private PageStageImpl(Class<P> pageType, String[] pathParams) {
             this.pageType = pageType;
+            this.pathParams = pathParams;
             this.runtimeCaseExecutor = new WebContractRuntimeCaseExecutor(
                     webPresentationGatewayProvider,
                     contextConfigurer
@@ -57,7 +65,7 @@ final class WebContractInvocationBuilder implements WebContractStages.UserStage 
 
             return scenarios.map(scenario -> dynamicTest(
                     scenario.name(),
-                    () -> runtimeCaseExecutor.execute(pageType, scenario)
+                    () -> runtimeCaseExecutor.execute(pageType, pathParams, scenario)
             ));
         }
     }
