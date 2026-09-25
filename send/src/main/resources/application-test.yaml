@@ -66,9 +66,14 @@ token:
   mittente: ${pn.external.bearer-token.tokentestMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
   session:
-    grossini: ${pn.external.session-token.grossini:REPLACE_ME}
-    francescopetrarca: REPLACE_ME
-    lucrezia: REPLACE_ME
+
+
+
+
+
+
+
+
 
 # ============================================================================
 # BFF API Configuration (notifiche legali via API)
@@ -85,7 +90,7 @@ gpd:
   api:
     base-url: https://api.uat.platform.pagopa.it/gpd/debt-positions-service/v1
     # REPLACE_ME: subscription key reale per l'header Ocp-Apim-Subscription-Key verso GPD
-    subscription-key: REPLACE_ME
+
 
 # ============================================================================
 # Pn External Registries API Configuration (gruppi notifica per PA)
