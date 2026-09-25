@@ -8,21 +8,28 @@ import it.pagopa.infrastructure.fuzzing.FuzzEngine;
 import org.slf4j.MDC;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 final class HttpContractRuntimeCaseExecutor {
     private final ObjectMapper objectMapper;
-    private final FuzzEngine fuzzEngine;
+    private final FuzzEngine payloadFuzzEngine;
+    private final FuzzEngine pathParamsFuzzEngine;
     private final OpenApiOperationAdapter operationAdapter;
+    private final HttpContractAuthentication authentication;
 
     HttpContractRuntimeCaseExecutor(
             ObjectMapper objectMapper,
-            FuzzEngine fuzzEngine,
-            OpenApiOperationAdapter operationAdapter
+            FuzzEngine payloadFuzzEngine,
+            FuzzEngine pathParamsFuzzEngine,
+            OpenApiOperationAdapter operationAdapter,
+            HttpContractAuthentication authentication
     ) {
         this.objectMapper = objectMapper;
-        this.fuzzEngine = fuzzEngine;
+        this.payloadFuzzEngine = payloadFuzzEngine;
+        this.pathParamsFuzzEngine = pathParamsFuzzEngine;
         this.operationAdapter = operationAdapter;
+        this.authentication = Objects.requireNonNull(authentication, "authentication must not be null");
     }
 
     void execute(
@@ -36,6 +43,7 @@ final class HttpContractRuntimeCaseExecutor {
         try {
             RuntimeScope payloadRuntime = materializeRuntimeScope(payloadState, RequestScope.PAYLOAD, testCase);
             RuntimeScope pathRuntime = materializeRuntimeScope(pathState, RequestScope.PATH_PARAMS, testCase);
+            authentication.authenticate();
             Object operation = materializeOperation(operationSupplier, testCase);
             HttpContractRequest request = buildRuntimeRequest(testCase, payloadRuntime, pathRuntime);
 
@@ -102,7 +110,7 @@ final class HttpContractRuntimeCaseExecutor {
             );
         }
 
-        List<FuzzCase> matches = fuzzEngine.generate(mutatedScope.source()).stream()
+        List<FuzzCase> matches = fuzzEngine(testCase.scope()).generate(mutatedScope.source()).stream()
                 .filter(candidate -> candidate.target().equals(testCase.target()))
                 .filter(candidate -> candidate.mutation().scenario() == testCase.mutation().scenario())
                 .toList();
@@ -165,6 +173,10 @@ final class HttpContractRuntimeCaseExecutor {
     private String formatDescriptor(ContractCaseDescriptor descriptor) {
         String target = descriptor.target().isRoot() ? "<root>" : descriptor.target().toString();
         return descriptor.scope() + " " + descriptor.scenario() + " @ " + target;
+    }
+
+    private FuzzEngine fuzzEngine(RequestScope scope) {
+        return scope == RequestScope.PAYLOAD ? payloadFuzzEngine : pathParamsFuzzEngine;
     }
 
     private record RuntimeScope(Object source, JsonNode baseline) {

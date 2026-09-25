@@ -15,12 +15,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -35,7 +38,7 @@ class HttpContractValidatorSupplierSemanticsTest {
 
     @Test
     void supplierOverloadsAreAvailableFromAllStagesAndNullSuppliersFailFast() {
-        HttpContractValidator contract = new HttpContractValidator(objectMapper, source -> List.of(), createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, source -> List.of(), source -> List.of(), createDecomposer(), completePolicy());
 
         Supplier<Payload> payloadSupplier = () -> new Payload("id", "name", List.of(new Contact("x@y")));
         Supplier<PathParams> pathSupplier = () -> new PathParams("agreement", "descriptor");
@@ -66,7 +69,7 @@ class HttpContractValidatorSupplierSemanticsTest {
         FuzzEngine fuzzEngine = source -> source instanceof Payload
                 ? List.of(payloadNameCase(""))
                 : List.of(pathAgreementCase("bad-uuid"));
-        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, fuzzEngine, createDecomposer(), completePolicy());
 
         var stage = contract.apiCall(SimpleOper::new)
                 .payload(() -> {
@@ -102,7 +105,7 @@ class HttpContractValidatorSupplierSemanticsTest {
             }
             return List.of();
         };
-        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, fuzzEngine, createDecomposer(), completePolicy());
 
         var tests = contract.apiCall(() -> {
                     CapturingOper operation = new CapturingOper("op-" + operationCounter.incrementAndGet());
@@ -146,7 +149,7 @@ class HttpContractValidatorSupplierSemanticsTest {
             Payload payload = (Payload) source;
             return List.of(payloadNameCase("", payload.id()));
         };
-        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, fuzzEngine, createDecomposer(), completePolicy());
         CapturingOper operation = new CapturingOper("op");
 
         var tests = contract.apiCall(() -> operation)
@@ -177,7 +180,7 @@ class HttpContractValidatorSupplierSemanticsTest {
                             .add(objectMapper.createObjectNode().put("email", ""))
             ));
         };
-        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, fuzzEngine, createDecomposer(), completePolicy());
         var tests = contract.apiCall(SimpleOper::new)
                 .payload(() -> payloadCounter.incrementAndGet() == 1
                         ? new Payload("id", "name", List.of(new Contact("a@b")))
@@ -201,7 +204,7 @@ class HttpContractValidatorSupplierSemanticsTest {
             if (invocation == 1) return List.of(caseA);
             return List.of(caseA, payloadNameCase(""));
         };
-        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, fuzzEngine, createDecomposer(), completePolicy());
         var tests = contract.apiCall(SimpleOper::new)
                 .payload(() -> new Payload("id", "name", List.of(new Contact("x@y"))))
                 .tests()
@@ -212,10 +215,52 @@ class HttpContractValidatorSupplierSemanticsTest {
     }
 
     @Test
+    void mapPathParamsAreBoundToConcreteOpenApiPathMethods() throws Exception {
+        OpenApiOperationAdapter adapter = new OpenApiOperationAdapter(objectMapper);
+        UUID clientId = UUID.fromString("9d4d6f29-22d3-4e05-8077-ea9c7d7b32aa");
+        TypedPathParamOperation operation = new TypedPathParamOperation();
+
+        Method bind = OpenApiOperationAdapter.class.getDeclaredMethod("bindPathParams", Object.class, JsonNode.class);
+        bind.setAccessible(true);
+
+        bind.invoke(
+                adapter,
+                operation,
+                objectMapper.createObjectNode()
+                        .put("clientId", clientId.toString())
+                        .put("agreementId", "agreement-123")
+        );
+
+        assertEquals(clientId, operation.clientId);
+        assertEquals("agreement-123", operation.agreementId);
+    }
+
+    @Test
+    void payloadAndMapPathParamsCanBeBoundTogether() throws Exception {
+        OpenApiOperationAdapter adapter = new OpenApiOperationAdapter(objectMapper);
+        PayloadAndPathParamOperation operation = new PayloadAndPathParamOperation();
+
+        HttpContractRequest request = new HttpContractRequest(
+                objectMapper.valueToTree(new Payload("payload-1", "valid-name", List.of(new Contact("x@y")))),
+                true,
+                objectMapper.valueToTree(Map.of(
+                        "agreementId", "agreement-123",
+                        "descriptorId", "descriptor-456"
+                ))
+        );
+
+        adapter.execute(operation, request);
+
+        assertTrue(operation.bodyJson.contains("payload-1"));
+        assertEquals("agreement-123", operation.agreementId);
+        assertEquals("descriptor-456", operation.descriptorId);
+    }
+
+    @Test
     void supplierExceptionsKeepOriginalCauseAndContext() {
         AtomicInteger counter = new AtomicInteger();
         FuzzEngine fuzzEngine = source -> List.of(payloadNameCase(""));
-        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, fuzzEngine, createDecomposer(), completePolicy());
         var tests = contract.apiCall(SimpleOper::new)
                 .payload(() -> {
                     if (counter.incrementAndGet() == 1) return new Payload("id", "name", List.of(new Contact("x@y")));
@@ -238,7 +283,7 @@ class HttpContractValidatorSupplierSemanticsTest {
             Payload payload = (Payload) source;
             return List.of(payloadNameCase("", payload.id()));
         };
-        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, createDecomposer(), completePolicy());
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, fuzzEngine, createDecomposer(), completePolicy());
         ConcurrentLinkedQueue<CapturingOper> operations = new ConcurrentLinkedQueue<>();
 
         var tests = contract.apiCall(() -> {
@@ -265,6 +310,126 @@ class HttpContractValidatorSupplierSemanticsTest {
         List<String> bodies = operations.stream().map(operation -> operation.bodyJson).toList();
         assertEquals(2, bodies.size());
         assertEquals(2, bodies.stream().distinct().count());
+    }
+
+    @Test
+    void authenticationRunsAfterPayloadAndPathSuppliersAndBeforeOperation() throws Throwable {
+        AtomicInteger payloadInvocations = new AtomicInteger();
+        AtomicInteger pathInvocations = new AtomicInteger();
+        AtomicInteger authenticationInvocations = new AtomicInteger();
+        ConcurrentLinkedQueue<String> events = new ConcurrentLinkedQueue<>();
+        FuzzEngine fuzzEngine = source -> source instanceof Payload
+                ? List.of(payloadNameCase("", "id"))
+                : List.of(pathAgreementCase("malformed-agreement"));
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, fuzzEngine, createDecomposer(), completePolicy());
+
+        var tests = contract.apiCall(
+                        () -> {
+                            authenticationInvocations.incrementAndGet();
+                            events.add("auth");
+                        },
+                        () -> {
+                            events.add("operation");
+                            return new CapturingOper("op");
+                        }
+                )
+                .payload(() -> {
+                    payloadInvocations.incrementAndGet();
+                    events.add("payload");
+                    return new Payload("id", "name", List.of(new Contact("x@y")));
+                })
+                .pathParams(() -> {
+                    pathInvocations.incrementAndGet();
+                    events.add("path");
+                    return new PathParams("agreement", "descriptor");
+                })
+                .tests()
+                .toList();
+
+        tests.get(0).getExecutable().execute();
+        tests.get(1).getExecutable().execute();
+
+        List<String> sequence = List.copyOf(events);
+        int payloadIndex = sequence.indexOf("payload");
+        int pathIndex = sequence.indexOf("path");
+        int authIndex = sequence.indexOf("auth");
+        int operationIndex = sequence.indexOf("operation");
+
+        assertTrue(payloadIndex >= 0);
+        assertTrue(pathIndex > payloadIndex);
+        assertTrue(authIndex > pathIndex);
+        assertTrue(operationIndex > authIndex);
+    }
+
+    @Test
+    void authenticationIsInvokedPerRuntimeCase() throws Throwable {
+        AtomicInteger authenticationInvocations = new AtomicInteger();
+        FuzzEngine fuzzEngine = source -> source instanceof Payload
+                ? List.of(
+                        payloadNameCase("", "id"),
+                        new FuzzCase(
+                                path("/name"),
+                                new FuzzMutation(FuzzScenario.REPLACED_WITH_NULL, FuzzMutationKind.REPLACE, null),
+                                objectMapper.createObjectNode()
+                                        .put("id", "id")
+                                        .putNull("name")
+                                        .putArray("contacts")
+                                        .add(objectMapper.createObjectNode().put("email", "x@y"))
+                        )
+                )
+                : List.of();
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, fuzzEngine, createDecomposer(), completePolicy());
+
+        var tests = contract.apiCall(
+                        () -> authenticationInvocations.incrementAndGet(),
+                        () -> new CapturingOper("op")
+                )
+                .payload(() -> new Payload("id", "name", List.of(new Contact("x@y"))))
+                .tests()
+                .toList();
+
+        tests.get(0).getExecutable().execute();
+        tests.get(1).getExecutable().execute();
+
+        assertEquals(2, authenticationInvocations.get());
+    }
+
+    @Test
+    void authenticationCanBeOverriddenByPayloadAndPathSuppliersBeforeOperation() throws Throwable {
+        AtomicReference<String> session = new AtomicReference<>("initial");
+        FuzzEngine fuzzEngine = source -> source instanceof Payload
+                ? List.of(payloadNameCase("", "id"))
+                : List.of(pathAgreementCase("agreement-1"));
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, fuzzEngine, fuzzEngine, createDecomposer(), completePolicy());
+
+        var tests = contract.apiCall(
+                        () -> session.set("A"),
+                        () -> {
+                            assertEquals("A", session.get());
+                            return new CapturingOper("op");
+                        }
+                )
+                .payload(() -> {
+                    session.set("B");
+                    return new Payload("id", "name", List.of(new Contact("x@y")));
+                })
+                .pathParams(() -> {
+                    session.set("C");
+                    return new PathParams("agreement", "descriptor");
+                })
+                .tests()
+                .toList();
+
+        tests.get(0).getExecutable().execute();
+        assertEquals("A", session.get());
+    }
+
+    @Test
+    void nullAuthenticationAndNullOperationSupplierAreRejected() {
+        HttpContractValidator contract = new HttpContractValidator(objectMapper, source -> List.of(), source -> List.of(), createDecomposer(), completePolicy());
+
+        assertThrows(NullPointerException.class, () -> contract.apiCall(null, SimpleOper::new));
+        assertThrows(ContractHttpException.class, () -> contract.apiCall(HttpContractAuthentication.noOp(), null));
     }
 
     private void executeUnchecked(org.junit.jupiter.api.DynamicTest test) {
@@ -360,6 +525,55 @@ class HttpContractValidatorSupplierSemanticsTest {
         }
     }
 
+    static class TypedPathParamOperation {
+        UUID clientId;
+        String agreementId;
+
+        public TypedPathParamOperation reqSpec(Consumer<RequestSpecBuilder> customizer) {
+            customizer.accept(new RequestSpecBuilder());
+            return this;
+        }
+
+        public TypedPathParamOperation clientIdPath(UUID value) {
+            this.clientId = value;
+            return this;
+        }
+
+        public TypedPathParamOperation agreementIdPath(String value) {
+            this.agreementId = value;
+            return this;
+        }
+
+        public <T> T execute(Function<Response, T> handler) {
+            return handler.apply(Mockito.mock(Response.class));
+        }
+    }
+
+    static class PayloadAndPathParamOperation {
+        String bodyJson;
+        String agreementId;
+        String descriptorId;
+
+        public PayloadAndPathParamOperation reqSpec(Consumer<RequestSpecBuilder> customizer) {
+            customizer.accept(new PayloadAndPathParamBuilder(this));
+            return this;
+        }
+
+        public PayloadAndPathParamOperation agreementIdPath(String value) {
+            this.agreementId = value;
+            return this;
+        }
+
+        public PayloadAndPathParamOperation descriptorIdPath(String value) {
+            this.descriptorId = value;
+            return this;
+        }
+
+        public <T> T execute(Function<Response, T> handler) {
+            return handler.apply(Mockito.mock(Response.class));
+        }
+    }
+
     static class CapturingOper {
         final String id;
         String bodyJson;
@@ -387,6 +601,26 @@ class HttpContractValidatorSupplierSemanticsTest {
 
         public <T> T execute(Function<Response, T> handler) {
             return handler.apply(Mockito.mock(Response.class));
+        }
+    }
+
+    static class PayloadAndPathParamBuilder extends RequestSpecBuilder {
+        private final PayloadAndPathParamOperation owner;
+
+        PayloadAndPathParamBuilder(PayloadAndPathParamOperation owner) {
+            this.owner = owner;
+        }
+
+        @Override
+        public RequestSpecBuilder setBody(String body) {
+            owner.bodyJson = body;
+            return this;
+        }
+
+        @Override
+        public RequestSpecBuilder setBody(Object body) {
+            owner.bodyJson = String.valueOf(body);
+            return this;
         }
     }
 
