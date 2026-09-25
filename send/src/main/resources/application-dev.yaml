@@ -66,9 +66,13 @@ token:
   mittente: ${pn.external.bearer-token.tokentestMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
   session:
-    grossini: REPLACE_ME
-    francescopetrarca: REPLACE_ME
-    lucrezia: REPLACE_ME
+
+
+
+
+    User1: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImEzYjYyYTVlLTNiYWEtNGI5Yy05ZjQyLTk3NDQxYmNlNDU3ZiJ9.eyJpYXQiOjE3OTAyNTM5OTcsImV4cCI6MTc5MDI4NjMxNiwidWlkIjoiZTllNGE5YzctOTU4Ni00YjkyLWE3ZGQtZWUxYTBlNzdkMzk4IiwiaXNzIjoiaHR0cHM6Ly93ZWJhcGkuZGV2Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwiYXVkIjoid2ViYXBpLmRldi5ub3RpZmljaGVkaWdpdGFsaS5pdCIsImp0aSI6IjE5OGNhZmQ0LThiZjgtNDA5YS1hODU3LTNmOGIzOGEzYmVkZSIsIm9yZ2FuaXphdGlvbiI6eyJpZCI6IjU2ZWQwNzRjLTEzYjYtNGQ2MS1iYTQ5LTIyMTk1M2U2YjYwZiIsInJvbGUiOiJhZG1pbiIsImZpc2NhbF9jb2RlIjoiMDAyMDcxOTAyNTcifX0.qF3YK-CSlDDFOzYyjw-dfOEN8j8Y4-_ffdtP_PaIkYGtEjBNl-YVUeXF4Te78V_xcUxfK95K6nL1wLc1f9-MI-fCQ-p_GBV2Cfmc1CT04AmeE-xErHllv2uBLUvhL2PcjBLXk5Nl2JofR4rVzhe6yPfw6mD9mbtsqp9sScg-gkcIV1zdBnwGN0DWWXuPPvQ3kRwC6NfqgxkyNs_7XMaEWm7ci-VL9h3P48xSD7t75WI82exTNpfILFfP49eI2PInpOrmVXiIR57APHH246qlOx26Kw
+
+
 
 # ============================================================================
 # BFF API Configuration (notifiche legali via API)
@@ -85,7 +89,7 @@ gpd:
   api:
     base-url: https://api.uat.platform.pagopa.it/gpd/debt-positions-service/v1
     # REPLACE_ME: subscription key reale per l'header Ocp-Apim-Subscription-Key verso GPD
-    subscription-key: REPLACE_ME
+
 
 # ============================================================================
 # Pn External Registries API Configuration (gruppi notifica per PA)
@@ -110,4 +114,4 @@ pa:
 # api-key per le API B2B delivery (header x-api-key), una entry per ogni costante di Tenant,
 # univoca per PA e per ambiente (qui: dev)
   delivery-api-key:
-    GROSSINI: REPLACE_ME
+
