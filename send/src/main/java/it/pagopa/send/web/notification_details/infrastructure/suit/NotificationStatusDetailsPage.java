@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.send.web.infrastructure.suit.component.BackNavigable;
+import it.pagopa.send.web.infrastructure.page.component.BackNavigable;
 import org.assertj.core.api.Assertions;
 
 @Url("da mappare")
