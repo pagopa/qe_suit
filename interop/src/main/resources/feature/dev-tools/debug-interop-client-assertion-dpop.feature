@@ -50,7 +50,6 @@ Feature: Debugger della request di tipo DPoP per un voucher spendibile presso le
   allora tutte le fasi di validazione di Client assertion, Recupero chiave, Firma e Stato della piattaforma risultano in stato PASSED
   e la fase di validazione della DPoP Proof risulta in stato FAILED con il messaggio di errore specifico al claim mancante
 
-    Given una sessione HTTP programmatica su BFF
     Given un eservice creato da Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un client API creato da PagoPA in cui è presente un admin e una coppia di chiavi crittografiche
     And una client assertion valida generata usando il client creato

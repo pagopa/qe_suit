@@ -1,10 +1,12 @@
 package it.pagopa.interop.suite;
 
+import it.pagopa.infrastructure.reporting.contract.lifecycle.GenerateContractReport;
 import org.junit.platform.suite.api.*;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
 
 @Suite
+@GenerateContractReport
 @IncludeEngines({"cucumber", "junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
 @SelectPackages("it.pagopa.interop.suite.contract")
