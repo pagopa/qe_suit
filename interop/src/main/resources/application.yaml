@@ -32,3 +32,15 @@ interop:
   api:
     openapi-url:
       bff: @bff.openapi.url@
+
+contract-report:
+  channels:
+    bff:
+      label: BFF
+      class-prefix: Bff
+      target-type: OPENAPI
+      openapi: @bff.openapi.url@
+    web:
+      label: WEB
+      class-prefix: Web
+      target-type: PAGE
