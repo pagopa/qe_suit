@@ -55,20 +55,22 @@ public class WebEServiceThresholdContractTest {
                         "soglia per fruitore con valore decimale (virgola)",
                         fillGeneralDataThen(page ->
                                 {
-                                    page.thresholdAndAttributeStep().dailyCallsPerConsumer().fill("1,5");
+                                    page.thresholdAndAttributeStep().dailyCallsPerConsumer().cleanAndWrite("1,5"); // "," è omesso, ma non il "."
+                                    page.thresholdAndAttributeStep().dailyCallsTotal().cleanAndWrite("100");
                                     page.saveDraftButton().click();
                                 }
                         ),
                         page -> Assertions.assertThat(
                                 page.thresholdAndAttributeStep().getDailyCallsPerConsumerErrorText()
-                        ).isEqualTo(INTEGER_THRESHOLD_ERROR_MESSAGE)
+                        ).isNullOrEmpty()
                 ),
 
                 new WebScenario<>(
                         "soglia per fruitore con valore decimale (punto)",
                         fillGeneralDataThen(page ->
                                 {
-                                    page.thresholdAndAttributeStep().dailyCallsPerConsumer().fill("1.5");
+                                    page.thresholdAndAttributeStep().dailyCallsPerConsumer().cleanAndWrite("1.5");
+                                    page.thresholdAndAttributeStep().dailyCallsTotal().cleanAndWrite("100");
                                     page.saveDraftButton().click();
                                 }
                         ),
@@ -81,20 +83,22 @@ public class WebEServiceThresholdContractTest {
                         "soglia totale con valore decimale (virgola)",
                         fillGeneralDataThen(page ->
                                 {
-                                    page.thresholdAndAttributeStep().dailyCallsTotal().fill("1,5");
+                                    page.thresholdAndAttributeStep().dailyCallsPerConsumer().cleanAndWrite("1");
+                                    page.thresholdAndAttributeStep().dailyCallsTotal().cleanAndWrite("1,5");        // "," è omesso, ma non il "."
                                     page.saveDraftButton().click();
                                 }
                         ),
                         page -> Assertions.assertThat(
                                 page.thresholdAndAttributeStep().getDailyCallsTotalErrorText()
-                        ).isEqualTo(INTEGER_THRESHOLD_ERROR_MESSAGE)
+                        ).isNullOrEmpty()
                 ),
 
                 new WebScenario<>(
                         "soglia totale con valore decimale (punto)",
                         fillGeneralDataThen(page ->
                                 {
-                                    page.thresholdAndAttributeStep().dailyCallsTotal().fill("1.5");
+                                    page.thresholdAndAttributeStep().dailyCallsPerConsumer().cleanAndWrite("1");
+                                    page.thresholdAndAttributeStep().dailyCallsTotal().cleanAndWrite("1.5");
                                     page.saveDraftButton().click();
                                 }
                         ),
@@ -108,8 +112,8 @@ public class WebEServiceThresholdContractTest {
     private Consumer<EServiceCreationPage> fillGeneralDataThen(Consumer<EServiceCreationPage> thresholdAction) {
         return page -> {
             fillValidGeneralData(page);
-            thresholdAction.accept(page);
             page.saveDraftButton().click();
+            thresholdAction.accept(page);
         };
     }
 
