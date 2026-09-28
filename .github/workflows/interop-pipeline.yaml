@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       ENVIRONMENT: ${{ inputs.environment || 'qa' }}
-      JAVA_TEST_SUITE: ${{ inputs.javaTestSuite || 'NrtStandardSuite' }}
+      JAVA_TEST_SUITE: ${{ inputs.javaTestSuite || 'NrtStandardSuiteTest' }}
       BRANCH_NAME: ${{ inputs.branchName || github.ref_name }}
 
     steps:
