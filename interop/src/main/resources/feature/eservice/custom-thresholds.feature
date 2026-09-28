@@ -20,14 +20,14 @@ Feature: Visualizzazione delle soglie di chiamate API personalizzate nella sched
   la sezione Soglie di chiamate API personalizzate.
 
     Given un erogatore admin del Comune di Milano
-    And crea un e-service <dataExchangeMode> con un attributo certificato e soglia personalizzata per fruitore a <customThreshold>
+    And crea un EService <dataExchangeMode> con un attributo certificato e soglia personalizzata per fruitore a <customThreshold>
       | consumerThreshold | 20 |
       | totalThreshold    | 40 |
     And un admin dell'Agenzia per l'Italia Digitale possiede quell'attributo certificato
-    When visualizza la pagina dell'e-service dal catalogo
+    When visualizza la pagina dell'EService dal catalogo
     Then la sezione soglie di chiamate API personalizzate è presente e mostra il valore <customThreshold>
 
-    When un admin del Comune di Milano visualizza la pagina dell'e-service dal catalogo
+    When un admin del Comune di Milano visualizza la pagina dell'EService dal catalogo
     Then la sezione soglie di chiamate API personalizzate non è presente
 
     Examples:
@@ -42,16 +42,16 @@ Feature: Visualizzazione delle soglie di chiamate API personalizzate nella sched
   la sezione Soglie di chiamate API personalizzate.
 
     Given un erogatore admin del Comune di Milano
-    And crea un e-service <dataExchangeMode> con un attributo certificato e soglia personalizzata per fruitore a <customThreshold>
+    And crea un EService <dataExchangeMode> con un attributo certificato e soglia personalizzata per fruitore a <customThreshold>
       | consumerThreshold | 20 |
       | totalThreshold    | 40 |
-    And un admin del Comune di Pozzallo conferisce in delega di fruizione l'e-service all'Agenzia per l'Italia Digitale
+    And un admin del Comune di Pozzallo conferisce in delega di fruizione l'EService all'Agenzia per l'Italia Digitale
     And un admin dell'Agenzia per l'Italia Digitale accetta la delega in fruizione
     And un admin dell'Agenzia per l'Italia Digitale possiede quell'attributo certificato
-    When visualizza la pagina dell'e-service dal catalogo
+    When visualizza la pagina dell'EService dal catalogo
     Then la sezione soglie di chiamate API personalizzate è presente e mostra il valore <customThreshold>
 
-    When un admin del Comune di Pozzallo visualizza la pagina dell'e-service dal catalogo
+    When un admin del Comune di Pozzallo visualizza la pagina dell'EService dal catalogo
     Then la sezione soglie di chiamate API personalizzate non è presente
 
     Examples:
@@ -64,8 +64,8 @@ Feature: Visualizzazione delle soglie di chiamate API personalizzate nella sched
   quando l'e-service non richiede un attributo certificato.
 
     Given un erogatore admin del Comune di Milano
-    And crea un e-service <dataExchangeMode>
-    When un admin dell'Agenzia per l'Italia Digitale visualizza la pagina dell'e-service dal catalogo
+    And crea un EService <dataExchangeMode>
+    When un admin dell'Agenzia per l'Italia Digitale visualizza la pagina dell'EService dal catalogo
     Then la sezione soglie di chiamate API personalizzate non è presente
 
     Examples:
@@ -78,11 +78,11 @@ Feature: Visualizzazione delle soglie di chiamate API personalizzate nella sched
   quando l'e-service richiede un attributo certificato ma la soglia per il fruitore non è stata personalizzata.
 
     Given un erogatore admin del Comune di Milano
-    And crea un e-service <dataExchangeMode> con un attributo certificato
+    And crea un EService <dataExchangeMode> con un attributo certificato
       | consumerThreshold | 20 |
       | totalThreshold    | 40 |
     And un admin dell'Agenzia per l'Italia Digitale possiede quell'attributo certificato
-    When visualizza la pagina dell'e-service dal catalogo
+    When visualizza la pagina dell'EService dal catalogo
     Then la sezione soglie di chiamate API personalizzate non è presente
 
     Examples:
