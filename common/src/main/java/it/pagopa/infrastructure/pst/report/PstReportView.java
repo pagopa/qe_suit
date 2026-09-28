@@ -21,6 +21,22 @@ public record PstReportView(
         List<OperationView> operations
 ) {
 
+    /**
+     * Scopes actually designed, in declaration order: feeds the report scope filter without
+     * exposing options that would match nothing.
+     */
+    public List<String> scopes() {
+        List<String> scopes = new ArrayList<>();
+        for (OperationView operation : operations) {
+            for (ScopeView scope : operation.scopes()) {
+                if (!scopes.contains(scope.scope())) {
+                    scopes.add(scope.scope());
+                }
+            }
+        }
+        return List.copyOf(scopes);
+    }
+
     public static PstReportView from(String title, PstDocument document) {
         Objects.requireNonNull(title, "title must not be null");
         Objects.requireNonNull(document, "document must not be null");

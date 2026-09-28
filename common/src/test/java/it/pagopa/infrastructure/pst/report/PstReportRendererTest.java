@@ -92,6 +92,20 @@ class PstReportRendererTest {
     }
 
     @Test
+    void rendersKeywordAndScopeFiltersOverSearchableRows() {
+        String html = renderer.renderToString(document(), "PST");
+
+        assertTrue(html.contains("id=\"textFilter\""));
+        assertTrue(html.contains("id=\"scopeFilter\""));
+        assertTrue(html.contains("<option value=\"PAYLOAD\">PAYLOAD</option>"));
+        assertTrue(html.contains("<option value=\"PATH_PARAMS\">PATH_PARAMS</option>"));
+
+        String create = operationSection(html, "createAgreement");
+        assertTrue(html.contains("data-search=\"post /agreements createagreement\""));
+        assertTrue(create.contains("data-search=\"$.delegationid replaced_with_null 200\""));
+    }
+
+    @Test
     void rendersPayloadTargetsAsJsonPathAndPathParamsAsPlaceholders() {
         PstDocument document = new PstDocument(List.of(new PstOperation("op", "PUT", "/items/{itemId}", List.of(
                 scenario(RequestScope.PAYLOAD, "", FuzzScenario.REMOVED, ContractValidity.UNKNOWN, 400, ExpectationOrigin.POLICY_UNKNOWN),
@@ -181,7 +195,7 @@ class PstReportRendererTest {
     }
 
     private List<String> rows(String section) {
-        Matcher matcher = Pattern.compile("<tr class=\"scenario-row\">(.*?)</tr>", Pattern.DOTALL).matcher(section);
+        Matcher matcher = Pattern.compile("<tr class=\"scenario-row\"[^>]*>(.*?)</tr>", Pattern.DOTALL).matcher(section);
         List<String> rows = new java.util.ArrayList<>();
         while (matcher.find()) rows.add(matcher.group(1));
         return rows;

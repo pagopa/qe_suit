@@ -36,7 +36,10 @@
         .status-code.status-4xx{background:var(--s4-soft);color:var(--s4);border-color:var(--s4)}
         .status-code.status-5xx{background:var(--s5-soft);color:var(--s5);border-color:var(--s5)}
         .empty-state{background:#fff;border:1px dashed var(--border);border-radius:10px;padding:20px;color:var(--muted);text-align:center;margin:15px 0}
-        @media(max-width:950px){main{padding:14px}.summary-grid{grid-template-columns:repeat(2,1fr)}.targets-grid{grid-template-columns:1fr}.group-header{display:block}}
+        .filters{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;display:grid;grid-template-columns:180px 1fr auto;gap:10px;align-items:center;box-shadow:var(--shadow);position:sticky;top:8px;z-index:10;margin-bottom:24px}
+        .filters select,.filters input[type=search]{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;background:#fff;color:var(--text);font:inherit;font-size:13px}
+        .filter-summary{font-size:12px;color:var(--muted);white-space:nowrap}
+        @media(max-width:950px){main{padding:14px}.summary-grid{grid-template-columns:repeat(2,1fr)}.targets-grid{grid-template-columns:1fr}.group-header{display:block}.filters{grid-template-columns:1fr}}
     </style>
 </head>
 <body>
@@ -54,9 +57,21 @@
     <div class="empty-state" th:if="${report.operations.isEmpty()}">Nessuna operation presente nel PST.</div>
 
     <th:block th:unless="${report.operations.isEmpty()}">
+        <section class="filters">
+            <select id="scopeFilter">
+                <option value="">Tutti gli scope</option>
+                <option th:each="scope : ${report.scopes}" th:value="${scope}" th:text="${scope}">PAYLOAD</option>
+            </select>
+            <input id="textFilter" type="search" placeholder="Cerca operationId, path, target o fuzz scenario…">
+            <div class="filter-summary" id="filterSummary">&nbsp;</div>
+        </section>
+
         <div class="section-title"><h2>Operation</h2><div class="hint">Metodo · path · operationId · numero scenari</div></div>
         <section class="targets-grid">
-            <a class="target-card" th:each="operation : ${report.operations}" th:href="${'#' + operation.anchor}">
+            <a class="target-card filterable-target"
+               th:each="operation : ${report.operations}"
+               th:href="${'#' + operation.anchor}"
+               th:attr="data-anchor=${operation.anchor}">
                 <div>
                     <span class="method-chip" th:text="${operation.httpMethod}">POST</span>
                     <span class="operation-id" th:text="${operation.operationId}">createAgreement</span>
@@ -67,10 +82,10 @@
         </section>
 
         <div class="section-title"><h2>Dettaglio scenari</h2><div class="hint">Operation · scope · target · scenario</div></div>
-        <section class="test-group operation"
+        <section class="test-group operation filterable-group"
                  th:each="operation : ${report.operations}"
                  th:id="${operation.anchor}"
-                 th:attr="data-operation-id=${operation.operationId}">
+                 th:attr="data-operation-id=${operation.operationId},data-anchor=${operation.anchor},data-search=${#strings.toLowerCase(operation.httpMethod + ' ' + operation.path + ' ' + operation.operationId)}">
             <div class="group-header">
                 <div>
                     <div class="group-line">
@@ -84,14 +99,15 @@
 
             <div class="empty-state" th:if="${operation.scopes.isEmpty()}">Nessuno scenario pianificato per questa operation.</div>
 
-            <div class="scope" th:each="scope : ${operation.scopes}" th:attr="data-scope=${scope.scope}">
+            <div class="scope filterable-scope" th:each="scope : ${operation.scopes}" th:attr="data-scope=${scope.scope}">
                 <div class="scope-title" th:text="${scope.scope + ' · ' + scope.scenarioCount + ' scenari'}">PAYLOAD · 0 scenari</div>
                 <table class="scenarios">
                     <thead>
                     <tr><th>Scope</th><th>Target</th><th>Fuzz scenario</th><th class="expected-status-header">Expected status code</th></tr>
                     </thead>
                     <tbody>
-                    <tr class="scenario-row" th:each="scenario : ${scope.scenarios}">
+                    <tr class="scenario-row" th:each="scenario : ${scope.scenarios}"
+                        th:attr="data-scope=${scenario.scope},data-search=${#strings.toLowerCase(scenario.target + ' ' + scenario.scenario + ' ' + scenario.expectedStatus)}">
                         <td class="scope-cell" th:text="${scenario.scope}">PAYLOAD</td>
                         <td class="target" th:text="${scenario.target}">$.name</td>
                         <td class="scenario" th:text="${scenario.scenario}">REMOVED</td>
@@ -101,7 +117,68 @@
                 </table>
             </div>
         </section>
+        <div class="empty-state" id="noMatches" hidden>Nessuno scenario corrisponde ai filtri applicati.</div>
     </th:block>
 </main>
+<script th:inline="none">
+    (function () {
+        const scopeFilter = document.getElementById('scopeFilter');
+        const textFilter = document.getElementById('textFilter');
+        if (!scopeFilter || !textFilter) return;
+
+        const summary = document.getElementById('filterSummary');
+        const noMatches = document.getElementById('noMatches');
+        const groups = Array.from(document.querySelectorAll('.filterable-group'));
+        const cards = Array.from(document.querySelectorAll('.filterable-target'));
+
+        const normalize = value => (value || '').toString().trim().toLowerCase();
+
+        function applyFilters() {
+            const scope = scopeFilter.value;
+            const text = normalize(textFilter.value);
+            const visibleAnchors = new Set();
+            let visibleScenarios = 0;
+
+            groups.forEach(group => {
+                const operationMatches = !text || normalize(group.dataset.search).includes(text);
+                let groupScenarios = 0;
+
+                group.querySelectorAll('.filterable-scope').forEach(scopeBlock => {
+                    const scopeMatches = !scope || scopeBlock.dataset.scope === scope;
+                    let scopeScenarios = 0;
+
+                    scopeBlock.querySelectorAll('.scenario-row').forEach(row => {
+                        // An operation match keeps all its rows, so a search by path or
+                        // operationId shows the whole design of that operation.
+                        const rowMatches = scopeMatches
+                                && (operationMatches || !text || normalize(row.dataset.search).includes(text));
+                        row.hidden = !rowMatches;
+                        if (rowMatches) scopeScenarios++;
+                    });
+
+                    scopeBlock.hidden = scopeScenarios === 0;
+                    groupScenarios += scopeScenarios;
+                });
+
+                group.hidden = groupScenarios === 0;
+                if (groupScenarios > 0) visibleAnchors.add(group.dataset.anchor);
+                visibleScenarios += groupScenarios;
+            });
+
+            cards.forEach(card => {
+                card.hidden = !visibleAnchors.has(card.dataset.anchor);
+            });
+
+            if (noMatches) noMatches.hidden = visibleScenarios > 0;
+            if (summary) {
+                summary.textContent = visibleAnchors.size + ' operation · ' + visibleScenarios + ' scenari';
+            }
+        }
+
+        scopeFilter.addEventListener('change', applyFilters);
+        textFilter.addEventListener('input', applyFilters);
+        applyFilters();
+    })();
+</script>
 </body>
 </html>
