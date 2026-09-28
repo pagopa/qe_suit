@@ -2,8 +2,10 @@ name: "[INTEROP] QA workflow"
 
 on:
   schedule:
-    # 06:00 UTC = 08:00 Europe/Rome (CEST) / 07:00 (CET). I cron di GitHub sono sempre UTC.
+    # 06:00 UTC = 08:00 Europe/Rome durante CEST.
+    # Attenzione: in inverno 06:00 UTC = 07:00 CET.
     - cron: '0 6 * * *'
+
   workflow_dispatch:
     inputs:
       environment:
@@ -14,11 +16,13 @@ on:
         options:
           - dev
           - qa
+
       javaTestSuite:
         description: 'Choose which Java test suite to run'
         required: false
         default: NrtStandardSuiteTest
         type: string
+
       branchName:
         description: 'Branch di qe_suit da testare (indipendente dal branch selezionato in "Use workflow from")'
         required: false
@@ -36,12 +40,24 @@ jobs:
   run_tests:
     name: Run Java Selenium Tests
     runs-on: ubuntu-22.04
+
     env:
       ENVIRONMENT: ${{ inputs.environment || 'qa' }}
       JAVA_TEST_SUITE: ${{ inputs.javaTestSuite || 'NrtStandardSuiteTest' }}
       BRANCH_NAME: ${{ inputs.branchName || github.ref_name }}
 
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      AWS_REGION: eu-south-1
+      AWS_DEFAULT_REGION: eu-south-1
+
     steps:
+      - name: Verify AWS credentials
+        run: |
+          echo "Checking AWS identity..."
+          aws sts get-caller-identity
+
       - name: Set up Maven
         uses: s4u/setup-maven-action@6d44c18d67d9e1549907b8815efa5e4dada1801b
         with:
@@ -83,7 +99,14 @@ jobs:
             SPRING_PROFILE="-Dspring.profiles.active=qa"
           fi
 
-          mvn test $SPRING_PROFILE -Dtest=${{ env.JAVA_TEST_SUITE }}
+          echo "Environment: ${{ env.ENVIRONMENT }}"
+          echo "Spring profile: $SPRING_PROFILE"
+          echo "Test suite: ${{ env.JAVA_TEST_SUITE }}"
+          echo "qe_suit branch: ${{ env.BRANCH_NAME }}"
+
+          mvn test \
+            $SPRING_PROFILE \
+            -Dtest=${{ env.JAVA_TEST_SUITE }}
 
       - name: Upload Test Logs
         if: always()
