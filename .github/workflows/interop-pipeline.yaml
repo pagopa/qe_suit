@@ -89,7 +89,7 @@ jobs:
           cd ./qe_suit/common
           mvn -B -ntp clean install -DskipTests
 
-      - name: Run Selenium Tests
+      - name: Run Test Suite
         run: |
           cd ./qe_suit/interop
 
