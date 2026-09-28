@@ -93,7 +93,25 @@ overrides:               # optional
     status: 200
 ```
 
+## Request bodies
+
+JSON bodies (`application/json`, `*+json`) are designed from the generated Java model resolved through the
+`body(...)` method of the generated operation.
+
+Form bodies (`multipart/form-data`, `application/x-www-form-urlencoded`) have no generated model: the
+generator emits one `<field>Form(...)` method per field. They are designed as a typed field map that goes
+through the same decomposer, rules, validity and expectation resolution as any other payload, so targets
+appear as `$.<field>`. Binary fields (`format: binary`/`base64`) are not fuzzable and are excluded: the
+contract test supplies the file directly on the generated operation. At runtime `OpenApiOperationAdapter`
+binds these payloads field by field on the `<field>Form(...)` methods instead of setting a JSON body.
+
+Any other media type (for example `application/octet-stream`) fails explicitly.
+
 ## Known limitations
 
 Top-level `List<Model>` bodies, immutable models, complex path parameters, external parameter `$ref` and
-unresolvable inline enums are not supported and fail explicitly.
+unresolvable inline enums in path parameters are not supported and fail explicitly.
+
+Inline enums of form fields are designed as their base scalar type, because the generated form methods are
+untyped (`Object...`) and no Java enum is generated for them: enum specific scenarios are therefore not
+designed for those fields, consistently with what the runtime can actually send.

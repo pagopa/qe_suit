@@ -21,4 +21,6 @@ scenarioStatus:
   REPLACED_WITH_NIL_UUID: 400
   REPLACED_WITH_UNKNOWN_ENUM: 400
 
-
+#operations:
+#  - createAgreement
+#  - getAgreementById

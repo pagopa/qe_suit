@@ -2,6 +2,7 @@ package it.pagopa.infrastructure.openapi.seed;
 
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.io.File;
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.InvocationTargetException;
@@ -11,6 +12,19 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.Period;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -26,6 +40,8 @@ import java.util.UUID;
 public final class DeterministicSeedFactory {
 
     private static final UUID SEED_UUID = UUID.fromString("11111111-1111-4111-8111-111111111111");
+    private static final Instant SEED_INSTANT = Instant.parse("2020-01-01T00:00:00Z");
+    private static final URI SEED_URI = URI.create("https://example.org/seed");
     // Keep one nested instance of a recursive model so graph traversal sees the recursive branch.
     private static final int MAX_TYPE_OCCURRENCES_PER_BRANCH = 2;
 
@@ -52,6 +68,9 @@ public final class DeterministicSeedFactory {
         if (rawType == Float.class || rawType == float.class) return 1.0f;
         if (rawType == Double.class || rawType == double.class) return 1.0d;
         if (rawType == Boolean.class || rawType == boolean.class) return true;
+        if (rawType == Character.class || rawType == char.class) return 'a';
+        Object jdkValue = jdkValueType(rawType);
+        if (jdkValue != null) return jdkValue;
         if (rawType.isEnum()) return firstEnumValue(rawType);
         if (rawType == Optional.class) {
             Type elementType = typeArgument(type, 0);
@@ -73,8 +92,33 @@ public final class DeterministicSeedFactory {
         return createBean(rawType, branchDepth);
     }
 
-    private Object createCollection(Class<?> collectionType, Type declaredType, Map<Class<?>, Integer> branchDepth) {
-        Collection<Object> values;
+    /**
+     * Value-like JDK types are not JavaBeans: they get a deterministic representative instance.
+     */
+    private Object jdkValueType(Class<?> rawType) {
+        if (rawType == Instant.class) return SEED_INSTANT;
+        if (rawType == OffsetDateTime.class) return SEED_INSTANT.atOffset(ZoneOffset.UTC);
+        if (rawType == ZonedDateTime.class) return SEED_INSTANT.atZone(ZoneOffset.UTC);
+        if (rawType == LocalDateTime.class) return LocalDateTime.ofInstant(SEED_INSTANT, ZoneOffset.UTC);
+        if (rawType == LocalDate.class) return LocalDate.ofInstant(SEED_INSTANT, ZoneOffset.UTC);
+        if (rawType == LocalTime.class) return LocalTime.ofInstant(SEED_INSTANT, ZoneOffset.UTC);
+        if (rawType == OffsetTime.class) return OffsetTime.ofInstant(SEED_INSTANT, ZoneOffset.UTC);
+        if (rawType == Duration.class) return Duration.ofSeconds(1);
+        if (rawType == Period.class) return Period.ofDays(1);
+        if (rawType == java.util.Date.class) return java.util.Date.from(SEED_INSTANT);
+        if (rawType == URI.class) return SEED_URI;
+        if (rawType == URL.class) {
+            try {
+                return SEED_URI.toURL();
+            } catch (MalformedURLException exception) {
+                throw new IllegalStateException("Cannot create deterministic seed for " + rawType.getName(), exception);
+            }
+        }
+        if (rawType == File.class) return new File("seed");
+        return null;
+    }
+
+    private Object createCollection(Class<?> collectionType, Type declaredType, Map<Class<?>, Integer> branchDepth) {        Collection<Object> values;
         if (Set.class.isAssignableFrom(collectionType)) {
             values = new LinkedHashSet<>();
         } else if (collectionType.isInterface() || collectionType == Collection.class) {

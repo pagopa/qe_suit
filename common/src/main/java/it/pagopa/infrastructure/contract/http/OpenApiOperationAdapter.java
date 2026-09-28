@@ -64,17 +64,109 @@ final class OpenApiOperationAdapter {
     }
 
     private void bind(Object operation, HttpContractRequest request) {
-        applyReqSpec(operation, reqSpec -> {
-            if (request.payloadPresent()) {
-                if (request.payload() == null) {
-                    reqSpec.setBody("null");
-                } else {
-                    reqSpec.setBody(toJson(request.payload()));
+        if (request.payloadPresent() && !hasBodyMethod(operation) && hasFormMethod(operation)) {
+            bindFormPayload(operation, request.payload());
+        } else {
+            applyReqSpec(operation, reqSpec -> {
+                if (request.payloadPresent()) {
+                    if (request.payload() == null) {
+                        reqSpec.setBody("null");
+                    } else {
+                        reqSpec.setBody(toJson(request.payload()));
+                    }
                 }
-            }
-        });
+            });
+        }
 
         bindPathParams(operation, request.pathParams());
+    }
+
+    private boolean hasBodyMethod(Object operation) {
+        for (Method method : operation.getClass().getMethods()) {
+            if (method.getName().equals("body") && method.getParameterCount() == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasFormMethod(Object operation) {
+        for (Method method : operation.getClass().getMethods()) {
+            if (method.getName().endsWith("Form") && method.getParameterCount() == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Binds a non JSON request body ({@code multipart/form-data} or
+     * {@code application/x-www-form-urlencoded}) on generated operations that expose
+     * one {@code <field>Form(...)} method per form field instead of {@code body(...)}.
+     */
+    private void bindFormPayload(Object operation, JsonNode payload) {
+        if (payload == null || payload.isNull()) {
+            return;
+        }
+        if (!payload.isObject()) {
+            throw new ContractHttpException(
+                    "Form request body must be a JSON object on "
+                            + operation.getClass().getSimpleName()
+            );
+        }
+
+        Iterator<Map.Entry<String, JsonNode>> fields = payload.fields();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> field = fields.next();
+            String fieldName = field.getKey();
+            String methodName = fieldName + "Form";
+            Method method = resolveFormFieldMethod(operation, methodName);
+
+            if (method == null) {
+                throw new ContractHttpException(
+                        "Cannot bind form field '" + fieldName + "': expected method "
+                                + methodName + "(...) on " + operation.getClass().getSimpleName()
+                );
+            }
+
+            try {
+                method.invoke(operation, formArgument(method, field.getValue()));
+            } catch (InvocationTargetException | IllegalAccessException exception) {
+                throw new ContractHttpException(
+                        "Failed to bind form field '" + fieldName + "'",
+                        exception
+                );
+            }
+        }
+    }
+
+    private Method resolveFormFieldMethod(Object operation, String methodName) {
+        for (Method method : operation.getClass().getMethods()) {
+            if (method.getName().equals(methodName) && method.getParameterCount() == 1) {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    private Object formArgument(Method method, JsonNode valueNode) {
+        Class<?> parameterType = method.getParameterTypes()[0];
+        if (parameterType.isArray()) {
+            Object[] values = {formValue(valueNode)};
+            return values;
+        }
+        return convertValueForParameter(valueNode, parameterType);
+    }
+
+    private Object formValue(JsonNode valueNode) {
+        if (valueNode == null || valueNode.isNull()) {
+            // Mirrors the JSON body convention: a null value stays observable on the wire.
+            return "null";
+        }
+        if (valueNode.isTextual()) return valueNode.textValue();
+        if (valueNode.isNumber()) return valueNode.numberValue();
+        if (valueNode.isBoolean()) return valueNode.booleanValue();
+        return toJson(valueNode);
     }
 
     private void bindPathParams(

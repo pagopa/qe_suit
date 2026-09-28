@@ -3,8 +3,10 @@ package it.pagopa.infrastructure.openapi;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.parser.OpenAPIV3Parser;
 import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
@@ -22,6 +24,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,6 +34,9 @@ import java.util.jar.JarFile;
 import java.util.stream.Stream;
 
 public final class OpenApiOperationDiscovery {
+
+    private static final String PATH_PARAMETER_KIND = "path parameter";
+    private static final String FORM_FIELD_KIND = "form field";
 
     private final ClassLoader classLoader;
 
@@ -107,7 +113,13 @@ public final class OpenApiOperationDiscovery {
     ) {
         String operationId = operation.getOperationId();
         Class<?> operationClass = resolveOperationClass(operationId, apiMethods);
-        Optional<Type> requestBodyType = requestBodyType(operationId, operationClass, operation);
+        ResolvedRequestBody requestBody = resolveRequestBody(
+                configuration,
+                openApi,
+                operationId,
+                operationClass,
+                operation
+        );
         List<PathParameterDescriptor> pathParameters = resolvePathParameters(
                 configuration,
                 openApi,
@@ -119,14 +131,114 @@ public final class OpenApiOperationDiscovery {
                 operationId,
                 method.name(),
                 path,
-                requestBodyType,
+                requestBody.jsonType(),
+                requestBody.formFields(),
                 pathParameters
         );
     }
 
-    private Optional<Type> requestBodyType(String operationId, Class<?> operationClass, Operation operation) {
-        boolean hasRequestBody = operation.getRequestBody() != null;
-        if (!hasRequestBody) return Optional.empty();
+    private ResolvedRequestBody resolveRequestBody(
+            GeneratedApiConfiguration configuration,
+            OpenAPI openApi,
+            String operationId,
+            Class<?> operationClass,
+            Operation operation
+    ) {
+        RequestBody requestBody = operation.getRequestBody();
+        if (requestBody == null) return ResolvedRequestBody.none();
+
+        Content content = requestBody.getContent();
+        Set<String> mediaTypes = content == null ? Set.of() : new LinkedHashSet<>(content.keySet());
+        Optional<String> jsonMediaType = mediaTypes.stream().filter(OpenApiOperationDiscovery::isJsonMediaType).findFirst();
+        if (jsonMediaType.isPresent() || mediaTypes.isEmpty()) {
+            return ResolvedRequestBody.json(jsonRequestBodyType(operationId, operationClass, mediaTypes));
+        }
+
+        Optional<String> formMediaType = mediaTypes.stream().filter(OpenApiOperationDiscovery::isFormMediaType).findFirst();
+        if (formMediaType.isEmpty()) {
+            throw new IllegalStateException(
+                    "Unsupported request body media type for operationId " + operationId + ": " + mediaTypes
+            );
+        }
+
+        Schema<?> schema = content.get(formMediaType.get()).getSchema();
+        if (schema == null) {
+            throw new IllegalStateException(
+                    "Missing request body schema for operationId " + operationId
+                            + ", media type " + formMediaType.get()
+            );
+        }
+        return ResolvedRequestBody.form(resolveFormFields(configuration, openApi, operationId, schema));
+    }
+
+    private List<FormFieldDescriptor> resolveFormFields(
+            GeneratedApiConfiguration configuration,
+            OpenAPI openApi,
+            String operationId,
+            Schema<?> schema
+    ) {
+        Schema<?> resolved = resolveSchemaReference(openApi, operationId, schema);
+        Map<String, Schema> properties = resolved.getProperties();
+        if (properties == null || properties.isEmpty()) {
+            throw new IllegalStateException(
+                    "Unsupported form request body without properties for operationId " + operationId
+            );
+        }
+        List<FormFieldDescriptor> fields = new ArrayList<>();
+        for (Map.Entry<String, Schema> entry : properties.entrySet()) {
+            Schema<?> fieldSchema = entry.getValue();
+            if (fieldSchema == null) {
+                throw new IllegalStateException(
+                        "Missing schema for form field '" + entry.getKey() + "' in operationId " + operationId
+                );
+            }
+            // Binary fields carry no fuzzable value: the test supplies the file on the generated operation.
+            if (isBinarySchema(fieldSchema)) continue;
+            Class<?> javaType = resolveScalarType(
+                    configuration,
+                    openApi,
+                    operationId,
+                    FORM_FIELD_KIND,
+                    entry.getKey(),
+                    fieldSchema,
+                    true
+            );
+            fields.add(new FormFieldDescriptor(entry.getKey(), javaType, schemaDescription(fieldSchema)));
+        }
+        return List.copyOf(fields);
+    }
+
+    private Schema<?> resolveSchemaReference(OpenAPI openApi, String operationId, Schema<?> schema) {
+        if (schema.get$ref() == null) return schema;
+        String componentName = lastReferenceToken(schema.get$ref());
+        Schema<?> referenced = openApi.getComponents() == null || openApi.getComponents().getSchemas() == null
+                ? null
+                : openApi.getComponents().getSchemas().get(componentName);
+        if (referenced == null) {
+            throw new IllegalStateException(
+                    "Cannot resolve request body schema reference in operationId " + operationId
+                            + ": " + schema.get$ref()
+            );
+        }
+        return referenced;
+    }
+
+    private static boolean isBinarySchema(Schema<?> schema) {
+        return "string".equals(schema.getType())
+                && ("binary".equals(schema.getFormat()) || "base64".equals(schema.getFormat()));
+    }
+
+    private static boolean isJsonMediaType(String mediaType) {
+        String value = mediaType.toLowerCase(Locale.ROOT);
+        return value.equals("application/json") || value.endsWith("+json") || value.equals("*/*");
+    }
+
+    private static boolean isFormMediaType(String mediaType) {
+        String value = mediaType.toLowerCase(Locale.ROOT);
+        return value.equals("multipart/form-data") || value.equals("application/x-www-form-urlencoded");
+    }
+
+    private Optional<Type> jsonRequestBodyType(String operationId, Class<?> operationClass, Set<String> mediaTypes) {
         List<Type> bodyTypes = Stream.of(operationClass.getMethods())
                 .filter(method -> method.getName().equals("body") && method.getParameterCount() == 1)
                 .map(method -> method.getGenericParameterTypes()[0])
@@ -137,9 +249,24 @@ public final class OpenApiOperationDiscovery {
             throw new IllegalStateException(
                     "Cannot resolve generated request body type for operationId " + operationId
                             + " from " + operationClass.getName()
+                            + " (media types " + mediaTypes + ")"
             );
         }
         return Optional.of(bodyTypes.get(0));
+    }
+
+    private record ResolvedRequestBody(Optional<Type> jsonType, List<FormFieldDescriptor> formFields) {
+        static ResolvedRequestBody none() {
+            return new ResolvedRequestBody(Optional.empty(), List.of());
+        }
+
+        static ResolvedRequestBody json(Optional<Type> type) {
+            return new ResolvedRequestBody(type, List.of());
+        }
+
+        static ResolvedRequestBody form(List<FormFieldDescriptor> fields) {
+            return new ResolvedRequestBody(Optional.empty(), fields);
+        }
     }
 
     private Class<?> resolveOperationClass(String operationId, List<ApiMethod> apiMethods) {
@@ -177,12 +304,14 @@ public final class OpenApiOperationDiscovery {
                                 + "' in operationId " + operationId
                 );
             }
-            Class<?> javaType = resolvePathParameterType(
+            Class<?> javaType = resolveScalarType(
                     configuration,
                     openApi,
                     operationId,
+                    PATH_PARAMETER_KIND,
                     parameter.getName(),
-                    schema
+                    schema,
+                    false
             );
             descriptors.add(new PathParameterDescriptor(parameter.getName(), javaType, schemaDescription(schema)));
         }
@@ -217,29 +346,35 @@ public final class OpenApiOperationDiscovery {
         }
     }
 
-    private Class<?> resolvePathParameterType(
+    private Class<?> resolveScalarType(
             GeneratedApiConfiguration configuration,
             OpenAPI openApi,
             String operationId,
+            String kind,
             String parameterName,
-            Schema<?> schema
+            Schema<?> schema,
+            boolean allowInlineEnum
     ) {
-        return resolvePathParameterType(
+        return resolveScalarType(
                 configuration,
                 openApi,
                 operationId,
+                kind,
                 parameterName,
                 schema,
+                allowInlineEnum,
                 new HashSet<>()
         );
     }
 
-    private Class<?> resolvePathParameterType(
+    private Class<?> resolveScalarType(
             GeneratedApiConfiguration configuration,
             OpenAPI openApi,
             String operationId,
+            String kind,
             String parameterName,
             Schema<?> schema,
+            boolean allowInlineEnum,
             Set<String> referenceChain
     ) {
         if (schema.get$ref() != null) {
@@ -247,8 +382,8 @@ public final class OpenApiOperationDiscovery {
             String componentName = lastReferenceToken(reference);
             if (!referenceChain.add(componentName)) {
                 throw new IllegalStateException(
-                        "Cyclic path parameter schema reference in operationId " + operationId
-                                + ", parameter '" + parameterName + "': " + referenceChain
+                        "Cyclic " + kind + " schema reference in operationId " + operationId
+                                + ", " + kind + " '" + parameterName + "': " + referenceChain
                 );
             }
             Optional<Class<?>> refClass = loadModelClass(configuration.modelPackage(), componentName);
@@ -257,22 +392,25 @@ public final class OpenApiOperationDiscovery {
                     ? null
                     : openApi.getComponents().getSchemas().get(componentName);
             if (referencedSchema != null && !reference.equals(referencedSchema.get$ref())) {
-                if (referencedSchema.getEnum() != null && !referencedSchema.getEnum().isEmpty()) {
-                    throw unresolvedEnum(operationId, parameterName, schema);
+                if (referencedSchema.getEnum() != null && !referencedSchema.getEnum().isEmpty()
+                        && !allowInlineEnum) {
+                    throw unresolvedEnum(operationId, kind, parameterName, schema);
                 }
-                return resolvePathParameterType(
+                return resolveScalarType(
                         configuration,
                         openApi,
                         operationId,
+                        kind,
                         parameterName,
                         referencedSchema,
+                        allowInlineEnum,
                         referenceChain
                 );
             }
         }
 
-        if (schema.getEnum() != null && !schema.getEnum().isEmpty()) {
-            throw unresolvedEnum(operationId, parameterName, schema);
+        if (schema.getEnum() != null && !schema.getEnum().isEmpty() && !allowInlineEnum) {
+            throw unresolvedEnum(operationId, kind, parameterName, schema);
         }
 
         String type = schema.getType();
@@ -298,15 +436,15 @@ public final class OpenApiOperationDiscovery {
             if (refClass.isPresent() && refClass.get().isEnum()) return refClass.get();
         }
         throw new IllegalStateException(
-                "Unsupported path parameter schema in operationId " + operationId
-                        + ", parameter '" + parameterName + "': " + schemaDescription(schema)
+                "Unsupported " + kind + " schema in operationId " + operationId
+                        + ", " + kind + " '" + parameterName + "': " + schemaDescription(schema)
         );
     }
 
-    private IllegalStateException unresolvedEnum(String operationId, String parameterName, Schema<?> schema) {
+    private IllegalStateException unresolvedEnum(String operationId, String kind, String parameterName, Schema<?> schema) {
         return new IllegalStateException(
                 "Cannot resolve generated Java enum for operationId " + operationId
-                        + ", parameter '" + parameterName + "', schema: " + schemaDescription(schema)
+                        + ", " + kind + " '" + parameterName + "', schema: " + schemaDescription(schema)
         );
     }
 

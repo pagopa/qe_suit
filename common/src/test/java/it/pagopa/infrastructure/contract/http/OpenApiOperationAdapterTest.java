@@ -62,6 +62,79 @@ class OpenApiOperationAdapterTest {
         assertEquals(true, exception.getMessage().contains("Cannot bind path parameter 'agreementId'"));
     }
 
+    @Test
+    void bindsFormFieldsWhenOperationHasNoBodyMethod() {
+        FakeFormOperation operation = new FakeFormOperation();
+        ObjectNode payload = objectMapper.createObjectNode();
+        payload.put("name", "mario");
+        payload.put("revision", 7);
+
+        adapter.execute(operation, new HttpContractRequest(payload, true, null));
+
+        assertEquals("mario", operation.boundFormParams.get("name"));
+        assertEquals(7, ((Number) operation.boundFormParams.get("revision")).intValue());
+        verify(operation.requestSpecBuilder, never()).setBody(anyString());
+    }
+
+    @Test
+    void bindsNullFormFieldValueAsNullLiteral() {
+        FakeFormOperation operation = new FakeFormOperation();
+        ObjectNode payload = objectMapper.createObjectNode();
+        payload.set("name", NullNode.instance);
+
+        adapter.execute(operation, new HttpContractRequest(payload, true, null));
+
+        assertEquals("null", operation.boundFormParams.get("name"));
+    }
+
+    @Test
+    void removedFormFieldIsNotBound() {
+        FakeFormOperation operation = new FakeFormOperation();
+        ObjectNode payload = objectMapper.createObjectNode();
+        payload.put("revision", 1);
+
+        adapter.execute(operation, new HttpContractRequest(payload, true, null));
+
+        assertFalse(operation.boundFormParams.containsKey("name"));
+    }
+
+    @Test
+    void missingFormFieldBindingMethodFailsFast() {
+        FakeFormOperation operation = new FakeFormOperation();
+        ObjectNode payload = objectMapper.createObjectNode().put("unknown", "x");
+
+        ContractHttpException exception = assertThrows(
+                ContractHttpException.class,
+                () -> adapter.execute(operation, new HttpContractRequest(payload, true, null))
+        );
+        assertEquals(true, exception.getMessage().contains("Cannot bind form field 'unknown'"));
+    }
+
+    static class FakeFormOperation {
+        final RequestSpecBuilder requestSpecBuilder = Mockito.spy(new RequestSpecBuilder());
+        final Response response = Mockito.mock(Response.class);
+        final Map<String, Object> boundFormParams = new LinkedHashMap<>();
+
+        public FakeFormOperation reqSpec(Consumer<RequestSpecBuilder> customizer) {
+            customizer.accept(requestSpecBuilder);
+            return this;
+        }
+
+        public FakeFormOperation nameForm(Object... values) {
+            boundFormParams.put("name", values[0]);
+            return this;
+        }
+
+        public FakeFormOperation revisionForm(Object... values) {
+            boundFormParams.put("revision", values[0]);
+            return this;
+        }
+
+        public <T> T execute(Function<Response, T> handler) {
+            return handler.apply(response);
+        }
+    }
+
     static class FakeOperation  {
         final RequestSpecBuilder requestSpecBuilder = Mockito.spy(new RequestSpecBuilder());
         final Response response = Mockito.mock(Response.class);

@@ -1,6 +1,7 @@
 package it.pagopa.infrastructure.openapi.seed;
 
 import it.pagopa.infrastructure.openapi.DiscoveredOperation;
+import it.pagopa.infrastructure.openapi.FormFieldDescriptor;
 import it.pagopa.infrastructure.openapi.PathParameterDescriptor;
 
 import java.util.LinkedHashMap;
@@ -19,6 +20,13 @@ public final class OperationSeedFactory {
     public OperationSeed create(DiscoveredOperation operation) {
         Objects.requireNonNull(operation, "operation must not be null");
         Optional<Object> body = operation.requestBodyType().map(seedFactory::create);
+        if (body.isEmpty() && !operation.requestBodyFormFields().isEmpty()) {
+            Map<String, Object> formBody = new LinkedHashMap<>();
+            for (FormFieldDescriptor field : operation.requestBodyFormFields()) {
+                formBody.put(field.name(), seedFactory.create(field.javaType()));
+            }
+            body = Optional.of(formBody);
+        }
         Map<String, Object> pathParameters = new LinkedHashMap<>();
         for (PathParameterDescriptor parameter : operation.pathParameters()) {
             pathParameters.put(parameter.name(), seedFactory.create(parameter.javaType()));

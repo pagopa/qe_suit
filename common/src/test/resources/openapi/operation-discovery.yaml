@@ -73,6 +73,49 @@ paths:
       responses:
         '200':
           description: found
+  /widgets/{widgetId}/documents:
+    post:
+      operationId: uploadWidgetDocument
+      parameters:
+        - name: widgetId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                revision:
+                  type: integer
+                  format: int32
+                kind:
+                  type: string
+                  enum: [INTERFACE, DOCUMENT]
+                doc:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: created
+  /widgets/form:
+    post:
+      operationId: submitWidgetForm
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WidgetForm'
+      responses:
+        '200':
+          description: ok
   /widgets/metrics/{ratio}/{active}/{large}/{threshold}:
     get:
       operationId: getWidgetMetrics
@@ -131,6 +174,13 @@ components:
         revision:
           type: integer
           format: int64
+    WidgetForm:
+      type: object
+      properties:
+        code:
+          type: string
+        active:
+          type: boolean
     WidgetKind:
       type: string
       enum: [STANDARD, PREMIUM]

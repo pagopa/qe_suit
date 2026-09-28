@@ -24,7 +24,8 @@ class OpenApiOperationDiscoveryTest {
         List<DiscoveredOperation> operations = discovery.discover(configuration, Set.of());
 
         assertEquals(
-                List.of("createWidget", "createWidgetBatch", "getWidget", "getWidgetBySlug", "getWidgetByKind", "getWidgetMetrics"),
+                List.of("createWidget", "createWidgetBatch", "getWidget", "getWidgetBySlug", "getWidgetByKind",
+                        "uploadWidgetDocument", "submitWidgetForm", "getWidgetMetrics"),
                 operations.stream().map(DiscoveredOperation::operationId).toList()
         );
         DiscoveredOperation create = operations.get(0);
@@ -99,6 +100,57 @@ class OpenApiOperationDiscoveryTest {
         assertEquals(Boolean.class, metricsSeed.get("active").getClass());
         assertEquals(Long.class, metricsSeed.get("large").getClass());
         assertEquals(Double.class, metricsSeed.get("threshold").getClass());
+    }
+
+    @Test
+    void discovers_multipart_form_fields_and_skips_binary_ones() {
+        DiscoveredOperation operation = discovery.discover(configuration, Set.of("uploadWidgetDocument")).get(0);
+
+        assertTrue(operation.requestBodyType().isEmpty());
+        assertEquals(
+                List.of("name", "revision", "kind"),
+                operation.requestBodyFormFields().stream().map(FormFieldDescriptor::name).toList()
+        );
+        assertEquals(
+                List.of(String.class, Integer.class, String.class),
+                operation.requestBodyFormFields().stream().map(FormFieldDescriptor::javaType).toList()
+        );
+        assertEquals(List.of("widgetId"), operation.pathParameters().stream().map(PathParameterDescriptor::name).toList());
+
+        var seed = new it.pagopa.infrastructure.openapi.seed.OperationSeedFactory(
+                new it.pagopa.infrastructure.openapi.seed.DeterministicSeedFactory()
+        ).create(operation);
+        java.util.Map<?, ?> formBody = (java.util.Map<?, ?>) seed.requestBody().orElseThrow();
+        assertEquals(List.of("name", "revision", "kind"), List.copyOf(formBody.keySet()));
+        assertEquals("seed", formBody.get("name"));
+        assertEquals(1, formBody.get("revision"));
+    }
+
+    @Test
+    void discovers_url_encoded_form_fields_through_schema_reference() {
+        DiscoveredOperation operation = discovery.discover(configuration, Set.of("submitWidgetForm")).get(0);
+
+        assertTrue(operation.requestBodyType().isEmpty());
+        assertEquals(
+                List.of("code", "active"),
+                operation.requestBodyFormFields().stream().map(FormFieldDescriptor::name).toList()
+        );
+        assertEquals(
+                List.of(String.class, Boolean.class),
+                operation.requestBodyFormFields().stream().map(FormFieldDescriptor::javaType).toList()
+        );
+    }
+
+    @Test
+    void rejects_unsupported_request_body_media_types() {
+        GeneratedApiConfiguration unsupported = configuration("/openapi/unsupported-body-media-type.yaml");
+
+        IllegalStateException exception = assertThrows(
+                IllegalStateException.class,
+                () -> discovery.discover(unsupported, Set.of("uploadWidgetRaw"))
+        );
+        assertTrue(exception.getMessage().contains("uploadWidgetRaw"));
+        assertTrue(exception.getMessage().contains("application/octet-stream"));
     }
 
     private GeneratedApiConfiguration configuration() {

@@ -70,4 +70,17 @@ class DeterministicSeedFactoryTest {
         assertEquals(UUID.fromString("11111111-1111-4111-8111-111111111111"), factory.create(UUID.class));
         assertEquals(WidgetKind.STANDARD, factory.create(WidgetKind.class));
     }
+
+    @Test
+    void creates_deterministic_seeds_for_jdk_value_types() {
+        assertEquals(java.time.Instant.parse("2020-01-01T00:00:00Z"), factory.create(java.time.Instant.class));
+        assertEquals(
+                java.time.OffsetDateTime.parse("2020-01-01T00:00:00Z"),
+                factory.create(java.time.OffsetDateTime.class)
+        );
+        assertEquals(java.time.LocalDate.parse("2020-01-01"), factory.create(java.time.LocalDate.class));
+        assertEquals(java.net.URI.create("https://example.org/seed"), factory.create(java.net.URI.class));
+        assertEquals(factory.create(java.net.URI.class), factory.create(java.net.URI.class));
+        assertEquals(java.time.Duration.ofSeconds(1), factory.create(java.time.Duration.class));
+    }
 }

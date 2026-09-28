@@ -32,6 +32,18 @@ public class DiscoveryFixtureApi {
         return new GetWidgetByInlineKindOper();
     }
 
+    public UploadWidgetDocumentOper uploadWidgetDocument() {
+        return new UploadWidgetDocumentOper();
+    }
+
+    public SubmitWidgetFormOper submitWidgetForm() {
+        return new SubmitWidgetFormOper();
+    }
+
+    public UploadWidgetRawOper uploadWidgetRaw() {
+        return new UploadWidgetRawOper();
+    }
+
     public static class CreateWidgetOper {
         public CreateWidgetOper body(WidgetPayload body) {
             return this;
@@ -57,5 +69,36 @@ public class DiscoveryFixtureApi {
     }
 
     public static class GetWidgetByInlineKindOper {
+    }
+
+    public static class UploadWidgetDocumentOper {
+        public UploadWidgetDocumentOper nameForm(Object... value) {
+            return this;
+        }
+
+        public UploadWidgetDocumentOper revisionForm(Object... value) {
+            return this;
+        }
+
+        public UploadWidgetDocumentOper kindForm(Object... value) {
+            return this;
+        }
+
+        public UploadWidgetDocumentOper docMultiPart(java.io.File value) {
+            return this;
+        }
+    }
+
+    public static class SubmitWidgetFormOper {
+        public SubmitWidgetFormOper codeForm(Object... value) {
+            return this;
+        }
+
+        public SubmitWidgetFormOper activeForm(Object... value) {
+            return this;
+        }
+    }
+
+    public static class UploadWidgetRawOper {
     }
 }
