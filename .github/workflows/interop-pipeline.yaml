@@ -17,7 +17,7 @@ on:
       javaTestSuite:
         description: 'Choose which Java test suite to run'
         required: false
-        default: NrtStandardSuite
+        default: NrtStandardSuiteTest
         type: string
       branchName:
         description: 'Branch di qe_suit da testare (indipendente dal branch selezionato in "Use workflow from")'
