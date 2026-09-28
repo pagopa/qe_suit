@@ -1,13 +1,12 @@
-package it.pagopa.send.web.campagne.infrastructure.page;
+package it.pagopa.send.web.campaigns.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.send.web.campagne.infrastructure.page.component.CampagneBox;
+import it.pagopa.send.web.campaigns.infrastructure.page.component.CampagneBox;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import org.assertj.core.api.Assertions;
-
 import java.util.Optional;
 
 @Url("${url.notifiche.mittente.campaigns}#selfCareToken=${token.mittente}")

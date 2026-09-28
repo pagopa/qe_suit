@@ -1,13 +1,16 @@
 package it.pagopa.send.suite.contract;
 
+import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
+import it.pagopa.send.common.campaigns.application.CampaignsGateway;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.user.domain.Tenant;
-import it.pagopa.send.web.campagne.infrastructure.page.CampaignDetailPage;
-import it.pagopa.send.web.campagne.infrastructure.page.CampaignsPage;
-import it.pagopa.send.web.campagne.infrastructure.page.component.CampagneElement;
+import it.pagopa.send.generated.openapi.clients.sender.informal.bff.model.CampaignSummary;
+import it.pagopa.send.web.campaigns.infrastructure.page.CampaignDetailPage;
+import it.pagopa.send.web.campaigns.infrastructure.page.CampaignsPage;
+import it.pagopa.send.web.campaigns.infrastructure.page.component.CampagneElement;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +36,9 @@ import java.util.stream.Stream;
 })
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
-public class WebCampagneContractTest {
+public class WebCampaignsContractTest {
     private final WebBrowserContractValidator webContractValidator;
+    private final CampaignsGateway campaignsGateway;
 
     @TestFactory
     Stream<DynamicTest> campagneButtonIsPresentIntoSidebar() {
@@ -117,22 +121,73 @@ public class WebCampagneContractTest {
         ));
     }
 
+
+
     @TestFactory
     Stream<DynamicTest> dettaglioCampagna() {
+        List<CampaignSummary> results = campaignsGateway.getCampaigns();
         return webContractValidator
                 .as(Tenant.GROSSINI, List.of())
-                .on(CampaignDetailPage.class)
-                .tests(dettaglioCampagnaScenarios());
+                .on(CampaignDetailPage.class,results.get(0).getCampaignId())
+                .tests(dettaglioCampagnaScenarios(results.get(0)));
     }
 
-    private static @NonNull Stream<WebScenario<CampaignDetailPage>> dettaglioCampagnaScenarios() {
+    private static @NonNull Stream<WebScenario<CampaignDetailPage>> dettaglioCampagnaScenarios(CampaignSummary summary) {
         return Stream.of(new WebScenario<>(
-                "Verifica dettaglio notifica",
-                page -> {
-                    page.labels().forEach(x-> System.out.println(x.read()));
-                },
+                "Verifica pagina dettaglio notifica",
+                page -> {},
                 page -> {
                     Assertions.assertThat(page.labels().size()).as("Non sono presenti le 8 labels previste").isEqualTo(8);
+                    Assertions.assertThat(page.header().read()).as("Il titolo non corrisponde a quello recuperato").isEqualTo(summary.getTitle());
+
+                }
+        ));
+    }
+
+    @TestFactory
+    Stream<DynamicTest> dettaglioCampagnaEmptyState() {
+        List<CampaignSummary> results = campaignsGateway.getCampaigns();
+        return webContractValidator
+                .as(Tenant.GROSSINI, List.of())
+                .on(CampaignDetailPage.class,results.get(0).getCampaignId())
+                .tests(dettaglioCampagnaEmptyStateScenarios(results.get(0)));
+    }
+
+    private static @NonNull Stream<WebScenario<CampaignDetailPage>> dettaglioCampagnaEmptyStateScenarios(CampaignSummary summary) {
+        return Stream.of(new WebScenario<>(
+                "Verifica pagina dettaglio notifica con nessuna comunicazione",
+                page -> {},
+                page -> {
+                    Assertions.assertThat(page.emptyStateLabel().read()).as("Sono presenti comunicazioni").isEqualTo("Nessuna comunicazione disponibile");
+                }
+        ));
+    }
+
+    @TestFactory
+    Stream<DynamicTest> dettaglioCampagnaRicerca() {
+        List<CampaignSummary> results = campaignsGateway.getCampaigns();
+        return webContractValidator
+                .as(Tenant.GROSSINI, List.of())
+                .on(CampaignDetailPage.class,results.get(1).getCampaignId())
+                .tests(dettaglioCampagnaRicercaScenarios(results.get(1)));
+    }
+
+    private static @NonNull Stream<WebScenario<CampaignDetailPage>> dettaglioCampagnaRicercaScenarios(CampaignSummary summary) {
+        return Stream.of(new WebScenario<>(
+                "Verifica pagina dettaglio notifica con ricerca",
+                page -> {
+                    page.recipientId().fill("DRCGNN12A46A326K");
+                    page.filterButton().click();
+                },
+                page -> {
+                    Assertions.assertThat(page.communications().rows().size()).as("Le comunicazioni trovate sono diverse da 1").isEqualTo(2);
+                    Assertions.assertThat(page.communications()
+                            .rows()
+                            .get(0)
+                            .cells()
+                            .get(0)
+                            .value()
+                            .read()).as("Valore campo recipientId non congruo").isEqualTo("DRCGNN12A46A326K");
                 }
         ));
     }
