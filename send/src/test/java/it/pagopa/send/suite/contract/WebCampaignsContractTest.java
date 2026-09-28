@@ -1,6 +1,5 @@
 package it.pagopa.send.suite.contract;
 
-import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.campaigns.application.CampaignsGateway;
@@ -183,7 +182,7 @@ public class WebCampaignsContractTest {
                     Assertions.assertThat(page.communications().rows().size()).as("Le comunicazioni trovate sono diverse da 1").isEqualTo(2);
                     Assertions.assertThat(page.communications()
                             .rows()
-                            .get(0)
+                            .get(1)
                             .cells()
                             .get(0)
                             .value()
