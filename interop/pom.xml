@@ -401,8 +401,10 @@
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
                                 <openApiNullable>false</openApiNullable>
+                                <useJakartaEe>true</useJakartaEe>
                                 <useAbstractionForFiles>true</useAbstractionForFiles>
-                                <useBeanValidation>false</useBeanValidation>
+                                <useBeanValidation>true</useBeanValidation>
+                                <performBeanValidation>false</performBeanValidation>
                                 <serializableModel>true</serializableModel>
                                 <serializationLibrary>jackson</serializationLibrary>
                                 <additionalModelTypeAnnotations>
