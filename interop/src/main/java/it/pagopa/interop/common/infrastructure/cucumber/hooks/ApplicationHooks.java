@@ -7,6 +7,7 @@ import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.application.context.TestContext;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.application.TestKind;
+import it.pagopa.infrastructure.logging.TestMdcKeys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -20,14 +21,22 @@ public class ApplicationHooks {
     private final TestContext testContext;
     private final CurrentChannel<Channel> currentChannel;
 
-    @Before
+    // Ordine minimo: l'MDC deve essere popolato prima di qualsiasi altro hook che logga.
+    @Before(order = Integer.MIN_VALUE)
     public void beforeScenario(Scenario scenario) {
         testContext.setCurrentTestKind(TestKind.FLOW);
-        MDC.put("scenario", scenario.getName());
-        log.info("=== SCENARIO START: {} ===", scenario.getName());
+
+        String scenarioName = ScenarioMdcSupport.scenarioName(scenario);
+        MDC.put(TestMdcKeys.TEST_CASE_ID, ScenarioMdcSupport.testCaseId(scenario));
+        MDC.put(TestMdcKeys.SCENARIO_NAME, scenarioName);
+        MDC.put(TestMdcKeys.SOURCE_FILE, ScenarioMdcSupport.sourceFile(scenario));
+
+        log.info("=== SCENARIO START: {} ===", scenarioName);
     }
 
-    @After
+    // Gli @After vengono eseguiti in ordine decrescente: l'ordine minimo garantisce
+    // che l'MDC resti popolato per tutti gli altri hook di cleanup.
+    @After(order = Integer.MIN_VALUE)
     public void afterScenario(Scenario scenario) {
         var errors = testContext.getEventualConsistencyErrors();
 
@@ -39,28 +48,11 @@ public class ApplicationHooks {
             log.error("Eventual consistency errors found:\n{}", formattedErrors);
         }
 
-        log.info("=== SCENARIO END: {} | Status: {} ===", scenario.getName(), scenario.getStatus());
+        log.info("=== SCENARIO END: {} | Status: {} ===",
+                ScenarioMdcSupport.scenarioName(scenario), scenario.getStatus());
 
-        MDC.remove("scenario");
-    }
-
-    @Before("@Business")
-    public void beforeBusinessScenario(Scenario scenario) {
-       testContext.setCurrentTestKind(TestKind.FLOW);
-    }
-
-    @Before("@Contract")
-    public void beforeContractScenario(Scenario scenario) {
-        testContext.setCurrentTestKind(TestKind.CONTRACT);
-    }
-
-    @Before("@BFF")
-    public void beforeBFFScenario(Scenario scenario) {
-        currentChannel.setCurrentChannel(Channel.BFF);
-    }
-
-    @Before("@WEB")
-    public void beforeWEBScenario(Scenario scenario) {
-        currentChannel.setCurrentChannel(Channel.WEB_BROWSER);
+        MDC.remove(TestMdcKeys.TEST_CASE_ID);
+        MDC.remove(TestMdcKeys.SCENARIO_NAME);
+        MDC.remove(TestMdcKeys.SOURCE_FILE);
     }
 }

@@ -7,10 +7,18 @@
 
     <property name="LOG_DIR" value="target/logs"/>
 
-    <!-- %X{scenario} e' popolato dagli hook Cucumber/JUnit: indispensabile per
-         ricostruire una timeline leggibile quando i test girano in parallelo. -->
+    <!-- Colonna testCaseId a larghezza fissa (48 char, sempre alle colonne 31-80):
+         permette allo step di CI di raggruppare i log per caso di test con un semplice
+         substr, senza regex sul testo libero del messaggio.
+         ".-48" tronca in coda: senza il segno meno logback taglierebbe la testa
+         dell'identificativo, che e' la parte piu' distintiva.
+         Le chiavi MDC sono popolate da ApplicationHooks (Cucumber) e da
+         MdcTestContextExtension (JUnit). -->
     <property name="LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} %replace(%X{scenario} ){'^$', ''}: %msg%n"/>
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%-48.-48X{testCaseId:-no-test-case}] [%thread] %logger{36} - %msg%n"/>
+
+    <property name="CONSOLE_PATTERN"
+              value="%d{HH:mm:ss.SSS} %-5level [%X{testCaseId:-no-test-case}] %logger{28} - %msg%n"/>
 
     <!-- Livello della suite. springProperty non funziona qui: logback viene inizializzato
          da surefire prima del contesto Spring, quindi si usa una property risolta da
@@ -19,7 +27,7 @@
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
+            <pattern>${CONSOLE_PATTERN}</pattern>
         </encoder>
     </appender>
 

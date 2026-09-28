@@ -82,12 +82,12 @@ jobs:
       - name: Build frontend-e2e-framework
         run: |
           cd ./qe_suit/frontend-e2e-framework
-          mvn clean install -DskipTests
+          mvn -B -ntp clean install -DskipTests
 
       - name: Build common
         run: |
           cd ./qe_suit/common
-          mvn clean install -DskipTests
+          mvn -B -ntp clean install -DskipTests
 
       - name: Run Selenium Tests
         run: |
@@ -104,23 +104,67 @@ jobs:
           echo "Test suite: ${{ env.JAVA_TEST_SUITE }}"
           echo "qe_suit branch: ${{ env.BRANCH_NAME }}"
 
-          mvn test \
+          mvn -B -ntp test \
             $SPRING_PROFILE \
             -Dtest=${{ env.JAVA_TEST_SUITE }}
+
+      # Il log e' cronologico: con i test in parallelo le righe di scenari diversi
+      # si alternano. Qui viene prodotta una seconda copia raggruppata per caso di test,
+      # leggibile senza dover filtrare a mano.
+      - name: Group logs by test case
+        if: always()
+        run: |
+          LOG_DIR="./qe_suit/interop/target/logs"
+          SOURCE="$LOG_DIR/e2e.log"
+
+          if [[ ! -f "$SOURCE" ]]; then
+            echo "Nessun log da raggruppare: $SOURCE non esiste."
+            exit 0
+          fi
+
+          # La chiave testCaseId occupa una colonna a larghezza fissa nel pattern di
+          # logback (caratteri 32-79), quindi si estrae con substr: niente regex sul
+          # testo libero del messaggio. Le righe che non rispettano il formato
+          # (es. stack trace) ereditano il caso di test della riga precedente.
+          awk '
+            {
+              if (length($0) >= 80 && substr($0, 31, 1) == "[" && substr($0, 80, 1) == "]") {
+                id = substr($0, 32, 48)
+                gsub(/[ \t]+$/, "", id)
+                current = id
+              }
+              key = (current == "" ? "00-startup" : current)
+              order[key] = (key in order) ? order[key] : ++seq
+              lines[key] = lines[key] $0 "\n"
+            }
+            END {
+              for (key in order) sorted[order[key]] = key
+              for (i = 1; i <= seq; i++) {
+                key = sorted[i]
+                printf "\n========================================================================\n"
+                printf "  TEST CASE: %s\n", key
+                printf "========================================================================\n"
+                printf "%s", lines[key]
+              }
+            }
+          ' "$SOURCE" > "$LOG_DIR/e2e.by-test-case.log"
+
+          echo "Casi di test trovati: $(grep -c '^  TEST CASE: ' "$LOG_DIR/e2e.by-test-case.log")"
 
       - name: Upload Test Logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-logs
+          name: test-logs-${{ inputs.environment || 'qa' }}-${{ github.run_number }}
           path: ./qe_suit/interop/target/logs/
           if-no-files-found: warn
+          retention-days: 10
 
       - name: Upload Cucumber Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cucumber-report
+          name: cucumber-report-${{ inputs.environment || 'qa' }}-${{ github.run_number }}
           path: ./qe_suit/interop/target/cucumber-reports/
           if-no-files-found: warn
           retention-days: 10
