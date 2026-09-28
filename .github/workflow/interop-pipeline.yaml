@@ -1,4 +1,4 @@
-name: [INTEROP] QA workflow
+name: "[INTEROP] QA workflow"
 
 on:
   schedule:
@@ -22,7 +22,7 @@ on:
       branchName:
         description: 'Provide the branch name for qe_suit to clone'
         required: false
-        default: main
+        default: develop
         type: string
 
 defaults:
@@ -66,16 +66,21 @@ jobs:
           cd ./qe_suit/frontend-e2e-framework
           mvn clean install
 
+      - name: Build common
+        run: |
+          cd ./qe_suit/common
+          mvn clean install -DskipTests
+
       - name: Run Selenium Tests
         run: |
           cd ./qe_suit/interop
-          
+
           if [[ "${{ env.ENVIRONMENT }}" == "dev" ]]; then
             SPRING_PROFILE="-Dspring.profiles.active=dev"
           else
             SPRING_PROFILE="-Dspring.profiles.active=qa"
           fi
-          
+
           mvn test $SPRING_PROFILE -Dtest=${{ env.JAVA_TEST_SUITE }}
 
       - name: Upload Test Logs
@@ -83,12 +88,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-logs
-          path: ./qe_suit/interop/qa-tests.log
+          path: ./qe_suit/interop/target/logs/
+          if-no-files-found: warn
 
       - name: Upload Cucumber Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cucumber-report
-          path: ./qe_suit/interop/target/cucumber-report*
+          path: ./qe_suit/interop/target/cucumber-reports/
+          if-no-files-found: warn
           retention-days: 10
