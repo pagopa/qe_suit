@@ -2,7 +2,7 @@ package it.pagopa.send.web.infrastructure.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.send.web.campagne.infrastructure.page.CampaignsPage;
+import it.pagopa.send.web.campaigns.infrastructure.page.CampaignsPage;
 import it.pagopa.send.web.infrastructure.page.ConfigureAddressSendPage;
 import it.pagopa.send.web.login.infrastructure.page.LogoutPage;
 import it.pagopa.send.web.login.infrastructure.page.OneIdPage;
