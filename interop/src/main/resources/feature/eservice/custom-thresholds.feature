@@ -19,7 +19,7 @@ Feature: Visualizzazione delle soglie di chiamate API personalizzate nella sched
   per il fruitore è stata personalizzata. L'erogatore che non ha l'attributo certificato non visualizza
   la sezione Soglie di chiamate API personalizzate.
 
-    Given un admin del Comune di Milano
+    Given un erogatore admin del Comune di Milano
     And crea un e-service <dataExchangeMode> con un attributo certificato e soglia personalizzata per fruitore a <customThreshold>
       | consumerThreshold | 20 |
       | totalThreshold    | 40 |
@@ -41,7 +41,7 @@ Feature: Visualizzazione delle soglie di chiamate API personalizzate nella sched
   per il fruitore è stata personalizzata. Il fruitore delegante che non ha l'attributo certificato non visualizza
   la sezione Soglie di chiamate API personalizzate.
 
-    Given un admin del Comune di Milano
+    Given un erogatore admin del Comune di Milano
     And crea un e-service <dataExchangeMode> con un attributo certificato e soglia personalizzata per fruitore a <customThreshold>
       | consumerThreshold | 20 |
       | totalThreshold    | 40 |
@@ -63,7 +63,7 @@ Feature: Visualizzazione delle soglie di chiamate API personalizzate nella sched
   La sezione Soglie di chiamate API personalizzate non viene mostrata sulla scheda e-service del fruitore
   quando l'e-service non richiede un attributo certificato.
 
-    Given un admin del Comune di Milano
+    Given un erogatore admin del Comune di Milano
     And crea un e-service <dataExchangeMode>
     When un admin dell'Agenzia per l'Italia Digitale visualizza la pagina dell'e-service dal catalogo
     Then la sezione soglie di chiamate API personalizzate non è presente
@@ -77,7 +77,7 @@ Feature: Visualizzazione delle soglie di chiamate API personalizzate nella sched
   La sezione Soglie di chiamate API personalizzate non viene mostrata sulla scheda e-service del fruitore
   quando l'e-service richiede un attributo certificato ma la soglia per il fruitore non è stata personalizzata.
 
-    Given un admin del Comune di Milano
+    Given un erogatore admin del Comune di Milano
     And crea un e-service <dataExchangeMode> con un attributo certificato
       | consumerThreshold | 20 |
       | totalThreshold    | 40 |
