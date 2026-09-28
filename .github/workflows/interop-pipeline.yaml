@@ -2,8 +2,8 @@ name: "[INTEROP] QA workflow"
 
 on:
   schedule:
-    - cron: '0 8 * * *'
-      timezone: "Europe/Rome"
+    # 06:00 UTC = 08:00 Europe/Rome (CEST) / 07:00 (CET). I cron di GitHub sono sempre UTC.
+    - cron: '0 6 * * *'
   workflow_dispatch:
     inputs:
       environment:
@@ -20,9 +20,9 @@ on:
         default: NrtStandardSuite
         type: string
       branchName:
-        description: 'Provide the branch name for qe_suit to clone'
+        description: 'Branch di qe_suit da testare (indipendente dal branch selezionato in "Use workflow from")'
         required: false
-        default: develop
+        default: ''
         type: string
 
 defaults:
@@ -37,9 +37,9 @@ jobs:
     name: Run Java Selenium Tests
     runs-on: ubuntu-22.04
     env:
-      ENVIRONMENT: ${{ github.event_name == 'schedule' && 'qa' || inputs.environment }}
-      JAVA_TEST_SUITE: ${{ github.event_name == 'schedule' && 'NrtStandardSuite' || inputs.javaTestSuite }}
-      BRANCH_NAME: ${{ github.event_name == 'schedule' && 'main' || inputs.branchName }}
+      ENVIRONMENT: ${{ inputs.environment || 'qa' }}
+      JAVA_TEST_SUITE: ${{ inputs.javaTestSuite || 'NrtStandardSuite' }}
+      BRANCH_NAME: ${{ inputs.branchName || github.ref_name }}
 
     steps:
       - name: Set up Maven
@@ -57,9 +57,11 @@ jobs:
       - name: Setup ChromeDriver
         uses: nanasess/setup-chromedriver@master
 
-      - name: Clone qe_suit repository
-        run: |
-          git clone --depth 1 --branch ${{ env.BRANCH_NAME }} https://github.com/pagopa/qe_suit.git
+      - name: Checkout qe_suit repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BRANCH_NAME }}
+          path: qe_suit
 
       - name: Build frontend-e2e-framework
         run: |
