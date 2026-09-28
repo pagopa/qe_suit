@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.web.domain.Component;
 
 import java.util.List;
 
-@XPath(".//div[contains(@class,'MuiTable-root')]")
+@XPath(".//table[contains(@class,'MuiTable-root')]")
 public interface Table extends Component {
     List<TableRow> rows();
 }

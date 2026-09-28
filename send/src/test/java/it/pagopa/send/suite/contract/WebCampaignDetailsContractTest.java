@@ -35,92 +35,9 @@ import java.util.stream.Stream;
 })
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
-public class WebCampaignsContractTest {
+public class WebCampaignDetailsContractTest {
     private final WebBrowserContractValidator webContractValidator;
     private final CampaignsGateway campaignsGateway;
-
-    @TestFactory
-    Stream<DynamicTest> campagneButtonIsPresentIntoSidebar() {
-        return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
-                .on(DashboardPage.class)
-                .tests(campagneButtonIsPresentIntoSidebarScenarios());
-    }
-
-    private static @NonNull Stream<WebScenario<DashboardPage>> campagneButtonIsPresentIntoSidebarScenarios() {
-        return Stream.of(new WebScenario<>(
-                "La voce della sidebar 'Campagne' è presente e cliccabile",
-                page -> {
-                    page.sidebar().comunicaConSend().click();
-                    page.sidebar().campagne().click();
-                },
-                page -> {
-                    page.sidebar().campagne().assertLoaded();
-                }
-        ));
-    }
-
-    @TestFactory
-    Stream<DynamicTest> campagneEmptyState() {
-        return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
-                .on(CampaignsPage.class)
-                .tests(campagneEmptyStateScenarios());
-    }
-
-    private static @NonNull Stream<WebScenario<CampaignsPage>> campagneEmptyStateScenarios() {
-        return Stream.of(new WebScenario<>(
-                "Lista di campagne non popolata",
-                page -> {
-                },
-                page -> {
-                    Assertions.assertThat(page.emptyStateLabel().read()).isNotNull();
-                }
-        ));
-    }
-
-    @TestFactory
-    Stream<DynamicTest> campagneListaPopolata() {
-        return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
-                .on(CampaignsPage.class)
-                .tests(campagneListaPopolataScenarios());
-    }
-
-    private static @NonNull Stream<WebScenario<CampaignsPage>> campagneListaPopolataScenarios() {
-        return Stream.of(new WebScenario<>(
-                "Lista di campagne popolata",
-                page -> {
-                },
-                page -> {
-                    Assertions.assertThat(page.table().elements()).as("La lista è vuota ma dovrebbe essere popolata").isNotEmpty();
-                }
-        ));
-    }
-
-    @TestFactory
-    Stream<DynamicTest> campagneElementiListaCorretti() {
-        return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
-                .on(CampaignsPage.class)
-                .tests(campagneElementiListaCorrettiScenarios());
-    }
-
-    private static @NonNull Stream<WebScenario<CampaignsPage>> campagneElementiListaCorrettiScenarios() {
-        return Stream.of(new WebScenario<>(
-                "Elementi della lista corretti",
-                page -> {
-                },
-                page -> {
-                    for (CampagneElement elem : page.table().elements()){
-                        Assertions.assertThat(elem.apriCampagna().isDisabled()).as("Il bottone è disabilitato").isFalse();
-                        Assertions.assertThat(elem.fields().size()).as("Non sono presenti le 4 labels previste").isEqualTo(4);
-                    }
-                }
-        ));
-    }
-
-
 
     @TestFactory
     Stream<DynamicTest> dettaglioCampagna() {
