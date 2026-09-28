@@ -1,6 +1,6 @@
 package it.pagopa.infrastructure.contract.http;
 
-enum RequestScope {
+public enum RequestScope {
     PAYLOAD,
     PATH_PARAMS
 }

@@ -1,0 +1,136 @@
+openapi: 3.0.3
+info:
+  title: Operation discovery fixture
+  version: 1.0.0
+paths:
+  /widgets:
+    post:
+      operationId: createWidget
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WidgetPayload'
+      responses:
+        '201':
+          description: created
+  /widgets/batch:
+    post:
+      operationId: createWidgetBatch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/WidgetPayload'
+      responses:
+        '201':
+          description: created
+  /widgets/{widgetId}/{revision}:
+    parameters:
+      - name: widgetId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: getWidget
+      parameters:
+        - name: revision
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: found
+  /widgets/by-slug/{slug}:
+    get:
+      operationId: getWidgetBySlug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: found
+  /widgets/by-kind/{kind}:
+    get:
+      operationId: getWidgetByKind
+      parameters:
+        - name: kind
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/WidgetKind'
+      responses:
+        '200':
+          description: found
+  /widgets/metrics/{ratio}/{active}/{large}/{threshold}:
+    get:
+      operationId: getWidgetMetrics
+      parameters:
+        - name: ratio
+          in: path
+          required: true
+          schema:
+            type: number
+            format: float
+        - name: active
+          in: path
+          required: true
+          schema:
+            type: boolean
+        - name: large
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: threshold
+          in: path
+          required: true
+          schema:
+            type: number
+            format: double
+components:
+  schemas:
+    WidgetPayload:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+          format: uuid
+        kind:
+          $ref: '#/components/schemas/WidgetKind'
+        count:
+          type: integer
+          format: int32
+        detail:
+          $ref: '#/components/schemas/WidgetDetail'
+        labels:
+          type: array
+          items:
+            type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/WidgetPayload'
+    WidgetDetail:
+      type: object
+      properties:
+        revision:
+          type: integer
+          format: int64
+    WidgetKind:
+      type: string
+      enum: [STANDARD, PREMIUM]

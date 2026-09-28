@@ -12,17 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 final class ContractCasePlanner {
     private final ObjectMapper objectMapper;
     private final ObjectGraphQueryResolver queryResolver;
-    private final HttpContractPolicy policy;
+    private final ExpectationResolver<Consumer<Response>> expectationResolver;
 
     ContractCasePlanner(ObjectMapper objectMapper, ObjectGraphQueryResolver queryResolver, HttpContractPolicy policy) {
         this.objectMapper = objectMapper;
         this.queryResolver = queryResolver;
-        this.policy = policy;
+        this.expectationResolver = new ExpectationResolver<>(policy::success, policy::expectationFor);
     }
 
     List<GeneratedContractCase> planCases(ScopePlanState<?> payload, ScopePlanState<?> pathParams) {
@@ -44,13 +45,14 @@ final class ContractCasePlanner {
         for (FuzzCase fuzzCase : state.fuzzCases()) {
             Node node = state.graph().find(fuzzCase.target())
                     .orElseThrow(() -> new ContractHttpException("Cannot resolve node for target path " + fuzzCase.target()));
-            ExpectationSelection selection = resolveExpectation(state, targetOverrides, validityResolver, fuzzCase, node);
+            ExpectationResolver.Resolution<Consumer<Response>> selection =
+                    resolveExpectation(state, targetOverrides, validityResolver, fuzzCase, node);
             out.add(new GeneratedContractCase(scope, fuzzCase.target(), fuzzCase.mutation(), selection.expectation(), selection.origin()));
         }
         return out;
     }
 
-    private ExpectationSelection resolveExpectation(
+    private ExpectationResolver.Resolution<Consumer<Response>> resolveExpectation(
             ScopePlanState<?> state,
             Map<Key, Consumer<Response>> targetOverrides,
             MutationValidityResolver validityResolver,
@@ -58,20 +60,12 @@ final class ContractCasePlanner {
             Node node
     ) {
         Key key = new Key(fuzzCase.mutation().scenario(), node.path());
-        Consumer<Response> targetExpectation = targetOverrides.get(key);
-        if (targetExpectation != null) return new ExpectationSelection(targetExpectation, ExpectationOrigin.TARGET_OVERRIDE);
-
-        Consumer<Response> scenarioExpectation = state.overrides().scenario(fuzzCase.mutation().scenario());
-        if (scenarioExpectation != null) return new ExpectationSelection(scenarioExpectation, ExpectationOrigin.SCENARIO_OVERRIDE);
-
-        ContractValidity validity = validityResolver.resolve(node, fuzzCase.mutation());
-        if (validity == ContractValidity.VALID) {
-            return new ExpectationSelection(policy.success(), ExpectationOrigin.INFERRED_VALID);
-        }
-        if (validity == ContractValidity.INVALID) {
-            return new ExpectationSelection(policy.expectationFor(fuzzCase.mutation().scenario()), ExpectationOrigin.POLICY_INVALID);
-        }
-        return new ExpectationSelection(policy.expectationFor(fuzzCase.mutation().scenario()), ExpectationOrigin.POLICY_UNKNOWN);
+        return expectationResolver.resolve(
+                fuzzCase.mutation().scenario(),
+                Optional.ofNullable(targetOverrides.get(key)),
+                Optional.ofNullable(state.overrides().scenario(fuzzCase.mutation().scenario())),
+                () -> validityResolver.resolve(node, fuzzCase.mutation())
+        );
     }
 
     private Map<Key, Consumer<Response>> resolveTargetOverrides(ScopePlanState<?> state) {
@@ -98,8 +92,5 @@ final class ContractCasePlanner {
     }
 
     private record Key(FuzzScenario scenario, NodePath path) {
-    }
-
-    private record ExpectationSelection(Consumer<Response> expectation, ExpectationOrigin origin) {
     }
 }

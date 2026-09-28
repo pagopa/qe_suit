@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: PST equivalence fixture
+  version: 1.0.0
+paths:
+  /resources/{id}:
+    put:
+      operationId: updateResource
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PstFixturePayload'
+      responses:
+        '200':
+          description: updated
+components:
+  schemas:
+    PstFixturePayload:
+      type: object
+      properties:
+        simple:
+          type: string
+        sized:
+          type: string
+        id:
+          type: string
+          format: uuid
+        kind:
+          $ref: '#/components/schemas/PstFixtureKind'
+        count:
+          type: integer
+        nullable:
+          type: string
+          nullable: true
+        optional:
+          type: string
+        required:
+          type: string
+        nested:
+          $ref: '#/components/schemas/PstFixtureNested'
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PstFixtureNested'
+    PstFixtureNested:
+      type: object
+      properties:
+        value:
+          type: string
+    PstFixtureKind:
+      type: string
+      enum: [STANDARD, PREMIUM]
