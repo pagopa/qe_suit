@@ -61,9 +61,7 @@ public class WebAgreementContractTest {
 
         return assertBannerIsVisible(
                 "Should see banner for agreement update to newer version",
-                DESIRED_MESSAGE_BANNER_1,
-                Tenant.COMUNE_DI_MILANO,
-                agreement.getId()
+                DESIRED_MESSAGE_BANNER_1, Tenant.COMUNE_DI_MILANO, agreement.getId()
         );
     }
 
@@ -85,9 +83,7 @@ public class WebAgreementContractTest {
 
         return assertBannerIsVisible(
                 "Should see banner agreement",
-                DESIRED_MESSAGE_BANNER_2,
-                Tenant.COMUNE_DI_MILANO,
-                agreement.getId()
+                DESIRED_MESSAGE_BANNER_2, Tenant.COMUNE_DI_MILANO, agreement.getId()
         );
     }
 
@@ -109,13 +105,12 @@ public class WebAgreementContractTest {
 
         return assertNoBannerIsVisible(
                 "Should see no banner when e-service is in archiving state and the agreement is non-updatable",
-                Tenant.COMUNE_DI_MILANO,
-                agreement.getId()
+                Tenant.COMUNE_DI_MILANO, agreement.getId()
         );
     }
 
     @TestFactory
-    Stream<DynamicTest> shouldSeeNoBannerWhenDescriptorInArchivingStateAndEserviceInArchivingStateAndAgreementIsNonUpdatable() {
+    Stream<DynamicTest> shouldSeeBanner2WhenDescriptorInArchivingStateAndEserviceInArchivingStateAndAgreementIsNonUpdatable() {
         Agreement agreement = interopJourney
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
@@ -132,10 +127,9 @@ public class WebAgreementContractTest {
                 )
                 .get(Agreement.class);
 
-        return assertNoBannerIsVisible(
-                "Should see no banner when descriptor and e-service are in archiving state and the agreement is non-updatable",
-                Tenant.COMUNE_DI_MILANO,
-                agreement.getId()
+        return assertBannerIsVisible(
+                "Should see banner agreement",
+                DESIRED_MESSAGE_BANNER_2, Tenant.COMUNE_DI_MILANO, agreement.getId()
         );
     }
 
