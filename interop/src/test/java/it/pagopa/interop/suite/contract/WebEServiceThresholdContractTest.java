@@ -28,7 +28,7 @@ import java.util.stream.Stream;
                 JunitContextConfig.class,
                 WebJUnitSuitConfig.class
         },
-        properties = {"spring.profiles.include=junit", "channel.web.browser=chrome", "channel.web.headless=false"}
+        properties = "spring.profiles.include=junit"
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
