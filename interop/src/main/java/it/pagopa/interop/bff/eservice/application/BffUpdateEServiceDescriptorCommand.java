@@ -1,6 +1,8 @@
 package it.pagopa.interop.bff.eservice.application;
 
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import lombok.Getter;
 
@@ -49,6 +51,18 @@ public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescrip
     @Override
     public UpdateEServiceDescriptorCommand description(String description) {
         bffPayload.setDescription(description);
+        return this;
+    }
+
+    @Override
+    public UpdateEServiceDescriptorCommand attributes(DescriptorAttributesSeed seed) {
+        bffPayload.attributes(seed);
+        return this;
+    }
+
+    @Override
+    public UpdateEServiceDescriptorCommand agreementApprovalPolicy(AgreementApprovalPolicy policy) {
+        bffPayload.agreementApprovalPolicy(policy);
         return this;
     }
 }
