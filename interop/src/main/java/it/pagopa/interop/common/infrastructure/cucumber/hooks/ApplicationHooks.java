@@ -25,9 +25,12 @@ public class ApplicationHooks {
     @Before(order = Integer.MIN_VALUE)
     public void beforeScenario(Scenario scenario) {
         testContext.setCurrentTestKind(TestKind.FLOW);
+        MDC.clear();
+        testContext.clearEventualConsistencyErrors();
 
         String scenarioName = ScenarioMdcSupport.scenarioName(scenario);
         MDC.put(TestMdcKeys.TEST_CASE_ID, ScenarioMdcSupport.testCaseId(scenario));
+        MDC.put(TestMdcKeys.TEST_EXECUTION_ID, ScenarioMdcSupport.executionId(scenario));
         MDC.put(TestMdcKeys.SCENARIO_NAME, scenarioName);
         MDC.put(TestMdcKeys.SOURCE_FILE, ScenarioMdcSupport.sourceFile(scenario));
 
@@ -38,21 +41,25 @@ public class ApplicationHooks {
     // che l'MDC resti popolato per tutti gli altri hook di cleanup.
     @After(order = Integer.MIN_VALUE)
     public void afterScenario(Scenario scenario) {
-        var errors = testContext.getEventualConsistencyErrors();
+        try{
+            var errors = testContext.getEventualConsistencyErrors();
 
-        if (!errors.isEmpty()) {
-            String formattedErrors = errors.stream()
-                    .map(error -> "- " + error)
-                    .collect(Collectors.joining(System.lineSeparator()));
+            if (!errors.isEmpty()) {
+                String formattedErrors = errors.stream()
+                        .map(error -> "- " + error)
+                        .collect(Collectors.joining(System.lineSeparator()));
 
-            log.error("Eventual consistency errors found:\n{}", formattedErrors);
+                log.error("Eventual consistency errors found:\n{}", formattedErrors);
+            }
+
+            log.info("=== SCENARIO END: {} | Status: {} ===",
+                    ScenarioMdcSupport.scenarioName(scenario),
+                    scenario.getStatus()
+            );
         }
-
-        log.info("=== SCENARIO END: {} | Status: {} ===",
-                ScenarioMdcSupport.scenarioName(scenario), scenario.getStatus());
-
-        MDC.remove(TestMdcKeys.TEST_CASE_ID);
-        MDC.remove(TestMdcKeys.SCENARIO_NAME);
-        MDC.remove(TestMdcKeys.SOURCE_FILE);
+        finally {
+            MDC.clear();
+            testContext.clearEventualConsistencyErrors();
+        }
     }
 }

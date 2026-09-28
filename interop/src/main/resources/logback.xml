@@ -1,74 +1,153 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!-- Flush degli appender alla chiusura della JVM: senza questo le ultime righe
-         di un run interrotto (o di un fail veloce) possono andare perse. -->
+    <!--
+        Garantisce il flush degli appender alla chiusura della JVM.
+        Utile soprattutto in caso di run interrotti o failure molto rapide.
+    -->
     <shutdownHook class="ch.qos.logback.core.hook.DefaultShutdownHook"/>
 
     <property name="LOG_DIR" value="target/logs"/>
 
-    <!-- Colonna testCaseId a larghezza fissa (48 char, sempre alle colonne 31-80):
-         permette allo step di CI di raggruppare i log per caso di test con un semplice
-         substr, senza regex sul testo libero del messaggio.
-         ".-48" tronca in coda: senza il segno meno logback taglierebbe la testa
-         dell'identificativo, che e' la parte piu' distintiva.
-         Le chiavi MDC sono popolate da ApplicationHooks (Cucumber) e da
-         MdcTestContextExtension (JUnit). -->
-    <property name="LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%-48.-48X{testCaseId:-no-test-case}] [%thread] %logger{36} - %msg%n"/>
+    <!--
+        Livello della suite configurabile tramite:
+        -DSUIT_LOG_LEVEL=DEBUG
+        oppure variabile ambiente:
+        SUIT_LOG_LEVEL=DEBUG
 
-    <property name="CONSOLE_PATTERN"
-              value="%d{HH:mm:ss.SSS} %-5level [%X{testCaseId:-no-test-case}] %logger{28} - %msg%n"/>
-
-    <!-- Livello della suite. springProperty non funziona qui: logback viene inizializzato
-         da surefire prima del contesto Spring, quindi si usa una property risolta da
-         -DSUIT_LOG_LEVEL o dall'omonima variabile d'ambiente (default INFO). -->
+        Default: INFO
+    -->
     <property name="suitLogLevel" value="${SUIT_LOG_LEVEL:-INFO}"/>
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <!--
+        Pattern completo per il file.
+
+        testCaseId:
+        identifica il caso di test logico.
+
+        testExecutionId:
+        identifica la singola esecuzione.
+        Negli Scenario Outline consente di distinguere Example 1, Example 2, ecc.
+
+        "bootstrap" indica log prodotti prima che un test abbia popolato l'MDC.
+        Esempio: bootstrap del contesto Spring.
+
+        La colonna testCaseId mantiene larghezza fissa a 48 caratteri
+        per semplificare eventuali elaborazioni CI.
+    -->
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%-48.-48X{testCaseId:-bootstrap}] [%X{testExecutionId:-bootstrap}] [%thread] %logger{36} - %msg%n"/>
+
+    <!--
+        Pattern console più compatto.
+
+        Viene mostrato testExecutionId invece di testCaseId perché:
+        - negli scenari normali coincidono;
+        - negli Scenario Outline executionId distingue i singoli Example.
+
+        Il thread è mantenuto perché utile durante l'esecuzione parallela.
+    -->
+    <property name="CONSOLE_PATTERN"
+              value="%d{HH:mm:ss.SSS} %-5level [%X{testExecutionId:-bootstrap}] [%thread] %logger{28} - %msg%n"/>
+
+
+    <!-- =========================================================
+         APPENDERS
+         ========================================================= -->
+
+    <appender name="CONSOLE"
+              class="ch.qos.logback.core.ConsoleAppender">
+
         <encoder>
             <pattern>${CONSOLE_PATTERN}</pattern>
         </encoder>
     </appender>
 
-    <!-- Unico file di log: framework (interazioni UI), step di test e chiamate HTTP
-         nella stessa timeline. FileAppender con append=false => ogni run parte da un
-         file pulito (RollingFileAppender non supporta append=false). -->
-    <appender name="TEST_FILE" class="ch.qos.logback.core.FileAppender">
+    <!--
+        File unico contenente:
+        - framework E2E
+        - step Cucumber
+        - chiamate HTTP
+        - log applicativi della suite
+
+        append=true:
+        ogni esecuzione aggiunge i log al file esistente.
+    -->
+    <appender name="TEST_FILE"
+              class="ch.qos.logback.core.FileAppender">
+
         <file>${LOG_DIR}/e2e.log</file>
-        <append>false</append>
+        <append>true</append>
+
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
-    <!-- Framework E2E: interazioni UI dai decorator ([ACTION]/[NAVIGATION]/[WAIT])
-         e meccanismi di retry/attesa del SeleniumApiAdapter. -->
-    <logger name="it.frontend.e2e.framework" level="${suitLogLevel}" additivity="false">
+
+    <!-- =========================================================
+         LOGGER DELLA SUITE
+         ========================================================= -->
+
+    <!--
+        Framework E2E:
+        interazioni UI, navigation, wait, retry, Selenium adapter.
+    -->
+    <logger name="it.frontend.e2e.framework"
+            level="${suitLogLevel}"
+            additivity="false">
+
         <appender-ref ref="TEST_FILE"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <!-- Step e domini della suite interop. -->
-    <logger name="it.pagopa.interop" level="${suitLogLevel}" additivity="false">
+    <!--
+        Step, hook e domini della suite Interop.
+    -->
+    <logger name="it.pagopa.interop"
+            level="${suitLogLevel}"
+            additivity="false">
+
         <appender-ref ref="TEST_FILE"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <!-- Modulo common: HttpLoggingFilter (request/response) e contract validation. -->
-    <logger name="it.pagopa.infrastructure" level="${suitLogLevel}" additivity="false">
+    <!--
+        Modulo infrastructure/common:
+        HttpLoggingFilter, contract validation e infrastruttura condivisa.
+    -->
+    <logger name="it.pagopa.infrastructure"
+            level="${suitLogLevel}"
+            additivity="false">
+
         <appender-ref ref="TEST_FILE"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <!-- Rumore di terze parti. -->
+
+    <!-- =========================================================
+         THIRD-PARTY NOISE
+         ========================================================= -->
+
     <logger name="org.springframework" level="WARN"/>
     <logger name="org.openqa.selenium" level="WARN"/>
     <logger name="org.apache.hc" level="WARN"/>
     <logger name="io.restassured" level="WARN"/>
     <logger name="io.cucumber" level="INFO"/>
 
-    <root level="INFO">
+
+    <!-- =========================================================
+         ROOT LOGGER
+         ========================================================= -->
+
+    <!--
+        WARN evita che librerie non esplicitamente configurate
+        riempiano console ed e2e.log con log INFO non rilevanti.
+
+        I package della suite restano comunque a suitLogLevel
+        perché configurati esplicitamente sopra.
+    -->
+    <root level="WARN">
         <appender-ref ref="CONSOLE"/>
         <appender-ref ref="TEST_FILE"/>
     </root>

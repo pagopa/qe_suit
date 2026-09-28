@@ -37,6 +37,14 @@ final class ScenarioMdcSupport {
         return matcher.find() ? matcher.group(1) : scenario.getName();
     }
 
+    static String executionId(Scenario scenario) {
+        String testCaseId = testCaseId(scenario);
+
+        return exampleIndex(scenario)
+                .map(index -> testCaseId + " - Example " + index)
+                .orElse(testCaseId);
+    }
+
     /** Nome del feature file, senza path, per identificare l'origine del test. */
     static String sourceFile(Scenario scenario) {
         String path = scenario.getUri().getSchemeSpecificPart();

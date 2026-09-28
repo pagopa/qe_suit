@@ -16,6 +16,9 @@ public final class TestMdcKeys {
     /** Origine del test: feature file per Cucumber, classe per JUnit. */
     public static final String SOURCE_FILE = "sourceFile";
 
+    /** Identificativo unico dell'esecuzione del test (es. AGREEMENT_DEPRECATED_DESCRIPTOR_1#example-1). */
+    public static final String TEST_EXECUTION_ID = "testExecutionId";
+
     private TestMdcKeys() {
     }
 }
