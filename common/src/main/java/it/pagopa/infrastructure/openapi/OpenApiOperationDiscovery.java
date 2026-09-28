@@ -12,6 +12,7 @@ import io.swagger.v3.parser.core.models.ParseOptions;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.JarURLConnection;
 import java.net.URISyntaxException;
@@ -36,6 +37,7 @@ import java.util.stream.Stream;
 public final class OpenApiOperationDiscovery {
 
     private static final String PATH_PARAMETER_KIND = "path parameter";
+    private static final String QUERY_PARAMETER_KIND = "query parameter";
     private static final String FORM_FIELD_KIND = "form field";
 
     private final ClassLoader classLoader;
@@ -127,13 +129,21 @@ public final class OpenApiOperationDiscovery {
                 pathItem,
                 operation
         );
+        List<QueryParameterDescriptor> queryParameters = resolveQueryParameters(
+                configuration,
+                openApi,
+                operationId,
+                pathItem,
+                operation
+        );
         return new DiscoveredOperation(
                 operationId,
                 method.name(),
                 path,
                 requestBody.jsonType(),
                 requestBody.formFields(),
-                pathParameters
+                pathParameters,
+                queryParameters
         );
     }
 
@@ -318,11 +328,115 @@ public final class OpenApiOperationDiscovery {
         return List.copyOf(descriptors);
     }
 
+    private List<QueryParameterDescriptor> resolveQueryParameters(
+            GeneratedApiConfiguration configuration,
+            OpenAPI openApi,
+            String operationId,
+            PathItem pathItem,
+            Operation operation
+    ) {
+        Map<String, Parameter> parametersByName = new LinkedHashMap<>();
+        addParameters(openApi, parametersByName, pathItem.getParameters(), operationId, "query");
+        addParameters(openApi, parametersByName, operation.getParameters(), operationId, "query");
+        List<QueryParameterDescriptor> descriptors = new ArrayList<>();
+        for (Parameter parameter : parametersByName.values()) {
+            Schema<?> schema = parameter.getSchema();
+            if (schema == null) {
+                throw new IllegalStateException(
+                        "Missing schema for query parameter '" + parameter.getName()
+                                + "' in operationId " + operationId
+                );
+            }
+            Type javaType = resolveQueryParameterType(configuration, openApi, operationId, parameter.getName(), schema);
+            descriptors.add(new QueryParameterDescriptor(
+                    parameter.getName(),
+                    javaType,
+                    Boolean.TRUE.equals(parameter.getRequired()),
+                    schemaDescription(schema)
+            ));
+        }
+        return List.copyOf(descriptors);
+    }
+
+    private Type resolveQueryParameterType(
+            GeneratedApiConfiguration configuration,
+            OpenAPI openApi,
+            String operationId,
+            String parameterName,
+            Schema<?> schema
+    ) {
+        Schema<?> resolved = schema.get$ref() == null
+                ? schema
+                : resolveSchemaReference(openApi, operationId, schema);
+        if ("array".equals(resolved.getType())) {
+            Schema<?> items = resolved.getItems();
+            if (items == null) {
+                throw new IllegalStateException(
+                        "Missing items schema for query parameter '" + parameterName
+                                + "' in operationId " + operationId
+                );
+            }
+            Class<?> elementType = resolveScalarType(
+                    configuration,
+                    openApi,
+                    operationId,
+                    QUERY_PARAMETER_KIND,
+                    parameterName,
+                    items,
+                    true
+            );
+            return listOf(elementType);
+        }
+        return resolveScalarType(
+                configuration,
+                openApi,
+                operationId,
+                QUERY_PARAMETER_KIND,
+                parameterName,
+                resolved,
+                true
+        );
+    }
+
+    private static Type listOf(Class<?> elementType) {
+        return new ParameterizedType() {
+            @Override
+            public Type[] getActualTypeArguments() {
+                return new Type[]{elementType};
+            }
+
+            @Override
+            public Type getRawType() {
+                return List.class;
+            }
+
+            @Override
+            public Type getOwnerType() {
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "java.util.List<" + elementType.getName() + ">";
+            }
+        };
+    }
+
     private void addPathParameters(
             OpenAPI openApi,
             Map<String, Parameter> destination,
             List<Parameter> parameters,
             String operationId
+    ) {
+        addParameters(openApi, destination, parameters, operationId, "path");
+    }
+
+    private void addParameters(
+            OpenAPI openApi,
+            Map<String, Parameter> destination,
+            List<Parameter> parameters,
+            String operationId,
+            String in
     ) {
         if (parameters == null) return;
         for (Parameter parameter : parameters) {
@@ -340,7 +454,7 @@ public final class OpenApiOperationDiscovery {
                 }
                 parameter = resolved;
             }
-            if ("path".equals(parameter.getIn())) {
+            if (in.equals(parameter.getIn())) {
                 destination.put(parameter.getName(), parameter);
             }
         }

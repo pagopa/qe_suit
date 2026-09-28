@@ -20,6 +20,7 @@ public final class InteropFuzzingProfile implements FuzzingProfile {
     private final ScalarRule scalarRule;
     private final FuzzCasePlanner payloadPlanner;
     private final FuzzCasePlanner pathParamsPlanner;
+    private final FuzzCasePlanner queryParamsPlanner;
 
     public InteropFuzzingProfile() {
         this.objectMapper = new ObjectMapper();
@@ -27,6 +28,9 @@ public final class InteropFuzzingProfile implements FuzzingProfile {
         this.scalarRule = new ScalarRule();
         this.payloadPlanner = new FuzzCasePlanner(List.of(nullAndMissingRule, scalarRule));
         this.pathParamsPlanner = new FuzzCasePlanner(List.of(scalarRule));
+        // Query parameters are mostly optional by contract: removal and null are legitimate
+        // scenarios there, unlike for path parameters.
+        this.queryParamsPlanner = new FuzzCasePlanner(List.of(nullAndMissingRule, scalarRule));
     }
 
     @Override
@@ -42,6 +46,11 @@ public final class InteropFuzzingProfile implements FuzzingProfile {
     @Override
     public FuzzCasePlanner pathParamsPlanner() {
         return pathParamsPlanner;
+    }
+
+    @Override
+    public FuzzCasePlanner queryParamsPlanner() {
+        return queryParamsPlanner;
     }
 
     public NullAndMissingRule nullAndMissingRule() {

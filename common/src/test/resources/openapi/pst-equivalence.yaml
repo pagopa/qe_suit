@@ -13,6 +13,16 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: filter
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+            format: int32
       requestBody:
         required: true
         content:

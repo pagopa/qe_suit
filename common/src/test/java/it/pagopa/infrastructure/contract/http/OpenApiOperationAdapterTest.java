@@ -110,6 +110,67 @@ class OpenApiOperationAdapterTest {
         assertEquals(true, exception.getMessage().contains("Cannot bind form field 'unknown'"));
     }
 
+    @Test
+    void bindsQueryParametersAndExpandsArraysAsVarargs() {
+        FakeQueryOperation operation = new FakeQueryOperation();
+        ObjectNode query = objectMapper.createObjectNode();
+        query.put("limit", 10);
+        query.putArray("states").add("ACTIVE").add("DRAFT");
+
+        adapter.execute(operation, new HttpContractRequest(null, false, null, query));
+
+        assertEquals(1, operation.boundQueryParams.get("limit").length);
+        assertEquals(10, ((Number) operation.boundQueryParams.get("limit")[0]).intValue());
+        assertEquals(2, operation.boundQueryParams.get("states").length);
+        assertEquals("ACTIVE", operation.boundQueryParams.get("states")[0]);
+    }
+
+    @Test
+    void removedQueryParameterIsNotBound() {
+        FakeQueryOperation operation = new FakeQueryOperation();
+        ObjectNode query = objectMapper.createObjectNode().put("limit", 1);
+
+        adapter.execute(operation, new HttpContractRequest(null, false, null, query));
+
+        assertFalse(operation.boundQueryParams.containsKey("states"));
+    }
+
+    @Test
+    void missingQueryBindingMethodFailsFast() {
+        FakeQueryOperation operation = new FakeQueryOperation();
+        ObjectNode query = objectMapper.createObjectNode().put("unknown", "x");
+
+        ContractHttpException exception = assertThrows(
+                ContractHttpException.class,
+                () -> adapter.execute(operation, new HttpContractRequest(null, false, null, query))
+        );
+        assertEquals(true, exception.getMessage().contains("Cannot bind query parameter 'unknown'"));
+    }
+
+    static class FakeQueryOperation {
+        final Response response = Mockito.mock(Response.class);
+        final Map<String, Object[]> boundQueryParams = new LinkedHashMap<>();
+
+        public FakeQueryOperation reqSpec(Consumer<RequestSpecBuilder> customizer) {
+            customizer.accept(new RequestSpecBuilder());
+            return this;
+        }
+
+        public FakeQueryOperation limitQuery(Object... values) {
+            boundQueryParams.put("limit", values);
+            return this;
+        }
+
+        public FakeQueryOperation statesQuery(Object... values) {
+            boundQueryParams.put("states", values);
+            return this;
+        }
+
+        public <T> T execute(Function<Response, T> handler) {
+            return handler.apply(response);
+        }
+    }
+
     static class FakeFormOperation {
         final RequestSpecBuilder requestSpecBuilder = Mockito.spy(new RequestSpecBuilder());
         final Response response = Mockito.mock(Response.class);

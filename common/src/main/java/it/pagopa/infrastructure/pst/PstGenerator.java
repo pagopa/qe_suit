@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.infrastructure.contract.http.ContractValidity;
 import it.pagopa.infrastructure.contract.http.ExpectationResolver;
 import it.pagopa.infrastructure.contract.http.JacksonMutationValidityResolver;
+import it.pagopa.infrastructure.contract.http.MutationValidityResolver;
+import it.pagopa.infrastructure.contract.http.QueryParameterValidityResolver;
 import it.pagopa.infrastructure.contract.http.RequestScope;
 import it.pagopa.infrastructure.fuzzing.FuzzCasePlanner;
 import it.pagopa.infrastructure.fuzzing.PlannedFuzzCase;
@@ -13,6 +15,7 @@ import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
 import it.pagopa.infrastructure.openapi.DiscoveredOperation;
 import it.pagopa.infrastructure.openapi.GeneratedApiConfiguration;
 import it.pagopa.infrastructure.openapi.OpenApiOperationDiscovery;
+import it.pagopa.infrastructure.openapi.QueryParameterDescriptor;
 import it.pagopa.infrastructure.openapi.seed.OperationSeed;
 import it.pagopa.infrastructure.openapi.seed.OperationSeedFactory;
 import it.pagopa.infrastructure.pst.model.PstDocument;
@@ -20,7 +23,9 @@ import it.pagopa.infrastructure.pst.model.PstOperation;
 import it.pagopa.infrastructure.pst.model.PstScenario;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -32,6 +37,7 @@ public final class PstGenerator {
     private final ObjectMapper objectMapper;
     private final FuzzCasePlanner payloadPlanner;
     private final FuzzCasePlanner pathParamsPlanner;
+    private final FuzzCasePlanner queryParamsPlanner;
 
     public PstGenerator(
             OpenApiOperationDiscovery operationDiscovery,
@@ -42,6 +48,28 @@ public final class PstGenerator {
             FuzzCasePlanner payloadPlanner,
             FuzzCasePlanner pathParamsPlanner
     ) {
+        this(
+                operationDiscovery,
+                apiConfiguration,
+                seedFactory,
+                graphDecomposer,
+                objectMapper,
+                payloadPlanner,
+                pathParamsPlanner,
+                pathParamsPlanner
+        );
+    }
+
+    public PstGenerator(
+            OpenApiOperationDiscovery operationDiscovery,
+            GeneratedApiConfiguration apiConfiguration,
+            OperationSeedFactory seedFactory,
+            ObjectGraphDecomposer graphDecomposer,
+            ObjectMapper objectMapper,
+            FuzzCasePlanner payloadPlanner,
+            FuzzCasePlanner pathParamsPlanner,
+            FuzzCasePlanner queryParamsPlanner
+    ) {
         this.operationDiscovery = Objects.requireNonNull(operationDiscovery, "operationDiscovery must not be null");
         this.apiConfiguration = Objects.requireNonNull(apiConfiguration, "apiConfiguration must not be null");
         this.seedFactory = Objects.requireNonNull(seedFactory, "seedFactory must not be null");
@@ -49,6 +77,7 @@ public final class PstGenerator {
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
         this.payloadPlanner = Objects.requireNonNull(payloadPlanner, "payloadPlanner must not be null");
         this.pathParamsPlanner = Objects.requireNonNull(pathParamsPlanner, "pathParamsPlanner must not be null");
+        this.queryParamsPlanner = Objects.requireNonNull(queryParamsPlanner, "queryParamsPlanner must not be null");
     }
 
     public PstDocument generate(PstConfig config) {
@@ -80,6 +109,16 @@ public final class PstGenerator {
                         expectationResolver
                 ));
             }
+            if (!seed.queryParameters().isEmpty()) {
+                scenarios.addAll(planScope(
+                        operation,
+                        RequestScope.QUERY_PARAMS,
+                        seed.queryParameters(),
+                        queryParamsPlanner,
+                        config,
+                        expectationResolver
+                ));
+            }
             operations.add(new PstOperation(
                     operation.operationId(),
                     operation.httpMethod(),
@@ -99,8 +138,7 @@ public final class PstGenerator {
             ExpectationResolver<Integer> expectationResolver
     ) {
         ObjectGraph graph = graphDecomposer.decompose(source);
-        JacksonMutationValidityResolver validityResolver =
-                new JacksonMutationValidityResolver(objectMapper, source.getClass());
+        MutationValidityResolver validityResolver = validityResolver(operation, scope, source);
         List<PstScenario> scenarios = new ArrayList<>();
         for (PlannedFuzzCase planned : planner.plan(graph)) {
             Node node = graph.find(planned.target()).orElseThrow(
@@ -124,6 +162,21 @@ public final class PstGenerator {
             ));
         }
         return scenarios;
+    }
+
+    /**
+     * Query parameters carry no validation annotation: their only contract metadata is
+     * {@code required}, taken from the OpenAPI specification.
+     */
+    private MutationValidityResolver validityResolver(DiscoveredOperation operation, RequestScope scope, Object source) {
+        if (scope != RequestScope.QUERY_PARAMS) {
+            return new JacksonMutationValidityResolver(objectMapper, source.getClass());
+        }
+        Map<String, Boolean> requiredByName = new LinkedHashMap<>();
+        for (QueryParameterDescriptor parameter : operation.queryParameters()) {
+            requiredByName.put(parameter.name(), parameter.required());
+        }
+        return new QueryParameterValidityResolver(requiredByName);
     }
 
     private Optional<Integer> findOverride(

@@ -28,6 +28,9 @@ final class PstTargetFormatter {
         if (scope == RequestScope.PATH_PARAMS && tokens.size() == 1) {
             return "{" + tokens.get(0) + "}";
         }
+        if (scope == RequestScope.QUERY_PARAMS && !tokens.isEmpty()) {
+            return "?" + jsonPath(tokens).substring(1).replaceFirst("^\\.", "");
+        }
         return jsonPath(tokens);
     }
 

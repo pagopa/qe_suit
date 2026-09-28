@@ -116,6 +116,30 @@ paths:
       responses:
         '200':
           description: ok
+  /widgets/search:
+    get:
+      operationId: searchWidgets
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: states
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [ACTIVE, DRAFT]
+      responses:
+        '200':
+          description: ok
   /widgets/metrics/{ratio}/{active}/{large}/{threshold}:
     get:
       operationId: getWidgetMetrics

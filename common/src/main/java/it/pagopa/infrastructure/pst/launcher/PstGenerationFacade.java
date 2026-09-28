@@ -48,7 +48,8 @@ public final class PstGenerationFacade {
                 new DefaultObjectGraphDecomposer(new JacksonObjectDecomposer(objectMapper)),
                 objectMapper,
                 Objects.requireNonNull(profile.payloadPlanner(), "FuzzingProfile.payloadPlanner() must not return null"),
-                Objects.requireNonNull(profile.pathParamsPlanner(), "FuzzingProfile.pathParamsPlanner() must not return null")
+                Objects.requireNonNull(profile.pathParamsPlanner(), "FuzzingProfile.pathParamsPlanner() must not return null"),
+                Objects.requireNonNull(profile.queryParamsPlanner(), "FuzzingProfile.queryParamsPlanner() must not return null")
         );
 
         PstDocument document = generator.generate(config);

@@ -89,7 +89,7 @@ Use the validator in this order:
 
 1. declare the final identity with `as(...)`;
 2. declare `apiCall(...)`;
-3. prepare `payload(...)` and `pathParams(...)` suppliers;
+3. prepare `payload(...)`, `pathParams(...)` and `queryParams(...)` suppliers;
 4. use Journey / UseCase calls freely inside a supplier when you need a setup precondition;
 5. do not re-authenticate manually inside `apiCall(...)`.
 

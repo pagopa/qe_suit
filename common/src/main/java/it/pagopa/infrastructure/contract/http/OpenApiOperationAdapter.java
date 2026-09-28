@@ -79,6 +79,60 @@ final class OpenApiOperationAdapter {
         }
 
         bindPathParams(operation, request.pathParams());
+        bindQueryParams(operation, request.queryParams());
+    }
+
+    /**
+     * Binds query parameters on the generated {@code <name>Query(Object...)} methods.
+     * A removed parameter is simply not bound, which is exactly what the contract describes
+     * for an absent query parameter.
+     */
+    private void bindQueryParams(Object operation, JsonNode queryParams) {
+        if (queryParams == null || queryParams.isNull()) {
+            return;
+        }
+        if (!queryParams.isObject()) {
+            throw new ContractHttpException("queryParams must be a JSON object");
+        }
+
+        Iterator<Map.Entry<String, JsonNode>> fields = queryParams.fields();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> field = fields.next();
+            String parameterName = field.getKey();
+            String methodName = parameterName + "Query";
+            Method method = resolveVarargsMethod(operation, methodName);
+
+            if (method == null) {
+                throw new ContractHttpException(
+                        "Cannot bind query parameter '" + parameterName + "': expected method "
+                                + methodName + "(...) on " + operation.getClass().getSimpleName()
+                );
+            }
+
+            try {
+                method.invoke(operation, queryArgument(method, field.getValue()));
+            } catch (InvocationTargetException | IllegalAccessException exception) {
+                throw new ContractHttpException(
+                        "Failed to bind query parameter '" + parameterName + "'",
+                        exception
+                );
+            }
+        }
+    }
+
+    private Object queryArgument(Method method, JsonNode valueNode) {
+        Class<?> parameterType = method.getParameterTypes()[0];
+        if (!parameterType.isArray()) {
+            return convertValueForParameter(valueNode, parameterType);
+        }
+        if (valueNode != null && valueNode.isArray()) {
+            Object[] values = new Object[valueNode.size()];
+            for (int i = 0; i < valueNode.size(); i++) {
+                values[i] = formValue(valueNode.get(i));
+            }
+            return values;
+        }
+        return new Object[]{formValue(valueNode)};
     }
 
     private boolean hasBodyMethod(Object operation) {
@@ -138,6 +192,10 @@ final class OpenApiOperationAdapter {
                 );
             }
         }
+    }
+
+    private Method resolveVarargsMethod(Object operation, String methodName) {
+        return resolveFormFieldMethod(operation, methodName);
     }
 
     private Method resolveFormFieldMethod(Object operation, String methodName) {

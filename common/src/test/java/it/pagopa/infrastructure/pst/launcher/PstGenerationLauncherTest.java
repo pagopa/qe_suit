@@ -39,6 +39,8 @@ class PstGenerationLauncherTest {
         String html = Files.readString(output, StandardCharsets.UTF_8);
         assertTrue(html.contains("data-operation-id=\"updateResource\""));
         assertTrue(html.contains("PST fixture title"));
+        assertTrue(html.contains("?filter"));
+        assertTrue(html.contains("?page"));
     }
 
     @Test
@@ -46,7 +48,7 @@ class PstGenerationLauncherTest {
         CountingProfile.calls = 0;
         Path output = temporaryDirectory.resolve("counting.html");
         PstGenerationLauncher.generate(arguments(writeConfig(), output, CountingProfile.class));
-        assertEquals(3, CountingProfile.calls);
+        assertEquals(4, CountingProfile.calls);
     }
 
     @Test

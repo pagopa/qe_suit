@@ -36,6 +36,16 @@ public interface HttpContractStages {
         }
 
         <T> PathParamsStage<T> pathParams(Supplier<T> pathParamsSupplier);
+
+        default <Q> QueryParamsStage<Q> queryParams(Q queryParams) {
+            return queryParams(() -> queryParams);
+        }
+
+        default QueryParamsStage<Map<String, ?>> queryParams(Map<String, ?> queryParams) {
+            return queryParams(() -> queryParams);
+        }
+
+        <Q> QueryParamsStage<Q> queryParams(Supplier<Q> queryParamsSupplier);
     }
 
     interface PayloadStage<T> extends TestsStage {
@@ -56,6 +66,16 @@ public interface HttpContractStages {
         }
 
         <P> PathParamsStage<P> pathParams(Supplier<P> pathParamsSupplier);
+
+        default <Q> QueryParamsStage<Q> queryParams(Q queryParams) {
+            return queryParams(() -> queryParams);
+        }
+
+        default QueryParamsStage<Map<String, ?>> queryParams(Map<String, ?> queryParams) {
+            return queryParams(() -> queryParams);
+        }
+
+        <Q> QueryParamsStage<Q> queryParams(Supplier<Q> queryParamsSupplier);
     }
 
     interface PathParamsStage<T> extends TestsStage {
@@ -72,5 +92,41 @@ public interface HttpContractStages {
         }
 
         <P> PayloadStage<P> payload(Supplier<P> payloadSupplier);
+
+        default <Q> QueryParamsStage<Q> queryParams(Q queryParams) {
+            return queryParams(() -> queryParams);
+        }
+
+        default QueryParamsStage<Map<String, ?>> queryParams(Map<String, ?> queryParams) {
+            return queryParams(() -> queryParams);
+        }
+
+        <Q> QueryParamsStage<Q> queryParams(Supplier<Q> queryParamsSupplier);
+    }
+
+    interface QueryParamsStage<T> extends TestsStage {
+        QueryParamsStage<T> scenario(FuzzScenario scenario, Consumer<Response> expectation);
+
+        QueryParamsStage<T> scenario(List<FuzzScenario> scenarios, Consumer<Response> expectation);
+
+        QueryParamsStage<T> targets(FuzzScenario scenario, Consumer<Response> expectation, List<TargetExpression<T>> targets);
+
+        QueryParamsStage<T> targets(List<FuzzScenario> scenarios, Consumer<Response> expectation, List<TargetExpression<T>> targets);
+
+        default <P> PayloadStage<P> payload(P payload) {
+            return payload(() -> payload);
+        }
+
+        <P> PayloadStage<P> payload(Supplier<P> payloadSupplier);
+
+        default <P> PathParamsStage<P> pathParams(P pathParams) {
+            return pathParams(() -> pathParams);
+        }
+
+        default PathParamsStage<Map<String, ?>> pathParams(Map<String, ?> pathParams) {
+            return pathParams(() -> pathParams);
+        }
+
+        <P> PathParamsStage<P> pathParams(Supplier<P> pathParamsSupplier);
     }
 }

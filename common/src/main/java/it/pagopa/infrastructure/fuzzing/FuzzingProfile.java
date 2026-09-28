@@ -19,4 +19,13 @@ public interface FuzzingProfile {
     FuzzCasePlanner payloadPlanner();
 
     FuzzCasePlanner pathParamsPlanner();
+
+    /**
+     * Rule set for query parameters. Defaults to the path parameter planner so that existing
+     * profiles keep compiling; override it when query parameters need a different rule set
+     * (for example removal/null scenarios, which are meaningful only for optional parameters).
+     */
+    default FuzzCasePlanner queryParamsPlanner() {
+        return pathParamsPlanner();
+    }
 }

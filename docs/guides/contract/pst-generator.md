@@ -87,7 +87,7 @@ operations:              # optional, default: all operations
   - createAgreement
 overrides:               # optional
   - operationId: createAgreement
-    scope: PAYLOAD       # PAYLOAD | PATH_PARAMS
+    scope: PAYLOAD       # PAYLOAD | PATH_PARAMS | QUERY_PARAMS
     target: /delegationId
     scenario: REPLACED_WITH_NULL
     status: 200
@@ -107,11 +107,30 @@ binds these payloads field by field on the `<field>Form(...)` methods instead of
 
 Any other media type (for example `application/octet-stream`) fails explicitly.
 
+## Query parameters
+
+Query parameters are a first class scope (`QUERY_PARAMS`), next to `PAYLOAD` and `PATH_PARAMS`. They are
+designed as a typed parameter map built from the OpenAPI operation, so they go through the same decomposer,
+rules, mutation validity and expectation resolution as the other scopes. Array parameters get one
+representative element, so element level scenarios are designed too. Targets are rendered as `?name` and
+`?name[0]`.
+
+Query parameters have no generated DTO, hence no validation annotation: their only contract metadata is the
+`required` flag of the specification, applied by `QueryParameterValidityResolver`. Removing or nulling an
+optional parameter is therefore `VALID` (success expected), doing the same on a required one is `INVALID`.
+Every other scenario stays `UNKNOWN` and is resolved by the policy, exactly like the other scopes.
+
+At runtime `OpenApiOperationAdapter` binds the parameters on the generated `<name>Query(Object...)` methods,
+expanding arrays into varargs. The runtime plans the query scope with the `queryParamsFuzzEngine`; when the
+test does not declare the `required` flags, every declared parameter is treated as optional, which mirrors
+the convention that a call without query parameters succeeds. The PST, which reads the specification, is
+strictly more precise on required parameters.
+
 ## Known limitations
 
 Top-level `List<Model>` bodies, immutable models, complex path parameters, external parameter `$ref` and
 unresolvable inline enums in path parameters are not supported and fail explicitly.
 
-Inline enums of form fields are designed as their base scalar type, because the generated form methods are
+Inline enums of form fields and of query parameters are designed as their base scalar type, because the generated form methods are
 untyped (`Object...`) and no Java enum is generated for them: enum specific scenarios are therefore not
 designed for those fields, consistently with what the runtime can actually send.

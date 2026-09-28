@@ -44,6 +44,24 @@ public class DiscoveryFixtureApi {
         return new UploadWidgetRawOper();
     }
 
+    public SearchWidgetsOper searchWidgets() {
+        return new SearchWidgetsOper();
+    }
+
+    public static class SearchWidgetsOper {
+        public SearchWidgetsOper qQuery(Object... value) {
+            return this;
+        }
+
+        public SearchWidgetsOper limitQuery(Object... value) {
+            return this;
+        }
+
+        public SearchWidgetsOper statesQuery(Object... value) {
+            return this;
+        }
+    }
+
     public static class CreateWidgetOper {
         public CreateWidgetOper body(WidgetPayload body) {
             return this;

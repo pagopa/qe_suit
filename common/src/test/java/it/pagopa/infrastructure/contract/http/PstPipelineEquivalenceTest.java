@@ -53,6 +53,10 @@ class PstPipelineEquivalenceTest {
             List.of(new NullAndMissingRule(), new ScalarRule())
     );
     private final FuzzCasePlanner pathPlanner = new FuzzCasePlanner(List.of(new ScalarRule()));
+    private final FuzzCasePlanner queryPlanner = new FuzzCasePlanner(
+            List.of(new NullAndMissingRule(), new ScalarRule())
+    );
+    private static final Map<String, Boolean> QUERY_METADATA = Map.of("filter", true, "page", false);
 
     @TempDir
     Path temporaryDirectory;
@@ -70,16 +74,21 @@ class PstPipelineEquivalenceTest {
 
         ScopePlanState<?> payloadState = runtimeState(payload, payloadPlanner);
         ScopePlanState<?> pathState = runtimeState(pathParams, pathPlanner);
+        ScopePlanState<?> queryState = runtimeState(
+                seed.queryParameters(),
+                queryPlanner,
+                new QueryParameterValidityResolver(QUERY_METADATA)
+        );
         HttpContractPolicy policy = runtimePolicy(config);
         ContractCasePlanner runtimePlanner = new ContractCasePlanner(
                 objectMapper,
                 new MockitoObjectGraphQueryResolver(),
                 policy
         );
-        List<GeneratedContractCase> runtimeCases = runtimePlanner.planCases(payloadState, pathState);
+        List<GeneratedContractCase> runtimeCases = runtimePlanner.planCases(payloadState, pathState, queryState);
 
         List<ScenarioTuple> runtime = runtimeCases.stream()
-                .map(testCase -> runtimeTuple(testCase, payloadState, pathState))
+                .map(testCase -> runtimeTuple(testCase, payloadState, pathState, queryState))
                 .toList();
         List<ScenarioTuple> pst = document.operations().get(0).scenarios().stream()
                 .map(PstPipelineEquivalenceTest::pstTuple)
@@ -120,6 +129,17 @@ class PstPipelineEquivalenceTest {
         assertTrue(pst.stream().anyMatch(tuple -> tuple.scope() == RequestScope.PATH_PARAMS
                 && tuple.target().equals("/id")
                 && tuple.scenario() == FuzzScenario.REPLACED_WITH_MALFORMED_UUID));
+        assertTrue(pst.stream().anyMatch(tuple -> tuple.scope() == RequestScope.QUERY_PARAMS
+                && tuple.target().equals("/page")
+                && tuple.scenario() == FuzzScenario.REMOVED
+                && tuple.validity() == ContractValidity.VALID));
+        assertTrue(pst.stream().anyMatch(tuple -> tuple.scope() == RequestScope.QUERY_PARAMS
+                && tuple.target().equals("/filter")
+                && tuple.scenario() == FuzzScenario.REMOVED
+                && tuple.validity() == ContractValidity.INVALID));
+        assertTrue(pst.stream().anyMatch(tuple -> tuple.scope() == RequestScope.QUERY_PARAMS
+                && tuple.target().equals("/filter")
+                && tuple.scenario() == FuzzScenario.REPLACED_WITH_SQL_INJECTION));
     }
 
     @Test
@@ -181,7 +201,8 @@ class PstPipelineEquivalenceTest {
                 graphDecomposer,
                 objectMapper,
                 payloadPlanner,
-                pathPlanner
+                pathPlanner,
+                queryPlanner
         );
     }
 
@@ -205,6 +226,14 @@ class PstPipelineEquivalenceTest {
     }
 
     private ScopePlanState<?> runtimeState(Object source, FuzzCasePlanner planner) {
+        return runtimeState(source, planner, null);
+    }
+
+    private ScopePlanState<?> runtimeState(
+            Object source,
+            FuzzCasePlanner planner,
+            MutationValidityResolver validityResolver
+    ) {
         ObjectGraph graph = graphDecomposer.decompose(source);
         List<FuzzCase> fuzzCases = runtimeCases(source, planner);
         return new ScopePlanState(
@@ -212,7 +241,8 @@ class PstPipelineEquivalenceTest {
                 source.getClass(),
                 graph,
                 fuzzCases,
-                new ScopeOverrides()
+                new ScopeOverrides(),
+                validityResolver
         );
     }
 
@@ -237,12 +267,19 @@ class PstPipelineEquivalenceTest {
     private ScenarioTuple runtimeTuple(
             GeneratedContractCase testCase,
             ScopePlanState<?> payloadState,
-            ScopePlanState<?> pathState
+            ScopePlanState<?> pathState,
+            ScopePlanState<?> queryState
     ) {
-        ScopePlanState<?> state = testCase.scope() == RequestScope.PAYLOAD ? payloadState : pathState;
+        ScopePlanState<?> state = switch (testCase.scope()) {
+            case PAYLOAD -> payloadState;
+            case PATH_PARAMS -> pathState;
+            case QUERY_PARAMS -> queryState;
+        };
         Node node = state.graph().find(testCase.target()).orElseThrow();
-        ContractValidity validity = new JacksonMutationValidityResolver(objectMapper, state.sourceType())
-                .resolve(node, testCase.mutation());
+        MutationValidityResolver resolver = state.validityResolver() != null
+                ? state.validityResolver()
+                : new JacksonMutationValidityResolver(objectMapper, state.sourceType());
+        ContractValidity validity = resolver.resolve(node, testCase.mutation());
         return new ScenarioTuple(
                 testCase.scope(),
                 testCase.target().toString(),

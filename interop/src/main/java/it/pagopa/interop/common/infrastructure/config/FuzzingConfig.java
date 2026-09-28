@@ -59,6 +59,21 @@ public class FuzzingConfig {
         );
     }
 
+    @Bean("queryParamsFuzzEngine")
+    FuzzEngine queryParamsFuzzEngine(
+            ObjectGraphDecomposer objectGraphDecomposer,
+            ObjectMapper objectMapper,
+            FuzzMutationApplier mutationApplier,
+            @Qualifier("queryParamsFuzzCasePlanner") FuzzCasePlanner fuzzCasePlanner
+    ) {
+        return new DefaultFuzzEngine(
+                objectGraphDecomposer,
+                objectMapper,
+                mutationApplier,
+                fuzzCasePlanner
+        );
+    }
+
     @Bean
     InteropFuzzingProfile interopFuzzingProfile() {
         return new InteropFuzzingProfile();
@@ -72,6 +87,11 @@ public class FuzzingConfig {
     @Bean("pathParamsFuzzCasePlanner")
     FuzzCasePlanner pathParamsFuzzCasePlanner(InteropFuzzingProfile fuzzingProfile) {
         return fuzzingProfile.pathParamsPlanner();
+    }
+
+    @Bean("queryParamsFuzzCasePlanner")
+    FuzzCasePlanner queryParamsFuzzCasePlanner(InteropFuzzingProfile fuzzingProfile) {
+        return fuzzingProfile.queryParamsPlanner();
     }
 
     // Kept for backward compatibility: same instances used by the profile planners.

@@ -9,6 +9,7 @@ import it.pagopa.infrastructure.objectgraph.NodePath;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphQuery;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -27,6 +28,14 @@ final class ContractCasePlanner {
     }
 
     List<GeneratedContractCase> planCases(ScopePlanState<?> payload, ScopePlanState<?> pathParams) {
+        return planCases(payload, pathParams, null);
+    }
+
+    List<GeneratedContractCase> planCases(
+            ScopePlanState<?> payload,
+            ScopePlanState<?> pathParams,
+            ScopePlanState<?> queryParams
+    ) {
         List<GeneratedContractCase> out = new ArrayList<>();
         if (payload != null) {
             out.addAll(planScope(RequestScope.PAYLOAD, payload));
@@ -34,11 +43,14 @@ final class ContractCasePlanner {
         if (pathParams != null) {
             out.addAll(planScope(RequestScope.PATH_PARAMS, pathParams));
         }
+        if (queryParams != null) {
+            out.addAll(planScope(RequestScope.QUERY_PARAMS, queryParams));
+        }
         return out;
     }
 
     private List<GeneratedContractCase> planScope(RequestScope scope, ScopePlanState<?> state) {
-        MutationValidityResolver validityResolver = new JacksonMutationValidityResolver(objectMapper, state.sourceType());
+        MutationValidityResolver validityResolver = validityResolver(scope, state);
         Map<Key, Consumer<Response>> targetOverrides = resolveTargetOverrides(state);
         List<GeneratedContractCase> out = new ArrayList<>();
 
@@ -50,6 +62,33 @@ final class ContractCasePlanner {
             out.add(new GeneratedContractCase(scope, fuzzCase.target(), fuzzCase.mutation(), selection.expectation(), selection.origin()));
         }
         return out;
+    }
+
+    /**
+     * Query parameters have no generated DTO carrying validation annotations, so their contract
+     * metadata is the {@code required} flag. When the caller does not provide it, every declared
+     * parameter is treated as optional, which mirrors the convention that a call without query
+     * parameters succeeds.
+     */
+    private MutationValidityResolver validityResolver(RequestScope scope, ScopePlanState<?> state) {
+        if (state.validityResolver() != null) {
+            return state.validityResolver();
+        }
+        if (scope == RequestScope.QUERY_PARAMS) {
+            return new QueryParameterValidityResolver(optionalParameters(state.source()));
+        }
+        return new JacksonMutationValidityResolver(objectMapper, state.sourceType());
+    }
+
+    private Map<String, Boolean> optionalParameters(Object source) {
+        if (!(source instanceof Map<?, ?> parameters)) {
+            return Map.of();
+        }
+        Map<String, Boolean> optional = new LinkedHashMap<>();
+        for (Object name : parameters.keySet()) {
+            optional.put(String.valueOf(name), false);
+        }
+        return optional;
     }
 
     private ExpectationResolver.Resolution<Consumer<Response>> resolveExpectation(

@@ -11,7 +11,8 @@ public record DiscoveredOperation(
         String path,
         Optional<Type> requestBodyType,
         List<FormFieldDescriptor> requestBodyFormFields,
-        List<PathParameterDescriptor> pathParameters
+        List<PathParameterDescriptor> pathParameters,
+        List<QueryParameterDescriptor> queryParameters
 ) {
     public DiscoveredOperation {
         Objects.requireNonNull(operationId, "operationId must not be null");
@@ -22,6 +23,7 @@ public record DiscoveredOperation(
                 Objects.requireNonNull(requestBodyFormFields, "requestBodyFormFields must not be null")
         );
         pathParameters = List.copyOf(Objects.requireNonNull(pathParameters, "pathParameters must not be null"));
+        queryParameters = List.copyOf(Objects.requireNonNull(queryParameters, "queryParameters must not be null"));
         if (requestBodyType.isPresent() && !requestBodyFormFields.isEmpty()) {
             throw new IllegalArgumentException(
                     "Operation " + operationId + " cannot declare both a JSON and a form request body"
@@ -34,8 +36,19 @@ public record DiscoveredOperation(
             String httpMethod,
             String path,
             Optional<Type> requestBodyType,
+            List<FormFieldDescriptor> requestBodyFormFields,
             List<PathParameterDescriptor> pathParameters
     ) {
-        this(operationId, httpMethod, path, requestBodyType, List.of(), pathParameters);
+        this(operationId, httpMethod, path, requestBodyType, requestBodyFormFields, pathParameters, List.of());
+    }
+
+    public DiscoveredOperation(
+            String operationId,
+            String httpMethod,
+            String path,
+            Optional<Type> requestBodyType,
+            List<PathParameterDescriptor> pathParameters
+    ) {
+        this(operationId, httpMethod, path, requestBodyType, List.of(), pathParameters, List.of());
     }
 }

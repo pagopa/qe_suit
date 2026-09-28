@@ -3,6 +3,7 @@ package it.pagopa.infrastructure.openapi.seed;
 import it.pagopa.infrastructure.openapi.DiscoveredOperation;
 import it.pagopa.infrastructure.openapi.FormFieldDescriptor;
 import it.pagopa.infrastructure.openapi.PathParameterDescriptor;
+import it.pagopa.infrastructure.openapi.QueryParameterDescriptor;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,6 +32,10 @@ public final class OperationSeedFactory {
         for (PathParameterDescriptor parameter : operation.pathParameters()) {
             pathParameters.put(parameter.name(), seedFactory.create(parameter.javaType()));
         }
-        return new OperationSeed(body, pathParameters);
+        Map<String, Object> queryParameters = new LinkedHashMap<>();
+        for (QueryParameterDescriptor parameter : operation.queryParameters()) {
+            queryParameters.put(parameter.name(), seedFactory.create(parameter.javaType()));
+        }
+        return new OperationSeed(body, pathParameters, queryParameters);
     }
 }

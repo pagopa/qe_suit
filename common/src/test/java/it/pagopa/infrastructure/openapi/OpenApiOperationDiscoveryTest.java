@@ -25,7 +25,7 @@ class OpenApiOperationDiscoveryTest {
 
         assertEquals(
                 List.of("createWidget", "createWidgetBatch", "getWidget", "getWidgetBySlug", "getWidgetByKind",
-                        "uploadWidgetDocument", "submitWidgetForm", "getWidgetMetrics"),
+                        "uploadWidgetDocument", "submitWidgetForm", "searchWidgets", "getWidgetMetrics"),
                 operations.stream().map(DiscoveredOperation::operationId).toList()
         );
         DiscoveredOperation create = operations.get(0);
@@ -49,6 +49,40 @@ class OpenApiOperationDiscoveryTest {
         assertEquals(List.of("widgetId", "revision"), get.pathParameters().stream().map(PathParameterDescriptor::name).toList());
         assertEquals(List.of(java.util.UUID.class, Integer.class), get.pathParameters().stream().map(PathParameterDescriptor::javaType).toList());
         assertTrue(get.requestBodyType().isEmpty());
+    }
+
+    @Test
+    void resolves_query_parameters_with_required_flag_and_array_types() {
+        DiscoveredOperation operation = discovery.discover(configuration, Set.of("searchWidgets")).get(0);
+
+        assertEquals(
+                List.of("q", "limit", "states"),
+                operation.queryParameters().stream().map(QueryParameterDescriptor::name).toList()
+        );
+        assertEquals(
+                List.of(true, false, false),
+                operation.queryParameters().stream().map(QueryParameterDescriptor::required).toList()
+        );
+        assertEquals(String.class, operation.queryParameters().get(0).javaType());
+        assertEquals(Integer.class, operation.queryParameters().get(1).javaType());
+
+        ParameterizedType statesType = (ParameterizedType) operation.queryParameters().get(2).javaType();
+        assertEquals(List.class, statesType.getRawType());
+        assertEquals(String.class, statesType.getActualTypeArguments()[0]);
+    }
+
+    @Test
+    void seeds_query_parameters_as_a_typed_map_with_one_representative_element() {
+        DiscoveredOperation operation = discovery.discover(configuration, Set.of("searchWidgets")).get(0);
+
+        java.util.Map<String, Object> seed = new it.pagopa.infrastructure.openapi.seed.OperationSeedFactory(
+                new it.pagopa.infrastructure.openapi.seed.DeterministicSeedFactory()
+        ).create(operation).queryParameters();
+
+        assertEquals(List.of("q", "limit", "states"), List.copyOf(seed.keySet()));
+        assertTrue(seed.get("q") instanceof String);
+        assertTrue(seed.get("limit") instanceof Integer);
+        assertEquals(1, ((List<?>) seed.get("states")).size());
     }
 
     @Test

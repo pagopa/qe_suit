@@ -9,5 +9,13 @@ public class PstFixtureApi {
         public UpdateResourceOper body(PstFixturePayload payload) {
             return this;
         }
+
+        public UpdateResourceOper filterQuery(Object... value) {
+            return this;
+        }
+
+        public UpdateResourceOper pageQuery(Object... value) {
+            return this;
+        }
     }
 }
