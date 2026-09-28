@@ -24,10 +24,11 @@ public class ApplicationHooks {
     public void beforeScenario(Scenario scenario) {
         testContext.setCurrentTestKind(TestKind.FLOW);
         MDC.put("scenario", scenario.getName());
+        log.info("=== SCENARIO START: {} ===", scenario.getName());
     }
 
     @After
-    public void afterScenario() {
+    public void afterScenario(Scenario scenario) {
         var errors = testContext.getEventualConsistencyErrors();
 
         if (!errors.isEmpty()) {
@@ -37,6 +38,8 @@ public class ApplicationHooks {
 
             log.error("Eventual consistency errors found:\n{}", formattedErrors);
         }
+
+        log.info("=== SCENARIO END: {} | Status: {} ===", scenario.getName(), scenario.getStatus());
 
         MDC.remove("scenario");
     }

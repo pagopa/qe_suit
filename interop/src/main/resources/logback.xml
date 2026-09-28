@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
+    <!-- Flush degli appender alla chiusura della JVM: senza questo le ultime righe
+         di un run interrotto (o di un fail veloce) possono andare perse. -->
+    <shutdownHook class="ch.qos.logback.core.hook.DefaultShutdownHook"/>
+
     <property name="LOG_DIR" value="target/logs"/>
 
+    <!-- %X{scenario} e' popolato dagli hook Cucumber/JUnit: indispensabile per
+         ricostruire una timeline leggibile quando i test girano in parallelo. -->
     <property name="LOG_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} %replace(%X{scenario} ){'^$', ''}: %msg%n"/>
 
-    <springProperty scope="context" name="suitLogLevel" source="logging.level.suit" defaultValue="INFO"/>
+    <!-- Livello della suite. springProperty non funziona qui: logback viene inizializzato
+         da surefire prima del contesto Spring, quindi si usa una property risolta da
+         -DSUIT_LOG_LEVEL o dall'omonima variabile d'ambiente (default INFO). -->
+    <property name="suitLogLevel" value="${SUIT_LOG_LEVEL:-INFO}"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -13,52 +23,41 @@
         </encoder>
     </appender>
 
-    <appender name="FRAMEWORK_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/framework.log</file>
+    <!-- Unico file di log: framework (interazioni UI), step di test e chiamate HTTP
+         nella stessa timeline. FileAppender con append=false => ogni run parte da un
+         file pulito (RollingFileAppender non supporta append=false). -->
+    <appender name="TEST_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${LOG_DIR}/e2e.log</file>
+        <append>false</append>
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/framework.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <maxFileSize>50MB</maxFileSize>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
     </appender>
 
-    <appender name="TEST_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/e2e-tests.log</file>
-        <encoder>
-            <pattern>${LOG_PATTERN}</pattern>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/e2e-tests.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <maxFileSize>50MB</maxFileSize>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-    </appender>
-
+    <!-- Framework E2E: interazioni UI dai decorator ([ACTION]/[NAVIGATION]/[WAIT])
+         e meccanismi di retry/attesa del SeleniumApiAdapter. -->
     <logger name="it.frontend.e2e.framework" level="${suitLogLevel}" additivity="false">
-        <appender-ref ref="FRAMEWORK_FILE"/>
+        <appender-ref ref="TEST_FILE"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
+    <!-- Step e domini della suite interop. -->
     <logger name="it.pagopa.interop" level="${suitLogLevel}" additivity="false">
         <appender-ref ref="TEST_FILE"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <logger name="E2E-Framework" level="${suitLogLevel}" additivity="false">
-        <appender-ref ref="FRAMEWORK_FILE"/>
-        <appender-ref ref="CONSOLE"/>
-    </logger>
-
-    <logger name="it.pagopa.interop.infrastructure.http" level="DEBUG" additivity="false">
+    <!-- Modulo common: HttpLoggingFilter (request/response) e contract validation. -->
+    <logger name="it.pagopa.infrastructure" level="${suitLogLevel}" additivity="false">
         <appender-ref ref="TEST_FILE"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
+    <!-- Rumore di terze parti. -->
     <logger name="org.springframework" level="WARN"/>
     <logger name="org.openqa.selenium" level="WARN"/>
+    <logger name="org.apache.hc" level="WARN"/>
+    <logger name="io.restassured" level="WARN"/>
     <logger name="io.cucumber" level="INFO"/>
 
     <root level="INFO">
