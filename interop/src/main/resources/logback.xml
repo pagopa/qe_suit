@@ -76,7 +76,7 @@
     <appender name="TEST_FILE"
               class="ch.qos.logback.core.FileAppender">
 
-        <file>${LOG_DIR}/e2e.log</file>
+        <file>${LOG_DIR}/qa-test.log</file>
         <append>true</append>
 
         <encoder>
