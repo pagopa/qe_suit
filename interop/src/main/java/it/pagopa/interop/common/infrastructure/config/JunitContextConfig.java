@@ -12,6 +12,8 @@ import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.application.context.TestContext;
+import it.pagopa.interop.m2m.infrastructure.context.InMemoryCurrentM2MSession;
+import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
