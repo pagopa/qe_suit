@@ -79,6 +79,14 @@ bff:
     bearer-token: ${pn.external.bearer-token.tokenBffApiDev:REPLACE_ME}
 
 # ============================================================================
+# Template API Configuration (templates via API)
+# ============================================================================
+template:
+  api:
+    base-url: http://localhost:8886
+    openapi-url: https://raw.githubusercontent.com/pagopa/pn-templates-engine/refs/tags/v1.17.0-RC.1/docs/openapi/pn-internal-templates-v1.yaml
+
+# ============================================================================
 # GPD API Configuration (posizioni debitorie)
 # ============================================================================
 gpd:
