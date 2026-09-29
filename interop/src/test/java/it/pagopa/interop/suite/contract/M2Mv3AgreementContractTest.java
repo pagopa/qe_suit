@@ -24,13 +24,13 @@ import java.util.stream.Stream;
 
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, M2Mv3ApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-public class M2Mv3CatalogContractTest {
+public class M2Mv3AgreementContractTest {
 
     private final ApiClient apiClient;
     private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
 
-    public M2Mv3CatalogContractTest(
+    public M2Mv3AgreementContractTest(
             ApiClient apiClient,
             @Qualifier("m2mV3InteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
             InteropJourney interopJourney,
