@@ -38,13 +38,13 @@ jobs:
           GITHUB_BASE_REF: ${{ github.base_ref }}
         run: bash .github/scripts/validate-commit-messages.sh
 
+      - name: Run install SUIT
+        working-directory: frontend-e2e-framework
+        run: bash ./mvnw -DskipTests install
+
       - name: Run COMMON unit tests
         working-directory: common
-        run: bash ./mvnw test
-
-      - name: Run install COMMON
-        working-directory: common
-        run: bash ./mvnw -DskipTests install
+        run: bash ./mvnw install
 
       - name: Run interop tests (ci-rules profile)
         working-directory: interop
