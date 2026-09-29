@@ -128,7 +128,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: qa-test-artifacts-${{ inputs.environment || 'qa' }}
+          name: qa-test-artifacts
           path: |
             ./qe_suit/interop/target/logs/
             ./qe_suit/interop/target/cucumber-reports/
