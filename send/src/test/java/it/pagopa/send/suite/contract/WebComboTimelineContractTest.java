@@ -35,11 +35,11 @@ public class WebComboTimelineContractTest {
 
     @TestFactory
     Stream<DynamicTest> shouldValidateComboTimelinePageLayout() {
-        String dummyCampaignId = "FattOrd";
-        String dummyIun = "XKDZ-PXRU-ARWP-202609-J-A";
+        String campaignId = "FattOrd";
+        String iun = "XKDZ-PXRU-ARWP-202609-J-A";
 
         return webContractValidator.as(Tenant.GROSSINI, List.of(Recipient.LUCREZIA))
-                .on(MittenteComboTimelinePage.class, dummyCampaignId, dummyIun)
+                .on(MittenteComboTimelinePage.class, campaignId, iun)
                 .tests(scenarios());
     }
 
