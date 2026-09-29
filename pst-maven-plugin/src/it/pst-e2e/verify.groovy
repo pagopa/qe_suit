@@ -5,7 +5,7 @@ assert report.isFile() : "PST report not generated at default path: " + report
 
 String html = report.getText(StandardCharsets.UTF_8.name())
 
-List<String> rows = html.split('<tr class="scenario-row">').drop(1).collect { it.substring(0, it.indexOf('</tr>')) }
+List<String> rows = html.split('<tr class="scenario-row"').drop(1).collect { it.substring(0, it.indexOf('</tr>')) }
 
 def cell = { String row, String css ->
     def matcher = row =~ /class="${css}"[^>]*>([^<]*)</
