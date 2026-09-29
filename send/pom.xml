@@ -20,7 +20,9 @@
 
     <properties>
         <java.version>17</java.version>
-        <cucumber.version>7.14.0</cucumber.version>
+        <cucumber.version>7.34.6</cucumber.version>
+        <jjwt.version>0.12.6</jjwt.version>
+        <spring-plugin.version>4.1.0</spring-plugin.version>
     </properties>
 
     <dependencies>
@@ -83,16 +85,32 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
         <!-- ========================= -->
-        <!-- JUNIT PLATFORM SUITE API (se ti serve la @Suite) -->
+        <!-- SPRING PLUGIN -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>org.springframework.plugin</groupId>
+            <artifactId>spring-plugin-core</artifactId>
+            <version>${spring-plugin.version}</version>
+        </dependency>
+
+        <!-- ========================= -->
+        <!-- JUNIT PLATFORM SUITE API (@Suite) -->
         <!-- ========================= -->
         <dependency>
             <groupId>org.junit.platform</groupId>
             <artifactId>junit-platform-suite-api</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -110,37 +128,50 @@
         </dependency>
 
         <!-- ========================= -->
-        <!-- OPENAPI GENERATED CLIENT (rest-assured library) -->
+        <!-- JWT -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- ========================= -->
+        <!-- Client Generation dependencies -->
         <!-- ========================= -->
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
-            <version>5.5.6</version>
-        </dependency>
-
-        <!--
-            rest-assured 5.5.6 porta transitivamente Groovy 5.0.4, che ha una regressione in
-            MetaClassImpl (getMetaProperty/setProperty) che fa fallire con NPE qualsiasi merge di
-            specifiche (es. ".expect().spec(...)" nel codice generato da ogni Oper). Si forza
-            l'uso di Groovy 4.0.24, versione con cui rest-assured è effettivamente compatibile.
-        -->
-        <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>4.0.24</version>
+            <version>6.0.1</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-xml</artifactId>
-            <version>4.0.24</version>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-path</artifactId>
+            <version>6.0.1</version>
         </dependency>
 
         <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy-json</artifactId>
-            <version>4.0.24</version>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>xml-path</artifactId>
+            <version>6.0.1</version>
         </dependency>
+
 
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -160,16 +191,15 @@
 
         <!-- provides javax.annotation.Generated used by the generated OpenAPI code -->
         <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-            <version>1.3.5</version>
-            <scope>provided</scope>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.plugin</groupId>
             <artifactId>spring-plugin-core</artifactId>
-            <version>4.1.0</version>
+            <version>${spring-plugin.version}</version>
         </dependency>
 
         <!-- ========================= -->
@@ -182,6 +212,26 @@
             <version>1.6.3</version>
         </dependency>
 
+        <!-- ========================= -->
+        <!-- ArchUnit: Architecture Testing Dependency -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5</artifactId>
+            <version>1.3.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ========================= -->
+        <!-- JUnit Platform: Reporting  -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-reporting</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -380,6 +430,41 @@
                             <configOptions>
                                 <apiPackage>it.pagopa.send.generated.openapi.clients.externalregistries.api</apiPackage>
                                 <modelPackage>it.pagopa.send.generated.openapi.clients.externalregistries.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <serializableModel>true</serializableModel>
+                                <serializationLibrary>jackson</serializationLibrary>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+
+                    <!-- Pn Template Engine -->
+                    <execution>
+                        <id>generate-template-internal-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-templates-engine/refs/tags/v1.17.0-RC.1/docs/openapi/pn-internal-templates-v1.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>rest-assured</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <configOptions>
+                                <apiPackage>it.pagopa.send.generated.openapi.clients.internal.template.api</apiPackage>
+                                <modelPackage>it.pagopa.send.generated.openapi.clients.internal.template.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
