@@ -64,9 +64,9 @@ public class BffApiContractConfig {
                         FuzzScenario.REPLACED_WITH_MIN_VALUE,
                         FuzzScenario.REPLACED_WITH_MAX_VALUE,
                         FuzzScenario.REPLACED_WITH_MALFORMED_UUID,
-                        FuzzScenario.REPLACED_WITH_NIL_UUID,
                         FuzzScenario.REPLACED_WITH_UNKNOWN_ENUM
                 ), 400)
+                .scenarioStatus(FuzzScenario.REPLACED_WITH_NIL_UUID, 404)
                 .scenarioStatus(FuzzScenario.REPLACED_WITH_XSS, 403)
                 .build();
     }
