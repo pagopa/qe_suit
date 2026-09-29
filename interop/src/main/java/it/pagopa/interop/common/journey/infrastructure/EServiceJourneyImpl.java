@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
+import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
@@ -13,6 +14,7 @@ import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 
 @Component
@@ -91,7 +93,18 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     private EServiceJourneyImpl publishPipeline(EService eService, EServiceDescriptor eServiceDescriptor) {
-        eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor);
+        Optional<Attribute> declaredAttribute = entityStore.getLast(Attribute.class);
+
+        if (declaredAttribute.isPresent()) {
+            eServiceDescriptorUseCase.prepareDescriptorForPublication(
+                    eService,
+                    eServiceDescriptor,
+                    command -> command.declaredAttribute(declaredAttribute.get())
+            );
+        } else {
+            eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor);
+        }
+
         eServiceDescriptorUseCase.publishDescriptor(eService, eServiceDescriptor);
         return this;
     }

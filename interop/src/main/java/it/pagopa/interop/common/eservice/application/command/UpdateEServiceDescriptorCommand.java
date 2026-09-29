@@ -1,5 +1,7 @@
 package it.pagopa.interop.common.eservice.application.command;
 
+import it.pagopa.interop.common.attribute.domain.Attribute;
+
 import java.util.List;
 
 public interface UpdateEServiceDescriptorCommand {
@@ -8,4 +10,5 @@ public interface UpdateEServiceDescriptorCommand {
     UpdateEServiceDescriptorCommand dailyCallsTotal(Integer dailyCallsTotal);
     UpdateEServiceDescriptorCommand audience(List<String> audience);
     UpdateEServiceDescriptorCommand description(String description);
+    UpdateEServiceDescriptorCommand declaredAttribute(Attribute attribute);
 }

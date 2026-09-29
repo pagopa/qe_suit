@@ -1,9 +1,13 @@
 package it.pagopa.interop.bff.eservice.application;
 
+import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -49,6 +53,29 @@ public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescrip
     @Override
     public UpdateEServiceDescriptorCommand description(String description) {
         bffPayload.setDescription(description);
+        return this;
+    }
+
+    @Override
+    public UpdateEServiceDescriptorCommand declaredAttribute(Attribute attribute) {
+        DescriptorAttributesSeed attributes = bffPayload.getAttributes();
+
+        if (attributes == null) {
+            attributes = new DescriptorAttributesSeed()
+                    .certified(new ArrayList<>())
+                    .declared(new ArrayList<>())
+                    .verified(new ArrayList<>());
+            bffPayload.setAttributes(attributes);
+        }
+
+        List<List<DescriptorAttributeSeed>> mutableDeclared = new ArrayList<>(attributes.getDeclared());
+        mutableDeclared.add(List.of(
+                new DescriptorAttributeSeed()
+                        .id(attribute.getId())
+                        .explicitAttributeVerification(false)
+        ));
+        attributes.setDeclared(mutableDeclared);
+
         return this;
     }
 }
