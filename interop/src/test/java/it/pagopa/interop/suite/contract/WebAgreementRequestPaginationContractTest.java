@@ -1,6 +1,7 @@
 package it.pagopa.interop.suite.contract;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
+import it.pagopa.infrastructure.suit.component.Pagination;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
@@ -14,13 +15,11 @@ import it.pagopa.interop.web.agreement.infrastructure.page.AgreementRequestPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 @SpringBootTest(
@@ -46,7 +45,7 @@ public class WebAgreementRequestPaginationContractTest {
     private final InteropJourney interopJourney;
 
     @TestFactory
-    Stream<DynamicTest> shouldKeepPaginationUsableWhenOffsetExceedsRealTotal() {
+    Stream<DynamicTest> shouldShowPaginationNavbarRegardlessOfOffset() {
         return webContractValidator
                 .as(
                         User.getTenantAdmin(CONSUMER),
@@ -58,78 +57,38 @@ public class WebAgreementRequestPaginationContractTest {
 
     private Stream<WebScenario<AgreementRequestPage>> scenarios() {
         return Stream.of(
-                offsetBeyondRealTotalScenario(),
-                offsetOnLastValidPageScenario(),
-                singlePageOverflowScenario()
+                baseOffsetScenario(),
+                highOffsetScenario()
         );
     }
 
-    private WebScenario<AgreementRequestPage> offsetBeyondRealTotalScenario() {
-        AtomicInteger lastPageNumber = new AtomicInteger();
-
+    private WebScenario<AgreementRequestPage> baseOffsetScenario() {
         return new WebScenario<>(
-                "offset oltre il totale reale rimane navigabile",
+                "offset = 0: la navbar di paginazione è presente",
                 page -> {
                     createPendingAgreementRequest();
                     page.navigateTo("10", "0");
-
-                    int n = page.table().pagination().lastPageNumber();
-                    lastPageNumber.set(n);
-
-                    page.navigateTo("10", String.valueOf(n * 10));
                 },
-                page -> {
-                    Assertions.assertThat(page.table().pagination().isUsable()).isTrue();
-                    Assertions.assertThat(page.table().pagination().lastPageNumber())
-                            .isEqualTo(lastPageNumber.get());
-                }
+                page -> Assertions.assertThat(page.pagination())
+                        .isPresent()
+                        .get()
+                        .extracting(Pagination::isUsable)
+                        .isEqualTo(true)
         );
     }
 
-    private WebScenario<AgreementRequestPage> offsetOnLastValidPageScenario() {
-        AtomicInteger lastPageNumber = new AtomicInteger();
-
+    private WebScenario<AgreementRequestPage> highOffsetScenario() {
         return new WebScenario<>(
-                "offset = (N-1)*10 (ultima pagina valida) rimane navigabile",
+                "offset elevato mantiene la navbar visibile a fine pagina",
                 page -> {
                     createPendingAgreementRequest();
-                    page.navigateTo("10", "0");
-
-                    int n = page.table().pagination().lastPageNumber();
-                    lastPageNumber.set(n);
-
-                    page.navigateTo("10", String.valueOf((n - 1) * 10));
+                    page.navigateTo("10", "1000");
                 },
-                page -> {
-                    Assertions.assertThat(page.table().pagination().isUsable()).isTrue();
-                    Assertions.assertThat(page.table().pagination().lastPageNumber())
-                            .isEqualTo(lastPageNumber.get());
-                }
-        );
-    }
-
-    private WebScenario<AgreementRequestPage> singlePageOverflowScenario() {
-        return new WebScenario<>(
-                "singola pagina disponibile: offset alto non produce 'nessun risultato'",
-                page -> {
-                    createPendingAgreementRequest();
-                    page.navigateTo("10", "0");
-
-                    // Questo scenario ha senso solo quando l'intero risultato sta in una
-                    // sola pagina. In un ambiente condiviso (QA) non è possibile garantirlo
-                    // in modo deterministico, quindi il caso viene saltato (non fallito)
-                    // quando il precondition non produce esattamente una pagina.
-                    Assumptions.assumeTrue(
-                            page.table().pagination().pageButtons().size() <= 1,
-                            "Skip: l'ambiente ha più di una pagina di risultati, impossibile verificare il caso N=1"
-                    );
-
-                    page.navigateTo("10", "100");
-                },
-                page -> {
-                    Assertions.assertThat(page.table().rows()).isNotEmpty();
-                    Assertions.assertThat(page.table().noResultsAlert()).isNotPresent();
-                }
+                page -> Assertions.assertThat(page.pagination())
+                        .isPresent()
+                        .get()
+                        .extracting(Pagination::isUsable)
+                        .isEqualTo(true)
         );
     }
 

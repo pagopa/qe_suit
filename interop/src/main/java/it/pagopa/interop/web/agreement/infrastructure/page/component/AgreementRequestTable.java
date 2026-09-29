@@ -20,13 +20,11 @@ public interface AgreementRequestTable extends Component {
 
     PageSize pageSize();
 
-    Pagination pagination();
-
     @Override
     default void assertLoaded() {
         SoftAssertions.assertSoftly(softly ->
                 softly.assertThat(!rows().isEmpty() || noResultsAlert().isPresent())
-                        .as("La tabella deve mostrare righe oppure lo stato 'nessun risultato'")
+                        .as("La tabella deve mostrare righe oppure lo stato 'La ricerca corrente non ha prodotto risultati'")
                         .isTrue()
         );
     }
