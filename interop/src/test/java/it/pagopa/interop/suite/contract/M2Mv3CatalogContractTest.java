@@ -1,17 +1,18 @@
 package it.pagopa.interop.suite.contract;
 
 import it.pagopa.infrastructure.channel.CurrentChannel;
-import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.AgreementSeed;
+import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import it.pagopa.interop.m2m.v3.infrastructure.config.M2Mv3ApiContractConfig;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -26,12 +27,12 @@ import java.util.stream.Stream;
 public class M2Mv3CatalogContractTest {
 
     private final ApiClient apiClient;
-    private final HttpContractValidator httpContractValidator;
+    private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
 
     public M2Mv3CatalogContractTest(
             ApiClient apiClient,
-            @Qualifier("m2Mv3ApiContractValidator") HttpContractValidator httpContractValidator,
+            @Qualifier("m2mV3InteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
             InteropJourney interopJourney,
             CurrentChannel<Channel> currentChannel
     ) {
@@ -44,6 +45,7 @@ public class M2Mv3CatalogContractTest {
     @TestFactory
     Stream<DynamicTest> createAgreement() {
         return httpContractValidator
+                .as(Tenant.COMUNE_DI_MILANO, M2MRole.M2M_ADMIN)
                 .apiCall(() -> {
                     interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
                     return apiClient.agreements().createAgreement();
