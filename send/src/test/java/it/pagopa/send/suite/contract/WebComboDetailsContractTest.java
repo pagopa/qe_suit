@@ -36,7 +36,7 @@ public class WebComboDetailsContractTest {
     @TestFactory
     Stream<DynamicTest> shouldValidateComboDetailsPageLayout() {
         String dummyCampaignId = "FattOrd";
-        String dummyIun = "GLAM-ZTPT-NZQG-202609-K-A";
+        String dummyIun = "XKDZ-PXRU-ARWP-202609-J-A";
 
         return webContractValidator.as(Tenant.GROSSINI, List.of(Recipient.LUCREZIA))
                 .on(MittenteComboDetailsPage.class, dummyCampaignId, dummyIun)

@@ -7,16 +7,16 @@ import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Chip;
 import org.assertj.core.api.SoftAssertions;
 
-@XPath(".//div[contains(@class, 'NotificationStatusBox') or (contains(@class, 'MuiPaper-root') and .//button[contains(., 'cronologia') or contains(., 'timeline')])]")
+@XPath("//div[@data-testid='NotificationDetailTimeline'] | //div[contains(@class, 'NotificationStatusBox')]")
 public interface ComboStatusSection extends Component {
 
-    @XPath(".//h5 | .//h2")
+    @XPath("//div[@data-testid='NotificationDetailTimeline']//h2 | .//h2 | .//h5")
     Readable<String> header();
 
-    @XPath(".//*[contains(@class, 'MuiChip-root')] | .//span[contains(@class, 'status')]")
+    @XPath(".//*[contains(@class, 'MuiChip-root')]")
     Chip statusChip();
 
-    @XPath(".//button[contains(., 'Vai alla cronologia') or contains(., 'timeline') or contains(., 'Cronologia')]")
+    @XPath("//button[@aria-label='Vai alla timeline della notifica' or contains(., 'Vai alla cronologia') or contains(., 'timeline') or contains(., 'Cronologia')]")
     Button openTimelineButton();
 
     @Override

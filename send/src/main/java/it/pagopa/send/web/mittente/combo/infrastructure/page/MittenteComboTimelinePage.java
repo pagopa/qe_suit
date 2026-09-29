@@ -8,7 +8,7 @@ import org.assertj.core.api.SoftAssertions;
 
 import java.util.Optional;
 
-@Url("${url.notifiche.mittente.dashboard}/campaigns/${campaignId}/communications/${iun}/timeline")
+@Url("${url.notifiche.mittente.base}/campaigns/${campaignId}/communications/${iun}/timeline")
 public interface MittenteComboTimelinePage extends Page {
 
     ComboTimelineComponent timeline();
