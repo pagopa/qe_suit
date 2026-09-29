@@ -6,6 +6,9 @@ import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import it.pagopa.infrastructure.reporting.contract.config.ContractChannelConfig;
+import it.pagopa.infrastructure.reporting.contract.config.ContractReportConfig;
+import it.pagopa.infrastructure.reporting.contract.config.ContractReportConfigurationLoader;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -204,6 +207,83 @@ public class ArchitectureRulesTest {
         if (!violations.isEmpty()) {
             fail("Le classi ContractTest non devono dichiarare @Execution. La configurazione deve passare esclusivamente per il file junit-platform.properties: " + violations);
         }
+    }
+
+    @Test
+    void contract_test_classes_must_start_with_configured_channel_prefix() {
+
+        ContractReportConfig contractReportConfig =
+                new ContractReportConfigurationLoader().load();
+
+        List<String> allowedPrefixes =
+                contractReportConfig.channels()
+                        .values()
+                        .stream()
+                        .map(ContractChannelConfig::classPrefix)
+                        .filter(prefix -> prefix != null && !prefix.isBlank())
+                        .toList();
+
+        var imported = new ClassFileImporter()
+                .importPackages("it.pagopa.interop");
+
+        Set<String> violations = new TreeSet<>();
+
+        for (JavaClass javaClass : imported) {
+
+            if (!javaClass.getSimpleName().endsWith("ContractTest")) {
+                continue;
+            }
+
+            String className =
+                    javaClass.getSimpleName();
+
+            boolean hasValidPrefix =
+                    allowedPrefixes.stream()
+                            .anyMatch(prefix ->
+                                    startsWithIgnoreCase(
+                                            className,
+                                            prefix
+                                    )
+                            );
+
+            if (!hasValidPrefix) {
+                violations.add(
+                        javaClass.getFullName()
+                                + " (expected prefix one of: "
+                                + allowedPrefixes
+                                + ")"
+                );
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            fail(
+                    "Le classi ContractTest devono iniziare con "
+                            + "uno dei class-prefix configurati in contract-report.channels: "
+                            + violations
+            );
+        }
+    }
+
+    private static boolean startsWithIgnoreCase(
+            String value,
+            String prefix) {
+
+        if (value == null || prefix == null) {
+            return false;
+        }
+
+        if (prefix.length() > value.length()) {
+            return false;
+        }
+
+        return value.regionMatches(
+                true,
+                0,
+                prefix,
+                0,
+                prefix.length()
+        );
     }
 
     private static void checkNamingConvention(JavaClass javaClass, Set<String> violations) {
