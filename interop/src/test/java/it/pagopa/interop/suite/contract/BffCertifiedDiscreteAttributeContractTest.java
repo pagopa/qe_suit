@@ -5,6 +5,7 @@ import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.attribute.infrastructure.BffAttributeRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import org.junit.jupiter.api.parallel.Execution;
@@ -24,7 +25,7 @@ public class BffCertifiedDiscreteAttributeContractTest extends AbstractBffAttrib
 
     public BffCertifiedDiscreteAttributeContractTest(
             ApiClient apiClient,
-            HttpContractValidator httpContractValidator,
+            InteropHttpContractValidator httpContractValidator,
             InteropJourney interopJourney,
             BffAttributeRequestFactory requestFactory
     ) {

@@ -28,7 +28,7 @@ public class BffProducerKeychainRequestFactory {
 
     public KeySeed keyCreationRequest() {
         BffClientKeyCreationCommand command = new BffClientKeyCreationCommand();
-        command.randomClientConsumerKey();
+        command.randomClientKey();
         return command.getKeySeed();
     }
 }

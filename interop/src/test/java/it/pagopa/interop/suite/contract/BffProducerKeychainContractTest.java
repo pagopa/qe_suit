@@ -7,6 +7,7 @@ import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.bff.producer_keychain.infrastructure.BffProducerKeychainRequestFactory;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -34,17 +35,15 @@ import static org.hamcrest.Matchers.is;
 public class BffProducerKeychainContractTest {
 
     private final ApiClient apiClient;
-    private final HttpContractValidator httpContractValidator;
+    private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final BffProducerKeychainRequestFactory requestFactory;
 
     @TestFactory
     Stream<DynamicTest> createProducerKeychain() {
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return apiClient.producerKeychain().createProducerKeychain();
-                })
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.producerKeychain().createProducerKeychain())
                 .payload(requestFactory::creationRequest)
                 .targets(
                         FuzzScenario.REMOVED,
@@ -57,10 +56,8 @@ public class BffProducerKeychainContractTest {
     @TestFactory
     Stream<DynamicTest> createProducerKeychainKey() {
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return apiClient.producerKeychain().createProducerKey();
-                })
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.producerKeychain().createProducerKey())
                 .pathParams(() -> Map.of("producerKeychainId", createProducerKeychainId()))
                 .payload(requestFactory::keyCreationRequest)
                 .tests();

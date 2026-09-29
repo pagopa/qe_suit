@@ -8,6 +8,7 @@ import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -31,17 +32,15 @@ import java.util.stream.Stream;
 public class BffEServiceTemplateContractTest {
 
     private final ApiClient apiClient;
-    private final HttpContractValidator httpContractValidator;
+    private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final BffEServiceTemplateRequestFactory requestFactory;
 
     @TestFactory
     Stream<DynamicTest> createEServiceTemplate() {
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return apiClient.eserviceTemplates().createEServiceTemplate();
-                })
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.eserviceTemplates().createEServiceTemplate())
                 .payload(requestFactory::creationRequest)
                 .tests();
     }
@@ -49,10 +48,8 @@ public class BffEServiceTemplateContractTest {
     @TestFactory
     Stream<DynamicTest> updateEServiceTemplateName() {
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return apiClient.eserviceTemplates().updateEServiceTemplateName();
-                })
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.eserviceTemplates().updateEServiceTemplateName())
                 .pathParams(() -> Map.of("eServiceTemplateId", createPublishedEServiceTemplateId()))
                 .payload(requestFactory::updateNameRequest)
                 .tests();
@@ -61,10 +58,8 @@ public class BffEServiceTemplateContractTest {
     @TestFactory
     Stream<DynamicTest> updateEServiceTemplateIntendedTarget() {
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return apiClient.eserviceTemplates().updateEServiceTemplateIntendedTarget();
-                })
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.eserviceTemplates().updateEServiceTemplateIntendedTarget())
                 .pathParams(() -> Map.of("eServiceTemplateId", createPublishedEServiceTemplateId()))
                 .payload(requestFactory::updateIntendedTargetRequest)
                 .tests();
@@ -73,10 +68,8 @@ public class BffEServiceTemplateContractTest {
     @TestFactory
     Stream<DynamicTest> updateEServiceTemplateDescription() {
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return apiClient.eserviceTemplates().updateEServiceTemplateDescription();
-                })
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.eserviceTemplates().updateEServiceTemplateDescription())
                 .pathParams(() -> Map.of("eServiceTemplateId", createPublishedEServiceTemplateId()))
                 .payload(requestFactory::updateDescriptionRequest)
                 .tests();

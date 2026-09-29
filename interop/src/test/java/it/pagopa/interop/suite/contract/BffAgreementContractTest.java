@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 public class BffAgreementContractTest {
 
     private final ApiClient apiClient;
-   private final InteropHttpContractValidator httpContractValidator;
+    private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final BffAgreementRequestFactory requestFactory;
 
