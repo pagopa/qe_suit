@@ -15,6 +15,7 @@ final class HttpContractRuntimeCaseExecutor {
     private final ObjectMapper objectMapper;
     private final FuzzEngine payloadFuzzEngine;
     private final FuzzEngine pathParamsFuzzEngine;
+    private final FuzzEngine queryParamsFuzzEngine;
     private final OpenApiOperationAdapter operationAdapter;
     private final HttpContractAuthentication authentication;
 
@@ -22,12 +23,14 @@ final class HttpContractRuntimeCaseExecutor {
             ObjectMapper objectMapper,
             FuzzEngine payloadFuzzEngine,
             FuzzEngine pathParamsFuzzEngine,
+            FuzzEngine queryParamsFuzzEngine,
             OpenApiOperationAdapter operationAdapter,
             HttpContractAuthentication authentication
     ) {
         this.objectMapper = objectMapper;
         this.payloadFuzzEngine = payloadFuzzEngine;
         this.pathParamsFuzzEngine = pathParamsFuzzEngine;
+        this.queryParamsFuzzEngine = queryParamsFuzzEngine;
         this.operationAdapter = operationAdapter;
         this.authentication = Objects.requireNonNull(authentication, "authentication must not be null");
     }
@@ -37,15 +40,17 @@ final class HttpContractRuntimeCaseExecutor {
             GeneratedContractCase testCase,
             ScopeState<?> payloadState,
             ScopeState<?> pathState,
+            ScopeState<?> queryState,
             Supplier<?> operationSupplier
     ) {
         MDC.put("scenario", testName);
         try {
             RuntimeScope payloadRuntime = materializeRuntimeScope(payloadState, RequestScope.PAYLOAD, testCase);
             RuntimeScope pathRuntime = materializeRuntimeScope(pathState, RequestScope.PATH_PARAMS, testCase);
+            RuntimeScope queryRuntime = materializeRuntimeScope(queryState, RequestScope.QUERY_PARAMS, testCase);
             authentication.authenticate();
             Object operation = materializeOperation(operationSupplier, testCase);
-            HttpContractRequest request = buildRuntimeRequest(testCase, payloadRuntime, pathRuntime);
+            HttpContractRequest request = buildRuntimeRequest(testCase, payloadRuntime, pathRuntime, queryRuntime);
 
             Response response = operationAdapter.execute(operation, request);
             try {
@@ -85,25 +90,33 @@ final class HttpContractRuntimeCaseExecutor {
     private HttpContractRequest buildRuntimeRequest(
             GeneratedContractCase testCase,
             RuntimeScope payloadRuntime,
-            RuntimeScope pathRuntime
+            RuntimeScope pathRuntime,
+            RuntimeScope queryRuntime
     ) {
         JsonNode payloadBaseline = payloadRuntime == null ? null : payloadRuntime.baseline();
         JsonNode pathBaseline = pathRuntime == null ? null : pathRuntime.baseline();
-        FuzzCase runtimeCase = resolveRuntimeCase(testCase, payloadRuntime, pathRuntime);
+        JsonNode queryBaseline = queryRuntime == null ? null : queryRuntime.baseline();
+        FuzzCase runtimeCase = resolveRuntimeCase(testCase, payloadRuntime, pathRuntime, queryRuntime);
         JsonNode mutated = runtimeCase.result();
 
-        if (testCase.scope() == RequestScope.PAYLOAD) {
-            return new HttpContractRequest(mutated, mutated != null, pathBaseline);
-        }
-        return new HttpContractRequest(payloadBaseline, payloadRuntime != null, mutated);
+        return switch (testCase.scope()) {
+            case PAYLOAD -> new HttpContractRequest(mutated, mutated != null, pathBaseline, queryBaseline);
+            case PATH_PARAMS -> new HttpContractRequest(payloadBaseline, payloadRuntime != null, mutated, queryBaseline);
+            case QUERY_PARAMS -> new HttpContractRequest(payloadBaseline, payloadRuntime != null, pathBaseline, mutated);
+        };
     }
 
     private FuzzCase resolveRuntimeCase(
             GeneratedContractCase testCase,
             RuntimeScope payloadRuntime,
-            RuntimeScope pathRuntime
+            RuntimeScope pathRuntime,
+            RuntimeScope queryRuntime
     ) {
-        RuntimeScope mutatedScope = testCase.scope() == RequestScope.PAYLOAD ? payloadRuntime : pathRuntime;
+        RuntimeScope mutatedScope = switch (testCase.scope()) {
+            case PAYLOAD -> payloadRuntime;
+            case PATH_PARAMS -> pathRuntime;
+            case QUERY_PARAMS -> queryRuntime;
+        };
         if (mutatedScope == null) {
             throw new ContractHttpException(
                     "Missing configured scope for case " + formatDescriptor(testCase.descriptor())
@@ -167,7 +180,11 @@ final class HttpContractRuntimeCaseExecutor {
     }
 
     private String scopeLabel(RequestScope scope) {
-        return scope == RequestScope.PAYLOAD ? "payload" : "pathParams";
+        return switch (scope) {
+            case PAYLOAD -> "payload";
+            case PATH_PARAMS -> "pathParams";
+            case QUERY_PARAMS -> "queryParams";
+        };
     }
 
     private String formatDescriptor(ContractCaseDescriptor descriptor) {
@@ -176,7 +193,11 @@ final class HttpContractRuntimeCaseExecutor {
     }
 
     private FuzzEngine fuzzEngine(RequestScope scope) {
-        return scope == RequestScope.PAYLOAD ? payloadFuzzEngine : pathParamsFuzzEngine;
+        return switch (scope) {
+            case PAYLOAD -> payloadFuzzEngine;
+            case PATH_PARAMS -> pathParamsFuzzEngine;
+            case QUERY_PARAMS -> queryParamsFuzzEngine;
+        };
     }
 
     private record RuntimeScope(Object source, JsonNode baseline) {

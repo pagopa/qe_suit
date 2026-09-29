@@ -28,6 +28,8 @@
         <bff.openapi.url>
             https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.22.0-RC2/packages/api-clients/open-api/bffApi.yml
         </bff.openapi.url>
+        <!-- FuzzingProfile shared by runtime contract tests and PST generation (pst:generate) -->
+        <pst.fuzzingProfile>it.pagopa.interop.common.infrastructure.contract.InteropFuzzingProfile</pst.fuzzingProfile>
     </properties>
 
     <dependencyManagement>
@@ -401,8 +403,10 @@
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
                                 <openApiNullable>false</openApiNullable>
+                                <useJakartaEe>true</useJakartaEe>
                                 <useAbstractionForFiles>true</useAbstractionForFiles>
-                                <useBeanValidation>false</useBeanValidation>
+                                <useBeanValidation>true</useBeanValidation>
+                                <performBeanValidation>false</performBeanValidation>
                                 <serializableModel>true</serializableModel>
                                 <serializationLibrary>jackson</serializationLibrary>
                                 <additionalModelTypeAnnotations>
@@ -652,6 +656,14 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <!-- PST generator: explicit goal only, not bound to any phase.
+                 mvn pst:generate -Dpst.openapiExecution=generate-bff-client -Dpst.config=src/test/resources/pst/bff.yaml -->
+            <plugin>
+                <groupId>it.pagopa</groupId>
+                <artifactId>pst-maven-plugin</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </plugin>
 
             <!-- Channel feature expansion: duplicate multi-channel scenarios before Cucumber discovery -->

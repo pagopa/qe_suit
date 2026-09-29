@@ -26,6 +26,10 @@ public final class NodePath {
         return ROOT;
     }
 
+    public static NodePath fromPointer(String pointer) {
+        return new NodePath(pointer);
+    }
+
     public boolean isRoot() {
         return pointer.isEmpty();
     }

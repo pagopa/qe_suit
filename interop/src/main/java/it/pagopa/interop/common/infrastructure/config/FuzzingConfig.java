@@ -6,11 +6,10 @@ import it.pagopa.infrastructure.objectgraph.DefaultObjectGraphDecomposer;
 import it.pagopa.infrastructure.objectgraph.JacksonObjectDecomposer;
 import it.pagopa.infrastructure.objectgraph.ObjectDecomposer;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
+import it.pagopa.interop.common.infrastructure.contract.InteropFuzzingProfile;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.List;
 
 @Configuration(proxyBeanMethods = false)
 public class FuzzingConfig {
@@ -35,14 +34,13 @@ public class FuzzingConfig {
             ObjectGraphDecomposer objectGraphDecomposer,
             ObjectMapper objectMapper,
             FuzzMutationApplier mutationApplier,
-            NullAndMissingRule nullAndMissingRule,
-            ScalarRule scalarRule
+            @Qualifier("payloadFuzzCasePlanner") FuzzCasePlanner fuzzCasePlanner
     ) {
         return new DefaultFuzzEngine(
                 objectGraphDecomposer,
                 objectMapper,
                 mutationApplier,
-                List.of(nullAndMissingRule, scalarRule)
+                fuzzCasePlanner
         );
     }
 
@@ -51,23 +49,59 @@ public class FuzzingConfig {
             ObjectGraphDecomposer objectGraphDecomposer,
             ObjectMapper objectMapper,
             FuzzMutationApplier mutationApplier,
-            @Qualifier("scalarRule") ScalarRule scalarRule
+            @Qualifier("pathParamsFuzzCasePlanner") FuzzCasePlanner fuzzCasePlanner
     ) {
         return new DefaultFuzzEngine(
                 objectGraphDecomposer,
                 objectMapper,
                 mutationApplier,
-                List.of(scalarRule)
+                fuzzCasePlanner
+        );
+    }
+
+    @Bean("queryParamsFuzzEngine")
+    FuzzEngine queryParamsFuzzEngine(
+            ObjectGraphDecomposer objectGraphDecomposer,
+            ObjectMapper objectMapper,
+            FuzzMutationApplier mutationApplier,
+            @Qualifier("queryParamsFuzzCasePlanner") FuzzCasePlanner fuzzCasePlanner
+    ) {
+        return new DefaultFuzzEngine(
+                objectGraphDecomposer,
+                objectMapper,
+                mutationApplier,
+                fuzzCasePlanner
         );
     }
 
     @Bean
-    NullAndMissingRule nullAndMissingRule() {
-        return new NullAndMissingRule();
+    InteropFuzzingProfile interopFuzzingProfile() {
+        return new InteropFuzzingProfile();
+    }
+
+    @Bean("payloadFuzzCasePlanner")
+    FuzzCasePlanner payloadFuzzCasePlanner(InteropFuzzingProfile fuzzingProfile) {
+        return fuzzingProfile.payloadPlanner();
+    }
+
+    @Bean("pathParamsFuzzCasePlanner")
+    FuzzCasePlanner pathParamsFuzzCasePlanner(InteropFuzzingProfile fuzzingProfile) {
+        return fuzzingProfile.pathParamsPlanner();
+    }
+
+    @Bean("queryParamsFuzzCasePlanner")
+    FuzzCasePlanner queryParamsFuzzCasePlanner(InteropFuzzingProfile fuzzingProfile) {
+        return fuzzingProfile.queryParamsPlanner();
+    }
+
+    // Kept for backward compatibility: same instances used by the profile planners.
+    @Bean
+    NullAndMissingRule nullAndMissingRule(InteropFuzzingProfile fuzzingProfile) {
+        return fuzzingProfile.nullAndMissingRule();
     }
 
     @Bean
-    ScalarRule scalarRule() {
-        return new ScalarRule();
+    ScalarRule scalarRule(InteropFuzzingProfile fuzzingProfile) {
+        return fuzzingProfile.scalarRule();
     }
 }

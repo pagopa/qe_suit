@@ -165,7 +165,7 @@ The authentication declared through `as(...)` is reapplied for every generated `
 
 ### Temporary session used by a precondition
 
-`payload(...)` and `pathParams(...)` are runtime suppliers. They can execute setup logic and temporarily switch session context.
+`payload(...)`, `pathParams(...)` and `queryParams(...)` are runtime suppliers. They can execute setup logic and temporarily switch session context.
 
 This is useful when a precondition needs a different user or tenant than the one used by the final API call.
 
@@ -331,6 +331,35 @@ clientIdPath(UUID clientId)
 not to `clientIdPath(Object)`. This is what makes the binding reliable for generated OpenAPI clients.
 
 This allows path parameters to participate in the same structural mutation model used for payloads, while keeping the API ergonomic for the test author.
+
+## Query parameters
+
+Query parameters are supplied through `queryParams(...)`, following exactly the same rules as `pathParams(...)`: a map keyed by the OpenAPI parameter name, or a POJO/record whose property names match the parameter names.
+
+Preferred form:
+
+```java
+.queryParams(() -> Map.of(
+        "offset", 0,
+        "limit", 10,
+        "states", List.of("ACTIVE")
+))
+```
+
+Values are bound to the generated `<name>Query(...)` methods. Lists are expanded into varargs, so array parameters are decomposed and fuzzed element by element as well.
+
+The supplied map is the baseline: the unmutated call must succeed. Query parameters have no generated DTO, therefore no validation annotation is available. At runtime every supplied parameter is treated as optional, so removing it or setting it to null is expected to succeed, while every other scenario is resolved by the contract policy. Use `scenario(...)` or `targets(...)` to override a specific expectation, for example when a parameter is in fact required:
+
+```java
+.queryParams(() -> Map.of("filter", "abc", "page", 1))
+.targets(
+        FuzzScenario.REMOVED,
+        response -> response.then().statusCode(400),
+        List.of(query -> query.get("filter"))
+)
+```
+
+The scopes are composable and order independent: `payload(...)`, `pathParams(...)` and `queryParams(...)` can be chained on the same API call, and each one contributes its own dynamic tests.
 
 ## Scenarios
 

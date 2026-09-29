@@ -21,6 +21,7 @@ public class BffApiContractConfig {
             ObjectMapper objectMapper,
             @Qualifier("payloadFuzzEngine") FuzzEngine payloadFuzzEngine,
             @Qualifier("pathParamsFuzzEngine") FuzzEngine pathParamsFuzzEngine,
+            @Qualifier("queryParamsFuzzEngine") FuzzEngine queryParamsFuzzEngine,
             ObjectGraphDecomposer objectGraphDecomposer,
             HttpContractPolicy bffApiContractPolicy
     ) {
@@ -28,6 +29,7 @@ public class BffApiContractConfig {
                 objectMapper,
                 payloadFuzzEngine,
                 pathParamsFuzzEngine,
+                queryParamsFuzzEngine,
                 objectGraphDecomposer,
                 bffApiContractPolicy
         );

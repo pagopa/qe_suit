@@ -11,10 +11,15 @@ public final class HttpContractValidator {
     private final ObjectMapper objectMapper;
     private final FuzzEngine payloadFuzzEngine;
     private final FuzzEngine pathParamsFuzzEngine;
+    private final FuzzEngine queryParamsFuzzEngine;
     private final ObjectGraphDecomposer objectGraphDecomposer;
     private final ContractCasePlanner casePlanner;
     private final OpenApiOperationAdapter operationAdapter;
 
+    /**
+     * Keeps the query parameter scope on the path parameter engine, so existing configurations
+     * behave exactly as before.
+     */
     public HttpContractValidator(
             ObjectMapper objectMapper,
             FuzzEngine payloadFuzzEngine,
@@ -22,9 +27,21 @@ public final class HttpContractValidator {
             ObjectGraphDecomposer objectGraphDecomposer,
             HttpContractPolicy policy
     ) {
+        this(objectMapper, payloadFuzzEngine, pathParamsFuzzEngine, pathParamsFuzzEngine, objectGraphDecomposer, policy);
+    }
+
+    public HttpContractValidator(
+            ObjectMapper objectMapper,
+            FuzzEngine payloadFuzzEngine,
+            FuzzEngine pathParamsFuzzEngine,
+            FuzzEngine queryParamsFuzzEngine,
+            ObjectGraphDecomposer objectGraphDecomposer,
+            HttpContractPolicy policy
+    ) {
         this.objectMapper = Objects.requireNonNull(objectMapper, "objectMapper must not be null");
         this.payloadFuzzEngine = Objects.requireNonNull(payloadFuzzEngine, "payloadFuzzEngine must not be null");
         this.pathParamsFuzzEngine = Objects.requireNonNull(pathParamsFuzzEngine, "pathParamsFuzzEngine must not be null");
+        this.queryParamsFuzzEngine = Objects.requireNonNull(queryParamsFuzzEngine, "queryParamsFuzzEngine must not be null");
         this.objectGraphDecomposer = Objects.requireNonNull(
                 objectGraphDecomposer,
                 "objectGraphDecomposer must not be null"
@@ -53,6 +70,7 @@ public final class HttpContractValidator {
                 objectMapper,
                 payloadFuzzEngine,
                 pathParamsFuzzEngine,
+                queryParamsFuzzEngine,
                 objectGraphDecomposer,
                 casePlanner,
                 operationAdapter,

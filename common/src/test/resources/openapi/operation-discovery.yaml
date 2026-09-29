@@ -1,0 +1,210 @@
+openapi: 3.0.3
+info:
+  title: Operation discovery fixture
+  version: 1.0.0
+paths:
+  /widgets:
+    post:
+      operationId: createWidget
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WidgetPayload'
+      responses:
+        '201':
+          description: created
+  /widgets/batch:
+    post:
+      operationId: createWidgetBatch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/WidgetPayload'
+      responses:
+        '201':
+          description: created
+  /widgets/{widgetId}/{revision}:
+    parameters:
+      - name: widgetId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      operationId: getWidget
+      parameters:
+        - name: revision
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: found
+  /widgets/by-slug/{slug}:
+    get:
+      operationId: getWidgetBySlug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: found
+  /widgets/by-kind/{kind}:
+    get:
+      operationId: getWidgetByKind
+      parameters:
+        - name: kind
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/WidgetKind'
+      responses:
+        '200':
+          description: found
+  /widgets/{widgetId}/documents:
+    post:
+      operationId: uploadWidgetDocument
+      parameters:
+        - name: widgetId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                revision:
+                  type: integer
+                  format: int32
+                kind:
+                  type: string
+                  enum: [INTERFACE, DOCUMENT]
+                doc:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: created
+  /widgets/form:
+    post:
+      operationId: submitWidgetForm
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WidgetForm'
+      responses:
+        '200':
+          description: ok
+  /widgets/search:
+    get:
+      operationId: searchWidgets
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: states
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+              enum: [ACTIVE, DRAFT]
+      responses:
+        '200':
+          description: ok
+  /widgets/metrics/{ratio}/{active}/{large}/{threshold}:
+    get:
+      operationId: getWidgetMetrics
+      parameters:
+        - name: ratio
+          in: path
+          required: true
+          schema:
+            type: number
+            format: float
+        - name: active
+          in: path
+          required: true
+          schema:
+            type: boolean
+        - name: large
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: threshold
+          in: path
+          required: true
+          schema:
+            type: number
+            format: double
+components:
+  schemas:
+    WidgetPayload:
+      type: object
+      properties:
+        name:
+          type: string
+        id:
+          type: string
+          format: uuid
+        kind:
+          $ref: '#/components/schemas/WidgetKind'
+        count:
+          type: integer
+          format: int32
+        detail:
+          $ref: '#/components/schemas/WidgetDetail'
+        labels:
+          type: array
+          items:
+            type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/WidgetPayload'
+    WidgetDetail:
+      type: object
+      properties:
+        revision:
+          type: integer
+          format: int64
+    WidgetForm:
+      type: object
+      properties:
+        code:
+          type: string
+        active:
+          type: boolean
+    WidgetKind:
+      type: string
+      enum: [STANDARD, PREMIUM]
