@@ -58,11 +58,17 @@ jobs:
           echo "Checking AWS identity..."
           aws sts get-caller-identity
 
-      - name: Set up Maven
-        uses: s4u/setup-maven-action@6d44c18d67d9e1549907b8815efa5e4dada1801b
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
-          java-version: 17
-          maven-version: 3.9.8
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Set up Maven
+        uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 3.9.11
 
       - name: Install Chrome Browser
         run: |
