@@ -87,12 +87,12 @@ jobs:
       - name: Build frontend-e2e-framework
         run: |
           cd ./qe_suit/frontend-e2e-framework
-          ./mvnw -B -ntp clean install
+          bash ./mvnw -B -ntp clean install
 
       - name: Build common
         run: |
           cd ./qe_suit/common
-          ./mvnw -B -ntp clean install
+          bash ./mvnw -B -ntp clean install
 
       - name: Run Test Suite
         run: |
@@ -109,10 +109,9 @@ jobs:
           echo "Test suite: ${{ env.JAVA_TEST_SUITE }}"
           echo "qe_suit branch: ${{ env.BRANCH_NAME }}"
 
-          ./mvnw -B -ntp test \
-            $SPRING_PROFILE \
-            -Dtest=${{ env.JAVA_TEST_SUITE }}
-
+          bash ./mvnw -B -ntp test \
+            "$SPRING_PROFILE" \
+            -Dtest="${{ env.JAVA_TEST_SUITE }}"
       # Il log e' cronologico: con i test in parallelo le righe di scenari diversi
       # si alternano. Qui viene prodotta una seconda copia raggruppata per caso di test,
       # leggibile senza dover filtrare a mano.
@@ -121,7 +120,7 @@ jobs:
         run: |
           cd ./qe_suit/common
 
-          mvn -B -ntp exec:java \
+          bash ./mvnw -B -ntp exec:java \
             -Dexec.mainClass=it.pagopa.infrastructure.logging.TestLogGrouperMain \
             -Dexec.args="../interop/target/logs/qa-test.log ../interop/target/logs/qa-test.by-test-case.log"
 
