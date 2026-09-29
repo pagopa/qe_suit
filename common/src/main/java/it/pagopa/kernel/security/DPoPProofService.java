@@ -1,6 +1,9 @@
 package it.pagopa.kernel.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Curve;
+import io.jsonwebtoken.security.Jwks;
 import it.pagopa.utils.jwt.JwtBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,8 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.interfaces.ECPublicKey;
-import java.security.interfaces.RSAPublicKey;
+import java.security.interfaces.*;
+import java.time.Instant;
 import java.util.*;
 
 @Slf4j
@@ -112,20 +115,56 @@ public class DPoPProofService {
 //        }
 //    }
 
-    private DPoPProof internalBuildDPoPProof(KeyPair keyPair, HttpMethod method, String htu, String accessToken) {
+    private DPoPProof internalBuildDPoPProof(
+            KeyPair keyPair,
+            HttpMethod method,
+            String htu,
+            String accessToken) {
+
         try {
-            long now = System.currentTimeMillis() / 1000;
+            if (!(keyPair.getPrivate() instanceof ECPrivateKey privateKey)
+                    || !(keyPair.getPublic() instanceof ECPublicKey publicKey)) {
+                throw new IllegalArgumentException("Expected EC key pair for DPoP proof");
+            }
 
-            Map<String, Object> header = buildHeader(keyPair.getPublic());
-            Map<String, Object> payload = buildPayload(method, htu, now, accessToken);
+            var publicJwk = Jwks.builder()
+                    .key(publicKey)
+                    .build();
 
-            String jwt = sign(header, payload, keyPair.getPrivate());
+            Instant now = Instant.now();
+
+            io.jsonwebtoken.JwtBuilder builder = Jwts.builder()
+                    .header()
+                    .type("dpop+jwt")
+                    .add("jwk", publicJwk)
+                    .and()
+                    .id(UUID.randomUUID().toString())
+                    .claim("htm", method.name())
+                    .claim("htu", htu)
+                    .claim("iat", now.getEpochSecond());
+
+            if (accessToken != null) {
+                builder.claim("ath", sha256Base64Url(accessToken));
+            }
+
+            String jwt = builder
+                    .signWith(privateKey, Jwts.SIG.ES256)
+                    .compact();
+
             return DPoPProof.builder()
-                    .key(Key.builder().pair(keyPair).build())
+                    .key(
+                            Key.builder()
+                                    .pair(keyPair)
+                                    .build()
+                    )
                     .jwt(jwt)
                     .build();
+
         } catch (Exception e) {
-            throw new IllegalStateException("Errore nella creazione del DPoP proof", e);
+            throw new IllegalStateException(
+                    "Errore nella creazione del DPoP proof",
+                    e
+            );
         }
     }
 
@@ -175,17 +214,29 @@ public class DPoPProofService {
         };
     }
 
-    private String sign(Map<String, Object> header, Map<String, Object> payload, PrivateKey privateKey) throws Exception {
-        String headerB64 = b64(MAPPER.writeValueAsBytes(header));
-        String payloadB64 = b64(MAPPER.writeValueAsBytes(payload));
-        String signingInput = headerB64 + "." + payloadB64;
+    private String sign(Map<String, Object> header, Map<String, Object> payload, PrivateKey privateKey) {
 
-        String javaAlg = "RS256".equals(header.get("alg")) ? "SHA256withRSA" : "SHA256withECDSA";
-        java.security.Signature sig = java.security.Signature.getInstance(javaAlg);
-        sig.initSign(privateKey);
-        sig.update(signingInput.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        io.jsonwebtoken.JwtBuilder builder = Jwts.builder()
+                .header()
+                .add(header)
+                .and()
+                .claims(payload);
 
-        return signingInput + "." + b64(sig.sign());
+        if (privateKey instanceof ECPrivateKey ecPrivateKey) {
+            return builder
+                    .signWith(ecPrivateKey, Jwts.SIG.ES256)
+                    .compact();
+        }
+
+        if (privateKey instanceof RSAPrivateKey rsaPrivateKey) {
+            return builder
+                    .signWith(rsaPrivateKey, Jwts.SIG.RS256)
+                    .compact();
+        }
+
+        throw new IllegalArgumentException(
+                "Unsupported private key type: " + privateKey.getAlgorithm()
+        );
     }
 
     private String sha256Base64Url(String input) {
