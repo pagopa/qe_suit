@@ -30,9 +30,15 @@ final class WebContractInvocationBuilder implements WebContractStages.UserStage 
     }
 
     @Override
+    public <P extends Page> WebContractStages.PageStage<P> on(Class<P> pageType) {
+        return on(pageType, new String[0]);
+    }
+
+    @Override
     public <P extends Page> WebContractStages.PageStage<P> on(Class<P> pageType, String... pathParams) {
         Objects.requireNonNull(pageType, "pageType must not be null");
-        return new PageStageImpl<>(pageType, pathParams == null ? new String[0] : pathParams.clone());
+        Objects.requireNonNull(pathParams, "pathParams must not be null");
+        return new PageStageImpl<>(pageType, pathParams);
     }
 
     private final class PageStageImpl<P extends Page> implements WebContractStages.PageStage<P> {
@@ -53,7 +59,8 @@ final class WebContractInvocationBuilder implements WebContractStages.UserStage 
             Objects.requireNonNull(scenarios, "scenarios must not be null");
             return scenarios.map(scenario -> dynamicTest(
                     scenario.name(),
-                    () -> runtimeCaseExecutor.execute(pageType, scenario, pathParams)));
+                    () -> runtimeCaseExecutor.execute(pageType, pathParams, scenario)
+            ));
         }
     }
 }

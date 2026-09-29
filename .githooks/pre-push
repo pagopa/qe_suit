@@ -5,4 +5,3 @@ REPO_ROOT="$(git rev-parse --show-toplevel)"
 
 cd "$REPO_ROOT/interop"
 bash ./mvnw -Dtest=ArchitectureRulesTest test
-

@@ -64,17 +64,167 @@ final class OpenApiOperationAdapter {
     }
 
     private void bind(Object operation, HttpContractRequest request) {
-        applyReqSpec(operation, reqSpec -> {
-            if (request.payloadPresent()) {
-                if (request.payload() == null) {
-                    reqSpec.setBody("null");
-                } else {
-                    reqSpec.setBody(toJson(request.payload()));
+        if (request.payloadPresent() && !hasBodyMethod(operation) && hasFormMethod(operation)) {
+            bindFormPayload(operation, request.payload());
+        } else {
+            applyReqSpec(operation, reqSpec -> {
+                if (request.payloadPresent()) {
+                    if (request.payload() == null) {
+                        reqSpec.setBody("null");
+                    } else {
+                        reqSpec.setBody(toJson(request.payload()));
+                    }
                 }
-            }
-        });
+            });
+        }
 
         bindPathParams(operation, request.pathParams());
+        bindQueryParams(operation, request.queryParams());
+    }
+
+    /**
+     * Binds query parameters on the generated {@code <name>Query(Object...)} methods.
+     * A removed parameter is simply not bound, which is exactly what the contract describes
+     * for an absent query parameter.
+     */
+    private void bindQueryParams(Object operation, JsonNode queryParams) {
+        if (queryParams == null || queryParams.isNull()) {
+            return;
+        }
+        if (!queryParams.isObject()) {
+            throw new ContractHttpException("queryParams must be a JSON object");
+        }
+
+        Iterator<Map.Entry<String, JsonNode>> fields = queryParams.fields();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> field = fields.next();
+            String parameterName = field.getKey();
+            String methodName = parameterName + "Query";
+            Method method = resolveVarargsMethod(operation, methodName);
+
+            if (method == null) {
+                throw new ContractHttpException(
+                        "Cannot bind query parameter '" + parameterName + "': expected method "
+                                + methodName + "(...) on " + operation.getClass().getSimpleName()
+                );
+            }
+
+            try {
+                method.invoke(operation, queryArgument(method, field.getValue()));
+            } catch (InvocationTargetException | IllegalAccessException exception) {
+                throw new ContractHttpException(
+                        "Failed to bind query parameter '" + parameterName + "'",
+                        exception
+                );
+            }
+        }
+    }
+
+    private Object queryArgument(Method method, JsonNode valueNode) {
+        Class<?> parameterType = method.getParameterTypes()[0];
+        if (!parameterType.isArray()) {
+            return convertValueForParameter(valueNode, parameterType);
+        }
+        if (valueNode != null && valueNode.isArray()) {
+            Object[] values = new Object[valueNode.size()];
+            for (int i = 0; i < valueNode.size(); i++) {
+                values[i] = formValue(valueNode.get(i));
+            }
+            return values;
+        }
+        return new Object[]{formValue(valueNode)};
+    }
+
+    private boolean hasBodyMethod(Object operation) {
+        for (Method method : operation.getClass().getMethods()) {
+            if (method.getName().equals("body") && method.getParameterCount() == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasFormMethod(Object operation) {
+        for (Method method : operation.getClass().getMethods()) {
+            if (method.getName().endsWith("Form") && method.getParameterCount() == 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Binds a non JSON request body ({@code multipart/form-data} or
+     * {@code application/x-www-form-urlencoded}) on generated operations that expose
+     * one {@code <field>Form(...)} method per form field instead of {@code body(...)}.
+     */
+    private void bindFormPayload(Object operation, JsonNode payload) {
+        if (payload == null || payload.isNull()) {
+            return;
+        }
+        if (!payload.isObject()) {
+            throw new ContractHttpException(
+                    "Form request body must be a JSON object on "
+                            + operation.getClass().getSimpleName()
+            );
+        }
+
+        Iterator<Map.Entry<String, JsonNode>> fields = payload.fields();
+        while (fields.hasNext()) {
+            Map.Entry<String, JsonNode> field = fields.next();
+            String fieldName = field.getKey();
+            String methodName = fieldName + "Form";
+            Method method = resolveFormFieldMethod(operation, methodName);
+
+            if (method == null) {
+                throw new ContractHttpException(
+                        "Cannot bind form field '" + fieldName + "': expected method "
+                                + methodName + "(...) on " + operation.getClass().getSimpleName()
+                );
+            }
+
+            try {
+                method.invoke(operation, formArgument(method, field.getValue()));
+            } catch (InvocationTargetException | IllegalAccessException exception) {
+                throw new ContractHttpException(
+                        "Failed to bind form field '" + fieldName + "'",
+                        exception
+                );
+            }
+        }
+    }
+
+    private Method resolveVarargsMethod(Object operation, String methodName) {
+        return resolveFormFieldMethod(operation, methodName);
+    }
+
+    private Method resolveFormFieldMethod(Object operation, String methodName) {
+        for (Method method : operation.getClass().getMethods()) {
+            if (method.getName().equals(methodName) && method.getParameterCount() == 1) {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    private Object formArgument(Method method, JsonNode valueNode) {
+        Class<?> parameterType = method.getParameterTypes()[0];
+        if (parameterType.isArray()) {
+            Object[] values = {formValue(valueNode)};
+            return values;
+        }
+        return convertValueForParameter(valueNode, parameterType);
+    }
+
+    private Object formValue(JsonNode valueNode) {
+        if (valueNode == null || valueNode.isNull()) {
+            // Mirrors the JSON body convention: a null value stays observable on the wire.
+            return "null";
+        }
+        if (valueNode.isTextual()) return valueNode.textValue();
+        if (valueNode.isNumber()) return valueNode.numberValue();
+        if (valueNode.isBoolean()) return valueNode.booleanValue();
+        return toJson(valueNode);
     }
 
     private void bindPathParams(

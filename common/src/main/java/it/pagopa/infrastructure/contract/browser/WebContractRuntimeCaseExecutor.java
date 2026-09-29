@@ -27,10 +27,11 @@ final class WebContractRuntimeCaseExecutor {
 
     <P extends Page> void execute(
             Class<P> pageType,
-            WebScenario<P> scenario,
-            String ... pathParams
+            String[] pathParams,
+            WebScenario<P> scenario
     ) {
         Objects.requireNonNull(pageType, "pageType must not be null");
+        Objects.requireNonNull(pathParams, "pathParams must not be null");
         Objects.requireNonNull(scenario, "scenario must not be null");
 
         contextConfigurer.provide();

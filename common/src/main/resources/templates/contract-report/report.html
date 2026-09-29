@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Contract Test Report</title>
+    <style>
+        :root{--bg:#f4f6f8;--panel:#fff;--text:#202b38;--muted:#687486;--border:#d7dee7;--pass:#43835a;--pass-soft:#eaf4ed;--fail:#bd5050;--fail-soft:#fbeded;--shadow:0 1px 3px rgba(15,23,42,.06)}
+        *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+        main{max-width:1550px;margin:0 auto;padding:24px}.page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px}
+        .kicker{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}h1{font-size:29px;margin:4px 0 5px}
+        .run-date{font-size:14px;color:var(--muted)}.run-date strong{color:var(--text)}
+        .summary-grid{display:grid;grid-template-columns:repeat(5,minmax(135px,1fr));gap:10px;margin:20px 0}
+        .summary-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:var(--shadow)}
+        .summary-card .label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800}
+        .summary-card .value{font-size:22px;font-weight:800;margin-top:5px}.summary-card .sub{font-size:11px;color:var(--muted);margin-top:4px}
+        .filters{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;display:grid;grid-template-columns:180px 1fr auto;gap:10px;align-items:center;box-shadow:var(--shadow);position:sticky;top:8px;z-index:10;margin-bottom:24px}
+        .filters select,.filters input[type=search]{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;background:#fff;color:var(--text)}
+        .status-filter-wrap{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.status-toggle{display:inline-flex;align-items:center;gap:6px;font-size:12px;background:#f7f9fb;border:1px solid var(--border);padding:7px 9px;border-radius:7px}
+        .section-title{display:flex;justify-content:space-between;align-items:center;margin:8px 0 10px}.section-title h2{font-size:18px;margin:0}.section-title .hint{font-size:12px;color:var(--muted)}
+        .targets-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:9px;margin-bottom:30px}
+        .target-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;text-decoration:none;color:inherit;display:flex;justify-content:space-between;gap:14px;box-shadow:var(--shadow)}
+        .target-card:hover{border-color:#aab9c9}.top-line{display:flex;gap:8px;align-items:center}.method-name{font-size:12px;font-weight:760;color:#3c4c5d}
+        .target-title{font-weight:800;margin-top:8px;font-size:14px;word-break:break-word}.target-side{text-align:right;display:flex;flex-direction:column;gap:7px;align-items:flex-end}
+        .scenario-count{font-size:12px;color:var(--muted)}.channel-chip{display:inline-block;border-radius:6px;padding:3px 7px;font-size:10px;font-weight:850;letter-spacing:.06em;background:#edf0f3;color:#52606e}
+        .channel-bff{background:#eaf1f8;color:#315f8e}.channel-m2m{background:#f1ecf8;color:#7859a6}.channel-web{background:#fbf1e4;color:#9a641f}.channel-mobile{background:#eef6f8;color:#2a6f7a}
+        .status-chip{display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:850;letter-spacing:.04em}.status-chip.passed{background:var(--pass);color:#fff}.status-chip.failed{background:var(--fail);color:#fff}.status-chip.skipped,.status-chip.aborted{background:#e8ebef;color:#52606e}
+        .test-group{background:#fff;border:1px solid var(--border);border-radius:12px;margin:18px 0;padding:17px;box-shadow:var(--shadow)}
+        .group-header{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding-bottom:13px;border-bottom:1px solid var(--border)}
+        .group-line{display:flex;align-items:center;gap:9px}.group-line h2{font-size:18px;margin:0}.group-meta{font-size:12px;color:var(--muted);margin-top:7px}.group-side{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:12px}
+        .cases{margin-top:12px}.case-detail{border:1px solid #e3e8ee;border-radius:8px;margin:7px 0;overflow:hidden;background:#fff}.case-detail.hidden-case{display:none}
+        .case-detail>summary{list-style:none;cursor:pointer;padding:11px 12px;display:flex;align-items:center;gap:9px}.case-detail>summary::-webkit-details-marker{display:none}.case-detail>summary:hover{background:#f8fafc}
+        .dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto}.dot.passed{background:var(--pass)}.dot.failed{background:var(--fail)}.dot.skipped,.dot.aborted{background:#87909b}
+        .case-name{font-size:13px;font-weight:700;flex:1;min-width:0}.case-duration{font-size:12px;color:var(--muted);min-width:58px;text-align:right}
+        .detail-body{border-top:1px solid var(--border);padding:16px;background:#fafcfd}.log-title{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#45576b;font-weight:850;margin:4px 0 8px}
+        .scenario-log{margin:0;width:100%;max-height:560px;overflow:auto;background:#0f1720;color:#e7edf4;border:1px solid #263442;border-radius:8px;padding:18px 20px;font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+        .technical{margin-top:13px}.technical>summary{cursor:pointer;color:#375d7d;font-size:12px;font-weight:750}.technical-body{margin-top:8px;font-size:12px}.technical-body code{display:block;margin-top:5px;background:#eef2f6;border:1px solid var(--border);padding:9px;border-radius:6px;word-break:break-all}
+        .precondition{border-color:#edc4c4}.empty-state{display:none;background:#fff;border:1px dashed var(--border);border-radius:10px;padding:20px;color:var(--muted);text-align:center;margin:15px 0}
+        @media(max-width:950px){main{padding:14px}.summary-grid{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr}.targets-grid{grid-template-columns:1fr}.group-header{display:block}.group-side{margin-top:10px}}
+    </style>
+</head>
+<body>
+<main>
+    <header class="page-header">
+        <div>
+            <div class="kicker">QA · Contract testing</div>
+            <h1>Contract Test Report</h1>
+            <div class="run-date"><strong th:text="${fmt.formatTimestamp(report.generatedAt)}">25/09/2026 09:45:12</strong>&nbsp;&nbsp; Europe/Rome</div>
+        </div>
+    </header>
+
+    <section class="summary-grid">
+        <article class="summary-card"><div class="label">Scenari</div><div class="value" th:text="${report.total}">0</div></article>
+        <article class="summary-card"><div class="label">Passed</div><div class="value" th:text="${report.passed}">0</div></article>
+        <article class="summary-card">
+            <div class="label">Failed</div>
+            <div class="value" th:text="${report.failed}">0</div>
+            <div class="sub" th:if="${report.preconditionFailedCount > 0}" th:text="${report.preconditionFailedCount + ' da precondizione'}">0 da precondizione</div>
+        </article>
+        <article class="summary-card"><div class="label">Skipped / Aborted</div><div class="value" th:text="${report.skipped + report.aborted}">0</div></article>
+        <article class="summary-card"><div class="label">Durata effettiva</div><div class="value" th:text="${fmt.formatDuration(report.effectiveDuration)}">0 ms</div></article>
+    </section>
+
+    <section class="filters">
+        <select id="channelFilter">
+            <option value="">Tutti i channel</option>
+            <option th:each="channel : ${report.channels}" th:value="${channel.label}" th:text="${channel.label}">BFF</option>
+        </select>
+        <input id="textFilter" type="search" placeholder="Cerca endpoint, page o nome metodo…">
+        <div class="status-filter-wrap">
+            <label class="status-toggle"><input class="status-checkbox" type="checkbox" value="PASSED" checked> Passed</label>
+            <label class="status-toggle"><input class="status-checkbox" type="checkbox" value="FAILED" checked> Failed</label>
+            <label class="status-toggle"><input class="status-checkbox" type="checkbox" value="SKIPPED" checked> Skipped</label>
+            <label class="status-toggle"><input class="status-checkbox" type="checkbox" value="ABORTED" checked> Aborted</label>
+        </div>
+    </section>
+
+    <div class="section-title"><h2>Target sotto test</h2><div class="hint">Channel · metodo · endpoint/page · esito · numero scenari</div></div>
+    <section class="targets-grid">
+        <a class="target-card filterable-target"
+           th:each="group, groupStat : ${report.groups}"
+           th:href="'#group-' + ${groupStat.index}"
+           th:attr="data-channel=${group.channelLabel},data-status=${group.aggregateStatus.name()},data-search=${group.searchText}">
+            <div class="target-main">
+                <div class="top-line">
+                    <span class="channel-chip" th:classappend="${' ' + fmt.channelClass(group.channelKey)}" th:text="${group.channelLabel}">BFF</span>
+                    <span class="method-name" th:text="${group.methodName}">createAgreement</span>
+                </div>
+                <div class="target-title" th:text="${group.target}">POST /agreements</div>
+            </div>
+            <div class="target-side">
+                <span class="status-chip" th:classappend="${' ' + fmt.statusClass(group.aggregateStatus.name())}" th:text="${group.aggregateStatus.name()}">PASSED</span>
+                <span class="scenario-count" th:text="${group.scenarioCount + ' scenari'}">0 scenari</span>
+            </div>
+        </a>
+    </section>
+
+    <div class="section-title"><h2>Dettaglio scenari</h2><div class="hint">Espandi uno scenario per dettagli failure e metadata tecnici</div></div>
+    <div id="emptyState" class="empty-state">Nessun risultato corrisponde ai filtri selezionati.</div>
+
+    <section class="test-group filterable-group"
+             th:each="group, groupStat : ${report.groups}"
+             th:id="'group-' + ${groupStat.index}"
+             th:attr="data-channel=${group.channelLabel},data-status=${group.aggregateStatus.name()},data-search=${group.searchText}">
+        <div class="group-header">
+            <div>
+                <div class="group-line">
+                    <span class="channel-chip" th:classappend="${' ' + fmt.channelClass(group.channelKey)}" th:text="${group.channelLabel}">BFF</span>
+                    <h2 th:text="${group.target}">POST /agreements</h2>
+                </div>
+                <div class="group-meta" th:text="${group.methodName + ' · ' + group.contractClassName}">createAgreement · BffAgreementContractTest</div>
+            </div>
+            <div class="group-side">
+                <span class="status-chip" th:classappend="${' ' + fmt.statusClass(group.aggregateStatus.name())}" th:text="${group.aggregateStatus.name()}">PASSED</span>
+                <span th:text="${group.scenarioCount + ' scenari'}">0 scenari</span>
+            </div>
+        </div>
+
+        <div class="cases">
+            <details class="case-detail"
+                     th:each="scenario : ${group.scenarios}"
+                     th:classappend="${scenario.preconditionFailure ? ' precondition' : ''}"
+                     th:attr="data-status=${scenario.status.name()},data-search=${#strings.toLowerCase(group.channelLabel + ' ' + group.target + ' ' + group.methodName + ' ' + group.contractClassName + ' ' + scenario.displayName)}">
+                <summary>
+                    <span class="dot" th:classappend="${' ' + fmt.statusClass(scenario.status.name())}"></span>
+                    <span class="case-name" th:text="${scenario.displayName}">Scenario</span>
+                    <span class="case-duration" th:text="${fmt.formatDuration(scenario.duration)}">0 ms</span>
+                    <span class="status-chip" th:classappend="${' ' + fmt.statusClass(scenario.status.name())}" th:text="${scenario.status.name()}">PASSED</span>
+                </summary>
+                <div class="detail-body">
+                    <div class="log-title" th:if="${scenario.status.name() == 'FAILED'}">Failure details</div>
+                    <pre class="scenario-log" th:if="${scenario.status.name() == 'FAILED'}" th:text="${'Type: ' + scenario.failureType + '\nMessage: ' + scenario.failureMessage + '\n\n' + scenario.stackTrace}">stack</pre>
+                    <div class="log-title" th:if="${scenario.status.name() == 'SKIPPED'}">Skip reason</div>
+                    <pre class="scenario-log" th:if="${scenario.status.name() == 'SKIPPED'}" th:text="${scenario.skipReason}">skip</pre>
+
+                    <details class="technical">
+                        <summary>Dettagli tecnici</summary>
+                        <div class="technical-body">
+                            <strong>contractClassName</strong><code th:text="${group.contractClassName}">Class</code>
+                            <strong>methodName</strong><code th:text="${group.methodName}">method</code>
+                            <strong>uniqueId</strong><code th:text="${scenario.uniqueId}">uid</code>
+                            <strong>startedAt</strong><code th:text="${fmt.formatTimestamp(scenario.startedAt)}">01/01/2026 10:00:00</code>
+                            <strong>finishedAt</strong><code th:text="${fmt.formatTimestamp(scenario.finishedAt)}">01/01/2026 10:00:01</code>
+                            <strong>targetType</strong><code th:text="${group.targetType.name()}">OPENAPI</code>
+                        </div>
+                    </details>
+                </div>
+            </details>
+        </div>
+    </section>
+</main>
+
+<script>
+    (() => {
+        const channelFilter = document.getElementById('channelFilter');
+        const textFilter = document.getElementById('textFilter');
+        const statusCheckboxes = Array.from(document.querySelectorAll('.status-checkbox'));
+        const groups = Array.from(document.querySelectorAll('.filterable-group'));
+        const targets = Array.from(document.querySelectorAll('.filterable-target'));
+        const emptyState = document.getElementById('emptyState');
+
+        const normalize = value => (value || '').toLowerCase().trim();
+
+        function applyFilters() {
+            const selectedChannel = normalize(channelFilter.value);
+            const selectedStatuses = new Set(statusCheckboxes.filter(c => c.checked).map(c => c.value));
+            const text = normalize(textFilter.value);
+            let visibleGroups = 0;
+
+            groups.forEach(group => {
+                const groupChannel = normalize(group.dataset.channel);
+                const groupStatus = group.dataset.status;
+                const groupSearch = normalize(group.dataset.search);
+                const channelMatch = !selectedChannel || groupChannel === selectedChannel;
+                const statusMatch = selectedStatuses.has(groupStatus);
+                const textMatch = !text || groupSearch.includes(text);
+                const visible = channelMatch && statusMatch && textMatch;
+                group.style.display = visible ? '' : 'none';
+                if (visible) visibleGroups++;
+            });
+
+            targets.forEach(target => {
+                const targetChannel = normalize(target.dataset.channel);
+                const targetStatus = target.dataset.status;
+                const targetSearch = normalize(target.dataset.search);
+                const channelMatch = !selectedChannel || targetChannel === selectedChannel;
+                const statusMatch = selectedStatuses.has(targetStatus);
+                const textMatch = !text || targetSearch.includes(text);
+                target.style.display = channelMatch && statusMatch && textMatch ? '' : 'none';
+            });
+
+            emptyState.style.display = visibleGroups === 0 ? 'block' : 'none';
+        }
+
+        channelFilter.addEventListener('change', applyFilters);
+        textFilter.addEventListener('input', applyFilters);
+        statusCheckboxes.forEach(checkbox => checkbox.addEventListener('change', applyFilters));
+        applyFilters();
+    })();
+</script>
+</body>
+</html>
