@@ -58,6 +58,12 @@ jobs:
           echo "Checking AWS identity..."
           aws sts get-caller-identity
 
+      - name: Checkout qe_suit repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BRANCH_NAME }}
+          path: qe_suit
+
       - name: Set up Java
         uses: actions/setup-java@v6
         with:
@@ -77,12 +83,6 @@ jobs:
 
       - name: Setup ChromeDriver
         uses: nanasess/setup-chromedriver@master
-
-      - name: Checkout qe_suit repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.BRANCH_NAME }}
-          path: qe_suit
 
       - name: Build frontend-e2e-framework
         run: |
