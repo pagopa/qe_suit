@@ -23,7 +23,7 @@ channel:
 # ============================================================================
 logging:
   level:
-    E2E-Framework: DEBUG
+    it.frontend.e2e.framework: DEBUG
 
 # ============================================================================
 # BFF API Configuration (notifiche legali via API)
