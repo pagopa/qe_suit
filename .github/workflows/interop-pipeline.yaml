@@ -124,7 +124,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-logs-${{ inputs.environment || 'qa' }}-${{ github.run_number }}
+          name: test-logs-${{ inputs.environment || 'qa' }}
           path: ./qe_suit/interop/target/logs/
           if-no-files-found: warn
           retention-days: 10
@@ -133,7 +133,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: cucumber-report-${{ inputs.environment || 'qa' }}-${{ github.run_number }}
+          name: cucumber-report-${{ inputs.environment || 'qa' }}
           path: ./qe_suit/interop/target/cucumber-reports/
           if-no-files-found: warn
           retention-days: 10
