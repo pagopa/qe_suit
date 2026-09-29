@@ -122,13 +122,8 @@ public class DPoPProofService {
             String accessToken) {
 
         try {
-            if (!(keyPair.getPrivate() instanceof ECPrivateKey privateKey)
-                    || !(keyPair.getPublic() instanceof ECPublicKey publicKey)) {
-                throw new IllegalArgumentException("Expected EC key pair for DPoP proof");
-            }
-
             var publicJwk = Jwks.builder()
-                    .key(publicKey)
+                    .key(keyPair.getPublic())
                     .build();
 
             Instant now = Instant.now();
@@ -144,12 +139,16 @@ public class DPoPProofService {
                     .claim("iat", now.getEpochSecond());
 
             if (accessToken != null) {
-                builder.claim("ath", sha256Base64Url(accessToken));
+                builder.claim(
+                        "ath",
+                        sha256Base64Url(accessToken)
+                );
             }
 
-            String jwt = builder
-                    .signWith(privateKey, Jwts.SIG.ES256)
-                    .compact();
+            String jwt = sign(
+                    builder,
+                    keyPair.getPrivate()
+            );
 
             return DPoPProof.builder()
                     .key(
@@ -222,20 +221,32 @@ public class DPoPProofService {
                 .and()
                 .claims(payload);
 
+        return sign(builder, privateKey);
+    }
+
+    private String sign(io.jsonwebtoken.JwtBuilder builder, PrivateKey privateKey) {
+
         if (privateKey instanceof ECPrivateKey ecPrivateKey) {
             return builder
-                    .signWith(ecPrivateKey, Jwts.SIG.ES256)
+                    .signWith(
+                            ecPrivateKey,
+                            Jwts.SIG.ES256
+                    )
                     .compact();
         }
 
         if (privateKey instanceof RSAPrivateKey rsaPrivateKey) {
             return builder
-                    .signWith(rsaPrivateKey, Jwts.SIG.RS256)
+                    .signWith(
+                            rsaPrivateKey,
+                            Jwts.SIG.RS256
+                    )
                     .compact();
         }
 
         throw new IllegalArgumentException(
-                "Unsupported private key type: " + privateKey.getAlgorithm()
+                "Unsupported private key type: "
+                        + privateKey.getAlgorithm()
         );
     }
 
