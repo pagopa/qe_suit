@@ -6,10 +6,10 @@ import org.assertj.core.api.SoftAssertions;
 
 import java.util.List;
 
-@XPath(".//div[contains(@class, 'MuiTimeline-root') or contains(@class, 'NotificationTimelineBox') or @id='timeline-container']")
+@XPath("//*[@data-testid='NotificationEventsTimeline'] | //ul[contains(@class, 'MuiTimeline-root')] | //div[contains(@class, 'MuiTimeline-root')]")
 public interface ComboTimelineComponent extends Component {
 
-    @XPath(".//*[contains(@class, 'MuiTimelineItem-root') or contains(@class, 'timeline-item')]")
+    @XPath(".//li[contains(@class, 'MuiTimelineItem-root')] | .//div[contains(@class, 'MuiTimelineItem-root')]")
     List<ComboTimelineItemComponent> items();
 
     @Override

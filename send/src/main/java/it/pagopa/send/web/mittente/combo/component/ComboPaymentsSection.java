@@ -7,13 +7,13 @@ import org.assertj.core.api.SoftAssertions;
 
 import java.util.List;
 
-@XPath(".//div[contains(@class, 'MuiPaper-root')][.//h5[contains(text(), 'Avviso di pagamento') or contains(text(), 'Pagamenti')]]")
+@XPath("//div[@data-testid='paymentInfoBox']/ancestor::div[contains(@class, 'MuiPaper-root')][1] | //div[contains(@class, 'MuiPaper-root')][.//h2[contains(., 'Pagamenti')] or .//h5[contains(., 'Pagamenti')]]")
 public interface ComboPaymentsSection extends Component {
 
-    @XPath(".//h5 | .//h2")
+    @XPath("//h2[normalize-space(text())='Pagamenti'] | .//h2 | .//h5")
     Readable<String> header();
 
-    @XPath(".//div[contains(@class, 'MuiCard-root') or contains(@class, 'payment-item')]")
+    @XPath("//div[@data-testid='payment-item'] | .//div[contains(@class, 'MuiCard-root') or contains(@class, 'payment-item')]")
     List<Readable<String>> paymentList();
 
     @Override

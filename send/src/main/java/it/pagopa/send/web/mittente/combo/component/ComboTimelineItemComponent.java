@@ -5,13 +5,13 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import org.assertj.core.api.SoftAssertions;
 
-@XPath(".//*[contains(@class, 'MuiTimelineItem-root') or contains(@class, 'timeline-item')]")
+@XPath(".//li[contains(@class, 'MuiTimelineItem-root')] | .//div[contains(@class, 'MuiTimelineItem-root')]")
 public interface ComboTimelineItemComponent extends Component {
 
-    @XPath(".//span[contains(@class, 'MuiTimelineContent') or contains(@class, 'item-title')] | .//div[contains(@class, 'MuiStack-root')]/span[1] | .//span[@data-testid='timeline-item-title']")
+    @XPath(".//div[contains(@class, 'MuiStack-root')][1]/span[last()] | .//span[contains(@class, 'MuiTimelineContent') or contains(@class, 'item-title')] | .//span[@data-testid='timeline-item-title'] | .//p[contains(@class, 'MuiTypography-root')]")
     Readable<String> title();
 
-    @XPath(".//span[contains(@class, 'MuiTimelineOppositeContent-root') or contains(@class, 'timestamp')] | .//p[contains(@class, 'timestamp')] | .//p[@data-testid='timeline-item-timestamp']")
+    @XPath(".//span[contains(@class, 'MuiTimelineOppositeContent-root') or contains(@class, 'timestamp')] | .//p[contains(@class, 'timestamp')] | .//p[@data-testid='timeline-item-timestamp'] | .//span[contains(@class, 'MuiTypography-caption')]")
     Readable<String> timestamp();
 
     @XPath(".//div[contains(@class, 'box-green') or contains(@class, 'status-success') or contains(@class, 'MuiAlert-colorSuccess') or contains(@class, 'MuiChip-colorSuccess')]")
