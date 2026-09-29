@@ -6,13 +6,13 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Button;
 import org.assertj.core.api.SoftAssertions;
 
-@XPath("//div[@id='page-header-container']/parent::div | //div[@id='page-header-container']")
+@XPath("//div[@id='page-header-container']")
 public interface ComboOverviewSection extends Component {
 
-    @XPath("//h1[@data-testid='titleBox' and @role='heading'] | //h1[@data-testid='titleBox'] | //h1")
+    @XPath(".//h1[@data-testid='titleBox'] | .//h1")
     Readable<String> title();
 
-    @XPath(".//p[normalize-space()='IUN']/following-sibling::div[1] | //h1[@data-testid='titleBox'] | .//h1")
+    @XPath(".//p[normalize-space()='IUN']/following-sibling::div[1]")
     Readable<String> iun();
 
     @XPath(".//p[normalize-space()='Persona destinataria' or normalize-space()='Destinatario']/following-sibling::div[1]")

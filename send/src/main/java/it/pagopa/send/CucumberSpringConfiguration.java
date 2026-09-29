@@ -6,7 +6,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @CucumberContextConfiguration
 @SpringBootTest(classes = TestBootApp.class)
-@ActiveProfiles({"test", "cucumber"})
+@ActiveProfiles(resolver = CucumberActiveProfilesResolver.class)
 public class CucumberSpringConfiguration {
 }
 

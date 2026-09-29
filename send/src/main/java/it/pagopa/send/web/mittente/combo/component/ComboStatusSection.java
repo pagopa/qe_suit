@@ -7,16 +7,16 @@ import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Chip;
 import org.assertj.core.api.SoftAssertions;
 
-@XPath("//div[@data-testid='NotificationDetailTimeline'] | //div[contains(@class, 'NotificationStatusBox')]")
+@XPath("//div[@data-testid='NotificationDetailTimeline']")
 public interface ComboStatusSection extends Component {
 
-    @XPath("//div[@data-testid='NotificationDetailTimeline']//h2 | .//h2 | .//h5")
+    @XPath(".//h2 | .//h6 | .//h5")
     Readable<String> header();
 
     @XPath(".//*[contains(@class, 'MuiChip-root')]")
     Chip statusChip();
 
-    @XPath("//button[@aria-label='Vai alla timeline della notifica' or contains(., 'Vai alla cronologia') or contains(., 'timeline') or contains(., 'Cronologia')]")
+    @XPath(".//button[@aria-label='Vai al dettaglio dello stato della comunicazione' or contains(., 'Vai al dettaglio')]")
     Button openTimelineButton();
 
     @Override
@@ -28,4 +28,5 @@ public interface ComboStatusSection extends Component {
         softly.assertAll();
     }
 }
+
 
