@@ -4,7 +4,7 @@ on:
   schedule:
     # 06:00 UTC = 08:00 Europe/Rome durante CEST.
     # Attenzione: in inverno 06:00 UTC = 07:00 CET.
-    - cron: '0 6 * * *'
+    - cron: '0 21 * * *'
 
   workflow_dispatch:
     inputs:
@@ -58,11 +58,22 @@ jobs:
           echo "Checking AWS identity..."
           aws sts get-caller-identity
 
-      - name: Set up Maven
-        uses: s4u/setup-maven-action@6d44c18d67d9e1549907b8815efa5e4dada1801b
+      - name: Checkout qe_suit repository
+        uses: actions/checkout@v4
         with:
-          java-version: 17
-          maven-version: 3.9.8
+          ref: ${{ env.BRANCH_NAME }}
+          path: qe_suit
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: |
+            qe_suit/frontend-e2e-framework/**/pom.xml
+            qe_suit/common/pom.xml
+            qe_suit/interop/pom.xml
 
       - name: Install Chrome Browser
         run: |
@@ -73,23 +84,17 @@ jobs:
       - name: Setup ChromeDriver
         uses: nanasess/setup-chromedriver@master
 
-      - name: Checkout qe_suit repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.BRANCH_NAME }}
-          path: qe_suit
-
       - name: Build frontend-e2e-framework
         run: |
           cd ./qe_suit/frontend-e2e-framework
-          mvn clean install -DskipTests
+          bash ./mvnw -B -ntp clean install
 
       - name: Build common
         run: |
           cd ./qe_suit/common
-          mvn clean install -DskipTests
+          bash ./mvnw -B -ntp clean install
 
-      - name: Run Selenium Tests
+      - name: Run Test Suite
         run: |
           cd ./qe_suit/interop
 
@@ -104,23 +109,29 @@ jobs:
           echo "Test suite: ${{ env.JAVA_TEST_SUITE }}"
           echo "qe_suit branch: ${{ env.BRANCH_NAME }}"
 
-          mvn test \
-            $SPRING_PROFILE \
-            -Dtest=${{ env.JAVA_TEST_SUITE }}
+          bash ./mvnw -B -ntp test \
+            "$SPRING_PROFILE" \
+            -Dtest="${{ env.JAVA_TEST_SUITE }}"
+      # Il log e' cronologico: con i test in parallelo le righe di scenari diversi
+      # si alternano. Qui viene prodotta una seconda copia raggruppata per caso di test,
+      # leggibile senza dover filtrare a mano.
+      - name: Group logs by test case
+        if: always()
+        run: |
+          cd ./qe_suit/common
 
-      - name: Upload Test Logs
+          bash ./mvnw -B -ntp exec:java \
+            -Dexec.mainClass=it.pagopa.infrastructure.logging.TestLogGrouperMain \
+            -Dexec.args="../interop/target/logs/qa-test.log ../interop/target/logs/qa-test.by-test-case.log"
+
+      - name: Upload QA Test Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-logs
-          path: ./qe_suit/interop/target/logs/
-          if-no-files-found: warn
-
-      - name: Upload Cucumber Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cucumber-report
-          path: ./qe_suit/interop/target/cucumber-reports/
+          name: qa-test-artifacts
+          path: |
+            ./qe_suit/interop/target/logs/
+            ./qe_suit/interop/target/cucumber-reports/
+            ./qe_suit/interop/target/contract-test/report.html
           if-no-files-found: warn
           retention-days: 10

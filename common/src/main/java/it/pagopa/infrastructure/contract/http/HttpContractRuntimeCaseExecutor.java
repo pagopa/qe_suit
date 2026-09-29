@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import it.pagopa.infrastructure.fuzzing.FuzzCase;
 import it.pagopa.infrastructure.fuzzing.FuzzEngine;
+import it.pagopa.infrastructure.logging.TestMdcKeys;
 import org.slf4j.MDC;
 
 import java.util.List;
@@ -43,7 +44,8 @@ final class HttpContractRuntimeCaseExecutor {
             ScopeState<?> queryState,
             Supplier<?> operationSupplier
     ) {
-        MDC.put("scenario", testName);
+        String previousScenarioName = MDC.get(TestMdcKeys.SCENARIO_NAME);
+        MDC.put(TestMdcKeys.SCENARIO_NAME, testName);
         try {
             RuntimeScope payloadRuntime = materializeRuntimeScope(payloadState, RequestScope.PAYLOAD, testCase);
             RuntimeScope pathRuntime = materializeRuntimeScope(pathState, RequestScope.PATH_PARAMS, testCase);
@@ -59,7 +61,13 @@ final class HttpContractRuntimeCaseExecutor {
                 throw HttpContractFailureDiagnostics.enrich(exception, testCase, request, response, objectMapper);
             }
         } finally {
-            MDC.remove("scenario");
+            // Ripristina il contesto del @TestFactory padre invece di azzerarlo:
+            // i casi dinamici successivi condividono lo stesso thread.
+            if (previousScenarioName != null) {
+                MDC.put(TestMdcKeys.SCENARIO_NAME, previousScenarioName);
+            } else {
+                MDC.remove(TestMdcKeys.SCENARIO_NAME);
+            }
         }
     }
 

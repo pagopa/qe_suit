@@ -18,6 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ContractTargetRegressionTest {
 
+    private static final Path SOURCE_ROOT = Path.of("src/test/java");
+    private static final String CONTRACT_FIXTURES_PACKAGE = "it.pagopa.infrastructure.reporting.contract.resolver.fixtures";
+
     @Test
     void allApiContractFactoriesResolveToExactlyOneOpenApiOperation() throws Exception {
         String spec = Path.of("src/test/resources/reporting/openapi/all-api-contracts.yaml").toAbsolutePath().toString();
@@ -39,7 +42,7 @@ class ContractTargetRegressionTest {
     @Test
     void allPageContractFactoriesResolveToExactlyOnePage() throws Exception {
         ContractChannelConfig web = new ContractChannelConfig("web", "WEB", "Web", ContractTargetType.PAGE, null);
-        PageContractTargetResolver resolver = new PageContractTargetResolver(Path.of("src/test/java"));
+        PageContractTargetResolver resolver = new PageContractTargetResolver(SOURCE_ROOT);
         List<Class<?>> contractClasses = contractClasses().stream()
                 .filter(clazz -> clazz.getSimpleName().startsWith("Web"))
                 .toList();
@@ -53,8 +56,7 @@ class ContractTargetRegressionTest {
     }
 
     private List<Class<?>> contractClasses() throws Exception {
-        Path root = Path.of("src/test/java/it/pagopa/interop/suite/contract");
-        try (Stream<Path> stream = Files.walk(root)) {
+        try (Stream<Path> stream = Files.walk(SOURCE_ROOT.resolve(CONTRACT_FIXTURES_PACKAGE.replace('.', '/')))) {
             return stream.filter(path -> path.toString().endsWith("ContractTest.java"))
                     .map(this::toClassName)
                     .map(this::loadClass)
@@ -63,9 +65,8 @@ class ContractTargetRegressionTest {
     }
 
     private String toClassName(Path path) {
-        String normalized = path.toString().replace('\\', '/');
-        String classPath = normalized.substring(normalized.indexOf("it/pagopa/interop")).replace(".java", "");
-        return classPath.replace('/', '.');
+        String relative = SOURCE_ROOT.relativize(path).toString().replace('\\', '/');
+        return relative.replace(".java", "").replace('/', '.');
     }
 
     private Class<?> loadClass(String className) {

@@ -1,11 +1,7 @@
 package it.pagopa.infrastructure.reporting.contract.renderer;
 
 import it.pagopa.infrastructure.reporting.contract.config.ContractTargetType;
-import it.pagopa.infrastructure.reporting.contract.model.ContractGroup;
-import it.pagopa.infrastructure.reporting.contract.model.ContractReport;
-import it.pagopa.infrastructure.reporting.contract.model.ContractReportChannel;
-import it.pagopa.infrastructure.reporting.contract.model.ContractScenario;
-import it.pagopa.infrastructure.reporting.contract.model.ContractScenarioStatus;
+import it.pagopa.infrastructure.reporting.contract.model.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

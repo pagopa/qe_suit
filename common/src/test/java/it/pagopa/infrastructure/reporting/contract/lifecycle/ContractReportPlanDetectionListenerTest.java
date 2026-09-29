@@ -1,6 +1,5 @@
 package it.pagopa.infrastructure.reporting.contract.lifecycle;
 
-import it.pagopa.interop.suite.contract.BffAgreementContractTest;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
@@ -78,6 +77,12 @@ class ContractReportPlanDetectionListenerTest {
     }
 
     static class UnitLikeTest {
+        @Test
+        void runs() {
+        }
+    }
+
+    static class BffAgreementContractTest {
         @Test
         void runs() {
         }
