@@ -1,10 +1,12 @@
 package it.pagopa.interop.suite;
 
+import it.pagopa.infrastructure.reporting.contract.lifecycle.GenerateContractReport;
 import org.junit.platform.suite.api.*;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
 
 @Suite
+@GenerateContractReport
 @IncludeEngines({"cucumber", "junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
 @SelectPackages("it.pagopa.interop.suite.contract")
@@ -13,12 +15,27 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-reports/report.json," + "html:target/cucumber-reports/report.html"),
         @ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "it.pagopa.interop"),
 
-        // abilita parallelismo JUnit
-        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "true"),
-        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent"),
+        // Jupiter: abilita parallelismo solo quando lancio questa suite
+        @ConfigurationParameter(
+                key = "junit.jupiter.execution.parallel.enabled",
+                value = "true"
+        ),
 
-        // abilita parallelismo Cucumber
-        @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
+        @ConfigurationParameter(
+                key = "junit.jupiter.execution.parallel.mode.default",
+                value = "concurrent"
+        ),
+
+        @ConfigurationParameter(
+                key = "junit.jupiter.execution.parallel.config.strategy",
+                value = "dynamic"
+        ),
+
+        // Cucumber
+        @ConfigurationParameter(
+                key = EXECUTION_MODE_FEATURE_PROPERTY_NAME,
+                value = "concurrent"
+        ),
 
         // tag cucumber
         @ConfigurationParameter(

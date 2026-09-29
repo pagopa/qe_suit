@@ -6,6 +6,9 @@ import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import it.pagopa.infrastructure.reporting.contract.config.ContractChannelConfig;
+import it.pagopa.infrastructure.reporting.contract.config.ContractReportConfig;
+import it.pagopa.infrastructure.reporting.contract.config.ContractReportConfigurationLoader;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -181,6 +184,108 @@ public class ArchitectureRulesTest {
         }
     }
 
+    @Test
+    void contract_test_classes_must_not_declare_junit_execution_annotation() {
+        var imported = new ClassFileImporter()
+                .importPackages("it.pagopa.interop");
+
+        Set<String> violations = new TreeSet<>();
+
+        for (JavaClass javaClass : imported) {
+            if (!javaClass.getSimpleName().endsWith("ContractTest")) {
+                continue;
+            }
+
+            boolean hasExecutionAnnotation = javaClass.getAnnotations().stream()
+                    .anyMatch(annotation -> annotation.getRawType().getFullName().equals("org.junit.jupiter.api.parallel.Execution"));
+
+            if (hasExecutionAnnotation) {
+                violations.add(javaClass.getFullName());
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            fail("Le classi ContractTest non devono dichiarare @Execution. La configurazione deve passare esclusivamente per il file junit-platform.properties: " + violations);
+        }
+    }
+
+    @Test
+    void contract_test_classes_must_start_with_configured_channel_prefix() {
+
+        ContractReportConfig contractReportConfig =
+                new ContractReportConfigurationLoader().load();
+
+        List<String> allowedPrefixes =
+                contractReportConfig.channels()
+                        .values()
+                        .stream()
+                        .map(ContractChannelConfig::classPrefix)
+                        .filter(prefix -> prefix != null && !prefix.isBlank())
+                        .toList();
+
+        var imported = new ClassFileImporter()
+                .importPackages("it.pagopa.interop");
+
+        Set<String> violations = new TreeSet<>();
+
+        for (JavaClass javaClass : imported) {
+
+            if (!javaClass.getSimpleName().endsWith("ContractTest")) {
+                continue;
+            }
+
+            String className =
+                    javaClass.getSimpleName();
+
+            boolean hasValidPrefix =
+                    allowedPrefixes.stream()
+                            .anyMatch(prefix ->
+                                    startsWithIgnoreCase(
+                                            className,
+                                            prefix
+                                    )
+                            );
+
+            if (!hasValidPrefix) {
+                violations.add(
+                        javaClass.getFullName()
+                                + " (expected prefix one of: "
+                                + allowedPrefixes
+                                + ")"
+                );
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            fail(
+                    "Le classi ContractTest devono iniziare con "
+                            + "uno dei class-prefix configurati in contract-report.channels: "
+                            + violations
+            );
+        }
+    }
+
+    private static boolean startsWithIgnoreCase(
+            String value,
+            String prefix) {
+
+        if (value == null || prefix == null) {
+            return false;
+        }
+
+        if (prefix.length() > value.length()) {
+            return false;
+        }
+
+        return value.regionMatches(
+                true,
+                0,
+                prefix,
+                0,
+                prefix.length()
+        );
+    }
+
     private static void checkNamingConvention(JavaClass javaClass, Set<String> violations) {
         String packageName = javaClass.getPackageName();
         String fullName = javaClass.getFullName();
@@ -216,7 +321,7 @@ public class ArchitectureRulesTest {
         boolean isCorePattern = COMMON_ALLOWED_PATTERNS.stream().anyMatch(simpleName::endsWith);
         if (!isCorePattern) return;
 
-        String expectedPrefix = capitalize(channel);
+        String expectedPrefix = expectedPrefixForChannel(channel);
         if (!simpleName.startsWith(expectedPrefix)) {
             violations.add(fullName + " (expected prefix: " + expectedPrefix + ")");
         }
@@ -234,6 +339,16 @@ public class ArchitectureRulesTest {
             return value;
         }
         return Character.toUpperCase(value.charAt(0)) + value.substring(1);
+    }
+
+    private static String expectedPrefixForChannel(String channel) {
+        if (channel == null || channel.isBlank()) {
+            return channel;
+        }
+        if (channel.chars().anyMatch(Character::isDigit)) {
+            return channel.toUpperCase();
+        }
+        return capitalize(channel);
     }
 
     private static Optional<List<JavaClass>> findPathToCucumber(JavaClass sourceClass, Set<String> visited) {

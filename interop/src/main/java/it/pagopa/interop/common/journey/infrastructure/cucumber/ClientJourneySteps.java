@@ -27,7 +27,7 @@ public class ClientJourneySteps {
                                 .name(RandomUtils.randomAlphanumericName("client"))
                                 .kind(ClientKind.CONSUMER)
                                 .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
-                                .keys(List.of(ClientKeyCreationCommand::randomClientConsumerKey))
+                                .keys(List.of(ClientKeyCreationCommand::randomClientKey))
                 )
                 .linkPurposeToClient(purpose);
     }
@@ -41,7 +41,7 @@ public class ClientJourneySteps {
                                 .name(RandomUtils.randomAlphanumericName("client"))
                                 .kind(ClientKind.API)
                                 .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
-                                .keys(List.of(ClientKeyCreationCommand::randomClientConsumerKey))
+                                .keys(List.of(ClientKeyCreationCommand::randomClientKey))
                 );
     }
 }

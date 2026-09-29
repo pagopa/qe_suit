@@ -1,12 +1,12 @@
 package it.pagopa.send.web.login.infrastructure;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.send.common.domain.OrganizationRole;
-import it.pagopa.send.common.domain.Recipient;
-import it.pagopa.send.common.domain.Tenant;
-import it.pagopa.send.common.domain.User;
+import it.pagopa.send.common.user.domain.OrganizationRole;
+import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -16,11 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Costruisce l'oggetto che il portale SelfCare si aspetta di trovare nel sessionStorage per
- * considerare l'utente già autenticato, usato dal login "veloce" che salta il flusso SPID.
- * La forma richiesta per un Tenant (organization con roles/ipaCode/hasGroups, email, family_name)
- * non è ancora stata verificata per un Recipient: finché non lo sarà, {@link #buildForRecipient}
- * resta un sottoinsieme più semplice.
+ * Costruisce l'oggetto che il portale SelfCare/cittadino si aspetta di trovare nel sessionStorage
+ * per considerare l'utente già autenticato, usato dal login "veloce" che salta il flusso SPID.
  */
 @Component
 @RequiredArgsConstructor
@@ -45,8 +42,17 @@ public class SelfCareSessionPayloadFactory {
         return serialize(payload, tenant.getUsername());
     }
 
+    /**
+     * Il portale cittadino (notifichedigitali.it) valida la sessione confrontando i claim del JWT
+     * duplicati alla radice dell'oggetto in sessionStorage (non un {@code desired_exp} calcolato
+     * a parte): {@link #basePayload} li spalma tutti, qui si aggiungono solo i campi anagrafici
+     * SPID (cognome, livello, {@code from_aa}) che il JWT non porta con sé.
+     */
     public String buildForRecipient(Recipient recipient, String sessionToken) {
         Map<String, Object> payload = basePayload(recipient, sessionToken);
+        payload.put("family_name", recipient.getFamilyName());
+        payload.put("level", "L2");
+        payload.put("from_aa", false);
 
         if (recipient.getOrganizationId() != null) {
             Map<String, Object> organization = new LinkedHashMap<>();
@@ -59,12 +65,17 @@ public class SelfCareSessionPayloadFactory {
         return serialize(payload, recipient.getUsername());
     }
 
+    /**
+     * Parte comune ai due tipi di sessione: prima i claim del JWT ({@code iat}/{@code exp}/
+     * {@code uid}/{@code iss}/{@code aud}/{@code jti}, così come compaiono nel token), poi i campi
+     * anagrafici di base, che sovrascrivono eventuali claim omonimi (es. {@code uid}) con il
+     * valore anagrafico atteso.
+     */
     private Map<String, Object> basePayload(User user, String sessionToken) {
-        Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("desired_exp", extractExpiry(sessionToken));
+        Map<String, Object> payload = new LinkedHashMap<>(extractClaims(sessionToken));
+        payload.put("sessionToken", sessionToken);
         payload.put("name", user.getName());
         payload.put("fiscal_number", user.getFiscalNumber());
-        payload.put("sessionToken", sessionToken);
         payload.put("uid", user.getUid());
         return payload;
     }
@@ -85,11 +96,11 @@ public class SelfCareSessionPayloadFactory {
     }
 
     /**
-     * Il portale considera la sessione scaduta se manca {@code desired_exp}: lo ricaviamo dal claim
-     * {@code exp} del sessionToken configurato, invece di tenerlo fisso, così resta coerente ogni
-     * volta che il token viene rigenerato/rinnovato in application-<profilo>.yaml.
+     * Decodifica il payload (secondo segmento) del sessionToken JWT configurato in
+     * {@code token.session.<utente>} e ne restituisce tutti i claim, così da poterli duplicare
+     * alla radice dell'oggetto sessionStorage esattamente come li valida il portale.
      */
-    private long extractExpiry(String sessionToken) {
+    private Map<String, Object> extractClaims(String sessionToken) {
         String[] segments = sessionToken.split("\\.");
         if (segments.length < 2) {
             throw new IllegalArgumentException("sessionToken non è un JWT valido: " + sessionToken);
@@ -100,10 +111,9 @@ public class SelfCareSessionPayloadFactory {
 
         try {
             byte[] decoded = Base64.getUrlDecoder().decode(payload);
-            JsonNode claims = objectMapper.readTree(decoded);
-            return claims.get("exp").asLong();
+            return objectMapper.readValue(decoded, new TypeReference<LinkedHashMap<String, Object>>() {});
         } catch (IOException e) {
-            throw new RuntimeException("Impossibile leggere il claim exp dal sessionToken", e);
+            throw new RuntimeException("Impossibile leggere i claim dal sessionToken", e);
         }
     }
 }

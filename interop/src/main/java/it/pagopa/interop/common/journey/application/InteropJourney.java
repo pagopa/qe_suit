@@ -7,5 +7,6 @@ public interface InteropJourney extends
         EServiceTemplateJourney<InteropJourney>,
         ClientJourney<InteropJourney>,
         PurposeJourney<InteropJourney>,
+        ChannelJourney<InteropJourney>,
         FinalizerJourney {
 }

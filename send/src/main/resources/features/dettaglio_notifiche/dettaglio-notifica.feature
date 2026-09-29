@@ -5,7 +5,7 @@ Feature: Tramite nuova interfaccia di notifica
 
   Scenario: [NUI_DETTAGLIO_NOTIFICA_ANNULLO_NOTIFICA] Viene controllato che, a seguito di annullamento, la pagina
     riporti correttamente l'informazione tramite apposita chip
-    Given una sessione HTTP programmatica su B2B
+    Given una sessione HTTP programmatica su BFF
     And una notifica di tipo semplice creata dalla PA Grossini per il destinatario "Lucrezia" in stato "ACCEPTED"
     And la PA Grossini ha creato ed annullato una notifica di tipo semplice per il destinatario "Lucrezia"
     And la PA Grossini è loggata al portale SEND tramite Browser

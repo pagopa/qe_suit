@@ -12,7 +12,7 @@ import java.util.List;
 public class JourneyProxyConfig {
 
     @Bean
-    public SendJourney interopJourney(List<JourneyModule> modules) {
+    public SendJourney sendJourney(List<JourneyModule> modules) {
         return (SendJourney) Proxy.newProxyInstance(
                 SendJourney.class.getClassLoader(),
                 new Class<?>[]{SendJourney.class},

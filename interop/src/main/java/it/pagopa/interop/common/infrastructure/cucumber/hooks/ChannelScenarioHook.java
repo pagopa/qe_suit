@@ -21,7 +21,8 @@ public final class ChannelScenarioHook {
         this.gherkinChannelEngine = gherkinChannelEngine;
     }
 
-    @Before(order = Integer.MIN_VALUE)
+    // Subito dopo l'hook che popola l'MDC, cosi' il log sotto risulta gia' attribuito allo scenario.
+    @Before(order = Integer.MIN_VALUE + 100)
     public void beforeScenario(Scenario scenario) {
         ChannelConfig<Channel> config =
                 gherkinChannelEngine.initializeScenario(

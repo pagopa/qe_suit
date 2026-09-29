@@ -48,3 +48,10 @@ out/
 
 .DS_Store
 Thumbs.db
+
+#######################################
+# Local secrets (bearer token, credenziali)
+# Mai committare: solo locali, popolati a mano da ogni sviluppatore
+#######################################
+
+send/src/main/resources/secrets/
