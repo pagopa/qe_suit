@@ -1,6 +1,5 @@
 package it.pagopa.interop.suite.contract;
 
-import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.client.infrastructure.BffClientRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
@@ -18,15 +17,12 @@ import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.Map;
 import java.util.stream.Stream;
 
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor

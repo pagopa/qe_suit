@@ -1,7 +1,6 @@
 package it.pagopa.interop.suite.contract;
 
 import io.restassured.response.Response;
-import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
@@ -15,8 +14,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -28,7 +25,6 @@ import java.util.stream.Stream;
 import static it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig.DEFAULT_SUCCESS_STATUS_CODE;
 import static org.hamcrest.Matchers.is;
 
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
