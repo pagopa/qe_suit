@@ -15,15 +15,12 @@ import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.AgreementSeed;
 import it.pagopa.interop.m2m.v3.infrastructure.config.M2Mv3ApiContractConfig;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, M2Mv3ApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class M2Mv3CatalogContractTest {

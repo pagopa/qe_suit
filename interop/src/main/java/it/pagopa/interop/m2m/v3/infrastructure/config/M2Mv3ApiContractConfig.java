@@ -18,13 +18,17 @@ public class M2Mv3ApiContractConfig {
     @Bean("m2Mv3ApiContractValidator")
     HttpContractValidator m2mV3ApiContractValidator(
             ObjectMapper objectMapper,
-            FuzzEngine fuzzEngine,
+            @Qualifier("payloadFuzzEngine") FuzzEngine payloadFuzzEngine,
+            @Qualifier("pathParamsFuzzEngine") FuzzEngine pathParamsFuzzEngine,
+            @Qualifier("queryParamsFuzzEngine") FuzzEngine queryParamsFuzzEngine,
             ObjectGraphDecomposer objectGraphDecomposer,
             @Qualifier("m2mV3ApiContractPolicy") HttpContractPolicy m2mV3ApiContractPolicy
     ) {
         return new HttpContractValidator(
                 objectMapper,
-                fuzzEngine,
+                payloadFuzzEngine,
+                pathParamsFuzzEngine,
+                queryParamsFuzzEngine,
                 objectGraphDecomposer,
                 m2mV3ApiContractPolicy
         );
