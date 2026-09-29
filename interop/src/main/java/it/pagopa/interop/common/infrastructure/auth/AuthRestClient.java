@@ -1,5 +1,7 @@
 package it.pagopa.interop.common.infrastructure.auth;
 
+import io.restassured.config.EncoderConfig;
+import io.restassured.config.RestAssuredConfig;
 import it.pagopa.infrastructure.template.RestClient;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
@@ -24,7 +26,11 @@ public class AuthRestClient extends RestClient {
         this.authApi = apiClient.auth();
     }
 
-    public TestChain<ClientCredentialsResponse> createToken(UUID clientId, String clientAssertion, @Nullable String dPoPProof) {
+    public TestChain<ClientCredentialsResponse> createToken(
+            UUID clientId,
+            String clientAssertion,
+            @Nullable String dPoPProof) {
+
         return execute(
                 () -> authApi.createToken()
                         .clientIdForm(clientId)
@@ -32,6 +38,16 @@ public class AuthRestClient extends RestClient {
                         .clientAssertionTypeForm("urn:ietf:params:oauth:client-assertion-type:jwt-bearer")
                         .grantTypeForm("client_credentials")
                         .dpoPHeader(dPoPProof)
+                        .reqSpec(reqSpec -> reqSpec.setConfig(
+                                RestAssuredConfig.config()
+                                        .encoderConfig(
+                                                EncoderConfig.encoderConfig()
+                                                        .defaultCharsetForContentType(
+                                                                "UTF-8",
+                                                                "application/x-www-form-urlencoded"
+                                                        )
+                                        )
+                        ))
                         .execute(Function.identity()),
                 ClientCredentialsResponse.class
         );
