@@ -181,6 +181,31 @@ public class ArchitectureRulesTest {
         }
     }
 
+    @Test
+    void contract_test_classes_must_not_declare_junit_execution_annotation() {
+        var imported = new ClassFileImporter()
+                .importPackages("it.pagopa.interop");
+
+        Set<String> violations = new TreeSet<>();
+
+        for (JavaClass javaClass : imported) {
+            if (!javaClass.getSimpleName().endsWith("ContractTest")) {
+                continue;
+            }
+
+            boolean hasExecutionAnnotation = javaClass.getAnnotations().stream()
+                    .anyMatch(annotation -> annotation.getRawType().getFullName().equals("org.junit.jupiter.api.parallel.Execution"));
+
+            if (hasExecutionAnnotation) {
+                violations.add(javaClass.getFullName());
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            fail("Le classi ContractTest non devono dichiarare @Execution. La configurazione deve passare esclusivamente per il file junit-platform.properties: " + violations);
+        }
+    }
+
     private static void checkNamingConvention(JavaClass javaClass, Set<String> violations) {
         String packageName = javaClass.getPackageName();
         String fullName = javaClass.getFullName();

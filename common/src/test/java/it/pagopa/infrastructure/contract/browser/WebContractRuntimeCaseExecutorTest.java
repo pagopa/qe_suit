@@ -56,7 +56,7 @@ class WebContractRuntimeCaseExecutorTest {
         );
 
         new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer)
-                .execute(TestPage.class, scenario);
+                .execute(TestPage.class, new String[0], scenario);
 
         verify(contextConfigurer).provide();
 
@@ -99,7 +99,7 @@ class WebContractRuntimeCaseExecutorTest {
 
         assertThatThrownBy(() ->
                 new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer)
-                        .execute(TestPage.class, scenario)
+                        .execute(TestPage.class, new String[0], scenario)
         )
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("navigate failure");
@@ -143,7 +143,7 @@ class WebContractRuntimeCaseExecutorTest {
 
         assertThatThrownBy(() ->
                 new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer)
-                        .execute(TestPage.class, scenario)
+                        .execute(TestPage.class, new String[0], scenario)
         )
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("assertLoaded failure");
@@ -191,7 +191,7 @@ class WebContractRuntimeCaseExecutorTest {
 
         assertThatThrownBy(() ->
                 new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer)
-                        .execute(TestPage.class, scenario)
+                        .execute(TestPage.class, new String[0], scenario)
         )
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("action failure");
@@ -239,7 +239,7 @@ class WebContractRuntimeCaseExecutorTest {
 
         assertThatThrownBy(() ->
                 new WebContractRuntimeCaseExecutor(gatewayProvider, contextConfigurer)
-                        .execute(TestPage.class, scenario)
+                        .execute(TestPage.class, new String[0], scenario)
         )
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("assertion failure");
@@ -280,11 +280,13 @@ class WebContractRuntimeCaseExecutorTest {
 
         executor.execute(
                 TestPage.class,
+                new String[0],
                 new WebScenario<>("first", p -> {}, p -> {})
         );
 
         executor.execute(
                 TestPage.class,
+                new String[0],
                 new WebScenario<>("second", p -> {}, p -> {})
         );
 

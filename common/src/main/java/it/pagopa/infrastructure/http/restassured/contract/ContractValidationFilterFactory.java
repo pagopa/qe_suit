@@ -11,6 +11,7 @@ import java.net.URI;
 public final class ContractValidationFilterFactory {
 
     private static final String REQUEST_VALIDATION = "validation.request";
+    private static final String REQUIRED_RESPONSE_BODY_SCHEMA = "validation.response.body.schema.required";
     private static final String UNKNOWN_RESPONSE_STATUS = "validation.response.status.unknown";
     private static final String UNEXPECTED_RESPONSE_BODY = "validation.response.body.unexpected";
     private static final String UNEXPECTED_CONTENT_TYPE = "validation.response.contentType.notAllowed";
@@ -34,6 +35,7 @@ public final class ContractValidationFilterFactory {
         return LevelResolver.create()
                 .withLevel(REQUEST_VALIDATION, ValidationReport.Level.IGNORE)
                 .withLevel(UNKNOWN_RESPONSE_STATUS, ValidationReport.Level.WARN)
+                .withLevel(REQUIRED_RESPONSE_BODY_SCHEMA, ValidationReport.Level.ERROR)
                 .withLevel(UNEXPECTED_RESPONSE_BODY, ValidationReport.Level.ERROR)
                 .withLevel(UNEXPECTED_CONTENT_TYPE, ValidationReport.Level.WARN)
                 .build();

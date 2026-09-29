@@ -19,10 +19,10 @@ channel:
 
 # ============================================================================
 # Logging Configuration
+# Il livello della suite e' gestito da logback.xml tramite la variabile
+# SUIT_LOG_LEVEL (default INFO), perche' logback viene inizializzato da surefire
+# prima del contesto Spring.
 # ============================================================================
-logging:
-  level:
-    suit: DEBUG
 
 # ============================================================================
 # Open-api URLs Configuration
@@ -34,3 +34,15 @@ interop:
       bff: @bff.openapi.url@
       m2m:
         v3: @m2m.v3.openapi.url@
+
+contract-report:
+  channels:
+    bff:
+      label: BFF
+      class-prefix: Bff
+      target-type: OPENAPI
+      openapi: @bff.openapi.url@
+    web:
+      label: WEB
+      class-prefix: Web
+      target-type: PAGE

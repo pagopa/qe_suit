@@ -1,10 +1,12 @@
 package it.pagopa.interop.bff.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.infrastructure.contract.http.HttpContractPolicy;
+import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.infrastructure.fuzzing.*;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
+import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,22 +16,34 @@ import java.util.List;
 @Configuration(proxyBeanMethods = false)
 public class BffApiContractConfig {
 
-    @Bean("bffApiContractValidator")
-    HttpContractValidator bffApiContractValidator(
+    @Bean("bffApiContract")
+    HttpContractValidator bffApiContract(
             ObjectMapper objectMapper,
-            FuzzEngine fuzzEngine,
+            @Qualifier("payloadFuzzEngine") FuzzEngine payloadFuzzEngine,
+            @Qualifier("pathParamsFuzzEngine") FuzzEngine pathParamsFuzzEngine,
+            @Qualifier("queryParamsFuzzEngine") FuzzEngine queryParamsFuzzEngine,
             ObjectGraphDecomposer objectGraphDecomposer,
-            @Qualifier("bffApiContractPolicy") HttpContractPolicy bffApiContractPolicy
+            HttpContractPolicy bffApiContractPolicy
     ) {
         return new HttpContractValidator(
                 objectMapper,
-                fuzzEngine,
+                payloadFuzzEngine,
+                pathParamsFuzzEngine,
+                queryParamsFuzzEngine,
                 objectGraphDecomposer,
                 bffApiContractPolicy
         );
     }
 
-    @Bean("bffApiContractPolicy")
+    @Bean
+    InteropHttpContractValidator interopHttpContractValidator(
+            HttpContractValidator bffApiContract,
+            CurrentUserSession currentUserSession
+    ) {
+        return new InteropHttpContractValidator(bffApiContract, currentUserSession);
+    }
+
+    @Bean
     HttpContractPolicy bffApiContractPolicy() {
         return HttpContractPolicy.builder()
                 .successStatus(200)

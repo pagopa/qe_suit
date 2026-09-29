@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-final class JacksonMutationValidityResolver implements MutationValidityResolver {
+public final class JacksonMutationValidityResolver implements MutationValidityResolver {
     private final ObjectMapper objectMapper;
     private final Class<?> rootType;
 
-    JacksonMutationValidityResolver(ObjectMapper objectMapper, Class<?> rootType) {
+    public JacksonMutationValidityResolver(ObjectMapper objectMapper, Class<?> rootType) {
         this.objectMapper = objectMapper;
         this.rootType = rootType;
     }

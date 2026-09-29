@@ -5,24 +5,35 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.response.Response;
 import it.pagopa.infrastructure.fuzzing.FuzzCase;
 import it.pagopa.infrastructure.fuzzing.FuzzEngine;
+import it.pagopa.infrastructure.logging.TestMdcKeys;
 import org.slf4j.MDC;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 final class HttpContractRuntimeCaseExecutor {
     private final ObjectMapper objectMapper;
-    private final FuzzEngine fuzzEngine;
+    private final FuzzEngine payloadFuzzEngine;
+    private final FuzzEngine pathParamsFuzzEngine;
+    private final FuzzEngine queryParamsFuzzEngine;
     private final OpenApiOperationAdapter operationAdapter;
+    private final HttpContractAuthentication authentication;
 
     HttpContractRuntimeCaseExecutor(
             ObjectMapper objectMapper,
-            FuzzEngine fuzzEngine,
-            OpenApiOperationAdapter operationAdapter
+            FuzzEngine payloadFuzzEngine,
+            FuzzEngine pathParamsFuzzEngine,
+            FuzzEngine queryParamsFuzzEngine,
+            OpenApiOperationAdapter operationAdapter,
+            HttpContractAuthentication authentication
     ) {
         this.objectMapper = objectMapper;
-        this.fuzzEngine = fuzzEngine;
+        this.payloadFuzzEngine = payloadFuzzEngine;
+        this.pathParamsFuzzEngine = pathParamsFuzzEngine;
+        this.queryParamsFuzzEngine = queryParamsFuzzEngine;
         this.operationAdapter = operationAdapter;
+        this.authentication = Objects.requireNonNull(authentication, "authentication must not be null");
     }
 
     void execute(
@@ -30,14 +41,18 @@ final class HttpContractRuntimeCaseExecutor {
             GeneratedContractCase testCase,
             ScopeState<?> payloadState,
             ScopeState<?> pathState,
+            ScopeState<?> queryState,
             Supplier<?> operationSupplier
     ) {
-        MDC.put("scenario", testName);
+        String previousScenarioName = MDC.get(TestMdcKeys.SCENARIO_NAME);
+        MDC.put(TestMdcKeys.SCENARIO_NAME, testName);
         try {
             RuntimeScope payloadRuntime = materializeRuntimeScope(payloadState, RequestScope.PAYLOAD, testCase);
             RuntimeScope pathRuntime = materializeRuntimeScope(pathState, RequestScope.PATH_PARAMS, testCase);
+            RuntimeScope queryRuntime = materializeRuntimeScope(queryState, RequestScope.QUERY_PARAMS, testCase);
+            authentication.authenticate();
             Object operation = materializeOperation(operationSupplier, testCase);
-            HttpContractRequest request = buildRuntimeRequest(testCase, payloadRuntime, pathRuntime);
+            HttpContractRequest request = buildRuntimeRequest(testCase, payloadRuntime, pathRuntime, queryRuntime);
 
             Response response = operationAdapter.execute(operation, request);
             try {
@@ -46,7 +61,13 @@ final class HttpContractRuntimeCaseExecutor {
                 throw HttpContractFailureDiagnostics.enrich(exception, testCase, request, response, objectMapper);
             }
         } finally {
-            MDC.remove("scenario");
+            // Ripristina il contesto del @TestFactory padre invece di azzerarlo:
+            // i casi dinamici successivi condividono lo stesso thread.
+            if (previousScenarioName != null) {
+                MDC.put(TestMdcKeys.SCENARIO_NAME, previousScenarioName);
+            } else {
+                MDC.remove(TestMdcKeys.SCENARIO_NAME);
+            }
         }
     }
 
@@ -77,32 +98,40 @@ final class HttpContractRuntimeCaseExecutor {
     private HttpContractRequest buildRuntimeRequest(
             GeneratedContractCase testCase,
             RuntimeScope payloadRuntime,
-            RuntimeScope pathRuntime
+            RuntimeScope pathRuntime,
+            RuntimeScope queryRuntime
     ) {
         JsonNode payloadBaseline = payloadRuntime == null ? null : payloadRuntime.baseline();
         JsonNode pathBaseline = pathRuntime == null ? null : pathRuntime.baseline();
-        FuzzCase runtimeCase = resolveRuntimeCase(testCase, payloadRuntime, pathRuntime);
+        JsonNode queryBaseline = queryRuntime == null ? null : queryRuntime.baseline();
+        FuzzCase runtimeCase = resolveRuntimeCase(testCase, payloadRuntime, pathRuntime, queryRuntime);
         JsonNode mutated = runtimeCase.result();
 
-        if (testCase.scope() == RequestScope.PAYLOAD) {
-            return new HttpContractRequest(mutated, mutated != null, pathBaseline);
-        }
-        return new HttpContractRequest(payloadBaseline, payloadRuntime != null, mutated);
+        return switch (testCase.scope()) {
+            case PAYLOAD -> new HttpContractRequest(mutated, mutated != null, pathBaseline, queryBaseline);
+            case PATH_PARAMS -> new HttpContractRequest(payloadBaseline, payloadRuntime != null, mutated, queryBaseline);
+            case QUERY_PARAMS -> new HttpContractRequest(payloadBaseline, payloadRuntime != null, pathBaseline, mutated);
+        };
     }
 
     private FuzzCase resolveRuntimeCase(
             GeneratedContractCase testCase,
             RuntimeScope payloadRuntime,
-            RuntimeScope pathRuntime
+            RuntimeScope pathRuntime,
+            RuntimeScope queryRuntime
     ) {
-        RuntimeScope mutatedScope = testCase.scope() == RequestScope.PAYLOAD ? payloadRuntime : pathRuntime;
+        RuntimeScope mutatedScope = switch (testCase.scope()) {
+            case PAYLOAD -> payloadRuntime;
+            case PATH_PARAMS -> pathRuntime;
+            case QUERY_PARAMS -> queryRuntime;
+        };
         if (mutatedScope == null) {
             throw new ContractHttpException(
                     "Missing configured scope for case " + formatDescriptor(testCase.descriptor())
             );
         }
 
-        List<FuzzCase> matches = fuzzEngine.generate(mutatedScope.source()).stream()
+        List<FuzzCase> matches = fuzzEngine(testCase.scope()).generate(mutatedScope.source()).stream()
                 .filter(candidate -> candidate.target().equals(testCase.target()))
                 .filter(candidate -> candidate.mutation().scenario() == testCase.mutation().scenario())
                 .toList();
@@ -159,12 +188,24 @@ final class HttpContractRuntimeCaseExecutor {
     }
 
     private String scopeLabel(RequestScope scope) {
-        return scope == RequestScope.PAYLOAD ? "payload" : "pathParams";
+        return switch (scope) {
+            case PAYLOAD -> "payload";
+            case PATH_PARAMS -> "pathParams";
+            case QUERY_PARAMS -> "queryParams";
+        };
     }
 
     private String formatDescriptor(ContractCaseDescriptor descriptor) {
         String target = descriptor.target().isRoot() ? "<root>" : descriptor.target().toString();
         return descriptor.scope() + " " + descriptor.scenario() + " @ " + target;
+    }
+
+    private FuzzEngine fuzzEngine(RequestScope scope) {
+        return switch (scope) {
+            case PAYLOAD -> payloadFuzzEngine;
+            case PATH_PARAMS -> pathParamsFuzzEngine;
+            case QUERY_PARAMS -> queryParamsFuzzEngine;
+        };
     }
 
     private record RuntimeScope(Object source, JsonNode baseline) {
