@@ -41,8 +41,13 @@ contract-report:
       label: BFF
       class-prefix: Bff
       target-type: OPENAPI
-      openapi: @bff.openapi.url@
+      openapi: ${interop.api.openapi-url.bff}
     web:
       label: WEB
       class-prefix: Web
       target-type: PAGE
+    m2m-v3:
+      label: M2M V3
+      class-prefix: M2MV3
+      target-type: OPENAPI
+      openapi: ${interop.api.openapi-url.m2m.v3}
