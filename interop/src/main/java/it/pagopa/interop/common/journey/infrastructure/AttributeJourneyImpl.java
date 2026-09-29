@@ -18,10 +18,4 @@ public class AttributeJourneyImpl implements AttributeJourney<AttributeJourneyIm
         attributeUseCase.createCertifiedAttribute();
         return this;
     }
-
-    @Override
-    public AttributeJourneyImpl assignAttribute(Tenant tenant) {
-        attributeUseCase.assignAttribute(tenant);
-        return this;
-    }
 }

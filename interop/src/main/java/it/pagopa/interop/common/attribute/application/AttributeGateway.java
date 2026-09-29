@@ -13,5 +13,4 @@ public interface AttributeGateway extends Plugin<Channel> {
 
     Attribute createCertifiedAttribute(AttributeSeed attributeSeed);
 
-    void assignAttribute(Tenant tenant);
 }

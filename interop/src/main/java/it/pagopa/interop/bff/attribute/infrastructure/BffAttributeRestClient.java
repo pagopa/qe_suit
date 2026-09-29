@@ -29,13 +29,6 @@ public class BffAttributeRestClient extends RestClient {
         );
     }
 
-    public TestChain<Void> assignAttribute(@Nonnull Tenant tenant) {
-        return execute(
-                () -> attributesApi.  .createCertifiedAttribute().body(payload).execute(Function.identity()),
-                Void.class
-        );
-    }
-
     public TestChain<Attribute> getAttribute(@Nonnull UUID attributeId) {
         return execute(
                 () -> attributesApi.getAttributeById().attributeIdPath(attributeId).execute(Function.identity()),

@@ -45,11 +45,6 @@ public class BffAttributeGateway implements AttributeGateway {
     }
 
     @Override
-    public void assignAttribute(Tenant tenant) {
-
-    }
-
-    @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
     }

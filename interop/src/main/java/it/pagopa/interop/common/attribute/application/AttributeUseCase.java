@@ -25,8 +25,4 @@ public class AttributeUseCase {
                 .description("Description Test");
         return attributeGateway.createCertifiedAttribute(seed);
     }
-
-    public void assignAttribute(Tenant tenant) {
-        attributeGateway.assignAttribute(tenant);
-    }
 }
