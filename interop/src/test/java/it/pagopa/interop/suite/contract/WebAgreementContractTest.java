@@ -59,10 +59,14 @@ public class WebAgreementContractTest {
                 )
                 .get(Agreement.class);
 
-        return assertBannerIsVisible(
-                "Should see banner for agreement update to newer version",
-                DESIRED_MESSAGE_BANNER_1, Tenant.COMUNE_DI_MILANO, agreement.getId()
-        );
+        return webContractValidator
+                .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
+                .on(AgreementPage.class, agreement.getId().toString())
+                .tests(Stream.of(new WebScenario<>(
+                        "Should see banner for agreement update to newer version",
+                        page -> {},
+                        page -> assertBannerIsVisible(page, DESIRED_MESSAGE_BANNER_1)
+                )));
     }
 
     @TestFactory
@@ -81,10 +85,14 @@ public class WebAgreementContractTest {
                 )
                 .get(Agreement.class);
 
-        return assertBannerIsVisible(
-                "Should see banner agreement",
-                DESIRED_MESSAGE_BANNER_2, Tenant.COMUNE_DI_MILANO, agreement.getId()
-        );
+        return webContractValidator
+                .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
+                .on(AgreementPage.class, agreement.getId().toString())
+                .tests(Stream.of(new WebScenario<>(
+                        "Should see obsolete version banner when e-service is archiving",
+                        page -> {},
+                        page -> assertBannerIsVisible(page, DESIRED_MESSAGE_BANNER_2)
+                )));
     }
 
     @TestFactory
@@ -103,10 +111,14 @@ public class WebAgreementContractTest {
                 )
                 .get(Agreement.class);
 
-        return assertNoBannerIsVisible(
-                "Should see no banner when e-service is in archiving state and the agreement is non-updatable",
-                Tenant.COMUNE_DI_MILANO, agreement.getId()
-        );
+        return webContractValidator
+                .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
+                .on(AgreementPage.class, agreement.getId().toString())
+                .tests(Stream.of(new WebScenario<>(
+                        "Should see no banner when e-service is archiving and agreement uses latest version",
+                        page -> {},
+                        this::assertNoBannerIsVisible
+                )));
     }
 
     @TestFactory
@@ -127,68 +139,37 @@ public class WebAgreementContractTest {
                 )
                 .get(Agreement.class);
 
-        return assertBannerIsVisible(
-                "Should see banner agreement",
-                DESIRED_MESSAGE_BANNER_2, Tenant.COMUNE_DI_MILANO, agreement.getId()
-        );
-    }
-
-    private Stream<DynamicTest> assertBannerIsVisible(
-            final String webScenarioMessage,
-            final String expectedMessage,
-            final Tenant consumer,
-            final UUID agreementId
-    ) {
-        return agreementScenario(
-                webScenarioMessage,
-                consumer,
-                agreementId,
-                page -> {
-                    List<String> alertMessages = page.alerts().stream()
-                            .map(alert -> alert.message().read())
-                            .toList();
-
-                    Assertions.assertThat(alertMessages).contains(expectedMessage);
-                }
-        );
-    }
-
-    private Stream<DynamicTest> assertNoBannerIsVisible(
-            final String webScenarioMessage,
-            final Tenant consumer,
-            final UUID agreementId
-    ) {
-        return agreementScenario(
-                webScenarioMessage,
-                consumer,
-                agreementId,
-                page -> {
-                    List<String> alertMessages = page.alerts().stream()
-                            .map(alert -> alert.message().read())
-                            .toList();
-
-                    Assertions.assertThat(alertMessages)
-                            .doesNotContain(DESIRED_MESSAGE_BANNER_1, DESIRED_MESSAGE_BANNER_2);
-                }
-        );
-    }
-
-    private Stream<DynamicTest> agreementScenario(
-            final String webScenarioMessage,
-            final Tenant consumer,
-            final UUID agreementId,
-            final Consumer<AgreementPage> assertions
-    ) {
-        WebScenario<AgreementPage> scenario = new WebScenario<>(
-                webScenarioMessage,
-                page -> {
-                },
-                assertions
-        );
-
         return webContractValidator
-                .as(User.getTenantAdmin(consumer), consumer)
-                .on(AgreementPage.class, agreementId.toString())
-                .tests(Stream.of(scenario));
+                .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
+                .on(AgreementPage.class, agreement.getId().toString())
+                .tests(Stream.of(new WebScenario<>(
+                        "Should see obsolete version banner when descriptor and e-service are archiving",
+                        page -> {},
+                        page -> assertBannerIsVisible(page, DESIRED_MESSAGE_BANNER_2)
+                )));
+    }
+
+    private void assertBannerIsVisible(
+            AgreementPage page,
+            String expectedMessage
+    ) {
+        Assertions.assertThat(readAlertMessages(page))
+                .as("Agreement alert messages")
+                .contains(expectedMessage);
+    }
+
+    private void assertNoBannerIsVisible(AgreementPage page) {
+        Assertions.assertThat(readAlertMessages(page))
+                .as("Agreement alert messages")
+                .doesNotContain(
+                        DESIRED_MESSAGE_BANNER_1,
+                        DESIRED_MESSAGE_BANNER_2
+                );
+    }
+
+    private List<String> readAlertMessages(AgreementPage page) {
+        return page.alerts().stream()
+                .map(alert -> alert.message().read())
+                .toList();
     }
 }
