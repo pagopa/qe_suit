@@ -24,7 +24,10 @@ interop:
       audience: dev.interop.pagopa.it/ui
       duration-sec: 14400
     oauth:
-      server: https://auth.dev.interop.pagopa.it/token.oauth2
+      server:
+        base-url: https://auth.dev.interop.pagopa.it
+        sync: ${interop.auth.oauth.server.base-url}/token.oauth2
+        async: ${interop.auth.oauth.server.base-url}/token.oauth2.async
     client-assertion:
       audience: auth.dev.interop.pagopa.it/client-assertion
       grant_type: client_credentials
@@ -32,6 +35,8 @@ interop:
   api:
     base-url:
       bff: https://selfcare.dev.interop.pagopa.it/0.0/backend-for-frontend
+      m2m:
+        v3: https://api.dev.interop.pagopa.it/v3
   web:
     base-url: https://selfcare.dev.interop.pagopa.it/ui/it
     catalog: ${interop.web.base-url}/catalogo-e-service
