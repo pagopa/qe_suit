@@ -2,9 +2,8 @@ name: "[INTEROP] QA workflow"
 
 on:
   schedule:
-    # 06:00 UTC = 08:00 Europe/Rome durante CEST.
-    # Attenzione: in inverno 06:00 UTC = 07:00 CET.
     - cron: '0 21 * * *'
+      timezone: "Europe/Rome"
 
   workflow_dispatch:
     inputs:

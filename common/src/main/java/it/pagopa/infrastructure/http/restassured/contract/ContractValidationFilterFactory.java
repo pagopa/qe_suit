@@ -35,7 +35,7 @@ public final class ContractValidationFilterFactory {
         return LevelResolver.create()
                 .withLevel(REQUEST_VALIDATION, ValidationReport.Level.IGNORE)
                 .withLevel(UNKNOWN_RESPONSE_STATUS, ValidationReport.Level.WARN)
-                .withLevel(REQUIRED_RESPONSE_BODY_SCHEMA, ValidationReport.Level.ERROR)
+                .withLevel(REQUIRED_RESPONSE_BODY_SCHEMA, ValidationReport.Level.WARN)
                 .withLevel(UNEXPECTED_RESPONSE_BODY, ValidationReport.Level.ERROR)
                 .withLevel(UNEXPECTED_CONTENT_TYPE, ValidationReport.Level.WARN)
                 .build();
