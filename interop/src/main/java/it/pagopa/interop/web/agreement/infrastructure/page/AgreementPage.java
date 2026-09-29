@@ -26,7 +26,7 @@ public interface AgreementPage extends Page {
     default void assertLoaded() {
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(breadcrumbs().getLastItemText()).as("Breadcrumbs last item text").isEqualTo("Gestisci richiesta");
-            softly.assertThat(pageTitle().readAndAssert(eServiceName -> Assertions.assertThat(eServiceName).as("Page title is not blank").isNotBlank()));
+            pageTitle().readAndAssert(eServiceName -> Assertions.assertThat(eServiceName).as("Page title is not blank").isNotBlank());
         });
     }
 
