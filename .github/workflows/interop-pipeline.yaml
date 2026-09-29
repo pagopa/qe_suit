@@ -59,16 +59,15 @@ jobs:
           aws sts get-caller-identity
 
       - name: Set up Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '17'
           cache: maven
-
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v5
-        with:
-          maven-version: 3.9.11
+          cache-dependency-path: |
+            qe_suit/frontend-e2e-framework/**/pom.xml
+            qe_suit/common/pom.xml
+            qe_suit/interop/pom.xml
 
       - name: Install Chrome Browser
         run: |
@@ -88,12 +87,12 @@ jobs:
       - name: Build frontend-e2e-framework
         run: |
           cd ./qe_suit/frontend-e2e-framework
-          mvn -B -ntp clean install
+          ./mvnw -B -ntp clean install
 
       - name: Build common
         run: |
           cd ./qe_suit/common
-          mvn -B -ntp clean install
+          ./mvnw -B -ntp clean install
 
       - name: Run Test Suite
         run: |
@@ -110,7 +109,7 @@ jobs:
           echo "Test suite: ${{ env.JAVA_TEST_SUITE }}"
           echo "qe_suit branch: ${{ env.BRANCH_NAME }}"
 
-          mvn -B -ntp test \
+          ./mvnw -B -ntp test \
             $SPRING_PROFILE \
             -Dtest=${{ env.JAVA_TEST_SUITE }}
 
