@@ -18,6 +18,11 @@ import static org.mockito.Mockito.verify;
 class AuthenticatedLocatableCapabilityTest {
 
     @Test
+    void faild(){
+        throw new RuntimeException("Test failed");
+    }
+
+    @Test
     void configurerRunsBeforeNavigationAndUpdatesCurrentUrl() {
         IWebPresentationApiAdapter adapter = mock(IWebPresentationApiAdapter.class);
         BrowserContext browserContext = mock(BrowserContext.class);
