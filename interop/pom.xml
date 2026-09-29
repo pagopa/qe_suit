@@ -704,11 +704,11 @@
                         <configuration>
                             <includes>
                                 <include>**/*Test.java</include>
+                                <include>**/architecture/**</include>
+                                <include>**/ci/**</include>
                             </includes>
                             <excludes>
                                 <exclude>**/suite/**</exclude>
-                                <exclude>**/architecture/**</exclude>
-                                <exclude>**/ci/**</exclude>
                             </excludes>
                             <failIfNoTests>true</failIfNoTests>
                         </configuration>
