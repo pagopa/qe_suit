@@ -26,9 +26,17 @@ public class SelfCareSessionPayloadFactory {
     private final ObjectMapper objectMapper;
 
     public String buildForTenant(Tenant tenant, String sessionToken) {
-        Map<String, Object> payload = basePayload(tenant, sessionToken);
+        Map<String, Object> claims = extractClaims(sessionToken);
+        Object desiredExp = claims.getOrDefault("desired_exp", claims.get("exp"));
+
+        Map<String, Object> payload = new LinkedHashMap<>();
+        if (desiredExp != null) {
+            payload.put("desired_exp", desiredExp);
+        }
         payload.put("email", tenant.getEmail());
         payload.put("family_name", tenant.getFamilyName());
+        payload.put("fiscal_number", tenant.getFiscalNumber());
+        payload.put("name", tenant.getName());
 
         Map<String, Object> organization = new LinkedHashMap<>();
         organization.put("id", tenant.getOrganizationId());
@@ -38,6 +46,9 @@ public class SelfCareSessionPayloadFactory {
         organization.put("ipaCode", tenant.getIpaCode());
         organization.put("hasGroups", tenant.isHasGroups());
         payload.put("organization", organization);
+
+        payload.put("sessionToken", sessionToken);
+        payload.put("uid", tenant.getUid());
 
         return serialize(payload, tenant.getUsername());
     }
@@ -77,6 +88,9 @@ public class SelfCareSessionPayloadFactory {
         payload.put("name", user.getName());
         payload.put("fiscal_number", user.getFiscalNumber());
         payload.put("uid", user.getUid());
+        if (!payload.containsKey("desired_exp") && payload.containsKey("exp")) {
+            payload.put("desired_exp", payload.get("exp"));
+        }
         return payload;
     }
 
