@@ -49,7 +49,7 @@ public class AccessTokenProvider {
                 .map(credentials ->
                         new AccessToken(
                                 credentials.getAccessToken(),
-                                TokenType.valueOf(credentials.getTokenType().name().toUpperCase()),
+                                TokenType.valueOf(credentials.getTokenType().getValue().toUpperCase()),
                                 credentials.getExpiresIn()
                         )
                 )
