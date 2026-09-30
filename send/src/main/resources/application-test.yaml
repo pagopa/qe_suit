@@ -57,26 +57,18 @@ selettore:
   supporto:
     area-riservata-selettore-env: '//*[@id="root"]//table//tr[4]/td[5]//button'
 
+
 # ============================================================================
 # Authentication Tokens
 # Bearer token for users
 # ============================================================================
 token:
-  mittente: ${pn.external.bearer-token.tokentestMittente:}
-  supporto: ${pn.external.bearer-token.tokenSupporto:}
+  mittente: ${pn.external.bearer-token.tokentestMittente}
+  supporto: ${pn.external.bearer-token.tokenSupporto}
   session:
-    # PA1 (Grossini / Comune di Palermo / Milano)
-    PA1: eyJhbGciOiAiUlMyNTYiLCJ0eXAiOiAiSldUIiwia2lkIjogImU0ZjJhYTIyLTE5MDctNDIyNC1iYWViLTExYzZiY2RkZDNkYSJ9.eyJpYXQiOiAxNzczMjQ5NjM2LCJleHAiOiAxODA0Nzg1NjM2LCAidWlkIjogImU5ZTRhOWM3LTk1ODYtNGI5Mi1hN2RkLWVlMWEwZTc3ZDM5OCIsImlzcyI6ICJodHRwczovL3dlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwiYXVkIjogIndlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwgIm9yZ2FuaXphdGlvbiI6IHsgImlkIjogIjViOTk0ZDRhLTBmYTgtNDdhYy05YzdiLTM1NGYxZDQ0YTFjZSIsICJyb2xlIjogImFkbWluIiwiZmlzY2FsX2NvZGUiOiAiODAwMTYzNTA4MjEifX0.A6ZQLKflDN1wJcVjREtZg5IDoKr18eRVIIxGUJmCO1U2avbeUBvZAzcp8sAIwe1Uzt3pKJpdZgx1poe_KqjDqakHgE6ik6OMLqfiCnLaNH1F28KC6gHn4_G6SEZ6HzXozwuvsTq-vniyMgdvinyuWX8RWOGwNjnhGm_2HVOvr5JOFfD6UqDoeFW_ZXFxc0MmGTf610cHa6YbVxuG0EZCdyW7gctMiXb__JNwvDs6cX4j2jK8dA0C_mXrcUD3SoEPOfzgd1LzGz8vIxU7smCQRKQLkfSQUjk2jmMZp_ko7kIGwL_HY1cKBdmkM1XjnMzADBgXVIJ4iMJux7jqqPNKcQ
-    # PA2 (Comune di Verona)
-    PA2: eyJhbGciOiAiUlMyNTYiLCJ0eXAiOiAiSldUIiwia2lkIjogImU0ZjJhYTIyLTE5MDctNDIyNC1iYWViLTExYzZiY2RkZDNkYSJ9.eyJpYXQiOiAxNzUxMzY1NzIzLCJleHAiOiAxNzgyOTAxNzIzLCAidWlkIjogIjIxMzRkOTJiLTVkMWItNDliNS05YTZlLTQyODNmNDg3OWJiZiIsImlzcyI6ICJodHRwczovL3dlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwiYXVkIjogIndlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwgIm9yZ2FuaXphdGlvbiI6IHsgImlkIjogImE5NWRhY2U0LTRhNDctNDE0OS1hODE0LTBlNjY5MTEzY2U0MCIsICJyb2xlIjogImFkbWluIiwiZmlzY2FsX2NvZGUiOiAiMDAyMTUxNTAyMzYifX0.Cne2J3Xu6Lo39BzOMZ_4ng76vZlsMWsfeKeYhHF1Mcm2pYonoXqrwvmZfww2n193gqfmx-itT33iNL6NEsUn5qf25nC_fOzekP9Zwld8LQ-tI9pOOzq_nlebTqLRzU4v9ovycxWFLPm4H64oSUKjVW65VrLjqX1khza2Haz11DeuFRAmGaPCK_G_juV48gqW8rcqKGuMAa9XK4Tb62BYYVVqTNF594GnKsjHo69cK24scE_Ug43lZb7LMGE3HlpTWt6DFEPon6zdw2cj_BjTr_D7GB9GokIz0Dy3OchFVqPEXVJnQKn7hQNM5ALwoGmt2859_8lo-8CUhDFF1sPxwQ
-    # User1 (Lucrezia / Cittadino PF)
-    User1: eyJhbGciOiAiUlMyNTYiLCJ0eXAiOiAiSldUIiwia2lkIjogImU0ZjJhYTIyLTE5MDctNDIyNC1iYWViLTExYzZiY2RkZDNkYSJ9.eyJpYXQiOiAxNzc5MjA3MzA3LCJleHAiOiAxODEwNzQzMzA3LCAidWlkIjogIjRmYzc1ZGYzLTA5MTMtNDA3ZS1iZGFhLWU1MDMyOTcwOGI3ZCIsImlzcyI6ICJodHRwczovL3dlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwiYXVkIjogIndlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0In0.PvOtCNbkXu06t-oDvLH7zGzJemQvZ50SeoweGMVt2o9-qQzSzgc9GJvbSnLBzl6WN7PTpsThh_3fsOAqyrRYZCPdcpLt8z--Pxq7kAsuCpb9KKFNeNYkt1pbsbVX63_kitorJiXdbGothn3azOI7gtB-h0C7eIAsFeozCjJtqn5bjhukXO1WaQCNfpx7cIVSWCvTYFdqZPiQUgS_vrVlWo3bVGGXn7M4dHHrFF5Ii57-Y960hsgPgrWR3w6PuN52-zD3gykRmwdRPeMGlwMHQynj1KFglEOiTkb3DPTE0cZGCRwDQQEPg2UTt8MZurJ6N8F8PzRUd3mZbSRvxYrvSA
-    # User2 (Cittadino PF)
-    User2: eyJhbGciOiAiUlMyNTYiLCJ0eXAiOiAiSldUIiwia2lkIjogImU0ZjJhYTIyLTE5MDctNDIyNC1iYWViLTExYzZiY2RkZDNkYSJ9.eyJpYXQiOiAxNzc5MjA3MjY1LCJleHAiOiAxODEwNzQzMjY1LCAidWlkIjogImE2YzEzNTBkLTFkNjktNDIwOS04YmY4LTMxZGU1OGM3OWQ2ZSIsImlzcyI6ICJodHRwczovL3dlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwiYXVkIjogIndlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0In0.CjLEgjPqCs96EEAofI9xXzMa62xvs2vbDE-esYskiTgoP8Mwru-NNG18vQdNfJoYYpB1ymlheVaMDLXWL-tLwIwqRqzphZm59gNI-p1QZ8-CKWuwwx-3Gn13hGXfhOo-l_hjAKyL3Tgm2jahdv_9AUxs9FH02CUOE1AD1ayhUSqHMomMTppAQywYiaNUXnQcIzwZSeNelYFvKciX6hU_DTM4bj3-S-MrxY81rXkJ_vKqnMFWY1_Nr6-bmJnYe6NmbSVJx3MAmY6Werkn5iD-ju4-qsZ8pVJydZcAp3_5RisXd_cYHbg2woxz3acyFbUBkS-eeRcGrDt-zatJekal-w
-    # PG1 (Francesco Petrarca / Vita Nova Sas / Le Epistolae)
-    PG1: eyJhbGciOiAiUlMyNTYiLCJ0eXAiOiAiSldUIiwia2lkIjogImU0ZjJhYTIyLTE5MDctNDIyNC1iYWViLTExYzZiY2RkZDNkYSJ9.eyJpYXQiOiAxNzU5OTk1MzA4LCJleHAiOiAxNzkxNTMxMzA4LCAidWlkIjogImU0OTBmMDJlLTk0MjktNGIzOC1iYjExLWRkYjhhNTYxZmI2MiIsImlzcyI6ICJodHRwczovL3dlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwiYXVkIjogIndlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwgIm9yZ2FuaXphdGlvbiI6IHsgImlkIjogIjhmNDA5Y2E2LWZjM2QtNDZjMy04ZGE3LTY5Y2Q5YTFlOWU2MiIsICJyb2xlIjogInBnLWFkbWluIiwiZmlzY2FsX2NvZGUiOiAiMTI2NjY4MTAyOTkifX0.vefvUj_GEo8E4a6tr2qUeloYUh9PI2cx5Rv22U7uwS165JUnSC9NdQqEOqSHbm6vTY1HwC9QcROiwHWX9rrTzvWD9fPb1Trx3Q--Vrts_xDE3S9noPn8oAxbSFZ5rvKfBXK8Q6Wd0whThoebrmyAfhoXVQU134H-3zLHm2yv5tGC9qpwQlYEvIuGIOOPAgmCH6-Inqlzze-AlE1fO9sMXWf1TVpmux2Mk8-Rc4qGUfObx55sdWlj-DSBBXOsRk3LueZLurRiW1HZnOwVr9u_QbUy-2hhbefBJJokOOwydqh6O4b_DLUC3AHda4mKZRG6nTu4ytHi_0QPWESbcVfJWA
-    # PG2 (Lucio Anneo Seneca)
-    PG2: eyJhbGciOiAiUlMyNTYiLCJ0eXAiOiAiSldUIiwia2lkIjogImU0ZjJhYTIyLTE5MDctNDIyNC1iYWViLTExYzZiY2RkZDNkYSJ9.eyJpYXQiOiAxNzU5OTk1NDQ0LCJleHAiOiAxNzkxNTMxNDQ0LCAidWlkIjogImE3YjAxOTFmLWZkMWMtNDhlYS1iMmViLWQxMmY5ZjFiYTUwZSIsImlzcyI6ICJodHRwczovL3dlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwiYXVkIjogIndlYmFwaS50ZXN0Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwgIm9yZ2FuaXphdGlvbiI6IHsgImlkIjogImIwNWRlNzc3LTgwYzYtNDU0OS1hMDU0LWQ4ZGZkYTEzOWM2MiIsICJyb2xlIjogInBnLWFkbWluIiwiZmlzY2FsX2NvZGUiOiAiMjA1MTc0OTAzMjAifX0.Q0NZPzwpETI8yyuimojwMmQDQj6VDMYLx3YwVrVRX48cXTC5xcDSVI50GpBcsVUGuzMmRbi_8zL3jr96W7JPei-DilDgQIbislvrSOYMepYRXm6DghdpwLNe4NCGCRsOc2jhQjzhytqO7R7dACNBHDnVucAnQS7X4oGJp6dQcRjgRAET11eRHUojbO0THggeutdbst-8UsUB_9wzofbsSwbjKyiJ9szKtb0A7UQ98PmybHFvUZl4YPSSEEOosEJsM9KqTHXON6zS4nOYLqyzk1hdzMKguuhEOXJYsbkd9gRkzPxYlPatI9irEEvaUAVwgOMlMrCFfaWfHAT9L-eWBQ
+    grossini: ${pn.external.session-token.grossini:REPLACE_ME}
+    francescopetrarca: REPLACE_ME
+    lucrezia: REPLACE_ME
 
 # ============================================================================
 # BFF API Configuration (notifiche legali via API)
@@ -92,7 +84,8 @@ bff:
 gpd:
   api:
     base-url: https://api.uat.platform.pagopa.it/gpd/debt-positions-service/v1
-    subscription-key: 7af5b95561f04499b38ced1bfaa492a6
+    # REPLACE_ME: subscription key reale per l'header Ocp-Apim-Subscription-Key verso GPD
+    subscription-key: REPLACE_ME
 
 # ============================================================================
 # Pn External Registries API Configuration (gruppi notifica per PA)
