@@ -23,9 +23,9 @@ on:
         type: string
 
       branchName:
-        description: 'Branch di qe_suit da testare (indipendente dal branch selezionato in "Use workflow from")'
+        description: 'Provide the branch name for qe_suit to clone'
         required: false
-        default: ''
+        default: main
         type: string
 
 defaults:
