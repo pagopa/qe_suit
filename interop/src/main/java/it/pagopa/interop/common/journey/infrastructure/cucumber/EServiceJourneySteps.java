@@ -114,7 +114,7 @@ public class EServiceJourneySteps {
         Attribute attribute = entityStore.getLastOrThrow(Attribute.class);
         certifiedItem.setId(attribute.getId());
         certifiedItem.setDailyCallsPerConsumer(customThreshold);
-        certifiedItem.setExplicitAttributeVerification(true);
+        certifiedItem.setExplicitAttributeVerification(false);
         attributesSeed.addCertifiedItem(List.of(certifiedItem));
         updateCommand.attributes(attributesSeed);
 
