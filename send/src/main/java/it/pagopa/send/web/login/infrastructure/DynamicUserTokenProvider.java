@@ -37,8 +37,9 @@ public class DynamicUserTokenProvider {
             return token;
         }
 
-        // Case variations lookup (e.g., pa1 -> PA1, user1 -> User1, pg1 -> PG1)
-        for (String candidate : List.of(alias.toUpperCase(), alias.toLowerCase())) {
+        // Case variations lookup (e.g., pa1 -> PA1, user1 -> User1, USER1 -> User1, pg1 -> PG1)
+        String capitalized = alias.substring(0, 1).toUpperCase() + alias.substring(1).toLowerCase();
+        for (String candidate : List.of(alias.toUpperCase(), alias.toLowerCase(), capitalized)) {
             token = env.getProperty("token.session." + candidate);
             if (isValid(token)) {
                 return token;
@@ -64,6 +65,31 @@ public class DynamicUserTokenProvider {
     }
 
     private boolean isValid(String token) {
-        return token != null && !token.isBlank() && !token.contains("REPLACE_ME");
+        if (token == null || token.isBlank() || token.contains("REPLACE_ME")) {
+            return false;
+        }
+        return !isJwtExpired(token);
+    }
+
+    private boolean isJwtExpired(String token) {
+        String[] parts = token.trim().split("\\.");
+        if (parts.length != 3) {
+            // Not a standard 3-part JWT (could be an opaque token or mock token in tests)
+            return false;
+        }
+
+        try {
+            byte[] decoded = java.util.Base64.getUrlDecoder().decode(parts[1]);
+            String payload = new String(decoded, java.nio.charset.StandardCharsets.UTF_8);
+            java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("\"exp\"\\s*:\\s*(\\d+)").matcher(payload);
+            if (matcher.find()) {
+                long expSeconds = Long.parseLong(matcher.group(1));
+                long nowSeconds = java.time.Instant.now().getEpochSecond();
+                return expSeconds < nowSeconds;
+            }
+        } catch (Exception ignored) {
+            // If parsing fails, fall back to treating token as non-expired so we don't break non-standard tokens
+        }
+        return false;
     }
 }
