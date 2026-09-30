@@ -2,7 +2,6 @@ package it.pagopa.interop.common.journey.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -22,12 +21,5 @@ public class UserJourneySteps {
     @Given("un fruitore {userRole} del {tenant}")
     public void setConsumer(UserRole userRole, Tenant consumer) {
         interopJourney.withConsumer(consumer, userRole);
-    }
-
-    @Given("un fruitore {userRole} di/del {tenant} possiede quell'attributo certificato")
-    public void setConsumerAssigningLastCertifiedAttribute(UserRole userRole, Tenant consumer) {
-        interopJourney
-                .withConsumer(consumer, userRole)
-                .assignCertifiedAttribute(consumer);
     }
 }
