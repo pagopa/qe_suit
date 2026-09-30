@@ -55,7 +55,7 @@ class DefaultCapabilityDispatcherTest {
         handlers.add(secondHandler);
         selector = new TestSelector();
         location = new TestLocation();
-        scope = new CapabilityScope("", "");
+        scope = new CapabilityScope("", "", false);
         dispatcher = new TestDefaultCapabilityDispatcher(handlers);
         actionMethod = ActionCapability.class.getMethod("action");
     }

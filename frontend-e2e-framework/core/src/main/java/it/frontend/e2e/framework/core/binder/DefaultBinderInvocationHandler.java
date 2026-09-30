@@ -8,6 +8,7 @@ import it.frontend.e2e.framework.core.config.SuiteContext;
 import it.frontend.e2e.framework.core.logging.ILogger;
 import it.frontend.e2e.framework.core.logging.Slf4jLogger;
 import it.frontend.e2e.framework.core.model.DomainElement;
+import it.frontend.e2e.framework.core.model.collection.PresentationElementList;
 import it.frontend.e2e.framework.core.utils.FallbackUtils;
 import it.frontend.e2e.framework.core.utils.TypeUtils;
 import it.frontend.e2e.framework.core.utils.WrapperBinder;
@@ -44,13 +45,16 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
             return switch (method.getName()) {
                 case "equals" -> proxy == args[0];
                 case "hashCode" -> System.identityHashCode(proxy);
-                case "toString" -> proxy.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(proxy));
+                case "toString" ->
+                        proxy.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(proxy));
                 default -> throw new UnsupportedOperationException("Object method not supported: " + method.getName());
             };
         }
+
         try {
             if (method.isDefault()) return handleDefaultMethod(proxy, method, args);
             if (TypeUtils.isOptionalReturn(method)) return WrapperBinder.bindOptional(this, method, args);
+            if (TypeUtils.isListReturn(method)) return resolveListReturn(method, args);
 
             Class<?> rt = method.getReturnType();
             if (isBindableType(rt)) return bindRecursive(method, rt, shouldSuppressExceptionForOptionalWrapper);
@@ -73,7 +77,7 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
         return new DefaultBinderInvocationHandler(this.dispatcher, bindContext, shouldSuppressExceptionForOptionalWrapper);
     }
 
-    public <T> T resolveCapabilityMethod(Method method, Object[] args, BindContext bindContext ) {
+    public <T> T resolveCapabilityMethod(Method method, Object[] args, BindContext bindContext) {
         logger.logDebug("Dispatching capability method: " + method.getName() + " | " + bindContext.toString());
         return dispatcher.dispatch(method, args, bindContext.getScope());
     }
@@ -82,17 +86,10 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
         //SuiteContext.getConfiguration().getSelectorResolver().resolve(XPathResolver.resolve(method, returnType));
         String childSel = XPathResolver.resolve(method, returnType);
 
-        if(childSel.startsWith("${")) {
+        if (childSel.startsWith("${")) {
             childSel = SuiteContext.getConfiguration().getSelectorResolver().resolve(XPathResolver.resolve(method, returnType)).toString();
         }
 
-        //String childSel = SuiteContext.getConfiguration().getSelectorResolver().resolve(XPathResolver.resolve(method, returnType)).toString();
-
-//        // Se non trovato da @Property, utilizza @XPath
-//        if (childSel.isEmpty()) {
-//            childSel = XPathResolver.resolve(method, returnType);
-//        }
-//
         String fullSel;
         logger.logInfo("childSel: " + childSel + " | isAbsolute: " + XPathResolver.isAbsolute(childSel));
 
@@ -102,14 +99,78 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
             fullSel = XPathResolver.compose(ctx.getScope().selector(), childSel);
         }
 
-        CapabilityScope scope = new CapabilityScope(fullSel, ctx.getScope().location());
+        CapabilityScope scope = new CapabilityScope(fullSel, ctx.getScope().location(), false);
+
+        BindContext childContext = new BindContext(
+                scope,
+                method.getGenericReturnType()
+        );
+
         logger.logInfo("Binding recursive element: " + returnType.getSimpleName() +
                 " | From: " + method.getDeclaringClass().getSimpleName() +
                 " | Selector: " + fullSel);
         return Proxy.newProxyInstance(
                 returnType.getClassLoader(),
                 new Class<?>[]{returnType},
-                new DefaultBinderInvocationHandler(this.dispatcher, new BindContext(scope), optionalBestEffort)
+                new DefaultBinderInvocationHandler(this.dispatcher, childContext, optionalBestEffort)
+        );
+    }
+
+    private Object resolveListReturn(Method method, Object[] args) {
+
+        Class<?> itemType = TypeUtils.getListGenericType(
+                method,
+                ctx.getBoundType()
+        );
+
+        /*
+         * Se la List contiene un tipo "semplice", ad esempio:
+         *
+         * List<String>
+         * List<Integer>
+         * List<Boolean>
+         *
+         * non bisogna creare proxy per gli elementi.
+         * La chiamata va delegata normalmente al dispatcher.
+         */
+        if (!isBindableType(itemType)) {
+            return resolveCapabilityMethod(
+                    method,
+                    args,
+                    ctx
+            );
+        }
+
+        /*
+         * Se invece la List contiene DomainElement/Capability,
+         * allora creiamo la PresentationElementList.
+         */
+        return bindListProxy(
+                method,
+                itemType
+        );
+    }
+
+    private Object bindListProxy(Method method, Class<?> itemType) {
+
+        String childSel = XPathResolver.resolve(method, itemType);
+        String fullSel = XPathResolver.isAbsolute(childSel)
+                ? childSel
+                : XPathResolver.compose(
+                ctx.getScope().selector(),
+                childSel
+        );
+
+        CapabilityScope collectionScope = new CapabilityScope(
+                fullSel,
+                ctx.getScope().location(),
+                true
+        );
+
+        return new PresentationElementList<>(
+                itemType,
+                collectionScope,
+                dispatcher
         );
     }
 
@@ -117,9 +178,11 @@ public class DefaultBinderInvocationHandler implements InvocationHandler {
         return DomainElement.class.isAssignableFrom(type) || Capability.class.isAssignableFrom(type);
     }
 
-    /** Getters  */
+    public BindContext getCtx() {
+        return ctx;
+    }
 
-    public BindContext getCtx() { return ctx; }
-
-    public ILogger getLogger() { return logger; }
+    public ILogger getLogger() {
+        return logger;
+    }
 }

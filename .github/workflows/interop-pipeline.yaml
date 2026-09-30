@@ -1,9 +1,10 @@
-name: INTEROP - QA workflow
+name: "[INTEROP] QA workflow"
 
 on:
   schedule:
-    - cron: '0 8 * * *'
+    - cron: '0 21 * * *'
       timezone: "Europe/Rome"
+
   workflow_dispatch:
     inputs:
       environment:
@@ -14,11 +15,13 @@ on:
         options:
           - dev
           - qa
+
       javaTestSuite:
         description: 'Choose which Java test suite to run'
         required: false
-        default: NrtStandardSuite
+        default: NrtStandardSuiteTest
         type: string
+
       branchName:
         description: 'Provide the branch name for qe_suit to clone'
         required: false
@@ -36,17 +39,40 @@ jobs:
   run_tests:
     name: Run Java Selenium Tests
     runs-on: ubuntu-22.04
+
     env:
-      ENVIRONMENT: ${{ github.event_name == 'schedule' && 'qa' || inputs.environment }}
-      JAVA_TEST_SUITE: ${{ github.event_name == 'schedule' && 'NrtStandardSuite' || inputs.javaTestSuite }}
-      BRANCH_NAME: ${{ github.event_name == 'schedule' && 'main' || inputs.branchName }}
+      ENVIRONMENT: ${{ inputs.environment || 'qa' }}
+      JAVA_TEST_SUITE: ${{ inputs.javaTestSuite || 'NrtStandardSuiteTest' }}
+      BRANCH_NAME: ${{ inputs.branchName || github.ref_name }}
+
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+      AWS_REGION: eu-south-1
+      AWS_DEFAULT_REGION: eu-south-1
 
     steps:
-      - name: Set up Maven
-        uses: s4u/setup-maven-action@6d44c18d67d9e1549907b8815efa5e4dada1801b
+      - name: Verify AWS credentials
+        run: |
+          echo "Checking AWS identity..."
+          aws sts get-caller-identity
+
+      - name: Checkout qe_suit repository
+        uses: actions/checkout@v4
         with:
-          java-version: 17
-          maven-version: 3.9.8
+          ref: ${{ env.BRANCH_NAME }}
+          path: qe_suit
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: |
+            qe_suit/frontend-e2e-framework/**/pom.xml
+            qe_suit/common/pom.xml
+            qe_suit/interop/pom.xml
 
       - name: Install Chrome Browser
         run: |
@@ -55,40 +81,56 @@ jobs:
           google-chrome --version
 
       - name: Setup ChromeDriver
-        uses: nanasess/setup-chromedriver@master
-
-      - name: Clone qe_suit repository
-        run: |
-          git clone --depth 1 --branch ${{ env.BRANCH_NAME }} https://github.com/pagopa/qe_suit.git
+        uses: nanasess/setup-chromedriver@904b949d6a9e6f5bb87b61ba516e716ddcc1ff8c # master, 2026-06-02
 
       - name: Build frontend-e2e-framework
         run: |
           cd ./qe_suit/frontend-e2e-framework
-          mvn clean install
+          bash ./mvnw -B -ntp clean install
 
-      - name: Run Selenium Tests
+      - name: Build common
+        run: |
+          cd ./qe_suit/common
+          bash ./mvnw -B -ntp clean install
+
+      - name: Run Test Suite
         run: |
           cd ./qe_suit/interop
-          
+
           if [[ "${{ env.ENVIRONMENT }}" == "dev" ]]; then
             SPRING_PROFILE="-Dspring.profiles.active=dev"
           else
             SPRING_PROFILE="-Dspring.profiles.active=qa"
           fi
-          
-          mvn test $SPRING_PROFILE -Dtest=${{ env.JAVA_TEST_SUITE }}
 
-      - name: Upload Test Logs
+          echo "Environment: ${{ env.ENVIRONMENT }}"
+          echo "Spring profile: $SPRING_PROFILE"
+          echo "Test suite: ${{ env.JAVA_TEST_SUITE }}"
+          echo "qe_suit branch: ${{ env.BRANCH_NAME }}"
+
+          bash ./mvnw -B -ntp test \
+            "$SPRING_PROFILE" \
+            -Dtest="${{ env.JAVA_TEST_SUITE }}"
+      # Il log e' cronologico: con i test in parallelo le righe di scenari diversi
+      # si alternano. Qui viene prodotta una seconda copia raggruppata per caso di test,
+      # leggibile senza dover filtrare a mano.
+      - name: Group logs by test case
+        if: always()
+        run: |
+          cd ./qe_suit/common
+
+          bash ./mvnw -B -ntp exec:java \
+            -Dexec.mainClass=it.pagopa.infrastructure.logging.TestLogGrouperMain \
+            -Dexec.args="../interop/target/logs/qa-test.log ../interop/target/logs/qa-test.by-test-case.log"
+
+      - name: Upload QA Test Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-logs
-          path: ./qe_suit/interop/qa-tests.log
-
-      - name: Upload Cucumber Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: cucumber-report
-          path: ./qe_suit/interop/target/cucumber-report*
+          name: qa-test-artifacts
+          path: |
+            ./qe_suit/interop/target/logs/
+            ./qe_suit/interop/target/cucumber-reports/
+            ./qe_suit/interop/target/contract-test/report.html
+          if-no-files-found: warn
           retention-days: 10

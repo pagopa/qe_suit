@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+MSG_FILE="${1:-}"
+
+if [[ -z "$MSG_FILE" || ! -f "$MSG_FILE" ]]; then
+  echo "Commit message file not found" >&2
+  exit 1
+fi
+
+MSG="$(head -n1 "$MSG_FILE")"
+
+ROOT_DIR="$(git rev-parse --show-toplevel)"
+
+bash "$ROOT_DIR/.github/scripts/validate-commit-message.sh" "$MSG"

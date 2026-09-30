@@ -1,0 +1,149 @@
+package it.pagopa.infrastructure.contract.http;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.infrastructure.fuzzing.FuzzEngine;
+import it.pagopa.infrastructure.objectgraph.ObjectGraph;
+import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
+import org.junit.jupiter.api.DynamicTest;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.DynamicTest.dynamicTest;
+
+final class HttpContractInvocationBuilder implements HttpContractStages.ApiCallStage {
+    private final FuzzEngine payloadFuzzEngine;
+    private final FuzzEngine pathParamsFuzzEngine;
+    private final FuzzEngine queryParamsFuzzEngine;
+    private final ObjectGraphDecomposer objectGraphDecomposer;
+    private final ContractCasePlanner casePlanner;
+    private final Supplier<?> operationSupplier;
+    private final HttpContractAuthentication authentication;
+    private final HttpContractRuntimeCaseExecutor runtimeCaseExecutor;
+
+    private ScopeState<?> payloadState;
+    private ScopeState<?> pathState;
+    private ScopeState<?> queryState;
+
+    HttpContractInvocationBuilder(
+            ObjectMapper objectMapper,
+            FuzzEngine payloadFuzzEngine,
+            FuzzEngine pathParamsFuzzEngine,
+            FuzzEngine queryParamsFuzzEngine,
+            ObjectGraphDecomposer objectGraphDecomposer,
+            ContractCasePlanner casePlanner,
+            OpenApiOperationAdapter operationAdapter,
+            HttpContractAuthentication authentication,
+            Supplier<?> operationSupplier
+    ) {
+        this.payloadFuzzEngine = payloadFuzzEngine;
+        this.pathParamsFuzzEngine = pathParamsFuzzEngine;
+        this.queryParamsFuzzEngine = queryParamsFuzzEngine;
+        this.objectGraphDecomposer = objectGraphDecomposer;
+        this.casePlanner = casePlanner;
+        this.operationSupplier = operationSupplier;
+        this.authentication = Objects.requireNonNull(authentication, "authentication must not be null");
+        this.runtimeCaseExecutor = new HttpContractRuntimeCaseExecutor(
+                objectMapper,
+                payloadFuzzEngine,
+                pathParamsFuzzEngine,
+                queryParamsFuzzEngine,
+                operationAdapter,
+                authentication
+        );
+    }
+
+    @Override
+    public <T> HttpContractStages.PayloadStage<T> payload(Supplier<T> payloadSupplier) {
+        this.payloadState = createScope(payloadSupplier, "payload");
+        return new HttpContractPayloadStage<>(this, payloadState.overrides());
+    }
+
+    @Override
+    public <T> HttpContractStages.PathParamsStage<T> pathParams(Supplier<T> pathParamsSupplier) {
+        this.pathState = createScope(pathParamsSupplier, "pathParams");
+        return new HttpContractPathParamsStage<>(this, pathState.overrides());
+    }
+
+    @Override
+    public <T> HttpContractStages.QueryParamsStage<T> queryParams(Supplier<T> queryParamsSupplier) {
+        this.queryState = createScope(queryParamsSupplier, "queryParams");
+        return new HttpContractQueryParamsStage<>(this, queryState.overrides());
+    }
+
+    @Override
+    public Stream<DynamicTest> tests() {
+        List<GeneratedContractCase> cases = casePlanner.planCases(
+                planScope(payloadState, RequestScope.PAYLOAD),
+                planScope(pathState, RequestScope.PATH_PARAMS),
+                planScope(queryState, RequestScope.QUERY_PARAMS)
+        );
+
+        return cases.stream().map(this::toDynamicTest);
+    }
+
+    private DynamicTest toDynamicTest(GeneratedContractCase testCase) {
+        String target = testCase.target().isRoot() ? "<root>" : testCase.target().toString();
+        String scope = scopeLabel(testCase.scope());
+        String name = "[" + scope + "] " + testCase.mutation().scenario() + " @ " + target;
+
+        return dynamicTest(
+                name,
+                () -> runtimeCaseExecutor.execute(
+                        name,
+                        testCase,
+                        payloadState,
+                        pathState,
+                        queryState,
+                        operationSupplier
+                )
+        );
+    }
+
+    @SuppressWarnings("unchecked")
+    private ScopePlanState<?> planScope(ScopeState<?> state, RequestScope scope) {
+        if (state == null) return null;
+
+        Object source = runtimeCaseExecutor.materializeSource(
+                state.sourceSupplier(),
+                scope,
+                "discovery",
+                null
+        );
+
+        ObjectGraph graph = objectGraphDecomposer.decompose(source);
+
+        return new ScopePlanState<>(
+                source,
+                (Class<Object>) source.getClass(),
+                graph,
+                fuzzEngine(scope).generate(source),
+                state.overrides()
+        );
+    }
+
+    private FuzzEngine fuzzEngine(RequestScope scope) {
+        return switch (scope) {
+            case PAYLOAD -> payloadFuzzEngine;
+            case PATH_PARAMS -> pathParamsFuzzEngine;
+            case QUERY_PARAMS -> queryParamsFuzzEngine;
+        };
+    }
+
+    private static String scopeLabel(RequestScope scope) {
+        return switch (scope) {
+            case PAYLOAD -> "payload";
+            case PATH_PARAMS -> "pathParams";
+            case QUERY_PARAMS -> "queryParams";
+        };
+    }
+
+    private <T> ScopeState<T> createScope(Supplier<T> supplier, String scopeName) {
+        if (supplier == null) {
+            throw new ContractHttpException(scopeName + " supplier must not be null");
+        }
+        return new ScopeState<>(supplier, new ScopeOverrides());
+    }
+}

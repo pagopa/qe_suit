@@ -2,6 +2,7 @@ package it.frontend.e2e.framework.web.adapter.selenium;
 
 import it.frontend.e2e.framework.core.assertion.AssertionAction;
 import it.frontend.e2e.framework.core.model.selector.XPathSelector;
+import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +12,7 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Interactive;
 
 import java.util.List;
 import java.util.Map;
@@ -22,10 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
+import static org.mockito.Mockito.*;
 
 @DisplayName("SeleniumApiAdapter")
 class SeleniumApiAdapterTest {
@@ -60,13 +59,15 @@ class SeleniumApiAdapterTest {
     @Test
     @DisplayName("click, sendText e clear delegano al WebElement")
     void shouldDelegateInteractionMethodsToWebElement() {
-        WebDriver driver = mock(WebDriver.class, withSettings().extraInterfaces(JavascriptExecutor.class));
+        WebDriver driver = mock(WebDriver.class, withSettings().extraInterfaces(JavascriptExecutor.class, Interactive.class));
         WebElement webElement = mock(WebElement.class);
+
         when(webElement.isDisplayed()).thenReturn(true);
         when(webElement.isEnabled()).thenReturn(true);
+
+        when(webElement.getAttribute("value")).thenReturn("mario.rossi");
+
         when(driver.findElement(any(By.class))).thenReturn(webElement);
-        when(webElement.isDisplayed()).thenReturn(true);
-        when(webElement.isEnabled()).thenReturn(true);
 
         SeleniumApiAdapter adapter = new SeleniumApiAdapter(driver, 1);
         XPathSelector selector = XPathSelector.of("//input[@id='username']");
@@ -77,7 +78,8 @@ class SeleniumApiAdapterTest {
 
         verify(webElement).click();
         verify(webElement).sendKeys("mario.rossi");
-        verify(webElement).clear();
+
+        verify(webElement, atLeastOnce()).getAttribute("value");
     }
 
     @Test
@@ -163,7 +165,7 @@ class SeleniumApiAdapterTest {
         when(js.executeScript(anyString(), eq(second))).thenReturn(Map.of("data-id", "2"));
 
         SeleniumApiAdapter adapter = new SeleniumApiAdapter(driver);
-        Optional<List<WebPresentationElement>> elements = adapter.findElements(XPathSelector.of("//li[@class='item']"));
+        Optional<List<WebPresentationElement>> elements = adapter.findElements(XPathSelector.of("//li[@class='item']"), FindPolicy.PRESENT);
 
         assertTrue(elements.isPresent());
         assertEquals(2, elements.get().size());

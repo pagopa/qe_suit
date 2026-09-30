@@ -21,7 +21,7 @@ public class TestCapabilityHandler extends AbstractCapabilityHandler<TestCapabil
             public void action() {}
 
             @Override
-            public List<?> getList() {
+            public List<? extends TestElement> getList() {
                 return List.of();
             }
 

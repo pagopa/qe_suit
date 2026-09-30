@@ -20,7 +20,7 @@ public class WebBinder extends DefaultBinder {
         final String encodedUrl = bindContext.getScope().location();
         final String resolvedUrl = resolveUrl(encodedUrl);
 
-        CapabilityScope newScope = new CapabilityScope(bindContext.getScope().selector(), resolvedUrl);
+        CapabilityScope newScope = new CapabilityScope(bindContext.getScope().selector(), resolvedUrl, false);
         WebBinderContext webBinderContext = new WebBinderContext(new BindContext(newScope));
 
         return new WebBinderContext(webBinderContext);

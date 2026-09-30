@@ -18,6 +18,7 @@ public class TypeHierarchyInspector {
     private static final String DOMAIN_ELEMENT_CLASS = "it.frontend.e2e.framework.core.model.DomainElement";
     private static final String CAPABILITY_CLASS = "it.frontend.e2e.framework.core.model.Capability";
     private static final String OPTIONAL_CLASS = "java.util.Optional";
+    private static final String LIST_CLASS = "java.util.List";
 
     private final Types types;
     private final Elements elements;
@@ -37,12 +38,13 @@ public class TypeHierarchyInspector {
 
     public TypeElement getReturnedTypeElement(ExecutableElement method) {
         TypeMirror returnType = method.getReturnType();
+
         if (!(returnType instanceof DeclaredType declaredType)) {
             return null;
         }
 
-        if (isOptional(declaredType)) {
-            return getOptionalInnerTypeElement(declaredType);
+        if (isOptional(declaredType) || isList(declaredType)) {
+            return getSingleGenericInnerTypeElement(declaredType);
         }
 
         Element element = declaredType.asElement();
@@ -72,19 +74,38 @@ public class TypeHierarchyInspector {
         return OPTIONAL_CLASS.equals(typeElement.getQualifiedName().toString());
     }
 
-    private TypeElement getOptionalInnerTypeElement(DeclaredType optionalType) {
-        List<? extends TypeMirror> typeArguments = optionalType.getTypeArguments();
+    private TypeElement getSingleGenericInnerTypeElement(DeclaredType containerType) {
+        List<? extends TypeMirror> typeArguments = containerType.getTypeArguments();
+
         if (typeArguments.size() != 1) {
             return null;
         }
 
         TypeMirror innerType = typeArguments.get(0);
+
         if (!(innerType instanceof DeclaredType innerDeclaredType)) {
             return null;
         }
 
         Element innerElement = innerDeclaredType.asElement();
         return innerElement instanceof TypeElement ? (TypeElement) innerElement : null;
+    }
+
+    private boolean isList(DeclaredType type) {
+        Element element = type.asElement();
+        if (!(element instanceof TypeElement typeElement)) {
+            return false;
+        }
+
+        TypeElement listType = elements.getTypeElement(LIST_CLASS);
+        if (listType == null) {
+            return false;
+        }
+
+        return types.isAssignable(
+                types.erasure(typeElement.asType()),
+                types.erasure(listType.asType())
+        );
     }
 
     private boolean isSubtype(TypeElement type, String fqcn) {

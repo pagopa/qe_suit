@@ -4,19 +4,12 @@ import it.frontend.e2e.framework.core.assertion.AssertionAction;
 import it.frontend.e2e.framework.core.model.selector.XPathSelector;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
+import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.config.WebSuiteContext;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.By;
-import org.openqa.selenium.ElementClickInterceptedException;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -30,7 +23,7 @@ import java.util.function.Supplier;
 @Slf4j
 public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
-    private static final long RETRY_WAIT_TIMEOUT_SECONDS = 30;
+    private static final long RETRY_WAIT_TIMEOUT_SECONDS = 60;
     private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 10;
     private final WebDriver driver;
 
@@ -56,9 +49,14 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public Optional<WebPresentationElement> findElement(XPathSelector selector) {
+       return findElement(selector, FindPolicy.CLICKABLE);
+    }
+
+    @Override
+    public Optional<WebPresentationElement> findElement(XPathSelector selector, FindPolicy findPolicy) {
         try {
             WebPresentationElement webPresentationElement = withRetry(() -> {
-                WebElement webElement = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+                WebElement webElement = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, findPolicy);
                 return toPresentationElement(selector, webElement);
             });
             return Optional.of(webPresentationElement);
@@ -76,13 +74,28 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public Optional<List<WebPresentationElement>> findElements(XPathSelector selector) {
+        return findElements(selector, FindPolicy.CLICKABLE);
+    }
+
+    @Override
+    public Optional<List<WebPresentationElement>> findElements(XPathSelector selector, FindPolicy policy) {
         try {
-            List<WebElement> webElements = findWebElements(selector);
-            List<WebPresentationElement> elements = webElements.stream()
-                    .map(webElement -> toPresentationElement(selector, webElement))
-                    .toList();
+            List<WebPresentationElement> elements = withRetry(() -> {
+                List<WebElement> webElements = findWebElements(selector, policy);
+
+                return webElements.stream()
+                        .map(webElement -> toPresentationElement(selector, webElement))
+                        .toList();
+            });
+
             return Optional.of(elements);
         } catch (Exception e) {
+            log.warn(
+                    "Unable to resolve collection. Selector: {} | Policy: {}",
+                    selector,
+                    policy,
+                    e
+            );
             return Optional.empty();
         }
     }
@@ -97,7 +110,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void click(XPathSelector selector) {
         withRetry(() -> {
-            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, FindPolicy.CLICKABLE);
             element.click();
             return element;
         });
@@ -106,13 +119,13 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void clickAndAssert(XPathSelector selector, AssertionAction<WebPresentationElement> assertion) {
         click(selector);
-        findElement(selector).ifPresent(found -> applyAssertion(found, assertion));
+        findElement(selector, FindPolicy.CLICKABLE).ifPresent(found -> applyAssertion(found, assertion));
     }
 
     @Override
     public void sendText(XPathSelector selector, String text) {
         withRetry(() -> {
-            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+            WebElement element = findWebElement(selector, FindPolicy.CLICKABLE);
             element.sendKeys(text);
             return element;
         });
@@ -136,8 +149,36 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void clear(XPathSelector selector) {
         withRetry(() -> {
-            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
-            element.clear();
+            WebElement element = findWebElement(selector, FindPolicy.CLICKABLE);
+
+            // 1. Gestione Cross-Platform: Rileva se gira su Mac (COMMAND) o Windows/Linux (CONTROL)
+            boolean isMac = System.getProperty("os.name").toLowerCase().contains("mac");
+            org.openqa.selenium.Keys modifier = isMac ? org.openqa.selenium.Keys.COMMAND : org.openqa.selenium.Keys.CONTROL;
+
+            // 2. STRATEGIA A: Tenta il "Seleziona tutto e Cancella" nativo
+            new org.openqa.selenium.interactions.Actions(driver)
+                    .click(element)
+                    .keyDown(modifier)
+                    .sendKeys("a")
+                    .keyUp(modifier)
+                    .sendKeys(org.openqa.selenium.Keys.BACK_SPACE)
+                    .perform();
+
+            // 3. STRATEGIA B (Fallback di robustezza): Se il Ctrl+A/Cmd+A è stato ignorato dal browser
+            // (tipico di Material-UI e dei campi type="number"), eliminiamo il valore a ritroso.
+            String currentValue = element.getAttribute("value");
+            if (currentValue != null && !currentValue.isEmpty()) {
+                // Mandiamo il cursore alla fine del testo per sicurezza
+                element.sendKeys(org.openqa.selenium.Keys.END);
+
+                // Premiamo BACK_SPACE tante volte quanti sono i caratteri rimasti.
+                // Questo costringe lo Stato di React ad accorgersi dell'evento di input!
+                int length = currentValue.length();
+                for (int i = 0; i < length; i++) {
+                    element.sendKeys(org.openqa.selenium.Keys.BACK_SPACE);
+                }
+            }
+
             return element;
         });
     }
@@ -151,7 +192,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public boolean isDisplayed(XPathSelector selector) {
         try {
-            return findWebElement(selector).isDisplayed();
+            return findWebElement(selector, FindPolicy.VISIBLE).isDisplayed();
         } catch (Exception e) {
             return false;
         }
@@ -160,7 +201,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public boolean isEnabled(XPathSelector selector) {
         try {
-            return findWebElement(selector).isEnabled();
+            return findWebElement(selector, FindPolicy.PRESENT).isEnabled();
         } catch (Exception e) {
             return false;
         }
@@ -170,7 +211,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     public Optional<String> getText(XPathSelector selector) {
         try {
             String text = withRetry(() -> {
-                WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+                WebElement element = findWebElement(selector, FindPolicy.VISIBLE);
                 return resolveElementText(element);
             });
             return Optional.of(text);
@@ -188,7 +229,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void waitForElement(XPathSelector selector, long timeoutSeconds) {
-        findWebElement(selector, timeoutSeconds);
+        findWebElement(selector, timeoutSeconds, FindPolicy.PRESENT);
     }
 
     @Override
@@ -303,8 +344,24 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     }
 
     @Override
-    public byte[] takeScreenshot() {
-        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+    public void setSessionStorageItem(String key, String value) {
+        if (key == null || key.isBlank()) {
+            throw new IllegalArgumentException("key cannot be null or blank");
+        }
+
+        if (!(driver instanceof JavascriptExecutor js)) {
+            throw new IllegalStateException("Driver does not support JavascriptExecutor");
+        }
+
+        try {
+            js.executeScript(
+                    "window.sessionStorage.setItem(arguments[0], arguments[1]);",
+                    key,
+                    value
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to set sessionStorage item for key: " + key, e);
+        }
     }
 
     @Override
@@ -319,22 +376,64 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
         }
     }
 
-    private WebElement findWebElement(XPathSelector selector, long timeoutSeconds) {
-        return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
-                .until(ExpectedConditions.elementToBeClickable(toBy(selector)));
+    private WebElement findWebElement(XPathSelector selector, long timeoutSeconds, FindPolicy policy) {
+
+        By by = toBy(selector);
+        WebDriverWait wait = new WebDriverWait(
+                driver,
+                Duration.ofSeconds(timeoutSeconds)
+        );
+
+        return switch (policy) {
+            case CLICKABLE ->
+                    wait.until(ExpectedConditions.elementToBeClickable(by));
+
+            case VISIBLE ->
+                    wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+
+            case PRESENT ->
+                    wait.until(ExpectedConditions.presenceOfElementLocated(by));
+        };
     }
 
-    private List<WebElement> findWebElements(XPathSelector selector, long timeoutSeconds) {
-        return new WebDriverWait(driver, Duration.ofSeconds(timeoutSeconds))
-                .until(ExpectedConditions.presenceOfAllElementsLocatedBy(toBy(selector)));
+    private WebElement findWebElement(XPathSelector selector, FindPolicy policy){
+        return findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, policy);
     }
 
-    private WebElement findWebElement(XPathSelector selector) {
-        return findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+    private List<WebElement> findWebElements(XPathSelector selector, long timeoutSeconds, FindPolicy policy) {
+
+        By by = toBy(selector);
+        WebDriverWait wait = new WebDriverWait(
+                driver,
+                Duration.ofSeconds(timeoutSeconds)
+        );
+
+        return switch (policy) {
+            case VISIBLE ->
+                    wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(by));
+
+            case PRESENT ->
+                    wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
+
+            case CLICKABLE ->
+                    wait.until(driver -> {
+                        List<WebElement> elements =
+                                ExpectedConditions.presenceOfAllElementsLocatedBy(by)
+                                        .apply(driver);
+
+                        if (elements == null || elements.isEmpty()) {
+                            return null;
+                        }
+
+                        return elements.stream().allMatch(WebElement::isEnabled)
+                                ? elements
+                                : null;
+                    });
+        };
     }
 
-    private List<WebElement> findWebElements(XPathSelector selector) {
-        return findWebElements(selector, DEFAULT_WAIT_TIMEOUT_SECONDS);
+    private List<WebElement> findWebElements(XPathSelector selector, FindPolicy policy) {
+        return findWebElements(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, policy);
     }
 
     private By toBy(XPathSelector selector) {
@@ -395,25 +494,25 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     }
 
     private <T> T withRetry(Supplier<T> action) {
-            long end = System.currentTimeMillis() + (RETRY_WAIT_TIMEOUT_SECONDS * 1000);
-            Throwable lastException = null;
-            log.info("Starting action with retry mechanism. Will retry for up to {} seconds if exception occurs.", RETRY_WAIT_TIMEOUT_SECONDS);
-            while (System.currentTimeMillis() < end) {
-                log.info("Attempting action. Time remaining for retries: {} seconds", (end - System.currentTimeMillis()) / 1000);
+        long end = System.currentTimeMillis() + (RETRY_WAIT_TIMEOUT_SECONDS * 1000);
+        Throwable lastException = null;
+        log.info("Starting action with retry mechanism. Will retry for up to {} seconds if exception occurs.", RETRY_WAIT_TIMEOUT_SECONDS);
+        while (System.currentTimeMillis() < end) {
+            log.info("Attempting action. Time remaining for retries: {} seconds", (end - System.currentTimeMillis()) / 1000);
 
+            try {
+                return action.get();
+            } catch (StaleElementReferenceException | ElementClickInterceptedException | TimeoutException e) {
+                lastException = e;
                 try {
-                    return action.get();
-                } catch (StaleElementReferenceException | ElementClickInterceptedException | TimeoutException e) {
-                    lastException = e;
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException ie) {
-                        Thread.currentThread().interrupt();
-                        throw new RuntimeException("Interrupted during retry", ie);
-                    }
+                    Thread.sleep(500);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Interrupted during retry", ie);
                 }
             }
-            log.info("Action failed after retries. No more attempts will be made.");
-            throw new RuntimeException("Action failed after retries", lastException);
+        }
+        log.info("Action failed after retries. No more attempts will be made.");
+        throw new RuntimeException("Action failed after retries", lastException);
     }
 }

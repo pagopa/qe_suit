@@ -47,6 +47,21 @@ public interface IPresentationApiAdapter<
         });
     }
 
+    default void clearAndSendText(S selector, String text){
+        clear(selector);
+        sendText(selector, text);
+    }
+
+    default void clearAndSendTextAndAssert(S selector, String text, AssertionAction<E> assertion){
+        clearAndAssert(selector);
+        sendTextAndAssert(selector, text, assertion);
+    }
+
+    default void clearAndSendTextAndAssert(S selector, String text){
+        clearAndAssert(selector);
+        sendTextAndAssert(selector, text);
+    }
+
     // Operazioni di verifica
     boolean isDisplayed(S selector);
     boolean isEnabled(S selector);

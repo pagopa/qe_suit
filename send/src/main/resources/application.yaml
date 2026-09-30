@@ -12,19 +12,25 @@ spring:
 channel:
   web:
     browser: chrome
-    headless: true
+    headless: false
     arguments:
       - --window-size=1920,1080
       - --incognito
+      - --lang=it-IT
 
 # ============================================================================
 # Logging Configuration
 # ============================================================================
 logging:
   level:
-    E2E-Framework: DEBUG
+    it.frontend.e2e.framework: DEBUG
 
-verification:
-  code:
-    service:
-      url: http://localhost:8886
+# ============================================================================
+# BFF API Configuration (notifiche legali via API)
+# ============================================================================
+bff:
+  api:
+    base-url: https://webapi.dev.notifichedigitali.it
+    # REPLACE_ME: sempre sovrascritto dal profilo attivo (test/dev/uat), valore reale solo in locale
+    bearer-token: REPLACE_ME
+

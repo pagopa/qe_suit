@@ -12,7 +12,8 @@ spring:
   config:
     activate:
       on-profile: test
-    import: optional:classpath:secrets/bearer-token-test.properties
+    import:
+      - optional:classpath:secrets/bearer-token-test.properties
 
 # ============================================================================
 # URLs Configuration
@@ -64,3 +65,49 @@ selettore:
 token:
   mittente: ${pn.external.bearer-token.tokentestMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
+  session:
+    grossini: ${pn.external.session-token.grossini:REPLACE_ME}
+    francescopetrarca: REPLACE_ME
+    lucrezia: ${pn.external.session-token.lucrezia:REPLACE_ME}
+
+# ============================================================================
+# BFF API Configuration (notifiche legali via API)
+# ============================================================================
+bff:
+  api:
+    base-url: https://webapi.test.notifichedigitali.it
+    bearer-token: ${pn.external.bearer-token.tokenBffApiTest:REPLACE_ME}
+
+# ============================================================================
+# GPD API Configuration (posizioni debitorie)
+# ============================================================================
+gpd:
+  api:
+    base-url: https://api.uat.platform.pagopa.it/gpd/debt-positions-service/v1
+    # REPLACE_ME: subscription key reale per l'header Ocp-Apim-Subscription-Key verso GPD
+    subscription-key: REPLACE_ME
+
+# ============================================================================
+# Pn External Registries API Configuration (gruppi notifica per PA)
+# ============================================================================
+external-registries:
+  api:
+    base-url: https://api.test.notifichedigitali.it
+
+# ============================================================================
+# Pn Delivery B2B API Configuration (lettura notifiche via SenderReadB2BApi)
+# ============================================================================
+delivery:
+  api:
+    base-url: https://api.test.notifichedigitali.it
+
+# api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
+# ogni costante di Tenant, univoca per PA e per ambiente (qui: test)
+pa:
+  groups-api-key:
+    GROSSINI: 2a36ad69-fce0-416b-b94e-7242773e638b
+
+# api-key per le API B2B delivery (header x-api-key), una entry per ogni costante di Tenant,
+# univoca per PA e per ambiente (qui: test)
+  delivery-api-key:
+    GROSSINI: 5df3a854-110c-46e9-a94b-274e2e74132d

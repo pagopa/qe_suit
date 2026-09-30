@@ -33,7 +33,7 @@ public class WebSuiteBuilder {
         return this;
     }
 
-    public WebSuiteBuilder withHandlers(ICapabilityHandler... handlers) {
+    public WebSuiteBuilder addHandlers(ICapabilityHandler... handlers) {
         this.handlers.addAll(List.of(handlers));
         return this;
     }

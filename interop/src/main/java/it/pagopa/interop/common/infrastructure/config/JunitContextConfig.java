@@ -1,0 +1,62 @@
+package it.pagopa.interop.common.infrastructure.config;
+
+import it.pagopa.infrastructure.context.InMemoryBrowserContext;
+import it.pagopa.infrastructure.context.InMemoryCurrentChannel;
+import it.pagopa.infrastructure.context.InMemoryEntityStore;
+import it.pagopa.infrastructure.context.InMemoryTestContext;
+import it.pagopa.interop.common.infrastructure.context.InMemoryCurrentUserSession;
+import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.application.context.BrowserContext;
+import it.pagopa.infrastructure.channel.CurrentChannel;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.application.context.TestContext;
+import it.pagopa.interop.m2m.infrastructure.context.InMemoryCurrentM2MSession;
+import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Scope;
+
+@TestConfiguration
+public class JunitContextConfig {
+
+    @Bean
+    CurrentChannel<Channel> currentChannel() {
+        InMemoryCurrentChannel<Channel> currentChannel = new InMemoryCurrentChannel<>();
+        currentChannel.setCurrentChannel(Channel.BFF);
+        return currentChannel;
+    }
+
+    @Bean
+    TestContext currentTestKind() {
+        return new InMemoryTestContext();
+    }
+
+    @Bean
+    CurrentUserSession currentUserSession() {
+        return new InMemoryCurrentUserSession();
+    }
+
+    @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    BrowserContext browserContext() {
+        return new InMemoryBrowserContext();
+    }
+
+    @Bean
+    EntityStore entityStore() {
+        return new InMemoryEntityStore();
+    }
+
+    @Bean
+    LastApiResponseStore lastApiResponseStore() {
+        return new it.pagopa.infrastructure.context.InMemoryLastApiResponseStore();
+    }
+
+    @Bean
+    CurrentM2MSession currentM2MSession() {
+        return new InMemoryCurrentM2MSession();
+    }
+}

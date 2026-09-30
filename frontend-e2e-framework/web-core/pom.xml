@@ -14,7 +14,7 @@
     </parent>
 
     <properties>
-        <selenium.version>4.34.0</selenium.version>
+        <selenium.version>4.44.0</selenium.version>
     </properties>
 
 
@@ -54,6 +54,13 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-devtools-v148</artifactId>
             <version>${selenium.version}</version>
             <scope>compile</scope>
         </dependency>

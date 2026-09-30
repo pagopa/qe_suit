@@ -1,0 +1,113 @@
+# ============================================================================
+# Test Profile Configuration
+# ============================================================================
+# Imports bearer tokens and test-specific settings for E2E tests
+# ============================================================================
+
+# ============================================================================
+# External Configuration Import
+# Loads bearer tokens for test environment from external properties file
+# ============================================================================
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import:
+      - optional:classpath:secrets/bearer-token-test.properties
+
+# ============================================================================
+# URLs Configuration
+# Base URLs and routes for test environment
+# ============================================================================
+url:
+  notifiche:
+    cittadino:
+      base: https://cittadini.dev.notifichedigitali.it
+      notifiche: ${url.notifiche.cittadino.base}/notifiche
+      recapiti: ${url.notifiche.cittadino.base}/recapiti
+      deleghe: ${url.notifiche.cittadino.base}/deleghe
+      add-deleghe: ${url.notifiche.cittadino.base}/deleghe/nuova
+      app-status: ${url.notifiche.cittadino.base}/app-status
+    persona-giuridica:
+      base: https://imprese.dev.notifichedigitali.it
+      notifiche: ${url.notifiche.persona-giuridica.base}/notifiche
+      notifiche-delegato: ${url.notifiche.persona-giuridica.base}/notifiche-delegato
+      app-status: ${url.notifiche.persona-giuridica.base}/app-status
+      integrazione-api: ${url.notifiche.persona-giuridica.base}/integrazione-api
+      recapiti: ${url.notifiche.persona-giuridica.base}/recapiti
+      deleghe-a-carico: ${url.notifiche.persona-giuridica.base}/deleghe/a-carico
+      delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati
+      add-delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati/nuova
+    mittente:
+      base: https://selfcare.dev.notifichedigitali.it
+      dashboard: ${url.notifiche.mittente.base}/dashboard
+      new-notification: ${url.notifiche.mittente.dashboard}/nuova-notifica
+      api-keys: ${url.notifiche.mittente.base}/api-keys
+      new-api-key: ${url.notifiche.mittente.api-keys}/nuova-api-key
+      app-status: ${url.notifiche.mittente.base}/app-status
+      statistics: ${url.notifiche.mittente.base}/statistiche
+    supporto:
+      base: https://uat.selfcare.pagopa.it
+
+# Selettori XPath da properties
+selettore:
+  login:
+    pg:
+      area-riservata-selettore-env: '//*[@id="root"]/div/div[2]/div[2]/main/div/div[3]/div[2]/div[8]/div/div/div/div[3]/button'
+  supporto:
+    area-riservata-selettore-env: '//*[@id="root"]//table//tr[4]/td[5]//button'
+
+
+# ============================================================================
+# Authentication Tokens
+# Bearer token for users
+# ============================================================================
+token:
+  mittente: ${pn.external.bearer-token.tokentestMittente}
+  supporto: ${pn.external.bearer-token.tokenSupporto}
+  session:
+    grossini: REPLACE_ME
+    francescopetrarca: REPLACE_ME
+    lucrezia: REPLACE_ME
+
+# ============================================================================
+# BFF API Configuration (notifiche legali via API)
+# ============================================================================
+bff:
+  api:
+    base-url: https://webapi.dev.notifichedigitali.it
+    bearer-token: ${pn.external.bearer-token.tokenBffApiDev:REPLACE_ME}
+
+# ============================================================================
+# GPD API Configuration (posizioni debitorie)
+# ============================================================================
+gpd:
+  api:
+    base-url: https://api.uat.platform.pagopa.it/gpd/debt-positions-service/v1
+    # REPLACE_ME: subscription key reale per l'header Ocp-Apim-Subscription-Key verso GPD
+    subscription-key: REPLACE_ME
+
+# ============================================================================
+# Pn External Registries API Configuration (gruppi notifica per PA)
+# ============================================================================
+external-registries:
+  api:
+    base-url: https://api.dev.notifichedigitali.it
+
+# ============================================================================
+# Pn Delivery B2B API Configuration (lettura notifiche via SenderReadB2BApi)
+# ============================================================================
+delivery:
+  api:
+    base-url: https://api.dev.notifichedigitali.it # TODO verificare host corretto per l'ambiente dev
+
+# api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
+# ogni costante di Tenant, univoca per PA e per ambiente (qui: dev)
+pa:
+  groups-api-key:
+    GROSSINI: ab1ea42c-baea-4fd2-9b2f-32e7f34c36b6
+
+# api-key per le API B2B delivery (header x-api-key), una entry per ogni costante di Tenant,
+# univoca per PA e per ambiente (qui: dev)
+  delivery-api-key:
+    GROSSINI: REPLACE_ME

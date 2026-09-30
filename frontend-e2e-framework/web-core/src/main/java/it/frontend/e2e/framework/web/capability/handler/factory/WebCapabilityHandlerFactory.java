@@ -12,7 +12,7 @@ public class WebCapabilityHandlerFactory  {
             GettableCapabilityHandler::new,
             WritableCapabilityHandler::new,
             adapter -> new ReadableCapabilityHandler<>(adapter, String.class),
-            LocatableCapabilityHanlder::new,
+            LocatableCapabilityHandler::new,
             UploadableCapabilityHandler::new
     );
 }

@@ -1,4 +1,4 @@
-name: SEND - QA workflow
+name: "[SEND] QA workflow"
 
 on:
   schedule:
@@ -57,7 +57,7 @@ jobs:
           google-chrome --version
 
       - name: Setup ChromeDriver
-        uses: nanasess/setup-chromedriver@master
+        uses: nanasess/setup-chromedriver@904b949d6a9e6f5bb87b61ba516e716ddcc1ff8c # master, 2026-06-02
 
       - name: Clone qe_suit repository
         run: |
@@ -70,20 +70,27 @@ jobs:
 
       - name: Run Selenium Tests
         run: |
-          cd ./qe_suit/send
-          mvn test -Dspring.profiles.active=${{ env.ENVIRONMENT }} -Dtest=${{ env.JAVA_TEST_SUITE }}
+          cd ./qe_suit/interop
+          
+          if [[ "${{ env.ENVIRONMENT }}" == "dev" ]]; then
+            SPRING_PROFILE="-Dspring.profiles.active=dev"
+          else
+            SPRING_PROFILE="-Dspring.profiles.active=qa"
+          fi
+          
+          mvn test $SPRING_PROFILE -Dtest=${{ env.JAVA_TEST_SUITE }}
 
       - name: Upload Test Logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-logs
-          path: ./qe_suit/send/qa-tests.log
+          path: ./qe_suit/interop/qa-tests.log
 
       - name: Upload Cucumber Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: cucumber-report
-          path: ./qe_suit/send/target/cucumber-report*
+          path: ./qe_suit/interop/target/cucumber-report*
           retention-days: 10

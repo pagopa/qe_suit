@@ -10,4 +10,9 @@ public interface Writable<T, S extends Selector, L extends Location, E extends A
     void write(T value);
     void writeAndAssert(T value);
     void writeAndAssert(T value, AssertionAction<E> assertionAction);
+    void clean();
+    void cleanAndAssert();
+    void cleanAndWrite(T value);
+    void cleanAndWriteAndAssert(T value, AssertionAction<E> assertionAction);
+    void cleanAndWriteAndAssert(T value);
 }
