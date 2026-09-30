@@ -41,7 +41,7 @@ public class BffEServiceContractTest {
     }
 
     @TestFactory
-    Stream<DynamicTest> updateEService() {
+    Stream<DynamicTest> updateEServiceById() {
         return httpContractValidator
                 .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .apiCall(() -> apiClient.eservices().updateEServiceById())
