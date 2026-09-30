@@ -81,7 +81,7 @@ jobs:
           google-chrome --version
 
       - name: Setup ChromeDriver
-        uses: nanasess/setup-chromedriver@master
+        uses: nanasess/setup-chromedriver@904b949d6a9e6f5bb87b61ba516e716ddcc1ff8c # master, 2026-06-02
 
       - name: Build frontend-e2e-framework
         run: |
