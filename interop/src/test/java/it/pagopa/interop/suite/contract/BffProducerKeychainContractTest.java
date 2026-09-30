@@ -50,7 +50,7 @@ public class BffProducerKeychainContractTest {
     }
 
     @TestFactory
-    Stream<DynamicTest> createProducerKeychainKey() {
+    Stream<DynamicTest> createProducerKey() {
         return httpContractValidator
                 .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .apiCall(() -> apiClient.producerKeychain().createProducerKey())
