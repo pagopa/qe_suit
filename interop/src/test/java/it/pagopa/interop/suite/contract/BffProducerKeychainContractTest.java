@@ -66,6 +66,14 @@ public class BffProducerKeychainContractTest {
                 .body(requestFactory.creationRequest())
                 .execute(value -> value);
 
+        /* FIXME temporaneo: bisogna implementare lo stack ProducerKeychain a partire dal journey,
+        *   così che venga usato il polling ai livelli inferiori. */
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         response.then().statusCode(is(DEFAULT_SUCCESS_STATUS_CODE));
         return response.jsonPath().getObject("id", UUID.class);
     }
