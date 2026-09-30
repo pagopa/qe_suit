@@ -2,6 +2,7 @@ package it.pagopa.interop.bff.tenant.infrastructure;
 
 import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.tenant.application.TenantGateway;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,9 @@ public class BffTenantGateway implements TenantGateway {
 
     @Override
     public void assignCertifiedAttribute(UUID attributeId, Tenant tenant) {
-        restClient.assignCertifiedAttribute(attributeId, tenant.getOrganizationId());
+        CertifiedTenantAttributeSeed seed = new CertifiedTenantAttributeSeed();
+        seed.setId(attributeId);
+        restClient.assignCertifiedAttribute(seed, tenant.getOrganizationId());
     }
 
     @Override

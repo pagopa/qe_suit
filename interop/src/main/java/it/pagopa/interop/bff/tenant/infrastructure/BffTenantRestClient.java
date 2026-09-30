@@ -22,9 +22,7 @@ public class BffTenantRestClient extends RestClient {
         this.tenantsApi = apiClient.tenants();
     }
 
-    public TestChain<Void> assignCertifiedAttribute(@Nonnull UUID attributeId, @Nonnull UUID organizationId) {
-        CertifiedTenantAttributeSeed seed = new CertifiedTenantAttributeSeed();
-        seed.setId(attributeId);
+    public TestChain<Void> assignCertifiedAttribute(@Nonnull CertifiedTenantAttributeSeed seed, @Nonnull UUID organizationId) {
         return execute(
                 () -> tenantsApi.addCertifiedAttribute()
                         .tenantIdPath(organizationId)
