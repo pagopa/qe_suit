@@ -1,73 +1,61 @@
 package it.pagopa.send.web.login.infrastructure;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.mock.env.MockEnvironment;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class DynamicUserTokenProviderTest {
 
-    @Nested
-    @SpringBootTest(classes = DynamicUserTokenProvider.class)
-    @ActiveProfiles("dev")
-    @DisplayName("Dev environment token resolution")
-    class DevProfileTest {
+    @Test
+    @DisplayName("Should resolve direct alias token")
+    void shouldResolveDirectAliasToken() {
+        MockEnvironment env = new MockEnvironment();
+        env.setProperty("token.session.PA1", "mock-token-pa1");
+        DynamicUserTokenProvider provider = new DynamicUserTokenProvider(env);
 
-        @Autowired
-        private DynamicUserTokenProvider provider;
-
-        @Test
-        @DisplayName("Should resolve standard PA1 and User1 tokens in dev")
-        void shouldResolveTokensInDev() {
-            assertNotNull(provider.getToken("PA1"), "PA1 token should be present in dev");
-            assertNotNull(provider.getToken("User1"), "User1 token should be present in dev");
-            assertNotNull(provider.getToken("PG1"), "PG1 token should be present in dev");
-            assertFalse(provider.getToken("PA1").isBlank());
-            assertFalse(provider.getToken("User1").isBlank());
-        }
+        assertEquals("mock-token-pa1", provider.getToken("PA1"));
     }
 
-    @Nested
-    @SpringBootTest(classes = DynamicUserTokenProvider.class)
-    @ActiveProfiles("test")
-    @DisplayName("Test environment token resolution")
-    class TestProfileTest {
+    @Test
+    @DisplayName("Should resolve case variations of alias")
+    void shouldResolveCaseVariations() {
+        MockEnvironment env = new MockEnvironment();
+        env.setProperty("token.session.PA1", "mock-token-pa1");
+        DynamicUserTokenProvider provider = new DynamicUserTokenProvider(env);
 
-        @Autowired
-        private DynamicUserTokenProvider provider;
-
-        @Test
-        @DisplayName("Should resolve standard PA1 and User1 tokens in test")
-        void shouldResolveTokensInTest() {
-            assertNotNull(provider.getToken("PA1"), "PA1 token should be present in test");
-            assertNotNull(provider.getToken("User1"), "User1 token should be present in test");
-            assertNotNull(provider.getToken("PG1"), "PG1 token should be present in test");
-            assertFalse(provider.getToken("PA1").isBlank());
-            assertFalse(provider.getToken("User1").isBlank());
-        }
+        assertEquals("mock-token-pa1", provider.getToken("pa1"));
+        assertEquals("mock-token-pa1", provider.getToken("PA1"));
     }
 
-    @Nested
-    @SpringBootTest(classes = DynamicUserTokenProvider.class)
-    @ActiveProfiles("uat")
-    @DisplayName("UAT environment token resolution")
-    class UatProfileTest {
+    @Test
+    @DisplayName("Should resolve legacy user aliases")
+    void shouldResolveLegacyAliases() {
+        MockEnvironment env = new MockEnvironment();
+        env.setProperty("token.session.PA1", "mock-token-pa1");
+        env.setProperty("token.session.User1", "mock-token-user1");
+        env.setProperty("token.session.PG1", "mock-token-pg1");
+        DynamicUserTokenProvider provider = new DynamicUserTokenProvider(env);
 
-        @Autowired
-        private DynamicUserTokenProvider provider;
+        assertEquals("mock-token-pa1", provider.getToken("grossini"));
+        assertEquals("mock-token-user1", provider.getToken("lucrezia"));
+        assertEquals("mock-token-pg1", provider.getToken("francescopetrarca"));
+        assertEquals("mock-token-pg1", provider.getToken("petrarca"));
+    }
 
-        @Test
-        @DisplayName("Should resolve standard PA1 and User1 tokens in uat")
-        void shouldResolveTokensInUat() {
-            assertNotNull(provider.getToken("PA1"), "PA1 token should be present in uat");
-            assertNotNull(provider.getToken("User1"), "User1 token should be present in uat");
-            assertNotNull(provider.getToken("PG1"), "PG1 token should be present in uat");
-            assertFalse(provider.getToken("PA1").isBlank());
-            assertFalse(provider.getToken("User1").isBlank());
-        }
+    @Test
+    @DisplayName("Should ignore REPLACE_ME placeholders and return null")
+    void shouldIgnoreReplaceMe() {
+        MockEnvironment env = new MockEnvironment();
+        env.setProperty("token.session.PA1", "REPLACE_ME");
+        env.setProperty("token.session.User1", "");
+        DynamicUserTokenProvider provider = new DynamicUserTokenProvider(env);
+
+        assertNull(provider.getToken("PA1"));
+        assertNull(provider.getToken("User1"));
+        assertNull(provider.getToken("non_existent"));
+        assertNull(provider.getToken(null));
+        assertNull(provider.getToken("   "));
     }
 }
