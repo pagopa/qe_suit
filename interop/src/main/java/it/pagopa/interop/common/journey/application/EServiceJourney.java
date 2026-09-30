@@ -25,6 +25,8 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
 
     SELF archiveEService(GracePeriodDays gracePeriodDays);
 
+    SELF archiveFirstEServiceDescriptor(GracePeriodDays gracePeriodDays);
+
     SELF waitUntilEService(Predicate<EService> predicate);
 
     default SELF createEService() {
