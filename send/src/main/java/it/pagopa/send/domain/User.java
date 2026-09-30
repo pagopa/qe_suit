@@ -1,20 +1,24 @@
-package it.frontend.e2e.framework.web.domain;
+package it.pagopa.send.domain;
 
 import lombok.Getter;
 
 public enum User {
-    GROSSINI("grossini", "test", "Comune di Palermo"),
-    PETRARCA("FrancescoPetrarca", "test", "Le Epistolae srl"),
-    LUCREZIA("lucrezia", "password123", null);
+    GROSSINI("grossini", "test", "Comune di Palermo", "PA"),
+    PETRARCA("FrancescoPetrarca", "test", "Le Epistolae srl", "PG"),
+    LUCREZIA("lucrezia", "password123", null, "PF"),
+    CESARE("cesare", "password123", null, "PF");
 
     @Getter private final String username;
     @Getter private final String password;
     @Getter private final String organization;
+    @Getter private final String type;
 
-    User(String username, String password, String organization) {
+
+    User(String username, String password, String organization, String type) {
         this.username = username;
         this.password = password;
         this.organization = organization;
+        this.type = type;
     }
 
     public static User fromUsername(String username) {
