@@ -1,5 +1,12 @@
 package it.pagopa.interop.architecture;
 
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.LambdaExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
@@ -261,6 +268,107 @@ public class ArchitectureRulesTest {
                     "Le classi ContractTest devono iniziare con "
                             + "uno dei class-prefix configurati in contract-report.channels: "
                             + violations
+            );
+        }
+    }
+
+    @Test
+    void api_contract_factory_names_must_match_api_operation_names()
+            throws IOException {
+
+        Path testRoot = Path.of("src/test/java");
+        Set<String> violations = new TreeSet<>();
+
+        List<Path> sourceFiles;
+        try (Stream<Path> paths = Files.walk(testRoot)) {
+            sourceFiles = paths
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith("ContractTest.java"))
+                    .sorted()
+                    .toList();
+        }
+
+        for (Path sourceFile : sourceFiles) {
+            var unit = StaticJavaParser.parse(sourceFile);
+
+            for (ClassOrInterfaceDeclaration contractClass
+                    : unit.findAll(ClassOrInterfaceDeclaration.class)) {
+
+                String className = contractClass.getNameAsString();
+
+                boolean isApiContract = className.endsWith("ContractTest")
+                        && (startsWithIgnoreCase(className, "Bff")
+                        || startsWithIgnoreCase(className, "M2M"));
+
+                if (!isApiContract) {
+                    continue;
+                }
+
+                for (var factory : contractClass.getMethods()) {
+                    boolean isTestFactory = factory.getAnnotations().stream()
+                            .anyMatch(annotation ->
+                                    annotation.getNameAsString().equals("TestFactory")
+                                            || annotation.getNameAsString().equals(
+                                            "org.junit.jupiter.api.TestFactory"
+                                    )
+                            );
+
+                    if (!isTestFactory) {
+                        continue;
+                    }
+
+                    for (MethodCallExpr apiCall
+                            : factory.findAll(MethodCallExpr.class)) {
+
+                        if (!apiCall.getNameAsString().equals("apiCall")
+                                || apiCall.getArguments().size() != 1
+                                || !(apiCall.getArgument(0) instanceof LambdaExpr lambda)) {
+                            continue;
+                        }
+
+                        List<Expression> operations = new ArrayList<>();
+
+                        if (lambda.getBody() instanceof ExpressionStmt statement) {
+                            operations.add(statement.getExpression());
+                        } else if (lambda.getBody().isBlockStmt()) {
+                            for (var statement
+                                    : lambda.getBody().asBlockStmt().getStatements()) {
+                                if (statement instanceof ReturnStmt returnStatement) {
+                                    returnStatement.getExpression()
+                                            .ifPresent(operations::add);
+                                }
+                            }
+                        }
+
+                        for (Expression expression : operations) {
+                            while (expression.isEnclosedExpr()) {
+                                expression = expression.asEnclosedExpr().getInner();
+                            }
+
+                            if (!(expression instanceof MethodCallExpr operation)) {
+                                continue;
+                            }
+
+                            String expectedName = operation.getNameAsString();
+                            String actualName = factory.getNameAsString();
+
+                            if (!actualName.equals(expectedName)) {
+                                violations.add(
+                                        sourceFile + " | " + className + "#" + actualName
+                                                + " | nome atteso: " + expectedName
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            fail(
+                    "Il nome dei metodi @TestFactory deve coincidere con "
+                            + "l'operazione invocata in .apiCall(...):\n"
+                            + String.join("\n", violations)
             );
         }
     }
