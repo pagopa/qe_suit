@@ -11,7 +11,7 @@ public class TenantJourneySteps {
 
     private final InteropJourney interopJourney;
 
-    @Given("assegna l'attributo a {tenant}")
+    @Given("assegna l'attributo certificato a {tenant}")
     public void assignCertifiedAttribute(Tenant consumer) {
         interopJourney.assignCertifiedAttribute(consumer);
     }
