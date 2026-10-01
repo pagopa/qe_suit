@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 public class BffTenantGateway implements TenantGateway {
 
     private final BffTenantRestClient restClient;
-    private final TenantRequestFactory requestFactory;
+    private final BffTenantRequestFactory requestFactory;
 
     @Override
     public void assignCertifiedAttribute(@NonNull TenantRef tenantRef, @NonNull AttributeRef attributeRef) {

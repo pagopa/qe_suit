@@ -1,24 +1,22 @@
 package it.pagopa.interop.common.journey.application;
 
-import it.pagopa.interop.common.agreement.domain.AgreementRef;
-import it.pagopa.interop.common.attribute.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 
 public interface TenantJourney<SELF extends TenantJourney<SELF>> extends JourneyModule {
 
-    SELF assignCertifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef);
+    SELF assignCertifiedAttribute(TenantRef tenantRef);
 
-    SELF assignCertifiedDiscreteAttribute(TenantRef tenantRef, AttributeRef attributeRef, int value);
+    SELF assignCertifiedDiscreteAttribute(TenantRef tenantRef, int value);
 
-    SELF assignDeclaredAttribute(AttributeRef attributeRef);
+    SELF assignDeclaredAttribute();
 
-    SELF assignVerifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef, AgreementRef agreementRef);
+    SELF assignVerifiedAttribute(TenantRef tenantRef);
 
-    SELF revokeDeclaredAttribute(AttributeRef attributeRef);
+    SELF revokeDeclaredAttribute();
 
-    SELF revokeCertifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef);
+    SELF revokeCertifiedAttribute(TenantRef tenantRef);
 
-    SELF revokeCertifiedDiscreteAttribute(TenantRef tenantRef, AttributeRef attributeRef);
+    SELF revokeCertifiedDiscreteAttribute(TenantRef tenantRef);
 
-    SELF revokeVerifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef, AgreementRef agreementRef);
+    SELF revokeVerifiedAttribute(TenantRef tenantRef);
 }
