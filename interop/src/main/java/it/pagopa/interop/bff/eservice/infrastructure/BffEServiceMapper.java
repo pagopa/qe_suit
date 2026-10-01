@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
 import it.pagopa.interop.common.infrastructure.SharedMapper;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogEServiceDescriptor;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
@@ -41,7 +42,32 @@ public interface BffEServiceMapper {
                 .build();
     }
 
+    default EService toEServicePreservingDescriptors(CatalogEServiceDescriptor source, EService existingEService) {
+        if (source == null) {
+            return existingEService;
+        }
+
+        // 1. Mappa i dati freschi dal BFF (i campi 'producerId' e 'descriptors' saranno null qui)
+        EService mapped = toEService(source);
+
+        // 2. Se non c'era uno stato precedente nel test, restituiamo direttamente l'oggetto mappato
+        if (existingEService == null) {
+            return mapped;
+        }
+
+        // 3. Uniamo le due informazioni: prendiamo la base aggiornata dal BFF e ripristiniamo
+        // lo stato dei descrittori e del producerId dal vecchio EService del test
+        return mapped.toBuilder()
+                .producerId(existingEService.getProducerId())
+                .descriptors(existingEService.getDescriptors() != null ? new ArrayList<>(existingEService.getDescriptors()) : new ArrayList<>())
+                .build();
+    }
+
     @Mapping(target = "producerId", ignore = true)
     @Mapping(target = "descriptors", ignore = true)
     EService toEService(ProducerEServiceDetails producerEServiceDetails);
+
+    @Mapping(target = "producerId", ignore = true)
+    @Mapping(target = "descriptors", ignore = true)
+    EService toEService(CatalogEServiceDescriptor catalogEServiceDescriptor);
 }

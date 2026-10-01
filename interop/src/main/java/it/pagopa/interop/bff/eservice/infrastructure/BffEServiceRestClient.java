@@ -55,6 +55,14 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
+    public TestChain<CatalogEServiceDescriptor> readEServiceFromCatalog(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+        return execute(
+                () -> eservicesApi.getCatalogEServiceDescriptor().eserviceIdPath(eserviceId).descriptorIdPath(descriptorId)
+                        .execute(Function.identity()),
+                CatalogEServiceDescriptor.class
+        );
+    }
+
     public TestChain<ProducerEServiceDescriptor> readDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
         return execute(
                 () -> eservicesApi.getProducerEServiceDescriptor().eserviceIdPath(eserviceId).descriptorIdPath(descriptorId).execute(Function.identity()),
