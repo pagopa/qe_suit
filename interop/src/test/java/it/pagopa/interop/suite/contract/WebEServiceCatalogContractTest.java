@@ -39,7 +39,6 @@ public class WebEServiceCatalogContractTest {
                         Tenant.COMUNE_DI_MILANO
                 )
                 .on(EServiceCatalogPage.class)
-                // Il validatore naviga alla pagina e invoca assertLoaded() prima dello scenario.
                 .tests(Stream.of(new WebScenario<>(
                         "catalogo e-service accessibile all'utente API del Comune di Milano",
                         page -> {},
