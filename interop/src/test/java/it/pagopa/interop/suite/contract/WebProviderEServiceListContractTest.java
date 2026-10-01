@@ -32,17 +32,17 @@ public class WebProviderEServiceListContractTest {
     private final WebBrowserContractValidator webContractValidator;
 
     @TestFactory
-    Stream<DynamicTest> shouldLoadProviderEServiceListForApiUser() {
-        return webContractValidator
-                .as(
-                        User.getTenantUser(Tenant.COMUNE_DI_MILANO, UserRole.API),
-                        Tenant.COMUNE_DI_MILANO
-                )
-                .on(ProviderEServiceListPage.class)
-                .tests(Stream.of(new WebScenario<>(
-                        "e-service erogati accessibili all'utente API del Comune di Milano",
-                        page -> {},
-                        page -> {}
-                )));
+    Stream<DynamicTest> shouldLoadProviderEServiceList() {
+        Tenant tenant = Tenant.COMUNE_DI_MILANO;
+
+        return Stream.of(UserRole.API, UserRole.ADMIN)
+                .flatMap(role -> webContractValidator
+                        .as(User.getTenantUser(tenant, role), tenant)
+                        .on(ProviderEServiceListPage.class)
+                        .tests(Stream.of(new WebScenario<>(
+                                "e-service erogati accessibili all'utente " + role.name() + " del Comune di Milano",
+                                page -> {},
+                                page -> {}
+                        ))));
     }
 }
