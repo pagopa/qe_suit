@@ -1,11 +1,21 @@
 package it.pagopa.interop.architecture;
 
+import com.github.javaparser.StaticJavaParser;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.LambdaExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.tngtech.archunit.core.domain.JavaClass;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
+import it.pagopa.infrastructure.reporting.contract.config.ContractChannelConfig;
+import it.pagopa.infrastructure.reporting.contract.config.ContractReportConfig;
+import it.pagopa.infrastructure.reporting.contract.config.ContractReportConfigurationLoader;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -181,6 +191,209 @@ public class ArchitectureRulesTest {
         }
     }
 
+    @Test
+    void contract_test_classes_must_not_declare_junit_execution_annotation() {
+        var imported = new ClassFileImporter()
+                .importPackages("it.pagopa.interop");
+
+        Set<String> violations = new TreeSet<>();
+
+        for (JavaClass javaClass : imported) {
+            if (!javaClass.getSimpleName().endsWith("ContractTest")) {
+                continue;
+            }
+
+            boolean hasExecutionAnnotation = javaClass.getAnnotations().stream()
+                    .anyMatch(annotation -> annotation.getRawType().getFullName().equals("org.junit.jupiter.api.parallel.Execution"));
+
+            if (hasExecutionAnnotation) {
+                violations.add(javaClass.getFullName());
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            fail("Le classi ContractTest non devono dichiarare @Execution. La configurazione deve passare esclusivamente per il file junit-platform.properties: " + violations);
+        }
+    }
+
+    @Test
+    void contract_test_classes_must_start_with_configured_channel_prefix() {
+
+        ContractReportConfig contractReportConfig =
+                new ContractReportConfigurationLoader().load();
+
+        List<String> allowedPrefixes =
+                contractReportConfig.channels()
+                        .values()
+                        .stream()
+                        .map(ContractChannelConfig::classPrefix)
+                        .filter(prefix -> prefix != null && !prefix.isBlank())
+                        .toList();
+
+        var imported = new ClassFileImporter()
+                .importPackages("it.pagopa.interop");
+
+        Set<String> violations = new TreeSet<>();
+
+        for (JavaClass javaClass : imported) {
+
+            if (!javaClass.getSimpleName().endsWith("ContractTest")) {
+                continue;
+            }
+
+            String className =
+                    javaClass.getSimpleName();
+
+            boolean hasValidPrefix =
+                    allowedPrefixes.stream()
+                            .anyMatch(prefix ->
+                                    startsWithIgnoreCase(
+                                            className,
+                                            prefix
+                                    )
+                            );
+
+            if (!hasValidPrefix) {
+                violations.add(
+                        javaClass.getFullName()
+                                + " (expected prefix one of: "
+                                + allowedPrefixes
+                                + ")"
+                );
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            fail(
+                    "Le classi ContractTest devono iniziare con "
+                            + "uno dei class-prefix configurati in contract-report.channels: "
+                            + violations
+            );
+        }
+    }
+
+    @Test
+    void api_contract_factory_names_must_match_api_operation_names()
+            throws IOException {
+
+        Path testRoot = Path.of("src/test/java");
+        Set<String> violations = new TreeSet<>();
+
+        List<Path> sourceFiles;
+        try (Stream<Path> paths = Files.walk(testRoot)) {
+            sourceFiles = paths
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith("ContractTest.java"))
+                    .sorted()
+                    .toList();
+        }
+
+        for (Path sourceFile : sourceFiles) {
+            var unit = StaticJavaParser.parse(sourceFile);
+
+            for (ClassOrInterfaceDeclaration contractClass
+                    : unit.findAll(ClassOrInterfaceDeclaration.class)) {
+
+                String className = contractClass.getNameAsString();
+
+                boolean isApiContract = className.endsWith("ContractTest")
+                        && (startsWithIgnoreCase(className, "Bff")
+                        || startsWithIgnoreCase(className, "M2M"));
+
+                if (!isApiContract) {
+                    continue;
+                }
+
+                for (var factory : contractClass.getMethods()) {
+                    boolean isTestFactory = factory.getAnnotations().stream()
+                            .anyMatch(annotation ->
+                                    annotation.getNameAsString().equals("TestFactory")
+                                            || annotation.getNameAsString().equals(
+                                            "org.junit.jupiter.api.TestFactory"
+                                    )
+                            );
+
+                    if (!isTestFactory) {
+                        continue;
+                    }
+
+                    for (MethodCallExpr apiCall
+                            : factory.findAll(MethodCallExpr.class)) {
+
+                        if (!apiCall.getNameAsString().equals("apiCall")
+                                || apiCall.getArguments().size() != 1
+                                || !(apiCall.getArgument(0) instanceof LambdaExpr lambda)) {
+                            continue;
+                        }
+
+                        List<Expression> operations = new ArrayList<>();
+
+                        if (lambda.getBody() instanceof ExpressionStmt statement) {
+                            operations.add(statement.getExpression());
+                        } else if (lambda.getBody().isBlockStmt()) {
+                            for (var statement
+                                    : lambda.getBody().asBlockStmt().getStatements()) {
+                                if (statement instanceof ReturnStmt returnStatement) {
+                                    returnStatement.getExpression()
+                                            .ifPresent(operations::add);
+                                }
+                            }
+                        }
+
+                        for (Expression expression : operations) {
+                            while (expression.isEnclosedExpr()) {
+                                expression = expression.asEnclosedExpr().getInner();
+                            }
+
+                            if (!(expression instanceof MethodCallExpr operation)) {
+                                continue;
+                            }
+
+                            String expectedName = operation.getNameAsString();
+                            String actualName = factory.getNameAsString();
+
+                            if (!actualName.equals(expectedName)) {
+                                violations.add(
+                                        sourceFile + " | " + className + "#" + actualName
+                                                + " | nome atteso: " + expectedName
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            fail(
+                    "Il nome dei metodi @TestFactory deve coincidere con "
+                            + "l'operazione invocata in .apiCall(...):\n"
+                            + String.join("\n", violations)
+            );
+        }
+    }
+
+    private static boolean startsWithIgnoreCase(
+            String value,
+            String prefix) {
+
+        if (value == null || prefix == null) {
+            return false;
+        }
+
+        if (prefix.length() > value.length()) {
+            return false;
+        }
+
+        return value.regionMatches(
+                true,
+                0,
+                prefix,
+                0,
+                prefix.length()
+        );
+    }
+
     private static void checkNamingConvention(JavaClass javaClass, Set<String> violations) {
         String packageName = javaClass.getPackageName();
         String fullName = javaClass.getFullName();
@@ -216,7 +429,7 @@ public class ArchitectureRulesTest {
         boolean isCorePattern = COMMON_ALLOWED_PATTERNS.stream().anyMatch(simpleName::endsWith);
         if (!isCorePattern) return;
 
-        String expectedPrefix = capitalize(channel);
+        String expectedPrefix = expectedPrefixForChannel(channel);
         if (!simpleName.startsWith(expectedPrefix)) {
             violations.add(fullName + " (expected prefix: " + expectedPrefix + ")");
         }
@@ -234,6 +447,16 @@ public class ArchitectureRulesTest {
             return value;
         }
         return Character.toUpperCase(value.charAt(0)) + value.substring(1);
+    }
+
+    private static String expectedPrefixForChannel(String channel) {
+        if (channel == null || channel.isBlank()) {
+            return channel;
+        }
+        if (channel.chars().anyMatch(Character::isDigit)) {
+            return channel.toUpperCase();
+        }
+        return capitalize(channel);
     }
 
     private static Optional<List<JavaClass>> findPathToCucumber(JavaClass sourceClass, Set<String> visited) {

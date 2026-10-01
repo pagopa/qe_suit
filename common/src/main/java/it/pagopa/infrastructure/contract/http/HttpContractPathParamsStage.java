@@ -46,6 +46,11 @@ final class HttpContractPathParamsStage<T> implements HttpContractStages.PathPar
     }
 
     @Override
+    public <Q> HttpContractStages.QueryParamsStage<Q> queryParams(Supplier<Q> queryParamsSupplier) {
+        return builder.queryParams(queryParamsSupplier);
+    }
+
+    @Override
     public Stream<DynamicTest> tests() {
         return builder.tests();
     }

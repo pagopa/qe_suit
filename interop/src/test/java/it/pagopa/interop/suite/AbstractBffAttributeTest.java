@@ -1,0 +1,47 @@
+package it.pagopa.interop.suite;
+
+import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
+import it.pagopa.interop.bff.attribute.infrastructure.BffAttributeRequestFactory;
+import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
+import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.UserRole;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
+
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+/* DEV. NOTE 01/10/2026: non è stato possibile collocarla in it.pagopa.interop.suite.contract
+* a causa del vincolo di commit secondo cui il metodo sotto @TestFactory deve chiamarsi
+* come quello chiamato in apiCall(...) */
+public abstract class AbstractBffAttributeTest {
+
+    protected final ApiClient apiClient;
+    protected final InteropHttpContractValidator httpContractValidator;
+    protected final InteropJourney interopJourney;
+    protected final BffAttributeRequestFactory requestFactory;
+
+    protected AbstractBffAttributeTest(
+            ApiClient apiClient,
+            InteropHttpContractValidator httpContractValidator,
+            InteropJourney interopJourney,
+            BffAttributeRequestFactory requestFactory
+    ) {
+        this.apiClient = apiClient;
+        this.httpContractValidator = httpContractValidator;
+        this.interopJourney = interopJourney;
+        this.requestFactory = requestFactory;
+    }
+
+    protected abstract Supplier<?> createAttributeImpl();
+
+    @TestFactory
+    Stream<DynamicTest> createAttribute() {
+        return httpContractValidator
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> createAttributeImpl().get())
+                .payload(requestFactory::creationRequest)
+                .tests();
+    }
+}

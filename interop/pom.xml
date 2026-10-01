@@ -25,9 +25,17 @@
         <spring-plugin.version>4.1.0</spring-plugin.version>
         <rest-assured.version>6.0.1</rest-assured.version>
         <swagger-request-validator.version>2.46.1</swagger-request-validator.version>
+        <auth.openapi.url>
+            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.22.0/packages/api-clients/open-api/authorizationServerApi.yml
+        </auth.openapi.url>
         <bff.openapi.url>
-            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.22.0-RC2/packages/api-clients/open-api/bffApi.yml
+             https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.22.0-RC3/packages/api-clients/open-api/bffApi.yml
         </bff.openapi.url>
+        <m2m.v3.openapi.url>
+            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.22.0-RC2/packages/api-clients/open-api/m2mGatewayApiV3.yml
+        </m2m.v3.openapi.url>
+        <!-- FuzzingProfile shared by runtime contract tests and PST generation (pst:generate) -->
+        <pst.fuzzingProfile>it.pagopa.interop.common.infrastructure.contract.InteropFuzzingProfile</pst.fuzzingProfile>
     </properties>
 
     <dependencyManagement>
@@ -271,6 +279,16 @@
             <version>1.3.0</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- ========================= -->
+        <!-- JUnit Platform: Reporting  -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-reporting</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -348,9 +366,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+
                 <configuration>
                     <useModulePath>false</useModulePath>
-                    <testClassesDirectory>${project.build.testOutputDirectory}</testClassesDirectory>
+
+                    <testClassesDirectory>
+                        ${project.build.testOutputDirectory}
+                    </testClassesDirectory>
+
                     <includes>
                         <include>**/suite/**</include>
                     </includes>
@@ -386,8 +409,86 @@
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
                                 <openApiNullable>false</openApiNullable>
+                                <useJakartaEe>true</useJakartaEe>
                                 <useAbstractionForFiles>true</useAbstractionForFiles>
-                                <useBeanValidation>false</useBeanValidation>
+                                <useBeanValidation>true</useBeanValidation>
+                                <performBeanValidation>false</performBeanValidation>
+                                <serializableModel>true</serializableModel>
+                                <serializationLibrary>jackson</serializationLibrary>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                                <legacyDiscriminatorBehavior>false</legacyDiscriminatorBehavior>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+
+                    <!-- Auth API -->
+                    <execution>
+                        <id>generate-auth-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <inputSpec>${auth.openapi.url}</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>rest-assured</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <configOptions>
+                                <apiPackage>it.pagopa.interop.generated.openapi.clients.auth.api</apiPackage>
+                                <modelPackage>it.pagopa.interop.generated.openapi.clients.auth.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useJakartaEe>true</useJakartaEe>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>true</useBeanValidation>
+                                <performBeanValidation>false</performBeanValidation>
+                                <serializableModel>true</serializableModel>
+                                <serializationLibrary>jackson</serializationLibrary>
+                                <additionalModelTypeAnnotations>
+                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+                                </additionalModelTypeAnnotations>
+                                <legacyDiscriminatorBehavior>false</legacyDiscriminatorBehavior>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+
+                    <!-- M2M V3 API -->
+                    <execution>
+                        <id>generate-m2m-v3-client</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <typeMappings>
+                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
+                            </typeMappings>
+                            <inputSpec>${m2m.v3.openapi.url}</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>rest-assured</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <configOptions>
+                                <apiPackage>it.pagopa.interop.generated.openapi.clients.m2m.v3.api</apiPackage>
+                                <modelPackage>it.pagopa.interop.generated.openapi.clients.m2m.v3.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <useJakartaEe>true</useJakartaEe>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>true</useBeanValidation>
+                                <performBeanValidation>false</performBeanValidation>
                                 <serializableModel>true</serializableModel>
                                 <serializationLibrary>jackson</serializationLibrary>
                                 <additionalModelTypeAnnotations>
@@ -636,7 +737,59 @@
                             </replacements>
                         </configuration>
                     </execution>
+
+                    <execution>
+                        <id>patch-m2m-v3-file-download-multipart</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>replace</goal>
+                        </goals>
+                        <configuration>
+                            <includes>
+                                <include>
+                                    ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/m2m/v3/api/AgreementsApi.java
+                                </include>
+                                <include>
+                                    ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/m2m/v3/api/EservicesApi.java
+                                </include>
+                                <include>
+                                    ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/m2m/v3/api/EserviceTemplatesApi.java
+                                </include>
+                                <include>
+                                    ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/m2m/v3/api/PurposesApi.java
+                                </include>
+                                <include>
+                                    ${project.build.directory}/generated-sources/openapi/src/main/java/it/pagopa/interop/generated/openapi/clients/m2m/v3/api/PurposeTemplatesApi.java
+                                </include>
+                            </includes>
+                            <regex>true</regex>
+                            <replacements>
+                                <replacement>
+                                    <token>import it\.pagopa\.interop\.generated\.openapi\.clients\.m2m\.v3\.model\.FileDownloadMultipart;\s*\n</token>
+                                    <value></value>
+                                </replacement>
+                                <replacement>
+                                    <token>(package it\.pagopa\.interop\.generated\.openapi\.clients\.m2m\.v3\.api;\s*\n)</token>
+                                    <value>$1
+import java.io.File;
+</value>
+                                </replacement>
+                                <replacement>
+                                    <token>FileDownloadMultipart</token>
+                                    <value>File</value>
+                                </replacement>
+                            </replacements>
+                        </configuration>
+                    </execution>
                 </executions>
+            </plugin>
+
+            <!-- PST generator: explicit goal only, not bound to any phase.
+                 mvn pst:generate -Dpst.openapiExecution=generate-bff-client -Dpst.config=src/test/resources/pst/bff.yaml -->
+            <plugin>
+                <groupId>it.pagopa</groupId>
+                <artifactId>pst-maven-plugin</artifactId>
+                <version>1.0-SNAPSHOT</version>
             </plugin>
 
             <!-- Channel feature expansion: duplicate multi-channel scenarios before Cucumber discovery -->
