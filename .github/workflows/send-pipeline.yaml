@@ -82,14 +82,14 @@ jobs:
 
       - name: Upload Test Logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: test-logs
           path: ./qe_suit/interop/qa-tests.log
 
       - name: Upload Cucumber Report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: cucumber-report
           path: ./qe_suit/interop/target/cucumber-report*
