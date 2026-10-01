@@ -43,7 +43,10 @@ class BffTenantRequestFactoryTest {
         assertThat(command).isInstanceOf(BffAssignCertifiedAttributeCommand.class);
         assertThat(((BffAssignCertifiedAttributeCommand) command).getBffPayload().getId()).isEqualTo(attrId);
         UUID otherId = UUID.randomUUID();
+
+        // Verifica che attribute restituisca la stessa istanza per consentire chiamate fluenti.
         assertThat(command.attribute(AttributeRef.of(otherId))).isSameAs(command);
+
         assertThat(((BffAssignCertifiedAttributeCommand) command).getBffPayload().getId()).isEqualTo(otherId);
     }
 
