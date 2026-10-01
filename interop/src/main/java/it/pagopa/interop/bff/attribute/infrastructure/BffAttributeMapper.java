@@ -18,7 +18,7 @@ public interface BffAttributeMapper {
     @Mapping(target = "name", source = "name")
     @Mapping(target = "description", source = "description")
     @Mapping(target = "kind", source = "kind")
-    @Mapping(target = "group", constant = "0")
+    @Mapping(target = "group", ignore = true)
     Attribute toAttribute(
             it.pagopa.interop.generated.openapi.clients.bff.model.Attribute attribute
     );

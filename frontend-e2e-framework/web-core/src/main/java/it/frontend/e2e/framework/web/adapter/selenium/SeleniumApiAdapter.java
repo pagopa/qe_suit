@@ -80,12 +80,22 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public Optional<List<WebPresentationElement>> findElements(XPathSelector selector, FindPolicy policy) {
         try {
-            List<WebElement> webElements = findWebElements(selector, policy);
-            List<WebPresentationElement> elements = webElements.stream()
-                    .map(webElement -> toPresentationElement(selector, webElement))
-                    .toList();
+            List<WebPresentationElement> elements = withRetry(() -> {
+                List<WebElement> webElements = findWebElements(selector, policy);
+
+                return webElements.stream()
+                        .map(webElement -> toPresentationElement(selector, webElement))
+                        .toList();
+            });
+
             return Optional.of(elements);
         } catch (Exception e) {
+            log.warn(
+                    "Unable to resolve collection. Selector: {} | Policy: {}",
+                    selector,
+                    policy,
+                    e
+            );
             return Optional.empty();
         }
     }
