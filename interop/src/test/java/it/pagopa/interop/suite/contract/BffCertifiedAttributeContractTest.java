@@ -7,6 +7,7 @@ import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
+import it.pagopa.interop.suite.AbstractBffAttributeContractTest;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
@@ -15,7 +16,7 @@ import java.util.function.Supplier;
 
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-public class BffCertifiedAttributeContractTest extends BffAbstractAttributeContractTest {
+public class BffCertifiedAttributeContractTest extends AbstractBffAttributeContractTest {
 
     public BffCertifiedAttributeContractTest(
             ApiClient apiClient,

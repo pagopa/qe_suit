@@ -1,4 +1,4 @@
-package it.pagopa.interop.suite.contract;
+package it.pagopa.interop.suite;
 
 import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.bff.attribute.infrastructure.BffAttributeRequestFactory;
@@ -12,14 +12,17 @@ import org.junit.jupiter.api.TestFactory;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public abstract class BffAbstractAttributeContractTest {
+/* DEV. NOTE 01/10/2026: non è stato possibile collocarla in it.pagopa.interop.suite.contract
+* a causa del vincolo di commit secondo cui il metodo sotto @TestFactory deve chiamarsi
+* come quello chiamato in apiCall(...) */
+public abstract class AbstractBffAttributeContractTest {
 
     protected final ApiClient apiClient;
     protected final InteropHttpContractValidator httpContractValidator;
     protected final InteropJourney interopJourney;
     protected final BffAttributeRequestFactory requestFactory;
 
-    protected BffAbstractAttributeContractTest(
+    protected AbstractBffAttributeContractTest(
             ApiClient apiClient,
             InteropHttpContractValidator httpContractValidator,
             InteropJourney interopJourney,
