@@ -29,6 +29,10 @@ public class EServiceUseCase {
         return eServiceGateway.getEService(eService.getRef());
     }
 
+    public EService getEServiceFromCatalog(EService eService) {
+        return eServiceGateway.getEServiceFromCatalog(eService.getRef());
+    }
+
     public void archiveEService(EService eService, GracePeriodDays gracePeriodDays) {
         eServiceGateway.archiveEService(eService.getRef(), gracePeriodDays);
     }
