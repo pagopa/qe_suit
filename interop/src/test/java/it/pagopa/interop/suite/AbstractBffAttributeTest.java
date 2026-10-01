@@ -15,14 +15,14 @@ import java.util.stream.Stream;
 /* DEV. NOTE 01/10/2026: non è stato possibile collocarla in it.pagopa.interop.suite.contract
 * a causa del vincolo di commit secondo cui il metodo sotto @TestFactory deve chiamarsi
 * come quello chiamato in apiCall(...) */
-public abstract class AbstractBffAttributeContractTest {
+public abstract class AbstractBffAttributeTest {
 
     protected final ApiClient apiClient;
     protected final InteropHttpContractValidator httpContractValidator;
     protected final InteropJourney interopJourney;
     protected final BffAttributeRequestFactory requestFactory;
 
-    protected AbstractBffAttributeContractTest(
+    protected AbstractBffAttributeTest(
             ApiClient apiClient,
             InteropHttpContractValidator httpContractValidator,
             InteropJourney interopJourney,
