@@ -24,11 +24,10 @@ Feature: Visualizzazione delle soglie di chiamate API personalizzate nella sched
       | consumerThreshold | 20 |
       | totalThreshold    | 40 |
     And assegna l'attributo certificato a Comune di Pozzallo
-#    And un fruitore admin del Comune di Pozzallo
-#    When visualizza la pagina dell'EService dal catalogo
-#    Then la sezione soglie di chiamate API personalizzate è presente e mostra il valore <customThreshold>
-#
-#    When un admin del Comune di Milano visualizza la pagina dell'EService dal catalogo
+    And un fruitore admin del Comune di Pozzallo
+    Then legge il valore <customThreshold> per la soglia di chiamate API personalizzata per l'EService da catalogo
+
+#    And un erogatore admin del Comune di Milano
 #    Then la sezione soglie di chiamate API personalizzate non è presente
 
     Examples:
