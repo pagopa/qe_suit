@@ -37,6 +37,12 @@ public class WebEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public EService getEServiceFromCatalog(EServiceRef eServiceRef) {
+        // TODO creare la pagina verso cui navigare catalogEServiceViewPage
+        return null;
+    }
+
+    @Override
     public void archiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
         throw new UnsupportedOperationException("Archiving an EService is not supported on the WEB_BROWSER channel");
     }
