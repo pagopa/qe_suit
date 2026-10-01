@@ -1,6 +1,6 @@
 package it.pagopa.interop.suite.contract;
 
-import it.pagopa.infrastructure.contract.http.HttpContractValidator;
+import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.bff.attribute.infrastructure.BffAttributeRequestFactory;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.common.journey.application.InteropJourney;
@@ -12,16 +12,16 @@ import org.junit.jupiter.api.TestFactory;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public abstract class AbstractBffAttributeContractTest {
+public abstract class BffAbstractAttributeContractTest {
 
     protected final ApiClient apiClient;
-    protected final HttpContractValidator httpContractValidator;
+    protected final InteropHttpContractValidator httpContractValidator;
     protected final InteropJourney interopJourney;
     protected final BffAttributeRequestFactory requestFactory;
 
-    protected AbstractBffAttributeContractTest(
+    protected BffAbstractAttributeContractTest(
             ApiClient apiClient,
-            HttpContractValidator httpContractValidator,
+            InteropHttpContractValidator httpContractValidator,
             InteropJourney interopJourney,
             BffAttributeRequestFactory requestFactory
     ) {
@@ -36,10 +36,8 @@ public abstract class AbstractBffAttributeContractTest {
     @TestFactory
     Stream<DynamicTest> createAttribute() {
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return createAttributeImpl().get();
-                })
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> createAttributeImpl().get())
                 .payload(requestFactory::creationRequest)
                 .tests();
     }
