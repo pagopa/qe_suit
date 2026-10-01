@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title th:text="${report.title}">Progettazione Scenari di Test</title>
+    <style>
+        :root{--bg:#f4f6f8;--panel:#fff;--text:#202b38;--muted:#687486;--border:#d7dee7;--s2:#43835a;--s2-soft:#eaf4ed;--s3:#315f8e;--s3-soft:#eaf1f8;--s4:#b0621c;--s4-soft:#fdf0e3;--s5:#bd5050;--s5-soft:#fbeded;--shadow:0 1px 3px rgba(15,23,42,.06)}
+        *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+        main{max-width:1550px;margin:0 auto;padding:24px}
+        .kicker{font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}h1{font-size:29px;margin:4px 0 5px}
+        .summary-grid{display:grid;grid-template-columns:repeat(2,minmax(135px,220px));gap:10px;margin:20px 0}
+        .summary-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;box-shadow:var(--shadow)}
+        .summary-card .label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:800}
+        .summary-card .value{font-size:22px;font-weight:800;margin-top:5px}
+        .section-title{display:flex;justify-content:space-between;align-items:center;margin:8px 0 10px}.section-title h2{font-size:18px;margin:0}.section-title .hint{font-size:12px;color:var(--muted)}
+        .targets-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:9px;margin-bottom:30px}
+        .target-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;text-decoration:none;color:inherit;display:flex;justify-content:space-between;gap:14px;box-shadow:var(--shadow)}
+        .target-card:hover{border-color:#aab9c9}.target-title{font-weight:800;margin-top:8px;font-size:14px;word-break:break-word}
+        .scenario-count{font-size:12px;color:var(--muted)}
+        .method-chip{display:inline-block;border-radius:6px;padding:3px 7px;font-size:10px;font-weight:850;letter-spacing:.06em;background:#eaf1f8;color:#315f8e}
+        .operation-id{font-size:12px;font-weight:760;color:#3c4c5d}
+        .test-group{background:#fff;border:1px solid var(--border);border-radius:12px;margin:18px 0;padding:17px;box-shadow:var(--shadow)}
+        .group-header{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding-bottom:13px;border-bottom:1px solid var(--border)}
+        .group-line{display:flex;align-items:center;gap:9px}.group-line h2{font-size:18px;margin:0;word-break:break-word}.group-meta{font-size:12px;color:var(--muted);margin-top:7px}
+        .scope-title{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#45576b;font-weight:850;margin:16px 0 8px}
+        table.scenarios{width:100%;border-collapse:collapse;font-size:13px}
+        table.scenarios th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border);padding:7px 8px}
+        table.scenarios td{border-bottom:1px solid #eef1f5;padding:7px 8px;vertical-align:top}
+        td.target,td.scenario{font-family:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;font-size:12px;word-break:break-all}
+        table.scenarios th.expected-status-header,td.expected-status-cell{text-align:center;width:190px}
+        table.scenarios td{vertical-align:middle}
+        .status-code{display:inline-block;min-width:64px;padding:5px 12px;border-radius:8px;font-size:17px;font-weight:900;letter-spacing:.03em;border:2px solid #9aa7b6;background:#f1f4f7;color:#3c4c5d;cursor:help}
+        .status-code.status-2xx{background:var(--s2-soft);color:var(--s2);border-color:var(--s2)}
+        .status-code.status-3xx{background:var(--s3-soft);color:var(--s3);border-color:var(--s3)}
+        .status-code.status-4xx{background:var(--s4-soft);color:var(--s4);border-color:var(--s4)}
+        .status-code.status-5xx{background:var(--s5-soft);color:var(--s5);border-color:var(--s5)}
+        .empty-state{background:#fff;border:1px dashed var(--border);border-radius:10px;padding:20px;color:var(--muted);text-align:center;margin:15px 0}
+        .filters{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px;display:grid;grid-template-columns:180px 1fr auto;gap:10px;align-items:center;box-shadow:var(--shadow);position:sticky;top:8px;z-index:10;margin-bottom:24px}
+        .filters select,.filters input[type=search]{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:7px;background:#fff;color:var(--text);font:inherit;font-size:13px}
+        .filter-summary{font-size:12px;color:var(--muted);white-space:nowrap}
+        @media(max-width:950px){main{padding:14px}.summary-grid{grid-template-columns:repeat(2,1fr)}.targets-grid{grid-template-columns:1fr}.group-header{display:block}.filters{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+<main>
+    <header class="page-header">
+        <div class="kicker">QA · PST</div>
+        <h1 id="pst-title" th:text="${report.title}">Progettazione Scenari di Test</h1>
+    </header>
+
+    <section class="summary-grid">
+        <article class="summary-card"><div class="label">Operation</div><div class="value" id="operation-count" th:text="${report.operationCount}">0</div></article>
+        <article class="summary-card"><div class="label">Scenari</div><div class="value" id="scenario-count" th:text="${report.scenarioCount}">0</div></article>
+    </section>
+
+    <div class="empty-state" th:if="${report.operations.isEmpty()}">Nessuna operation presente nel PST.</div>
+
+    <th:block th:unless="${report.operations.isEmpty()}">
+        <section class="filters">
+            <select id="scopeFilter">
+                <option value="">Tutti gli scope</option>
+                <option th:each="scope : ${report.scopes}" th:value="${scope}" th:text="${scope}">PAYLOAD</option>
+            </select>
+            <input id="textFilter" type="search" placeholder="Cerca operationId, path, target o fuzz scenario…">
+            <div class="filter-summary" id="filterSummary">&nbsp;</div>
+        </section>
+
+        <div class="section-title"><h2>Operation</h2><div class="hint">Metodo · path · operationId · numero scenari</div></div>
+        <section class="targets-grid">
+            <a class="target-card filterable-target"
+               th:each="operation : ${report.operations}"
+               th:href="${'#' + operation.anchor}"
+               th:attr="data-anchor=${operation.anchor}">
+                <div>
+                    <span class="method-chip" th:text="${operation.httpMethod}">POST</span>
+                    <span class="operation-id" th:text="${operation.operationId}">createAgreement</span>
+                    <div class="target-title" th:text="${operation.path}">/agreements</div>
+                </div>
+                <span class="scenario-count" th:text="${operation.scenarioCount + ' scenari'}">0 scenari</span>
+            </a>
+        </section>
+
+        <div class="section-title"><h2>Dettaglio scenari</h2><div class="hint">Operation · scope · target · scenario</div></div>
+        <section class="test-group operation filterable-group"
+                 th:each="operation : ${report.operations}"
+                 th:id="${operation.anchor}"
+                 th:attr="data-operation-id=${operation.operationId},data-anchor=${operation.anchor},data-search=${#strings.toLowerCase(operation.httpMethod + ' ' + operation.path + ' ' + operation.operationId)}">
+            <div class="group-header">
+                <div>
+                    <div class="group-line">
+                        <span class="method-chip http-method" th:text="${operation.httpMethod}">POST</span>
+                        <h2 class="operation-path" th:text="${operation.path}">/agreements</h2>
+                    </div>
+                    <div class="group-meta operation-id" th:text="${operation.operationId}">createAgreement</div>
+                </div>
+                <span class="scenario-count operation-scenario-count" th:text="${operation.scenarioCount + ' scenari'}">0 scenari</span>
+            </div>
+
+            <div class="empty-state" th:if="${operation.scopes.isEmpty()}">Nessuno scenario pianificato per questa operation.</div>
+
+            <div class="scope filterable-scope" th:each="scope : ${operation.scopes}" th:attr="data-scope=${scope.scope}">
+                <div class="scope-title" th:text="${scope.scope + ' · ' + scope.scenarioCount + ' scenari'}">PAYLOAD · 0 scenari</div>
+                <table class="scenarios">
+                    <thead>
+                    <tr><th>Scope</th><th>Target</th><th>Fuzz scenario</th><th class="expected-status-header">Expected status code</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr class="scenario-row" th:each="scenario : ${scope.scenarios}"
+                        th:attr="data-scope=${scenario.scope},data-search=${#strings.toLowerCase(scenario.target + ' ' + scenario.scenario + ' ' + scenario.expectedStatus)}">
+                        <td class="scope-cell" th:text="${scenario.scope}">PAYLOAD</td>
+                        <td class="target" th:text="${scenario.target}">$.name</td>
+                        <td class="scenario" th:text="${scenario.scenario}">REMOVED</td>
+                        <td class="expected-status-cell"><span class="status-code" th:classappend="${scenario.statusClass}" th:title="${scenario.details}" th:text="${scenario.expectedStatus}">400</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <div class="empty-state" id="noMatches" hidden>Nessuno scenario corrisponde ai filtri applicati.</div>
+    </th:block>
+</main>
+<script th:inline="none">
+    (function () {
+        const scopeFilter = document.getElementById('scopeFilter');
+        const textFilter = document.getElementById('textFilter');
+        if (!scopeFilter || !textFilter) return;
+
+        const summary = document.getElementById('filterSummary');
+        const noMatches = document.getElementById('noMatches');
+        const groups = Array.from(document.querySelectorAll('.filterable-group'));
+        const cards = Array.from(document.querySelectorAll('.filterable-target'));
+
+        const normalize = value => (value || '').toString().trim().toLowerCase();
+
+        function applyFilters() {
+            const scope = scopeFilter.value;
+            const text = normalize(textFilter.value);
+            const visibleAnchors = new Set();
+            let visibleScenarios = 0;
+
+            groups.forEach(group => {
+                const operationMatches = !text || normalize(group.dataset.search).includes(text);
+                let groupScenarios = 0;
+
+                group.querySelectorAll('.filterable-scope').forEach(scopeBlock => {
+                    const scopeMatches = !scope || scopeBlock.dataset.scope === scope;
+                    let scopeScenarios = 0;
+
+                    scopeBlock.querySelectorAll('.scenario-row').forEach(row => {
+                        // An operation match keeps all its rows, so a search by path or
+                        // operationId shows the whole design of that operation.
+                        const rowMatches = scopeMatches
+                                && (operationMatches || !text || normalize(row.dataset.search).includes(text));
+                        row.hidden = !rowMatches;
+                        if (rowMatches) scopeScenarios++;
+                    });
+
+                    scopeBlock.hidden = scopeScenarios === 0;
+                    groupScenarios += scopeScenarios;
+                });
+
+                group.hidden = groupScenarios === 0;
+                if (groupScenarios > 0) visibleAnchors.add(group.dataset.anchor);
+                visibleScenarios += groupScenarios;
+            });
+
+            cards.forEach(card => {
+                card.hidden = !visibleAnchors.has(card.dataset.anchor);
+            });
+
+            if (noMatches) noMatches.hidden = visibleScenarios > 0;
+            if (summary) {
+                summary.textContent = visibleAnchors.size + ' operation · ' + visibleScenarios + ' scenari';
+            }
+        }
+
+        scopeFilter.addEventListener('change', applyFilters);
+        textFilter.addEventListener('input', applyFilters);
+        applyFilters();
+    })();
+</script>
+</body>
+</html>

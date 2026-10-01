@@ -1,6 +1,8 @@
 package it.pagopa.send.common.kernel.domain;
 
-public enum Channel {
-    B2B,
+import it.pagopa.application.ChannelKind;
+
+public enum Channel implements ChannelKind {
+    BFF,
     WEB_BROWSER
 }
