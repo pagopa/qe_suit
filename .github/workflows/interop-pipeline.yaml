@@ -58,13 +58,13 @@ jobs:
           aws sts get-caller-identity
 
       - name: Checkout qe_suit repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ env.BRANCH_NAME }}
           path: qe_suit
 
       - name: Set up Java
-        uses: actions/setup-java@v6
+        uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6
         with:
           distribution: temurin
           java-version: '17'
@@ -125,7 +125,7 @@ jobs:
 
       - name: Upload QA Test Artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: qa-test-artifacts
           path: |
