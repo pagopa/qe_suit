@@ -8,7 +8,10 @@ import org.junit.platform.suite.api.*;
 @Suite
 @GenerateContractReport
 @IncludeEngines("junit-jupiter")
-@SelectClasses({WebConsumerAgreementContractTest.class})
+@SelectClasses({
+        WebConsumerAgreementContractTest.class,
+        WebProducerAgreementContractTest.class
+})
 @ConfigurationParameters({
         @ConfigurationParameter(
                 key = "junit.jupiter.execution.parallel.enabled",
