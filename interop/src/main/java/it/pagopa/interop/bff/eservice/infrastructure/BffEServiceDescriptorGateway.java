@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties;
 import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.DelayUtils;
@@ -18,6 +19,7 @@ import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDaysSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.Assertions;
 import org.instancio.Instancio;
 import org.springframework.stereotype.Service;
 
@@ -74,16 +76,49 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
         if (!(command instanceof BffUpdateEServiceDescriptorCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of BffUpdateEServiceDescriptorCommand");
 
-        UpdateEServiceDescriptorSeed payload = bffCommand.getBffPayload();
+        // Se è un e-service asincrono e le relative proprietà insieme all'interfaccia di callback
+        // non sono stati ancora definiti, vengono soddisfatti con dei valori di default
+        if (bffCommand.getBffPayload().getAsyncExchangeProperties() == null) {
+            Optional<EService> maybeEService = entityStore.getById(eServiceRef.id(), EService.class);
+            Assertions.assertThat(maybeEService.isPresent()).isTrue();
 
-        return restClient.updateDescriptor(eServiceRef.id(), descriptorRef.id(), payload)
+            if (maybeEService.get().getAsyncExchange()) {
+                linkOpenApiCallbackInterface(eServiceRef, descriptorRef, "assets/origin-interface.yaml");
+                AsyncExchangeProperties properties = new AsyncExchangeProperties();
+                properties.setResponseTime(60);
+                properties.setResourceAvailableTime(60);
+                properties.setMaxResultSet(1);
+                properties.setConfirmation(false);
+                properties.setBulk(true);
+                bffCommand.getBffPayload().setAsyncExchangeProperties(properties);
+            }
+        }
+        restClient.updateDescriptor(eServiceRef.id(), descriptorRef.id(), bffCommand.getBffPayload())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getEServiceDescriptor(eServiceRef, descriptorRef))
                 .get();
+
+        return PollingUtils.pollUntil(
+                () -> getEServiceDescriptor(eServiceRef, descriptorRef),
+                descriptor -> (
+                        descriptor.getDailyCallsPerConsumer().intValue() == bffCommand.getBffPayload().getDailyCallsPerConsumer().intValue()
+                        && descriptor.getDailyCallsTotal().intValue() == bffCommand.getBffPayload().getDailyCallsTotal().intValue()
+                )
+        );
     }
 
     @Override
     public EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String openApiInterfacePath) {
+        return linkOpenApiInterface(eServiceRef, descriptorRef, openApiInterfacePath, "INTERFACE");
+    }
+
+    @Override
+    public EServiceDescriptor linkOpenApiCallbackInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String openApiInterfacePath) {
+        return linkOpenApiInterface(eServiceRef, descriptorRef, openApiInterfacePath, "ASYNC_EXCHANGE_CALLBACK_INTERFACE");
+    }
+
+    // TODO DocumentKind dovrebbe essere un Enum
+    private EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String openApiInterfacePath, String documentKind) {
         File openapiFile = FileUtils.loadClasspathResourceAsTempFile(openApiInterfacePath);
         String documentName = RandomUtils.randomAlphanumericName("interface") + ".yaml";
         DelayUtils.waitForSeconds(1); // Wait for a second to avoid potential eventual consistency error
@@ -91,7 +126,7 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
         return restClient.addDocument(
                         eServiceRef.id(),
                         descriptorRef.id(),
-                        "INTERFACE",
+                        documentKind,
                         documentName,
                         openapiFile
                 )
