@@ -72,7 +72,7 @@ public class WebEServiceContractTest {
     }
 
     @TestFactory
-    Stream<DynamicTest> shouldShowCreatedEServiceName() {
+    Stream<DynamicTest> shouldShowEServiceDetailToProducer() {
         Tenant tenant = Tenant.COMUNE_DI_MILANO;
         EService eService = interopJourney
                 .withProducer(tenant, UserRole.ADMIN)
