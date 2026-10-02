@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Url("${interop.web.consumer-agreement-list}/${agreementId}")
-public interface AgreementPage extends Page {
+public interface ConsumerAgreementPage extends Page {
 
     @XPath(".//h2")
     Readable<String> pageTitle();

@@ -12,7 +12,7 @@ import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.web.agreement.infrastructure.page.AgreementPage;
+import it.pagopa.interop.web.agreement.infrastructure.page.ConsumerAgreementPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
@@ -61,7 +61,7 @@ public class WebAgreementContractTest {
 
         return webContractValidator
                 .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
-                .on(AgreementPage.class, agreement.getId().toString())
+                .on(ConsumerAgreementPage.class, agreement.getId().toString())
                 .tests(Stream.of(new WebScenario<>(
                         "Should see banner for agreement update to newer version",
                         page -> {},
@@ -87,7 +87,7 @@ public class WebAgreementContractTest {
 
         return webContractValidator
                 .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
-                .on(AgreementPage.class, agreement.getId().toString())
+                .on(ConsumerAgreementPage.class, agreement.getId().toString())
                 .tests(Stream.of(new WebScenario<>(
                         "Should see obsolete version banner when e-service is archiving",
                         page -> {},
@@ -113,7 +113,7 @@ public class WebAgreementContractTest {
 
         return webContractValidator
                 .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
-                .on(AgreementPage.class, agreement.getId().toString())
+                .on(ConsumerAgreementPage.class, agreement.getId().toString())
                 .tests(Stream.of(new WebScenario<>(
                         "Should see no banner when e-service is archiving and agreement uses latest version",
                         page -> {},
@@ -141,7 +141,7 @@ public class WebAgreementContractTest {
 
         return webContractValidator
                 .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
-                .on(AgreementPage.class, agreement.getId().toString())
+                .on(ConsumerAgreementPage.class, agreement.getId().toString())
                 .tests(Stream.of(new WebScenario<>(
                         "Should see obsolete version banner when descriptor and e-service are archiving",
                         page -> {},
@@ -150,7 +150,7 @@ public class WebAgreementContractTest {
     }
 
     private void assertBannerIsVisible(
-            AgreementPage page,
+            ConsumerAgreementPage page,
             String expectedMessage
     ) {
         Assertions.assertThat(readAlertMessages(page))
@@ -158,7 +158,7 @@ public class WebAgreementContractTest {
                 .contains(expectedMessage);
     }
 
-    private void assertNoBannerIsVisible(AgreementPage page) {
+    private void assertNoBannerIsVisible(ConsumerAgreementPage page) {
         Assertions.assertThat(readAlertMessages(page))
                 .as("Agreement alert messages")
                 .doesNotContain(
@@ -167,7 +167,7 @@ public class WebAgreementContractTest {
                 );
     }
 
-    private List<String> readAlertMessages(AgreementPage page) {
+    private List<String> readAlertMessages(ConsumerAgreementPage page) {
         return page.alerts().stream()
                 .map(alert -> alert.message().read())
                 .toList();
