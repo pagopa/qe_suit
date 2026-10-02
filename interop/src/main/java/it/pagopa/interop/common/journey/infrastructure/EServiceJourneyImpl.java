@@ -3,6 +3,7 @@ package it.pagopa.interop.common.journey.infrastructure;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
@@ -47,6 +48,14 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     @Override
     public EServiceJourneyImpl addDescriptor(EService eService, EServiceDescriptorState state) {
         EServiceDescriptor eServiceDescriptor = eServiceDescriptorUseCase.addDescriptor(eService);
+        return processLifecycle(eService, eServiceDescriptor, state);
+    }
+
+    @Override
+    public EServiceJourneyImpl updateDescriptor(UpdateEServiceDescriptorCommand command, EServiceDescriptorState state) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        EServiceDescriptor eServiceDescriptor = eService.getLastDraftDescriptor();
+        eServiceDescriptorUseCase.updateDescriptor(eService, eServiceDescriptor, command);
         return processLifecycle(eService, eServiceDescriptor, state);
     }
 

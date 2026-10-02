@@ -18,6 +18,7 @@ import org.instancio.Instancio;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.instancio.Select.field;
 
@@ -54,6 +55,19 @@ public class BffEServiceGateway implements EServiceGateway {
     @Override
     public EService getEService(EServiceRef eServiceRef) {
         return restClient.readEService(eServiceRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(eServiceDetails -> {
+                    Optional<EService> maybeEService = entityStore.getById(eServiceRef.id(), EService.class);
+                    return mapper.toEServicePreservingDescriptors(eServiceDetails, maybeEService.orElse(null));
+                })
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public EService getEServiceFromCatalog(EServiceRef eServiceRef) {
+        UUID descriptorId = getEService(eServiceRef).getActiveDescriptor().getId();
+        return restClient.readEServiceFromCatalog(eServiceRef.id(), descriptorId)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(eServiceDetails -> {
                     Optional<EService> maybeEService = entityStore.getById(eServiceRef.id(), EService.class);
