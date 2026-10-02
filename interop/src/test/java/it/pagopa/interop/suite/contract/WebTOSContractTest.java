@@ -20,7 +20,18 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.stream.Stream;
 
-/** Visual checks: DOM structure and essential copy, excluding layout and full legal text. */
+/**
+ * Visual checks for the initial state of the terms-of-service page as a Comune di Milano administrator.
+ * <ul>
+ *     <li>Page title: exact copy {@code Termini di servizio}.</li>
+ *     <li>Document: eleven ordered sections with identifiers, expected headings, and nonempty paragraphs.
+ *         Only the numeric prefix of {@code Proprietà intellettuale} is excluded from comparison.</li>
+ *     <li>Indexes: two DOM indexes, including hidden variants, with eleven links each targeting the same
+ *         page and matching the unique section identifiers one to one in document order.</li>
+ * </ul>
+ * Excludes layout, colors, fonts, full legal text, index-entry copy, {@code TIMESTAMP}, global header/footer,
+ * and index visibility or interaction. Responsive coverage depends on the actual viewport used for the run.
+ */
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
         properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
@@ -55,11 +66,13 @@ public class WebTOSContractTest {
 
     private Stream<WebScenario<TOSPage>> scenarios() {
         return Stream.of(
-                new WebScenario<>("Visuale TOS: titolo pagina", page -> {},
+                new WebScenario<>("Visuale TOS: copy esatto del titolo pagina", page -> {},
                         page -> Assertions.assertThat(page.pageTitle().read())
                                 .as("Copy titolo pagina TOS").isEqualTo("Termini di servizio")),
-                new WebScenario<>("Visuale TOS: sezioni e copy essenziali", page -> {}, this::assertSections),
-                new WebScenario<>("Visuale TOS: indice e destinazioni nel DOM", page -> {}, this::assertIndexes)
+                new WebScenario<>("Visuale TOS: 11 sezioni ordinate, titoli attesi e paragrafi non vuoti",
+                        page -> {}, this::assertSections),
+                new WebScenario<>("Visuale TOS: 2 indici nel DOM, 11 link ciascuno e destinazioni univoche ordinate",
+                        page -> {}, this::assertIndexes)
         );
     }
 
