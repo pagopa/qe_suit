@@ -36,7 +36,7 @@ public class BffEServiceTemplateContractTest {
 
     private static final String STANDARD_INTERFACE = "assets/origin-interface.yaml";
     // Fixture exceeding the YAML alias limit enforced by the BFF
-    private static final String COMPLEX_INTERFACE = "openapi/test.yaml";
+    private static final String COMPLEX_INTERFACE = "openapi/openapi-refs-test.yaml";
 
     private final ApiClient apiClient;
     private final InteropHttpContractValidator httpContractValidator;
