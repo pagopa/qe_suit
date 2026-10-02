@@ -1,0 +1,18 @@
+subject: "Comunicazione Bonaria Test"
+campaignId: "Fattord"
+senderDenomination: "Comune di Palermo"
+amount: 3000
+primaryMessage:
+  subject: "Oggetto IT"
+  longBody: "Gentile cittadino, questa e' una comunicazione informativa di prova per la notifica bonaria relativa alla sua utenza."
+  shortBody: "Short IT"
+  language: "IT"
+physicalAddress:
+  at: "Presso"
+  address: "Via @OK_RIS"
+  addressDetails: "scala c"
+  zip: "00133"
+  municipality: "Roma"
+  municipalityDetails: "Roma"
+  province: "RM"
+  foreignState: "ITALIA"
