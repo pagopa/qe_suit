@@ -28,6 +28,7 @@ url:
       notifiche-dettaglio-timeline: ${url.notifiche.cittadino.base}/notifiche/${iun}/dettaglio/timeline
       recapiti: ${url.notifiche.cittadino.base}/recapiti
       recapiti-domicilio-digitale-attivazione: ${url.notifiche.cittadino.base}/recapiti/domicilio-digitale/attivazione
+      recapiti-domicilio-digitale-gestione: ${url.notifiche.cittadino.base}/recapiti/domicilio-digitale/gestione
       deleghe: ${url.notifiche.cittadino.base}/deleghe
       add-deleghe: ${url.notifiche.cittadino.base}/deleghe/nuova
       app-status: ${url.notifiche.cittadino.base}/app-status
@@ -39,6 +40,7 @@ url:
       termini-di-servizio: ${url.notifiche.cittadino.base}/termini-di-servizio
       termini-di-servizio-sercq-send: ${url.notifiche.cittadino.base}/termini-di-servizio/sercq-send
       assistenza: ${url.notifiche.cittadino.base}/assistenza
+      profilo: ${url.notifiche.cittadino.base}/profilo
     persona-giuridica:
       base: https://imprese.uat.notifichedigitali.it
       notifiche: ${url.notifiche.persona-giuridica.base}/notifiche

@@ -16,12 +16,14 @@ import it.pagopa.send.web.destinatario_pf.infrastructure.page.AddressPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AppStatusPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DelegationsPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DigitalDomicileActivationPFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.DigitalDomicileManagementPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NewDelegationPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationTimelinePFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingAlertsPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingDigitalDomicilePFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingIoPFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.ProfilePFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.SercqTermsOfServicePFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.SupportPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.TermsOfServicePFPage;
@@ -60,8 +62,10 @@ public class PageType {
         DELEGATIONS_PF("DelegationsPF", DelegationsPFPage.class),
         NEW_DELEGATION_PF("NewDelegationPF", NewDelegationPFPage.class),
         DIGITAL_DOMICILE_ACTIVATION_PF("DigitalDomicileActivationPF", DigitalDomicileActivationPFPage.class),
+        DIGITAL_DOMICILE_MANAGEMENT_PF("DigitalDomicileManagementPF", DigitalDomicileManagementPFPage.class),
         NOTIFICATION_PF("NotificationPF", NotificationPFPage.class),
         SUPPORT_PF("SupportPF", SupportPFPage.class),
+        PROFILE_PF("ProfilePF", ProfilePFPage.class),
         NOTIFICATION_TIMELINE_PF("NotificationTimelinePF", NotificationTimelinePFPage.class),
         ONBOARDING_DIGITAL_DOMICILE_PF("OnboardingDigitalDomicilePF", OnboardingDigitalDomicilePFPage.class),
         ONBOARDING_ALERTS_PF("OnboardingAlertsPF", OnboardingAlertsPFPage.class),

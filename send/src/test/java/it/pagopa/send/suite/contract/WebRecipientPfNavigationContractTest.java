@@ -10,11 +10,13 @@ import it.pagopa.send.web.destinatario_pf.infrastructure.page.AddressPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AppStatusPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DelegationsPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DigitalDomicileActivationPFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.DigitalDomicileManagementPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NewDelegationPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingAlertsPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingDigitalDomicilePFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingIoPFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.ProfilePFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.SercqTermsOfServicePFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.SupportPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.TermsOfServicePFPage;
@@ -122,6 +124,14 @@ public class WebRecipientPfNavigationContractTest {
                 )));
     }
 
+    /**
+     * Richiede un utente con una PEC attiva come domicilio digitale (Lucrezia su test).
+     */
+    @TestFactory
+    Stream<DynamicTest> shouldReachDigitalDomicileManagementPF() {
+        return reachabilityTest(DigitalDomicileManagementPFPage.class);
+    }
+
     @TestFactory
     Stream<DynamicTest> shouldReachAppStatusPF() {
         return reachabilityTest(AppStatusPFPage.class);
@@ -130,6 +140,11 @@ public class WebRecipientPfNavigationContractTest {
     @TestFactory
     Stream<DynamicTest> shouldReachSupportPF() {
         return reachabilityTest(SupportPFPage.class);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> shouldReachProfilePF() {
+        return reachabilityTest(ProfilePFPage.class);
     }
 
     /**
