@@ -7,7 +7,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 
-@Url("${interop.web.erogazione-agreement}/${agreementId}")
+@Url("${interop.web.producer-agreement-list}/${agreementId}")
 public interface ProducerAgreementDetailPage extends Page {
 
     @XPath(".//h1[normalize-space(.)='Gestisci richiesta di fruizione']")
