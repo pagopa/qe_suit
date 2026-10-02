@@ -12,7 +12,7 @@ import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.web.agreement.infrastructure.page.AgreementListPage;
+import it.pagopa.interop.web.agreement.infrastructure.page.ProducerAgreementListPage;
 import it.pagopa.interop.web.agreement.infrastructure.page.AgreementPage;
 import it.pagopa.interop.web.agreement.infrastructure.page.ProducerAgreementDetailPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
@@ -51,7 +51,7 @@ public class WebAgreementContractTest {
         return Stream.of(UserRole.API, UserRole.ADMIN)
                 .flatMap(role -> webContractValidator
                         .as(User.getTenantUser(tenant, role), tenant)
-                        .on(AgreementListPage.class)
+                        .on(ProducerAgreementListPage.class)
                         .tests(Stream.of(new WebScenario<>(
                                 "richieste di fruizione ricevute accessibili all'utente " + role.name() + " del Comune di Milano",
                                 page -> {},

@@ -6,7 +6,7 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 
 @Url("${interop.web.producer-agreement-list}")
-public interface AgreementListPage extends Page {
+public interface ProducerAgreementListPage extends Page {
 
     @XPath(".//h1[normalize-space(.)='Richieste di fruizione ricevute']")
     Readable<String> pageTitle();
