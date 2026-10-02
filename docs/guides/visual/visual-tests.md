@@ -127,4 +127,4 @@ Credentials remain in local or CI configuration. Do not add SSO dependencies to 
 
 VS Code automatic Java compilation may interfere with Maven output directories. If classes are missing during test startup, check for concurrent compilation; disable `java.autobuild.enabled` in user settings before recompiling. `surefire:test` uses existing artifacts and does not replace compilation after changes.
 
-Respect session authorization requirements before making changes. In this work, the user requires explicit approval; do not delete reports or other local evidence without authorization and prior preservation.
+Preserve reports and other local evidence before any cleanup needed for verification.
