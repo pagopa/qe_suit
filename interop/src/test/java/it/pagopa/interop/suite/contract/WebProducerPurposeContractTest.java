@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
-public class WebPurposeContractTest {
+public class WebProducerPurposeContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
     private final InteropJourney interopJourney;
