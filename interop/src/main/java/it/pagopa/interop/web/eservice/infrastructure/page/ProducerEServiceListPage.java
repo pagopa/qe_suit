@@ -6,7 +6,7 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 
 @Url("${interop.web.erogazione-e-service}")
-public interface ProviderEServiceListPage extends Page {
+public interface ProducerEServiceListPage extends Page {
 
     @XPath(".//h1[normalize-space(.)='I miei e-service']")
     Readable<String> pageTitle();
