@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * PIN-9480 / PR #3140 - upload of the interface document on an e-service template.
+ * PIN-9480 - upload of the interface document on an e-service template.
  */
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
