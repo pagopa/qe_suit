@@ -47,22 +47,31 @@ public class WebCatalogEServiceContractTest {
 
     @TestFactory
     Stream<DynamicTest> shouldSeeCustomThresholdForYourTenant1() {
+        return shouldSeeCustomThresholdForYourTenant(false);
+    }
 
-        boolean asyncExchange = false;
+    @TestFactory
+    Stream<DynamicTest> shouldSeeCustomThresholdForYourTenant2() {
+        return shouldSeeCustomThresholdForYourTenant(true);
+    }
+
+    private Stream<DynamicTest> shouldSeeCustomThresholdForYourTenant(boolean eServiceAsyncExchange) {
         int consumerThreshold = 20;
         int totalThreshold = 40;
         int customThresholdForYourTenant = 30;
         Tenant consumer = Tenant.COMUNE_DI_POZZALLO;
 
         TenantRef consumerTenantRef = TenantRef.of(consumer.getOrganizationId());
-        interopJourney.createCertifiedAttribute();
+        interopJourney
+                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .createCertifiedAttribute();
 
         EServiceCreationCommand eServiceCommand = new BffEServiceCreationCommand()
                 .name("e-service-" + Instant.now().getEpochSecond())
                 .description("Primo descrittore")
                 .technology(EServiceTechnology.REST)
                 .mode(EServiceMode.DELIVER)
-                .isAsync(asyncExchange)
+                .isAsync(eServiceAsyncExchange)
                 .handlePersonalData(false)
                 .isConsumerDelegable(true);
 
@@ -91,14 +100,17 @@ public class WebCatalogEServiceContractTest {
         EService eService = entityStore.getLastOrThrow(EService.class);
 
         return webContractValidator
-                .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
+                .as(User.getTenantAdmin(consumer), consumer)
                 .on(EServiceDetailPage.class, eService.getId().toString(), eService.getActiveDescriptor().getId().toString())
                 .tests(Stream.of(new WebScenario<>(
                         "Should see correct values for thresholds and custom thresholds",
                         page -> {},
                         page -> {
+                            Assertions.assertThat(page.thresholdsAndAttributesTitle().read()).as("Section title").isNotBlank();
+                            Assertions.assertThat(page.apiCallsThresholdTitle().read()).as("Subsection title").isNotBlank();
                             assertLabelEqualsTo(page.consumerDailyThreshold(), String.valueOf(consumerThreshold));
                             assertLabelEqualsTo(page.totalDailyThreshold(), String.valueOf(totalThreshold));
+                            Assertions.assertThat(page.customApiCallsThresholdTitle().read()).as("Subsection title").isNotBlank();
                             assertLabelEqualsTo(page.yourTenantDailyThreshold(), String.valueOf(customThresholdForYourTenant));
                         }
                 )));
