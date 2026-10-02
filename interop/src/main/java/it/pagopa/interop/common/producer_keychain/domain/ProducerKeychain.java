@@ -18,6 +18,13 @@ public class ProducerKeychain implements Identifiable {
     UUID id;
     String name;
     String description;
+    // KeyPair locale usata per le operazioni crittografiche.
     List<Key> keys;
+    // Metadati delle chiavi registrate sulla BFF, senza materiale crittografico.
+    List<ProducerKeychainPublicKey> publicKeys;
     Set<UserRef> users;
+
+    public ProducerKeychainRef getRef() {
+        return ProducerKeychainRef.of(id);
+    }
 }

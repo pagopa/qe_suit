@@ -16,6 +16,7 @@ import java.util.List;
 
 @Configuration(proxyBeanMethods = false)
 public class BffApiContractConfig {
+    public static final int DEFAULT_SUCCESS_STATUS_CODE = 200;
 
     @Bean("bffApiContract")
     HttpContractValidator bffApiContract(
@@ -48,7 +49,7 @@ public class BffApiContractConfig {
     @Bean("bffApiContractPolicy")
     HttpContractPolicy bffApiContractPolicy() {
         return HttpContractPolicy.builder()
-                .successStatus(200)
+                .successStatus(DEFAULT_SUCCESS_STATUS_CODE)
                 .scenarioStatus(List.of(
                         FuzzScenario.REPLACED_WITH_NULL,
                         FuzzScenario.REMOVED,
