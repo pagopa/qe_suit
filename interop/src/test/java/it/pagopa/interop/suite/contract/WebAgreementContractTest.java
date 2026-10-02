@@ -45,7 +45,7 @@ public class WebAgreementContractTest {
     private final InteropJourney interopJourney;
 
     @TestFactory
-    Stream<DynamicTest> shouldLoadAgreementList() {
+    Stream<DynamicTest> shouldShowReceivedAgreementListToProducer() {
         Tenant tenant = Tenant.COMUNE_DI_MILANO;
 
         return Stream.of(UserRole.API, UserRole.ADMIN)
