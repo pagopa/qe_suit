@@ -11,8 +11,8 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCatalogPage;
-import it.pagopa.interop.web.eservice.infrastructure.page.ProviderEServiceDetailPage;
-import it.pagopa.interop.web.eservice.infrastructure.page.ProviderEServiceListPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceListPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
@@ -38,13 +38,13 @@ public class WebEServiceContractTest {
     private final InteropJourney interopJourney;
 
     @TestFactory
-    Stream<DynamicTest> shouldLoadProviderEServiceList() {
+    Stream<DynamicTest> shouldLoadProducerEServiceList() {
         Tenant tenant = Tenant.COMUNE_DI_MILANO;
 
         return Stream.of(UserRole.API, UserRole.ADMIN)
                 .flatMap(role -> webContractValidator
                         .as(User.getTenantUser(tenant, role), tenant)
-                        .on(ProviderEServiceListPage.class)
+                        .on(ProducerEServiceListPage.class)
                         .tests(Stream.of(new WebScenario<>(
                                 "e-service erogati accessibili all'utente " + role.name() + " del Comune di Milano",
                                 page -> {
@@ -83,7 +83,7 @@ public class WebEServiceContractTest {
                 .flatMap(role -> webContractValidator
                         .as(User.getTenantUser(tenant, role), tenant)
                         .on(
-                                ProviderEServiceDetailPage.class,
+                                ProducerEServiceDetailPage.class,
                                 eService.getId().toString(),
                                 eService.getActiveDescriptor().getId().toString()
                         )

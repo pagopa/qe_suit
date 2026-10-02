@@ -8,7 +8,7 @@ import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.erogazione-e-service}/${eserviceId}/${descriptorId}")
-public interface ProviderEServiceDetailPage extends Page {
+public interface ProducerEServiceDetailPage extends Page {
 
     @XPath(".//h1")
     Readable<String> pageTitle();
