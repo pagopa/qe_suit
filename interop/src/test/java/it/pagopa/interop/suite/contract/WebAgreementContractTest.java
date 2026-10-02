@@ -14,6 +14,7 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.web.agreement.infrastructure.page.AgreementListPage;
 import it.pagopa.interop.web.agreement.infrastructure.page.AgreementPage;
+import it.pagopa.interop.web.agreement.infrastructure.page.ProducerAgreementDetailPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
@@ -53,6 +54,27 @@ public class WebAgreementContractTest {
                         .on(AgreementListPage.class)
                         .tests(Stream.of(new WebScenario<>(
                                 "richieste di fruizione ricevute accessibili all'utente " + role.name() + " del Comune di Milano",
+                                page -> {},
+                                page -> {}
+                        ))));
+    }
+
+    @TestFactory
+    Stream<DynamicTest> shouldShowAgreementDetailToProducer() {
+        Tenant producer = Tenant.COMUNE_DI_MILANO;
+        Agreement agreement = interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(Tenant.PAGO_PA, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .get(Agreement.class);
+
+        return Stream.of(UserRole.API, UserRole.ADMIN)
+                .flatMap(role -> webContractValidator
+                        .as(User.getTenantUser(producer, role), producer)
+                        .on(ProducerAgreementDetailPage.class, agreement.getId().toString())
+                        .tests(Stream.of(new WebScenario<>(
+                                "richiesta di fruizione ricevuta visibile all'utente " + role.name() + " del Comune di Milano",
                                 page -> {},
                                 page -> {}
                         ))));
