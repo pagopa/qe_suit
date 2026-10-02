@@ -42,4 +42,5 @@ interop:
     catalog: ${interop.web.base-url}/catalogo-e-service
     erogazione-e-service: ${interop.web.base-url}/erogazione/e-service
     erogazione-agreement: ${interop.web.base-url}/erogazione/richieste
+    producer-purpose-list: ${interop.web.base-url}/erogazione/finalita
     agreement: ${interop.web.base-url}/fruizione/richieste
