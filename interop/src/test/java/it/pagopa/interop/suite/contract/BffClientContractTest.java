@@ -1,12 +1,12 @@
 package it.pagopa.interop.suite.contract;
 
-import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.client.infrastructure.BffClientRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientKind;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -27,19 +27,16 @@ import java.util.stream.Stream;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class BffClientContractTest {
-
     private final ApiClient apiClient;
-    private final HttpContractValidator httpContractValidator;
+    private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final BffClientRequestFactory requestFactory;
 
     @TestFactory
     Stream<DynamicTest> createConsumerClient() {
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return apiClient.clients().createConsumerClient();
-                })
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.clients().createConsumerClient())
                 .payload(requestFactory::creationRequest)
                 .tests();
     }
@@ -47,10 +44,8 @@ public class BffClientContractTest {
     @TestFactory
     Stream<DynamicTest> getClient() {
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return apiClient.clients().getClient();
-                })
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.clients().getClient())
                 .pathParams(() -> {
                     Client createdClient = interopJourney
                             .withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
@@ -72,10 +67,8 @@ public class BffClientContractTest {
     @TestFactory
     Stream<DynamicTest> createApiClient() {
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return apiClient.clients().createApiClient();
-                })
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.clients().createApiClient())
                 .payload(requestFactory::creationRequest)
                 .tests();
     }
@@ -83,6 +76,7 @@ public class BffClientContractTest {
     @TestFactory
     Stream<DynamicTest> createKey() {
         return httpContractValidator
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .apiCall(() -> apiClient.clients().createKey())
                 .pathParams(() -> {
                     Client createdClient = interopJourney

@@ -55,7 +55,8 @@ public final class JacksonMutationValidityResolver implements MutationValidityRe
         if (meta.maxSize != null && value.length() > meta.maxSize) return ContractValidity.INVALID;
 
         if (mutation.scenario() == FuzzScenario.REPLACED_WITH_XSS
-                || mutation.scenario() == FuzzScenario.REPLACED_WITH_SQL_INJECTION) {
+                || mutation.scenario() == FuzzScenario.REPLACED_WITH_SQL_INJECTION
+                || mutation.scenario() == FuzzScenario.REPLACED_WITH_URL_INJECTION) {
             return ContractValidity.UNKNOWN;
         }
 

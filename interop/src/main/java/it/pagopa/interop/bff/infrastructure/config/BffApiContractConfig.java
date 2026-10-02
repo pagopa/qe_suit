@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
+import org.springframework.context.annotation.Primary;
 
 @Configuration(proxyBeanMethods = false)
 public class BffApiContractConfig {
@@ -36,6 +37,10 @@ public class BffApiContractConfig {
                 bffApiContractPolicy
         );
     }
+
+    /* FIXME 29/09/2026: per risolvere presto il problema di conflitto tra bean è stato posto
+    *   @Primary, ma il bean va restituito in funzione del test (bff o m2m). */
+    @Primary
 
     @Bean("bffInteropHttpContractValidator")
     InteropHttpContractValidator interopHttpContractValidator(
