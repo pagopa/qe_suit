@@ -12,7 +12,7 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import java.util.List;
 import java.util.Optional;
 
-@Url("${interop.web.agreement}/${agreementId}")
+@Url("${interop.web.consumer-agreement-list}/${agreementId}")
 public interface AgreementPage extends Page {
 
     @XPath(".//h2")

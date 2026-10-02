@@ -41,6 +41,6 @@ interop:
     base-url: https://selfcare.dev.interop.pagopa.it/ui/it
     catalog: ${interop.web.base-url}/catalogo-e-service
     producer-e-service-list: ${interop.web.base-url}/erogazione/e-service
-    agreement: ${interop.web.base-url}/fruizione/richieste
+    consumer-agreement-list: ${interop.web.base-url}/fruizione/richieste
     producer-agreement-list: ${interop.web.base-url}/erogazione/richieste
     producer-purpose-list: ${interop.web.base-url}/erogazione/finalita
