@@ -40,7 +40,7 @@ interop:
   web:
     base-url: https://selfcare.qa.interop.pagopa.it/ui/it
     catalog: ${interop.web.base-url}/catalogo-e-service
-    erogazione-e-service: ${interop.web.base-url}/erogazione/e-service
+    producer-e-service-list: ${interop.web.base-url}/erogazione/e-service
     agreement: ${interop.web.base-url}/fruizione/richieste
     erogazione-agreement: ${interop.web.base-url}/erogazione/richieste
     producer-purpose-list: ${interop.web.base-url}/erogazione/finalita

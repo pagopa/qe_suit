@@ -7,7 +7,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 
-@Url("${interop.web.erogazione-e-service}/${eserviceId}/${descriptorId}")
+@Url("${interop.web.producer-e-service-list}/${eserviceId}/${descriptorId}")
 public interface ProducerEServiceDetailPage extends Page {
 
     @XPath(".//h1")

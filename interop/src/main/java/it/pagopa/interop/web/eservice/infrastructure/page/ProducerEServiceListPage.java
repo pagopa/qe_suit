@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 
-@Url("${interop.web.erogazione-e-service}")
+@Url("${interop.web.producer-e-service-list}")
 public interface ProducerEServiceListPage extends Page {
 
     @XPath(".//h1[normalize-space(.)='I miei e-service']")
