@@ -17,9 +17,9 @@ public interface ProducerEServiceDetailPage extends Page {
 
     @Override
     default void assertLoaded() {
-        Assertions.assertThat(breadcrumbs().getLastItemText())
-                .as("Breadcrumbs last item text")
-                .isEqualTo("Visualizza e-service");
+        Assertions.assertThat(breadcrumbs().items().stream().map(Readable::read).toList())
+                .as("Breadcrumbs")
+                .containsExactly("Erogazione", "I miei e-service", "Visualizza e-service");
         pageTitle().readAndAssert(name -> Assertions.assertThat(name)
                 .as("Page title is not blank")
                 .isNotBlank());
