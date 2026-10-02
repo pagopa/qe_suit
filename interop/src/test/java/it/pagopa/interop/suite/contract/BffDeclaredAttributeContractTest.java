@@ -6,42 +6,30 @@ import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.common.journey.application.InteropJourney;
-import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
-import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.TestFactory;
+import it.pagopa.interop.suite.AbstractBffAttributeTest;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-public class BffDeclaredAttributeContractTest {
-
-    private final ApiClient apiClient;
-    private final InteropHttpContractValidator httpContractValidator;
-    private final BffAttributeRequestFactory requestFactory;
+public class BffDeclaredAttributeContractTest extends AbstractBffAttributeTest {
 
     public BffDeclaredAttributeContractTest(
             ApiClient apiClient,
-            InteropHttpContractValidator httpContractValidator,
+            @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
+            InteropJourney interopJourney,
             BffAttributeRequestFactory requestFactory
     ) {
-        this.apiClient = apiClient;
-        this.httpContractValidator = httpContractValidator;
-        this.requestFactory = requestFactory;
+        super(apiClient, httpContractValidator, interopJourney, requestFactory);
     }
 
-    @TestFactory
-    Stream<DynamicTest> createDeclaredAttribute() {
-        return httpContractValidator
-                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
-                .apiCall(() -> apiClient.attributes().createDeclaredAttribute())
-                .payload(requestFactory::creationRequest)
-                .tests();
+    @Override
+    protected Supplier<?> createAttributeImpl() {
+        return () -> apiClient.attributes().createDeclaredAttribute();
     }
 }
 

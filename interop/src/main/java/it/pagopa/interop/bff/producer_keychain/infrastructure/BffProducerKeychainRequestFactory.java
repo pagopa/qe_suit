@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.producer_keychain.infrastructure;
 
-import it.pagopa.interop.bff.client.application.BffClientKeyCreationCommand;
+import it.pagopa.interop.bff.producer_keychain.application.BffProducerKeyCreationCommand;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSeed;
@@ -27,8 +27,8 @@ public class BffProducerKeychainRequestFactory {
     }
 
     public KeySeed keyCreationRequest() {
-        BffClientKeyCreationCommand command = new BffClientKeyCreationCommand();
-        command.randomClientKey();
+        BffProducerKeyCreationCommand command = new BffProducerKeyCreationCommand();
+        command.randomProducerKey();
         return command.getKeySeed();
     }
 }

@@ -9,19 +9,23 @@ import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDaysSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import lombok.RequiredArgsConstructor;
+import org.instancio.Instancio;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.Optional;
 
 import static it.pagopa.interop.common.eservice.domain.EServiceDescriptorState.PUBLISHED;
+import static org.instancio.Select.field;
 
 @Service
 @RequiredArgsConstructor
@@ -93,6 +97,17 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
                 )
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getEServiceDescriptor(eServiceRef, descriptorRef))
+                .get();
+    }
+
+    @Override
+    public void archiveDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays) {
+        GracePeriodDaysSeed payload = Instancio.of(GracePeriodDaysSeed.class)
+                .set(field(GracePeriodDaysSeed::getGracePeriodDays), it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays.fromValue(gracePeriodDays.getDays()))
+                .create();
+
+        restClient.scheduleArchiveEserviceDescriptor(eServiceRef.id(), descriptorRef.id(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
     }
 
