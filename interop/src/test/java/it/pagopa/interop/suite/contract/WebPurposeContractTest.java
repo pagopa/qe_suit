@@ -46,12 +46,41 @@ public class WebPurposeContractTest {
                         .on(ProducerPurposeListPage.class)
                         .tests(Stream.of(new WebScenario<>(
                                 "finalità ricevute visibili all'utente " + role.name() + " del Comune di Milano",
-                                page -> {},
+                                page -> {
+                                },
                                 page -> {
                                     page.purposeHeader().readAndAssert("Finalità");
                                     page.consumerHeader().readAndAssert("Fruitore");
                                     page.stateHeader().readAndAssert("Stato finalità");
                                 }
+                        ))));
+    }
+
+    @TestFactory
+    Stream<DynamicTest> shouldShowPurposeDetailToProducer() {
+        Tenant producer = Tenant.COMUNE_DI_MILANO;
+        Tenant consumer = Tenant.PAGO_PA;
+        InteropJourney setup = interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE);
+
+        Agreement agreement = setup.get(Agreement.class);
+        Purpose purpose = setup.linkPurpose(PurposeVersionState.ACTIVE).get(Purpose.class);
+
+        Assertions.assertThat(purpose.getEserviceId()).isEqualTo(agreement.getEserviceId());
+        Assertions.assertThat(purpose.getConsumerId()).isEqualTo(agreement.getConsumerId());
+
+        return Stream.of(UserRole.API, UserRole.ADMIN)
+                .flatMap(role -> webContractValidator
+                        .as(User.getTenantUser(producer, role), producer)
+                        .on(ProducerPurposeDetailPage.class, purpose.getId().toString())
+                        .tests(Stream.of(new WebScenario<>(
+                                "finalità ricevuta visibile all'utente " + role.name() + " del Comune di Milano",
+                                page -> {
+                                },
+                                page -> page.pageTitle().readAndAssert(purpose.getTitle())
                         ))));
     }
 }
