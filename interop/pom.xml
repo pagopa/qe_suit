@@ -64,6 +64,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+
+            <dependency>
+                <groupId>com.github.javaparser</groupId>
+                <artifactId>javaparser-core</artifactId>
+                <version>3.26.3</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

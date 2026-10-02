@@ -1,10 +1,13 @@
 package it.pagopa.interop.common.eservice.application;
 
+import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -52,9 +55,11 @@ public class EServiceDescriptorUseCase {
         return updateDescriptor(eService, descriptor, command);
     }
 
-    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor){
-        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
-        EServiceDescriptor updatedDescriptor = updateDescriptor(eService, descriptor, command);
+    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand... command){
+        if (command.length == 0)
+            command = new UpdateEServiceDescriptorCommand[] { requestFactory.defaultUpdateDescriptorCommand() };
+
+        EServiceDescriptor updatedDescriptor = updateDescriptor(eService, descriptor, command[0]);
 
         return linkOpenApiInterface(eService, updatedDescriptor, "assets/origin-interface.yaml");
     }
