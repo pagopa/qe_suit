@@ -24,10 +24,21 @@ url:
     cittadino:
       base: https://cittadini.uat.notifichedigitali.it
       notifiche: ${url.notifiche.cittadino.base}/notifiche
+      notifiche-dettaglio: ${url.notifiche.cittadino.base}/notifiche/${iun}/dettaglio
+      notifiche-dettaglio-timeline: ${url.notifiche.cittadino.base}/notifiche/${iun}/dettaglio/timeline
       recapiti: ${url.notifiche.cittadino.base}/recapiti
+      recapiti-domicilio-digitale-attivazione: ${url.notifiche.cittadino.base}/recapiti/domicilio-digitale/attivazione
       deleghe: ${url.notifiche.cittadino.base}/deleghe
       add-deleghe: ${url.notifiche.cittadino.base}/deleghe/nuova
       app-status: ${url.notifiche.cittadino.base}/app-status
+      onboarding: ${url.notifiche.cittadino.base}/onboarding
+      onboarding-domicilio-digitale: ${url.notifiche.cittadino.base}/onboarding/domicilio-digitale
+      onboarding-domicilio-avvisi: ${url.notifiche.cittadino.base}/onboarding/avvisi
+      onboarding-domicilio-io: ${url.notifiche.cittadino.base}/onboarding/io
+      informativa-privacy: ${url.notifiche.cittadino.base}/informativa-privacy
+      termini-di-servizio: ${url.notifiche.cittadino.base}/termini-di-servizio
+      termini-di-servizio-sercq-send: ${url.notifiche.cittadino.base}/termini-di-servizio/sercq-send
+      assistenza: ${url.notifiche.cittadino.base}/assistenza
     persona-giuridica:
       base: https://imprese.uat.notifichedigitali.it
       notifiche: ${url.notifiche.persona-giuridica.base}/notifiche

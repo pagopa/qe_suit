@@ -6,6 +6,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.send.web.login.infrastructure.page.DowntimeItem;
+import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Chip;
 import it.pagopa.send.web.notification_details.infrastructure.suit.NotificationDetailsPage;
 import it.pagopa.send.web.notification_details.infrastructure.suit.section.AttachmentSection;
@@ -22,6 +23,35 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @Url("about:blank")
 public interface NotificationDetailsPFPage extends NotificationDetailsPage {
+
+    @XPath("//*[@data-testid=\"breadcrumb-root-button\"]")
+    Button notificationsBreadcrumb();
+
+    @XPath("//*[@data-testid=\"titleBox\"]")
+    Readable<String> title();
+
+    @XPath("//*[@data-testid=\"NotificationDetailTimeline\"]//button[normalize-space()=\"Vai al dettaglio\"]")
+    Button timelineDetailsButton();
+
+    @XPath("//main")
+    NotificationTimelinePFPage notificationTimeline();
+
+    // labels
+
+    @XPath("//*[@data-testid=\"breadcrumb-root-button\"]/ancestor::ol/li[last()]")
+    Readable<String> currentBreadcrumb();
+
+    @XPath("//p[contains(normalize-space(),\"depositata il giorno\")]/preceding-sibling::span[1]")
+    Readable<String> sender();
+
+    @XPath("//p[contains(normalize-space(),\"depositata il giorno\")]")
+    Readable<String> depositDate();
+
+    @XPath("//p[normalize-space()=\"Codice IUN\"]")
+    Readable<String> iunLabel();
+
+    @XPath("//p[normalize-space()=\"Codice IUN\"]/following-sibling::p[1]")
+    Readable<String> iun();
 
     @XPath("//*[@id=\"title-of-page\"]")
     Chip fullPecMessage();
@@ -160,5 +190,18 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
     FacSimileSection facsimileSection();
 
     DowntimeSection downtimeSection();
+
+    @Override
+    default void assertLoaded() {
+        notificationsBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("In arrivo"));
+        title().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
+
+        // labels
+        currentBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(title().read()));
+        sender().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
+        depositDate().readAndAssert(h -> Assertions.assertThat(h).matches(".*depositata il giorno \\d{2}/\\d{2}/\\d{4}"));
+        iunLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Codice IUN"));
+        iun().readAndAssert(h -> Assertions.assertThat(h).matches("[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-\\d{6}-[A-Z]-[A-Z0-9]"));
+    }
 
 }

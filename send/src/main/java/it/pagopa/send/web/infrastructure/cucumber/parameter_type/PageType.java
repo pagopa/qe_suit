@@ -15,7 +15,16 @@ import it.pagopa.send.web.mittente.infrastructure.page.StatisticsPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AddressPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AppStatusPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DelegationsPFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.DigitalDomicileActivationPFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.NewDelegationPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationPFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationTimelinePFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingAlertsPFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingDigitalDomicilePFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingIoPFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.SercqTermsOfServicePFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.SupportPFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.TermsOfServicePFPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.AddressPGPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.ApiIntegrationPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.DelegatedNotificationPage;
@@ -49,7 +58,16 @@ public class PageType {
         ADDRESS_PF("AddressPF", AddressPFPage.class),
         APP_STATUS_PF("AppStatusPF", AppStatusPFPage.class),
         DELEGATIONS_PF("DelegationsPF", DelegationsPFPage.class),
+        NEW_DELEGATION_PF("NewDelegationPF", NewDelegationPFPage.class),
+        DIGITAL_DOMICILE_ACTIVATION_PF("DigitalDomicileActivationPF", DigitalDomicileActivationPFPage.class),
         NOTIFICATION_PF("NotificationPF", NotificationPFPage.class),
+        SUPPORT_PF("SupportPF", SupportPFPage.class),
+        NOTIFICATION_TIMELINE_PF("NotificationTimelinePF", NotificationTimelinePFPage.class),
+        ONBOARDING_DIGITAL_DOMICILE_PF("OnboardingDigitalDomicilePF", OnboardingDigitalDomicilePFPage.class),
+        ONBOARDING_ALERTS_PF("OnboardingAlertsPF", OnboardingAlertsPFPage.class),
+        ONBOARDING_IO_PF("OnboardingIoPF", OnboardingIoPFPage.class),
+        TERMS_OF_SERVICE_PF("TermsOfServicePF", TermsOfServicePFPage.class),
+        SERCQ_TERMS_OF_SERVICE_PF("SercqTermsOfServicePF", SercqTermsOfServicePFPage.class),
         CONFIGURE_ADDRESS_SEND_PAGE("ConfigureAddressSendPage",ConfigureAddressSendPage .class);
 
         private final String pageName;
