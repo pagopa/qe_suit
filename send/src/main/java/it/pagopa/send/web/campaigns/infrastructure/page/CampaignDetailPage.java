@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Url("${url.notifiche.mittente.campaigns}/${campaignId}#selfCareToken=${token.mittente}")
+@Url("${url.notifiche.mittente.campaigns}/${campaignId}#selfCareToken=${selfCareToken}")
 public interface CampaignDetailPage extends Page {
     @XPath("//*[@data-testid=\"titleBox\"]")
     Readable<String> header();

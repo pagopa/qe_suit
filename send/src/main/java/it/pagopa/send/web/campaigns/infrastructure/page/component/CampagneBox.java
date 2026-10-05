@@ -5,8 +5,7 @@ import it.frontend.e2e.framework.web.domain.Component;
 
 import java.util.List;
 
-@XPath("//div[contains(@class,'MuiBox-root')]")
+@XPath(".//div[contains(@class,'MuiBox-root')]")
 public interface CampagneBox extends Component {
-
     List<CampagneElement> elements();
 }
