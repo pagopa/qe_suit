@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -32,6 +33,20 @@ public class InformalDeliveryRestClient {
                 .post("/informal/delivery/v1/requests");
 
         log.info("Risposta creazione informal request: status={}, body={}", response.getStatusCode(), response.getBody().asString());
+        return response;
+    }
+
+    public Response preloadAttachments(String apiKey, List<Map<String, Object>> requests) {
+        log.info("Invio richiesta preload allegati informal a {}/delivery/v1/attachments/preload", baseUrl);
+        Response response = RestAssured.given()
+                .baseUri(baseUrl)
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
+                .header("x-api-key", apiKey)
+                .body(requests)
+                .post("/delivery/v1/attachments/preload");
+
+        log.info("Risposta preload allegati informal: status={}, body={}", response.getStatusCode(), response.getBody().asString());
         return response;
     }
 }

@@ -1,7 +1,7 @@
 package it.pagopa.send.common.informal_notification.infrastructure.factory;
 
 import it.pagopa.send.bff.infrastructure.DebtPositionService;
-import it.pagopa.send.bff.infrastructure.DocumentPreloadService;
+import it.pagopa.send.bff.informal_notification.infrastructure.InformalDocumentPreloadService;
 import it.pagopa.send.bff.infrastructure.PaGroupService;
 import it.pagopa.send.bff.informal_notification.infrastructure.DeliveryPushMessagesRestClient;
 import it.pagopa.send.common.infrastructure.RandomNumericGenerator;
@@ -38,7 +38,7 @@ public class InformalNotificationRequestFactory {
 
     private final InformalNotificationDefaultsLoader defaultsLoader;
     private final DebtPositionService debtPositionService;
-    private final DocumentPreloadService documentPreloadService;
+    private final InformalDocumentPreloadService informalDocumentPreloadService;
     private final PaGroupService paGroupService;
     private final DeliveryPushMessagesRestClient deliveryPushMessagesRestClient;
 
@@ -134,16 +134,12 @@ public class InformalNotificationRequestFactory {
     }
 
     private DocumentRef buildAttachment(String preloadIdx) {
-        PreloadedDocument document = documentPreloadService.preloadTestPdf(preloadIdx);
+        PreloadedDocument document = informalDocumentPreloadService.preloadTestPdf(preloadIdx);
         return new DocumentRef(document.key(), document.versionToken(), document.sha256(), ATTACHMENT_CONTENT_TYPE);
     }
 
     private DocumentRef buildCommunicationAttachment(String preloadIdx) {
-        PreloadedDocument document = documentPreloadService.preloadTestPdf(preloadIdx);
-        String key = document.key();
-        if (key != null && key.startsWith("PN_NOTIFICATION_ATTACHMENTS")) {
-            key = key.replaceFirst("PN_NOTIFICATION_ATTACHMENTS", "PN_COMMUNICATIONS_ATTACHMENT");
-        }
-        return new DocumentRef(key, document.versionToken(), document.sha256(), ATTACHMENT_CONTENT_TYPE);
+        PreloadedDocument document = informalDocumentPreloadService.preloadTestPdf(preloadIdx);
+        return new DocumentRef(document.key(), document.versionToken(), document.sha256(), ATTACHMENT_CONTENT_TYPE);
     }
 }
