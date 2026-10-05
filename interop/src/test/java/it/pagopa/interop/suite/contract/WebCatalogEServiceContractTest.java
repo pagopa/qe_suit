@@ -60,6 +60,7 @@ public class WebCatalogEServiceContractTest {
         private boolean customThresholdToCertifiedAttributeForConsumer;
         private boolean customThresholdToCertifiedAttributeForDelegator;
         private boolean shouldSeeCustomThresholds;
+        private boolean isProducerThePortalUser;
     }
 
     @TestFactory
@@ -70,7 +71,8 @@ public class WebCatalogEServiceContractTest {
                 false,
                 true,
                 false,
-                true
+                true,
+                false
         );
         return shouldSeeOrNotCustomThresholdsForYourTenant(params);
     }
@@ -83,7 +85,8 @@ public class WebCatalogEServiceContractTest {
                 false,
                 true,
                 false,
-                true
+                true,
+                false
         );
         return shouldSeeOrNotCustomThresholdsForYourTenant(params);
     }
@@ -91,6 +94,7 @@ public class WebCatalogEServiceContractTest {
     @TestFactory
     Stream<DynamicTest> checkCustomThresholdsOnCatalog3() {
         CustomThresholdTestParams params = new CustomThresholdTestParams(
+                false,
                 false,
                 false,
                 false,
@@ -109,6 +113,7 @@ public class WebCatalogEServiceContractTest {
                 false,
                 false,
                 false,
+                false,
                 false
         );
         return shouldSeeOrNotCustomThresholdsForYourTenant(params);
@@ -119,6 +124,7 @@ public class WebCatalogEServiceContractTest {
         CustomThresholdTestParams params = new CustomThresholdTestParams(
                 false,
                 true,
+                false,
                 false,
                 false,
                 false,
@@ -135,6 +141,7 @@ public class WebCatalogEServiceContractTest {
                 false,
                 true,
                 false,
+                false,
                 false
         );
         return shouldSeeOrNotCustomThresholdsForYourTenant(params);
@@ -148,20 +155,93 @@ public class WebCatalogEServiceContractTest {
                 true,
                 true,
                 true,
-                true
+                true,
+                false
         );
         return shouldSeeOrNotCustomThresholdsForOtherTenant(params);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> checkCustomThresholdsOnCatalog8() {
+        CustomThresholdTestParams params = new CustomThresholdTestParams(
+                true,
+                true,
+                true,
+                true,
+                true,
+                true,
+                false
+        );
+        return shouldSeeOrNotCustomThresholdsForOtherTenant(params);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> checkCustomThresholdsOnCatalog9() {
+        CustomThresholdTestParams params = new CustomThresholdTestParams(
+                false,
+                true,
+                false,
+                true,
+                false,
+                true,
+                false
+        );
+        return shouldSeeOrNotCustomThresholdsForOtherTenant(params);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> checkCustomThresholdsOnCatalog10() {
+        CustomThresholdTestParams params = new CustomThresholdTestParams(
+                true,
+                true,
+                false,
+                true,
+                false,
+                true,
+                false
+        );
+        return shouldSeeOrNotCustomThresholdsForOtherTenant(params);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> checkCustomThresholdsOnCatalog11() {
+        CustomThresholdTestParams params = new CustomThresholdTestParams(
+                false,
+                true,
+                false,
+                true,
+                false,
+                false,
+                true
+        );
+        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> checkCustomThresholdsOnCatalog12() {
+        CustomThresholdTestParams params = new CustomThresholdTestParams(
+                true,
+                true,
+                false,
+                true,
+                false,
+                false,
+                true
+        );
+        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
     }
 
     private Stream<DynamicTest> shouldSeeOrNotCustomThresholdsForYourTenant(CustomThresholdTestParams params) {
         int consumerThreshold = 20;
         int totalThreshold = 40;
         int customThresholdForYourTenant = 30;
+        Tenant producer = Tenant.COMUNE_DI_MILANO;
         Tenant consumer = Tenant.COMUNE_DI_POZZALLO;
+        Tenant portalUser = (params.isProducerThePortalUser) ? producer : consumer;
 
         TenantRef consumerTenantRef = TenantRef.of(consumer.getOrganizationId());
         if (params.certifiedAttributeToConsumer) { interopJourney
-                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .withProducer(producer, UserRole.ADMIN)
                 .createCertifiedAttribute();
         }
 
@@ -189,7 +269,7 @@ public class WebCatalogEServiceContractTest {
         updateCommand.attributes(attributesSeed);
 
         interopJourney
-                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .withProducer(producer, UserRole.ADMIN)
                 .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
                 .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
 
@@ -197,7 +277,7 @@ public class WebCatalogEServiceContractTest {
 
         EService eService = entityStore.getLastOrThrow(EService.class);
         return webContractValidator
-                .as(User.getTenantAdmin(consumer), consumer)
+                .as(User.getTenantAdmin(portalUser), portalUser)
                 .on(EServiceDetailPage.class, eService.getId().toString(), eService.getActiveDescriptor().getId().toString())
                 .tests(Stream.of(new WebScenario<>(
                         "Should see correct values for thresholds and custom thresholds",
@@ -224,17 +304,18 @@ public class WebCatalogEServiceContractTest {
         int totalThreshold = 40;
         int customThresholdForDelegator = 35;
         int customThresholdForDelegatee = 30;
+        Tenant producer = Tenant.COMUNE_DI_MILANO;
         Tenant delegator = Tenant.COMUNE_DI_COMUN_NUOVO; // Fruitore delegante
         Tenant delegatee = Tenant.COMUNE_DI_POZZALLO;    // Fruitore delegato
+        Tenant portalUser = (params.isProducerThePortalUser) ? producer : delegatee;
 
         TenantRef delegatorTenantRef = TenantRef.of(delegator.getOrganizationId());
         TenantRef delegateeTenantRef = TenantRef.of(delegatee.getOrganizationId());
 
-        if (params.certifiedAttributeToConsumer) { interopJourney
-                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
                 .createCertifiedAttribute()  // Per delegante
                 .createCertifiedAttribute(); // Per delegato
-        }
 
         EServiceCreationCommand eServiceCommand = new BffEServiceCreationCommand()
                 .name("e-service-" + Instant.now().getEpochSecond())
@@ -262,7 +343,7 @@ public class WebCatalogEServiceContractTest {
         updateCommand.attributes(attributesSeed);
 
         interopJourney
-                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .withProducer(producer, UserRole.ADMIN)
                 .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
                 .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
 
@@ -277,7 +358,7 @@ public class WebCatalogEServiceContractTest {
                 .approveConsumerDelegation(entityStore.getLastOrThrow(Delegation.class).getId());
 
         return webContractValidator
-                .as(User.getTenantAdmin(delegatee), delegatee)
+                .as(User.getTenantAdmin(portalUser), portalUser)
                 .on(EServiceDetailPage.class, eService.getId().toString(), eService.getActiveDescriptor().getId().toString())
                 .tests(Stream.of(new WebScenario<>(
                         "Should see correct values for thresholds and custom thresholds",
@@ -290,6 +371,8 @@ public class WebCatalogEServiceContractTest {
                             if (params.shouldSeeCustomThresholds) {
                                 Assertions.assertThat(page.customApiCallsThresholdTitle().read()).as("Subsection title").isNotBlank();
                                 assertLabelEqualsTo(page.yourTenantDailyThreshold(), String.valueOf(customThresholdForDelegatee));
+                                if (params.certifiedAttributeToDelegator)
+                                    assertLabelEqualsTo(page.otherTenantDailyThreshold(), String.valueOf(customThresholdForDelegator));
                             } else {
                                 Assertions.assertThat(page.customApiCallsThresholdTitle().get().isPresent()).isFalse();
                                 Assertions.assertThat(page.yourTenantDailyThreshold().get().isPresent()).isFalse();
