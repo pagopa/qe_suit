@@ -7,6 +7,7 @@ import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.*;
@@ -33,6 +34,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -180,8 +182,10 @@ public class WebCatalogEServiceContractTest {
                 .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
 
         DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed();
+        List<DescriptorAttributeSeed> requirement = new ArrayList<>();
         if (params.customThresholdToCertifiedAttributeForConsumer) // Fruitore
-            addNthAttributeWithCustomThresholdToAttributesSeed(-1, customThresholdForYourTenant, attributesSeed);
+            addNthAttributeWithCustomThresholdToAttributeRequirement(-1, customThresholdForYourTenant, requirement);
+        attributesSeed.addCertifiedItem(requirement);
         updateCommand.attributes(attributesSeed);
 
         interopJourney
@@ -220,8 +224,8 @@ public class WebCatalogEServiceContractTest {
         int totalThreshold = 40;
         int customThresholdForDelegator = 35;
         int customThresholdForDelegatee = 30;
-        Tenant delegator = Tenant.COMUNE_DI_COMUN_NUOVO;
-        Tenant delegatee = Tenant.COMUNE_DI_POZZALLO; // Consumer
+        Tenant delegator = Tenant.COMUNE_DI_COMUN_NUOVO; // Fruitore delegante
+        Tenant delegatee = Tenant.COMUNE_DI_POZZALLO;    // Fruitore delegato
 
         TenantRef delegatorTenantRef = TenantRef.of(delegator.getOrganizationId());
         TenantRef delegateeTenantRef = TenantRef.of(delegatee.getOrganizationId());
@@ -249,10 +253,12 @@ public class WebCatalogEServiceContractTest {
                 .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
 
         DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed();
+        List<DescriptorAttributeSeed> requirement = new ArrayList<>();
         if (params.customThresholdToCertifiedAttributeForDelegator) // Fruitore delegante
-            addNthAttributeWithCustomThresholdToAttributesSeed(1, customThresholdForDelegator, attributesSeed);
+            addNthAttributeWithCustomThresholdToAttributeRequirement(1, customThresholdForDelegator, requirement);
         if (params.customThresholdToCertifiedAttributeForConsumer)  // Fruitore delegato
-            addNthAttributeWithCustomThresholdToAttributesSeed(-1, customThresholdForDelegatee, attributesSeed);
+            addNthAttributeWithCustomThresholdToAttributeRequirement(-1, customThresholdForDelegatee, requirement);
+        attributesSeed.addCertifiedItem(requirement);
         updateCommand.attributes(attributesSeed);
 
         interopJourney
@@ -264,6 +270,12 @@ public class WebCatalogEServiceContractTest {
         if (params.certifiedAttributeToConsumer) interopJourney.assignCertifiedAttribute(delegateeTenantRef);
 
         EService eService = entityStore.getLastOrThrow(EService.class);
+        interopJourney
+                .withConsumer(delegator, UserRole.ADMIN)
+                .createConsumerDelegation(delegateeTenantRef, eService.getRef())
+                .withConsumer(delegatee, UserRole.ADMIN)
+                .approveConsumerDelegation(entityStore.getLastOrThrow(Delegation.class).getId());
+
         return webContractValidator
                 .as(User.getTenantAdmin(delegatee), delegatee)
                 .on(EServiceDetailPage.class, eService.getId().toString(), eService.getActiveDescriptor().getId().toString())
@@ -287,22 +299,20 @@ public class WebCatalogEServiceContractTest {
                 )));
     }
 
-    private void addNthAttributeWithCustomThresholdToAttributesSeed(int nthAttribute, int customThreshold, DescriptorAttributesSeed seed) {
-        if (customThreshold > 0) {
-            DescriptorAttributeSeed certifiedItem = new DescriptorAttributeSeed();
-            Attribute attribute;
-            if (nthAttribute == 1) {
-                attribute = entityStore.getFirstOrThrow(Attribute.class);
-            } else if (nthAttribute == -1) {
-                attribute = entityStore.getLastOrThrow(Attribute.class);
-            } else {
-                throw new IllegalArgumentException("Non supported Nth attribute value: " + nthAttribute);
-            }
-            certifiedItem.setId(attribute.getId());
-            certifiedItem.setDailyCallsPerConsumer(customThreshold);
-            certifiedItem.setExplicitAttributeVerification(false);
-            seed.addCertifiedItem(List.of(certifiedItem));
+    private void addNthAttributeWithCustomThresholdToAttributeRequirement(int nthAttribute, int customThreshold, List<DescriptorAttributeSeed> requirement) {
+        DescriptorAttributeSeed attributeSeed = new DescriptorAttributeSeed();
+        Attribute attribute;
+        if (nthAttribute == 1) {
+            attribute = entityStore.getFirstOrThrow(Attribute.class);
+        } else if (nthAttribute == -1) {
+            attribute = entityStore.getLastOrThrow(Attribute.class);
+        } else {
+            throw new IllegalArgumentException("Non supported Nth attribute value: " + nthAttribute);
         }
+        attributeSeed.setId(attribute.getId());
+        attributeSeed.setDailyCallsPerConsumer(customThreshold);
+        attributeSeed.setExplicitAttributeVerification(false);
+        requirement.add(attributeSeed);
     }
 
     private void assertLabelEqualsTo(
