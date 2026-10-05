@@ -3,13 +3,11 @@ package it.pagopa.send.bff.campaigns.infrastructure;
 import it.pagopa.infrastructure.template.RestClient;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
-import it.pagopa.send.generated.openapi.clients.bff.api.NotificationSentApi;
 import it.pagopa.send.generated.openapi.clients.bff.model.*;
 import it.pagopa.send.generated.openapi.clients.sender.informal.bff.api.SenderInformalNotificationsApi;
 import it.pagopa.send.generated.openapi.clients.sender.informal.bff.model.BffCampaignSearchResponseV1;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
 import java.util.function.Function;
 
 @Component
