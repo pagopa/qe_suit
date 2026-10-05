@@ -22,7 +22,10 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttribute
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDetailPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -45,14 +48,17 @@ public class WebCatalogEServiceContractTest {
     private final InteropJourney interopJourney;
     private final EntityStore entityStore;
 
-    public record CustomThresholdTestParams(
-            boolean eServiceAsyncExchange,
-            boolean certifiedAttributeToConsumer,
-            boolean certifiedAttributeToDelegator,
-            boolean customThresholdToCertifiedAttributeForConsumer,
-            boolean customThresholdToCertifiedAttributeForDelegator,
-            boolean shouldSeeCustomThresholds
-    ) {}
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    public class CustomThresholdTestParams {
+        private boolean eServiceAsyncExchange;
+        private boolean certifiedAttributeToConsumer;
+        private boolean certifiedAttributeToDelegator;
+        private boolean customThresholdToCertifiedAttributeForConsumer;
+        private boolean customThresholdToCertifiedAttributeForDelegator;
+        private boolean shouldSeeCustomThresholds;
+    }
 
     @TestFactory
     Stream<DynamicTest> checkCustomThresholdsOnCatalog1() {
