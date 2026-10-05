@@ -1,6 +1,5 @@
 package it.pagopa.interop.suite.contract;
 
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.infrastructure.suit.component.Label;
@@ -49,77 +48,104 @@ public class WebCatalogEServiceContractTest {
     public record CustomThresholdTestParams(
             boolean eServiceAsyncExchange,
             boolean certifiedAttributeToConsumer,
-            boolean customThresholdToCertifiedAttribute,
+            boolean certifiedAttributeToDelegator,
+            boolean customThresholdToCertifiedAttributeForConsumer,
+            boolean customThresholdToCertifiedAttributeForDelegator,
             boolean shouldSeeCustomThresholds
     ) {}
 
     @TestFactory
-    Stream<DynamicTest> checkCustomThresholdForYourTenant1() {
+    Stream<DynamicTest> checkCustomThresholdsOnCatalog1() {
         CustomThresholdTestParams params = new CustomThresholdTestParams(
                 false,
+                true,
+                false,
+                true,
+                false,
+                true
+        );
+        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> checkCustomThresholdsOnCatalog2() {
+        CustomThresholdTestParams params = new CustomThresholdTestParams(
+                true,
+                true,
+                false,
+                true,
+                false,
+                true
+        );
+        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> checkCustomThresholdsOnCatalog3() {
+        CustomThresholdTestParams params = new CustomThresholdTestParams(
+                false,
+                false,
+                false,
+                false,
+                false,
+                false
+        );
+        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> checkCustomThresholdsOnCatalog4() {
+        CustomThresholdTestParams params = new CustomThresholdTestParams(
+                true,
+                false,
+                false,
+                false,
+                false,
+                false
+        );
+        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> checkCustomThresholdsOnCatalog5() {
+        CustomThresholdTestParams params = new CustomThresholdTestParams(
+                false,
+                true,
+                false,
+                false,
+                false,
+                false
+        );
+        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> checkCustomThresholdsOnCatalog6() {
+        CustomThresholdTestParams params = new CustomThresholdTestParams(
+                true,
+                true,
+                false,
+                true,
+                false,
+                false
+        );
+        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> checkCustomThresholdsOnCatalog7() {
+        CustomThresholdTestParams params = new CustomThresholdTestParams(
+                false,
+                true,
+                true,
                 true,
                 true,
                 true
         );
-        return shouldSeeOrNotCustomThresholdForYourTenant(params);
+        return shouldSeeOrNotCustomThresholdsForOtherTenant(params);
     }
 
-    @TestFactory
-    Stream<DynamicTest> checkCustomThresholdForYourTenant2() {
-        CustomThresholdTestParams params = new CustomThresholdTestParams(
-                true,
-                true,
-                true,
-                true
-        );
-        return shouldSeeOrNotCustomThresholdForYourTenant(params);
-    }
-
-    @TestFactory
-    Stream<DynamicTest> checkCustomThresholdForYourTenant3() {
-        CustomThresholdTestParams params = new CustomThresholdTestParams(
-                false,
-                false,
-                false,
-                false
-        );
-        return shouldSeeOrNotCustomThresholdForYourTenant(params);
-    }
-
-    @TestFactory
-    Stream<DynamicTest> checkCustomThresholdForYourTenant4() {
-        CustomThresholdTestParams params = new CustomThresholdTestParams(
-                true,
-                false,
-                false,
-                false
-        );
-        return shouldSeeOrNotCustomThresholdForYourTenant(params);
-    }
-
-    @TestFactory
-    Stream<DynamicTest> checkCustomThresholdForYourTenant5() {
-        CustomThresholdTestParams params = new CustomThresholdTestParams(
-                false,
-                true,
-                false,
-                false
-        );
-        return shouldSeeOrNotCustomThresholdForYourTenant(params);
-    }
-
-    @TestFactory
-    Stream<DynamicTest> checkCustomThresholdForYourTenant6() {
-        CustomThresholdTestParams params = new CustomThresholdTestParams(
-                true,
-                true,
-                true,
-                false
-        );
-        return shouldSeeOrNotCustomThresholdForYourTenant(params);
-    }
-
-    private Stream<DynamicTest> shouldSeeOrNotCustomThresholdForYourTenant(CustomThresholdTestParams params) {
+    private Stream<DynamicTest> shouldSeeOrNotCustomThresholdsForYourTenant(CustomThresholdTestParams params) {
         int consumerThreshold = 20;
         int totalThreshold = 40;
         int customThresholdForYourTenant = 30;
@@ -148,15 +174,8 @@ public class WebCatalogEServiceContractTest {
                 .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
 
         DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed();
-
-        if (params.customThresholdToCertifiedAttribute) {
-            DescriptorAttributeSeed certifiedItem = new DescriptorAttributeSeed();
-            Attribute attribute = entityStore.getLastOrThrow(Attribute.class);
-            certifiedItem.setId(attribute.getId());
-            certifiedItem.setDailyCallsPerConsumer(customThresholdForYourTenant);
-            certifiedItem.setExplicitAttributeVerification(false);
-            attributesSeed.addCertifiedItem(List.of(certifiedItem));
-        }
+        if (params.customThresholdToCertifiedAttributeForConsumer) // Fruitore
+            addNthAttributeWithCustomThresholdToAttributesSeed(-1, customThresholdForYourTenant, attributesSeed);
         updateCommand.attributes(attributesSeed);
 
         interopJourney
@@ -164,11 +183,9 @@ public class WebCatalogEServiceContractTest {
                 .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
                 .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
 
-        if (params.certifiedAttributeToConsumer)
-            interopJourney.assignCertifiedAttribute(consumerTenantRef);
+        if (params.certifiedAttributeToConsumer) interopJourney.assignCertifiedAttribute(consumerTenantRef);
 
         EService eService = entityStore.getLastOrThrow(EService.class);
-
         return webContractValidator
                 .as(User.getTenantAdmin(consumer), consumer)
                 .on(EServiceDetailPage.class, eService.getId().toString(), eService.getActiveDescriptor().getId().toString())
@@ -190,6 +207,96 @@ public class WebCatalogEServiceContractTest {
                             }
                         }
                 )));
+    }
+
+    private Stream<DynamicTest> shouldSeeOrNotCustomThresholdsForOtherTenant(CustomThresholdTestParams params) {
+        int consumerThreshold = 20;
+        int totalThreshold = 40;
+        int customThresholdForDelegator = 35;
+        int customThresholdForDelegatee = 30;
+        Tenant delegator = Tenant.COMUNE_DI_COMUN_NUOVO;
+        Tenant delegatee = Tenant.COMUNE_DI_POZZALLO; // Consumer
+
+        TenantRef delegatorTenantRef = TenantRef.of(delegator.getOrganizationId());
+        TenantRef delegateeTenantRef = TenantRef.of(delegatee.getOrganizationId());
+
+        if (params.certifiedAttributeToConsumer) { interopJourney
+                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .createCertifiedAttribute()  // Per delegante
+                .createCertifiedAttribute(); // Per delegato
+        }
+
+        EServiceCreationCommand eServiceCommand = new BffEServiceCreationCommand()
+                .name("e-service-" + Instant.now().getEpochSecond())
+                .description("Primo descrittore")
+                .technology(EServiceTechnology.REST)
+                .mode(EServiceMode.DELIVER)
+                .isAsync(params.eServiceAsyncExchange)
+                .handlePersonalData(false)
+                .isConsumerDelegable(true);
+
+        UpdateEServiceDescriptorCommand updateCommand = new BffUpdateEServiceDescriptorCommand()
+                .dailyCallsPerConsumer(consumerThreshold)
+                .dailyCallsTotal(totalThreshold)
+                .voucherLifespan(60)
+                .audience(List.of("Audience"))
+                .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
+
+        DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed();
+        if (params.customThresholdToCertifiedAttributeForDelegator) // Fruitore delegante
+            addNthAttributeWithCustomThresholdToAttributesSeed(1, customThresholdForDelegator, attributesSeed);
+        if (params.customThresholdToCertifiedAttributeForConsumer)  // Fruitore delegato
+            addNthAttributeWithCustomThresholdToAttributesSeed(-1, customThresholdForDelegatee, attributesSeed);
+        updateCommand.attributes(attributesSeed);
+
+        interopJourney
+                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
+                .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
+
+        if (params.certifiedAttributeToDelegator) interopJourney.assignCertifiedAttribute(delegatorTenantRef);
+        if (params.certifiedAttributeToConsumer) interopJourney.assignCertifiedAttribute(delegateeTenantRef);
+
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        return webContractValidator
+                .as(User.getTenantAdmin(delegatee), delegatee)
+                .on(EServiceDetailPage.class, eService.getId().toString(), eService.getActiveDescriptor().getId().toString())
+                .tests(Stream.of(new WebScenario<>(
+                        "Should see correct values for thresholds and custom thresholds",
+                        page -> {},
+                        page -> {
+                            Assertions.assertThat(page.thresholdsAndAttributesTitle().read()).as("Section title").isNotBlank();
+                            Assertions.assertThat(page.apiCallsThresholdTitle().read()).as("Subsection title").isNotBlank();
+                            assertLabelEqualsTo(page.consumerDailyThreshold(), String.valueOf(consumerThreshold));
+                            assertLabelEqualsTo(page.totalDailyThreshold(), String.valueOf(totalThreshold));
+                            if (params.shouldSeeCustomThresholds) {
+                                Assertions.assertThat(page.customApiCallsThresholdTitle().read()).as("Subsection title").isNotBlank();
+                                assertLabelEqualsTo(page.yourTenantDailyThreshold(), String.valueOf(customThresholdForDelegatee));
+                            } else {
+                                Assertions.assertThat(page.customApiCallsThresholdTitle().get().isPresent()).isFalse();
+                                Assertions.assertThat(page.yourTenantDailyThreshold().get().isPresent()).isFalse();
+                                Assertions.assertThat(page.otherTenantDailyThreshold().get().isPresent()).isFalse();
+                            }
+                        }
+                )));
+    }
+
+    private void addNthAttributeWithCustomThresholdToAttributesSeed(int nthAttribute, int customThreshold, DescriptorAttributesSeed seed) {
+        if (customThreshold > 0) {
+            DescriptorAttributeSeed certifiedItem = new DescriptorAttributeSeed();
+            Attribute attribute;
+            if (nthAttribute == 1) {
+                attribute = entityStore.getFirstOrThrow(Attribute.class);
+            } else if (nthAttribute == -1) {
+                attribute = entityStore.getLastOrThrow(Attribute.class);
+            } else {
+                throw new IllegalArgumentException("Non supported Nth attribute value: " + nthAttribute);
+            }
+            certifiedItem.setId(attribute.getId());
+            certifiedItem.setDailyCallsPerConsumer(customThreshold);
+            certifiedItem.setExplicitAttributeVerification(false);
+            seed.addCertifiedItem(List.of(certifiedItem));
+        }
     }
 
     private void assertLabelEqualsTo(
