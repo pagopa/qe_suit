@@ -1,5 +1,6 @@
 package it.pagopa.interop.architecture;
 
+import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.expr.Expression;
@@ -275,6 +276,9 @@ public class ArchitectureRulesTest {
     @Test
     void api_contract_factory_names_must_match_api_operation_names()
             throws IOException {
+
+        StaticJavaParser.getParserConfiguration()
+                .setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_17);
 
         Path testRoot = Path.of("src/test/java");
         Set<String> violations = new TreeSet<>();
