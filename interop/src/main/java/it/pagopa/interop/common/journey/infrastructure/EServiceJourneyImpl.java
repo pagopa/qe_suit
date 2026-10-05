@@ -55,8 +55,8 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     public EServiceJourneyImpl updateDescriptor(UpdateEServiceDescriptorCommand command, EServiceDescriptorState state) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceDescriptor eServiceDescriptor = eService.getLastDraftDescriptor();
-        eServiceDescriptorUseCase.updateDescriptor(eService, eServiceDescriptor, command);
-        return processLifecycle(eService, eServiceDescriptor, state);
+        EServiceDescriptor updatedDescriptor = eServiceDescriptorUseCase.updateDescriptor(eService, eServiceDescriptor, command);
+        return processLifecycle(eService, updatedDescriptor, state, command);
     }
 
     @Override
@@ -91,13 +91,13 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         return this;
     }
 
-    private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState targetState) {
+    private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState targetState, UpdateEServiceDescriptorCommand... command) {
         entityStore.upsert(eService);
 
         return switch (targetState) {
             case DRAFT -> this;
 
-            case PUBLISHED -> publishPipeline(eService, eServiceDescriptor);
+            case PUBLISHED -> publishPipeline(eService, eServiceDescriptor, command);
 
             // Facilmente estensibile in futuro senza toccare i metodi pubblici:
             // case SUSPENDED -> publishPipeline(eService).suspendPipeline(eService);
@@ -108,8 +108,8 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         };
     }
 
-    private EServiceJourneyImpl publishPipeline(EService eService, EServiceDescriptor eServiceDescriptor) {
-        eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor);
+    private EServiceJourneyImpl publishPipeline(EService eService, EServiceDescriptor eServiceDescriptor, UpdateEServiceDescriptorCommand... command) {
+        eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor, command);
         eServiceDescriptorUseCase.publishDescriptor(eService, eServiceDescriptor);
         return this;
     }

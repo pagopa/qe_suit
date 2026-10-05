@@ -17,4 +17,8 @@ public class Attribute implements Identifiable {
     String description;
     AttributeKind kind;
     Integer group;
+
+    public AttributeRef getRef() {
+        return AttributeRef.of(id);
+    }
 }
