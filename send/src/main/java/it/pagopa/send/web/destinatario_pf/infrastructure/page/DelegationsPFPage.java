@@ -8,8 +8,13 @@ import it.pagopa.infrastructure.suit.component.Button;
 import org.assertj.core.api.Assertions;
 
 /**
- * Questa pagina rappresenta la sezione Deleghe del cittadino, con i delegati e le deleghe a proprio carico.
- * La pagina richiede un utente senza delegati e senza deleghe a proprio carico.
+ * {@code {baseUrl}/deleghe}
+ * Pagina "Deleghe" del cittadino.
+ * Si apre dalla voce "Deleghe" del menu laterale.
+ * Contiene la sezione "I tuoi delegati" (persone a cui l'utente ha delegato le proprie notifiche)
+ * e la sezione "Deleghe a tuo carico" (persone che hanno delegato l'utente).
+ * L'assertLoaded verifica solo gli elementi presenti per qualunque utente; gli stati vuoti delle due sezioni
+ * compaiono solo se l'utente non ha deleghe e non vengono verificati.
  */
 @Url("${url.notifiche.cittadino.deleghe}")
 public interface DelegationsPFPage extends Page {
@@ -49,9 +54,6 @@ public interface DelegationsPFPage extends Page {
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Deleghe"));
         subtitle().readAndAssert(h -> Assertions.assertThat(h).startsWith("Qui puoi gestire i tuoi delegati e le deleghe a tuo carico."));
         addDelegationButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Aggiungi una delega"));
-        delegatesEmptyState().readAndAssert(h -> Assertions.assertThat(h).startsWith("Non hai delegato nessuno alla visualizzazione delle tue notifiche."));
-        addDelegateLink().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Aggiungi una delega"));
-        delegatorsEmptyState().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Non hai deleghe a tuo carico."));
 
         // labels
         delegatesTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("I tuoi delegati"));

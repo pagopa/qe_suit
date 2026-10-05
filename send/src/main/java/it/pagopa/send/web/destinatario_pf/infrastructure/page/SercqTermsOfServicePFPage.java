@@ -7,8 +7,10 @@ import it.frontend.e2e.framework.web.domain.Page;
 import org.assertj.core.api.Assertions;
 
 /**
- * Questa pagina rappresenta i termini e condizioni d'uso del domicilio digitale SERCQ di SEND,
- * il cui testo è caricato da un widget OneTrust.
+ * {@code {baseUrl}/termini-di-servizio/sercq-send}
+ * Pagina dei termini e condizioni d'uso del domicilio digitale SERCQ di SEND.
+ * Si apre dal link "Termini del servizio" nel riepilogo del wizard di attivazione del domicilio digitale.
+ * Il testo è caricato da un widget OneTrust: l'assertLoaded verifica solo il titolo e i titoli delle sezioni.
  */
 @Url("${url.notifiche.cittadino.termini-di-servizio-sercq-send}")
 public interface SercqTermsOfServicePFPage extends Page {

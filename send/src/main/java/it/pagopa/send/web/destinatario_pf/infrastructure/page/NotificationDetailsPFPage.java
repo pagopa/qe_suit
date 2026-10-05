@@ -18,8 +18,12 @@ import org.assertj.core.api.Assertions;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Questa pagina rappresenta la pagina dei dettagli di una notifica per il cittadino, accessibile dal portale delle notifiche.
- * La pagina mostra informazioni dettagliate sulla notifica selezionata.
+ * {@code {baseUrl}/notifiche/<IUN>/dettaglio}
+ * Pagina di dettaglio di una notifica del cittadino.
+ * Si apre dal pulsante "Apri" di una riga della pagina {@code {baseUrl}/notifiche}.
+ * Il contenuto cambia con il tipo di notifica: una notifica a valore legale ha documenti, stato e disservizi,
+ * una comunicazione ha pagamenti e contatti del mittente.
+ * L'assertLoaded verifica solo gli elementi comuni a ogni notifica (breadcrumb, oggetto, mittente, data e IUN).
  */
 @Url("about:blank")
 public interface NotificationDetailsPFPage extends NotificationDetailsPage {

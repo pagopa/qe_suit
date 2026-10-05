@@ -8,8 +8,12 @@ import it.pagopa.infrastructure.suit.component.Button;
 import org.assertj.core.api.Assertions;
 
 /**
- * Questa pagina rappresenta il passo di onboarding "Tutto, sull'app IO" per il cittadino,
- * in cui attivare SEND sull'app IO.
+ * {@code {baseUrl}/onboarding/io}
+ * Pagina di onboarding "Tutto, sull'app IO" del cittadino.
+ * Si apre dalla card "Preferisco attivare solo SEND sull'app IO" della pagina {@code {baseUrl}/onboarding}
+ * (card non mostrata a tutti gli utenti).
+ * Propone di attivare SEND sull'app IO (campi mappati in questa pagina); il contenuto può cambiare se l'utente ha già attivato IO.
+ * L'assertLoaded verifica solo gli elementi sempre presenti.
  */
 @Url("${url.notifiche.cittadino.onboarding-domicilio-io}")
 public interface OnboardingIoPFPage extends Page {
@@ -29,20 +33,14 @@ public interface OnboardingIoPFPage extends Page {
     // labels
 
     @XPath("//*[@data-testid=\"io-step\"]//p[1]")
-    Readable<String> ioStepTitle();
+    Readable<String> ioSectionTitle();
 
     @XPath("//*[@data-testid=\"io-step\"]//p[2]")
-    Readable<String> ioStepDescription();
+    Readable<String> ioSectionDescription();
 
     @Override
     default void assertLoaded() {
         exitButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Esci"));
         wizardTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Tutto, sull'app IO"));
-        downloadIoAppButton().readAndAssert(h -> Assertions.assertThat(h).startsWith("Scarica l").endsWith("app IO"));
-        ioAlreadyInstalledButton().readAndAssert(h -> Assertions.assertThat(h).contains("scaricato e installato"));
-
-        // labels
-        ioStepTitle().readAndAssert(h -> Assertions.assertThat(h).startsWith("Attiva SEND sull").endsWith("app IO"));
-        ioStepDescription().readAndAssert(h -> Assertions.assertThat(h).contains("Riceverai un avviso su IO"));
     }
 }

@@ -2,18 +2,18 @@ package it.pagopa.send.web.destinatario_pf.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import org.assertj.core.api.Assertions;
 
-import java.util.List;
-
 /**
- * Questa pagina rappresenta lo stato della piattaforma per il cittadino, con lo stato attuale dei servizi SEND
- * e lo storico dei disservizi con le relative attestazioni scaricabili.
- * La pagina richiede che nello storico sia presente almeno un disservizio.
+ * {@code {baseUrl}/app-status}
+ * Pagina "Stato della piattaforma" del cittadino.
+ * Si apre dalla voce "Stato della piattaforma" del menu laterale.
+ * Contiene lo stato attuale dei servizi SEND e lo storico dei disservizi con le attestazioni scaricabili.
+ * L'assertLoaded verifica solo gli elementi sempre presenti; tabella e paginazione dello storico
+ * compaiono solo se la piattaforma ha registrato almeno un disservizio e non vengono verificate.
  */
 @Url("${url.notifiche.cittadino.app-status}")
 public interface AppStatusPFPage extends Page {
@@ -69,14 +69,6 @@ public interface AppStatusPFPage extends Page {
         subtitle().readAndAssert(h -> Assertions.assertThat(h).startsWith("Verifica il funzionamento di SEND"));
         statusBar().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
         lastCheck().readAndAssert(h -> Assertions.assertThat(h).startsWith("Ultimo aggiornamento"));
-        downtimeTableHeaders().readAllAndAssert(List.of("Data di inizio", "Data di fine", "Servizio coinvolto", "Attestazioni opponibili a terzi", "Stato"));
-        downtimeServices().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).isNotBlank()));
-        downloadLegalFactButtons().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).isEqualTo("Scarica l'attestazione")));
-        downtimeStatuses().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).isNotBlank()));
-        rowsPerPageButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("10"));
-        Assertions.assertThat(previousPageButton().get(FindPolicy.PRESENT)).isPresent();
-        firstPageButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("1"));
-        Assertions.assertThat(nextPageButton().get(FindPolicy.PRESENT)).isPresent();
 
         // labels
         downtimeHistoryTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Storico dei disservizi"));

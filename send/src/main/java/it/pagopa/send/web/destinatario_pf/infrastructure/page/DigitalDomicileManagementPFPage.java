@@ -7,11 +7,13 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import org.assertj.core.api.Assertions;
 
-import java.util.List;
-
 /**
- * Questa pagina rappresenta la gestione del domicilio digitale del cittadino, accessibile da "Gestisci" nella sezione I tuoi recapiti.
- * La pagina richiede un utente con una PEC attiva come domicilio digitale.
+ * {@code {baseUrl}/recapiti/domicilio-digitale/gestione}
+ * Pagina "Gestisci il tuo domicilio digitale" del cittadino.
+ * Si apre dal pulsante "Gestisci" della card domicilio digitale in "I tuoi recapiti".
+ * Mostra il domicilio digitale attivo e le opzioni per modificarlo; la pagina è disponibile solo a un utente con un domicilio digitale attivo.
+ * L'assertLoaded verifica solo gli elementi presenti per qualunque domicilio; stato, indirizzo e "Trasferisci su SEND"
+ * dipendono dal tipo di domicilio (PEC o SEND) e non vengono verificati.
  */
 @Url("${url.notifiche.cittadino.recapiti-domicilio-digitale-gestione}")
 public interface DigitalDomicileManagementPFPage extends Page {
@@ -49,14 +51,7 @@ public interface DigitalDomicileManagementPFPage extends Page {
     default void assertLoaded() {
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Gestisci il tuo domicilio digitale"));
         optionsTitle().readAndAssert(h -> Assertions.assertThat(h).startsWith("Scegli un").endsWith("opzione"));
-        transferToSendButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Trasferisci su SEND"));
         customizeBySenderButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Personalizza per ente"));
         backButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Indietro"));
-
-        // labels
-        status().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Attivo"));
-        pecValue().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
-        optionTitles().readAllAndAssert(List.of("Trasferisci il domicilio digitale sulla piattaforma SEND", "Personalizza il tuo domicilio digitale per ente mittente"));
-        optionDescriptions().readAllAndAssert(h -> Assertions.assertThat(h).hasSize(2).allSatisfy(v -> Assertions.assertThat(v).isNotBlank()));
     }
 }

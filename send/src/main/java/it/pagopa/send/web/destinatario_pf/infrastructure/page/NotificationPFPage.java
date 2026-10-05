@@ -17,10 +17,12 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Questa pagina rappresenta la pagina iniziale del portale delle notifiche per il cittadino
- * in cui vengono visualizzate tutte le notifiche ricevute.
- * La pagina contiene un elenco di notifiche con informazioni come il mittente, la data di ricezione e lo stato della notifica.
- * La tabella delle notifiche richiede un utente che abbia ricevuto almeno una notifica.
+ * {@code {baseUrl}/notifiche}
+ * Pagina "In arrivo" del cittadino, pagina iniziale del portale dopo il login.
+ * Si apre dalla voce "In arrivo" del menu laterale.
+ * Contiene i filtri di ricerca e la tabella delle notifiche ricevute.
+ * L'assertLoaded verifica solo gli elementi presenti per qualunque utente (titolo e filtri); il componente
+ * {@link NotificationsTable} mappa la tabella, che compare solo se l'utente ha ricevuto almeno una notifica.
  */
 @Url("${url.notifiche.cittadino.notifiche}")
 public interface NotificationPFPage extends NotificationSearchPage {
@@ -36,6 +38,7 @@ public interface NotificationPFPage extends NotificationSearchPage {
     @XPath("//tbody/tr[1]/td[last()]//button")
     Clickable notificationDetailsButton();
 
+    //Primo tasto apri disponibile sulla prima Notifica a valore legale
     @XPath("(//*[@data-testid=\"notificationsTable.body.row\"][.//span[normalize-space()=\"Notifica a valore legale\"]]//*[@data-testid=\"goToNotificationDetail\"])[1]")
     Button firstLegalNotificationDetailsButton();
 
@@ -43,7 +46,11 @@ public interface NotificationPFPage extends NotificationSearchPage {
     Readable<String> communicationTypeLabel();
 
     @XPath("//*[@id=\"communicationType\"]")
-    Readable<String> communicationTypeSelect();
+    Button communicationTypeSelect();
+
+    //Opzione Legal sul filtro tipologia (utile a filtrare solo le notifiche a valore legale)
+    @XPath("//*[@role=\"listbox\"]//*[@data-value=\"LEGAL\"]")
+    Button legalNotificationsOption();
 
     @XPath("//*[@id=\"iunMatch-label\"]")
     Readable<String> iunSearchLabel();
@@ -69,6 +76,7 @@ public interface NotificationPFPage extends NotificationSearchPage {
     @XPath("//*[@data-testid=\"notificationsTable\"]")
     NotificationsTable notificationsTable();
 
+    //link a pagina di dettaglio notifica
     @XPath("//main")
     NotificationDetailsPFPage notificationDetails();
 
@@ -116,6 +124,15 @@ public interface NotificationPFPage extends NotificationSearchPage {
             firstPageButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("1"));
             Assertions.assertThat(nextPageButton().get(FindPolicy.PRESENT)).isPresent();
         }
+    }
+
+    /**
+     * Filtra la lista sulle sole notifiche a valore legale tramite il filtro "Tipologia".
+     */
+    default void filterLegalNotifications() {
+        communicationTypeSelect().click();
+        legalNotificationsOption().click();
+        filterButton().click();
     }
 
     @Override

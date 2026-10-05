@@ -3,54 +3,66 @@ package it.pagopa.send.web.destinatario_pf.infrastructure.page;
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import org.assertj.core.api.Assertions;
 
 /**
- * Questa pagina rappresenta il wizard di onboarding "Attivazione avvisi" per il cittadino,
- * il cui primo passo propone di attivare SEND sull'app IO.
+ * {@code {baseUrl}/onboarding/avvisi}
+ * Pagina del wizard di onboarding "Attivazione avvisi" del cittadino.
+ * Si apre dalla card "Voglio solo gli avvisi" della pagina {@code {baseUrl}/onboarding}.
+ * Il wizard ha due passi: avvisi su IO ({@link OnboardingWizardPFPage.IoSection}) e avvisi via email e SMS
+ * ({@link EmailSmsSection}), il cui contenuto dipende dai recapiti di cortesia dell'utente.
+ * L'assertLoaded verifica solo gli elementi comuni a tutti i passi.
  */
 @Url("${url.notifiche.cittadino.onboarding-domicilio-avvisi}")
-public interface OnboardingAlertsPFPage extends Page {
+public interface OnboardingAlertsPFPage extends OnboardingWizardPFPage, Page {
 
-    @XPath("//*[@data-testid=\"exit-button\"]")
-    Button exitButton();
+    @XPath("//*[@data-testid=\"email-sms-step\"]")
+    EmailSmsSection emailSmsSection();
 
-    @XPath("//*[@data-testid=\"wizard-title\"]")
-    Readable<String> wizardTitle();
+    /**
+     * Sezione del passo corrente, riconosciuta dall'etichetta dell'indicatore di avanzamento.
+     */
+    default Component currentSection() {
+        String current = currentProgressItem().read();
+        if (current.contains("Attiva gli avvisi su IO")) {
+            return ioSection();
+        }
+        return emailSmsSection();
+    }
 
-    @XPath("//*[@data-testid=\"io-primary-button\"]")
-    Button downloadIoAppButton();
+    interface EmailSmsSection extends Component {
+        @XPath("//*[@data-testid=\"courtesy-banner\"]")
+        Readable<String> courtesyBanner();
 
-    @XPath("//*[@data-testid=\"io-refresh-link\"]")
-    Button ioAlreadyInstalledButton();
+        @XPath("//*[@id=\"default_email-typography\"]")
+        Readable<String> courtesyEmail();
 
-    @XPath("//*[@data-testid=\"prev-button\"]")
-    Button backButton();
+        @XPath("//*[@id=\"modifyContact-default_email\"]")
+        Button modifyCourtesyEmailButton();
 
-    @XPath("//*[@data-testid=\"next-button\"]")
-    Button continueWithoutIoButton();
+        @XPath("//*[@id=\"default_sms-typography\"]")
+        Readable<String> courtesySms();
 
-    // labels
+        @XPath("//*[@id=\"modifyContact-default_sms\"]")
+        Button modifyCourtesySmsButton();
 
-    @XPath("//*[@data-testid=\"io-step\"]//p[1]")
-    Readable<String> ioStepTitle();
-
-    @XPath("//*[@data-testid=\"io-step\"]//p[2]")
-    Readable<String> ioStepDescription();
+        @Override
+        default void assertLoaded() {
+            courtesyBanner().readAndAssert(h -> Assertions.assertThat(h).contains("avvisi attivi"));
+        }
+    }
 
     @Override
     default void assertLoaded() {
+        oneTrustBanner().ifPresent(OneTrustBanner::accept);
         exitButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Esci"));
         wizardTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Attivazione avvisi"));
-        downloadIoAppButton().readAndAssert(h -> Assertions.assertThat(h).startsWith("Scarica l").endsWith("app IO"));
-        ioAlreadyInstalledButton().readAndAssert(h -> Assertions.assertThat(h).contains("scaricato e installato"));
-        backButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Indietro"));
-        continueWithoutIoButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Continua senza l'app IO"));
-
-        // labels
-        ioStepTitle().readAndAssert(h -> Assertions.assertThat(h).startsWith("Attiva SEND sull").endsWith("app IO"));
-        ioStepDescription().readAndAssert(h -> Assertions.assertThat(h).contains("Riceverai un avviso su IO"));
+        progressItems().readAllAndAssert(h -> Assertions.assertThat(h).satisfiesExactly(
+                p -> Assertions.assertThat(p).contains("Attiva gli avvisi su IO"),
+                p -> Assertions.assertThat(p).contains("Email e SMS")));
     }
 }

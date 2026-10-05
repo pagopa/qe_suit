@@ -7,7 +7,10 @@ import it.frontend.e2e.framework.web.domain.Page;
 import org.assertj.core.api.Assertions;
 
 /**
- * Questa pagina rappresenta i termini e condizioni d'uso di SEND, il cui testo è caricato da un widget OneTrust.
+ * {@code {baseUrl}/termini-di-servizio}
+ * Pagina dei termini e condizioni d'uso di SEND.
+ * Si apre dal link "Termini e Condizioni" nel footer del portale.
+ * Il testo è caricato da un widget OneTrust: l'assertLoaded verifica solo il titolo e i titoli delle sezioni.
  */
 @Url("${url.notifiche.cittadino.termini-di-servizio}")
 public interface TermsOfServicePFPage extends Page {

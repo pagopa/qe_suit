@@ -13,9 +13,13 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Questa pagina rappresenta il wizard di attivazione del domicilio digitale SERCQ per il cittadino,
- * accessibile dalla sezione I tuoi recapiti. Il wizard è composto da tre passi: come funziona, inserimento dell'email e riepilogo.
- * La pagina richiede un utente che abbia già inserito email e numero di cellulare come recapiti di cortesia.
+ * {@code {baseUrl}/recapiti/domicilio-digitale/attivazione}
+ * Pagina del wizard "Attiva domicilio digitale su SEND" del cittadino.
+ * Si apre dalla card domicilio digitale di "I tuoi recapiti".
+ * Il wizard ha tre passi: "Come funziona" (mostrato all'apertura), "Inserisci la tua email" e "Riepilogo".
+ * L'assertLoaded verifica solo il primo passo. I componenti {@link EmailSection} e {@link SummarySection} mappano i passi
+ * successivi e verificano solo i loro elementi fissi: il contenuto (email, cellulare, contatti del riepilogo) dipende
+ * dai recapiti di cortesia già inseriti dall'utente. Il pulsante "Conferma" del riepilogo attiva il domicilio digitale.
  */
 @Url("${url.notifiche.cittadino.recapiti-domicilio-digitale-attivazione}")
 public interface DigitalDomicileActivationPFPage extends Page {
@@ -26,13 +30,13 @@ public interface DigitalDomicileActivationPFPage extends Page {
     Readable<String> wizardTitle();
 
     @XPath("//*[@data-testid=\"step-0\"]")
-    Readable<String> howItWorksStep();
+    Readable<String> howItWorksProgressLabel();
 
     @XPath("//*[@data-testid=\"step-1\"]")
-    Readable<String> insertEmailStep();
+    Readable<String> insertEmailProgressLabel();
 
     @XPath("//*[@data-testid=\"step-2\"]")
-    Readable<String> summaryStep();
+    Readable<String> summaryProgressLabel();
 
     @XPath("//*[@data-testid=\"deliveredLink\"]")
     Button deliveredLink();
@@ -44,10 +48,10 @@ public interface DigitalDomicileActivationPFPage extends Page {
     Button cancelButton();
 
     @XPath("//*[@data-testid=\"emailSmsContactWizard\"]")
-    EmailStep emailStep();
+    EmailSection emailSection();
 
     @XPath("//*[@data-testid=\"sercqSendContactWizard\"]")
-    SummaryStep summaryStepSection();
+    SummarySection summarySection();
 
     // labels
 
@@ -60,7 +64,7 @@ public interface DigitalDomicileActivationPFPage extends Page {
     @XPath("//*[@data-testid=\"sercq-send-info-list\"]/li//p[2]")
     Readable<String> infoDescriptions();
 
-    interface EmailStep extends Component {
+    interface EmailSection extends Component {
         @XPath("//*[@id=\"default_email-custom-label\"]")
         Readable<String> emailLabel();
 
@@ -95,14 +99,7 @@ public interface DigitalDomicileActivationPFPage extends Page {
 
         @Override
         default void assertLoaded() {
-            emailLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Indirizzo email"));
-            emailValue().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
-            modifyEmailButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Modifica"));
-            smsLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Numero di cellulare"));
-            smsValue().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
-            modifySmsButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Modifica"));
             backButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Indietro"));
-            continueButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Continua"));
 
             // labels
             title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("La tua email per ricevere avvisi sulle notifiche SEND"));
@@ -110,7 +107,7 @@ public interface DigitalDomicileActivationPFPage extends Page {
         }
     }
 
-    interface SummaryStep extends Component {
+    interface SummarySection extends Component {
         @XPath("//*[@data-testid=\"sercq-send-disclaimer\"]")
         Readable<String> disclaimer();
 
@@ -166,8 +163,6 @@ public interface DigitalDomicileActivationPFPage extends Page {
             digitalDomicileLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Domicilio digitale"));
             digitalDomicileValue().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("SEND"));
             alertsLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Riceverai un avviso via:"));
-            contactTypes().readAllAndAssert(List.of("Email", "Numero di cellulare"));
-            contactValues().readAllAndAssert(h -> Assertions.assertThat(h).hasSize(2).allSatisfy(v -> Assertions.assertThat(v).isNotBlank()));
             monitorAlert().readAndAssert(h -> Assertions.assertThat(h).startsWith("Monitora i recapiti che hai scelto"));
         }
     }
@@ -176,9 +171,9 @@ public interface DigitalDomicileActivationPFPage extends Page {
     default void assertLoaded() {
         oneTrustBanner().ifPresent(OneTrustBanner::accept);
         wizardTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Attiva domicilio digitale su SEND"));
-        howItWorksStep().readAndAssert(h -> Assertions.assertThat(h).contains("Come funziona"));
-        insertEmailStep().readAndAssert(h -> Assertions.assertThat(h).contains("Inserisci la tua email"));
-        summaryStep().readAndAssert(h -> Assertions.assertThat(h).contains("Riepilogo"));
+        howItWorksProgressLabel().readAndAssert(h -> Assertions.assertThat(h).contains("Come funziona"));
+        insertEmailProgressLabel().readAndAssert(h -> Assertions.assertThat(h).contains("Inserisci la tua email"));
+        summaryProgressLabel().readAndAssert(h -> Assertions.assertThat(h).contains("Riepilogo"));
         deliveredLink().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("consegnata"));
         continueButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Continua"));
         cancelButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Annulla"));

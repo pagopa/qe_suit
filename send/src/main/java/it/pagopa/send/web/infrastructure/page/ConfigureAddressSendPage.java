@@ -11,9 +11,12 @@ import it.pagopa.infrastructure.suit.component.Button;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Questa pagina rappresenta la configurazione iniziale di SEND per il cittadino (onboarding), con le card per scegliere
- * come ricevere le notifiche e il pulsante per saltare la configurazione.
- * La card "Preferisco attivare solo SEND sull'app IO" non è mostrata a tutti gli utenti (es. Lucrezia su test) e non viene verificata.
+ * {@code {baseUrl}/onboarding}
+ * Pagina "Configura SEND" del cittadino (onboarding).
+ * Mostrata al primo accesso al portale.
+ * Contiene le card per scegliere come ricevere le notifiche e il pulsante per saltare la configurazione.
+ * L'assertLoaded verifica solo gli elementi presenti per qualunque utente: la card "Preferisco attivare solo SEND sull'app IO"
+ * non è mostrata a tutti e non viene verificata.
  */
 @Url("${url.notifiche.cittadino.base}/onboarding")
 public interface ConfigureAddressSendPage extends Page {

@@ -11,8 +11,11 @@ import it.pagopa.infrastructure.suit.component.TextField;
 import org.assertj.core.api.Assertions;
 
 /**
- * Questa pagina rappresenta il form di richiesta assistenza del cittadino, accessibile dal link Assistenza in alto nella pagina.
- * La pagina permette di indicare l'email su cui ricevere le risposte dell'assistenza.
+ * {@code {baseUrl}/assistenza}
+ * Pagina "Come possiamo aiutarti?" del cittadino.
+ * Si apre dal link "Assistenza" (icona con il punto interrogativo) in alto nella pagina.
+ * Contiene il form per indicare l'email su cui ricevere le risposte dell'assistenza; "Avanti" resta disabilitato finché il form è vuoto.
+ * L'assertLoaded verifica tutti gli elementi del form, che sono gli stessi per qualunque utente.
  */
 @Url("${url.notifiche.cittadino.assistenza}")
 public interface SupportPFPage extends Page {

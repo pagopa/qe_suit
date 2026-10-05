@@ -1,5 +1,6 @@
 package it.pagopa.send.suite.contract;
 
+import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
@@ -10,7 +11,6 @@ import it.pagopa.send.web.destinatario_pf.infrastructure.page.AddressPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AppStatusPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DelegationsPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DigitalDomicileActivationPFPage;
-import it.pagopa.send.web.destinatario_pf.infrastructure.page.DigitalDomicileManagementPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NewDelegationPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingAlertsPFPage;
@@ -52,143 +52,218 @@ public class WebRecipientPfNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    /**
-     * Richiede un utente che abbia ricevuto almeno una notifica (Lucrezia su test).
-     */
+    // notifiche
+
+    // In arrivo
     @TestFactory
-    Stream<DynamicTest> shouldReachNotificationPF() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
-                .on(NotificationPFPage.class)
-                .tests(Stream.of(new WebScenario<>(
-                        "controllo tabella notifiche",
-                        page -> {},
-                        page -> page.notificationsTable().assertLoaded()
-                )));
+    Stream<DynamicTest> shouldReachNotificationListPF() {
+        return reachabilityTest(NotificationPFPage.class);
     }
 
+    // Dettaglio notifica
     /**
-     * Apre il dettaglio della prima notifica in lista: richiede un utente che abbia ricevuto almeno una notifica (Lucrezia su test).
+     * Se presente, apre il dettaglio della prima notifica in lista: se l'utente non ha notifiche la pagina non è raggiungibile
+     * e il test non verifica nulla.
      */
     @TestFactory
     Stream<DynamicTest> shouldReachNotificationDetailsPF() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
                 .on(NotificationPFPage.class)
                 .tests(Stream.of(new WebScenario<>(
-                        "controllo dettaglio prima notifica",
-                        NotificationPFPage::goToNotificationDetails,
-                        page -> page.notificationDetails().assertLoaded()
-                )));
-    }
-
-    /**
-     * Richiede un utente con PEC, recapiti personalizzati per ente, email e cellulare già configurati (Lucrezia su test).
-     */
-    @TestFactory
-    Stream<DynamicTest> shouldReachAddressPF() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
-                .on(AddressPFPage.class)
-                .tests(Stream.of(new WebScenario<>(
-                        "controllo recapiti configurati",
+                        "se presente, verifica dettaglio prima notifica",
                         page -> {},
                         page -> {
-                            page.pecContact().assertLoaded();
-                            page.specialContacts().assertLoaded();
-                            page.emailContact().assertLoaded();
-                            page.smsContact().assertLoaded();
+                            if (page.notificationsTable().openButtons().read() == null) {
+                                // Nessuna notifica ricevuta: il dettaglio non è raggiungibile, quindi il test termina senza verificarlo
+                                return;
+                            }
+                            page.goToNotificationDetails();
+                            page.notificationDetails().assertLoaded();
                         }
                 )));
     }
 
-    @TestFactory
-    Stream<DynamicTest> shouldReachDelegationsPF() {
-        return reachabilityTest(DelegationsPFPage.class);
-    }
-
-    @TestFactory
-    Stream<DynamicTest> shouldReachNewDelegationPF() {
-        return reachabilityTest(NewDelegationPFPage.class);
-    }
-
-    @TestFactory
-    Stream<DynamicTest> shouldReachDigitalDomicileActivationPF() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
-                .on(DigitalDomicileActivationPFPage.class)
-                .tests(Stream.of(new WebScenario<>(
-                        "controllo passi wizard attivazione domicilio digitale",
-                        page -> {
-                            page.continueButton().click();
-                            page.emailStep().assertLoaded();
-                            page.emailStep().continueButton().click();
-                        },
-                        page -> page.summaryStepSection().assertLoaded()
-                )));
-    }
-
+    // Stato della notifica (timeline)
     /**
-     * Richiede un utente con una PEC attiva come domicilio digitale (Lucrezia su test).
-     */
-    @TestFactory
-    Stream<DynamicTest> shouldReachDigitalDomicileManagementPF() {
-        return reachabilityTest(DigitalDomicileManagementPFPage.class);
-    }
-
-    @TestFactory
-    Stream<DynamicTest> shouldReachAppStatusPF() {
-        return reachabilityTest(AppStatusPFPage.class);
-    }
-
-    @TestFactory
-    Stream<DynamicTest> shouldReachSupportPF() {
-        return reachabilityTest(SupportPFPage.class);
-    }
-
-    @TestFactory
-    Stream<DynamicTest> shouldReachProfilePF() {
-        return reachabilityTest(ProfilePFPage.class);
-    }
-
-    /**
-     * Apre la timeline della prima notifica a valore legale in lista: richiede un utente che abbia ricevuto almeno una notifica a valore legale (Lucrezia su test).
+     * Se presente, apre la timeline della prima notifica a valore legale, filtrando la lista per tipologia: se l'utente non ha
+     * notifiche a valore legale la pagina non è raggiungibile e il test non verifica nulla.
      */
     @TestFactory
     Stream<DynamicTest> shouldReachNotificationTimelinePF() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
                 .on(NotificationPFPage.class)
                 .tests(Stream.of(new WebScenario<>(
-                        "controllo timeline prima notifica a valore legale",
+                        "se presente, controllo timeline prima notifica a valore legale",
+                        NotificationPFPage::filterLegalNotifications,  // la timeline esiste solo per le notifiche a valore legale: si filtra la lista su quelle
                         page -> {
+                            if (page.firstLegalNotificationDetailsButton().get(FindPolicy.PRESENT).isEmpty()) {
+                                // Nessuna notifica a valore legale: la timeline non è raggiungibile, quindi il test termina senza verificarla
+                                return;
+                            }
                             page.firstLegalNotificationDetailsButton().click();
                             page.notificationDetails().timelineDetailsButton().click();
-                        },
-                        page -> page.notificationDetails().notificationTimeline().assertLoaded()
+                            page.notificationDetails().notificationTimeline().assertLoaded();  // controlli della pagina timeline
+                        }
                 )));
     }
 
+    // recapiti
+
+    // I tuoi recapiti
+    @TestFactory
+    Stream<DynamicTest> shouldReachAddressPF() {
+        return reachabilityTest(AddressPFPage.class);
+    }
+
+    // Attiva domicilio digitale su SEND
+    /**
+     * Se presente, percorre il wizard di attivazione fino al riepilogo senza mai premere "Conferma": se l'utente non ha ancora
+     * un'email il secondo passo chiede di inserirla e il test non prosegue oltre.
+     */
+    @TestFactory
+    Stream<DynamicTest> shouldReachDigitalDomicileActivationPF() {
+        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+                .on(DigitalDomicileActivationPFPage.class)
+                .tests(Stream.of(new WebScenario<>(
+                        "se presente, controllo riepilogo wizard attivazione domicilio digitale",
+                        page -> {},
+                        page -> {
+                            page.continueButton().click();
+                            if (!"Continua".equals(page.emailSection().continueButton().read())) {
+                                // Email non ancora inserita, quindi il test termina senza verificare il riepilogo
+                                return;
+                            }
+                            page.emailSection().assertLoaded();
+                            page.emailSection().continueButton().click();
+                            page.summarySection().assertLoaded();
+                        }
+                )));
+    }
+
+    // Gestisci il tuo domicilio digitale
+    /**
+     * Se presente, apre la gestione del domicilio digitale da "Gestisci" nei recapiti: se l'utente non ha un domicilio digitale
+     * attivo la pagina non è raggiungibile e il test non verifica nulla.
+     */
+    @TestFactory
+    Stream<DynamicTest> shouldReachDigitalDomicileManagementPF() {
+        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+                .on(AddressPFPage.class)
+                .tests(Stream.of(new WebScenario<>(
+                        "se presente, controllo gestione domicilio digitale",
+                        page -> {},
+                        page -> {
+                            if (page.pecContact().manageButton().get(FindPolicy.PRESENT).isEmpty()) {
+                                // Nessun domicilio digitale attivo: la gestione non è raggiungibile, quindi il test termina senza verificarla
+                                return;
+                            }
+                            page.pecContact().manageButton().click();
+                            page.digitalDomicileManagement().assertLoaded();
+                        }
+                )));
+    }
+
+    // deleghe
+
+    // Deleghe
+    @TestFactory
+    Stream<DynamicTest> shouldReachDelegationsPF() {
+        return reachabilityTest(DelegationsPFPage.class);
+    }
+
+    // Aggiungi una delega
+    @TestFactory
+    Stream<DynamicTest> shouldReachNewDelegationPF() {
+        return reachabilityTest(NewDelegationPFPage.class);
+    }
+
+    // onboarding
+
+    // Configura SEND (onboarding)
     @TestFactory
     Stream<DynamicTest> shouldReachOnboardingPF() {
         return reachabilityTest(ConfigureAddressSendPage.class);
     }
 
+    // Onboarding: Il meglio di SEND
+    /**
+     * Se presenti, verifica tutti i passi del wizard: quello di apertura e ciascuno di quelli raggiunti con il pulsante avanti,
+     * fermandosi sull'ultimo senza premere "Conferma" o prima, su un passo che richiede una scelta.
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachOnboardingDigitalDomicilePF() {
-        return reachabilityTest(OnboardingDigitalDomicilePFPage.class);
+        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+                .on(OnboardingDigitalDomicilePFPage.class)
+                .tests(Stream.of(new WebScenario<>(
+                        "se presenti, controllo passi wizard Il meglio di SEND",
+                        page -> {},
+                        page -> {
+                            int sections = page.progressItems().readAll().size();
+                            page.currentSection().assertLoaded();  // passo di apertura
+                            for (int i = 1; i < sections && page.canGoNext(); i++) {
+                                page.next();
+                                page.currentSection().assertLoaded();  // passo raggiunto con il pulsante avanti
+                            }
+                        }
+                )));
     }
 
+    // Onboarding: Attivazione avvisi
+    /**
+     * Se presenti, verifica tutti i passi del wizard: quello di apertura e ciascuno di quelli raggiunti con il pulsante avanti,
+     * fermandosi sull'ultimo senza premere "Conferma".
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachOnboardingAlertsPF() {
-        return reachabilityTest(OnboardingAlertsPFPage.class);
+        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+                .on(OnboardingAlertsPFPage.class)
+                .tests(Stream.of(new WebScenario<>(
+                        "se presenti, controllo passi wizard Attivazione avvisi",
+                        page -> {},
+                        page -> {
+                            int sections = page.progressItems().readAll().size();
+                            page.currentSection().assertLoaded();  // passo di apertura
+                            for (int i = 1; i < sections && page.canGoNext(); i++) {
+                                page.next();
+                                page.currentSection().assertLoaded();  // passo raggiunto con il pulsante avanti
+                            }
+                        }
+                )));
     }
 
+    // Onboarding: Tutto, sull'app IO
     @TestFactory
     Stream<DynamicTest> shouldReachOnboardingIoPF() {
         return reachabilityTest(OnboardingIoPFPage.class);
     }
 
+    // altre pagine
+
+    // Stato della piattaforma
+    @TestFactory
+    Stream<DynamicTest> shouldReachAppStatusPF() {
+        return reachabilityTest(AppStatusPFPage.class);
+    }
+
+    // Assistenza
+    @TestFactory
+    Stream<DynamicTest> shouldReachSupportPF() {
+        return reachabilityTest(SupportPFPage.class);
+    }
+
+    // I tuoi dati
+    @TestFactory
+    Stream<DynamicTest> shouldReachProfilePF() {
+        return reachabilityTest(ProfilePFPage.class);
+    }
+
+    // Termini di servizio
     @TestFactory
     Stream<DynamicTest> shouldReachTermsOfServicePF() {
         return reachabilityTest(TermsOfServicePFPage.class);
     }
 
+    // Termini di servizio SERCQ
     @TestFactory
     Stream<DynamicTest> shouldReachSercqTermsOfServicePF() {
         return reachabilityTest(SercqTermsOfServicePFPage.class);

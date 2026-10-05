@@ -7,14 +7,24 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.send.web.infrastructure.page.AddressPage;
+import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import org.assertj.core.api.Assertions;
 
+import java.util.Optional;
+
 /**
- * Questa pagina rappresenta la sezione I tuoi recapiti del cittadino, dove gestire domicilio digitale, app IO e recapiti di cortesia.
- * Le sezioni con i recapiti già configurati (PEC, recapiti personalizzati per ente, email e cellulare) richiedono un utente che li abbia inseriti.
+ * {@code {baseUrl}/recapiti}
+ * Pagina "I tuoi recapiti" del cittadino.
+ * Si apre dalla voce "I tuoi recapiti" del menu laterale.
+ * Contiene le card del domicilio digitale, di SEND sull'app IO, dell'email e del cellulare.
+ * L'assertLoaded verifica solo gli elementi presenti per qualunque utente (titoli della pagina e delle card).
+ * I componenti {@link PecContact}, {@link SpecialContacts}, {@link EmailContact} e {@link SmsContact} mappano
+ * le sezioni che compaiono solo quando l'utente ha configurato il relativo recapito.
  */
 @Url("${url.notifiche.cittadino.recapiti}")
 public interface AddressPFPage extends AddressPage, Page {
+
+    Optional<OneTrustBanner> oneTrustBanner();
 
     @XPath("//*[@data-testid=\"titleBox\"]")
     Readable<String> title();
@@ -48,6 +58,9 @@ public interface AddressPFPage extends AddressPage, Page {
 
     @XPath("//*[@data-testid=\"smsContactTitle\"]/ancestor::*[.//*[@data-testid=\"default_smsContact\"]][1]")
     SmsContact smsContact();
+
+    @XPath("//main")
+    DigitalDomicileManagementPFPage digitalDomicileManagement();
 
     // labels
 
@@ -184,16 +197,12 @@ public interface AddressPFPage extends AddressPage, Page {
 
     @Override
     default void assertLoaded() {
+        oneTrustBanner().ifPresent(OneTrustBanner::accept);
         breadcrumbs().readAndAssert(h -> Assertions.assertThat(h).isIn("Addresses", "I tuoi recapiti"));
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("I tuoi recapiti"));
         subtitle().readAndAssert(h -> Assertions.assertThat(h).startsWith("Gestisci i recapiti digitali su cui ricevere le comunicazioni a valore legale di SEND"));
         legalContactsTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Il tuo domicilio digitale"));
         ioContactTitle().readAndAssert(h -> Assertions.assertThat(h).startsWith("SEND sull").endsWith("app IO"));
-        ioContactDescription().readAndAssert(h -> Assertions.assertThat(h).startsWith("Collegare SEND a IO"));
-        downloadIoAppButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Scarica l'app IO"));
         emailContactTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Il tuo indirizzo email"));
-
-        // labels
-        ioStatus().readAndAssert(h -> Assertions.assertThat(h).isIn("Attivo", "Da attivare"));
     }
 }

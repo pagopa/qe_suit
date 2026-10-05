@@ -7,7 +7,11 @@ import it.frontend.e2e.framework.web.domain.Page;
 import org.assertj.core.api.Assertions;
 
 /**
- * Questa pagina rappresenta i dati anagrafici del cittadino (nome, cognome e codice fiscale), ricavati dallo SPID o dalla CIE.
+ * {@code {baseUrl}/profilo}
+ * Pagina "I tuoi dati" del cittadino.
+ * Si apre dal menu dell'area utente in alto (pulsante con il nome dell'utente).
+ * Mostra nome, cognome e codice fiscale ricavati da SPID o CIE, non modificabili.
+ * L'assertLoaded verifica le etichette e che i valori siano presenti, senza controllare quelli di un utente specifico.
  */
 @Url("${url.notifiche.cittadino.profilo}")
 public interface ProfilePFPage extends Page {

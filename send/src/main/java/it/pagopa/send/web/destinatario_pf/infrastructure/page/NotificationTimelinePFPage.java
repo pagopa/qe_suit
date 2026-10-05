@@ -8,8 +8,12 @@ import it.pagopa.infrastructure.suit.component.Button;
 import org.assertj.core.api.Assertions;
 
 /**
- * Questa pagina rappresenta lo stato di una notifica a valore legale per il cittadino, con la timeline degli eventi,
- * accessibile dal dettaglio della notifica tramite "Vai al dettaglio".
+ * {@code {baseUrl}/notifiche/<IUN>/dettaglio/timeline}
+ * Pagina "Stato della notifica" del cittadino, con la timeline degli eventi di una notifica a valore legale.
+ * Si apre dal pulsante "Vai al dettaglio" della sezione
+ * "Stato della notifica" nel dettaglio della notifica.
+ * L'assertLoaded verifica gli elementi presenti per qualunque notifica; gli eventi cambiano da notifica a notifica,
+ * per cui di ciascuno si verifica solo che abbia un titolo e una data.
  */
 @Url("${url.notifiche.cittadino.notifiche}/${iun}/dettaglio/timeline")
 public interface NotificationTimelinePFPage extends Page {

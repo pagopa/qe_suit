@@ -11,8 +11,11 @@ import it.pagopa.infrastructure.suit.component.TextField;
 import org.assertj.core.api.Assertions;
 
 /**
- * Questa pagina rappresenta la pagina di creazione di una nuova delega per il cittadino, accessibile dalla sezione Deleghe.
- * La pagina contiene il form con i dati del delegato, gli enti, la scadenza e il codice di verifica da condividere.
+ * {@code {baseUrl}/deleghe/nuova}
+ * Pagina "Aggiungi una delega" del cittadino.
+ * Si apre dal pulsante "Aggiungi una delega" della pagina {@code {baseUrl}/deleghe}.
+ * Contiene il form con i dati del delegato, gli enti, la scadenza e il codice di verifica da condividere con il delegato.
+ * L'assertLoaded verifica tutti gli elementi del form, che sono gli stessi per qualunque utente.
  */
 @Url("${url.notifiche.cittadino.add-deleghe}")
 public interface NewDelegationPFPage extends Page {
