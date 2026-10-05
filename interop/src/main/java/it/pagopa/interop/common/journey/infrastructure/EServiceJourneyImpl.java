@@ -1,12 +1,10 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
+import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
-import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.utils.async.PollingUtils;
@@ -14,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 @Component
@@ -34,6 +33,21 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {
         EService draftEService = eServiceUseCase.createEService(cmd -> {
         });
+        return processLifecycle(draftEService, draftEService.getLastDraftDescriptor(), targetState);
+    }
+
+    @Override
+    public EServiceJourneyImpl createEService(EServiceDescriptorState targetState, EServiceTechnology eServiceTechnology) {
+        EServiceCreationCommand command = new BffEServiceCreationCommand()
+                .name("new eservice " + UUID.randomUUID())
+                .description("description for new eservice")
+                .isAsync(true)
+                .mode(EServiceMode.DELIVER)
+                .handlePersonalData(false)
+                .isClientAccessDelegable(false)
+                .technology(eServiceTechnology);
+
+        EService draftEService = eServiceUseCase.createEService(command);
         return processLifecycle(draftEService, draftEService.getLastDraftDescriptor(), targetState);
     }
 
