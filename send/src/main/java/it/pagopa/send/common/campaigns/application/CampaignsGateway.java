@@ -9,4 +9,5 @@ import java.util.List;
 
 public interface CampaignsGateway extends Plugin<Channel> {
     List<CampaignSummary> getCampaigns();
+    CampaignSummary getCampaignByID(String id);
 }

@@ -30,4 +30,15 @@ public class BffCampaignsGateway implements CampaignsGateway {
         return Objects.requireNonNull(restClient.getCampaigns().withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get()).getResultsPage();
     }
+
+    @Override
+    public CampaignSummary getCampaignByID(String id) {
+        return Objects.requireNonNull(restClient.getCampaigns().withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get())
+                .getResultsPage()
+                .stream()
+                .filter(x-> x.getCampaignId().equals(id))
+                .toList()
+                .get(0);
+    }
 }
