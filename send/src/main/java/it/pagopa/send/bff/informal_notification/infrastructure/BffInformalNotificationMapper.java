@@ -1,10 +1,12 @@
 package it.pagopa.send.bff.informal_notification.infrastructure;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.send.common.informal_notification.domain.InformalNotificationCreationRequest;
 import it.pagopa.send.common.informal_notification.domain.ResolvedInformalPagoPaPayment;
 import it.pagopa.send.common.informal_notification.domain.ResolvedInformalRecipient;
 import it.pagopa.send.common.legal_notification.domain.DocumentRef;
 import it.pagopa.send.common.legal_notification.domain.NotificationDefaults;
+import it.pagopa.send.generated.openapi.clients.informal.model.InformalNotificationRequestV1;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -99,5 +101,15 @@ public class BffInformalNotificationMapper {
         if (addr.province() != null) map.put("province", addr.province());
         if (addr.foreignState() != null) map.put("foreignState", addr.foreignState());
         return map;
+    }
+
+    public InformalNotificationRequestV1 toRequestV1(
+            InformalNotificationCreationRequest request
+    ) {
+        ObjectMapper obj = new ObjectMapper();
+        return obj.convertValue(
+                toPayload(request),
+                InformalNotificationRequestV1.class
+        );
     }
 }
