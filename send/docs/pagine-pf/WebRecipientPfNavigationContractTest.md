@@ -1,8 +1,14 @@
-# Contract test delle pagine del portale SEND per le persone fisiche
+# Test di navigazione delle pagine del portale SEND per le persone fisiche
 
-Questo documento elenca le pagine del portale cittadini di SEND mappate come Page Object e verificate dai contract test
-di `WebRecipientPfNavigationContractTest`. Per ogni pagina riporta indirizzo, contenuto, classe e test, lo screenshot
-e il rimando al suo `assertLoaded()`, che resta l'unica fonte di verità sugli elementi verificati.
+Questo documento descrive `WebRecipientPfNavigationContractTest`: per ogni pagina del portale cittadini di SEND
+verifica che la pagina si apra e che il suo `assertLoaded()` passi. Per ogni pagina riporta indirizzo, contenuto,
+classe e test, lo screenshot e il rimando al suo `assertLoaded()`.
+
+I contenuti di una pagina (testi, stato iniziale, validazioni dei campi) sono verificati invece dai contract test di
+pagina, descritti ciascuno in un documento con lo stesso nome della classe di test:
+
+- [`WebDelegationsPFContractTest`](WebDelegationsPFContractTest.md): pagina "Deleghe"
+- [`WebNewDelegationPFContractTest`](WebNewDelegationPFContractTest.md): pagina "Aggiungi una delega"
 
 Negli indirizzi `{baseUrl}` è la proprietà `url.notifiche.cittadino.base` del profilo attivo
 (es. `https://cittadini.test.notifichedigitali.it` sul profilo `test`).
@@ -11,7 +17,9 @@ Negli indirizzi `{baseUrl}` è la proprietà `url.notifiche.cittadino.base` del 
 
 L'`assertLoaded()` di ogni pagina verifica solo gli elementi **fissi**, presenti per qualunque utente: le parti che
 dipendono dai dati dell'utente (recapiti configurati, deleghe, notifiche ricevute, disservizi) sono mappate come campi
-o componenti ma non vengono verificate, per evitare test falliti per falsi positivi.
+o componenti ma non vengono verificate, per evitare test falliti per falsi positivi. Per le pagine che hanno un contract
+test dedicato l'`assertLoaded()` verifica solo che la pagina sia caricata (titolo, input e pulsanti necessari):
+testi e label sono verificati nel contract test.
 
 Negli screenshot gli elementi verificati sono evidenziati:
 
@@ -23,7 +31,7 @@ Negli screenshot gli elementi verificati sono evidenziati:
 Gli screenshot sono catturati sull'ambiente `test` con l'utente di test Lucrezia Borgia, a 1920x1080, e vanno
 rigenerati quando cambia l'`assertLoaded()` di una pagina. I dati visibili sono dati di test.
 
-Screenshot aggiornati al: **05/10/2026**.
+Screenshot aggiornati al: **06/10/2026**.
 
 ## Indice
 
@@ -137,10 +145,11 @@ Elementi verificati: vedi `assertLoaded()` in [`DigitalDomicileManagementPFPage`
 
 **Indirizzo:** `{baseUrl}/deleghe`
 
-Pagina "Deleghe" del cittadino. Si apre dalla voce "Deleghe" del menu laterale. Contiene la sezione "I tuoi delegati" (persone a cui l'utente ha delegato le proprie notifiche) e la sezione "Deleghe a tuo carico" (persone che hanno delegato l'utente). L'assertLoaded verifica solo gli elementi presenti per qualunque utente; gli stati vuoti delle due sezioni compaiono solo se l'utente non ha deleghe e non vengono verificati.
+Pagina "Deleghe" del cittadino. Si apre dalla voce "Deleghe" del menu laterale. Contiene la sezione "I tuoi delegati" (persone a cui l'utente ha delegato le proprie notifiche) e la sezione "Deleghe a tuo carico" (persone che hanno delegato l'utente). L'assertLoaded verifica che la pagina sia caricata, cioè il titolo, il pulsante "Aggiungi una delega" e le due sezioni; testi e contenuto delle sezioni, che dipende dalle deleghe dell'utente, sono verificati da `WebDelegationsPFContractTest`.
 
 - Page Object: [`DelegationsPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/DelegationsPFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachDelegationsPF`
+- Contract test della pagina: [`WebDelegationsPFContractTest`](WebDelegationsPFContractTest.md)
 
 ![Deleghe](img/DelegationsPFPage.png)
 
@@ -150,10 +159,11 @@ Elementi verificati: vedi `assertLoaded()` in [`DelegationsPFPage`](../../src/ma
 
 **Indirizzo:** `{baseUrl}/deleghe/nuova`
 
-Pagina "Aggiungi una delega" del cittadino. Si apre dal pulsante "Aggiungi una delega" della pagina `{baseUrl}/deleghe`. Contiene il form con i dati del delegato, gli enti, la scadenza e il codice di verifica da condividere con il delegato. L'assertLoaded verifica tutti gli elementi del form, che sono gli stessi per qualunque utente.
+Pagina "Aggiungi una delega" del cittadino. Si apre dal pulsante "Aggiungi una delega" della pagina `{baseUrl}/deleghe`. Contiene il form con i dati del delegato, gli enti, la scadenza e il codice di verifica da condividere con il delegato. L'assertLoaded verifica che la pagina sia caricata, cioè il titolo e la presenza degli input e dei pulsanti del form; testi, stato iniziale e validazioni del form sono verificati da `WebNewDelegationPFContractTest`.
 
 - Page Object: [`NewDelegationPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/NewDelegationPFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachNewDelegationPF`
+- Contract test della pagina: [`WebNewDelegationPFContractTest`](WebNewDelegationPFContractTest.md)
 
 ![Aggiungi una delega](img/NewDelegationPFPage.png)
 

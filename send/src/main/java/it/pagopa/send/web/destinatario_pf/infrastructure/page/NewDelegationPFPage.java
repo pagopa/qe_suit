@@ -8,17 +8,23 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.RadioButton;
 import it.pagopa.infrastructure.suit.component.TextField;
+import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import org.assertj.core.api.Assertions;
+
+import java.util.Optional;
 
 /**
  * {@code {baseUrl}/deleghe/nuova}
  * Pagina "Aggiungi una delega" del cittadino.
  * Si apre dal pulsante "Aggiungi una delega" della pagina {@code {baseUrl}/deleghe}.
  * Contiene il form con i dati del delegato, gli enti, la scadenza e il codice di verifica da condividere con il delegato.
- * L'assertLoaded verifica tutti gli elementi del form, che sono gli stessi per qualunque utente.
+ * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo e la presenza degli input e dei pulsanti del form;
+ * testi, stato iniziale e validazioni del form sono verificati da {@code WebNewDelegationPFContractTest}.
  */
 @Url("${url.notifiche.cittadino.add-deleghe}")
 public interface NewDelegationPFPage extends Page {
+
+    Optional<OneTrustBanner> oneTrustBanner();
 
     @XPath("//*[@data-testid=\"titleBox\"]")
     Readable<String> breadcrumbs();
@@ -44,17 +50,35 @@ public interface NewDelegationPFPage extends Page {
     @XPath("//*[@id=\"nome\"]")
     TextField firstNameInput();
 
+    @XPath("//*[@id=\"nome-helper-text\"]")
+    Readable<String> firstNameHelperText();
+
     @XPath("//*[@id=\"cognome-label\"]")
     Readable<String> lastNameLabel();
 
     @XPath("//*[@id=\"cognome\"]")
     TextField lastNameInput();
 
+    @XPath("//*[@id=\"cognome-helper-text\"]")
+    Readable<String> lastNameHelperText();
+
+    @XPath("//*[@id=\"ragioneSociale-label\"]")
+    Readable<String> businessNameLabel();
+
+    @XPath("//*[@id=\"ragioneSociale\"]")
+    TextField businessNameInput();
+
+    @XPath("//*[@id=\"ragioneSociale-helper-text\"]")
+    Readable<String> businessNameHelperText();
+
     @XPath("//*[@id=\"codiceFiscale-label\"]")
     Readable<String> taxIdLabel();
 
     @XPath("//*[@id=\"codiceFiscale\"]")
     TextField taxIdInput();
+
+    @XPath("//*[@id=\"codiceFiscale-helper-text\"]")
+    Readable<String> taxIdHelperText();
 
     @XPath("//*[@id=\"selectEntities\"]")
     Readable<String> entitiesLabel();
@@ -65,11 +89,26 @@ public interface NewDelegationPFPage extends Page {
     @XPath("//*[@id=\"enti-selezionati\"]")
     RadioButton selectedEntitiesRadio();
 
+    @XPath("//*[@id=\"enti-label\"]")
+    Readable<String> selectedEntitiesLabel();
+
+    @XPath("//*[@id=\"enti\"]")
+    TextField selectedEntitiesInput();
+
+    @XPath("//*[@id=\"enti\"]")
+    Button selectedEntitiesDropdown();
+
+    @XPath("//*[@id=\"enti-listbox\"]//*[@role=\"option\"]")
+    Readable<String> selectedEntitiesOptions();
+
     @XPath("//*[@id=\"expirationDate-label\"]")
     Readable<String> expirationDateLabel();
 
     @XPath("//*[@id=\"expirationDate\"]")
     TextField expirationDateInput();
+
+    @XPath("//*[@id=\"expirationDate-helper-text\"]")
+    Readable<String> expirationDateHelperText();
 
     @XPath("//*[@data-testid=\"verificationCode\"]")
     Readable<String> verificationCode();
@@ -103,41 +142,39 @@ public interface NewDelegationPFPage extends Page {
     @XPath("//*[@data-testid=\"verificationCode\"]/preceding::p[1]")
     Readable<String> verificationCodeDescription();
 
+    default String getFirstNameErrorMessage() {
+        return firstNameHelperText().read();
+    }
+
+    default String getLastNameErrorMessage() {
+        return lastNameHelperText().read();
+    }
+
+    default String getBusinessNameErrorMessage() {
+        return businessNameHelperText().read();
+    }
+
+    default String getTaxIdErrorMessage() {
+        return taxIdHelperText().read();
+    }
+
+    default String getExpirationDateErrorMessage() {
+        return expirationDateHelperText().read();
+    }
+
     @Override
     default void assertLoaded() {
+        oneTrustBanner().ifPresent(OneTrustBanner::accept);
         breadcrumbs().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Aggiungi una delega"));
-        delegationsBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Deleghe"));
-        subtitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Inserisci i dati della persona fisica o giuridica a cui vuoi delegare la lettura delle tue notifiche."));
-
-        personType().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Soggetto giuridico:*"));
-        Assertions.assertThat(naturalPersonRadio().getLabel()).isEqualTo("Persona fisica");
-        Assertions.assertThat(legalPersonRadio().getLabel()).isEqualTo("Persona giuridica");
-
-        firstNameLabel().readAndAssert(h -> Assertions.assertThat(h).contains("Nome"));
+        Assertions.assertThat(naturalPersonRadio().radio().get(FindPolicy.PRESENT)).isPresent();
+        Assertions.assertThat(legalPersonRadio().radio().get(FindPolicy.PRESENT)).isPresent();
         Assertions.assertThat(firstNameInput().get(FindPolicy.PRESENT)).isPresent();
-        lastNameLabel().readAndAssert(h -> Assertions.assertThat(h).contains("Cognome"));
         Assertions.assertThat(lastNameInput().get(FindPolicy.PRESENT)).isPresent();
-        taxIdLabel().readAndAssert(h -> Assertions.assertThat(h).contains("Codice Fiscale"));
         Assertions.assertThat(taxIdInput().get(FindPolicy.PRESENT)).isPresent();
-
-        entitiesLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Potrà consultare le notifiche da parte di:*"));
-        Assertions.assertThat(allEntitiesRadio().getLabel()).isEqualTo("Tutti gli enti");
-        Assertions.assertThat(selectedEntitiesRadio().getLabel()).isEqualTo("Solo enti selezionati");
-
-        expirationDateLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Termine delega"));
+        Assertions.assertThat(allEntitiesRadio().radio().get(FindPolicy.PRESENT)).isPresent();
+        Assertions.assertThat(selectedEntitiesRadio().radio().get(FindPolicy.PRESENT)).isPresent();
         Assertions.assertThat(expirationDateInput().get(FindPolicy.PRESENT)).isPresent();
-
-        verificationCode().readAndAssert(h -> Assertions.assertThat(h.replaceAll("\\s", "")).matches("\\d{5}"));
         copyVerificationCodeButton().assertLoaded();
-        submitButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Invia la richiesta"));
-
-        // labels
-        currentBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Nuova delega"));
-        requiredFieldsLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Campi obbligatori*"));
-        personTypeHelper().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Seleziona la tipologia di soggetto giuridico"));
-        entitiesHelper().readAndAssert(h -> Assertions.assertThat(h).startsWith("Seleziona un"));
-        validityPeriodLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Periodo di validità della delega*"));
-        verificationCodeTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Codice di verifica"));
-        verificationCodeDescription().readAndAssert(h -> Assertions.assertThat(h).startsWith("Condividi questo codice con la persona delegata"));
+        submitButton().assertLoaded();
     }
 }
