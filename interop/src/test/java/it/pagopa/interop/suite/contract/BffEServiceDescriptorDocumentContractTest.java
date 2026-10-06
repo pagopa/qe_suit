@@ -61,67 +61,47 @@ public class BffEServiceDescriptorDocumentContractTest {
         this.requestFactory = requestFactory;
     }
 
-    // T10 - baseline
     @TestFactory
-    Stream<DynamicTest> createInterfaceDocument_validWsdl() {
-        return Stream.of(dynamicTest("valid.wsdl -> 200 CreatedResource", () -> {
-            Draft draft = newDraftDescriptor();
+    Stream<DynamicTest> createEServiceDocument() {
+        Stream<DynamicTest> scenarios = Stream.of(
+                // T10 - baseline
+                dynamicTest("valid.wsdl -> 200 CreatedResource", () -> {
+                    Draft draft = newDraftDescriptor();
+                    Response response = postDocument(draft, requestFactory.interfaceDocumentRequest(VALID_WSDL));
+                    assertEquals(200, response.statusCode(), response.asPrettyString());
+                    assertNotNull(response.jsonPath().getString("id"), "CreatedResource.id must be present");
+                }),
 
-            Response response = postDocument(draft, requestFactory.interfaceDocumentRequest(VALID_WSDL));
+                // T11 - C1: soap:address missing
+                dynamicTest("missing soap:address -> 400 / 10017", () -> {
+                    Draft draft = newDraftDescriptor();
+                    Response response = postDocument(draft, requestFactory.interfaceDocumentRequest(MISSING_SOAP_ADDRESS_WSDL));
+                    assertProblem(response, "10017");
+                    assertEquals("Error extracting field from SOAP file", response.jsonPath().getString("title"));
+                    assertEquals("Error extracting field soap:address from SOAP file", response.jsonPath().getString("detail"));
+                }),
 
-            assertEquals(200, response.statusCode(), response.asPrettyString());
-            assertNotNull(response.jsonPath().getString("id"), "CreatedResource.id must be present");
-        }));
-    }
+                // T12 - C2: WSDL not parsable
+                dynamicTest("not parsable WSDL -> 400 / 10016", () -> {
+                    Draft draft = newDraftDescriptor();
+                    Response response = postDocument(draft, requestFactory.interfaceDocumentRequest(NOT_PARSABLE_WSDL));
+                    assertProblem(response, "10016");
+                }),
 
-    // T11 - C1: soap:address missing
-    @TestFactory
-    Stream<DynamicTest> createInterfaceDocument_missingSoapAddress() {
-        return Stream.of(dynamicTest("missing soap:address -> 400 / 10017", () -> {
-            Draft draft = newDraftDescriptor();
+                // T13 - C3: soap:operation missing
+                dynamicTest("missing soap:operation -> 400 / 10017", () -> {
+                    Draft draft = newDraftDescriptor();
+                    Response response = postDocument(draft, requestFactory.interfaceDocumentRequest(MISSING_SOAP_OPERATION_WSDL));
+                    assertProblem(response, "10017");
+                    assertTrue(
+                            response.jsonPath().getString("detail").contains("soap:operation"),
+                            "detail must mention soap:operation: " + response.asPrettyString()
+                    );
+                })
+        );
 
-            Response response = postDocument(draft, requestFactory.interfaceDocumentRequest(MISSING_SOAP_ADDRESS_WSDL));
-
-            assertProblem(response, "10017");
-            assertEquals("Error extracting field from SOAP file", response.jsonPath().getString("title"));
-            assertEquals(
-                    "Error extracting field soap:address from SOAP file",
-                    response.jsonPath().getString("detail")
-            );
-        }));
-    }
-
-    // T12 - C2: WSDL not parsable
-    @TestFactory
-    Stream<DynamicTest> createInterfaceDocument_notParsableWsdl() {
-        return Stream.of(dynamicTest("not parsable WSDL -> 400 / 10016", () -> {
-            Draft draft = newDraftDescriptor();
-
-            Response response = postDocument(draft, requestFactory.interfaceDocumentRequest(NOT_PARSABLE_WSDL));
-            assertProblem(response, "10016");
-        }));
-    }
-
-    // T13 - C3: soap:operation missing
-    @TestFactory
-    Stream<DynamicTest> createInterfaceDocument_missingSoapOperation() {
-        return Stream.of(dynamicTest("missing soap:operation -> 400 / 10017", () -> {
-            Draft draft = newDraftDescriptor();
-
-            Response response = postDocument(draft, requestFactory.interfaceDocumentRequest(MISSING_SOAP_OPERATION_WSDL));
-
-            assertProblem(response, "10017");
-            assertTrue(
-                    response.jsonPath().getString("detail").contains("soap:operation"),
-                    "detail must mention soap:operation: " + response.asPrettyString()
-            );
-        }));
-    }
-
-    // T14 - C5: no document is created by a rejected upload, and the descriptor stays usable
-    @TestFactory
-    Stream<DynamicTest> createInterfaceDocument_invalidWsdl_doesNotCreateDocument() {
-        return Stream.of(MISSING_SOAP_ADDRESS_WSDL, NOT_PARSABLE_WSDL, MISSING_SOAP_OPERATION_WSDL)
+        // T14 - C5: no document is created by a rejected upload, and the descriptor stays usable
+        Stream<DynamicTest> invalidUploadScenarios = Stream.of(MISSING_SOAP_ADDRESS_WSDL, NOT_PARSABLE_WSDL, MISSING_SOAP_OPERATION_WSDL)
                 .map(fixture -> dynamicTest("no document created for " + fixture, () -> {
                     Draft draft = newDraftDescriptor();
                     int docsBefore = readDescriptor(draft).getDocs().size();
@@ -136,6 +116,8 @@ public class BffEServiceDescriptorDocumentContractTest {
                     Response retry = postDocument(draft, requestFactory.interfaceDocumentRequest(VALID_WSDL));
                     assertEquals(200, retry.statusCode(), retry.asPrettyString());
                 }));
+
+        return Stream.concat(scenarios, invalidUploadScenarios);
     }
 
     private void assertProblem(Response response, String expectedCode) {
