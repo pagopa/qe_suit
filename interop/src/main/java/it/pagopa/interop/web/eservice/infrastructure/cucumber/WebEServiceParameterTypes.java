@@ -3,7 +3,7 @@ package it.pagopa.interop.web.eservice.infrastructure.cucumber;
 import io.cucumber.java.ParameterType;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.interop.web.debug_client_assertion.infrastructure.page.DebugClientAssertionPage;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreationPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreatePage;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
@@ -22,7 +22,7 @@ public class WebEServiceParameterTypes {
     private static final String PAGE_TYPES =
             ESERVICE_CREATION_PAGE_ALIAS + "|" + DEBUG_CLIENT_ASSERTION_PAGE_ALIAS;
 
-    private final EServiceCreationPage eServiceCreationPage;
+    private final EServiceCreatePage eServiceCreatePage;
     private final DebugClientAssertionPage debugClientAssertionPage;
 
     @ParameterType(PAGE_TYPES)
@@ -30,7 +30,7 @@ public class WebEServiceParameterTypes {
         String normalized = normalize(page);
 
         if (containsAlias(ESERVICE_CREATION_PAGE_ALIAS, normalized)) {
-            return eServiceCreationPage;
+            return eServiceCreatePage;
         }
 
         if (containsAlias(DEBUG_CLIENT_ASSERTION_PAGE_ALIAS, normalized)) {

@@ -4,7 +4,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.web.eservice.application.WebEServiceGeneralData;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreationPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreatePage;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.GeneralDataWizard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebEServiceGeneralDataGateway {
 
-    private final EServiceCreationPage eServiceCreationPage;
+    private final EServiceCreatePage eServiceCreatePage;
 
     public void fillEServiceGeneralData(WebEServiceGeneralData model) {
         validateAsyncExchangeMode(model);
-        GeneralDataWizard generalDataWizard = eServiceCreationPage.generalDataStep();
+        GeneralDataWizard generalDataWizard = eServiceCreatePage.generalDataStep();
 
         generalDataWizard
                 .setName(model.eservice().getName())
@@ -28,11 +28,11 @@ public class WebEServiceGeneralDataGateway {
                 .setPersonalData(model.eservice().getPersonalData())
                 .setMode(model.eservice().getMode());
 
-        eServiceCreationPage.saveDraftButton().click();
+        eServiceCreatePage.saveDraftButton().click();
     }
 
     public EService readEServiceGeneralData() {
-        GeneralDataWizard generalDataWizard = eServiceCreationPage.generalDataStep();
+        GeneralDataWizard generalDataWizard = eServiceCreatePage.generalDataStep();
 
         return EService.builder()
                 .name(generalDataWizard.name().read())
