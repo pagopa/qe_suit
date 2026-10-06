@@ -7,7 +7,7 @@ import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.web.eservice.application.WebEServiceCreationCommand;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreatePage;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

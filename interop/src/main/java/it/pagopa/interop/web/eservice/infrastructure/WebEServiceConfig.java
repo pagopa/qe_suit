@@ -2,12 +2,9 @@ package it.pagopa.interop.web.eservice.infrastructure;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCatalogPage;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreatePage;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDetailPage;
-import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.GeneralDataWizard;
-import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.ThresholdAndAttributeWizard;
-import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.technical.TechnicalSpecWizard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCatalogPage;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceDetailPage;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Bean;
@@ -17,24 +14,6 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 public class WebEServiceConfig {
-
-    @Bean
-    @ScenarioScope
-    public GeneralDataWizard generalDataStepComponent(EServiceCreatePage creationPage) {
-        return creationPage.generalDataStep();
-    }
-
-    @Bean
-    @ScenarioScope
-    public ThresholdAndAttributeWizard thresholdAndAttributeStep(EServiceCreatePage creationPage) {
-        return creationPage.thresholdAndAttributeStep();
-    }
-
-    @Bean
-    @ScenarioScope
-    public TechnicalSpecWizard technicalDataStepComponent(EServiceCreatePage creationPage) {
-        return creationPage.technicalSpecificationStep();
-    }
 
     @Bean
     @ScenarioScope

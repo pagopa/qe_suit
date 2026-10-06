@@ -1,11 +1,11 @@
-package it.pagopa.interop.web.eservice.infrastructure.page.refactor;
+package it.pagopa.interop.web.eservice.infrastructure.suit.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.infrastructure.suit.component.Stepper;
-import org.assertj.core.api.Assertions;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data_form.GeneralDataForm;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.threshold_attribute_form.ThresholdAndAttributeForm;
 
 @Url("${interop.web.base-url}/erogazione/e-service/crea/")
 public interface EServiceCreatePage extends Page {

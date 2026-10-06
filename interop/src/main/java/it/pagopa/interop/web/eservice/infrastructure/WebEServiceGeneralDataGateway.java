@@ -4,8 +4,9 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.web.eservice.application.WebEServiceGeneralData;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreatePage;
-import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.GeneralDataWizard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data_form.GeneralDataForm;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.component.creation_wizard.GeneralDataWizard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,29 +19,28 @@ public class WebEServiceGeneralDataGateway {
 
     public void fillEServiceGeneralData(WebEServiceGeneralData model) {
         validateAsyncExchangeMode(model);
-        GeneralDataWizard generalDataWizard = eServiceCreatePage.generalDataStep();
+        GeneralDataForm generalDataForm = eServiceCreatePage.generalDataForm();
 
-        generalDataWizard
-                .setName(model.eservice().getName())
-                .setDescription(model.eservice().getDescription())
+        generalDataForm
+                .setEServiceName(model.eservice().getName())
+                .setEServiceDescription(model.eservice().getDescription())
                 .setAsyncExchange(model.eservice().getAsyncExchange())
                 .setTechnology(model.eservice().getTechnology())
-                .setPersonalData(model.eservice().getPersonalData())
-                .setMode(model.eservice().getMode());
-
-        eServiceCreatePage.saveDraftButton().click();
+                .setUsePersonalData(Boolean.TRUE.equals(model.eservice().getPersonalData()))
+                .setMode(model.eservice().getMode())
+                .saveDraft();
     }
 
     public EService readEServiceGeneralData() {
-        GeneralDataWizard generalDataWizard = eServiceCreatePage.generalDataStep();
+        GeneralDataForm generalDataWizard = eServiceCreatePage.generalDataForm();
 
         return EService.builder()
-                .name(generalDataWizard.name().read())
-                .description(generalDataWizard.description().read())
-                .technology(EServiceTechnology.valueOf(generalDataWizard.getTechnology().name()))
+                .name(generalDataWizard.getEServiceName())
+                .description(generalDataWizard.getEServiceDescription())
+                .technology(EServiceTechnology.valueOf(generalDataWizard.getEServiceTechnology().name()))
                 .asyncExchange(generalDataWizard.getAsyncExchange())
-                .mode(EServiceMode.valueOf(generalDataWizard.getMode().name()))
-                .personalData(generalDataWizard.getPersonalData())
+                .mode(EServiceMode.valueOf(generalDataWizard.getEServiceMode().name()))
+                .personalData(generalDataWizard.getUsePersonalData())
                 .build();
     }
 
