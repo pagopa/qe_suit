@@ -43,6 +43,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                 value = """
                         (@debug-client-assertion-page-ui-flow
                          or @agreement
+                         or @eservice-template
                          or @debug-client-assertion-page-ui-behavior
                          or @dev-tools-page-ui-behavior)
                         and not @wait_for_fix
