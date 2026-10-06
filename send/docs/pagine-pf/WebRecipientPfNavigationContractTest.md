@@ -9,6 +9,9 @@ pagina, descritti ciascuno in un documento con lo stesso nome della classe di te
 
 - [`WebDelegationsPFContractTest`](WebDelegationsPFContractTest.md): pagina "Deleghe"
 - [`WebNewDelegationPFContractTest`](WebNewDelegationPFContractTest.md): pagina "Aggiungi una delega"
+- [`WebSupportPFContractTest`](WebSupportPFContractTest.md): pagina "Come possiamo aiutarti?" (assistenza)
+- [`WebTermsOfServicePFContractTest`](WebTermsOfServicePFContractTest.md): pagina "Termini e condizioni d'uso"
+- [`WebSercqTermsOfServicePFContractTest`](WebSercqTermsOfServicePFContractTest.md): pagina "Termini e condizioni d'uso" del domicilio digitale SERCQ
 
 Negli indirizzi `{baseUrl}` è la proprietà `url.notifiche.cittadino.base` del profilo attivo
 (es. `https://cittadini.test.notifichedigitali.it` sul profilo `test`).
@@ -262,10 +265,11 @@ Elementi verificati: vedi `assertLoaded()` in [`AppStatusPFPage`](../../src/main
 
 **Indirizzo:** `{baseUrl}/assistenza`
 
-Pagina "Come possiamo aiutarti?" del cittadino. Si apre dal link "Assistenza" (icona con il punto interrogativo) in alto nella pagina. Contiene il form per indicare l'email su cui ricevere le risposte dell'assistenza; "Avanti" resta disabilitato finché il form è vuoto. L'assertLoaded verifica tutti gli elementi del form, che sono gli stessi per qualunque utente.
+Pagina "Come possiamo aiutarti?" del cittadino. Si apre dal link "Assistenza" (icona con il punto interrogativo) in alto nella pagina. Contiene il form per indicare l'email su cui ricevere le risposte dell'assistenza; "Avanti" resta disabilitato finché le due email non sono valide e uguali. L'assertLoaded verifica che la pagina sia caricata, cioè il titolo e la presenza dei campi e dei pulsanti del form; testi, stato iniziale e validazioni del form sono verificati da `WebSupportPFContractTest`.
 
 - Page Object: [`SupportPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/SupportPFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachSupportPF`
+- Contract test della pagina: [`WebSupportPFContractTest`](WebSupportPFContractTest.md)
 
 ![Assistenza](img/SupportPFPage.png)
 
@@ -288,10 +292,11 @@ Elementi verificati: vedi `assertLoaded()` in [`ProfilePFPage`](../../src/main/j
 
 **Indirizzo:** `{baseUrl}/termini-di-servizio`
 
-Pagina dei termini e condizioni d'uso di SEND. Si apre dal link "Termini e Condizioni" nel footer del portale. Il testo è caricato da un widget OneTrust: l'assertLoaded verifica solo il titolo e i titoli delle sezioni.
+Pagina dei termini e condizioni d'uso di SEND. Si apre dal link "Termini e Condizioni" nel footer del portale. Il testo è caricato da un widget OneTrust: un indice con un link per ogni sezione e le sezioni del documento. L'assertLoaded verifica che la pagina sia caricata, cioè che il titolo sia "Termini e condizioni d'uso" e che ci sia almeno una sezione; titoli delle sezioni e indice sono verificati da `WebTermsOfServicePFContractTest`.
 
 - Page Object: [`TermsOfServicePFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/TermsOfServicePFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachTermsOfServicePF`
+- Contract test della pagina: [`WebTermsOfServicePFContractTest`](WebTermsOfServicePFContractTest.md)
 
 ![Termini di servizio](img/TermsOfServicePFPage.png)
 
@@ -301,10 +306,11 @@ Elementi verificati: vedi `assertLoaded()` in [`TermsOfServicePFPage`](../../src
 
 **Indirizzo:** `{baseUrl}/termini-di-servizio/sercq-send`
 
-Pagina dei termini e condizioni d'uso del domicilio digitale SERCQ di SEND. Si apre dal link "Termini del servizio" nel riepilogo del wizard di attivazione del domicilio digitale. Il testo è caricato da un widget OneTrust: l'assertLoaded verifica solo il titolo e i titoli delle sezioni.
+Pagina dei termini e condizioni d'uso del domicilio digitale SERCQ di SEND. Si apre dal link "Termini del servizio" nel riepilogo del wizard di attivazione del domicilio digitale. Il testo è caricato da un widget OneTrust: un indice con un link per ogni sezione e le sezioni del documento. L'assertLoaded verifica che la pagina sia caricata, cioè che il titolo sia "Termini e condizioni d'uso" e che ci sia almeno una sezione; titoli delle sezioni e indice sono verificati da `WebSercqTermsOfServicePFContractTest`.
 
 - Page Object: [`SercqTermsOfServicePFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/SercqTermsOfServicePFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachSercqTermsOfServicePF`
+- Contract test della pagina: [`WebSercqTermsOfServicePFContractTest`](WebSercqTermsOfServicePFContractTest.md)
 
 ![Termini di servizio SERCQ](img/SercqTermsOfServicePFPage.png)
 
