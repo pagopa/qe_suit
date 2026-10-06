@@ -39,7 +39,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     @Override
     public EServiceJourneyImpl createEService(EServiceDescriptorState targetState, EServiceTechnology eServiceTechnology) {
         EService eservice = eServiceUseCase.createEService(
-                command -> command.technology(eServiceTechnology).isAsync(true)
+                command -> command.technology(eServiceTechnology).isAsync(false)
         );
         return processLifecycle(eservice, eservice.getLastDraftDescriptor(), targetState);
     }
