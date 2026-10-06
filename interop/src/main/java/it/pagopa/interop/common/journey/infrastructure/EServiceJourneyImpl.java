@@ -38,17 +38,10 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     @Override
     public EServiceJourneyImpl createEService(EServiceDescriptorState targetState, EServiceTechnology eServiceTechnology) {
-        EServiceCreationCommand command = new BffEServiceCreationCommand()
-                .name("new eservice " + UUID.randomUUID())
-                .description("description for new eservice")
-                .isAsync(true)
-                .mode(EServiceMode.DELIVER)
-                .handlePersonalData(false)
-                .isClientAccessDelegable(false)
-                .technology(eServiceTechnology);
-
-        EService draftEService = eServiceUseCase.createEService(command);
-        return processLifecycle(draftEService, draftEService.getLastDraftDescriptor(), targetState);
+        EService eservice = eServiceUseCase.createEService(
+                command -> command.technology(eServiceTechnology).isAsync(true)
+        );
+        return processLifecycle(eservice, eservice.getLastDraftDescriptor(), targetState);
     }
 
     @Override
