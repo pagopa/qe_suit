@@ -6,7 +6,7 @@ import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
-import it.pagopa.interop.web.eservice.infrastructure.page.refactor.EServiceCreatePage;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;

@@ -8,7 +8,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDetailPage;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceDetailPage;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
