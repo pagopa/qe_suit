@@ -17,7 +17,7 @@ public class InformalDeliveryRestClient {
     private final String baseUrl;
 
     public InformalDeliveryRestClient(
-            @Value("${informal.delivery.base-url:${delivery.api.base-url:https://api.dev.notifichedigitali.it}}") String baseUrl
+            @Value("${delivery.api.base-url:${delivery.api.base-url:https://api.dev.notifichedigitali.it}}") String baseUrl
     ) {
         this.baseUrl = baseUrl;
     }
@@ -44,7 +44,7 @@ public class InformalDeliveryRestClient {
                 .accept(ContentType.JSON)
                 .header("x-api-key", apiKey)
                 .body(requests)
-                .post("/delivery/v1/attachments/preload");
+                .post("/informal/delivery/v1/attachments/preload");
 
         log.info("Risposta preload allegati informal: status={}, body={}", response.getStatusCode(), response.getBody().asString());
         return response;

@@ -33,7 +33,7 @@ public class InformalDocumentPreloadService {
     private final CurrentUserSession currentUserSession;
     private final Map<String, String> paDeliveryApiKeys;
 
-    @Value("${informal.delivery.api-key:68c854bc-a234-4f08-b738-d632814c84cc}")
+    @Value("${pa.delivery-api-key.PALERMO}")
     private String defaultApiKey;
 
     public PreloadedDocument preloadTestPdf(String preloadIdx) {
