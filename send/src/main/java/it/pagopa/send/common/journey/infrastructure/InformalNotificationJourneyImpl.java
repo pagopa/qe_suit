@@ -6,6 +6,7 @@ import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.journey.application.InformalNotificationJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.generated.openapi.clients.informal.model.FullSentInformalNotificationV1;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -47,5 +48,15 @@ public class InformalNotificationJourneyImpl implements InformalNotificationJour
         InformalNotificationDomain domain = informalNotificationUseCase.sendNotification(sender);
         log.info("Comunicazione bonaria inviata con successo: {}", domain);
         return domain;
+    }
+
+    @Override
+    public FullSentInformalNotificationV1 getInformalNotification(String iun){
+        return informalNotificationUseCase.getInformalNotification(iun);
+    }
+
+    @Override
+    public FullSentInformalNotificationV1 getLastInformalNotification(){
+        return informalNotificationUseCase.getLastInformalNotification();
     }
 }
