@@ -6,7 +6,6 @@ import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.web.eservice.application.WebEServiceGeneralData;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data_form.GeneralDataForm;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
-import it.pagopa.interop.web.eservice.infrastructure.suit.page.component.creation_wizard.GeneralDataWizard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
