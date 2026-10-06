@@ -2,7 +2,7 @@ package it.pagopa.interop.web.eservice.infrastructure;
 
 import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties;
 import it.pagopa.interop.web.eservice.application.WebEServiceTechnicalData;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreationPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreatePage;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.technical.TechnicalSpecWizard;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +15,10 @@ import java.util.Optional;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WebEServiceTechDataGateway {
 
-    private final EServiceCreationPage eServiceCreationPage;
+    private final EServiceCreatePage eServiceCreatePage;
 
     public void fillEServiceTechData(WebEServiceTechnicalData model) {
-        TechnicalSpecWizard technicalSpecWizard = eServiceCreationPage.technicalSpecificationStep();
+        TechnicalSpecWizard technicalSpecWizard = eServiceCreatePage.technicalSpecificationStep();
         var voucherComponent = technicalSpecWizard.voucherComponent();
         var interfaceComponent = technicalSpecWizard.interfaceComponent();
 
@@ -33,7 +33,7 @@ public class WebEServiceTechDataGateway {
     }
 
     public WebEServiceTechnicalData readEServiceTechData() {
-        TechnicalSpecWizard technicalSpecWizard = eServiceCreationPage.technicalSpecificationStep();
+        TechnicalSpecWizard technicalSpecWizard = eServiceCreatePage.technicalSpecificationStep();
         var voucherComp = technicalSpecWizard.voucherComponent();
         var asyncComp = technicalSpecWizard.asyncComponent();
 
@@ -56,7 +56,7 @@ public class WebEServiceTechDataGateway {
     private void fillAsyncProperties(AsyncExchangeProperties seed, String callbackInterfacePath) {
         if (seed == null) return;
 
-        TechnicalSpecWizard technicalSpecWizard = eServiceCreationPage.technicalSpecificationStep();
+        TechnicalSpecWizard technicalSpecWizard = eServiceCreatePage.technicalSpecificationStep();
         var asyncComponent = technicalSpecWizard.asyncComponent();
 
         asyncComponent.responseTime().fill(seed.getResponseTime());

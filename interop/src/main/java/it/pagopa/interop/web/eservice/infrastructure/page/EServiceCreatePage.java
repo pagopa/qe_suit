@@ -11,7 +11,7 @@ import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wiz
 import it.pagopa.infrastructure.suit.component.Button;
 
 @Url("${interop.web.base-url}/erogazione/e-service/crea/")
-public interface EServiceCreationPage extends Page {
+public interface EServiceCreatePage extends Page {
 
     @XPath(".//h1")
     Readable<String> title();

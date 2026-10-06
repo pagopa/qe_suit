@@ -1,7 +1,7 @@
 package it.pagopa.interop.web.eservice.infrastructure.cucumber;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreationPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreatePage;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.GeneralDataWizard;
 import it.pagopa.infrastructure.suit.component.Alert;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,8 @@ public class WebEServiceGeneralDataParameterType {
     private final GeneralDataWizard generalInformationStep;
 
     @Autowired
-    public WebEServiceGeneralDataParameterType(EServiceCreationPage eServiceCreationPage) {
-        this.generalInformationStep = eServiceCreationPage.generalDataStep();
+    public WebEServiceGeneralDataParameterType(EServiceCreatePage eServiceCreatePage) {
+        this.generalInformationStep = eServiceCreatePage.generalDataStep();
     }
 
     @ParameterType("Nome|Descrizione|L’e-service eroga dati personali\\?")
