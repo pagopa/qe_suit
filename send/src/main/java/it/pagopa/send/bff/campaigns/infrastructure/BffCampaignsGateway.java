@@ -18,7 +18,6 @@ import java.util.Objects;
 @Slf4j
 public class BffCampaignsGateway implements CampaignsGateway {
     private final CampaignsRestClient restClient;
-    private final EntityStore entityStore;
 
     @Override
     public boolean supports(@NonNull Channel channel) {
