@@ -18,7 +18,7 @@ public class DeliveryPushMessagesRestClient {
     private final String baseUrl;
 
     public DeliveryPushMessagesRestClient(
-            @Value("${delivery.push.base-url:http://localhost:8889}") String baseUrl
+            @Value("${delivery.push.base-url}") String baseUrl
     ) {
         this.baseUrl = baseUrl;
     }
