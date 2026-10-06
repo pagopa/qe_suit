@@ -57,6 +57,7 @@ public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImp
             adapter.navigateTo(targetUrl);
         }
 
+        adapter.setSessionStorageItem("lang", "it");
         adapter.setSessionStorageItem(SESSION_STORAGE_KEY, sessionPayload);
 
         adapter.navigateTo(targetUrl);
