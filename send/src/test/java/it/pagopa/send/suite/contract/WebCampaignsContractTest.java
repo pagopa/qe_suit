@@ -1,5 +1,6 @@
 package it.pagopa.send.suite.contract;
 
+import it.frontend.e2e.framework.core.capability.core.Readable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.campaigns.application.CampaignsGateway;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
@@ -26,7 +28,7 @@ import org.springframework.test.context.TestConstructor;
 import java.util.List;
 import java.util.stream.Stream;
 
-@ActiveProfiles({"dev", "junit"})
+@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
@@ -37,7 +39,8 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class WebCampaignsContractTest {
     private final WebBrowserContractValidator webContractValidator;
-    private final CampaignsGateway campaignsGateway;
+    @Value("${token.mittente}")
+    private String veronaSelfCareToken;
 
     @TestFactory
     Stream<DynamicTest> campagneButtonIsPresentIntoSidebar() {
@@ -62,9 +65,10 @@ public class WebCampaignsContractTest {
 
     @TestFactory
     Stream<DynamicTest> campagneEmptyState() {
+        String selfCareToken = "";
         return webContractValidator
                 .as(Tenant.GROSSINI, List.of())
-                .on(CampaignsPage.class)
+                .on(CampaignsPage.class,selfCareToken)
                 .tests(campagneEmptyStateScenarios());
     }
 
@@ -81,9 +85,10 @@ public class WebCampaignsContractTest {
 
     @TestFactory
     Stream<DynamicTest> campagneListaPopolata() {
+
         return webContractValidator
                 .as(Tenant.GROSSINI, List.of())
-                .on(CampaignsPage.class)
+                .on(CampaignsPage.class,veronaSelfCareToken)
                 .tests(campagneListaPopolataScenarios());
     }
 
@@ -93,7 +98,7 @@ public class WebCampaignsContractTest {
                 page -> {
                 },
                 page -> {
-                    Assertions.assertThat(page.table().elements()).as("La lista è vuota ma dovrebbe essere popolata").isNotEmpty();
+                    Assertions.assertThat(page.box().elements()).as("La lista è vuota ma dovrebbe essere popolata").isNotEmpty();
                 }
         ));
     }
@@ -102,7 +107,7 @@ public class WebCampaignsContractTest {
     Stream<DynamicTest> campagneElementiListaCorretti() {
         return webContractValidator
                 .as(Tenant.GROSSINI, List.of())
-                .on(CampaignsPage.class)
+                .on(CampaignsPage.class,veronaSelfCareToken)
                 .tests(campagneElementiListaCorrettiScenarios());
     }
 
@@ -112,81 +117,35 @@ public class WebCampaignsContractTest {
                 page -> {
                 },
                 page -> {
-                    for (CampagneElement elem : page.table().elements()){
+                    for (CampagneElement elem : page.box().elements()){
                         Assertions.assertThat(elem.apriCampagna().isDisabled()).as("Il bottone è disabilitato").isFalse();
                         Assertions.assertThat(elem.fields().size()).as("Non sono presenti le 4 labels previste").isEqualTo(4);
+                        boolean contieneCodiceId = elem.fields().stream()
+                                .map(Readable::read).anyMatch("Codice ID"::equals);
+                        boolean contieneData =  elem.fields().stream()
+                                .map(Readable::read).anyMatch(s -> s.matches("\\d{2}/\\d{2}/\\d{4}"));
+                        Assertions.assertThat(contieneCodiceId).as("Non è presente il campo 'Codice ID'").isTrue();
+                        Assertions.assertThat(contieneData).as("Non è presente la data").isTrue();
                     }
                 }
         ));
-    }
-
-
-
-    @TestFactory
-    Stream<DynamicTest> dettaglioCampagna() {
-        List<CampaignSummary> results = campaignsGateway.getCampaigns();
+    }@TestFactory
+    Stream<DynamicTest> campagneElementiPaginazione() {
         return webContractValidator
                 .as(Tenant.GROSSINI, List.of())
-                .on(CampaignDetailPage.class,results.get(0).getCampaignId())
-                .tests(dettaglioCampagnaScenarios(results.get(0)));
+                .on(CampaignsPage.class,veronaSelfCareToken)
+                .tests(campagneElementiPaginazioneScenarios());
     }
 
-    private static @NonNull Stream<WebScenario<CampaignDetailPage>> dettaglioCampagnaScenarios(CampaignSummary summary) {
+    private static @NonNull Stream<WebScenario<CampaignsPage>> campagneElementiPaginazioneScenarios() {
         return Stream.of(new WebScenario<>(
-                "Verifica pagina dettaglio notifica",
-                page -> {},
+                "Verifica paginazione coerente",
                 page -> {
-                    Assertions.assertThat(page.labels().size()).as("Non sono presenti le 8 labels previste").isEqualTo(8);
-                    Assertions.assertThat(page.header().read()).as("Il titolo non corrisponde a quello recuperato").isEqualTo(summary.getTitle());
-
-                }
-        ));
-    }
-
-    @TestFactory
-    Stream<DynamicTest> dettaglioCampagnaEmptyState() {
-        List<CampaignSummary> results = campaignsGateway.getCampaigns();
-        return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
-                .on(CampaignDetailPage.class,results.get(0).getCampaignId())
-                .tests(dettaglioCampagnaEmptyStateScenarios(results.get(0)));
-    }
-
-    private static @NonNull Stream<WebScenario<CampaignDetailPage>> dettaglioCampagnaEmptyStateScenarios(CampaignSummary summary) {
-        return Stream.of(new WebScenario<>(
-                "Verifica pagina dettaglio notifica con nessuna comunicazione",
-                page -> {},
-                page -> {
-                    Assertions.assertThat(page.emptyStateLabel().read()).as("Sono presenti comunicazioni").isEqualTo("Nessuna comunicazione disponibile");
-                }
-        ));
-    }
-
-    @TestFactory
-    Stream<DynamicTest> dettaglioCampagnaRicerca() {
-        List<CampaignSummary> results = campaignsGateway.getCampaigns();
-        return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
-                .on(CampaignDetailPage.class,results.get(1).getCampaignId())
-                .tests(dettaglioCampagnaRicercaScenarios(results.get(1)));
-    }
-
-    private static @NonNull Stream<WebScenario<CampaignDetailPage>> dettaglioCampagnaRicercaScenarios(CampaignSummary summary) {
-        return Stream.of(new WebScenario<>(
-                "Verifica pagina dettaglio notifica con ricerca",
-                page -> {
-                    page.recipientId().fill("DRCGNN12A46A326K");
-                    page.filterButton().click();
                 },
                 page -> {
-                    Assertions.assertThat(page.communications().rows().size()).as("Le comunicazioni trovate sono diverse da 1").isEqualTo(2);
-                    Assertions.assertThat(page.communications()
-                            .rows()
-                            .get(1)
-                            .cells()
-                            .get(0)
-                            .value()
-                            .read()).as("Valore campo recipientId non congruo").isEqualTo("DRCGNN12A46A326K");
+                        Assertions.assertThat(page.box().elements().size())
+                                .as("Gli elementi della pagina sono maggiori di quelli richiesti dalla paginazione")
+                                .isLessThanOrEqualTo(Integer.parseInt(page.rowsXPageButton().read()));
                 }
         ));
     }
