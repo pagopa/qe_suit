@@ -7,7 +7,7 @@ import it.pagopa.interop.web.purpose_template.infrastructure.suite.page.Consumer
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class PurposeTemplateCatalogSteps {
+public class WebPurposeTemplateCatalogSteps {
 
     private final ConsumerPurposeTemplateCatalogPage consumerPurposeTemplateCatalogPage;
     private final UnauthorizedComponent unauthorizedComponent;
