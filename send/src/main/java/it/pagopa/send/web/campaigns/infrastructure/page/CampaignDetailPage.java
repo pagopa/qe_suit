@@ -2,14 +2,11 @@ package it.pagopa.send.web.campaigns.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
-import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.TextField;
-import it.pagopa.send.web.campaigns.infrastructure.page.component.Table;
-import it.pagopa.send.web.campaigns.infrastructure.page.component.TableRow;
+import it.pagopa.send.web.infrastructure.page.component.Table;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import org.assertj.core.api.Assertions;
 

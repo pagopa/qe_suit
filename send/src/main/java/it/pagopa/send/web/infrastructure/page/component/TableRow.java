@@ -1,4 +1,4 @@
-package it.pagopa.send.web.campaigns.infrastructure.page.component;
+package it.pagopa.send.web.infrastructure.page.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;
