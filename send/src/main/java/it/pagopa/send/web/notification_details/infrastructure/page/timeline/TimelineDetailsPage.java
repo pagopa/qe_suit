@@ -15,7 +15,11 @@ public interface TimelineDetailsPage extends Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        // Nota: oneTrustBanner() restituisce sempre un Optional con un lazy proxy anche se il banner
+        // non è nel DOM. Si usa try-catch per verificare la presenza reale prima del click.
+        oneTrustBanner().ifPresent(banner -> {
+            try { banner.accept(); } catch (Exception ignored) {}
+        });
         timeline().assertLoaded();
     }
 }

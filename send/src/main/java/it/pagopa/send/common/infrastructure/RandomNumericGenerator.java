@@ -9,12 +9,16 @@ import java.util.Random;
  */
 public final class RandomNumericGenerator {
 
+    private static final Random RANDOM = new Random();
+
     private RandomNumericGenerator() {
     }
 
     public static String generate(int length) {
-        long max = (long) Math.pow(10, length);
-        long value = Math.abs(new Random().nextLong() % max);
-        return String.format("%0" + length + "d", value);
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(RANDOM.nextInt(10));
+        }
+        return sb.toString();
     }
 }

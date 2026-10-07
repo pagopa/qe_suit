@@ -9,7 +9,7 @@ import org.assertj.core.api.SoftAssertions;
 @XPath("//div[@id='page-header-container']")
 public interface ComboOverviewSection extends Component {
 
-    @XPath(".//h1[@data-testid='titleBox'] | .//h1")
+    @XPath(".//h1[@data-testid='titleBox' or self::h1]")
     Readable<String> title();
 
     @XPath(".//p[normalize-space()='IUN']/following-sibling::div[1]")
