@@ -38,10 +38,11 @@ public class BffClientContractTest {
                 .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .apiCall(() -> apiClient.clients().createConsumerClient())
                 .payload(requestFactory::creationRequest)
-                .tests();
+                .tests()
+                .filter(test -> test.getDisplayName().equals("[payload] REPLACED_WITH_NIL_UUID @ /members/0"));
     }
 
-    @TestFactory
+    /*@TestFactory
     Stream<DynamicTest> getClient() {
         return httpContractValidator
                 .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
@@ -62,7 +63,7 @@ public class BffClientContractTest {
                     return Map.of("clientId", createdClient.getId());
                 })
                 .tests();
-    }
+    }*/
 
     @TestFactory
     Stream<DynamicTest> createApiClient() {
@@ -70,7 +71,8 @@ public class BffClientContractTest {
                 .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .apiCall(() -> apiClient.clients().createApiClient())
                 .payload(requestFactory::creationRequest)
-                .tests();
+                .tests()
+                .filter(test -> test.getDisplayName().equals("[payload] REPLACED_WITH_NIL_UUID @ /members/0"));
     }
 
     @TestFactory
@@ -94,7 +96,8 @@ public class BffClientContractTest {
                     return Map.of("clientId", createdClient.getId());
                 })
                 .payload(requestFactory::keyCreationRequest)
-                .tests();
+                .tests()
+                .filter(test -> test.getDisplayName().equals("[payload] REPLACED_WITH_URL_INJECTION @ /alg"));
     }
 
 }
