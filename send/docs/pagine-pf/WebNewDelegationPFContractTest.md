@@ -78,6 +78,9 @@ test; i testi attesi sono costanti in cima alla classe.
 | ragione sociale con spazi all'inizio o alla fine | messaggio di errore sulla ragione sociale di una persona giuridica |
 | persona giuridica con codice fiscale non numerico | messaggio di errore sul codice fiscale di una persona giuridica (solo numeri) |
 | termine delega vuoto | messaggio di errore sul termine delega |
+| termine delega con data passata | "Data errata" uscendo dal campo, con una data già trascorsa |
+| termine delega con data impossibile | "Data errata" uscendo dal campo, con il 31 febbraio |
+| termine delega con data incompleta | "Data errata" uscendo dal campo, con solo giorno e mese |
 
 ## Stati verificati
 

@@ -15,6 +15,7 @@ pagina, descritti ciascuno in un documento con lo stesso nome della classe di te
 - [`WebConfigureAddressSendPFContractTest`](WebConfigureAddressSendPFContractTest.md): pagina di onboarding "Configura SEND"
 - [`WebOnboardingIoPFContractTest`](WebOnboardingIoPFContractTest.md): pagina di onboarding "Tutto, sull'app IO"
 - [`WebOnboardingDigitalDomicilePFContractTest`](WebOnboardingDigitalDomicilePFContractTest.md): wizard di onboarding "Il meglio di SEND"
+- [`WebOnboardingAlertsPFContractTest`](WebOnboardingAlertsPFContractTest.md): wizard di onboarding "Attivazione avvisi"
 
 Negli indirizzi `{baseUrl}` è la proprietà `url.notifiche.cittadino.base` del profilo attivo
 (es. `https://cittadini.test.notifichedigitali.it` sul profilo `test`).
@@ -221,10 +222,11 @@ Elementi verificati: vedi `assertLoaded()` in [`OnboardingDigitalDomicilePFPage`
 
 **Indirizzo:** `{baseUrl}/onboarding/avvisi`
 
-Pagina del wizard di onboarding "Attivazione avvisi" del cittadino. Si apre dalla card "Voglio solo gli avvisi" della pagina `{baseUrl}/onboarding`. Il wizard ha due passi: avvisi su IO (`OnboardingWizardPFPage.IoSection`) e avvisi via email e SMS (`EmailSmsSection`), il cui contenuto dipende dai recapiti di cortesia dell'utente. L'assertLoaded verifica solo gli elementi comuni a tutti i passi.
+Pagina del wizard di onboarding "Attivazione avvisi" del cittadino. Si apre dalla card "Voglio solo gli avvisi" della pagina `{baseUrl}/onboarding`. Il wizard ha due passi: avvisi su IO (`OnboardingWizardPFPage.IoSection`) e avvisi via email e SMS (`EmailSmsSection`), il cui contenuto dipende dai recapiti di cortesia dell'utente. L'assertLoaded verifica che la pagina sia caricata, cioè il titolo "Attivazione avvisi", "Esci" e i due passi dell'indicatore; l'assertLoaded di ogni sezione verifica che il passo abbia un contenuto. I testi di ogni passo sono verificati da `WebOnboardingAlertsPFContractTest`.
 
 - Page Object: [`OnboardingAlertsPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/OnboardingAlertsPFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachOnboardingAlertsPF` (se presente: il test verifica il passo di apertura e ogni passo raggiunto con il pulsante avanti, fermandosi sull'ultimo senza premere Conferma)
+- Contract test della pagina: [`WebOnboardingAlertsPFContractTest`](WebOnboardingAlertsPFContractTest.md)
 
 ![Onboarding: Attivazione avvisi](img/OnboardingAlertsPFPage.png)
 

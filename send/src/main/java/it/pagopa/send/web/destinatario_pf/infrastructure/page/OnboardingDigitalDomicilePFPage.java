@@ -6,6 +6,7 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.TextField;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import org.assertj.core.api.Assertions;
 
@@ -91,6 +92,18 @@ public interface OnboardingDigitalDomicilePFPage extends OnboardingWizardPFPage,
 
         @XPath("//*[@id=\"modifyContact-default_email\"]")
         Button modifyCourtesyEmailButton();
+
+        // modifica dell'email: "Modifica" apre il campo con l'email e "Conferma"; un valore valido avvia l'invio del codice
+        // di verifica, quindi nei test si usano solo valori non validi
+
+        @XPath("//*[@data-testid=\"default_emailContact\"]//input")
+        TextField editEmailInput();
+
+        @XPath("//*[@id=\"saveContact-default_email\"]")
+        Button saveEmailButton();
+
+        @XPath("//*[@id=\"default_email-helper-text\"]")
+        Readable<String> editEmailErrorMessage();
 
         // labels
 

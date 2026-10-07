@@ -61,6 +61,7 @@ public class WebNewDelegationPFContractTest {
     private static final String INVALID_TAX_ID_MESSAGE = "Il Codice Fiscale inserito non è corretto";
     private static final String SPACES_AT_EDGES_MESSAGE = "Elimina gli spazi all'inizio o alla fine";
     private static final String EXPIRATION_DATE_REQUIRED_MESSAGE = "La data di termine delega è obbligatoria";
+    private static final String INVALID_DATE_MESSAGE = "Data errata";
 
     // dati di prova: il codice fiscale non valido blocca sempre l'invio del form
 
@@ -305,7 +306,24 @@ public class WebNewDelegationPFContractTest {
                             page.submitButton().click();
                         },
                         page -> Assertions.assertThat(page.getExpirationDateErrorMessage()).isEqualTo(EXPIRATION_DATE_REQUIRED_MESSAGE)
-                )
+                ),
+
+                invalidDateScenario("termine delega con data passata", "01012020"),
+                invalidDateScenario("termine delega con data impossibile", "31022027"),
+                invalidDateScenario("termine delega con data incompleta", "0101")
+        );
+    }
+
+    // il messaggio compare quando si esce dal campo; il campo data ha una maschera, quindi si scrivono solo le cifre
+    private WebScenario<NewDelegationPFPage> invalidDateScenario(String name, String digits) {
+        return new WebScenario<>(
+                name,
+                page -> {
+                    page.expirationDateInput().write(Keys.chord(Keys.CONTROL, "a") + Keys.DELETE);
+                    page.expirationDateInput().write(digits);
+                    page.expirationDateInput().write(Keys.TAB.toString());
+                },
+                page -> Assertions.assertThat(page.getExpirationDateErrorMessage()).isEqualTo(INVALID_DATE_MESSAGE)
         );
     }
 }

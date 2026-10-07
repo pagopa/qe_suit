@@ -88,3 +88,14 @@ Utente senza PEC:
 | se raggiungibile, passo riepilogo con conferma non premuta | titolo "Il tuo riepilogo", le due etichette del riepilogo, l'avviso "Monitora i recapiti che hai scelto…", "Indietro" e "Conferma" (non premuto) |
 
 ![Passo 4](img/OnboardingDigitalDomicilePFPage_SummarySection.png)
+
+### Validazioni (`shouldValidatePecSectionEmail`)
+
+"Modifica" sull'email del passo 2 apre un campo con l'email e "Conferma". Con un'email valida "Conferma" avvia l'invio
+del codice di verifica al nuovo indirizzo, quindi gli scenari usano solo valori non validi, anche senza spazi: il portale
+toglie gli spazi all'inizio e alla fine prima di validare.
+
+| Scenario | Cosa verifica |
+|---|---|
+| se raggiungibile, modifica email vuota | "Indirizzo email non valido" dopo "Conferma" |
+| se raggiungibile, modifica email non valida | "Indirizzo email non valido" dopo "Conferma" |

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.openqa.selenium.Keys;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
@@ -34,7 +35,8 @@ import static it.pagopa.send.suite.contract.OnboardingIoExpectedTexts.IO_TITLE;
  * I test sono organizzati per:
  * <ul>
  *     <li>testi comuni a tutti i passi;</li>
- *     <li>un gruppo per ogni passo del wizard, con testi e pulsanti del passo.</li>
+ *     <li>un gruppo per ogni passo del wizard, con testi e pulsanti del passo;</li>
+ *     <li>messaggi di validazione della modifica dell'email al passo 2.</li>
  * </ul>
  * Il passo mostrato all'apertura e il contenuto dei passi dipendono dai recapiti dell'utente: ogni scenario si sposta
  * sul suo passo con "Indietro" e "Avanti" e lo verifica se è raggiungibile. Nessuno scenario fa scelte nei passi o preme
@@ -89,6 +91,12 @@ public class WebOnboardingDigitalDomicilePFContractTest {
     private static final String LEGAL_DELIVERY_LABEL = "Le comunicazioni a valore legale verranno recapitate su:";
     private static final String ALERTS_LABEL = "Riceverai un avviso via:";
     private static final String MONITOR_ALERT = "Monitora i recapiti che hai scelto: una notifica digitale SEND inizia a produrre effetti giuridici anche se non l’hai consultata.";
+
+    // messaggi di validazione della modifica dell'email al passo 2
+    private static final String INVALID_EMAIL_MESSAGE = "Indirizzo email non valido";
+
+    // dati di prova: non valido anche senza spazi, perché un valore valido avvierebbe l'invio del codice di verifica
+    private static final String INVALID_EMAIL = "abc";
 
     private final WebBrowserContractValidator webContractValidator;
 
@@ -224,6 +232,41 @@ public class WebOnboardingDigitalDomicilePFContractTest {
                                 }
                         )
                 ));
+    }
+
+    // messaggi di validazione della modifica dell'email al passo 2: solo valori non validi, così non parte mai l'invio
+    // del codice di verifica
+
+    @TestFactory
+    Stream<DynamicTest> shouldValidatePecSectionEmail() {
+        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+                .on(OnboardingDigitalDomicilePFPage.class)
+                .tests(Stream.of(
+                        editEmailScenario("se raggiungibile, modifica email vuota", ""),
+                        editEmailScenario("se raggiungibile, modifica email non valida", INVALID_EMAIL)
+                ));
+    }
+
+    /**
+     * Preme "Modifica" sull'email del passo 2, la sostituisce con il valore, preme "Conferma" e controlla il messaggio. Se il
+     * passo non è raggiungibile senza una scelta lo scenario termina senza verificarlo.
+     */
+    private WebScenario<OnboardingDigitalDomicilePFPage> editEmailScenario(String name, String value) {
+        return new WebScenario<>(
+                name,
+                page -> {},
+                page -> {
+                    if (!page.goToSection(PEC_SECTION)) {
+                        // Il passo richiede una scelta al passo precedente, quindi il test termina senza verificarlo
+                        return;
+                    }
+                    OnboardingDigitalDomicilePFPage.PecSection section = page.pecSection();
+                    section.modifyCourtesyEmailButton().click();
+                    section.editEmailInput().write(Keys.chord(Keys.CONTROL, "a") + Keys.DELETE + value);
+                    section.saveEmailButton().click();
+                    section.editEmailErrorMessage().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(INVALID_EMAIL_MESSAGE));
+                }
+        );
     }
 
     private void assertBackAndNextButtons(OnboardingWizardPFPage page, String nextLabel) {
