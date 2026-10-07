@@ -12,6 +12,9 @@ pagina, descritti ciascuno in un documento con lo stesso nome della classe di te
 - [`WebSupportPFContractTest`](WebSupportPFContractTest.md): pagina "Come possiamo aiutarti?" (assistenza)
 - [`WebTermsOfServicePFContractTest`](WebTermsOfServicePFContractTest.md): pagina "Termini e condizioni d'uso"
 - [`WebSercqTermsOfServicePFContractTest`](WebSercqTermsOfServicePFContractTest.md): pagina "Termini e condizioni d'uso" del domicilio digitale SERCQ
+- [`WebConfigureAddressSendPFContractTest`](WebConfigureAddressSendPFContractTest.md): pagina di onboarding "Configura SEND"
+- [`WebOnboardingIoPFContractTest`](WebOnboardingIoPFContractTest.md): pagina di onboarding "Tutto, sull'app IO"
+- [`WebOnboardingDigitalDomicilePFContractTest`](WebOnboardingDigitalDomicilePFContractTest.md): wizard di onboarding "Il meglio di SEND"
 
 Negli indirizzi `{baseUrl}` è la proprietà `url.notifiche.cittadino.base` del profilo attivo
 (es. `https://cittadini.test.notifichedigitali.it` sul profilo `test`).
@@ -24,17 +27,13 @@ o componenti ma non vengono verificate, per evitare test falliti per falsi posit
 test dedicato l'`assertLoaded()` verifica solo che la pagina sia caricata (titolo, input e pulsanti necessari):
 testi e label sono verificati nel contract test.
 
-Negli screenshot gli elementi verificati sono evidenziati:
-
-| Evidenziazione | Significato |
-|---|---|
-| bordo **rosso pieno** | elemento principale, individuato da `id` o `data-testid` |
-| bordo **arancione tratteggiato** | elemento del blocco `// labels`: testi senza `id`/`data-testid`, individuati per posizione o per testo |
+Negli screenshot sono evidenziati con un **bordo rosso** gli elementi verificati dall'`assertLoaded()` della pagina (o
+della sezione, per i passi dei wizard), ricavati dal codice dell'`assertLoaded()` stesso.
 
 Gli screenshot sono catturati sull'ambiente `test` con l'utente di test Lucrezia Borgia, a 1920x1080, e vanno
 rigenerati quando cambia l'`assertLoaded()` di una pagina. I dati visibili sono dati di test.
 
-Screenshot aggiornati al: **06/10/2026**.
+Screenshot aggiornati al: **07/10/2026**.
 
 ## Indice
 
@@ -176,10 +175,11 @@ Elementi verificati: vedi `assertLoaded()` in [`NewDelegationPFPage`](../../src/
 
 **Indirizzo:** `{baseUrl}/onboarding`
 
-Pagina "Configura SEND" del cittadino (onboarding). Mostrata al primo accesso al portale. Contiene le card per scegliere come ricevere le notifiche e il pulsante per saltare la configurazione. L'assertLoaded verifica solo gli elementi presenti per qualunque utente: la card "Preferisco attivare solo SEND sull'app IO" non è mostrata a tutti e non viene verificata.
+Pagina "Configura SEND" del cittadino (onboarding). Mostrata al primo accesso al portale. Contiene le card per scegliere come ricevere le notifiche, che aprono le pagine di onboarding, e il pulsante per saltare la configurazione. Le card "Scelgo il meglio di SEND" e "Voglio solo gli avvisi" sono mostrate a tutti; la terza card "Preferisco attivare solo SEND sull'app IO" solo agli utenti senza recapiti di cortesia (email, SMS o app IO). L'assertLoaded verifica che la pagina sia caricata, cioè il titolo e la presenza dei pulsanti delle due card mostrate a tutti e di "Salta"; testi e pagine aperte dalle card sono verificati da `WebConfigureAddressSendPFContractTest`.
 
 - Page Object: [`ConfigureAddressSendPage`](../../src/main/java/it/pagopa/send/web/infrastructure/page/ConfigureAddressSendPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachOnboardingPF`
+- Contract test della pagina: [`WebConfigureAddressSendPFContractTest`](WebConfigureAddressSendPFContractTest.md)
 
 ![Configura SEND (onboarding)](img/ConfigureAddressSendPage.png)
 
@@ -189,14 +189,19 @@ Elementi verificati: vedi `assertLoaded()` in [`ConfigureAddressSendPage`](../..
 
 **Indirizzo:** `{baseUrl}/onboarding/domicilio-digitale`
 
-Pagina del wizard di onboarding "Il meglio di SEND" del cittadino. Si apre dalla card "Scelgo il meglio di SEND" della pagina `{baseUrl}/onboarding`. Il wizard ha quattro passi: scelta del domicilio digitale (`ChooseDigitalDomicileSection`), casella di posta (`PecSection` se l'utente ha già una PEC), avvisi su IO (`OnboardingWizardPFPage.IoSection`) e riepilogo (`SummarySection`). Il passo mostrato all'apertura dipende dai recapiti dell'utente. L'assertLoaded verifica solo gli elementi comuni a tutti i passi.
+Pagina del wizard di onboarding "Il meglio di SEND" del cittadino. Si apre dalla card "Scelgo il meglio di SEND" della pagina `{baseUrl}/onboarding`. Il wizard ha quattro passi: scelta del domicilio digitale (`ChooseDigitalDomicileSection`), casella di posta (`PecSection` se l'utente ha già una PEC), avvisi su IO (`OnboardingWizardPFPage.IoSection`) e riepilogo (`SummarySection`). Il passo mostrato all'apertura dipende dai recapiti dell'utente. L'assertLoaded verifica che la pagina sia caricata, cioè il titolo "Il meglio di SEND", "Esci" e i quattro passi dell'indicatore; l'assertLoaded di ogni sezione verifica che il titolo del passo ci sia. I testi di ogni passo sono verificati da `WebOnboardingDigitalDomicilePFContractTest`.
 
 - Page Object: [`OnboardingDigitalDomicilePFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/OnboardingDigitalDomicilePFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachOnboardingDigitalDomicilePF` (se presente: il test verifica il passo di apertura e ogni passo raggiunto con il pulsante avanti, fermandosi sull'ultimo senza premere Conferma; con un utente senza PEC si ferma al passo di scelta del domicilio, dopo averlo verificato)
+- Contract test della pagina: [`WebOnboardingDigitalDomicilePFContractTest`](WebOnboardingDigitalDomicilePFContractTest.md)
 
 ![Onboarding: Il meglio di SEND](img/OnboardingDigitalDomicilePFPage.png)
 
 Passi del wizard: in ogni screenshot sono evidenziati gli elementi verificati dalla sezione di quel passo.
+
+**Passo 1: Scegli un domicilio digitale (utente con PEC in attivazione, raggiunto con "Indietro")** (`ChooseDigitalDomicileSection`)
+
+![Passo 1: Scegli un domicilio digitale](img/OnboardingDigitalDomicilePFPage_ChooseDigitalDomicileSection.png)
 
 **Passo 2: Associa una casella di posta (utente con PEC)** (`PecSection`)
 
@@ -239,10 +244,13 @@ Elementi verificati: vedi `assertLoaded()` in [`OnboardingAlertsPFPage`](../../s
 
 **Indirizzo:** `{baseUrl}/onboarding/io`
 
-Pagina di onboarding "Tutto, sull'app IO" del cittadino. Si apre dalla card "Preferisco attivare solo SEND sull'app IO" della pagina `{baseUrl}/onboarding` (card non mostrata a tutti gli utenti). Propone di attivare SEND sull'app IO (campi mappati in questa pagina); il contenuto può cambiare se l'utente ha già attivato IO. L'assertLoaded verifica solo gli elementi sempre presenti.
+Pagina di onboarding "Tutto, sull'app IO" del cittadino. Dal portale si apre solo dalla terza card "Preferisco attivare solo SEND sull'app IO" della pagina "Configura SEND" (`{baseUrl}/onboarding`), mostrata solo agli utenti senza recapiti di cortesia (email, SMS o app IO); il test di navigazione la apre dall'indirizzo. Non va confusa con il passo "Attiva gli avvisi su IO" dei wizard di onboarding, che mostra lo stesso blocco ma resta sull'indirizzo del wizard. L'assertLoaded verifica che la pagina sia caricata, cioè che il titolo sia "Tutto, sull'app IO" e che ci siano i pulsanti; testi e comportamento di "Esci" sono verificati da `WebOnboardingIoPFContractTest`.
+
+![Configura SEND con la terza card](img/WebConfigureAddressSendPFContractTest/card-io.png)
 
 - Page Object: [`OnboardingIoPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/OnboardingIoPFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachOnboardingIoPF`
+- Contract test della pagina: [`WebOnboardingIoPFContractTest`](WebOnboardingIoPFContractTest.md)
 
 ![Onboarding: Tutto, sull'app IO](img/OnboardingIoPFPage.png)
 

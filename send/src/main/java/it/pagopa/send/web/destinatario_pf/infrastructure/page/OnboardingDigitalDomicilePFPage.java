@@ -15,8 +15,11 @@ import org.assertj.core.api.Assertions;
  * Si apre dalla card "Scelgo il meglio di SEND" della pagina {@code {baseUrl}/onboarding}.
  * Il wizard ha quattro passi: scelta del domicilio digitale ({@link ChooseDigitalDomicileSection}), casella di posta
  * ({@link PecSection} se l'utente ha già una PEC), avvisi su IO ({@link OnboardingWizardPFPage.IoSection}) e riepilogo
- * ({@link SummarySection}). Il passo mostrato all'apertura dipende dai recapiti dell'utente.
- * L'assertLoaded verifica solo gli elementi comuni a tutti i passi.
+ * ({@link SummarySection}).
+ * Il passo mostrato all'apertura dipende dai recapiti dell'utente; con "Indietro" e "Avanti" ci si sposta tra i passi senza
+ * salvare nulla, finché non si preme "Conferma" sull'ultimo.
+ * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo "Il meglio di SEND", "Esci" e i quattro passi
+ * dell'indicatore; i testi di ogni passo sono verificati da {@code WebOnboardingDigitalDomicilePFContractTest}.
  */
 @Url("${url.notifiche.cittadino.onboarding-domicilio-digitale}")
 public interface OnboardingDigitalDomicilePFPage extends OnboardingWizardPFPage, Page {
@@ -48,7 +51,14 @@ public interface OnboardingDigitalDomicilePFPage extends OnboardingWizardPFPage,
         return summarySection();
     }
 
+    /**
+     * Primo passo. Ha due varianti: la scelta tra domicilio digitale su SEND e su PEC, per chi non ha una PEC, e l'avviso
+     * di attivazione in corso, per chi ha una PEC in attivazione.
+     */
     interface ChooseDigitalDomicileSection extends Component {
+        @XPath("//*[@data-testid=\"chose-digital-domicile-step\"]")
+        Readable<String> content();
+
         @XPath("//*[@data-testid=\"select-send-button\"]")
         Button selectSendButton();
 
@@ -57,24 +67,21 @@ public interface OnboardingDigitalDomicilePFPage extends OnboardingWizardPFPage,
 
         // labels
 
-        @XPath("//*[@data-testid=\"select-send-button\"]/preceding-sibling::p[2]")
+        @XPath("(//*[@data-testid=\"chose-digital-domicile-step\"]//p)[1]")
         Readable<String> title();
 
-        @XPath("//*[@data-testid=\"select-send-button\"]/preceding-sibling::p[1]")
-        Readable<String> sendDescription();
+        @XPath("(//*[@data-testid=\"chose-digital-domicile-step\"]//p)[2]")
+        Readable<String> description();
 
         @XPath("//*[@data-testid=\"select-pec-button\"]/preceding-sibling::p[1]")
         Readable<String> pecDescription();
 
+        @XPath("//*[@data-testid=\"chose-digital-domicile-step\"]//*[contains(@class,\"MuiChip-label\")]")
+        Readable<String> activationInProgressLabel();
+
         @Override
         default void assertLoaded() {
-            selectSendButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Attiva su SEND"));
-            selectPecButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Attiva su una PEC"));
-
-            // labels
-            title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Attiva il domicilio digitale su SEND"));
-            sendDescription().readAndAssert(h -> Assertions.assertThat(h).startsWith("Riceverai le comunicazioni a valore legale su SEND"));
-            pecDescription().readAndAssert(h -> Assertions.assertThat(h).startsWith("In alternativa, puoi decidere di ricevere le notifiche SEND"));
+            title().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
         }
     }
 
@@ -104,9 +111,7 @@ public interface OnboardingDigitalDomicilePFPage extends OnboardingWizardPFPage,
 
         @Override
         default void assertLoaded() {
-            // labels
-            title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("La tua PEC come domicilio digitale SEND"));
-            description().readAndAssert(h -> Assertions.assertThat(h).startsWith("Riceverai le comunicazioni a valore legale sulla tua PEC"));
+            title().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
         }
     }
 
@@ -127,24 +132,15 @@ public interface OnboardingDigitalDomicilePFPage extends OnboardingWizardPFPage,
 
         @Override
         default void assertLoaded() {
-            monitorAlert().readAndAssert(h -> Assertions.assertThat(h).startsWith("Monitora i recapiti che hai scelto"));
-
-            // labels
-            title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Il tuo riepilogo"));
-            legalDeliveryLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Le comunicazioni a valore legale verranno recapitate su:"));
-            alertsLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Riceverai un avviso via:"));
+            title().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
         }
     }
 
     @Override
     default void assertLoaded() {
         oneTrustBanner().ifPresent(OneTrustBanner::accept);
-        exitButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Esci"));
         wizardTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Il meglio di SEND"));
-        progressItems().readAllAndAssert(h -> Assertions.assertThat(h).satisfiesExactly(
-                p -> Assertions.assertThat(p).contains("Scegli un domicilio digitale"),
-                p -> Assertions.assertThat(p).contains("Associa una casella di posta"),
-                p -> Assertions.assertThat(p).contains("Attiva gli avvisi su IO"),
-                p -> Assertions.assertThat(p).contains("Controlla le opzioni scelte")));
+        exitButton().assertLoaded();
+        progressItems().readAllAndAssert(h -> Assertions.assertThat(h).hasSize(4));
     }
 }

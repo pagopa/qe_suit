@@ -1,7 +1,6 @@
 package it.pagopa.send.web.destinatario_pf.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.AbstractPage;
 import it.frontend.e2e.framework.web.domain.Component;
@@ -41,6 +40,10 @@ public interface OnboardingWizardPFPage extends AbstractPage {
     @XPath("//*[@data-testid=\"next-button\"]")
     Button nextButton();
 
+    // titolo e pulsante avanti insieme: il titolo c'è sempre, così si sa se c'è il pulsante avanti senza attenderlo
+    @XPath("//*[@data-testid=\"wizard-title\"] | //*[@data-testid=\"next-button\"]")
+    Button titleAndNextButton();
+
     @XPath("//*[@data-testid=\"io-step\"]")
     IoSection ioSection();
 
@@ -53,17 +56,15 @@ public interface OnboardingWizardPFPage extends AbstractPage {
 
         // labels
 
-        @XPath("//*[@data-testid=\"io-step\"]//p[1]")
+        @XPath("(//*[@data-testid=\"io-step\"]//p)[1]")
         Readable<String> title();
 
-        @XPath("//*[@data-testid=\"io-step\"]//p[2]")
+        @XPath("(//*[@data-testid=\"io-step\"]//p)[2]")
         Readable<String> description();
 
         @Override
         default void assertLoaded() {
-            // labels
-            title().readAndAssert(h -> Assertions.assertThat(h).startsWith("Attiva SEND sull").endsWith("app IO"));
-            description().readAndAssert(h -> Assertions.assertThat(h).contains("Riceverai un avviso su IO"));
+            title().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
         }
     }
 
@@ -80,8 +81,16 @@ public interface OnboardingWizardPFPage extends AbstractPage {
      */
     default boolean canGoNext() {
         return !isLastSection()
-                && nextButton().get(FindPolicy.PRESENT).isPresent()
+                && hasNextButton()
                 && !CONFIRM_LABEL.equals(nextButton().read());
+    }
+
+    /**
+     * Indica se il passo corrente ha il pulsante avanti; non c'è, per esempio, sui passi che richiedono una scelta.
+     */
+    default boolean hasNextButton() {
+        return titleAndNextButton().getAll().orElse(List.of()).stream()
+                .anyMatch(element -> "next-button".equals(element.getAttributes().get("data-testid")));
     }
 
     /**
@@ -93,7 +102,52 @@ public interface OnboardingWizardPFPage extends AbstractPage {
         }
         String current = currentProgressItem().read();
         nextButton().click();
-        for (int i = 0; i < 20 && current.equals(currentProgressItem().read()); i++) {
+        waitForSectionChange(current);
+    }
+
+    /**
+     * Torna al passo precedente con "Indietro" e attende che l'indicatore di avanzamento si aggiorni; sul primo passo non
+     * fa nulla. Non modifica i dati: le scelte fatte nei passi non sono salvate finché non si preme "Conferma".
+     */
+    default void back() {
+        if (currentSectionIndex() <= 0) {
+            return;
+        }
+        String current = currentProgressItem().read();
+        backButton().click();
+        waitForSectionChange(current);
+    }
+
+    /**
+     * Posizione del passo corrente nell'indicatore di avanzamento, a partire da 0.
+     */
+    default int currentSectionIndex() {
+        return progressItems().readAll().indexOf(currentProgressItem().read());
+    }
+
+    /**
+     * Va al passo il cui nome contiene {@code sectionName}, tornando indietro o andando avanti senza confermare nulla.
+     * Restituisce {@code false} se il passo non è raggiungibile, per esempio perché un passo precedente richiede una scelta.
+     */
+    default boolean goToSection(String sectionName) {
+        List<String> items = progressItems().readAll();
+        int target = -1;
+        for (int i = 0; i < items.size() && target < 0; i++) {
+            if (items.get(i).contains(sectionName)) {
+                target = i;
+            }
+        }
+        for (int i = 0; i < items.size() && currentSectionIndex() > target; i++) {
+            back();
+        }
+        for (int i = 0; i < items.size() && currentSectionIndex() < target && canGoNext(); i++) {
+            next();
+        }
+        return target >= 0 && currentSectionIndex() == target;
+    }
+
+    private void waitForSectionChange(String previous) {
+        for (int i = 0; i < 20 && previous.equals(currentProgressItem().read()); i++) {
             try {
                 Thread.sleep(250);
             } catch (InterruptedException e) {
