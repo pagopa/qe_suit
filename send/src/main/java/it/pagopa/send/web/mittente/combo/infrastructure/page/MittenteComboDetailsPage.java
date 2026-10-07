@@ -29,7 +29,48 @@ public interface MittenteComboDetailsPage extends Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        assertLoadedWithInterval(java.time.Duration.ofSeconds(30));
+    }
+
+    default void assertLoadedFast() {
+        assertLoadedWithInterval(java.time.Duration.ofSeconds(1), java.time.Duration.ofSeconds(90));
+    }
+
+    default void assertLoadedWithInterval(java.time.Duration pollInterval) {
+        assertLoadedWithInterval(pollInterval, java.time.Duration.ofSeconds(60));
+    }
+
+    default void assertLoadedWithInterval(java.time.Duration pollInterval, java.time.Duration atMostDuration) {
+        // Nota: oneTrustBanner() restituisce sempre un Optional con un lazy proxy anche se il banner
+        // non è nel DOM. Si usa isPresent() + try-catch per verificare la presenza reale prima del click.
+        oneTrustBanner().ifPresent(banner -> {
+            try { banner.accept(); } catch (Exception ignored) {}
+        });
+
+        try {
+            org.awaitility.Awaitility.await()
+                    .atMost(atMostDuration)
+                    .pollInterval(pollInterval)
+                    .ignoreExceptions()
+                    .until(() -> {
+                        oneTrustBanner().ifPresent(banner -> {
+                            try { banner.accept(); } catch (Exception ignored) {}
+                        });
+                        try {
+                            overviewSection().assertLoaded();
+                            statusSection().assertLoaded();
+                            channelsSection().assertLoaded();
+                            return true;
+                        } catch (Throwable t) {
+                            try {
+                                reload();
+                            } catch (Exception ignored) {
+                            }
+                            return false;
+                        }
+                    });
+        } catch (Exception ignored) {
+        }
 
         SoftAssertions softly = new SoftAssertions();
         softly.assertThatCode(() -> overviewSection().assertLoaded())

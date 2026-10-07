@@ -49,4 +49,12 @@ public class InformalDeliveryRestClient {
         log.info("Risposta preload allegati informal: status={}, body={}", response.getStatusCode(), response.getBody().asString());
         return response;
     }
+
+    public Response getSentInformalNotification(String apiKey, String iun) {
+        return RestAssured.given()
+                .baseUri(baseUrl)
+                .accept(ContentType.JSON)
+                .header("x-api-key", apiKey)
+                .get("/informal/delivery/v1/notifications/sent/" + iun);
+    }
 }
