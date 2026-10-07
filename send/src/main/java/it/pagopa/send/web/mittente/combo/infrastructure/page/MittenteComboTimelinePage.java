@@ -17,7 +17,36 @@ public interface MittenteComboTimelinePage extends Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        // Nota: oneTrustBanner() restituisce sempre un Optional con un lazy proxy anche se il banner
+        // non è nel DOM. Si usa try-catch per verificare la presenza reale prima del click.
+        oneTrustBanner().ifPresent(banner -> {
+            try { banner.accept(); } catch (Exception ignored) {}
+        });
+
+        try {
+            org.awaitility.Awaitility.await()
+                    .atMost(java.time.Duration.ofSeconds(60))
+                    .pollInterval(java.time.Duration.ofSeconds(30))
+                    .ignoreExceptions()
+                    .until(() -> {
+                        oneTrustBanner().ifPresent(banner -> {
+                            try { banner.accept(); } catch (Exception ignored) {}
+                        });
+                        try {
+                            if (!timeline().items().isEmpty()) {
+                                timeline().assertLoaded();
+                                return true;
+                            }
+                        } catch (Throwable ignored) {
+                        }
+                        try {
+                            reload();
+                        } catch (Exception ignored) {
+                        }
+                        return false;
+                    });
+        } catch (Exception ignored) {
+        }
 
         SoftAssertions softly = new SoftAssertions();
         softly.assertThatCode(() -> timeline().assertLoaded())

@@ -7,14 +7,14 @@ import org.assertj.core.api.SoftAssertions;
 
 import java.util.List;
 
-@XPath("//div[@data-testid='paymentInfoBox'] | //div[contains(@class, 'MuiPaper-root')][.//h2[contains(., 'Pagamenti')] or .//h5[contains(., 'Pagamenti')]]")
+@XPath("//div[@data-testid='paymentInfoBox' or (contains(@class, 'MuiPaper-root') and (.//h2[contains(., 'Pagamenti')] or .//h5[contains(., 'Pagamenti')]))]")
 public interface ComboPaymentsSection extends Component {
 
-    @XPath(".//h2[normalize-space(text())='Pagamenti'] | .//h2 | .//h5")
+    @XPath(".//*[self::h2 or self::h5][contains(., 'Pagamenti')]")
     Readable<String> header();
 
-    @XPath(".//div[@data-testid='payment-item'] | .//div[contains(@class, 'MuiCard-root') or contains(@class, 'payment-item')]")
-    List<Readable<String>> paymentList();
+    @XPath(".//*[@data-testid='payment-item' or contains(@class, 'payment-item') or contains(@class, 'MuiCard-root')]")
+    List<Component> paymentList();
 
     @Override
     default void assertLoaded() {

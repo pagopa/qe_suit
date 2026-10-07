@@ -111,3 +111,26 @@ pa:
 # univoca per PA e per ambiente (qui: dev)
   delivery-api-key:
     GROSSINI: REPLACE_ME
+
+# ============================================================================
+# Comunicazioni Bonarie (Combo) IUN Configuration for Dev
+# ============================================================================
+combo:
+  iun:
+    fattord:
+      pf: ${COMBO_IUN_FATTORD_PF:XKDZ-PXRU-ARWP-202609-J-A}
+      pg: ${COMBO_IUN_FATTORD_PG:MUZL-GJHU-DEHX-202609-N-A}
+      flow-io-fail-email-ok: ${COMBO_IUN_FATTORD_PF:XKDZ-PXRU-ARWP-202609-J-A}
+      flow-email-unavail: ${COMBO_IUN_FATTORD_EMAIL_UNAVAIL:GLAM-ZTPT-NZQG-202609-K-A}
+    reminder:
+      pf: ${COMBO_IUN_REMINDER_PF:DPKG-ENTQ-KHZA-202609-V-A}
+      pg: ${COMBO_IUN_REMINDER_PG:PXUQ-UTJE-QMGW-202609-V-A}
+      flow-io-fail-email-ok: ${COMBO_IUN_REMINDER_PF_1:VGMV-XTEV-YZLQ-202609-U-A}
+      flow-io-fail-email-delivered: ${COMBO_IUN_REMINDER_PF:DPKG-ENTQ-KHZA-202609-V-A}
+      flow-io-fail-excluded: ${COMBO_IUN_REMINDER_PF_EXCLUDED:AWLP-DTLX-RNTH-202609-A-A}
+    messamora:
+      pf: ${COMBO_IUN_MESSAMORA_PF:EXVA-TVPL-QPVJ-202609-Q-A}
+      pg: ${COMBO_IUN_MESSAMORA_PG:HWUJ-TGYU-MEXW-202609-D-A}
+      flow-io-fail-analog: ${COMBO_IUN_MESSAMORA_PF:EXVA-TVPL-QPVJ-202609-Q-A}
+      flow-io-ok-analog: ${COMBO_IUN_MESSAMORA_PF_ANALOG:TEUE-ZDGY-VETY-202609-Q-A}
+

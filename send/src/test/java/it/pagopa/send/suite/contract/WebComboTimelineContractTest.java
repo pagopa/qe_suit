@@ -17,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
+import org.springframework.core.env.Environment;
+
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -32,11 +34,13 @@ import java.util.stream.Stream;
 public class WebComboTimelineContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
+    private final Environment environment;
 
     @TestFactory
     Stream<DynamicTest> shouldValidateComboTimelinePageLayout() {
-        String campaignId = "FattOrd";
-        String iun = "XKDZ-PXRU-ARWP-202609-J-A";
+        String campaignId = environment.getProperty("combo.campaign.fattord", "FattOrd");
+        String iun = environment.getProperty("combo.iun.fattord.flow-io-fail-email-ok",
+                environment.getProperty("combo.iun.fattord.pf", "XKDZ-PXRU-ARWP-202609-J-A"));
 
         return webContractValidator.as(Tenant.GROSSINI, List.of(Recipient.LUCREZIA))
                 .on(MittenteComboTimelinePage.class, campaignId, iun)

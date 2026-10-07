@@ -12,7 +12,7 @@ spring:
 channel:
   web:
     browser: chrome
-    headless: false
+    headless: true
     arguments:
       - --window-size=1920,1080
       - --incognito
@@ -32,4 +32,34 @@ bff:
   api:
     base-url: https://webapi.dev.notifichedigitali.it
     bearer-token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImEzYjYyYTVlLTNiYWEtNGI5Yy05ZjQyLTk3NDQxYmNlNDU3ZiJ9.eyJpYXQiOjE3ODQyMTcyODIsImV4cCI6MTc4NDI0OTY1NywidWlkIjoiZTllNGE5YzctOTU4Ni00YjkyLWE3ZGQtZWUxYTBlNzdkMzk4IiwiaXNzIjoiaHR0cHM6Ly93ZWJhcGkuZGV2Lm5vdGlmaWNoZWRpZ2l0YWxpLml0IiwiYXVkIjoid2ViYXBpLmRldi5ub3RpZmljaGVkaWdpdGFsaS5pdCIsImp0aSI6IjI0NDEyODcxLTZmZTAtNGMwNS05ZmM3LTAyYzY0NDFhZDIwZiIsIm9yZ2FuaXphdGlvbiI6eyJpZCI6IjViOTk0ZDRhLTBmYTgtNDdhYy05YzdiLTM1NGYxZDQ0YTFjZSIsInJvbGUiOiJhZG1pbiIsImZpc2NhbF9jb2RlIjoiODAwMTYzNTA4MjEifX0.c4WJFrxymqfDwC9iAyZFmIMx0up2aRWs8OcPCeZBBxrqClK2ZvtthuWCyhGat3INdKQQUR-d-GM4CqGnm9q2wnJTtIJIuCASKOd3UPX1V7r0_oy0nVcOPSKDUy7O5PPWMTY5J3fKjtIq3ClwUdU7hEgyfMAlCGqBlOJYPGtsXkvwqv3WcWbIx5yAOXarcUfiFaL8sfX8T8FD0u-Jgxd2WCb7H8HSL5d_nr9tAERLp8Feesg5S4FmsFFiRPXQMoYRwe8yGjihNLUPLOFkRci0SlC8a3hOaissu0DHIBO2M2F1tlJY-IHcDW_fcwLI2_OF99raXdmtCIao9H9j-yhOIA
+
+# ============================================================================
+# Comunicazioni Bonarie (Combo) IUN Configuration Defaults
+# ============================================================================
+combo:
+  iun:
+    fattord:
+      pf: ${COMBO_IUN_FATTORD_PF:HDUX-MWKW-HRHY-202609-Q-A}
+      in-progress: ${COMBO_IUN_FATTORD_IN_PROGRESS:HDUX-MWKW-HRHY-202609-Q-A}
+      delivered-email: ${COMBO_IUN_FATTORD_DELIVERED_EMAIL:HDUX-MWKW-HRHY-202609-Q-A}
+      delivered-io: ${COMBO_IUN_FATTORD_DELIVERED_IO:HDUX-MWKW-HRHY-202609-Q-A}
+      pg: ${COMBO_IUN_FATTORD_PG:GNUJ-PMLZ-QJDQ-202609-U-A}
+      flow-io-fail-email-ok: ${COMBO_IUN_FATTORD_FLOW_IO_FAIL_EMAIL_OK:HDUX-MWKW-HRHY-202609-Q-A}
+      flow-email-unavail: ${COMBO_IUN_FATTORD_EMAIL_UNAVAIL:DMZW-RETX-GDPD-202609-U-A}
+    reminder:
+      pf: ${COMBO_IUN_REMINDER_PF:XYGK-ZVGJ-QVYL-202609-M-A}
+      in-progress: ${COMBO_IUN_REMINDER_IN_PROGRESS:XYGK-ZVGJ-QVYL-202609-M-A}
+      completed-sms: ${COMBO_IUN_REMINDER_COMPLETED_SMS:XYGK-ZVGJ-QVYL-202609-M-A}
+      pg: ${COMBO_IUN_REMINDER_PG:QMUA-AKLW-TWDT-202609-W-A}
+      flow-io-fail-email-ok: ${COMBO_IUN_REMINDER_FLOW_IO_FAIL_EMAIL_OK:XYGK-ZVGJ-QVYL-202609-M-A}
+      flow-io-fail-ok: ${COMBO_IUN_REMINDER_FLOW_IO_FAIL_OK:XYGK-ZVGJ-QVYL-202609-M-A}
+      flow-io-fail-email-delivered: ${COMBO_IUN_REMINDER_FLOW_IO_FAIL_EMAIL_DELIVERED:XYGK-ZVGJ-QVYL-202609-M-A}
+      flow-io-fail-excluded: ${COMBO_IUN_REMINDER_PF_EXCLUDED:DUMQ-LGJY-PDKQ-202608-J-A}
+      flow-io-fail-excl: ${COMBO_IUN_REMINDER_PF_EXCLUDED:DUMQ-LGJY-PDKQ-202608-J-A}
+    messamora:
+      pf: ${COMBO_IUN_MESSAMORA_PF:YZNV-TDYU-MGUL-202609-P-A}
+      pg: ${COMBO_IUN_MESSAMORA_PG:XYZY-EHWU-NPAT-202609-Q-A}
+      flow-io-fail-analog: ${COMBO_IUN_MESSAMORA_PF:YZNV-TDYU-MGUL-202609-P-A}
+      flow-io-ok-analog: ${COMBO_IUN_MESSAMORA_PF_ANALOG:MRGH-DEJL-VYEA-202609-M-A}
+
 

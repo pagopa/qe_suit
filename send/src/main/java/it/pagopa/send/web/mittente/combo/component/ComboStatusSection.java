@@ -10,7 +10,7 @@ import org.assertj.core.api.SoftAssertions;
 @XPath("//div[@data-testid='NotificationDetailTimeline']")
 public interface ComboStatusSection extends Component {
 
-    @XPath(".//h2 | .//h6 | .//h5")
+    @XPath(".//*[self::h2 or self::h6 or self::h5]")
     Readable<String> header();
 
     @XPath(".//*[contains(@class, 'MuiChip-root')]")
