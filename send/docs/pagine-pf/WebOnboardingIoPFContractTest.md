@@ -9,12 +9,6 @@ Contract test della pagina di onboarding **"Tutto, sull'app IO"** del cittadino.
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachOnboardingIoPF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#onboarding-tutto-sullapp-io)
 
-## La pagina
-
-![Tutto, sull'app IO](img/OnboardingIoPFPage.png)
-
-In rosso gli elementi verificati dall'`assertLoaded()`.
-
 ## Da dove si arriva
 
 Dal portale la pagina si apre **solo dalla terza card** di "Configura SEND" (`{baseUrl}/onboarding`), "Preferisco
@@ -42,6 +36,12 @@ Nessuno scenario preme i pulsanti della sezione dell'app IO.
 
 La pagina contiene anche i pulsanti "Indietro" e "Conferma" del wizard, ma sono nascosti perché il wizard ha un solo
 passo: non sono mappati né verificati.
+
+## Elementi verificati
+
+In rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
+
+![Tutto, sull'app IO](img/WebOnboardingIoPFContractTest/pagina.png)
 
 ## Scenari
 

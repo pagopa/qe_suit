@@ -36,6 +36,12 @@ Il 07/10/2026 sull'ambiente di test tutti i servizi erano operativi e lo storico
 sono stati eseguiti i rami con lo storico e la paginazione. Il caso di un disservizio in corso non si può provocare
 dal test e non è stato eseguito.
 
+## Elementi verificati
+
+In rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
+
+![Stato della piattaforma](img/WebAppStatusPFContractTest/pagina.png)
+
 ## Scenari
 
 ### Testi della pagina (`shouldShowAppStatusTexts`)

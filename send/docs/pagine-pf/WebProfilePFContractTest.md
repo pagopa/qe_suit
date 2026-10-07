@@ -21,6 +21,12 @@ I dati sono ricavati da SPID o CIE e non sono modificabili: la pagina non ha for
 confrontati con quelli dell'utente con cui si apre la pagina (`Recipient.LUCREZIA`: `denomination`, `familyName` e
 `taxId`), quindi il test verifica anche che la pagina mostri i dati dell'utente giusto.
 
+## Elementi verificati
+
+In rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
+
+![I tuoi dati](img/WebProfilePFContractTest/pagina.png)
+
 ## Scenari
 
 ### Testi della pagina (`shouldShowProfileTexts`)

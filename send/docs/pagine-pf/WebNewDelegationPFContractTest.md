@@ -34,6 +34,22 @@ Il form ha due livelli di validazione:
 Per questo gli scenari di validazione compilano i campi obbligatori, così il browser lascia passare l'invio e il
 portale mostra i propri messaggi.
 
+## Elementi verificati
+
+In rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
+
+All'apertura (persona fisica, tutti gli enti):
+
+![Aggiungi una delega](img/WebNewDelegationPFContractTest/pagina.png)
+
+Persona giuridica: la ragione sociale al posto di nome e cognome:
+
+![persona giuridica](img/WebNewDelegationPFContractTest/persona-giuridica.png)
+
+Solo enti selezionati, con l'elenco degli enti aperto:
+
+![solo enti selezionati](img/WebNewDelegationPFContractTest/solo-enti-selezionati.png)
+
 ## Scenari
 
 Il test è diviso in quattro gruppi, uno per aspetto della pagina. I nomi sono quelli che compaiono nel report dei
@@ -82,34 +98,3 @@ test; i testi attesi sono costanti in cima alla classe.
 | termine delega con data impossibile | "Data errata" uscendo dal campo, con il 31 febbraio |
 | termine delega con data incompleta | "Data errata" uscendo dal campo, con solo giorno e mese |
 
-## Stati verificati
-
-Gli screenshot mostrano lo stato della pagina negli scenari che modificano il form.
-
-**codice fiscale non valido**
-
-![codice fiscale non valido](img/WebNewDelegationPFContractTest/codice-fiscale-non-valido.png)
-
-**nome con spazi all'inizio o alla fine**
-
-![nome con spazi all'inizio o alla fine](img/WebNewDelegationPFContractTest/nome-con-spazi.png)
-
-**persona giuridica: ragione sociale al posto di nome e cognome**
-
-![persona giuridica](img/WebNewDelegationPFContractTest/persona-giuridica.png)
-
-**persona giuridica con codice fiscale non numerico**
-
-![persona giuridica con codice fiscale non numerico](img/WebNewDelegationPFContractTest/persona-giuridica-codice-fiscale-non-numerico.png)
-
-**solo enti selezionati: compare la scelta degli enti** (il fumetto è la validazione del browser sul campo vuoto)
-
-![solo enti selezionati](img/WebNewDelegationPFContractTest/solo-enti-selezionati.png)
-
-**solo enti selezionati: l'elenco degli enti contiene almeno un ente**
-
-![elenco degli enti](img/WebNewDelegationPFContractTest/elenco-enti.png)
-
-**termine delega vuoto**
-
-![termine delega vuoto](img/WebNewDelegationPFContractTest/termine-delega-vuoto.png)

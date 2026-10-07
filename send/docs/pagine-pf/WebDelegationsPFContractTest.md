@@ -34,6 +34,18 @@ un utente che ha sia delegati sia deleghe a carico.
 
 Nessuno scenario crea, accetta, rifiuta o revoca deleghe.
 
+## Elementi verificati
+
+In rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
+
+Utente senza deleghe (Lucrezia):
+
+![Deleghe, utente senza deleghe](img/WebDelegationsPFContractTest/pagina.png)
+
+Utente con delegati e deleghe a carico:
+
+![Deleghe, utente con deleghe](img/WebDelegationsPFContractTest/con-deleghe.png)
+
 ## Scenari
 
 Il test è diviso in tre gruppi, uno per aspetto della pagina. I nomi sono quelli che compaiono nel report dei test; i

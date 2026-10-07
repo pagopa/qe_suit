@@ -10,12 +10,6 @@ Contract test del wizard di onboarding **"Il meglio di SEND"** del cittadino.
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachOnboardingDigitalDomicilePF`,
   descritto in [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#onboarding-il-meglio-di-send)
 
-## La pagina
-
-![Il meglio di SEND](img/OnboardingDigitalDomicilePFPage.png)
-
-In rosso gli elementi verificati dall'`assertLoaded()`: titolo, "Esci" e indicatore dei passi.
-
 ## Cosa verifica
 
 L'`assertLoaded()` della pagina verifica solo che sia caricata, e quello di ogni passo che ci sia il titolo del passo.
@@ -45,6 +39,8 @@ I testi del blocco "Attiva SEND sull'app IO" sono gli stessi della pagina "Tutto
 
 ## Scenari
 
+Negli screenshot dei passi: in rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
+
 ### Testi comuni a tutti i passi (`shouldShowDigitalDomicileWizardTexts`)
 
 | Scenario | Cosa verifica |
@@ -59,11 +55,11 @@ I testi del blocco "Attiva SEND sull'app IO" sono gli stessi della pagina "Tutto
 
 Utente con PEC in attivazione (Lucrezia):
 
-![Passo 1, PEC in attivazione](img/OnboardingDigitalDomicilePFPage_ChooseDigitalDomicileSection.png)
+![Passo 1, PEC in attivazione](img/WebOnboardingDigitalDomicilePFContractTest/passo-1.png)
 
 Utente senza PEC:
 
-![Passo 1, scelta tra SEND e PEC](img/OnboardingDigitalDomicilePFPage_ChooseDigitalDomicileSection_scelta.png)
+![Passo 1, scelta tra SEND e PEC](img/WebOnboardingDigitalDomicilePFContractTest/passo-1-scelta.png)
 
 ### Passo 2 (`shouldShowPecSection`)
 
@@ -71,7 +67,7 @@ Utente senza PEC:
 |---|---|
 | se raggiungibile, passo associa una casella di posta con la PEC dell'utente | titolo, descrizione, etichetta "Indirizzo PEC" con la PEC, frase sugli avvisi con l'email, "Modifica", "Indietro" e "Continua" |
 
-![Passo 2](img/OnboardingDigitalDomicilePFPage_PecSection.png)
+![Passo 2](img/WebOnboardingDigitalDomicilePFContractTest/passo-2.png)
 
 ### Passo 3 (`shouldShowIoSection`)
 
@@ -79,7 +75,7 @@ Utente senza PEC:
 |---|---|
 | se raggiungibile, passo attiva gli avvisi su IO | titolo e descrizione del blocco IO, "Scarica l'app IO", "Ho già scaricato e installato l'app", "Indietro" e "Continua senza l'app IO" |
 
-![Passo 3](img/OnboardingDigitalDomicilePFPage_IoSection.png)
+![Passo 3](img/WebOnboardingDigitalDomicilePFContractTest/passo-3.png)
 
 ### Passo 4 (`shouldShowSummarySection`)
 
@@ -87,7 +83,7 @@ Utente senza PEC:
 |---|---|
 | se raggiungibile, passo riepilogo con conferma non premuta | titolo "Il tuo riepilogo", le due etichette del riepilogo, l'avviso "Monitora i recapiti che hai scelto…", "Indietro" e "Conferma" (non premuto) |
 
-![Passo 4](img/OnboardingDigitalDomicilePFPage_SummarySection.png)
+![Passo 4](img/WebOnboardingDigitalDomicilePFContractTest/passo-4.png)
 
 ### Validazioni (`shouldValidatePecSectionEmail`)
 

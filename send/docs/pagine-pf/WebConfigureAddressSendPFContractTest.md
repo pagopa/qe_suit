@@ -10,13 +10,6 @@ Contract test della pagina di onboarding **"Configura SEND"** del cittadino.
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachOnboardingPF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#configura-send-onboarding)
 
-## La pagina
-
-![Configura SEND](img/ConfigureAddressSendPage.png)
-
-In rosso gli elementi verificati dall'`assertLoaded()`. La pagina è quella di un utente con recapiti di cortesia, quindi
-con le due card mostrate a tutti; la terza card è descritta più sotto.
-
 ## Cosa verifica
 
 L'`assertLoaded()` della pagina verifica solo che sia caricata: il titolo e la presenza dei pulsanti delle due card
@@ -44,6 +37,12 @@ leggono prima quali card sono mostrate e la verificano solo se c'è: Lucrezia ha
 il ramo con la card è stato eseguito il 07/10/2026 con un utente senza recapiti di cortesia.
 
 ![Configura SEND con la terza card](img/WebConfigureAddressSendPFContractTest/card-io.png)
+
+## Elementi verificati
+
+In rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
+
+![Configura SEND (utente con recapiti di cortesia)](img/WebConfigureAddressSendPFContractTest/pagina.png)
 
 ## Scenari
 

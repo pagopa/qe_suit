@@ -10,12 +10,6 @@ Contract test del wizard di onboarding **"Attivazione avvisi"** del cittadino.
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachOnboardingAlertsPF`, descritto
   in [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#onboarding-attivazione-avvisi)
 
-## La pagina
-
-![Attivazione avvisi](img/OnboardingAlertsPFPage.png)
-
-In rosso gli elementi verificati dall'`assertLoaded()`: titolo, "Esci" e indicatore dei passi.
-
 ## Cosa verifica
 
 L'`assertLoaded()` della pagina verifica solo che sia caricata, e quello di ogni passo che il passo abbia un contenuto.
@@ -43,6 +37,8 @@ wizard "Il meglio di SEND": sono costanti condivise in `OnboardingIoExpectedText
 
 ## Scenari
 
+Negli screenshot dei passi: in rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
+
 ### Testi comuni a tutti i passi (`shouldShowAlertsWizardTexts`)
 
 | Scenario | Cosa verifica |
@@ -55,7 +51,7 @@ wizard "Il meglio di SEND": sono costanti condivise in `OnboardingIoExpectedText
 |---|---|
 | passo attiva gli avvisi su IO | titolo e descrizione del blocco IO, "Scarica l'app IO", "Ho già scaricato e installato l'app", "Indietro" e "Continua senza l'app IO" |
 
-![Passo 1](img/OnboardingAlertsPFPage_IoSection.png)
+![Passo 1](img/WebOnboardingAlertsPFContractTest/passo-1.png)
 
 ### Passo 2 (`shouldShowEmailSmsSection`)
 
@@ -65,11 +61,11 @@ wizard "Il meglio di SEND": sono costanti condivise in `OnboardingIoExpectedText
 
 Recapiti già attivi (Lucrezia):
 
-![Passo 2, recapiti attivi](img/OnboardingAlertsPFPage_EmailSmsSection.png)
+![Passo 2, recapiti attivi](img/WebOnboardingAlertsPFContractTest/passo-2.png)
 
 Recapiti da inserire:
 
-![Passo 2, recapiti da inserire](img/OnboardingAlertsPFPage_EmailSmsSection_da_inserire.png)
+![Passo 2, recapiti da inserire](img/WebOnboardingAlertsPFContractTest/passo-2-da-inserire.png)
 
 ### Validazioni (`shouldValidateEmailSmsSection`)
 

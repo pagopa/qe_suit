@@ -22,6 +22,12 @@ il documento cambia il test fallisce e va aggiornato insieme al documento.
 
 La pagina contiene due indici: uno per desktop e uno per mobile, nascosto. Il test usa quello per desktop.
 
+## Elementi verificati
+
+In rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
+
+![Termini e condizioni d'uso SERCQ](img/WebSercqTermsOfServicePFContractTest/pagina.png)
+
 ## Scenari
 
 ### Testi della pagina (`shouldShowSercqTermsOfServiceTexts`)

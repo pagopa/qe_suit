@@ -36,6 +36,12 @@ Regole del form, ricavate dal portale il 06/10/2026:
 | conferma diversa dall'email, anche solo per le maiuscole | sotto la conferma: "L'indirizzo email di conferma non è uguale all'indirizzo email inserito" | disabilitato |
 | email valide e uguali | nessuno | abilitato |
 
+## Elementi verificati
+
+In rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
+
+![Come possiamo aiutarti?](img/WebSupportPFContractTest/pagina.png)
+
 ## Scenari
 
 Il test è diviso in quattro gruppi, uno per aspetto della pagina. I nomi sono quelli che compaiono nel report dei
@@ -75,24 +81,3 @@ test; i testi attesi sono costanti in cima alla classe.
 | solo email senza conferma: avanti disabilitato | "Avanti" disabilitato |
 | email valide e uguali: avanti abilitato | "Avanti" abilitato |
 
-## Stati verificati
-
-**email non valida**
-
-![email non valida](img/WebSupportPFContractTest/email-non-valida.png)
-
-**email con spazi all'inizio o alla fine**
-
-![email con spazi](img/WebSupportPFContractTest/email-con-spazi.png)
-
-**email di conferma diversa**
-
-![conferma diversa](img/WebSupportPFContractTest/conferma-diversa.png)
-
-**email di conferma uguale ma con maiuscole diverse**
-
-![conferma con maiuscole diverse](img/WebSupportPFContractTest/conferma-maiuscole-diverse.png)
-
-**email valide e uguali: avanti abilitato**
-
-![email valide](img/WebSupportPFContractTest/email-valide.png)
