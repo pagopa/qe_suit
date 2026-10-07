@@ -17,6 +17,7 @@ pagina, descritti ciascuno in un documento con lo stesso nome della classe di te
 - [`WebOnboardingDigitalDomicilePFContractTest`](WebOnboardingDigitalDomicilePFContractTest.md): wizard di onboarding "Il meglio di SEND"
 - [`WebOnboardingAlertsPFContractTest`](WebOnboardingAlertsPFContractTest.md): wizard di onboarding "Attivazione avvisi"
 - [`WebProfilePFContractTest`](WebProfilePFContractTest.md): pagina "I tuoi dati"
+- [`WebAppStatusPFContractTest`](WebAppStatusPFContractTest.md): pagina "Stato della piattaforma"
 
 Negli indirizzi `{baseUrl}` è la proprietà `url.notifiche.cittadino.base` del profilo attivo
 (es. `https://cittadini.test.notifichedigitali.it` sul profilo `test`).
@@ -263,10 +264,11 @@ Elementi verificati: vedi `assertLoaded()` in [`OnboardingIoPFPage`](../../src/m
 
 **Indirizzo:** `{baseUrl}/app-status`
 
-Pagina "Stato della piattaforma" del cittadino. Si apre dalla voce "Stato della piattaforma" del menu laterale. Contiene lo stato attuale dei servizi SEND e lo storico dei disservizi con le attestazioni scaricabili. L'assertLoaded verifica solo gli elementi sempre presenti; tabella e paginazione dello storico compaiono solo se la piattaforma ha registrato almeno un disservizio e non vengono verificate.
+Pagina "Stato della piattaforma" del cittadino. Si apre dalla voce "Stato della piattaforma" del menu laterale. Contiene lo stato attuale dei servizi SEND e lo storico dei disservizi con le attestazioni scaricabili; tabella e paginazione dello storico compaiono solo se la piattaforma ha registrato almeno un disservizio. L'assertLoaded verifica che la pagina sia caricata, cioè il titolo, lo stato attuale e l'ultimo aggiornamento; testi, formato dello stato e dello storico sono verificati da `WebAppStatusPFContractTest`.
 
 - Page Object: [`AppStatusPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/AppStatusPFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachAppStatusPF`
+- Contract test della pagina: [`WebAppStatusPFContractTest`](WebAppStatusPFContractTest.md)
 
 ![Stato della piattaforma](img/AppStatusPFPage.png)
 
