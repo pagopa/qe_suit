@@ -16,6 +16,7 @@ pagina, descritti ciascuno in un documento con lo stesso nome della classe di te
 - [`WebOnboardingIoPFContractTest`](WebOnboardingIoPFContractTest.md): pagina di onboarding "Tutto, sull'app IO"
 - [`WebOnboardingDigitalDomicilePFContractTest`](WebOnboardingDigitalDomicilePFContractTest.md): wizard di onboarding "Il meglio di SEND"
 - [`WebOnboardingAlertsPFContractTest`](WebOnboardingAlertsPFContractTest.md): wizard di onboarding "Attivazione avvisi"
+- [`WebProfilePFContractTest`](WebProfilePFContractTest.md): pagina "I tuoi dati"
 
 Negli indirizzi `{baseUrl}` è la proprietà `url.notifiche.cittadino.base` del profilo attivo
 (es. `https://cittadini.test.notifichedigitali.it` sul profilo `test`).
@@ -289,10 +290,11 @@ Elementi verificati: vedi `assertLoaded()` in [`SupportPFPage`](../../src/main/j
 
 **Indirizzo:** `{baseUrl}/profilo`
 
-Pagina "I tuoi dati" del cittadino. Si apre dal menu dell'area utente in alto (pulsante con il nome dell'utente). Mostra nome, cognome e codice fiscale ricavati da SPID o CIE, non modificabili. L'assertLoaded verifica le etichette e che i valori siano presenti, senza controllare quelli di un utente specifico.
+Pagina "I tuoi dati" del cittadino. Si apre dal menu dell'area utente in alto (pulsante con il nome dell'utente). Mostra nome, cognome e codice fiscale ricavati da SPID o CIE, non modificabili. L'assertLoaded verifica che la pagina sia caricata, cioè che il titolo sia "I tuoi dati" e che ci siano le tre righe dei dati; etichette e valori sono verificati da `WebProfilePFContractTest`.
 
 - Page Object: [`ProfilePFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/ProfilePFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachProfilePF`
+- Contract test della pagina: [`WebProfilePFContractTest`](WebProfilePFContractTest.md)
 
 ![I tuoi dati](img/ProfilePFPage.png)
 

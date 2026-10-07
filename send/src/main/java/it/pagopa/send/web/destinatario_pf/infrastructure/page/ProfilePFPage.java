@@ -4,20 +4,24 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import org.assertj.core.api.Assertions;
+
+import java.util.Optional;
 
 /**
  * {@code {baseUrl}/profilo}
  * Pagina "I tuoi dati" del cittadino.
  * Si apre dal menu dell'area utente in alto (pulsante con il nome dell'utente).
- * Mostra nome, cognome e codice fiscale ricavati da SPID o CIE, non modificabili.
- * L'assertLoaded verifica le etichette e che i valori siano presenti, senza controllare quelli di un utente specifico.
+ * Mostra nome, cognome e codice fiscale ricavati da SPID o CIE, non modificabili, in un riquadro con una riga per dato:
+ * l'etichetta a sinistra e il valore a destra.
+ * L'assertLoaded verifica che la pagina sia caricata, cioè che il titolo sia "I tuoi dati" e che ci siano le tre righe;
+ * testi e valori sono verificati da {@code WebProfilePFContractTest}.
  */
 @Url("${url.notifiche.cittadino.profilo}")
 public interface ProfilePFPage extends Page {
 
-    @XPath("//*[@id=\"item\"]")
-    Readable<String> breadcrumbs();
+    Optional<OneTrustBanner> oneTrustBanner();
 
     @XPath("//*[@data-testid=\"titleBox\"]")
     Readable<String> title();
@@ -25,38 +29,27 @@ public interface ProfilePFPage extends Page {
     @XPath("//*[@id=\"subtitle-page\"]")
     Readable<String> subtitle();
 
-    // labels
+    // labels: righe del riquadro dei dati, con l'etichetta nella prima colonna e il valore nella seconda
 
-    @XPath("//main//p[normalize-space()=\"Nome\"]")
-    Readable<String> firstNameLabel();
+    @XPath("//*[@id=\"page-header-container\"]/following-sibling::div//div[contains(@class,\"MuiPaper-root\")]/div/div[1]/p")
+    Readable<String> labels();
 
-    @XPath("//main//p[normalize-space()=\"Nome\"]/../following-sibling::div[1]/p")
+    @XPath("//*[@id=\"page-header-container\"]/following-sibling::div//div[contains(@class,\"MuiPaper-root\")]/div/div[2]/p")
+    Readable<String> values();
+
+    @XPath("(//*[@id=\"page-header-container\"]/following-sibling::div//div[contains(@class,\"MuiPaper-root\")]/div/div[2]/p)[1]")
     Readable<String> firstName();
 
-    @XPath("//main//p[normalize-space()=\"Cognome\"]")
-    Readable<String> lastNameLabel();
-
-    @XPath("//main//p[normalize-space()=\"Cognome\"]/../following-sibling::div[1]/p")
+    @XPath("(//*[@id=\"page-header-container\"]/following-sibling::div//div[contains(@class,\"MuiPaper-root\")]/div/div[2]/p)[2]")
     Readable<String> lastName();
 
-    @XPath("//main//p[normalize-space()=\"Codice fiscale\"]")
-    Readable<String> taxCodeLabel();
-
-    @XPath("//main//p[normalize-space()=\"Codice fiscale\"]/../following-sibling::div[1]/p")
+    @XPath("(//*[@id=\"page-header-container\"]/following-sibling::div//div[contains(@class,\"MuiPaper-root\")]/div/div[2]/p)[3]")
     Readable<String> taxCode();
 
     @Override
     default void assertLoaded() {
-        breadcrumbs().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("I tuoi dati"));
+        oneTrustBanner().ifPresent(OneTrustBanner::accept);
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("I tuoi dati"));
-        subtitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Questi dati vengono ricavati dal tuo SPID o CIE e non sono modificabili."));
-
-        // labels
-        firstNameLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Nome"));
-        firstName().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
-        lastNameLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Cognome"));
-        lastName().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
-        taxCodeLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Codice fiscale"));
-        taxCode().readAndAssert(h -> Assertions.assertThat(h).matches("[A-Z0-9]{16}"));
+        labels().readAllAndAssert(h -> Assertions.assertThat(h).hasSize(3));
     }
 }
