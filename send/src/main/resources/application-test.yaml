@@ -46,6 +46,7 @@ url:
       new-api-key: ${url.notifiche.mittente.api-keys}/nuova-api-key
       app-status: ${url.notifiche.mittente.base}/app-status
       statistics: ${url.notifiche.mittente.base}/statistiche
+      campaigns: ${url.notifiche.mittente.base}/campaigns
     supporto:
       base: https://uat.selfcare.pagopa.it
 
@@ -98,8 +99,13 @@ external-registries:
 # Pn Delivery B2B API Configuration (lettura notifiche via SenderReadB2BApi)
 # ============================================================================
 delivery:
+  push:
+    base-url: http://localhost:8889
   api:
     base-url: https://api.test.notifichedigitali.it
+  informal:
+    api:
+      base-url: https://api.test.notifichedigitali.it/informal
 
 # api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
 # ogni costante di Tenant, univoca per PA e per ambiente (qui: test)
@@ -111,6 +117,7 @@ pa:
 # univoca per PA e per ambiente (qui: test)
   delivery-api-key:
     GROSSINI: 5df3a854-110c-46e9-a94b-274e2e74132d
+    PALERMO: 5df3a854-110c-46e9-a94b-274e2e74132d
 
 # ============================================================================
 # Comunicazioni Bonarie (Combo) IUN Configuration for Test
@@ -158,3 +165,4 @@ combo:
       flow-io-ok-analog: ${COMBO_IUN_MESSAMORA_PF_ANALOG:VGAK-PKJE-DGYR-202609-R-A}
       viewed: ${COMBO_IUN_MESSAMORA_VIEWED:MRGH-DEJL-VYEA-202609-M-A}
 
+    PALERMO: 5df3a854-110c-46e9-a94b-274e2e74132d
