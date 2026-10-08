@@ -4,7 +4,7 @@ Contract test del wizard **"Attiva domicilio digitale su SEND"** del cittadino.
 
 - **Indirizzo:** `{baseUrl}/recapiti/domicilio-digitale/attivazione`, dalla card domicilio digitale di "I tuoi recapiti"
 - **Page Object:** [`DigitalDomicileActivationPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/DigitalDomicileActivationPFPage.java)
-- **Test:** [`WebDigitalDomicileActivationPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebDigitalDomicileActivationPFContractTest.java)
+- **Test:** [`WebDigitalDomicileActivationPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebDigitalDomicileActivationPFContractTest.java)
 - **Utente:** Lucrezia Borgia
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachDigitalDomicileActivationPF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#attiva-domicilio-digitale-su-send)

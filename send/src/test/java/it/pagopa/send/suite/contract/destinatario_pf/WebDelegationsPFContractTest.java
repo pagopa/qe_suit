@@ -1,4 +1,4 @@
-package it.pagopa.send.suite.contract;
+package it.pagopa.send.suite.contract.destinatario_pf;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;

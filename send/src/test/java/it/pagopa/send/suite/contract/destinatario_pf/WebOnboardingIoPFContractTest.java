@@ -1,4 +1,4 @@
-package it.pagopa.send.suite.contract;
+package it.pagopa.send.suite.contract.destinatario_pf;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
@@ -19,10 +19,10 @@ import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
-import static it.pagopa.send.suite.contract.OnboardingIoExpectedTexts.DOWNLOAD_IO_APP;
-import static it.pagopa.send.suite.contract.OnboardingIoExpectedTexts.IO_ALREADY_INSTALLED;
-import static it.pagopa.send.suite.contract.OnboardingIoExpectedTexts.IO_DESCRIPTION;
-import static it.pagopa.send.suite.contract.OnboardingIoExpectedTexts.IO_TITLE;
+import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.DOWNLOAD_IO_APP;
+import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.IO_ALREADY_INSTALLED;
+import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.IO_DESCRIPTION;
+import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.IO_TITLE;
 
 /**
  * Contract test della pagina di onboarding "Tutto, sull'app IO" del cittadino ({@code {baseUrl}/onboarding/io}).

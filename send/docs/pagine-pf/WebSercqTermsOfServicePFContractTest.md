@@ -4,7 +4,7 @@ Contract test della pagina **"Termini e condizioni d'uso"** del domicilio digita
 
 - **Indirizzo:** `{baseUrl}/termini-di-servizio/sercq-send`, dal link "Termini del servizio" nel riepilogo del wizard di attivazione del domicilio digitale
 - **Page Object:** [`SercqTermsOfServicePFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/SercqTermsOfServicePFPage.java)
-- **Test:** [`WebSercqTermsOfServicePFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebSercqTermsOfServicePFContractTest.java)
+- **Test:** [`WebSercqTermsOfServicePFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebSercqTermsOfServicePFContractTest.java)
 - **Utente:** Lucrezia Borgia (la pagina è la stessa per qualunque cittadino)
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachSercqTermsOfServicePF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#termini-di-servizio-sercq)

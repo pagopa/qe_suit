@@ -4,7 +4,7 @@ Contract test della pagina **"Aggiungi una delega"** del cittadino.
 
 - **Indirizzo:** `{baseUrl}/deleghe/nuova`, dal pulsante "Aggiungi una delega" della pagina `{baseUrl}/deleghe`
 - **Page Object:** [`NewDelegationPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/NewDelegationPFPage.java)
-- **Test:** [`WebNewDelegationPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebNewDelegationPFContractTest.java)
+- **Test:** [`WebNewDelegationPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebNewDelegationPFContractTest.java)
 - **Utente:** Lucrezia Borgia (il form è lo stesso per qualunque cittadino)
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachNewDelegationPF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#aggiungi-una-delega)

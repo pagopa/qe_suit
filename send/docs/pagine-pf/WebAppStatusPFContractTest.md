@@ -4,7 +4,7 @@ Contract test della pagina **"Stato della piattaforma"** del cittadino.
 
 - **Indirizzo:** `{baseUrl}/app-status`, dalla voce "Stato della piattaforma" del menu laterale
 - **Page Object:** [`AppStatusPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/AppStatusPFPage.java)
-- **Test:** [`WebAppStatusPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebAppStatusPFContractTest.java)
+- **Test:** [`WebAppStatusPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebAppStatusPFContractTest.java)
 - **Utente:** Lucrezia Borgia (la pagina è la stessa per qualunque cittadino)
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachAppStatusPF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#stato-della-piattaforma)

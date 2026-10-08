@@ -4,7 +4,7 @@ Contract test della pagina **"Deleghe"** del cittadino.
 
 - **Indirizzo:** `{baseUrl}/deleghe`, dalla voce "Deleghe" del menu laterale
 - **Page Object:** [`DelegationsPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/DelegationsPFPage.java)
-- **Test:** [`WebDelegationsPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebDelegationsPFContractTest.java)
+- **Test:** [`WebDelegationsPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebDelegationsPFContractTest.java)
 - **Utente:** Lucrezia Borgia
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachDelegationsPF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#deleghe)

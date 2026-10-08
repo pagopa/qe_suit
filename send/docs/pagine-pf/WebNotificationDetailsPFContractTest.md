@@ -8,7 +8,7 @@ Contract test del **dettaglio di una notifica** del cittadino e della pagina **"
   - `{baseUrl}/notifiche/<IUN>/dettaglio/timeline`, da "Vai al dettaglio" nella sezione "Stato della notifica"
 - **Page Object:** [`NotificationDetailsPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/NotificationDetailsPFPage.java)
   e [`NotificationTimelinePFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/NotificationTimelinePFPage.java)
-- **Test:** [`WebNotificationDetailsPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebNotificationDetailsPFContractTest.java)
+- **Test:** [`WebNotificationDetailsPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebNotificationDetailsPFContractTest.java)
 - **Utente:** Lucrezia Borgia
 - **Test di navigazione delle pagine:** `WebRecipientPfNavigationContractTest#shouldReachNotificationDetailsPF` e
   `#shouldReachNotificationTimelinePF`, descritti in

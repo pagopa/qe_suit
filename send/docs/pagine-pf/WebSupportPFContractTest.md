@@ -4,7 +4,7 @@ Contract test della pagina **"Come possiamo aiutarti?"** (assistenza) del cittad
 
 - **Indirizzo:** `{baseUrl}/assistenza`, dal link "Assistenza" in alto nella pagina
 - **Page Object:** [`SupportPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/SupportPFPage.java)
-- **Test:** [`WebSupportPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebSupportPFContractTest.java)
+- **Test:** [`WebSupportPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebSupportPFContractTest.java)
 - **Utente:** Lucrezia Borgia (il form è lo stesso per qualunque cittadino)
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachSupportPF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#assistenza)

@@ -5,7 +5,7 @@ Contract test del wizard di onboarding **"Attivazione avvisi"** del cittadino.
 - **Indirizzo:** `{baseUrl}/onboarding/avvisi`, dalla card "Voglio solo gli avvisi" della pagina "Configura SEND"
   (`{baseUrl}/onboarding`)
 - **Page Object:** [`OnboardingAlertsPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/OnboardingAlertsPFPage.java)
-- **Test:** [`WebOnboardingAlertsPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebOnboardingAlertsPFContractTest.java)
+- **Test:** [`WebOnboardingAlertsPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebOnboardingAlertsPFContractTest.java)
 - **Utente:** Lucrezia Borgia
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachOnboardingAlertsPF`, descritto
   in [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#onboarding-attivazione-avvisi)

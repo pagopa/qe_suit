@@ -5,7 +5,7 @@ Contract test del wizard di onboarding **"Il meglio di SEND"** del cittadino.
 - **Indirizzo:** `{baseUrl}/onboarding/domicilio-digitale`, dalla card "Scelgo il meglio di SEND" della pagina
   "Configura SEND" (`{baseUrl}/onboarding`)
 - **Page Object:** [`OnboardingDigitalDomicilePFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/OnboardingDigitalDomicilePFPage.java)
-- **Test:** [`WebOnboardingDigitalDomicilePFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebOnboardingDigitalDomicilePFContractTest.java)
+- **Test:** [`WebOnboardingDigitalDomicilePFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebOnboardingDigitalDomicilePFContractTest.java)
 - **Utente:** Lucrezia Borgia
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachOnboardingDigitalDomicilePF`,
   descritto in [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#onboarding-il-meglio-di-send)

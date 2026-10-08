@@ -5,7 +5,7 @@ Contract test della pagina **"Gestisci il tuo domicilio digitale"** del cittadin
 - **Indirizzo:** `{baseUrl}/recapiti/domicilio-digitale/gestione`, dal pulsante "Gestisci" della card domicilio digitale
   in "I tuoi recapiti"
 - **Page Object:** [`DigitalDomicileManagementPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/DigitalDomicileManagementPFPage.java)
-- **Test:** [`WebDigitalDomicileManagementPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebDigitalDomicileManagementPFContractTest.java)
+- **Test:** [`WebDigitalDomicileManagementPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebDigitalDomicileManagementPFContractTest.java)
 - **Utente:** Lucrezia Borgia (domicilio digitale attivo su PEC)
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachDigitalDomicileManagementPF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#gestisci-il-tuo-domicilio-digitale)

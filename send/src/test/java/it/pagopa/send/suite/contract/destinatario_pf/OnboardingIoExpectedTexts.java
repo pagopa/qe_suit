@@ -1,4 +1,4 @@
-package it.pagopa.send.suite.contract;
+package it.pagopa.send.suite.contract.destinatario_pf;
 
 /**
  * Testi attesi del blocco "Attiva SEND sull'app IO", uguale nella pagina "Tutto, sull'app IO" e nel passo IO dei wizard

@@ -5,7 +5,7 @@ Contract test della pagina di onboarding **"Configura SEND"** del cittadino.
 - **Indirizzo:** `{baseUrl}/onboarding`, mostrata al primo accesso al portale finché l'utente non configura SEND o salta
   la configurazione; sempre raggiungibile dall'indirizzo e dal pulsante "Esci" delle pagine di onboarding
 - **Page Object:** [`ConfigureAddressSendPage`](../../src/main/java/it/pagopa/send/web/infrastructure/page/ConfigureAddressSendPage.java)
-- **Test:** [`WebConfigureAddressSendPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebConfigureAddressSendPFContractTest.java)
+- **Test:** [`WebConfigureAddressSendPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebConfigureAddressSendPFContractTest.java)
 - **Utente:** Lucrezia Borgia
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachOnboardingPF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#configura-send-onboarding)

@@ -1,4 +1,4 @@
-package it.pagopa.send.suite.contract;
+package it.pagopa.send.suite.contract.destinatario_pf;
 
 import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.pagopa.infrastructure.contract.browser.WebScenario;

@@ -4,7 +4,7 @@ Contract test della pagina **"I tuoi dati"** del cittadino.
 
 - **Indirizzo:** `{baseUrl}/profilo`, dal menu dell'area utente in alto (pulsante con il nome dell'utente)
 - **Page Object:** [`ProfilePFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/ProfilePFPage.java)
-- **Test:** [`WebProfilePFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebProfilePFContractTest.java)
+- **Test:** [`WebProfilePFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebProfilePFContractTest.java)
 - **Utente:** Lucrezia Borgia
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachProfilePF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#i-tuoi-dati)

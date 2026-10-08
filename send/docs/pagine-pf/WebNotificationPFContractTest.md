@@ -4,7 +4,7 @@ Contract test della pagina **"In arrivo"** del cittadino.
 
 - **Indirizzo:** `{baseUrl}/notifiche`, pagina iniziale dopo il login e voce "In arrivo" del menu laterale
 - **Page Object:** [`NotificationPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/NotificationPFPage.java)
-- **Test:** [`WebNotificationPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebNotificationPFContractTest.java)
+- **Test:** [`WebNotificationPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebNotificationPFContractTest.java)
 - **Utente:** Lucrezia Borgia
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachNotificationListPF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#in-arrivo)

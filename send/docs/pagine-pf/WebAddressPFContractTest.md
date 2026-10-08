@@ -4,7 +4,7 @@ Contract test della pagina **"I tuoi recapiti"** del cittadino.
 
 - **Indirizzo:** `{baseUrl}/recapiti`, dalla voce "I tuoi recapiti" del menu laterale
 - **Page Object:** [`AddressPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/AddressPFPage.java)
-- **Test:** [`WebAddressPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebAddressPFContractTest.java)
+- **Test:** [`WebAddressPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebAddressPFContractTest.java)
 - **Utente:** Lucrezia Borgia
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachAddressPF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#i-tuoi-recapiti)

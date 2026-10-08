@@ -4,7 +4,7 @@ Contract test della pagina di onboarding **"Tutto, sull'app IO"** del cittadino.
 
 - **Indirizzo:** `{baseUrl}/onboarding/io`
 - **Page Object:** [`OnboardingIoPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/OnboardingIoPFPage.java)
-- **Test:** [`WebOnboardingIoPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/WebOnboardingIoPFContractTest.java)
+- **Test:** [`WebOnboardingIoPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebOnboardingIoPFContractTest.java)
 - **Utente:** Lucrezia Borgia
 - **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachOnboardingIoPF`, descritto in
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#onboarding-tutto-sullapp-io)
