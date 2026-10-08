@@ -1,61 +1,42 @@
-# WebOnboardingIoPFContractTest
+# Tutto, sull'app IO
 
-Contract test della pagina di onboarding **"Tutto, sull'app IO"** del cittadino.
+Pagina di onboarding `{baseUrl}/onboarding/io`.
 
-- **Indirizzo:** `{baseUrl}/onboarding/io`
-- **Page Object:** [`OnboardingIoPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/OnboardingIoPFPage.java)
-- **Test:** [`WebOnboardingIoPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebOnboardingIoPFContractTest.java)
-- **Utente:** Lucrezia Borgia
-- **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachOnboardingIoPF`, descritto in
+- Page object: [`OnboardingIoPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/OnboardingIoPFPage.java)
+- Test: [`WebOnboardingIoPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebOnboardingIoPFContractTest.java)
+- Utente: Lucrezia Borgia
+- Navigazione: `WebRecipientPfNavigationContractTest#shouldReachOnboardingIoPF`, vedi
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#onboarding-tutto-sullapp-io)
+
+## La pagina
+
+In rosso quello che controlla `assertLoaded()`: il titolo e i pulsanti "Esci", "Scarica l'app IO" e "Ho già scaricato
+e installato l'app".
+
+![Tutto, sull'app IO](img/OnboardingIoPFPage.png)
+
+## Cosa verifica il contract test
+
+Il titolo, il titolo e la descrizione della sezione dell'app IO, il testo dei tre pulsanti e che "Esci" riporti a
+"Configura SEND". In rosso gli elementi controllati.
+
+![Tutto, sull'app IO, elementi verificati](img/WebOnboardingIoPFContractTest/pagina.png)
 
 ## Da dove si arriva
 
-Dal portale la pagina si apre **solo dalla terza card** di "Configura SEND" (`{baseUrl}/onboarding`), "Preferisco
-attivare solo SEND sull'app IO", che è mostrata solo agli utenti **senza recapiti di cortesia** (email, SMS o app IO).
-Agli altri utenti la card non compare e la pagina non è raggiungibile dal portale.
+Nel portale la pagina si apre solo dalla terza card di "Configura SEND", "Preferisco attivare solo SEND sull'app IO",
+che compare solo a chi non ha recapiti di cortesia (email, SMS o app IO).
 
 ![Configura SEND con la terza card](img/WebConfigureAddressSendPFContractTest/card-io.png)
 
-Il collegamento tra la card e la pagina è verificato da
-[`WebConfigureAddressSendPFContractTest`](WebConfigureAddressSendPFContractTest.md#terza-card-shouldshowconfiguresendiocard).
-Questo test apre la pagina dall'indirizzo, così il contenuto è verificato con qualunque utente.
+Il passaggio dalla card alla pagina lo controlla
+[`WebConfigureAddressSendPFContractTest`](WebConfigureAddressSendPFContractTest.md). Questo test apre la pagina
+dall'indirizzo, così funziona con qualunque utente.
 
-Non va confusa con il passo "Attiva gli avvisi su IO" dei wizard "Il meglio di SEND" e "Attivazione avvisi": il blocco
-"Attiva SEND sull'app IO" è lo stesso, ma lì è un passo del wizard e l'indirizzo resta quello del wizard.
+## Note
 
-## Cosa verifica
-
-L'`assertLoaded()` della pagina verifica solo che sia caricata: che il titolo sia "Tutto, sull'app IO" e che ci siano
-i pulsanti "Esci", "Scarica l'app IO" e "Ho già scaricato e installato l'app". Questo contract test verifica:
-
-- i **testi** della pagina e della sezione dell'app IO;
-- i **pulsanti** e dove porta "Esci".
-
-Nessuno scenario preme i pulsanti della sezione dell'app IO.
-
-La pagina contiene anche i pulsanti "Indietro" e "Conferma" del wizard, ma sono nascosti perché il wizard ha un solo
-passo: non sono mappati né verificati.
-
-## Elementi verificati
-
-In rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
-
-![Tutto, sull'app IO](img/WebOnboardingIoPFContractTest/pagina.png)
-
-## Scenari
-
-### Testi della pagina (`shouldShowOnboardingIoTexts`)
-
-| Scenario | Cosa verifica |
-|---|---|
-| titolo della pagina | titolo "Tutto, sull'app IO" |
-| sezione dell'app IO | titolo e descrizione della sezione |
-
-### Pulsanti (`shouldShowOnboardingIoButtons`)
-
-| Scenario | Cosa verifica |
-|---|---|
-| pulsante per uscire | testo del pulsante "Esci" |
-| pulsanti della sezione dell'app IO | testo di "Scarica l'app IO" e "Ho già scaricato e installato l'app" |
-| esci riporta alla pagina configura SEND | il clic su "Esci" apre la pagina "Configura SEND" (verificata con il suo `assertLoaded()`) |
+- Il test non preme i pulsanti della sezione dell'app IO.
+- I pulsanti "Indietro" e "Conferma" del wizard sono nella pagina ma nascosti, perché il wizard ha un solo passo: non
+  sono mappati.
+- Il blocco "Attiva SEND sull'app IO" compare anche come passo dei wizard "Il meglio di SEND" e "Attivazione avvisi",
+  ma lì l'indirizzo resta quello del wizard.

@@ -1,43 +1,27 @@
-# WebProfilePFContractTest
+# I tuoi dati
 
-Contract test della pagina **"I tuoi dati"** del cittadino.
+Pagina `{baseUrl}/profilo`, dal menu dell'area utente in alto (il pulsante con il nome dell'utente).
 
-- **Indirizzo:** `{baseUrl}/profilo`, dal menu dell'area utente in alto (pulsante con il nome dell'utente)
-- **Page Object:** [`ProfilePFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/ProfilePFPage.java)
-- **Test:** [`WebProfilePFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebProfilePFContractTest.java)
-- **Utente:** Lucrezia Borgia
-- **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachProfilePF`, descritto in
+- Page object: [`ProfilePFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/ProfilePFPage.java)
+- Test: [`WebProfilePFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebProfilePFContractTest.java)
+- Utente: Lucrezia Borgia
+- Navigazione: `WebRecipientPfNavigationContractTest#shouldReachProfilePF`, vedi
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#i-tuoi-dati)
 
-## Cosa verifica
+## La pagina
 
-L'`assertLoaded()` della pagina verifica solo che sia caricata: che il titolo sia "I tuoi dati" e che ci siano le tre
-righe dei dati. Questo contract test verifica:
+In rosso quello che controlla `assertLoaded()`: il titolo e le tre righe dei dati.
 
-- i **testi** della pagina e le etichette dei dati;
-- i **dati dell'utente collegato**: nome, cognome e codice fiscale.
+![I tuoi dati](img/ProfilePFPage.png)
 
-I dati sono ricavati da SPID o CIE e non sono modificabili: la pagina non ha form né pulsanti. I valori mostrati sono
-confrontati con quelli dell'utente con cui si apre la pagina (`Recipient.LUCREZIA`: `denomination`, `familyName` e
-`taxId`), quindi il test verifica anche che la pagina mostri i dati dell'utente giusto.
+## Cosa verifica il contract test
 
-## Elementi verificati
+Titolo, sottotitolo, le etichette "Nome", "Cognome" e "Codice fiscale" e i tre valori. In rosso gli elementi controllati.
 
-In rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
+![I tuoi dati, elementi verificati](img/WebProfilePFContractTest/pagina.png)
 
-![I tuoi dati](img/WebProfilePFContractTest/pagina.png)
+## Note
 
-## Scenari
-
-### Testi della pagina (`shouldShowProfileTexts`)
-
-| Scenario | Cosa verifica |
-|---|---|
-| intestazione della pagina | titolo "I tuoi dati" e sottotitolo |
-| etichette dei dati | "Nome", "Cognome" e "Codice fiscale", nell'ordine |
-
-### Dati dell'utente (`shouldShowProfileData`)
-
-| Scenario | Cosa verifica |
-|---|---|
-| nome, cognome e codice fiscale dell'utente collegato | i tre valori sono quelli dell'utente collegato |
+- I valori sono confrontati con quelli di `Recipient.LUCREZIA` (`denomination`, `familyName`, `taxId`): il test controlla
+  anche che la pagina mostri i dati dell'utente giusto.
+- I dati arrivano da SPID o CIE e non si possono modificare: la pagina non ha form né pulsanti.

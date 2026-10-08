@@ -1,74 +1,44 @@
-# WebDelegationsPFContractTest
+# Deleghe
 
-Contract test della pagina **"Deleghe"** del cittadino.
+Pagina `{baseUrl}/deleghe`, dalla voce "Deleghe" del menu laterale.
 
-- **Indirizzo:** `{baseUrl}/deleghe`, dalla voce "Deleghe" del menu laterale
-- **Page Object:** [`DelegationsPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/DelegationsPFPage.java)
-- **Test:** [`WebDelegationsPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebDelegationsPFContractTest.java)
-- **Utente:** Lucrezia Borgia
-- **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachDelegationsPF`, descritto in
+- Page object: [`DelegationsPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/DelegationsPFPage.java)
+- Test: [`WebDelegationsPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebDelegationsPFContractTest.java)
+- Utente: Lucrezia Borgia
+- Navigazione: `WebRecipientPfNavigationContractTest#shouldReachDelegationsPF`, vedi
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#deleghe)
 
-## Cosa verifica
+## La pagina
 
-L'`assertLoaded()` della pagina verifica solo che sia caricata: il titolo, il pulsante "Aggiungi una delega" e la
-presenza delle due sezioni. Questo contract test verifica tutto il resto:
+In rosso quello che controlla `assertLoaded()`: il titolo, "Aggiungi una delega" e le due sezioni.
 
-- i **testi** della pagina e delle sezioni;
-- i **pulsanti** e i link, compresa la pagina che aprono;
-- il **contenuto delle sezioni** "I tuoi delegati" e "Deleghe a tuo carico".
+![Deleghe](img/DelegationsPFPage.png)
 
-## Il contenuto delle sezioni dipende dall'utente
+## Cosa verifica il contract test
 
-Ogni sezione mostra un messaggio se è vuota, altrimenti una tabella con le deleghe. Gli scenari delle sezioni leggono
-prima il testo della sezione, che c'è sempre, e verificano lo stato presente:
+I testi della pagina e delle sezioni, il pulsante e il link "Aggiungi una delega" con la pagina che aprono, e il
+contenuto di "I tuoi delegati" e "Deleghe a tuo carico". In rosso gli elementi controllati.
 
-| Sezione | Sezione vuota | Sezione con deleghe |
-|---|---|---|
-| I tuoi delegati | messaggio "Non hai delegato nessuno…" e link "Aggiungi una delega" | intestazioni e, per ogni riga, nome, date, permessi, stato e menu |
-| Deleghe a tuo carico | messaggio "Non hai deleghe a tuo carico." | intestazioni e, per ogni riga, nome, date, permessi, stato e menu |
-
-Le due tabelle hanno la stessa struttura e sono mappate con lo stesso componente (`DelegationsTable`). Lucrezia non ha
-deleghe, quindi con lei vengono verificati gli stati vuoti; i rami con le tabelle sono stati eseguiti il 06/10/2026 con
-un utente che ha sia delegati sia deleghe a carico.
-
-Nessuno scenario crea, accetta, rifiuta o revoca deleghe.
-
-## Elementi verificati
-
-In rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
-
-Utente senza deleghe (Lucrezia):
+Senza deleghe (Lucrezia):
 
 ![Deleghe, utente senza deleghe](img/WebDelegationsPFContractTest/pagina.png)
 
-Utente con delegati e deleghe a carico:
+Con delegati e deleghe a carico:
 
 ![Deleghe, utente con deleghe](img/WebDelegationsPFContractTest/con-deleghe.png)
 
-## Scenari
+## Varianti
 
-Il test è diviso in tre gruppi, uno per aspetto della pagina. I nomi sono quelli che compaiono nel report dei test; i
-testi attesi sono costanti in cima alla classe.
+Ogni sezione mostra un messaggio se è vuota, altrimenti la tabella delle deleghe. Il test controlla quello che trova.
 
-### Testi della pagina (`shouldShowDelegationsTexts`)
+| Sezione | Vuota | Con deleghe |
+|---|---|---|
+| I tuoi delegati | "Non hai delegato nessuno…" e il link "Aggiungi una delega" | colonne e, per ogni riga, nome, date `gg/mm/aaaa`, permessi, stato e menu |
+| Deleghe a tuo carico | "Non hai deleghe a tuo carico." | come sopra; lo stato può essere "Accetta" |
 
-| Scenario | Cosa verifica |
-|---|---|
-| intestazione della pagina | titolo e sottotitolo |
-| titoli delle sezioni | "I tuoi delegati" e "Deleghe a tuo carico" |
+Le tabelle con le deleghe sono state provate il 06/10/2026 con un utente che ha sia delegati sia deleghe a carico.
 
-### Pulsanti (`shouldShowDelegationsButtons`)
+## Note
 
-| Scenario | Cosa verifica |
-|---|---|
-| pulsante aggiungi una delega | testo del pulsante "Aggiungi una delega" |
-| il pulsante aggiungi una delega apre la pagina aggiungi una delega | il clic apre la pagina "Aggiungi una delega" (verificata con il suo `assertLoaded()`) |
-
-### Contenuto delle sezioni (`shouldShowDelegationsSections`)
-
-| Scenario | Cosa verifica |
-|---|---|
-| i tuoi delegati: messaggio di sezione vuota oppure tabella delle deleghe | il messaggio di sezione vuota e il link "Aggiungi una delega", oppure la tabella come per le deleghe a carico |
-| se vuota, il link della sezione i tuoi delegati apre la pagina aggiungi una delega | il clic sul link apre la pagina "Aggiungi una delega"; se l'utente ha delegati il link non c'è e lo scenario termina senza verificarlo |
-| deleghe a tuo carico: messaggio di sezione vuota oppure tabella delle deleghe | il messaggio di sezione vuota, oppure le intestazioni della tabella (Nome, Inizio delega, Fine delega, Permessi, Stato) e su ogni riga nome non vuoto, date `gg/mm/aaaa`, permessi, stato ("Accetta" o lo stato della delega) e menu delle azioni |
+- Il test non crea, accetta, rifiuta o revoca deleghe.
+- Le due tabelle hanno la stessa struttura e usano lo stesso componente, `DelegationsTable`.

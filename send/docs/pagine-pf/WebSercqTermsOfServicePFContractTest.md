@@ -1,45 +1,29 @@
-# WebSercqTermsOfServicePFContractTest
+# Termini e condizioni d'uso SERCQ
 
-Contract test della pagina **"Termini e condizioni d'uso"** del domicilio digitale SERCQ di SEND.
+Pagina `{baseUrl}/termini-di-servizio/sercq-send`, dal link "Termini del servizio" nel riepilogo del wizard di
+attivazione del domicilio digitale.
 
-- **Indirizzo:** `{baseUrl}/termini-di-servizio/sercq-send`, dal link "Termini del servizio" nel riepilogo del wizard di attivazione del domicilio digitale
-- **Page Object:** [`SercqTermsOfServicePFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/SercqTermsOfServicePFPage.java)
-- **Test:** [`WebSercqTermsOfServicePFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebSercqTermsOfServicePFContractTest.java)
-- **Utente:** Lucrezia Borgia (la pagina è la stessa per qualunque cittadino)
-- **Test di navigazione della pagina:** `WebRecipientPfNavigationContractTest#shouldReachSercqTermsOfServicePF`, descritto in
+- Page object: [`SercqTermsOfServicePFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/SercqTermsOfServicePFPage.java)
+- Test: [`WebSercqTermsOfServicePFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebSercqTermsOfServicePFContractTest.java)
+- Utente: Lucrezia Borgia (la pagina è uguale per tutti i cittadini)
+- Navigazione: `WebRecipientPfNavigationContractTest#shouldReachSercqTermsOfServicePF`, vedi
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#termini-di-servizio-sercq)
 
-## Cosa verifica
+## La pagina
 
-L'`assertLoaded()` della pagina verifica solo che sia caricata: che il titolo sia "Termini e condizioni d'uso" e che ci
-sia almeno una sezione. Questo contract test verifica:
+In rosso quello che controlla `assertLoaded()`: il titolo e la presenza di almeno una sezione.
 
-- i **testi**: titolo, inizio dell'introduzione e titoli delle sezioni;
-- l'**indice**: le voci e il collegamento di ognuna a una sezione della pagina.
+![Termini e condizioni d'uso SERCQ](img/SercqTermsOfServicePFPage.png)
 
-Il testo è un documento legale caricato da un widget OneTrust. I titoli delle sezioni sono confrontati esattamente: se
-il documento cambia il test fallisce e va aggiornato insieme al documento.
+## Cosa verifica il contract test
 
-La pagina contiene due indici: uno per desktop e uno per mobile, nascosto. Il test usa quello per desktop.
+Il titolo, l'inizio dell'introduzione, i titoli delle 10 sezioni e l'indice: le voci, nell'ordine, e il link di ognuna
+a una sezione della pagina (`#otnotice-section-…`). In rosso gli elementi controllati.
 
-## Elementi verificati
+![Termini e condizioni d'uso SERCQ, elementi verificati](img/WebSercqTermsOfServicePFContractTest/pagina.png)
 
-In rosso gli elementi che il contract test legge e verifica, esclusi i messaggi di validazione.
+## Note
 
-![Termini e condizioni d'uso SERCQ](img/WebSercqTermsOfServicePFContractTest/pagina.png)
-
-## Scenari
-
-### Testi della pagina (`shouldShowSercqTermsOfServiceTexts`)
-
-| Scenario | Cosa verifica |
-|---|---|
-| titolo e introduzione | titolo "Termini e condizioni d'uso" e inizio del primo paragrafo |
-| titoli delle sezioni | i titoli delle 10 sezioni numerate, nell'ordine |
-
-### Indice delle sezioni (`shouldShowSercqTermsOfServiceIndex`)
-
-| Scenario | Cosa verifica |
-|---|---|
-| voci dell'indice | "Introduzione", le 10 sezioni numerate e "1341 e 1342 c.c.", nell'ordine |
-| ogni voce dell'indice porta a una sezione della pagina | una voce per ogni sezione, ciascuna con un link a una sezione della pagina (`#otnotice-section-…`) |
+- Il testo è un documento legale caricato da un widget OneTrust. I titoli sono confrontati esattamente: se il documento
+  cambia, il test va aggiornato.
+- La pagina ha due indici, uno per desktop e uno nascosto per mobile. Il test usa quello per desktop.
