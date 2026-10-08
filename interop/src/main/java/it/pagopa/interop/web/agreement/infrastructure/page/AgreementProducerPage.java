@@ -2,8 +2,10 @@ package it.pagopa.interop.web.agreement.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.core.model.selector.XPathSelector;
+import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.frontend.e2e.framework.web.config.WebSuiteContext;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Label;
@@ -77,19 +79,11 @@ public interface AgreementProducerPage extends Page {
      * Attende la scomparsa dello skeleton della tabella (dati asincroni).
      */
     default void waitUntilTableLoaded() {
-        long deadline = System.currentTimeMillis() + TABLE_LOAD_TIMEOUT_MILLIS;
-        while (tableSkeleton().get(FindPolicy.PRESENT).isPresent()) {
-            if (System.currentTimeMillis() > deadline) {
-                throw new IllegalStateException("Skeleton della tabella ancora presente dopo "
-                        + TABLE_LOAD_TIMEOUT_MILLIS + " ms");
-            }
-            try {
-                Thread.sleep(TABLE_LOAD_POLL_MILLIS);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new IllegalStateException("Interrotto in attesa del caricamento della tabella", e);
-            }
-        }
+        IWebPresentationApiAdapter adapter = WebSuiteContext.getConfiguration()
+                .getPresentationApiAdapters()
+                .get(0);
+
+        adapter.waitUntilElementDisappears(XPathSelector.of(".//*[contains(@class, 'MuiSkeleton-root')]"), TABLE_LOAD_TIMEOUT_MILLIS/1000);
     }
 
     /**
