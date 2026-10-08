@@ -129,11 +129,11 @@ public class WebRecipientPfNavigationContractTest {
                         page -> {},
                         page -> {
                             page.continueButton().click();
-                            if (!"Continua".equals(page.emailSection().continueButton().read())) {
-                                // Email non ancora inserita, quindi il test termina senza verificare il riepilogo
+                            page.emailSection().assertLoaded();
+                            if (page.emailSection().content().read().contains("Aggiungi email")) {
+                                // Email non ancora inserita: "Continua" non porta al riepilogo, quindi il test termina senza verificarlo
                                 return;
                             }
-                            page.emailSection().assertLoaded();
                             page.emailSection().continueButton().click();
                             page.summarySection().assertLoaded();
                         }

@@ -19,6 +19,7 @@ pagina, descritti ciascuno in un documento con lo stesso nome della classe di te
 - [`WebProfilePFContractTest`](WebProfilePFContractTest.md): pagina "I tuoi dati"
 - [`WebAppStatusPFContractTest`](WebAppStatusPFContractTest.md): pagina "Stato della piattaforma"
 - [`WebAddressPFContractTest`](WebAddressPFContractTest.md): pagina "I tuoi recapiti"
+- [`WebDigitalDomicileActivationPFContractTest`](WebDigitalDomicileActivationPFContractTest.md): wizard "Attiva domicilio digitale su SEND"
 
 Negli indirizzi `{baseUrl}` è la proprietà `url.notifiche.cittadino.base` del profilo attivo
 (es. `https://cittadini.test.notifichedigitali.it` sul profilo `test`).
@@ -116,10 +117,11 @@ Elementi verificati: vedi `assertLoaded()` in [`AddressPFPage`](../../src/main/j
 
 **Indirizzo:** `{baseUrl}/recapiti/domicilio-digitale/attivazione`
 
-Pagina del wizard "Attiva domicilio digitale su SEND" del cittadino. Si apre dalla card domicilio digitale di "I tuoi recapiti". Il wizard ha tre passi: "Come funziona" (mostrato all'apertura), "Inserisci la tua email" e "Riepilogo". L'assertLoaded verifica solo il primo passo. I componenti `EmailSection` e `SummarySection` mappano i passi successivi e verificano solo i loro elementi fissi: il contenuto (email, cellulare, contatti del riepilogo) dipende dai recapiti di cortesia già inseriti dall'utente. Il pulsante "Conferma" del riepilogo attiva il domicilio digitale.
+Pagina del wizard "Attiva domicilio digitale su SEND" del cittadino. Si apre dalla card domicilio digitale di "I tuoi recapiti". Il wizard ha tre passi: "Come funziona" (mostrato all'apertura), "Inserisci la tua email" e "Riepilogo"; il contenuto del secondo passo e del riepilogo dipende dai recapiti di cortesia dell'utente. Il pulsante "Conferma" del riepilogo attiva il domicilio digitale. L'assertLoaded verifica che la pagina sia caricata, cioè il titolo del wizard, i tre passi, "Continua" e "Annulla"; i componenti `EmailSection` e `SummarySection` verificano solo il titolo del loro passo. Testi, contenuto dei passi e validazioni sono verificati da `WebDigitalDomicileActivationPFContractTest`.
 
 - Page Object: [`DigitalDomicileActivationPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/DigitalDomicileActivationPFPage.java)
-- Test: `WebRecipientPfNavigationContractTest#shouldReachDigitalDomicileActivationPF` (se presente: il test percorre il wizard fino al riepilogo senza mai premere Conferma e ne verifica gli elementi fissi; se l'utente non ha ancora un'email di cortesia il secondo passo chiede di inserirla e il test termina senza verificare il riepilogo)
+- Test: `WebRecipientPfNavigationContractTest#shouldReachDigitalDomicileActivationPF` (se presente: il test percorre il wizard fino al riepilogo senza mai premere Conferma; se l'utente non ha ancora un'email di cortesia il secondo passo chiede di inserirla e il test termina senza verificare il riepilogo)
+- Contract test della pagina: [`WebDigitalDomicileActivationPFContractTest`](WebDigitalDomicileActivationPFContractTest.md)
 
 ![Attiva domicilio digitale su SEND](img/DigitalDomicileActivationPFPage.png)
 
