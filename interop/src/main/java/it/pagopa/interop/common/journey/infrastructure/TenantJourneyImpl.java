@@ -20,7 +20,20 @@ public class TenantJourneyImpl implements TenantJourney<TenantJourneyImpl> {
 
     @Override
     public TenantJourneyImpl assignCertifiedAttribute(TenantRef tenant) {
-        AttributeRef attribute = entityStore.getLastOrThrow(Attribute.class).getRef();
+        assignCertifiedAttribute(tenant, -1);
+        return this;
+    }
+
+    @Override
+    public TenantJourneyImpl assignCertifiedAttribute(TenantRef tenant, int nthAttribute) {
+        AttributeRef attribute;
+        if (nthAttribute == 1) {
+            attribute = entityStore.getFirstOrThrow(Attribute.class).getRef();
+        } else if (nthAttribute == -1) {
+            attribute = entityStore.getLastOrThrow(Attribute.class).getRef();
+        } else {
+            throw new IllegalArgumentException("No method to retrieve attribute n. " + nthAttribute);
+        }
         tenantUseCase.assignCertifiedAttribute(tenant, attribute);
         return this;
     }
