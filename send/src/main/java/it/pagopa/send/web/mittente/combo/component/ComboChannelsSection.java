@@ -7,23 +7,26 @@ import org.assertj.core.api.SoftAssertions;
 
 import java.util.List;
 
-@XPath("//div[contains(@class, 'MuiPaper-root') and .//h5[contains(., 'canale')]]")
+@XPath("//div[contains(@class, 'MuiPaper-root')][.//h2[contains(., 'Canali') or contains(., 'Dettaglio invio per canale')] or .//h5[contains(., 'Canali') or contains(., 'Dettaglio invio per canale')]]")
 public interface ComboChannelsSection extends Component {
 
-    @XPath(".//h5")
+    @XPath(".//*[self::h2 or self::h5]")
     Readable<String> header();
 
-    @XPath(".//ul[contains(@class, 'MuiList-root')]/li")
+    @XPath(".//li[contains(@class, 'MuiListItem-root')]")
     List<ChannelItemComponent> channelItems();
 
-    @XPath(".//li")
+    @XPath(".")
     interface ChannelItemComponent extends Component {
 
-        @XPath(".//div[contains(@class, 'MuiListItemIcon-root')]/following-sibling::p")
+        @XPath(".//p[contains(@class, 'MuiTypography-body2') or contains(@class, 'css-nxuris') or contains(@class, 'channel-name')]")
         Readable<String> name();
 
-        @XPath(".//span")
+        @XPath(".//div[contains(@class, '1vn2o2m') or contains(@class, 'MuiChip-root')]//span[contains(@class, 'css-0') or contains(@class, 'MuiChip-label') or not(*)]")
         Readable<String> statusBadge();
+
+        @XPath(".//span[contains(@class, 'MuiTypography-caption') or contains(@class, 'css-1qg6hcb')]")
+        Readable<String> description();
 
         @Override
         default void assertLoaded() {
@@ -41,6 +44,4 @@ public interface ComboChannelsSection extends Component {
         softly.assertAll();
     }
 }
-
-
 
