@@ -56,6 +56,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceDescriptor eServiceDescriptor = eService.getLastDraftDescriptor();
         EServiceDescriptor updatedDescriptor = eServiceDescriptorUseCase.updateDescriptor(eService, eServiceDescriptor, command);
+        eService.addDescriptor(updatedDescriptor);
         return processLifecycle(eService, updatedDescriptor, state, command);
     }
 
