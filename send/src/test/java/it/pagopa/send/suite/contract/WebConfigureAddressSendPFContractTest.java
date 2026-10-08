@@ -138,7 +138,7 @@ public class WebConfigureAddressSendPFContractTest {
                 new WebScenario<>(
                         "attiva il meglio di SEND apre il wizard il meglio di SEND",
                         page -> {
-                            page.oneTrustBanner().ifPresent(OneTrustBanner::accept);  // il banner dei cookie copre le card
+                            page.oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);  // il banner dei cookie copre le card
                             page.digitalDomicileButton().click();
                         },
                         page -> page.digitalDomicileWizard().assertLoaded()
@@ -147,7 +147,7 @@ public class WebConfigureAddressSendPFContractTest {
                 new WebScenario<>(
                         "attiva solo gli avvisi apre il wizard attivazione avvisi",
                         page -> {
-                            page.oneTrustBanner().ifPresent(OneTrustBanner::accept);  // il banner dei cookie copre le card
+                            page.oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);  // il banner dei cookie copre le card
                             page.courtesyButton().click();
                         },
                         page -> page.alertsWizard().assertLoaded()
@@ -188,7 +188,7 @@ public class WebConfigureAddressSendPFContractTest {
                                 // L'utente ha recapiti di cortesia: la card non è mostrata, quindi il test termina senza verificarla
                                 return;
                             }
-                            page.oneTrustBanner().ifPresent(OneTrustBanner::accept);  // il banner dei cookie copre le card
+                            page.oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);  // il banner dei cookie copre le card
                             page.ioButton().click();
                             page.ioPage().assertLoaded();
                         }

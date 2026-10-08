@@ -243,7 +243,7 @@ public interface DigitalDomicileActivationPFPage extends Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         wizardTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Attiva domicilio digitale su SEND"));
         howItWorksProgressLabel().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
         insertEmailProgressLabel().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());

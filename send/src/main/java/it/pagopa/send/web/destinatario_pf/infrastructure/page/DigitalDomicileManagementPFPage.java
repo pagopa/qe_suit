@@ -138,7 +138,7 @@ public interface DigitalDomicileManagementPFPage extends Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Gestisci il tuo domicilio digitale"));
         customizeBySenderButton().assertLoaded();
         backButton().assertLoaded();

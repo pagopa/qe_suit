@@ -330,7 +330,7 @@ public interface AddressPFPage extends AddressPage, Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("I tuoi recapiti"));
         legalContactsTitle().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
         ioContactTitle().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());

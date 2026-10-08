@@ -97,7 +97,7 @@ public interface DelegationsPFPage extends Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Deleghe"));
         addDelegationButton().assertLoaded();
         delegatesSection().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());

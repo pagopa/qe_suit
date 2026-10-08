@@ -52,7 +52,7 @@ public interface OnboardingIoPFPage extends Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         wizardTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Tutto, sull'app IO"));
         exitButton().assertLoaded();
         downloadIoAppButton().assertLoaded();

@@ -48,7 +48,7 @@ public interface ProfilePFPage extends Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("I tuoi dati"));
         labels().readAllAndAssert(h -> Assertions.assertThat(h).hasSize(3));
     }

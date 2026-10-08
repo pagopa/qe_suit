@@ -84,7 +84,7 @@ public interface AppStatusPFPage extends Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Stato della piattaforma"));
         statusBar().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
         lastCheck().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());

@@ -164,7 +164,7 @@ public interface NewDelegationPFPage extends Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         breadcrumbs().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Aggiungi una delega"));
         Assertions.assertThat(naturalPersonRadio().radio().get(FindPolicy.PRESENT)).isPresent();
         Assertions.assertThat(legalPersonRadio().radio().get(FindPolicy.PRESENT)).isPresent();

@@ -151,7 +151,7 @@ public interface OnboardingDigitalDomicilePFPage extends OnboardingWizardPFPage,
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         wizardTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Il meglio di SEND"));
         exitButton().assertLoaded();
         progressItems().readAllAndAssert(h -> Assertions.assertThat(h).hasSize(4));

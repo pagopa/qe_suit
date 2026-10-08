@@ -229,7 +229,7 @@ public interface NotificationPFPage extends NotificationSearchPage {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("In arrivo"));
         Assertions.assertThat(communicationTypeSelect().get(FindPolicy.PRESENT)).isPresent();
         Assertions.assertThat(iunSearchInput().get(FindPolicy.PRESENT)).isPresent();

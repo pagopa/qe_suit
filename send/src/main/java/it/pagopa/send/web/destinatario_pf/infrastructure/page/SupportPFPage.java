@@ -77,7 +77,7 @@ public interface SupportPFPage extends Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Come possiamo aiutarti?"));
         Assertions.assertThat(mailInput().get(FindPolicy.PRESENT)).isPresent();
         Assertions.assertThat(confirmMailInput().get(FindPolicy.PRESENT)).isPresent();

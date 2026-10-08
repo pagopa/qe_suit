@@ -136,7 +136,7 @@ public interface OnboardingAlertsPFPage extends OnboardingWizardPFPage, Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         wizardTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Attivazione avvisi"));
         exitButton().assertLoaded();
         progressItems().readAllAndAssert(h -> Assertions.assertThat(h).hasSize(2));
