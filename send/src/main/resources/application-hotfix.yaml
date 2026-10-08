@@ -1,35 +1,35 @@
 # ============================================================================
-# Test Profile Configuration
+# hotfix Profile Configuration
 # ============================================================================
-# Imports bearer tokens and test-specific settings for E2E tests
+# Imports bearer tokens and hotfix-specific settings for E2E tests
 # ============================================================================
 
 # ============================================================================
 # External Configuration Import
-# Loads bearer tokens for test environment from external properties file
+# Loads bearer tokens for hotfix environment from external properties file
 # ============================================================================
 spring:
   config:
     activate:
-      on-profile: test
+      on-profile: hotfix
     import:
-      - optional:classpath:secrets/bearer-token-test.properties
+      - optional:classpath:secrets/bearer-token-hotfix.properties
 
 # ============================================================================
 # URLs Configuration
-# Base URLs and routes for test environment
+# Base URLs and routes for hotfix environment
 # ============================================================================
 url:
   notifiche:
     cittadino:
-      base: https://cittadini.test.notifichedigitali.it
+      base: https://cittadini.hotfix.notifichedigitali.it
       notifiche: ${url.notifiche.cittadino.base}/notifiche
       recapiti: ${url.notifiche.cittadino.base}/recapiti
       deleghe: ${url.notifiche.cittadino.base}/deleghe
       add-deleghe: ${url.notifiche.cittadino.base}/deleghe/nuova
       app-status: ${url.notifiche.cittadino.base}/app-status
     persona-giuridica:
-      base: https://imprese.test.notifichedigitali.it
+      base: https://imprese.hotfix.notifichedigitali.it
       notifiche: ${url.notifiche.persona-giuridica.base}/notifiche
       notifiche-delegato: ${url.notifiche.persona-giuridica.base}/notifiche-delegato
       app-status: ${url.notifiche.persona-giuridica.base}/app-status
@@ -39,7 +39,7 @@ url:
       delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati
       add-delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati/nuova
     mittente:
-      base: https://selfcare.test.notifichedigitali.it
+      base: https://selfcare.hotfix.notifichedigitali.it
       dashboard: ${url.notifiche.mittente.base}/dashboard
       new-notification: ${url.notifiche.mittente.dashboard}/nuova-notifica
       api-keys: ${url.notifiche.mittente.base}/api-keys
@@ -63,7 +63,7 @@ selettore:
 # Bearer token for users
 # ============================================================================
 token:
-  mittente: ${pn.external.bearer-token.tokentestMittente}
+  mittente: ${pn.external.bearer-token.tokenhotfixMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
   session:
     grossini: ${pn.external.session-token.grossini:GROSSINI}
@@ -75,8 +75,8 @@ token:
 # ============================================================================
 bff:
   api:
-    base-url: https://webapi.test.notifichedigitali.it
-    bearer-token: ${pn.external.bearer-token.tokenBffApiTest:REPLACE_ME}
+    base-url: https://webapi.hotfix.notifichedigitali.it
+    bearer-token: ${pn.external.bearer-token.tokenBffApiHotfix:REPLACE_ME}
 
 # ============================================================================
 # GPD API Configuration (posizioni debitorie)
@@ -92,14 +92,14 @@ gpd:
 # ============================================================================
 external-registries:
   api:
-    base-url: https://api.test.notifichedigitali.it
+    base-url: https://api.hotfix.notifichedigitali.it
 
 # ============================================================================
 # Pn Delivery B2B API Configuration (lettura notifiche via SenderReadB2BApi)
 # ============================================================================
 delivery:
   api:
-    base-url: https://api.test.notifichedigitali.it
+    base-url: https://api.hotfix.notifichedigitali.it
 
 template:
   api:
@@ -107,12 +107,12 @@ template:
     openapi-url: https://raw.githubusercontent.com/pagopa/pn-templates-engine/refs/tags/v1.17.0-RC.1/docs/openapi/pn-internal-templates-v1.yaml
 
 # api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
-# ogni costante di Tenant, univoca per PA e per ambiente (qui: test)
+# ogni costante di Tenant, univoca per PA e per ambiente (qui: hotfix)
 pa:
   groups-api-key:
     GROSSINI: 2a36ad69-fce0-416b-b94e-7242773e638b
 
 # api-key per le API B2B delivery (header x-api-key), una entry per ogni costante di Tenant,
-# univoca per PA e per ambiente (qui: test)
+# univoca per PA e per ambiente (qui: hotfix)
   delivery-api-key:
     GROSSINI: 5df3a854-110c-46e9-a94b-274e2e74132d
