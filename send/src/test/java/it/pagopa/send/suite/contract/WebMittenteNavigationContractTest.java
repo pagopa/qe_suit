@@ -7,6 +7,7 @@ import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
+import it.pagopa.send.web.infrastructure.page.component.TableCell;
 import it.pagopa.send.web.mittente.infrastructure.page.APIKeyPage;
 import it.pagopa.send.web.mittente.infrastructure.page.NewAPIKeyPage;
 import it.pagopa.send.web.mittente.infrastructure.page.PlatformStatusPage;
@@ -14,6 +15,7 @@ import it.pagopa.send.web.mittente.infrastructure.page.StatisticsPage;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
@@ -33,7 +35,7 @@ import java.util.stream.Stream;
  * {@code WebContractRuntimeCaseExecutor}), quindi ogni scenario qui sotto è un no-op: il test
  * fallisce se e solo se la pagina non è raggiungibile o non si carica correttamente.
  */
-@ActiveProfiles({"test", "junit"})
+@ActiveProfiles({"hotfix", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
@@ -45,7 +47,7 @@ import java.util.stream.Stream;
 public class WebMittenteNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
-
+    private final String token = "";
     @TestFactory
     Stream<DynamicTest> shouldReachDashboard() {
         return reachabilityTest(DashboardPage.class);
@@ -83,6 +85,38 @@ public class WebMittenteNavigationContractTest {
                         "controllo caricamento pagina " + pageType.getSimpleName(),
                         page -> {},
                         page -> {}
+                )));
+    }
+
+    @TestFactory
+    Stream<DynamicTest> colonnaGruppiPresente() {
+        return colonnaGruppiPresenteScenarios();
+    }
+
+    private Stream<DynamicTest> colonnaGruppiPresenteScenarios() {
+        return webContractValidator.as(Tenant.GROSSINI, List.of())
+                .on(DashboardPage.class,token)
+                .tests(Stream.of(new WebScenario<>(
+                        "Check presenza colonna 'Gruppi' su Dashboard Notifiche",
+                        page -> {},
+                        page ->
+                        {
+                            boolean checkGruppiPresence = false;
+                            List<TableCell> headerCells =page
+                                    .notifications()
+                                    .header()
+                                    .cells();
+
+                            for (TableCell elem : headerCells){
+                                System.out.println(elem.read());
+                                if(elem.read().equals("Gruppi")) {
+                                    checkGruppiPresence = true;
+                                    break;
+                                }
+                            }
+
+                            Assertions.assertTrue(checkGruppiPresence);
+                        }
                 )));
     }
 }
