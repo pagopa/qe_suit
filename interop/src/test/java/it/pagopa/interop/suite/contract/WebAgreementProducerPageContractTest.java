@@ -95,8 +95,7 @@ public class WebAgreementProducerPageContractTest {
                             assertAbsent(page.editButton(), "Pulsante 'Modifica'");
                         }),
                 scenario("ES-AG-01.15 - Filtro erogatore assente",
-                        page -> Assertions.assertThat(page.producerFilter().isPresent())
-                                .as("Filtro 'Cerca per erogatore': atteso assente").isFalse()),
+                        page -> assertAbsent(page.producerFilter(), "Filtro 'Cerca per erogatore'")),
                 scenario("ES-AG-01.16 - Colonna Erogatore assente",
                         page -> assertAbsent(page.producerColumnHeader(), "Colonna 'Erogatore'")),
                 scenario("ES-AG-01.17 - Pulsante di creazione assente",
@@ -156,7 +155,7 @@ public class WebAgreementProducerPageContractTest {
     }
 
     private static void assertAbsent(Component component, String name) {
-        Assertions.assertThat(component.get(FindPolicy.PRESENT).isPresent())
+        Assertions.assertThat(component.isPresentNow())
                 .as(name + ": atteso assente dal DOM").isFalse();
     }
 

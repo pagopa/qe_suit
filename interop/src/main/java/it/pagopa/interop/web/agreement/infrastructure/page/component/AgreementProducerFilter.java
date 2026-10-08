@@ -40,7 +40,7 @@ public interface AgreementProducerFilter extends Component {
     }
 
     default boolean hasSelection() {
-        return selectedValue().get(FindPolicy.PRESENT).isPresent();
+        return selectedValue().isPresentNow();
     }
 }
 

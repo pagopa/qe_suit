@@ -7,7 +7,9 @@ import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.openqa.selenium.By;
+import org.openqa.selenium.InvalidSelectorException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -20,6 +22,8 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -28,6 +32,66 @@ import static org.mockito.Mockito.*;
 
 @DisplayName("SeleniumApiAdapter")
 class SeleniumApiAdapterTest {
+
+    @Test
+    @Timeout(5)
+    void shouldCheckAbsenceWithOneLookup() {
+        WebDriver driver = mock(WebDriver.class);
+        By by = By.xpath("//*[@id='missing']");
+        when(driver.findElements(by)).thenReturn(List.of());
+
+        SeleniumApiAdapter adapter = new SeleniumApiAdapter(driver);
+
+        assertFalse(adapter.isPresentNow(XPathSelector.of("//*[@id='missing']")));
+        verify(driver).findElements(by);
+        verifyNoMoreInteractions(driver);
+    }
+
+    @Test
+    void shouldTreatHiddenElementAsPresentWithoutReadingIt() {
+        WebDriver driver = mock(WebDriver.class);
+        WebElement hiddenElement = mock(WebElement.class);
+        By by = By.xpath("//*[@id='hidden']");
+        when(driver.findElements(by)).thenReturn(List.of(hiddenElement));
+
+        SeleniumApiAdapter adapter = new SeleniumApiAdapter(driver);
+
+        assertTrue(adapter.isPresentNow(XPathSelector.of("//*[@id='hidden']")));
+        verify(driver).findElements(by);
+        verifyNoMoreInteractions(driver);
+        verifyNoInteractions(hiddenElement);
+    }
+
+    @Test
+    @Timeout(5)
+    void shouldPropagateLookupTimeoutWithoutRetrying() {
+        WebDriver driver = mock(WebDriver.class);
+        By by = By.xpath("//*[@id='element']");
+        org.openqa.selenium.TimeoutException failure = new org.openqa.selenium.TimeoutException("lookup failed");
+        when(driver.findElements(by)).thenThrow(failure);
+
+        SeleniumApiAdapter adapter = new SeleniumApiAdapter(driver);
+
+        assertSame(failure, assertThrows(org.openqa.selenium.TimeoutException.class,
+                () -> adapter.isPresentNow(XPathSelector.of("//*[@id='element']"))));
+        verify(driver).findElements(by);
+        verifyNoMoreInteractions(driver);
+    }
+
+    @Test
+    void shouldNotInterpretInvalidSelectorAsAbsence() {
+        WebDriver driver = mock(WebDriver.class);
+        By by = By.xpath("//unknown::button");
+        InvalidSelectorException failure = new InvalidSelectorException("invalid XPath");
+        when(driver.findElements(by)).thenThrow(failure);
+
+        SeleniumApiAdapter adapter = new SeleniumApiAdapter(driver);
+
+        assertSame(failure, assertThrows(InvalidSelectorException.class,
+                () -> adapter.isPresentNow(XPathSelector.of("//unknown::button"))));
+        verify(driver).findElements(by);
+        verifyNoMoreInteractions(driver);
+    }
 
     @Test
     @DisplayName("findElement mappa testo, tag, attributi HTML e location")
