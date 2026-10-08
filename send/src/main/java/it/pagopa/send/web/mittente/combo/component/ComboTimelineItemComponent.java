@@ -11,7 +11,7 @@ public interface ComboTimelineItemComponent extends Component, Readable<String> 
     @XPath(".//div[contains(@class, 'MuiTimelineContent-root')]//p[contains(@class, 'MuiTypography-root')][1]")
     Readable<String> title();
 
-    @XPath(".//*[@data-testid='dateItem'] | .//span[contains(@class, 'MuiTimelineOppositeContent-root')]")
+    @XPath(".//*[@data-testid='dateItem' or contains(@class, 'MuiTimelineOppositeContent-root')]")
     Readable<String> timestamp();
 
     @XPath(".//div[contains(@class, 'MuiTimelineContent-root')]")
