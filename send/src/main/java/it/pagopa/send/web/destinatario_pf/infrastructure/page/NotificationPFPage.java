@@ -43,6 +43,14 @@ public interface NotificationPFPage extends NotificationSearchPage {
     @XPath("(//*[@data-testid=\"notificationsTable.body.row\"][.//span[normalize-space()=\"Notifica a valore legale\"]]//*[@data-testid=\"goToNotificationDetail\"])[1]")
     Button firstLegalNotificationDetailsButton();
 
+    // "Apri" della prima notifica a valore legale già letta (senza il pallino di notifica nuova): aprirla non cambia lo stato di lettura
+    @XPath("(//*[@data-testid=\"notificationsTable.body.row\"][not(.//*[@data-testid=\"new-notification-badge\"])][.//span[normalize-space()=\"Notifica a valore legale\"]]//*[@data-testid=\"goToNotificationDetail\"])[1]")
+    Button firstReadLegalNotificationDetailsButton();
+
+    // "Apri" della prima comunicazione già letta (senza il pallino di notifica nuova)
+    @XPath("(//*[@data-testid=\"notificationsTable.body.row\"][not(.//*[@data-testid=\"new-notification-badge\"])][not(.//span[normalize-space()=\"Notifica a valore legale\"])]//*[@data-testid=\"goToNotificationDetail\"])[1]")
+    Button firstReadCommunicationDetailsButton();
+
     @XPath("//*[@id=\"communicationType-label\"]")
     Readable<String> communicationTypeLabel();
 
@@ -181,6 +189,15 @@ public interface NotificationPFPage extends NotificationSearchPage {
     default void filterLegalNotifications() {
         communicationTypeSelect().click();
         legalNotificationsOption().click();
+        filterButton().click();
+    }
+
+    /**
+     * Filtra la lista sulle sole comunicazioni tramite il filtro "Tipologia".
+     */
+    default void filterCommunications() {
+        communicationTypeSelect().click();
+        communicationsOption().click();
         filterButton().click();
     }
 

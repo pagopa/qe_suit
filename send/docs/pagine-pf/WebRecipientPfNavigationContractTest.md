@@ -22,6 +22,7 @@ pagina, descritti ciascuno in un documento con lo stesso nome della classe di te
 - [`WebDigitalDomicileActivationPFContractTest`](WebDigitalDomicileActivationPFContractTest.md): wizard "Attiva domicilio digitale su SEND"
 - [`WebDigitalDomicileManagementPFContractTest`](WebDigitalDomicileManagementPFContractTest.md): pagina "Gestisci il tuo domicilio digitale"
 - [`WebNotificationPFContractTest`](WebNotificationPFContractTest.md): pagina "In arrivo"
+- [`WebNotificationDetailsPFContractTest`](WebNotificationDetailsPFContractTest.md): dettaglio di una notifica e "Stato della notifica" (timeline)
 
 Negli indirizzi `{baseUrl}` è la proprietà `url.notifiche.cittadino.base` del profilo attivo
 (es. `https://cittadini.test.notifichedigitali.it` sul profilo `test`).
@@ -80,10 +81,11 @@ Elementi verificati: vedi `assertLoaded()` in [`NotificationPFPage`](../../src/m
 
 **Indirizzo:** `{baseUrl}/notifiche/<IUN>/dettaglio`
 
-Pagina di dettaglio di una notifica del cittadino. Si apre dal pulsante "Apri" di una riga della pagina `{baseUrl}/notifiche`. Il contenuto cambia con il tipo di notifica: una notifica a valore legale ha documenti, stato e disservizi, una comunicazione ha pagamenti e contatti del mittente. L'assertLoaded verifica solo gli elementi comuni a ogni notifica (breadcrumb, oggetto, mittente, data e IUN).
+Pagina di dettaglio di una notifica del cittadino. Si apre dal pulsante "Apri" di una riga della pagina `{baseUrl}/notifiche`. Il contenuto cambia con il tipo di notifica: una notifica a valore legale ha documenti, stato, avviso di avvenuta ricezione e disservizi; una comunicazione (`{baseUrl}/comunicazione/<IUN>/dettaglio`) ha messaggio, documenti, pagamenti e contatti del mittente. L'assertLoaded verifica che la pagina sia caricata, cioè l'oggetto, il breadcrumb e lo IUN; intestazione e sezioni sono verificate da `WebNotificationDetailsPFContractTest`.
 
 - Page Object: [`NotificationDetailsPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/NotificationDetailsPFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachNotificationDetailsPF` (se presente: se l'utente non ha notifiche la pagina non è raggiungibile e il test termina senza verificare nulla)
+- Contract test della pagina: [`WebNotificationDetailsPFContractTest`](WebNotificationDetailsPFContractTest.md)
 
 ![Dettaglio notifica](img/NotificationDetailsPFPage.png)
 
@@ -93,10 +95,11 @@ Elementi verificati: vedi `assertLoaded()` in [`NotificationDetailsPFPage`](../.
 
 **Indirizzo:** `{baseUrl}/notifiche/<IUN>/dettaglio/timeline`
 
-Pagina "Stato della notifica" del cittadino, con la timeline degli eventi di una notifica a valore legale. Si apre dal pulsante "Vai al dettaglio" della sezione "Stato della notifica" nel dettaglio della notifica. L'assertLoaded verifica gli elementi presenti per qualunque notifica; gli eventi cambiano da notifica a notifica, per cui di ciascuno si verifica solo che abbia un titolo e una data.
+Pagina "Stato della notifica" del cittadino, con la timeline degli eventi di una notifica a valore legale. Si apre dal pulsante "Vai al dettaglio" della sezione "Stato della notifica" nel dettaglio della notifica. L'assertLoaded verifica che la pagina sia caricata, cioè il titolo e il breadcrumb; breadcrumb ed eventi sono verificati da `WebNotificationDetailsPFContractTest`.
 
 - Page Object: [`NotificationTimelinePFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/NotificationTimelinePFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachNotificationTimelinePF` (se presente: il test filtra la lista per notifiche a valore legale; se l'utente non ne ha la pagina non è raggiungibile e il test termina senza verificare nulla)
+- Contract test della pagina: [`WebNotificationDetailsPFContractTest`](WebNotificationDetailsPFContractTest.md#timeline-shouldshownotificationtimeline)
 
 ![Stato della notifica (timeline)](img/NotificationTimelinePFPage.png)
 

@@ -21,9 +21,12 @@ import static org.assertj.core.api.Assertions.assertThat;
  * {@code {baseUrl}/notifiche/<IUN>/dettaglio}
  * Pagina di dettaglio di una notifica del cittadino.
  * Si apre dal pulsante "Apri" di una riga della pagina {@code {baseUrl}/notifiche}.
- * Il contenuto cambia con il tipo di notifica: una notifica a valore legale ha documenti, stato e disservizi,
- * una comunicazione ha pagamenti e contatti del mittente.
- * L'assertLoaded verifica solo gli elementi comuni a ogni notifica (breadcrumb, oggetto, mittente, data e IUN).
+ * Il contenuto cambia con il tipo di notifica: una notifica a valore legale ha documenti, stato, avviso di avvenuta
+ * ricezione e disservizi; una comunicazione ({@code {baseUrl}/comunicazione/<IUN>/dettaglio}) ha messaggio, documenti,
+ * pagamenti e contatti del mittente. Le sezioni che implementano {@link NotificationDetailsPage} sono condivise con gli
+ * step Cucumber.
+ * L'assertLoaded verifica che la pagina sia caricata, cioè l'oggetto, il breadcrumb e lo IUN; intestazione e sezioni
+ * sono verificate da {@code WebNotificationDetailsPFContractTest}.
  */
 @Url("about:blank")
 public interface NotificationDetailsPFPage extends NotificationDetailsPage {
@@ -56,6 +59,60 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
 
     @XPath("//p[normalize-space()=\"Codice IUN\"]/following-sibling::p[1]")
     Readable<String> iun();
+
+    // contenuto della pagina, per sapere quali sezioni ci sono senza attenderle
+    @XPath("//main")
+    Readable<String> content();
+
+    // documenti allegati
+
+    @XPath("//*[@id=\"notification-detail-document-attached\"]")
+    Readable<String> documentsTitle();
+
+    @XPath("//*[@data-testid=\"documentsMessage\"]")
+    Readable<String> documentsMessage();
+
+    @XPath("//*[@data-testid=\"notificationDetailDocuments\"]//*[@data-testid=\"documentButton\"]")
+    Readable<String> documentButtons();
+
+    // notifica a valore legale: stato, avviso di avvenuta ricezione e disservizi
+
+    @XPath("//*[@data-testid=\"NotificationDetailTimeline\"]//h2")
+    Readable<String> statusTitle();
+
+    @XPath("//*[@data-testid=\"NotificationDetailTimeline\"]//h2/following::span[1]")
+    Readable<String> currentStatus();
+
+    @XPath("//*[@data-testid=\"aarDownload\"]//h2")
+    Readable<String> aarTitle();
+
+    @XPath("//*[@data-testid=\"aarBox\"]//p")
+    Readable<String> aarLabel();
+
+    @XPath("//*[@data-testid=\"downtimesBox\"]//h2")
+    Readable<String> downtimesTitle();
+
+    // comunicazione: messaggio, pagamenti e contatti del mittente
+
+    @XPath("(//*[@data-testid=\"informalNotificationMessage\"]//p)[1]")
+    Readable<String> communicationGreeting();
+
+    @XPath("//p[starts-with(normalize-space(),\"Questa comunicazione potrebbe produrre effetti giuridici\")]")
+    Readable<String> legalEffectsNote();
+
+    @XPath("//*[@data-testid=\"notification-payment-recipient-title\"]")
+    Readable<String> paymentsTitle();
+
+    // non va premuto: avvia il pagamento
+    @XPath("//*[@data-testid=\"pay-button\"]")
+    Button payButton();
+
+    @XPath("//h2[normalize-space()=\"Contatta il mittente\"]")
+    Readable<String> contactSenderTitle();
+
+    // etichette dei contatti forniti dal mittente ("Numero di telefono dell'ente", "Sito web dell'ente", ...)
+    @XPath("//h2[normalize-space()=\"Contatta il mittente\"]/following-sibling::*//p[contains(normalize-space(),\"dell'ente\")]")
+    Readable<String> contactSenderLabels();
 
     @XPath("//*[@id=\"title-of-page\"]")
     Chip fullPecMessage();
@@ -197,15 +254,9 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
 
     @Override
     default void assertLoaded() {
-        notificationsBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("In arrivo"));
         title().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
-
-        // labels
-        currentBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(title().read()));
-        sender().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
-        depositDate().readAndAssert(h -> Assertions.assertThat(h).matches(".*depositata il giorno \\d{2}/\\d{2}/\\d{4}"));
-        iunLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Codice IUN"));
-        iun().readAndAssert(h -> Assertions.assertThat(h).matches("[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-\\d{6}-[A-Z]-[A-Z0-9]"));
+        notificationsBreadcrumb().assertLoaded();
+        iun().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
     }
 
 }

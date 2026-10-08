@@ -12,8 +12,9 @@ import org.assertj.core.api.Assertions;
  * Pagina "Stato della notifica" del cittadino, con la timeline degli eventi di una notifica a valore legale.
  * Si apre dal pulsante "Vai al dettaglio" della sezione
  * "Stato della notifica" nel dettaglio della notifica.
- * L'assertLoaded verifica gli elementi presenti per qualunque notifica; gli eventi cambiano da notifica a notifica,
- * per cui di ciascuno si verifica solo che abbia un titolo e una data.
+ * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo e il breadcrumb; breadcrumb ed eventi sono
+ * verificati da {@code WebNotificationDetailsPFContractTest}. Gli eventi cambiano da notifica a notifica, per cui di
+ * ciascuno si verifica solo che abbia un titolo e, se presente, una data.
  */
 @Url("${url.notifiche.cittadino.notifiche}/${iun}/dettaglio/timeline")
 public interface NotificationTimelinePFPage extends Page {
@@ -40,13 +41,7 @@ public interface NotificationTimelinePFPage extends Page {
 
     @Override
     default void assertLoaded() {
-        notificationsBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("In arrivo"));
-        notificationBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
-        eventDates().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).matches("\\d{2} [A-Z]{3}, \\d{2}:\\d{2}")));
-
-        // labels
-        currentBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Stato della notifica"));
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Stato della notifica"));
-        eventTitles().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).isNotBlank()));
+        notificationsBreadcrumb().assertLoaded();
     }
 }
