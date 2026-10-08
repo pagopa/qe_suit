@@ -3,10 +3,7 @@ package it.pagopa.interop.common.infrastructure.cucumber.parameter_type;
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.client.domain.ClientKind;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
-import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +18,7 @@ public class CommonParameterTypes {
         return currentUserSession.getUser();
     }
 
-    @ParameterType("admin|ADMIN|api|API|security|SECURITY|support|SUPPORT|API,SECURITY|api,security")
+    @ParameterType("admin|ADMIN|api|API|security|SECURITY|support|SUPPORT|API,SECURITY|api,security|reviewer|REVIEWER|viewer|VIEWER")
     public UserRole userRole(String name) {
         return UserRole.fromName(name);
     }
@@ -29,6 +26,11 @@ public class CommonParameterTypes {
     @ParameterType("AgID|Comune di Milano|Comune di Pozzallo|Comune di Comun Nuovo|PagoPA|Kyma|Sogecap|Sogessur")
     public Tenant tenant(String tenant) {
         return Tenant.fromAlias(tenant);
+    }
+
+    @ParameterType("GSP|PA|PRIVATE")
+    public TenantKind tenantKind(String kind) {
+        return TenantKind.valueOf(kind);
     }
 
     @ParameterType("BFF|bff")
