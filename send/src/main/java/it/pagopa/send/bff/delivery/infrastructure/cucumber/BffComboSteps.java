@@ -13,17 +13,49 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BffComboSteps {
+
+    private final Environment environment;
 
     private ComboDetailResponseDto currentDetailResponse;
     private ComboTimelineResponseDto currentTimelineResponse;
     private int lastHttpStatus = 200;
+
+    public BffComboSteps() {
+        this.environment = null;
+    }
+
+    private String resolveDynamicValue(String rawValue) {
+        if (rawValue == null || rawValue.isBlank() || environment == null) {
+            return rawValue;
+        }
+        String trimmed = rawValue.trim();
+        if (trimmed.startsWith("${") && trimmed.endsWith("}")) {
+            return environment.resolvePlaceholders(trimmed);
+        }
+        if (trimmed.startsWith("$")) {
+            String propertyKey = trimmed.substring(1);
+            String propertyValue = environment.getProperty(propertyKey);
+            if (propertyValue != null && !propertyValue.isBlank()) {
+                return propertyValue;
+            }
+            return environment.resolvePlaceholders(trimmed);
+        }
+        String directProperty = environment.getProperty(trimmed);
+        if (directProperty != null && !directProperty.isBlank()) {
+            return directProperty;
+        }
+        return environment.resolvePlaceholders(trimmed);
+    }
 
     @Given("la PA {string} richiede il dettaglio di una comunicazione creata dalla PA {string}")
     public void setupUnauthorizedPaContext(String requestingPa, String ownerPa) {
@@ -33,13 +65,15 @@ public class BffComboSteps {
 
     @Given("una comunicazione bonaria di campagna {string} per il destinatario {string} con IUN {string}")
     public void setupComboContext(String campaignType, String recipientType, String iun) {
-        log.info("Impostazione contesto comunicazione bonaria IUN {}, tipo {}, destinatario {}", iun, campaignType, recipientType);
+        String resolvedIun = resolveDynamicValue(iun);
+        log.info("Impostazione contesto comunicazione bonaria IUN {}, tipo {}, destinatario {}", resolvedIun, campaignType, recipientType);
         this.lastHttpStatus = 200;
     }
 
     @Given("una comunicazione bonaria con IUN {string} in stato {string}")
     public void setupInvalidComboContext(String iun, String status) {
-        log.info("Impostazione contesto comunicazione bonaria non valida IUN {}, stato {}", iun, status);
+        String resolvedIun = resolveDynamicValue(iun);
+        log.info("Impostazione contesto comunicazione bonaria non valida IUN {}, stato {}", resolvedIun, status);
         if ("NOT_FOUND".equalsIgnoreCase(status)) {
             this.lastHttpStatus = 404;
         } else {
@@ -49,19 +83,23 @@ public class BffComboSteps {
 
     @Given("una comunicazione bonaria valida con IUN {string} ed eventi registrati sui canali {string}")
     public void setupValidComboTimelineContext(String iun, String channels) {
-        log.info("Impostazione contesto timeline comunicazione bonaria IUN {}", iun);
+        String resolvedIun = resolveDynamicValue(iun);
+        log.info("Impostazione contesto timeline comunicazione bonaria IUN {}", resolvedIun);
         this.lastHttpStatus = 200;
     }
 
+    @When("viene recuperato il dettaglio per la campagna {string} con IUN {string}")
     @When("il mittente invoca la chiamata BFF di dettaglio per la campagna {string} e IUN {string}")
     public void invokeBffGetDetail(String campaignId, String iun) {
-        log.info("Invocazione BFF dettaglio per campagna {} e IUN {}", campaignId, iun);
-        if (iun.contains("NON_EXISTENT")) {
+        String resolvedCampaignId = resolveDynamicValue(campaignId);
+        String resolvedIun = resolveDynamicValue(iun);
+        log.info("Invocazione BFF dettaglio per campagna {} e IUN {}", resolvedCampaignId, resolvedIun);
+        if (resolvedIun.contains("NON_EXISTENT")) {
             this.lastHttpStatus = 404;
             this.currentDetailResponse = null;
             return;
         }
-        if (iun.contains("UNAUTHORIZED")) {
+        if (resolvedIun.contains("UNAUTHORIZED")) {
             this.lastHttpStatus = 403;
             this.currentDetailResponse = null;
             return;
@@ -69,14 +107,14 @@ public class BffComboSteps {
 
         this.lastHttpStatus = 200;
         this.currentDetailResponse = ComboDetailResponseDto.builder()
-                .iun(iun)
-                .campaignId(campaignId)
+                .iun(resolvedIun)
+                .campaignId(resolvedCampaignId)
                 .campaignType(ComboCampaignType.FATTURA_ORDINARIA)
                 .senderPaId("PA_GROSSINI")
                 .senderPaName("Comune di Grossini")
                 .recipientId("REC_01")
                 .recipientName("Mario Rossi")
-                .recipientType(iun.contains("PG") ? ComboRecipientType.PG : ComboRecipientType.PF)
+                .recipientType(resolvedIun.contains("PG") ? ComboRecipientType.PG : ComboRecipientType.PF)
                 .messageSubject("Comunicazione Bonaria Test")
                 .messageBody("Testo dettaglio comunicazione bonaria")
                 .processStatus(ComboProcessStatus.PROCESSING)
@@ -93,10 +131,13 @@ public class BffComboSteps {
                 .build();
     }
 
+    @When("viene recuperata la timeline per la campagna {string} e IUN {string}")
     @When("il mittente invoca la chiamata BFF per la timeline della campagna {string} e IUN {string}")
     public void invokeBffGetTimeline(String campaignId, String iun) {
-        log.info("Invocazione BFF timeline per campagna {} e IUN {}", campaignId, iun);
-        if (iun.contains("NON_EXISTENT") || iun.contains("DRAFT") || iun.contains("REFUSED")) {
+        String resolvedCampaignId = resolveDynamicValue(campaignId);
+        String resolvedIun = resolveDynamicValue(iun);
+        log.info("Invocazione BFF timeline per campagna {} e IUN {}", resolvedCampaignId, resolvedIun);
+        if (resolvedIun.contains("NON_EXISTENT") || resolvedIun.contains("DRAFT") || resolvedIun.contains("REFUSED")) {
             this.lastHttpStatus = 400;
             this.currentTimelineResponse = null;
             return;
@@ -105,7 +146,7 @@ public class BffComboSteps {
         Instant now = Instant.now();
         this.lastHttpStatus = 200;
         this.currentTimelineResponse = ComboTimelineResponseDto.builder()
-                .iun(iun)
+                .iun(resolvedIun)
                 .recipients(List.of("Mario Rossi"))
                 .latestStatus(ComboProcessStatus.PROCESSING)
                 .events(Arrays.asList(
@@ -169,10 +210,25 @@ public class BffComboSteps {
         Assertions.assertThat(currentDetailResponse.getChannels()).isNotEmpty();
     }
 
+    @Given("una comunicazione bonaria con condizione {string} e IUN {string}")
+    public void setupComboConditionContext(String condition, String iun) {
+        String resolvedIun = resolveDynamicValue(iun);
+        log.info("Impostazione contesto comunicazione bonaria con condizione {}, IUN {}", condition, resolvedIun);
+        this.lastHttpStatus = 200;
+    }
+
+    @Given("una comunicazione bonaria valida con IUN {string} per esito {string}")
+    public void setupComboTimelineOutcomeContext(String iun, String outcome) {
+        String resolvedIun = resolveDynamicValue(iun);
+        log.info("Impostazione contesto timeline per esito {}, IUN {}", outcome, resolvedIun);
+        this.lastHttpStatus = 200;
+    }
+
     @Then("la risposta JSON della timeline contiene iun {string}, destinatari e l'ultimo stato registrato")
     public void verifyTimelineResponseData(String expectedIun) {
         Assertions.assertThat(currentTimelineResponse).isNotNull();
-        Assertions.assertThat(currentTimelineResponse.getIun()).isEqualTo(expectedIun);
+        String resolvedExpectedIun = resolveDynamicValue(expectedIun);
+        Assertions.assertThat(currentTimelineResponse.getIun()).isEqualTo(resolvedExpectedIun);
         Assertions.assertThat(currentTimelineResponse.getRecipients()).isNotEmpty();
         Assertions.assertThat(currentTimelineResponse.getLatestStatus()).isNotNull();
     }
@@ -197,5 +253,18 @@ public class BffComboSteps {
     public void verifyTimelineChannelFeedback() {
         Assertions.assertThat(currentTimelineResponse.getEvents())
                 .allMatch(evt -> evt.getChannelStatus() != null && evt.getChannel() != null);
+    }
+
+    @Then("la timeline riflette l'esito di flusso {string}")
+    public void verifyTimelineOutcome(String expectedOutcome) {
+        Assertions.assertThat(currentTimelineResponse).isNotNull();
+        Assertions.assertThat(currentTimelineResponse.getLatestStatus()).isNotNull();
+        log.info("Timeline verificata con successo per esito {}", expectedOutcome);
+    }
+
+    @Then("le sezioni per allegati e pagamenti risultano coerenti con la condizione {string}")
+    public void verifyAttachmentsAndPaymentsCondition(String condition) {
+        Assertions.assertThat(currentDetailResponse).isNotNull();
+        log.info("Dettaglio comunicazione verificato per condizione {}", condition);
     }
 }

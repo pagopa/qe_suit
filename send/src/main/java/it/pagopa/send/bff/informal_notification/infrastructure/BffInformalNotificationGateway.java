@@ -65,6 +65,28 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
         assert response != null;
         String iun = new String(java.util.Base64.getDecoder().decode(response.getNotificationRequestId()));
 
+        if (iun != null && !iun.isBlank()) {
+            final String finalIun = iun;
+            log.info("Attesa disponibilita comunicazione bonaria su BE per IUN {}...", finalIun);
+            try {
+                org.awaitility.Awaitility.await()
+                        .atMost(java.time.Duration.ofSeconds(90))
+                        .pollInterval(java.time.Duration.ofSeconds(1))
+                        .ignoreExceptions()
+                        .until(() -> {
+                            try {
+                                Response checkResp = informalDeliveryRestClient.getSentInformalNotification(apiKey, finalIun);
+                                return checkResp.getStatusCode() == 200;
+                            } catch (Exception e) {
+                                return false;
+                            }
+                        });
+                log.info("Comunicazione bonaria IUN {} confermata disponibile su backend (200 OK)!", finalIun);
+            } catch (Exception e) {
+                log.warn("Timeout o errore durante il polling BE per IUN {}: {}", finalIun, e.getMessage());
+            }
+        }
+
         List<String> messageIds = request.recipients().stream()
                 .map(ResolvedInformalRecipient::messageId)
                 .toList();

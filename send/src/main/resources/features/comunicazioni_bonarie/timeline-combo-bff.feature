@@ -1,23 +1,33 @@
 @bff @comunicazioniBonarie @scenario5
-Feature: Recupero Timeline Comunicazione Bonaria via BFF API
+Feature: [BFF] [PA] Recupero Timeline Comunicazione Bonaria via BFF API
+
+  # Gli scenari di errore per stato invalido (DRAFT, REFUSED, NOT_FOUND) sono test di contratto dell'API
+  # e si trovano in BffComboContractTest.java.
+  # Questo file descrive solo flussi di business: come la PA mittente recupera la timeline di una comunicazione.
 
   Background:
     Given una sessione HTTP programmatica su BFF
 
-  Scenario Outline: [SCENARIO_5_NEGATIVO] Errore per comunicazioni inesistenti, in bozza o rifiutate
-    Given una comunicazione bonaria con IUN "<iun>" in stato "<statoInvalido>"
-    When il mittente invoca la chiamata BFF per la timeline della campagna "<campaignId>" e IUN "<iun>"
-    Then il sistema risponde con errore e non restituisce alcuna timeline per lo stato "<statoInvalido>"
-
-    Examples:
-      | campaignId | iun                 | statoInvalido |
-      | CAMP_999   | IUN_DRAFT_111       | DRAFT         |
-      | CAMP_999   | IUN_REFUSED_222     | REFUSED       |
-      | CAMP_999   | IUN_NON_EXISTENT_33 | NOT_FOUND     |
-
-  Scenario: [SCENARIO_5_POSITIVO] Recupero timeline e verifica ordinamento cronologico decrescente
-    Given una comunicazione bonaria valida con IUN "IUN_TIMELINE_VALID_123" ed eventi registrati sui canali "SEND,IO,EMAIL,SMS"
-    When il mittente invoca la chiamata BFF per la timeline della campagna "CAMP_200" e IUN "IUN_TIMELINE_VALID_123"
-    Then la risposta JSON della timeline contiene iun "IUN_TIMELINE_VALID_123", destinatari e l'ultimo stato registrato
+  @positivo @ordinamento
+  Scenario: [SCENARIO_5_POSITIVO_ORDINAMENTO] Recupero timeline e verifica ordinamento cronologico decrescente
+    Given una comunicazione bonaria valida con IUN "${combo.iun.fattord.pf}" ed eventi registrati sui canali "SEND,IO,EMAIL,SMS"
+    When viene recuperata la timeline per la campagna "FattOrd" e IUN "${combo.iun.fattord.pf}"
+    Then la risposta JSON della timeline contiene iun "${combo.iun.fattord.pf}", destinatari e l'ultimo stato registrato
     And la lista degli eventi della timeline è ordinata rigorosamente dal più recente al meno recente
     And la timeline traccia correttamente i feedback per ciascun canale abilitato
+
+  @positivo @esiti
+  Scenario Outline: [SCENARIO_5_POSITIVO_ESITI] Recupero timeline per specifici esiti e ramificazioni del workflow
+    Given una comunicazione bonaria valida con IUN "<iun>" per esito "<esitoFlusso>"
+    When viene recuperata la timeline per la campagna "<campaignId>" e IUN "<iun>"
+    Then la risposta JSON della timeline contiene iun "<iun>", destinatari e l'ultimo stato registrato
+    And la timeline riflette l'esito di flusso "<esitoFlusso>"
+    And la timeline traccia correttamente i feedback per ciascun canale abilitato
+
+    Examples:
+      | campaignId | iun                                    | esitoFlusso                   |
+      | FattOrd    | ${combo.iun.fattord.pf}                | INVIO_RIUSCITO                |
+      | FattOrd    | ${combo.iun.fattord.viewed}            | INTERROTTO_PER_LETTURA        |
+      | Reminder   | ${combo.iun.reminder.flow-io-fail-ok}  | INTERROTTO_PER_CONSEGNA       |
+      | Reminder   | ${combo.iun.reminder.flow-io-fail-excl}| INVIO_FALLITO                 |
+      | MessaMora  | ${combo.iun.messamora.pf}              | INVIO_COMPLETATO_CON_KO       |

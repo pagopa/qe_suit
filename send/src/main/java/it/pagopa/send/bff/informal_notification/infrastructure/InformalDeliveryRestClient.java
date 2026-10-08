@@ -37,7 +37,7 @@ public class InformalDeliveryRestClient {
     }
 
     public Response preloadAttachments(String apiKey, List<Map<String, Object>> requests) {
-        log.info("Invio richiesta preload allegati informal a {}/delivery/v1/attachments/preload", baseUrl);
+        log.info("Invio richiesta preload allegati informal a {}/informal/delivery/v1/attachments/preload", baseUrl);
         Response response = RestAssured.given()
                 .baseUri(baseUrl)
                 .contentType(ContentType.JSON)
@@ -48,5 +48,13 @@ public class InformalDeliveryRestClient {
 
         log.info("Risposta preload allegati informal: status={}, body={}", response.getStatusCode(), response.getBody().asString());
         return response;
+    }
+
+    public Response getSentInformalNotification(String apiKey, String iun) {
+        return RestAssured.given()
+                .baseUri(baseUrl)
+                .accept(ContentType.JSON)
+                .header("x-api-key", apiKey)
+                .get("/informal/delivery/v1/notifications/sent/" + iun);
     }
 }
