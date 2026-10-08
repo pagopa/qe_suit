@@ -18,6 +18,7 @@ pagina, descritti ciascuno in un documento con lo stesso nome della classe di te
 - [`WebOnboardingAlertsPFContractTest`](WebOnboardingAlertsPFContractTest.md): wizard di onboarding "Attivazione avvisi"
 - [`WebProfilePFContractTest`](WebProfilePFContractTest.md): pagina "I tuoi dati"
 - [`WebAppStatusPFContractTest`](WebAppStatusPFContractTest.md): pagina "Stato della piattaforma"
+- [`WebAddressPFContractTest`](WebAddressPFContractTest.md): pagina "I tuoi recapiti"
 
 Negli indirizzi `{baseUrl}` è la proprietà `url.notifiche.cittadino.base` del profilo attivo
 (es. `https://cittadini.test.notifichedigitali.it` sul profilo `test`).
@@ -101,10 +102,11 @@ Elementi verificati: vedi `assertLoaded()` in [`NotificationTimelinePFPage`](../
 
 **Indirizzo:** `{baseUrl}/recapiti`
 
-Pagina "I tuoi recapiti" del cittadino. Si apre dalla voce "I tuoi recapiti" del menu laterale. Contiene le card del domicilio digitale, di SEND sull'app IO, dell'email e del cellulare. L'assertLoaded verifica solo gli elementi presenti per qualunque utente (titoli della pagina e delle card). I componenti `PecContact`, `SpecialContacts`, `EmailContact` e `SmsContact` mappano le sezioni che compaiono solo quando l'utente ha configurato il relativo recapito.
+Pagina "I tuoi recapiti" del cittadino. Si apre dalla voce "I tuoi recapiti" del menu laterale. Contiene le card del domicilio digitale, di SEND sull'app IO e dell'email, più quella del cellulare se l'utente ne ha uno; il contenuto delle card dipende dai recapiti dell'utente. L'assertLoaded verifica che la pagina sia caricata, cioè il titolo e le card del domicilio digitale, dell'app IO e dell'email; testi, recapiti e validazioni sono verificati da `WebAddressPFContractTest`.
 
 - Page Object: [`AddressPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/AddressPFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachAddressPF`
+- Contract test della pagina: [`WebAddressPFContractTest`](WebAddressPFContractTest.md)
 
 ![I tuoi recapiti](img/AddressPFPage.png)
 

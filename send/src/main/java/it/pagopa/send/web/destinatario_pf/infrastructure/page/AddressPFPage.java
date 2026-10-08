@@ -6,6 +6,7 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.TextField;
 import it.pagopa.send.web.infrastructure.page.AddressPage;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import org.assertj.core.api.Assertions;
@@ -16,10 +17,12 @@ import java.util.Optional;
  * {@code {baseUrl}/recapiti}
  * Pagina "I tuoi recapiti" del cittadino.
  * Si apre dalla voce "I tuoi recapiti" del menu laterale.
- * Contiene le card del domicilio digitale, di SEND sull'app IO, dell'email e del cellulare.
- * L'assertLoaded verifica solo gli elementi presenti per qualunque utente (titoli della pagina e delle card).
- * I componenti {@link PecContact}, {@link SpecialContacts}, {@link EmailContact} e {@link SmsContact} mappano
- * le sezioni che compaiono solo quando l'utente ha configurato il relativo recapito.
+ * Contiene le card del domicilio digitale, di SEND sull'app IO e dell'email, più quella del cellulare se l'utente ne ha
+ * uno. Il contenuto delle card dipende dai recapiti dell'utente: ogni recapito attivo mostra il valore, "Modifica" e
+ * "Disattiva" o "Elimina"; un recapito da attivare mostra il modo per inserirlo.
+ * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo e le card del domicilio digitale, dell'app IO e
+ * dell'email; testi, recapiti e validazioni sono verificati da {@code WebAddressPFContractTest}.
+ * L'assertLoaded è usato anche dagli step Cucumber dei recapiti.
  */
 @Url("${url.notifiche.cittadino.recapiti}")
 public interface AddressPFPage extends AddressPage, Page {
@@ -32,20 +35,17 @@ public interface AddressPFPage extends AddressPage, Page {
     @XPath("//*[@id=\"subtitle-page\"]")
     Readable<String> subtitle();
 
+    // card del domicilio digitale
+
     @XPath("//*[@data-testid=\"legalContactsTitle\"]")
     Readable<String> legalContactsTitle();
 
-    @XPath("//*[@data-testid=\"ioContactTitle\"]")
-    Readable<String> ioContactTitle();
+    @XPath("//*[@data-testid=\"legalContactsTitle\"]/ancestor::*[@data-testid=\"PnInfoCardHeader\"]//*[contains(@class,'MuiChip-label')]")
+    Readable<String> legalContactsStatus();
 
-    @XPath("//*[@data-testid=\"ioContactDescription\"]")
-    Readable<String> ioContactDescription();
-
-    @XPath("//*[@id=\"ioContactSection\"]//button")
-    Button downloadIoAppButton();
-
-    @XPath("//*[@data-testid=\"emailContactTitle\"]")
-    Readable<String> emailContactTitle();
+    // contenuto della card, per sapere se il domicilio è attivo senza attendere i suoi elementi
+    @XPath("//*[@data-testid=\"legalContacts\"]")
+    Readable<String> legalContactsContent();
 
     @XPath("//*[@data-testid=\"legalContacts\"]")
     PecContact pecContact();
@@ -53,20 +53,54 @@ public interface AddressPFPage extends AddressPage, Page {
     @XPath("//*[@data-testid=\"specialContacts\"]")
     SpecialContacts specialContacts();
 
-    @XPath("//*[@id=\"emailContactSection\"]")
-    EmailContact emailContact();
+    @XPath("//*[@data-testid=\"legalContacts\"]")
+    DigitalDomicileToActivate digitalDomicileToActivate();
 
-    @XPath("//*[@data-testid=\"smsContactTitle\"]/ancestor::*[.//*[@data-testid=\"default_smsContact\"]][1]")
-    SmsContact smsContact();
+    // card di SEND sull'app IO
 
-    @XPath("//main")
-    DigitalDomicileManagementPFPage digitalDomicileManagement();
-
-    // labels
+    @XPath("//*[@data-testid=\"ioContactTitle\"]")
+    Readable<String> ioContactTitle();
 
     @XPath("//*[@data-testid=\"ioContactTitle\"]/ancestor::*[@data-testid=\"PnInfoCardHeader\"]//*[contains(@class,'MuiChip-label')]")
     Readable<String> ioStatus();
 
+    @XPath("//*[@data-testid=\"ioContactDescription\"]")
+    Readable<String> ioContactDescription();
+
+    @XPath("//*[@id=\"ioContactSection\"]//button")
+    Button downloadIoAppButton();
+
+    // card dell'email (e del cellulare da aggiungere, se l'utente non ne ha uno)
+
+    @XPath("//*[@data-testid=\"emailContactTitle\"]")
+    Readable<String> emailContactTitle();
+
+    @XPath("//*[@id=\"emailContactSection\"]")
+    Readable<String> emailContactContent();
+
+    @XPath("//*[@id=\"emailContactSection\"]")
+    EmailContact emailContact();
+
+    @XPath("//*[@id=\"emailContactSection\"]")
+    EmailToAdd emailToAdd();
+
+    // card del cellulare, presente solo se l'utente ne ha uno
+
+    @XPath("//*[@data-testid=\"smsContactTitle\"]/ancestor::*[.//*[@data-testid=\"default_smsContact\"]][1]")
+    SmsContact smsContact();
+
+    // contenuto della pagina, per sapere quali card ci sono senza attenderle
+    @XPath("//main")
+    Readable<String> content();
+
+    @XPath("//main")
+    DigitalDomicileManagementPFPage digitalDomicileManagement();
+
+    /**
+     * Domicilio digitale attivo su PEC: valore, "Modifica", "Gestisci" e "Disattiva", con l'avviso sull'indirizzo
+     * principale. "Modifica" apre un campo con "Conferma": un valore valido avvia la verifica della PEC, quindi nei test si
+     * usano solo valori non validi.
+     */
     interface PecContact extends Component {
         @XPath("//*[@id=\"default_pec-typography\"]")
         Readable<String> pecValue();
@@ -80,36 +114,54 @@ public interface AddressPFPage extends AddressPage, Page {
         @XPath("//*[@data-testid=\"legalContacts\"]//*[@data-testid=\"PnInfoCardHeader\"]//button[normalize-space()=\"Disattiva\"]")
         Button disableButton();
 
-        // labels
+        @XPath("//*[@data-testid=\"default_pecContact\"]//input")
+        TextField editPecInput();
 
-        @XPath("//*[@data-testid=\"legalContactsTitle\"]/ancestor::*[@data-testid=\"PnInfoCardHeader\"]//*[contains(@class,'MuiChip-label')]")
-        Readable<String> status();
+        @XPath("//*[@id=\"saveContact-default_pec\"]")
+        Button savePecButton();
+
+        @XPath("//*[@id=\"default_pec-helper-text\"]")
+        Readable<String> editPecErrorMessage();
+
+        // labels
 
         @XPath("//*[@data-testid=\"default_pecContact\"]/following-sibling::p[1]")
         Readable<String> description();
 
+        @XPath("//*[@data-testid=\"legalContacts\"]//*[contains(@class,'MuiAlert-message')]")
+        Readable<String> mainAddressAlert();
+
         @Override
         default void assertLoaded() {
             pecValue().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
-            modifyPecButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Modifica"));
-            manageButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Gestisci"));
-            disableButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Disattiva"));
-
-            // labels
-            status().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Attivo"));
-            description().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Quando un ente ti invia una notifica SEND, viene recapitata in modo sicuro e con valore legale sulla PEC che hai scelto."));
         }
     }
 
+    /**
+     * PEC personalizzate per ente: per ogni ente il nome, la PEC, "Modifica" ed "Elimina". Ogni elemento legge la colonna
+     * di tutti gli enti; i campi di modifica si individuano dall'id del recapito dell'ente.
+     */
     interface SpecialContacts extends Component {
         @XPath("//*[contains(@data-testid,\"_pecSpecialContact\")]//span[contains(@id,\"_pec-typography\")]")
         Readable<String> values();
 
         @XPath("//*[contains(@data-testid,\"_pecSpecialContact\")]//button[starts-with(@id,\"modifyContact-\")]")
-        Readable<String> modifyButtons();
+        Button modifyButtons();
 
         @XPath("//*[contains(@data-testid,\"_pecSpecialContact\")]//button[starts-with(@id,\"cancelContact-\")]")
         Readable<String> deleteButtons();
+
+        @XPath("(//*[contains(@data-testid,\"_pecSpecialContact\")]//button[starts-with(@id,\"modifyContact-\")])[1]")
+        Button firstModifyButton();
+
+        @XPath("(//*[contains(@data-testid,\"_pecSpecialContact\")]//input)[1]")
+        TextField firstEditInput();
+
+        @XPath("(//*[contains(@data-testid,\"_pecSpecialContact\")]//button[starts-with(@id,\"saveContact-\")])[1]")
+        Button firstSaveButton();
+
+        @XPath("(//*[contains(@data-testid,\"_pecSpecialContact\")]//p[contains(@id,\"-helper-text\")])[1]")
+        Readable<String> firstEditErrorMessage();
 
         // labels
 
@@ -121,16 +173,38 @@ public interface AddressPFPage extends AddressPage, Page {
 
         @Override
         default void assertLoaded() {
-            values().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).isNotBlank()));
-            modifyButtons().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).isEqualTo("Modifica")));
-            deleteButtons().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).isEqualTo("Elimina")));
-
-            // labels
-            title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("PERSONALIZZATI PER ENTE"));
-            senders().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).isNotBlank()));
+            values().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty());
         }
     }
 
+    /**
+     * Domicilio digitale da attivare: i tre vantaggi e il pulsante "Inizia", che apre il wizard di attivazione.
+     */
+    interface DigitalDomicileToActivate extends Component {
+        @XPath("//*[@data-testid=\"legalContacts\"]//*[@data-testid=\"PnInfoCardBody\"]/button")
+        Button startButton();
+
+        // labels
+
+        @XPath("//*[@data-testid=\"legalContacts\"]//*[@data-testid=\"PnInfoCardBody\"]/p[1]")
+        Readable<String> whyUseful();
+
+        @XPath("//*[@data-testid=\"legalContacts\"]//*[@data-testid=\"PnInfoCardBody\"]/div//p[1]")
+        Readable<String> benefitTitles();
+
+        @XPath("//*[@data-testid=\"legalContacts\"]//*[@data-testid=\"PnInfoCardBody\"]/div//p[2]")
+        Readable<String> benefitDescriptions();
+
+        @Override
+        default void assertLoaded() {
+            whyUseful().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
+        }
+    }
+
+    /**
+     * Email attiva: valore, "Modifica" e "Disattiva". "Modifica" apre un campo con "Conferma": un valore valido avvia
+     * l'invio del codice di verifica, quindi nei test si usano solo valori non validi.
+     */
     interface EmailContact extends Component {
         @XPath("//*[@id=\"default_email-typography\"]")
         Readable<String> emailValue();
@@ -140,6 +214,15 @@ public interface AddressPFPage extends AddressPage, Page {
 
         @XPath("//*[@data-testid=\"disable-email\"]")
         Button disableEmailButton();
+
+        @XPath("//*[@data-testid=\"default_emailContact\"]//input")
+        TextField editEmailInput();
+
+        @XPath("//*[@id=\"saveContact-default_email\"]")
+        Button saveEmailButton();
+
+        @XPath("//*[@id=\"default_email-helper-text\"]")
+        Readable<String> editEmailErrorMessage();
 
         // labels
 
@@ -152,15 +235,63 @@ public interface AddressPFPage extends AddressPage, Page {
         @Override
         default void assertLoaded() {
             emailValue().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
-            modifyEmailButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Modifica"));
-            disableEmailButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Disattiva"));
-
-            // labels
-            status().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Attivo"));
-            description().readAndAssert(h -> Assertions.assertThat(h).contains("ti avvisiamo con una email"));
         }
     }
 
+    /**
+     * Email da aggiungere: il campo con "Aggiungi email" e, sotto, il pulsante per aggiungere anche il cellulare, che apre
+     * un campo con "Aggiungi numero" e "Annulla". Un valore valido avvia l'invio del codice di verifica, quindi nei test si
+     * usano solo valori non validi.
+     */
+    interface EmailToAdd extends Component {
+        @XPath("//*[@id=\"default_email-label\"]")
+        Readable<String> emailInputLabel();
+
+        @XPath("//*[@id=\"default_email\"]")
+        TextField emailInput();
+
+        @XPath("//*[@id=\"default_email-button\"]")
+        Button addEmailButton();
+
+        @XPath("//*[@id=\"default_email-helper-text\"]")
+        Readable<String> emailErrorMessage();
+
+        @XPath("//*[@id=\"emailContactSection\"]//button[normalize-space()=\"Aggiungi numero di cellulare\"]")
+        Button addSmsButton();
+
+        @XPath("//*[@id=\"default_sms-label\"]")
+        Readable<String> smsInputLabel();
+
+        @XPath("//*[@id=\"default_sms\"]")
+        TextField smsInput();
+
+        @XPath("//*[@id=\"default_sms-button\"]")
+        Button saveSmsButton();
+
+        @XPath("//*[@id=\"default_sms-helper-text\"]")
+        Readable<String> smsErrorMessage();
+
+        @XPath("//*[@data-testid=\"default_smsContact\"]/following-sibling::button[normalize-space()=\"Annulla\"] | //*[@data-testid=\"default_smsContact\"]//button[normalize-space()=\"Annulla\"]")
+        Button cancelSmsButton();
+
+        // labels
+
+        @XPath("//*[@id=\"emailContactSection\"]//*[@data-testid=\"PnInfoCardBody\"]/p[1]")
+        Readable<String> description();
+
+        @XPath("//*[@id=\"emailContactSection\"]//button[normalize-space()=\"Aggiungi numero di cellulare\"]/preceding-sibling::p[1]")
+        Readable<String> smsQuestion();
+
+        @Override
+        default void assertLoaded() {
+            description().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
+        }
+    }
+
+    /**
+     * Cellulare attivo: valore, "Modifica" e "Disattiva". "Modifica" apre un campo con "Conferma": un valore valido avvia
+     * l'invio del codice di verifica, quindi nei test si usano solo valori non validi.
+     */
     interface SmsContact extends Component {
         @XPath("//*[@data-testid=\"smsContactTitle\"]")
         Readable<String> smsContactTitle();
@@ -177,6 +308,15 @@ public interface AddressPFPage extends AddressPage, Page {
         @XPath("//*[@data-testid=\"smsContactDescription\"]")
         Readable<String> smsContactDescription();
 
+        @XPath("//*[@data-testid=\"default_smsContact\"]//input")
+        TextField editSmsInput();
+
+        @XPath("//*[@id=\"saveContact-default_sms\"]")
+        Button saveSmsButton();
+
+        @XPath("//*[@id=\"default_sms-helper-text\"]")
+        Readable<String> editSmsErrorMessage();
+
         // labels
 
         @XPath("//*[@data-testid=\"smsContactTitle\"]/ancestor::*[@data-testid=\"PnInfoCardHeader\"]//*[contains(@class,'MuiChip-label')]")
@@ -184,25 +324,16 @@ public interface AddressPFPage extends AddressPage, Page {
 
         @Override
         default void assertLoaded() {
-            smsContactTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Il tuo cellulare"));
             smsValue().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
-            modifySmsButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Modifica"));
-            disableSmsButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Disattiva"));
-            smsContactDescription().readAndAssert(h -> Assertions.assertThat(h).endsWith("ti avvisiamo con un SMS."));
-
-            // labels
-            status().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Attivo"));
         }
     }
 
     @Override
     default void assertLoaded() {
         oneTrustBanner().ifPresent(OneTrustBanner::accept);
-        breadcrumbs().readAndAssert(h -> Assertions.assertThat(h).isIn("Addresses", "I tuoi recapiti"));
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("I tuoi recapiti"));
-        subtitle().readAndAssert(h -> Assertions.assertThat(h).startsWith("Gestisci i recapiti digitali su cui ricevere le comunicazioni a valore legale di SEND"));
-        legalContactsTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Il tuo domicilio digitale"));
-        ioContactTitle().readAndAssert(h -> Assertions.assertThat(h).startsWith("SEND sull").endsWith("app IO"));
-        emailContactTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Il tuo indirizzo email"));
+        legalContactsTitle().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
+        ioContactTitle().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
+        emailContactTitle().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
     }
 }
