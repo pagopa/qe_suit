@@ -48,16 +48,17 @@ public class WebAgreementProducerPageContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    /**
-     * Verifica la presenza nel DOM dei componenti attesi (h1, descrizione, 3 filtri, tabella,
-     * intestazioni, paginazione) e l'assenza dello skeleton a caricamento completato.
-     * <p>
-     * Contesto: Admin Comune di Milano, apertura diretta. ID matrice: ES-AG-01.01-01.08, 01.13.
-     * Precondizioni dati: nessuna.
-     */
+
     @TestFactory
-    Stream<DynamicTest> pageMustContainExpectedComponents() {
+    Stream<DynamicTest> producerAgreementsPageMustMatchContract() {
         return run(Stream.of(
+                /*
+                 * Verifica la presenza nel DOM dei componenti attesi (h1, descrizione, 3 filtri, tabella,
+                 * intestazioni, paginazione) e l'assenza dello skeleton a caricamento completato.
+                 * <p>
+                 * Contesto: Admin Comune di Milano, apertura diretta. ID matrice: ES-AG-01.01-01.08, 01.13.
+                 * Precondizioni dati: nessuna.
+                 */
                 scenario("ES-AG-01.01 - Titolo h1 presente",
                         page -> assertPresent(page.pageTitle(), "Titolo h1")),
                 scenario("ES-AG-01.02 - Descrizione presente",
@@ -80,19 +81,14 @@ public class WebAgreementProducerPageContractTest {
                         page -> {
                             page.waitUntilTableLoaded();
                             assertAbsent(page.tableSkeleton(), "Skeleton della tabella");
-                        })
-        ));
-    }
+                        }),
 
-    /**
-     * Verifica l'assenza nel DOM dei componenti non previsti lato erogatore.
-     * <p>
-     * Contesto: Admin Comune di Milano, apertura diretta. ID matrice: ES-AG-01.14-01.17.
-     * Precondizioni dati: nessuna (il pulsante "Modifica" è verificato come assente a prescindere dalle righe).
-     */
-    @TestFactory
-    Stream<DynamicTest> pageMustNotContainUnexpectedComponents() {
-        return run(Stream.of(
+                /*
+                 * Verifica l'assenza nel DOM dei componenti non previsti lato erogatore.
+                 * <p>
+                 * Contesto: Admin Comune di Milano, apertura diretta. ID matrice: ES-AG-01.14-01.17.
+                 * Precondizioni dati: nessuna (il pulsante "Modifica" è verificato come assente a prescindere dalle righe).
+                 */
                 scenario("ES-AG-01.14 - Pulsante Modifica assente",
                         page -> {
                             page.waitUntilTableLoaded();
@@ -104,19 +100,14 @@ public class WebAgreementProducerPageContractTest {
                 scenario("ES-AG-01.16 - Colonna Erogatore assente",
                         page -> assertAbsent(page.producerColumnHeader(), "Colonna 'Erogatore'")),
                 scenario("ES-AG-01.17 - Pulsante di creazione assente",
-                        page -> assertAbsent(page.createButton(), "Pulsante di creazione"))
-        ));
-    }
+                        page -> assertAbsent(page.createButton(), "Pulsante di creazione")),
 
-    /**
-     * Verifica i copy esatti di titolo, descrizione, label dei filtri e intestazioni di colonna.
-     * <p>
-     * Contesto: Admin Comune di Milano, apertura diretta. ID matrice: ES-AG-03.01-03.05, 03.07-03.10.
-     * Precondizioni dati: nessuna.
-     */
-    @TestFactory
-    Stream<DynamicTest> pageMustShowExpectedTexts() {
-        return run(Stream.of(
+                /*
+                 * Verifica i copy esatti di titolo, descrizione, label dei filtri e intestazioni di colonna.
+                 * <p>
+                 * Contesto: Admin Comune di Milano, apertura diretta. ID matrice: ES-AG-03.01-03.05, 03.07-03.10.
+                 * Precondizioni dati: nessuna.
+                 */
                 scenario("ES-AG-03.01 - Testo h1",
                         page -> assertText("Titolo h1", page.pageTitle().read(), AgreementProducerPage.TITLE)),
                 scenario("ES-AG-03.02 - Testo descrizione",
@@ -130,20 +121,15 @@ public class WebAgreementProducerPageContractTest {
                 scenario("ES-AG-03.07/03.08/03.09/03.10 - Intestazioni colonna",
                         page -> Assertions.assertThat(page.table().readHeaderLabels())
                                 .as("Intestazioni colonna (in ordine)")
-                                .containsExactlyElementsOf(List.of("E-service", "Fruitore", "Stato richiesta", "")))
-        ));
-    }
+                                .containsExactlyElementsOf(List.of("E-service", "Fruitore", "Stato richiesta", ""))),
 
-    /**
-     * Verifica lo stato iniziale prima di qualsiasi interazione: filtri abilitati e senza selezione,
-     * paginazione sulla pagina 1.
-     * <p>
-     * Contesto: Admin Comune di Milano, apertura diretta. ID matrice: ES-AG-04.01, 04.04 (solo pagina 1).
-     * Precondizioni dati: nessuna. Righe per pagina di default non verificato (valore mancante).
-     */
-    @TestFactory
-    Stream<DynamicTest> pageMustBeInInitialState() {
-        return run(Stream.of(
+                /*
+                 * Verifica lo stato iniziale prima di qualsiasi interazione: filtri abilitati e senza selezione,
+                 * paginazione sulla pagina 1.
+                 * <p>
+                 * Contesto: Admin Comune di Milano, apertura diretta. ID matrice: ES-AG-04.01, 04.04 (solo pagina 1).
+                 * Precondizioni dati: nessuna. Righe per pagina di default non verificato (valore mancante).
+                 */
                 scenario("ES-AG-04.01 - Filtri abilitati e senza selezione",
                         page -> SoftAssertions.assertSoftly(softly -> {
                             assertFilterInitialState(softly, "e-service", page.eServiceFilter());
