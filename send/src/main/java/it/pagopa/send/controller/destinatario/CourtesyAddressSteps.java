@@ -2,7 +2,7 @@ package it.pagopa.send.controller.destinatario;
 
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.send.domain.web.pages.destinatario.AddressPage;
+import it.pagopa.send.web.infrastructure.page.AddressPage;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

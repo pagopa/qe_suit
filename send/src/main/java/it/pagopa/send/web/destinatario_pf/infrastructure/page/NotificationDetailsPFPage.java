@@ -6,6 +6,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.send.web.login.infrastructure.page.DowntimeItem;
+import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Chip;
 import it.pagopa.send.web.notification_details.infrastructure.suit.NotificationDetailsPage;
 import it.pagopa.send.web.notification_details.infrastructure.suit.section.AttachmentSection;
@@ -17,11 +18,101 @@ import org.assertj.core.api.Assertions;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Questa pagina rappresenta la pagina dei dettagli di una notifica per il cittadino, accessibile dal portale delle notifiche.
- * La pagina mostra informazioni dettagliate sulla notifica selezionata.
+ * {@code {baseUrl}/notifiche/<IUN>/dettaglio}
+ * Pagina di dettaglio di una notifica del cittadino.
+ * Si apre dal pulsante "Apri" di una riga della pagina {@code {baseUrl}/notifiche}.
+ * Il contenuto cambia con il tipo di notifica: una notifica a valore legale ha documenti, stato, avviso di avvenuta
+ * ricezione e disservizi; una comunicazione ({@code {baseUrl}/comunicazione/<IUN>/dettaglio}) ha messaggio, documenti,
+ * pagamenti e contatti del mittente. Le sezioni che implementano {@link NotificationDetailsPage} sono condivise con gli
+ * step Cucumber.
+ * L'assertLoaded verifica che la pagina sia caricata, cioè l'oggetto, il breadcrumb e lo IUN; intestazione e sezioni
+ * sono verificate da {@code WebNotificationDetailsPFContractTest}.
  */
 @Url("about:blank")
 public interface NotificationDetailsPFPage extends NotificationDetailsPage {
+
+    @XPath("//*[@data-testid=\"breadcrumb-root-button\"]")
+    Button notificationsBreadcrumb();
+
+    @XPath("//*[@data-testid=\"titleBox\"]")
+    Readable<String> title();
+
+    @XPath("//*[@data-testid=\"NotificationDetailTimeline\"]//button[normalize-space()=\"Vai al dettaglio\"]")
+    Button timelineDetailsButton();
+
+    @XPath("//main")
+    NotificationTimelinePFPage notificationTimeline();
+
+    // labels
+
+    @XPath("//*[@data-testid=\"breadcrumb-root-button\"]/ancestor::ol/li[last()]")
+    Readable<String> currentBreadcrumb();
+
+    @XPath("//p[contains(normalize-space(),\"depositata il giorno\")]/preceding-sibling::span[1]")
+    Readable<String> sender();
+
+    @XPath("//p[contains(normalize-space(),\"depositata il giorno\")]")
+    Readable<String> depositDate();
+
+    @XPath("//p[normalize-space()=\"Codice IUN\"]")
+    Readable<String> iunLabel();
+
+    @XPath("//p[normalize-space()=\"Codice IUN\"]/following-sibling::p[1]")
+    Readable<String> iun();
+
+    // contenuto della pagina, per sapere quali sezioni ci sono senza attenderle
+    @XPath("//main")
+    Readable<String> content();
+
+    // documenti allegati
+
+    @XPath("//*[@id=\"notification-detail-document-attached\"]")
+    Readable<String> documentsTitle();
+
+    @XPath("//*[@data-testid=\"documentsMessage\"]")
+    Readable<String> documentsMessage();
+
+    @XPath("//*[@data-testid=\"notificationDetailDocuments\"]//*[@data-testid=\"documentButton\"]")
+    Readable<String> documentButtons();
+
+    // notifica a valore legale: stato, avviso di avvenuta ricezione e disservizi
+
+    @XPath("//*[@data-testid=\"NotificationDetailTimeline\"]//h2")
+    Readable<String> statusTitle();
+
+    @XPath("//*[@data-testid=\"NotificationDetailTimeline\"]//h2/following::span[1]")
+    Readable<String> currentStatus();
+
+    @XPath("//*[@data-testid=\"aarDownload\"]//h2")
+    Readable<String> aarTitle();
+
+    @XPath("//*[@data-testid=\"aarBox\"]//p")
+    Readable<String> aarLabel();
+
+    @XPath("//*[@data-testid=\"downtimesBox\"]//h2")
+    Readable<String> downtimesTitle();
+
+    // comunicazione: messaggio, pagamenti e contatti del mittente
+
+    @XPath("(//*[@data-testid=\"informalNotificationMessage\"]//p)[1]")
+    Readable<String> communicationGreeting();
+
+    @XPath("//p[starts-with(normalize-space(),\"Questa comunicazione potrebbe produrre effetti giuridici\")]")
+    Readable<String> legalEffectsNote();
+
+    @XPath("//*[@data-testid=\"notification-payment-recipient-title\"]")
+    Readable<String> paymentsTitle();
+
+    // non va premuto: avvia il pagamento
+    @XPath("//*[@data-testid=\"pay-button\"]")
+    Button payButton();
+
+    @XPath("//h2[normalize-space()=\"Contatta il mittente\"]")
+    Readable<String> contactSenderTitle();
+
+    // etichette dei contatti forniti dal mittente ("Numero di telefono dell'ente", "Sito web dell'ente", ...)
+    @XPath("//h2[normalize-space()=\"Contatta il mittente\"]/following-sibling::*//p[contains(normalize-space(),\"dell'ente\")]")
+    Readable<String> contactSenderLabels();
 
     @XPath("//*[@id=\"title-of-page\"]")
     Chip fullPecMessage();
@@ -160,5 +251,12 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
     FacSimileSection facsimileSection();
 
     DowntimeSection downtimeSection();
+
+    @Override
+    default void assertLoaded() {
+        title().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
+        notificationsBreadcrumb().assertLoaded();
+        iun().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
+    }
 
 }
