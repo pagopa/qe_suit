@@ -139,7 +139,7 @@ public class WebCatalogEServiceContractTest {
                 true,
                 true,
                 false,
-                true,
+                false,
                 false,
                 false,
                 false
