@@ -5,6 +5,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
+import it.pagopa.send.web.infrastructure.page.component.Table;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.notification_search.infrastructure.suit.NotificationSearchPage;
 import org.assertj.core.api.Assertions;
@@ -12,7 +13,7 @@ import org.assertj.core.api.Assertions;
 import java.util.Map;
 import java.util.Optional;
 
-@Url("${url.notifiche.mittente.dashboard}")
+@Url("${url.notifiche.mittente.dashboard}#selfCareToken=${token}")
 public interface DashboardPage extends NotificationSearchPage {
 
     @XPath("//*[@data-testid=\"titleBox\"]")
@@ -29,6 +30,8 @@ public interface DashboardPage extends NotificationSearchPage {
 
     @XPath("//*[@id=\"endDate\"]")
     Writable<String> endDateSearchInput();
+
+    Table notifications();
 
     /**
      * Filtro esclusivo del portale mittenti: assente lato PF.
