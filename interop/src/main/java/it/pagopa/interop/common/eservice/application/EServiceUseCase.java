@@ -32,4 +32,8 @@ public class EServiceUseCase {
     public void archiveEService(EService eService, GracePeriodDays gracePeriodDays) {
         eServiceGateway.archiveEService(eService.getRef(), gracePeriodDays);
     }
+
+    public void shouldCreateEServiceCorrectly(EService eService) {
+        eServiceGateway.shouldCreateEServiceCorrectly(eService);
+    }
 }

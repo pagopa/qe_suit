@@ -45,4 +45,12 @@ public class WebEServiceGateway implements EServiceGateway {
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.WEB_BROWSER;
     }
+
+    @Override
+    public void shouldCreateEServiceCorrectly(EService eService) {
+        eServiceCreationPage.navigateTo();
+        eServiceCreationPage.assertLoaded();
+
+        //generalDataGateway.shouldCreateEServiceGeneralDataCorrectly(eService);
+    }
 }

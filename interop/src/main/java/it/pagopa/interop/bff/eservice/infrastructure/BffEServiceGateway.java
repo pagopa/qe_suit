@@ -14,6 +14,7 @@ import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.SoftAssertions;
 import org.instancio.Instancio;
 import org.springframework.stereotype.Service;
 
@@ -73,6 +74,32 @@ public class BffEServiceGateway implements EServiceGateway {
         restClient.scheduleArchiveEservice(eServiceRef.id(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
+    }
+
+    @Override
+    public void shouldCreateEServiceCorrectly(EService eService) {
+        EService retrievedEService = getEService(eService.getRef());
+
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(retrievedEService.getName())
+                    .as("The created EService name does not match the expected name.")
+                    .isEqualTo(eService.getName());
+            softly.assertThat(retrievedEService.getDescription())
+                    .as("The created EService description does not match the expected description.")
+                    .isEqualTo(eService.getDescription());
+            softly.assertThat(retrievedEService.getMode())
+                    .as("The created EService mode does not match the expected mode.")
+                    .isEqualTo(eService.getMode());
+            softly.assertThat(retrievedEService.getAsyncExchange())
+                    .as("The created EService asyncExchange does not match the expected asyncExchange.")
+                    .isEqualTo(eService.getAsyncExchange());
+            softly.assertThat(retrievedEService.getTechnology())
+                    .as("The created EService technology does not match the expected technology.")
+                    .isEqualTo(eService.getTechnology());
+            softly.assertThat(retrievedEService.getPersonalData())
+                    .as("The created EService personalData does not match the expected personalData.")
+                    .isEqualTo(eService.getPersonalData());
+        });
     }
 
     @Override

@@ -13,4 +13,6 @@ public interface EServiceGateway extends Plugin<Channel> {
     EService getEService(EServiceRef eServiceRef);
 
     void archiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays);
+
+    void shouldCreateEServiceCorrectly(EService eService);
 }
