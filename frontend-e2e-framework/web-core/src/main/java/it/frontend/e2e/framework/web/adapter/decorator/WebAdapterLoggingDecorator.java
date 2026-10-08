@@ -38,6 +38,12 @@ public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<
     }
 
     @Override
+    public boolean isPresentNow(XPathSelector selector) {
+        logger.logDebug("Check current DOM presence by selector: " + selector);
+        return webAdapter.isPresentNow(selector);
+    }
+
+    @Override
     public Optional<String> getLocalStorageItem(String key) {
         logger.logDebug("Get localStorage item by key: " + key);
         return webAdapter.getLocalStorageItem(key);

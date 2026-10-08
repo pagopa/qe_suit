@@ -10,4 +10,7 @@ import java.util.Optional;
 
 public interface Gettable<E extends AbstractPresentationElement<XPathSelector,Url>> extends it.frontend.e2e.framework.core.capability.core.Gettable<XPathSelector, Url, E> {
     Optional<E> get(FindPolicy policy);
+
+    /** Checks current DOM presence without waiting for the element to appear. */
+    boolean isPresentNow();
 }
