@@ -21,6 +21,7 @@ pagina, descritti ciascuno in un documento con lo stesso nome della classe di te
 - [`WebAddressPFContractTest`](WebAddressPFContractTest.md): pagina "I tuoi recapiti"
 - [`WebDigitalDomicileActivationPFContractTest`](WebDigitalDomicileActivationPFContractTest.md): wizard "Attiva domicilio digitale su SEND"
 - [`WebDigitalDomicileManagementPFContractTest`](WebDigitalDomicileManagementPFContractTest.md): pagina "Gestisci il tuo domicilio digitale"
+- [`WebNotificationPFContractTest`](WebNotificationPFContractTest.md): pagina "In arrivo"
 
 Negli indirizzi `{baseUrl}` è la proprietà `url.notifiche.cittadino.base` del profilo attivo
 (es. `https://cittadini.test.notifichedigitali.it` sul profilo `test`).
@@ -65,10 +66,11 @@ Screenshot aggiornati al: **07/10/2026**.
 
 **Indirizzo:** `{baseUrl}/notifiche`
 
-Pagina "In arrivo" del cittadino, pagina iniziale del portale dopo il login. Si apre dalla voce "In arrivo" del menu laterale. Contiene i filtri di ricerca e la tabella delle notifiche ricevute. L'assertLoaded verifica solo gli elementi presenti per qualunque utente (titolo e filtri); il componente `NotificationsTable` mappa la tabella, che compare solo se l'utente ha ricevuto almeno una notifica.
+Pagina "In arrivo" del cittadino, pagina iniziale del portale dopo il login. Si apre dalla voce "In arrivo" del menu laterale. Contiene i filtri di ricerca e la tabella delle notifiche ricevute, che compare solo se l'utente ha ricevuto almeno una notifica; a chi non ha un domicilio digitale mostra anche il banner per attivarlo. L'assertLoaded verifica che la pagina sia caricata, cioè il titolo e i campi dei filtri; è usato anche dagli step Cucumber. Testi, tabella, filtri e banner sono verificati da `WebNotificationPFContractTest`.
 
 - Page Object: [`NotificationPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/NotificationPFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachNotificationListPF`
+- Contract test della pagina: [`WebNotificationPFContractTest`](WebNotificationPFContractTest.md)
 
 ![In arrivo](img/NotificationPFPage.png)
 

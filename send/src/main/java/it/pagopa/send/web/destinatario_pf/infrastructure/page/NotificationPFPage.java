@@ -6,7 +6,6 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
-import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.TextField;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
@@ -20,9 +19,11 @@ import java.util.Optional;
  * {@code {baseUrl}/notifiche}
  * Pagina "In arrivo" del cittadino, pagina iniziale del portale dopo il login.
  * Si apre dalla voce "In arrivo" del menu laterale.
- * Contiene i filtri di ricerca e la tabella delle notifiche ricevute.
- * L'assertLoaded verifica solo gli elementi presenti per qualunque utente (titolo e filtri); il componente
- * {@link NotificationsTable} mappa la tabella, che compare solo se l'utente ha ricevuto almeno una notifica.
+ * Contiene i filtri di ricerca e la tabella delle notifiche ricevute; a chi non ha un domicilio digitale mostra anche il
+ * banner {@link AddDomicileBanner}. Il componente {@link NotificationsTable} mappa la tabella, che compare solo se
+ * l'utente ha ricevuto almeno una notifica.
+ * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo e i campi dei filtri; è usato anche dagli step
+ * Cucumber. Testi, tabella, filtri e messaggi sono verificati da {@code WebNotificationPFContractTest}.
  */
 @Url("${url.notifiche.cittadino.notifiche}")
 public interface NotificationPFPage extends NotificationSearchPage {
@@ -73,6 +74,33 @@ public interface NotificationPFPage extends NotificationSearchPage {
     @XPath("//*[@id=\"filter-notifications-button\"]")
     Button filterButton();
 
+    // opzioni della tendina "Tipologia", aperte fuori dal form in fondo alla pagina
+    @XPath("//*[@role=\"listbox\"]//*[@role=\"option\"]")
+    Readable<String> communicationTypeOptions();
+
+    @XPath("//*[@role=\"listbox\"]//*[@data-value=\"INFORMAL\"]")
+    Button communicationsOption();
+
+    @XPath("//*[@id=\"iunMatch-helper-text\"]")
+    Readable<String> iunErrorMessage();
+
+    @XPath("//*[@id=\"startDate-helper-text\"]")
+    Readable<String> startDateErrorMessage();
+
+    @XPath("//*[@id=\"endDate-helper-text\"]")
+    Readable<String> endDateErrorMessage();
+
+    // contenuto della pagina, per sapere se ci sono il banner e la tabella senza attenderli
+    @XPath("//main")
+    Readable<String> content();
+
+    @XPath("//*[@data-testid=\"addDomicileBanner\"]")
+    AddDomicileBanner addDomicileBanner();
+
+    // opzioni del menu "Righe per pagina"
+    @XPath("//*[@role=\"menu\"]//*[@role=\"menuitem\"]")
+    Readable<String> rowsPerPageOptions();
+
     @XPath("//*[@data-testid=\"notificationsTable\"]")
     NotificationsTable notificationsTable();
 
@@ -96,6 +124,10 @@ public interface NotificationPFPage extends NotificationSearchPage {
         @XPath("//*[@data-testid=\"notificationsTable.body.row\"]/td[4]")
         Readable<String> iuns();
 
+        // oggetto di ogni riga con l'eventuale etichetta "Notifica a valore legale"
+        @XPath("//*[@data-testid=\"notificationsTable.body.row\"]/td[3]")
+        Readable<String> subjectCells();
+
         @XPath("//*[@data-testid=\"goToNotificationDetail\"]")
         Readable<String> openButtons();
 
@@ -113,18 +145,35 @@ public interface NotificationPFPage extends NotificationSearchPage {
 
         @Override
         default void assertLoaded() {
-            headers().readAllAndAssert(h -> Assertions.assertThat(h).hasSize(5).startsWith("Data", "Mittente", "Oggetto", "Codice IUN"));
-            dates().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).isNotBlank()));
-            senders().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).isNotBlank()));
-            subjects().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).isNotBlank()));
-            iuns().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).matches("[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-\\d{6}-[A-Z]-[A-Z0-9]")));
-            openButtons().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).isEqualTo("Apri")));
-            rowsPerPageButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("10"));
-            Assertions.assertThat(previousPageButton().get(FindPolicy.PRESENT)).isPresent();
-            firstPageButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("1"));
-            Assertions.assertThat(nextPageButton().get(FindPolicy.PRESENT)).isPresent();
+            headers().readAllAndAssert(h -> Assertions.assertThat(h).isNotEmpty());
         }
     }
+
+    /**
+     * Banner "Niente più documenti cartacei", mostrato solo a chi non ha un domicilio digitale. "Chiudi" lo nasconde.
+     */
+    interface AddDomicileBanner extends Component {
+        @XPath("//*[@data-testid=\"addDomicileBanner\"]//h6")
+        Readable<String> title();
+
+        @XPath("//*[@data-testid=\"addDomicileBanner\"]//p")
+        Readable<String> description();
+
+        @XPath("//*[@data-testid=\"addDomicileBanner\"]//button[normalize-space()=\"Attiva domicilio digitale\"]")
+        Button activateButton();
+
+        @XPath("//*[@data-testid=\"addDomicileBanner\"]//button[@aria-label=\"Chiudi\"]")
+        Button closeButton();
+
+        @Override
+        default void assertLoaded() {
+            title().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
+        }
+    }
+
+    // pagina del wizard di attivazione, aperta da "Attiva domicilio digitale" del banner
+    @XPath("//main")
+    DigitalDomicileActivationPFPage digitalDomicileActivation();
 
     /**
      * Filtra la lista sulle sole notifiche a valore legale tramite il filtro "Tipologia".
@@ -164,20 +213,11 @@ public interface NotificationPFPage extends NotificationSearchPage {
     @Override
     default void assertLoaded() {
         oneTrustBanner().ifPresent(OneTrustBanner::accept);
-        breadcrumbs().readAndAssert((h) -> {
-            Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h).isIn("In arrivo");
-        });
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("In arrivo"));
-        communicationTypeLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Tipologia"));
-        communicationTypeSelect().readAndAssert(h -> Assertions.assertThat(h).isNotNull());
-        iunSearchLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Codice IUN"));
+        Assertions.assertThat(communicationTypeSelect().get(FindPolicy.PRESENT)).isPresent();
         Assertions.assertThat(iunSearchInput().get(FindPolicy.PRESENT)).isPresent();
-        startDateSearchLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Dal"));
         Assertions.assertThat(startDateSearchInput().get(FindPolicy.PRESENT)).isPresent();
-        endDateSearchLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Al"));
         Assertions.assertThat(endDateSearchInput().get(FindPolicy.PRESENT)).isPresent();
-        Assertions.assertThat(filterButton().get(FindPolicy.PRESENT).map(WebPresentationElement::getText)).hasValue("Filtra");
-        Assertions.assertThat(filterButton().isDisabled()).isTrue();
+        Assertions.assertThat(filterButton().get(FindPolicy.PRESENT)).isPresent();
     }
 }
