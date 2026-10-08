@@ -6,6 +6,8 @@ public interface TenantJourney<SELF extends TenantJourney<SELF>> extends Journey
 
     SELF assignCertifiedAttribute(TenantRef tenantRef);
 
+    SELF assignCertifiedAttribute(TenantRef tenantRef, int nthAttribute);
+
     SELF assignCertifiedDiscreteAttribute(TenantRef tenantRef, int value);
 
     SELF assignDeclaredAttribute();
