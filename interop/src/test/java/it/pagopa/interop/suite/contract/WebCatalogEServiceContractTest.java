@@ -347,8 +347,10 @@ public class WebCatalogEServiceContractTest {
                 .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
                 .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
 
-        if (params.certifiedAttributeToDelegator) interopJourney.assignCertifiedAttribute(delegatorTenantRef);
-        if (params.certifiedAttributeToConsumer) interopJourney.assignCertifiedAttribute(delegateeTenantRef);
+        if (params.certifiedAttributeToDelegator)
+            interopJourney.assignCertifiedAttribute(delegatorTenantRef, 1);
+        if (params.certifiedAttributeToConsumer)
+            interopJourney.assignCertifiedAttribute(delegateeTenantRef, -1);
 
         EService eService = entityStore.getLastOrThrow(EService.class);
         interopJourney
