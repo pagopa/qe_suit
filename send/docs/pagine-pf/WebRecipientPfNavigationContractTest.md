@@ -20,6 +20,7 @@ pagina, descritti ciascuno in un documento con lo stesso nome della classe di te
 - [`WebAppStatusPFContractTest`](WebAppStatusPFContractTest.md): pagina "Stato della piattaforma"
 - [`WebAddressPFContractTest`](WebAddressPFContractTest.md): pagina "I tuoi recapiti"
 - [`WebDigitalDomicileActivationPFContractTest`](WebDigitalDomicileActivationPFContractTest.md): wizard "Attiva domicilio digitale su SEND"
+- [`WebDigitalDomicileManagementPFContractTest`](WebDigitalDomicileManagementPFContractTest.md): pagina "Gestisci il tuo domicilio digitale"
 
 Negli indirizzi `{baseUrl}` è la proprietà `url.notifiche.cittadino.base` del profilo attivo
 (es. `https://cittadini.test.notifichedigitali.it` sul profilo `test`).
@@ -141,10 +142,11 @@ Elementi verificati: vedi `assertLoaded()` in [`DigitalDomicileActivationPFPage`
 
 **Indirizzo:** `{baseUrl}/recapiti/domicilio-digitale/gestione`
 
-Pagina "Gestisci il tuo domicilio digitale" del cittadino. Si apre dal pulsante "Gestisci" della card domicilio digitale in "I tuoi recapiti". Mostra il domicilio digitale attivo e le opzioni per modificarlo; la pagina è disponibile solo a un utente con un domicilio digitale attivo. L'assertLoaded verifica solo gli elementi presenti per qualunque domicilio; stato, indirizzo e "Trasferisci su SEND" dipendono dal tipo di domicilio (PEC o SEND) e non vengono verificati.
+Pagina "Gestisci il tuo domicilio digitale" del cittadino. Si apre dal pulsante "Gestisci" della card domicilio digitale in "I tuoi recapiti". Mostra il domicilio digitale attivo e le opzioni per modificarlo; la pagina è disponibile solo a un utente con un domicilio digitale attivo. L'assertLoaded verifica che la pagina sia caricata, cioè il titolo, "Personalizza per ente" e "Indietro"; stato, indirizzo, opzioni e form "Personalizza per ente" sono verificati da `WebDigitalDomicileManagementPFContractTest`.
 
 - Page Object: [`DigitalDomicileManagementPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/DigitalDomicileManagementPFPage.java)
 - Test: `WebRecipientPfNavigationContractTest#shouldReachDigitalDomicileManagementPF` (se presente: se l'utente non ha un domicilio digitale attivo la pagina non è raggiungibile e il test termina senza verificare nulla)
+- Contract test della pagina: [`WebDigitalDomicileManagementPFContractTest`](WebDigitalDomicileManagementPFContractTest.md)
 
 ![Gestisci il tuo domicilio digitale](img/DigitalDomicileManagementPFPage.png)
 
