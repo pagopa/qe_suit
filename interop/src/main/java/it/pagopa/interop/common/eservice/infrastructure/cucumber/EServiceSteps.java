@@ -17,8 +17,7 @@ import java.util.Locale;
 @RequiredArgsConstructor
 public class EServiceSteps {
     private final EServiceUseCase eServiceUseCase;
-    private final CucumberEntityStore entityStore;
-
+    private Tenant tenant;
     private String name;
     private String description;
     private EServiceMode mode;
@@ -27,10 +26,11 @@ public class EServiceSteps {
     private Boolean personalData;
 
     @Given("il {tenant} che intraprende la creazione di un nuovo e-service erogatore")
-    public void beginEServiceCreation(Tenant tenant) {
+    public void beginEServiceCreation( Tenant tenant) {
         this.name = "Nome dell'eservice di test";
         this.description = "Descrizione dell'eservice di test";
         this.mode = EServiceMode.DELIVER;
+        this.tenant = tenant;
     }
 
     @When("seleziona la modalità di scambio dei dati {string} per l'e-service")
@@ -65,7 +65,7 @@ public class EServiceSteps {
     @Then("l'utente completa la creazione dell'e-service")
     public void completeEServiceCreation() {
         EService createdEService =
-                eServiceUseCase.createEService(configure -> {;
+                eServiceUseCase.createEService(configure -> {
                     configure.name(name);
                     configure.description(description);
                     configure.mode(mode);
