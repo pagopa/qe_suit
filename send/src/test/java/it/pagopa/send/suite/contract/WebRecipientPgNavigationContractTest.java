@@ -15,7 +15,9 @@ import it.pagopa.send.web.destinatario_pg.infrastructure.page.OrganizationAuthor
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.OrganizationDelegationsPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.PlatformStatusPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
+import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
@@ -91,6 +93,24 @@ public class WebRecipientPgNavigationContractTest {
                         "controllo caricamento pagina " + pageType.getSimpleName(),
                         page -> {},
                         page -> {}
+                )));
+    }
+
+    @TestFactory
+    Stream<DynamicTest> captionSpaUnicoFooter() {
+        return captionSpaFooterScenarios();
+    }
+
+    private Stream<DynamicTest> captionSpaFooterScenarios() {
+        String token = "";
+        return webContractValidator.asRecipient(Recipient.PETRARCA)
+                .on(DashboardPage.class,token)
+                .tests(Stream.of(new WebScenario<>(
+                        "Check assenza dicitura 'Socio Unico'",
+                        page -> {},
+                        page -> {
+                            Assertions.assertFalse(page.footer().caption().read().toLowerCase().contains("socio unico"));
+                        }
                 )));
     }
 }

@@ -6,12 +6,15 @@ import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AddressPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AppStatusPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DelegationsPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationPFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
+import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
@@ -20,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -28,7 +32,7 @@ import java.util.stream.Stream;
  * Si veda {@link WebMittenteNavigationContractTest} per il razionale (scenario no-op: il
  * framework naviga e chiama {@code assertLoaded()} prima ancora di eseguirlo).
  */
-@ActiveProfiles({"test", "junit"})
+@ActiveProfiles({"hotfix", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
@@ -40,6 +44,7 @@ import java.util.stream.Stream;
 public class WebRecipientPfNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
+
 
     @TestFactory
     Stream<DynamicTest> shouldReachNotificationPF() {
@@ -69,5 +74,23 @@ public class WebRecipientPfNavigationContractTest {
                         page -> {},
                         page -> {}
                 )));
+    }
+
+    @TestFactory
+    Stream<DynamicTest> captionSpaUnicoFooter() {
+        return captionSpaFooterScenarios();
+    }
+
+    private Stream<DynamicTest> captionSpaFooterScenarios() {
+        String token = "";
+        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        .on(DashboardPage.class, token)
+        .tests(Stream.of(new WebScenario<>(
+                "Check assenza dicitura 'Socio Unico'",
+                page -> {},
+                page -> {
+                    Assertions.assertFalse(page.footer().caption().read().toLowerCase().contains("socio unico"));
+                }
+        )));
     }
 }
