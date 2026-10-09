@@ -4,10 +4,12 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
@@ -16,15 +18,11 @@ import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 public class EServiceJourneySteps {
@@ -109,14 +107,9 @@ public class EServiceJourneySteps {
                 .audience(List.of("Audience"))
                 .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
 
-        DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed();
-        DescriptorAttributeSeed certifiedItem = new DescriptorAttributeSeed();
         Attribute attribute = entityStore.getLastOrThrow(Attribute.class);
-        certifiedItem.setId(attribute.getId());
-        certifiedItem.setDailyCallsPerConsumer(customThreshold);
-        certifiedItem.setExplicitAttributeVerification(false);
-        attributesSeed.addCertifiedItem(List.of(certifiedItem));
-        updateCommand.attributes(attributesSeed);
+        Attributes attributes = Attributes.builder().certified(List.of(attribute)).build();
+        updateCommand.attributes(attributes);
 
         interopJourney
                 .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
