@@ -5,6 +5,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
+import it.pagopa.send.web.infrastructure.page.component.Footer;
 import it.pagopa.send.web.notification_search.infrastructure.suit.NotificationSearchPage;
 import org.assertj.core.api.Assertions;
 
@@ -35,6 +36,9 @@ public interface NotificationPFPage extends NotificationSearchPage {
 
     @XPath("//*[@id=\"filter-notifications-button\"]")
     Clickable filterButton();
+
+    @XPath("//footer[contains(@class, 'MuiBox-root')]")
+    Footer footer();
 
     @Override
     default void goToNotificationDetails() {

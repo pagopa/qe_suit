@@ -15,6 +15,7 @@ import it.pagopa.send.web.mittente.infrastructure.page.StatisticsPage;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -44,6 +45,7 @@ import java.util.stream.Stream;
 })
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
+@Slf4j
 public class WebMittenteNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
@@ -130,7 +132,9 @@ public class WebMittenteNavigationContractTest {
                 .on(DashboardPage.class,token)
                 .tests(Stream.of(new WebScenario<>(
                         "Check assenza dicitura 'Socio Unico'",
-                        page -> {},
+                        page -> {
+                            log.info("Contenuto letto: \n{}", page.footer().caption().read());
+                        },
                         page ->
                                 Assertions.assertFalse(page.footer().caption().read().toLowerCase().contains("socio unico"))
                 )));
