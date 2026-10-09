@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.tenant.application;
 
-import it.pagopa.interop.common.attribute.domain.AttributeRef;
+import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.tenant.application.command.AssignDeclaredAttributeCommand;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
 import lombok.Getter;

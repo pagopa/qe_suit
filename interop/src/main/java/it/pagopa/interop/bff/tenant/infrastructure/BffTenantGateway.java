@@ -3,12 +3,11 @@ package it.pagopa.interop.bff.tenant.infrastructure;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.tenant.application.*;
-import it.pagopa.interop.common.agreement.domain.AgreementRef;
-import it.pagopa.interop.common.attribute.domain.AttributeRef;
+import it.pagopa.interop.common.kernel.domain.AgreementRef;
+import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.tenant.application.TenantGateway;
-import it.pagopa.interop.common.tenant.application.TenantRequestFactory;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -82,6 +81,3 @@ public class BffTenantGateway implements TenantGateway {
         chain.withPolling(PollingStrategy.UNTIL_SUCCESS).get();
     }
 }
-
-
-

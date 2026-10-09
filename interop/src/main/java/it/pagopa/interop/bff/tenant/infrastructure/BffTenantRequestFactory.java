@@ -1,8 +1,8 @@
 package it.pagopa.interop.bff.tenant.infrastructure;
 
 import it.pagopa.interop.bff.tenant.application.*;
-import it.pagopa.interop.common.agreement.domain.AgreementRef;
-import it.pagopa.interop.common.attribute.domain.AttributeRef;
+import it.pagopa.interop.common.kernel.domain.AgreementRef;
+import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.tenant.application.TenantRequestFactory;
 import it.pagopa.interop.common.tenant.application.command.*;
@@ -41,6 +41,3 @@ public class BffTenantRequestFactory implements TenantRequestFactory {
         return delimiter == Channel.BFF;
     }
 }
-
-
-

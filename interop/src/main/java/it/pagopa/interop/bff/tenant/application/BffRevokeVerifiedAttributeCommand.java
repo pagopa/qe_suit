@@ -1,6 +1,6 @@
 package it.pagopa.interop.bff.tenant.application;
 
-import it.pagopa.interop.common.agreement.domain.AgreementRef;
+import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.tenant.application.command.RevokeVerifiedAttributeCommand;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RevokeVerifiedAttributeRequest;
 import lombok.Getter;
