@@ -4,6 +4,7 @@ import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.tenant.application.command.AssignCertifiedDiscreteAttributeCommand;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedDiscreteTenantAttributeSeed;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.util.Objects;
 
@@ -12,8 +13,8 @@ public class BffAssignCertifiedDiscreteAttributeCommand implements AssignCertifi
     private final CertifiedDiscreteTenantAttributeSeed bffPayload = new CertifiedDiscreteTenantAttributeSeed();
 
     @Override
-    public AssignCertifiedDiscreteAttributeCommand attribute(AttributeRef attributeRef) {
-        bffPayload.setId(Objects.requireNonNull(attributeRef, "attributeRef must not be null").id());
+    public AssignCertifiedDiscreteAttributeCommand attribute(@NonNull AttributeRef attributeRef) {
+        bffPayload.setId(attributeRef.id());
         return this;
     }
 

@@ -5,6 +5,7 @@ import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.tenant.application.command.AssignVerifiedAttributeCommand;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.util.Objects;
 
@@ -13,14 +14,14 @@ public class BffAssignVerifiedAttributeCommand implements AssignVerifiedAttribut
     private final VerifiedTenantAttributeSeed bffPayload = new VerifiedTenantAttributeSeed();
 
     @Override
-    public AssignVerifiedAttributeCommand attribute(AttributeRef attributeRef) {
-        bffPayload.setId(Objects.requireNonNull(attributeRef, "attributeRef must not be null").id());
+    public AssignVerifiedAttributeCommand attribute(@NonNull AttributeRef attributeRef) {
+        bffPayload.setId(attributeRef.id());
         return this;
     }
 
     @Override
-    public AssignVerifiedAttributeCommand agreement(AgreementRef agreementRef) {
-        bffPayload.setAgreementId(Objects.requireNonNull(Objects.requireNonNull(agreementRef, "agreementRef must not be null").id(), "agreementId must not be null"));
+    public AssignVerifiedAttributeCommand agreement(@NonNull AgreementRef agreementRef) {
+        bffPayload.setAgreementId(agreementRef.id());
         return this;
     }
 
