@@ -92,7 +92,11 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         return this;
     }
 
-    private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState targetState, UpdateEServiceDescriptorCommand... command) {
+    private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState targetState) {
+        return processLifecycle(eService, eServiceDescriptor, targetState, null);
+    }
+
+    private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState targetState, UpdateEServiceDescriptorCommand command) {
         entityStore.upsert(eService);
 
         return switch (targetState) {
@@ -109,7 +113,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         };
     }
 
-    private EServiceJourneyImpl publishPipeline(EService eService, EServiceDescriptor eServiceDescriptor, UpdateEServiceDescriptorCommand... command) {
+    private EServiceJourneyImpl publishPipeline(EService eService, EServiceDescriptor eServiceDescriptor, UpdateEServiceDescriptorCommand command) {
         eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor, command);
         eServiceDescriptorUseCase.publishDescriptor(eService, eServiceDescriptor);
         return this;

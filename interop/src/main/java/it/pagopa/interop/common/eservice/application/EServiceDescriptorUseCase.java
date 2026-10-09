@@ -55,11 +55,9 @@ public class EServiceDescriptorUseCase {
         return updateDescriptor(eService, descriptor, command);
     }
 
-    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand... command){
-        if (command.length == 0)
-            command = new UpdateEServiceDescriptorCommand[] { requestFactory.defaultUpdateDescriptorCommand() };
-
-        EServiceDescriptor updatedDescriptor = updateDescriptor(eService, descriptor, command[0]);
+    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand command){
+        if (command == null) command = requestFactory.defaultUpdateDescriptorCommand();
+        EServiceDescriptor updatedDescriptor = updateDescriptor(eService, descriptor, command);
 
         return linkOpenApiInterface(eService, updatedDescriptor, "assets/origin-interface.yaml");
     }
