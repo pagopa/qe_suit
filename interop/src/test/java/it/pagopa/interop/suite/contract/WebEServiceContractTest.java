@@ -63,10 +63,8 @@ public class WebEServiceContractTest {
                         .on(EServiceCatalogPage.class)
                         .tests(Stream.of(new WebScenario<>(
                                 "catalogo e-service accessibile all'utente " + role.name() + " del Comune di Milano",
-                                page -> {
-                                },
-                                page -> {
-                                }
+                                page -> DelayUtils.waitForSeconds(10),
+                                EServiceCatalogPage::assertLoaded
                         ))));
     }
 
@@ -88,9 +86,11 @@ public class WebEServiceContractTest {
                         )
                         .tests(Stream.of(new WebScenario<>(
                                 "nome dell'e-service creato visibile all'utente " + role.name() + " del Comune di Milano",
+                                page -> DelayUtils.waitForSeconds(10),
                                 page -> {
-                                },
-                                page -> page.pageTitle().readAndAssert(eService.getName())
+                                    page.assertLoaded();
+                                    page.pageTitle().readAndAssert(eService.getName());
+                                }
                         ))));
     }
 }
