@@ -1,13 +1,13 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.interop.common.journey.application.DelegationJourney;
+import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.delegation.application.DelegationUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -22,8 +22,8 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
     }
 
     @Override
-    public DelegationJourneyImpl approveConsumerDelegation(UUID delegationId) {
-        delegationUseCase.approveConsumerDelegation(delegationId);
+    public DelegationJourneyImpl approveConsumerDelegation(DelegationRef delegationRef) {
+        delegationUseCase.approveConsumerDelegation(delegationRef);
         return this;
     }
 }

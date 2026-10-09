@@ -357,7 +357,7 @@ public class WebCatalogEServiceContractTest {
                 .withConsumer(delegator, UserRole.ADMIN)
                 .createConsumerDelegation(delegateeTenantRef, eService.getRef())
                 .withConsumer(delegatee, UserRole.ADMIN)
-                .approveConsumerDelegation(entityStore.getLastOrThrow(Delegation.class).getId());
+                .approveConsumerDelegation(entityStore.getLastOrThrow(Delegation.class).getRef());
 
         return webContractValidator
                 .as(User.getTenantAdmin(portalUser), portalUser)

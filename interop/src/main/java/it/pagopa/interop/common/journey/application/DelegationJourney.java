@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.journey.application;
 
+import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 
@@ -9,5 +10,5 @@ public interface DelegationJourney<SELF extends DelegationJourney<SELF>> extends
 
     SELF createConsumerDelegation(TenantRef delegateRef, EServiceRef eServiceRef);
 
-    SELF approveConsumerDelegation(UUID delegationId);
+    SELF approveConsumerDelegation(DelegationRef delegationRef);
 }
