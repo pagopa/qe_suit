@@ -2,6 +2,7 @@ package it.pagopa.send.suite.contract;
 
 import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
+import it.pagopa.send.web.notification_search.infrastructure.suit.NotificationFiltersPage;
 import it.pagopa.send.web.notification_search.infrastructure.suit.RecipientNotificationsPage;
 import it.pagopa.send.web.notification_search.infrastructure.suit.component.AddDomicileBanner;
 import it.pagopa.send.web.notification_search.infrastructure.suit.component.NotificationsTable;
@@ -18,7 +19,9 @@ import java.util.stream.Stream;
 /**
  * Scenari comuni ai contract test della pagina "In arrivo" del cittadino ({@code WebNotificationPFContractTest}) e
  * dell'impresa ({@code WebNotificationPGContractTest}), che hanno gli stessi filtri, la stessa tabella e lo stesso
- * banner. Ogni test sceglie l'utente e la pagina, passa il titolo atteso e aggiunge i propri scenari.
+ * banner. Ogni test sceglie l'utente e la pagina, passa il titolo atteso e aggiunge i propri scenari. Testi e
+ * validazioni dei filtri per IUN e date valgono anche per "In arrivo dalle deleghe"
+ * ({@code WebDelegatedNotificationPGContractTest}).
  * <p>
  * La tabella e il banner dipendono dall'utente: ogni scenario li verifica se presenti. Gli scenari non aprono le
  * notifiche, perché aprirle le segna come lette, e non chiudono il banner.
@@ -62,16 +65,32 @@ public final class RecipientNotificationsScenarios {
     }
 
     /**
-     * Titolo, etichette dei filtri, "Filtra" disabilitato e opzioni di "Tipologia".
+     * Titolo, etichette dei filtri, "Filtra" disabilitato, etichetta e opzioni di "Tipologia".
      */
     public static <P extends RecipientNotificationsPage> Stream<WebScenario<P>> texts(String title) {
+        return Stream.concat(
+                filterTexts(title),
+                Stream.of(new WebScenario<P>(
+                        "tipologia propone notifiche a valore legale e comunicazioni",
+                        page -> page.communicationTypeSelect().click(),
+                        page -> {
+                            page.communicationTypeLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(COMMUNICATION_TYPE_LABEL));
+                            page.communicationTypeOptions().readAllAndAssert(h -> Assertions.assertThat(h).containsExactlyElementsOf(COMMUNICATION_TYPES));
+                        }
+                ))
+        );
+    }
+
+    /**
+     * Titolo, etichette dei filtri per IUN e date e "Filtra" disabilitato: comuni a tutte le liste di notifiche.
+     */
+    public static <P extends NotificationFiltersPage> Stream<WebScenario<P>> filterTexts(String title) {
         return Stream.of(
                 new WebScenario<>(
                         "titolo, etichette dei filtri e filtra disabilitato",
                         page -> {},
                         page -> {
                             page.title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(title));
-                            page.communicationTypeLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(COMMUNICATION_TYPE_LABEL));
                             page.iunSearchLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(IUN_LABEL));
                             page.startDateSearchLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(START_DATE_LABEL));
                             page.endDateSearchLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(END_DATE_LABEL));
@@ -79,12 +98,6 @@ public final class RecipientNotificationsScenarios {
                             Assertions.assertThat(page.filterButton().get(FindPolicy.PRESENT).map(b -> b.getText())).hasValue(FILTER);
                             Assertions.assertThat(page.filterButton().isDisabled()).isTrue();
                         }
-                ),
-
-                new WebScenario<>(
-                        "tipologia propone notifiche a valore legale e comunicazioni",
-                        page -> page.communicationTypeSelect().click(),
-                        page -> page.communicationTypeOptions().readAllAndAssert(h -> Assertions.assertThat(h).containsExactlyElementsOf(COMMUNICATION_TYPES))
                 )
         );
     }
@@ -198,7 +211,7 @@ public final class RecipientNotificationsScenarios {
     /**
      * Messaggi dei filtri con un IUN non valido e con date fuori dall'intervallo ammesso.
      */
-    public static <P extends RecipientNotificationsPage> Stream<WebScenario<P>> filterValidations() {
+    public static <P extends NotificationFiltersPage> Stream<WebScenario<P>> filterValidations() {
         return Stream.of(
                 new WebScenario<>(
                         "IUN non valido",
