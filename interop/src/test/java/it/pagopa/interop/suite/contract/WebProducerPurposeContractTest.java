@@ -16,6 +16,7 @@ import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.interop.web.purpose.infrastructure.page.ProducerPurposeDetailPage;
 import it.pagopa.interop.web.purpose.infrastructure.page.ProducerPurposeListPage;
+import it.pagopa.utils.async.DelayUtils;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
@@ -46,9 +47,9 @@ public class WebProducerPurposeContractTest {
                         .on(ProducerPurposeListPage.class)
                         .tests(Stream.of(new WebScenario<>(
                                 "finalità ricevute visibili all'utente " + role.name() + " del Comune di Milano",
+                                page -> DelayUtils.waitForSeconds(10),
                                 page -> {
-                                },
-                                page -> {
+                                    page.assertLoaded();
                                     page.purposeHeader().readAndAssert("Finalità");
                                     page.consumerHeader().readAndAssert("Fruitore");
                                     page.stateHeader().readAndAssert("Stato finalità");
@@ -78,9 +79,11 @@ public class WebProducerPurposeContractTest {
                         .on(ProducerPurposeDetailPage.class, purpose.getId().toString())
                         .tests(Stream.of(new WebScenario<>(
                                 "finalità ricevuta visibile all'utente " + role.name() + " del Comune di Milano",
+                                page -> DelayUtils.waitForSeconds(10),
                                 page -> {
-                                },
-                                page -> page.pageTitle().readAndAssert(purpose.getTitle())
+                                    page.assertLoaded();
+                                    page.pageTitle().readAndAssert(purpose.getTitle());
+                                }
                         ))));
     }
 }
