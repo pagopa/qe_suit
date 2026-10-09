@@ -4,13 +4,12 @@ import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.delegation.application.DelegationGateway;
 import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 
 @Service
@@ -30,8 +29,8 @@ public class BffDelegationGateway implements DelegationGateway {
     }
 
     @Override
-    public void approveConsumerDelegation(UUID delegationId) {
-        restClient.approveConsumerDelegation(delegationId).withPolling(PollingStrategy.UNTIL_SUCCESS);
+    public void approveConsumerDelegation(DelegationRef delegationRef) {
+        restClient.approveConsumerDelegation(delegationRef.id()).withPolling(PollingStrategy.UNTIL_SUCCESS);
     }
 
     @Override
