@@ -18,6 +18,8 @@ public class Attribute implements Identifiable {
     String description;
     AttributeKind kind;
     Integer group;
+    Integer dailyCallsPerConsumer;
+    AttributeCertifiedDiscreteConfig discreteConfig;
 
     public AttributeRef getRef() {
         return AttributeRef.of(id);
