@@ -14,6 +14,7 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.web.agreement.infrastructure.page.ProducerAgreementListPage;
 import it.pagopa.interop.web.agreement.infrastructure.page.ProducerAgreementDetailPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
+import it.pagopa.utils.async.DelayUtils;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -43,8 +44,8 @@ public class WebProducerAgreementContractTest {
                         .on(ProducerAgreementListPage.class)
                         .tests(Stream.of(new WebScenario<>(
                                 "richieste di fruizione ricevute accessibili all'utente " + role.name() + " del Comune di Milano",
-                                page -> {},
-                                page -> {}
+                                page -> DelayUtils.waitForSeconds(10),
+                                ProducerAgreementListPage::assertLoaded
                         ))));
     }
 
@@ -64,8 +65,8 @@ public class WebProducerAgreementContractTest {
                         .on(ProducerAgreementDetailPage.class, agreement.getId().toString())
                         .tests(Stream.of(new WebScenario<>(
                                 "richiesta di fruizione ricevuta visibile all'utente " + role.name() + " del Comune di Milano",
-                                page -> {},
-                                page -> {}
+                                page -> DelayUtils.waitForSeconds(10),
+                                ProducerAgreementDetailPage::assertLoaded
                         ))));
     }
 }
