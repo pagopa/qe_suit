@@ -7,6 +7,7 @@ import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
@@ -18,9 +19,7 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
+import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDetailPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.AllArgsConstructor;
@@ -261,12 +260,12 @@ public class WebCatalogEServiceContractTest {
                 .audience(List.of("Audience"))
                 .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
 
-        DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed();
-        List<DescriptorAttributeSeed> requirement = new ArrayList<>();
+
+        List<Attribute> requirement = new ArrayList<>();
         if (params.customThresholdToCertifiedAttributeForConsumer) // Fruitore
             addNthAttributeWithCustomThresholdToAttributeRequirement(-1, customThresholdForYourTenant, requirement);
-        attributesSeed.addCertifiedItem(requirement);
-        updateCommand.attributes(attributesSeed);
+        Attributes attributes = Attributes.builder().certified(requirement).build();
+        updateCommand.attributes(attributes);
 
         interopJourney
                 .withProducer(producer, UserRole.ADMIN)
@@ -333,14 +332,13 @@ public class WebCatalogEServiceContractTest {
                 .audience(List.of("Audience"))
                 .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
 
-        DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed();
-        List<DescriptorAttributeSeed> requirement = new ArrayList<>();
+        List<Attribute> requirement = new ArrayList<>();
         if (params.customThresholdToCertifiedAttributeForDelegator) // Fruitore delegante
             addNthAttributeWithCustomThresholdToAttributeRequirement(1, customThresholdForDelegator, requirement);
         if (params.customThresholdToCertifiedAttributeForConsumer)  // Fruitore delegato
             addNthAttributeWithCustomThresholdToAttributeRequirement(-1, customThresholdForDelegatee, requirement);
-        attributesSeed.addCertifiedItem(requirement);
-        updateCommand.attributes(attributesSeed);
+        Attributes attributes = Attributes.builder().certified(requirement).build();
+        updateCommand.attributes(attributes);
 
         interopJourney
                 .withProducer(producer, UserRole.ADMIN)
@@ -384,20 +382,17 @@ public class WebCatalogEServiceContractTest {
                 )));
     }
 
-    private void addNthAttributeWithCustomThresholdToAttributeRequirement(int nthAttribute, int customThreshold, List<DescriptorAttributeSeed> requirement) {
-        DescriptorAttributeSeed attributeSeed = new DescriptorAttributeSeed();
+    private void addNthAttributeWithCustomThresholdToAttributeRequirement(int nthAttribute, int customThreshold, List<Attribute> requirement) {
         Attribute attribute;
         if (nthAttribute == 1) {
             attribute = entityStore.getFirstOrThrow(Attribute.class);
         } else if (nthAttribute == -1) {
             attribute = entityStore.getLastOrThrow(Attribute.class);
         } else {
-            throw new IllegalArgumentException("Non supported Nth attribute value: " + nthAttribute);
+            throw new IllegalArgumentException("Not supported Nth attribute value: " + nthAttribute);
         }
-        attributeSeed.setId(attribute.getId());
-        attributeSeed.setDailyCallsPerConsumer(customThreshold);
-        attributeSeed.setExplicitAttributeVerification(false);
-        requirement.add(attributeSeed);
+        attribute = attribute.toBuilder().dailyCallsPerConsumer(customThreshold).build();
+        requirement.add(attribute);
     }
 
     private void assertLabelEqualsTo(
