@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.attribute.domain;
 
 import it.pagopa.domain.Identifiable;
+import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
@@ -17,4 +18,10 @@ public class Attribute implements Identifiable {
     String description;
     AttributeKind kind;
     Integer group;
+    Integer dailyCallsPerConsumer;
+    AttributeCertifiedDiscreteConfig discreteConfig;
+
+    public AttributeRef getRef() {
+        return AttributeRef.of(id);
+    }
 }

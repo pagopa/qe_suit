@@ -4,6 +4,7 @@ import it.pagopa.domain.Identifiable;
 import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
@@ -73,8 +74,7 @@ public class EService implements Identifiable {
                 );
     }
 
-    public void addDescriptor(EServiceDescriptor descriptor) {
-        Objects.requireNonNull(descriptor, "descriptor non può essere null");
+    public void addDescriptor(@NonNull EServiceDescriptor descriptor) {
         Objects.requireNonNull(descriptor.getId(), "descriptor.id non può essere null");
 
         for (int i = 0; i < descriptors.size(); i++) {

@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.agreement.domain;
+package it.pagopa.interop.common.kernel.domain;
 
 import javax.annotation.Nonnull;
 import java.util.UUID;
