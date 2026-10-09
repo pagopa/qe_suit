@@ -14,6 +14,7 @@ import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCatalogPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceListPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
+import it.pagopa.utils.async.DelayUtils;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -47,10 +48,8 @@ public class WebEServiceContractTest {
                         .on(ProducerEServiceListPage.class)
                         .tests(Stream.of(new WebScenario<>(
                                 "e-service erogati accessibili all'utente " + role.name() + " del Comune di Milano",
-                                page -> {
-                                },
-                                page -> {
-                                }
+                                page -> DelayUtils.waitForSeconds(10),
+                                ProducerEServiceListPage::assertLoaded
                         ))));
     }
 
