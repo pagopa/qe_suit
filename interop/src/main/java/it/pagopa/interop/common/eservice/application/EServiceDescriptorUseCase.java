@@ -1,16 +1,16 @@
 package it.pagopa.interop.common.eservice.application;
 
-import it.pagopa.interop.common.attribute.domain.Attributes;
+import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
+import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributesSeed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 @Service
@@ -62,5 +62,21 @@ public class EServiceDescriptorUseCase {
         EServiceDescriptor updatedDescriptor = updateDescriptor(eService, descriptor, command[0]);
 
         return linkOpenApiInterface(eService, updatedDescriptor, "assets/origin-interface.yaml");
+    }
+
+    public EServiceCreationCommand getDefaultEServiceCreationCommand(boolean async) {
+        EServiceCreationCommand command = requestFactory.defaultCreationEServiceCommand();
+        command.isAsync(async);
+        return command;
+    }
+
+    public UpdateEServiceDescriptorCommand getUpdateEServiceDescriptorCommand(
+            int consumerThreshold,
+            int totalThreshold
+    ) {
+        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        command.dailyCallsPerConsumer(consumerThreshold);
+        command.dailyCallsTotal(totalThreshold);
+        return command;
     }
 }
