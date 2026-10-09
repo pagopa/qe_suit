@@ -113,29 +113,25 @@ public interface EServiceDetailPage extends Page {
     @XPath(GENERAL_SECTION + "//*[normalize-space()='Eroga dati personali' and not(*)]")
     Label personalDataLabel();
 
-    // TODO controllare che sia valido
-    @XPath(GENERAL_SECTION + "//*[normalize-space()='Eroga dati personali' and not(*)]/following-sibling::*[1]")
+    @XPath(GENERAL_SECTION + "//div[./div/p[normalize-space()='Eroga dati personali']]/div[2]//span")
     Label personalDataValue();
 
     @XPath(GENERAL_SECTION + "//*[normalize-space()='Scambio dati' and not(*)]")
     Label exchangeTypeLabel();
 
-    // TODO controllare che sia valido
-    @XPath(GENERAL_SECTION + "//*[normalize-space()='Scambio dati' and not(*)]/following-sibling::*[1]")
+    @XPath(GENERAL_SECTION + "//div[./div/p[normalize-space()='Scambio dati']]/div[2]//span")
     Label exchangeTypeValue();
 
     @XPath(GENERAL_SECTION + "//*[normalize-space()=\"Descrizione dell'e-service\" and not(*)]")
     Label eserviceDescriptionLabel();
 
-    // TODO controllare che sia valido
-    @XPath(GENERAL_SECTION + "//*[normalize-space()=\"Descrizione dell'e-service\" and not(*)]/following-sibling::*[1]")
+    @XPath(GENERAL_SECTION + "//div[./div/p[normalize-space()=\"Descrizione dell'e-service\"]]/div[2]//span")
     Label eserviceDescriptionValue();
 
     @XPath(GENERAL_SECTION + "//*[normalize-space()='Descrizione della versione' and not(*)]")
     Label descriptorDescriptionLabel();
 
-    // TODO controllare che sia valido
-    @XPath(GENERAL_SECTION + "//*[normalize-space()='Descrizione della versione' and not(*)]/following-sibling::*[1]")
+    @XPath(GENERAL_SECTION + "//div[./div/p[normalize-space()='Descrizione della versione']]/div[2]//span")
     Label descriptorDescriptionValue();
 
     @XPath(GENERAL_SECTION + "//h3[normalize-space()='Fruizione tramite delega']")
@@ -144,15 +140,13 @@ public interface EServiceDetailPage extends Page {
     @XPath(GENERAL_SECTION + "//*[normalize-space()='Autorizzazione' and not(*)]")
     Label consumerDelegableLabel();
 
-    // TODO controllare che sia valido
-    @XPath(GENERAL_SECTION + "//*[normalize-space()='Autorizzazione' and not(*)]/following-sibling::*[1]")
+    @XPath(GENERAL_SECTION + "//div[./div/p[normalize-space()='Autorizzazione']]/div[2]//span")
     Label consumerDelegableValue();
 
     @XPath(GENERAL_SECTION + "//*[normalize-space()='Autorizzazione all’associazione dei client' and not(*)]")
     Label clientAccessDelegableLabel();
 
-    // TODO controllare che sia valido
-    @XPath(GENERAL_SECTION + "//*[normalize-space()='Autorizzazione all’associazione dei client' and not(*)]/following-sibling::*[1]")
+    @XPath(GENERAL_SECTION + "//div[./div/p[normalize-space()=\"Autorizzazione all’associazione dei client\"]]/div[2]//span")
     Label clientAccessDelegableValue();
 
     // Bottom actions are IconLink (MUI Link, rendered as <button> when component='button')
@@ -162,7 +156,7 @@ public interface EServiceDetailPage extends Page {
     @XPath(GENERAL_SECTION + "//*[(self::a or self::button)][normalize-space()='Vedi i dettagli sullo scambio asincrono']")
     Label showAsyncExchangeDetailsAction();
 
-    @XPath(GENERAL_SECTION + "//*[(self::a or self::button)][normalize-space()='Visualizza i contatti dell’erogatore']")
+    @XPath(GENERAL_SECTION + "//*[(self::a or self::button)][.//span[normalize-space()='Visualizza i contatti dell’erogatore']]")
     Label showProducerContactsAction();
 
     // Closed MUI drawers are not mounted: any mounted drawer is an open one
