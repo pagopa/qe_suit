@@ -4,6 +4,12 @@
 spring:
   profiles:
     active: test
+  config:
+    import:
+      - optional:classpath:secrets/application-secrets.yaml
+      - optional:classpath:secrets/application-secrets-${spring.profiles.active:test}.yaml
+      - optional:file:./send/src/main/resources/secrets/application-secrets.yaml
+      - optional:file:./send/src/main/resources/secrets/application-secrets-${spring.profiles.active:test}.yaml
 
 # ============================================================================
 # Channel Configuration
