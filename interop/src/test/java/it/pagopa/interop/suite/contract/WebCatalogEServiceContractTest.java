@@ -4,11 +4,10 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.interop.TestBootApp;
-import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
-import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.delegation.domain.Delegation;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.*;
@@ -19,7 +18,6 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDetailPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.AllArgsConstructor;
@@ -32,7 +30,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -47,6 +44,7 @@ public class WebCatalogEServiceContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
     private final InteropJourney interopJourney;
+    private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EntityStore entityStore;
 
     @Getter
@@ -244,22 +242,10 @@ public class WebCatalogEServiceContractTest {
                 .createCertifiedAttribute();
         }
 
-        EServiceCreationCommand eServiceCommand = new BffEServiceCreationCommand()
-                .name("e-service-" + Instant.now().getEpochSecond())
-                .description("Primo descrittore")
-                .technology(EServiceTechnology.REST)
-                .mode(EServiceMode.DELIVER)
-                .isAsync(params.eServiceAsyncExchange)
-                .handlePersonalData(false)
-                .isConsumerDelegable(true);
-
-        UpdateEServiceDescriptorCommand updateCommand = new BffUpdateEServiceDescriptorCommand()
-                .dailyCallsPerConsumer(consumerThreshold)
-                .dailyCallsTotal(totalThreshold)
-                .voucherLifespan(60)
-                .audience(List.of("Audience"))
-                .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
-
+        EServiceCreationCommand eServiceCommand =
+                eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(params.eServiceAsyncExchange);
+        UpdateEServiceDescriptorCommand updateCommand =
+                eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(consumerThreshold, totalThreshold);
 
         List<Attribute> requirement = new ArrayList<>();
         if (params.customThresholdToCertifiedAttributeForConsumer) // Fruitore
@@ -316,21 +302,10 @@ public class WebCatalogEServiceContractTest {
                 .createCertifiedAttribute()  // Per delegante
                 .createCertifiedAttribute(); // Per delegato
 
-        EServiceCreationCommand eServiceCommand = new BffEServiceCreationCommand()
-                .name("e-service-" + Instant.now().getEpochSecond())
-                .description("Primo descrittore")
-                .technology(EServiceTechnology.REST)
-                .mode(EServiceMode.DELIVER)
-                .isAsync(params.eServiceAsyncExchange)
-                .handlePersonalData(false)
-                .isConsumerDelegable(true);
-
-        UpdateEServiceDescriptorCommand updateCommand = new BffUpdateEServiceDescriptorCommand()
-                .dailyCallsPerConsumer(consumerThreshold)
-                .dailyCallsTotal(totalThreshold)
-                .voucherLifespan(60)
-                .audience(List.of("Audience"))
-                .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
+        EServiceCreationCommand eServiceCommand =
+                eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(params.eServiceAsyncExchange);
+        UpdateEServiceDescriptorCommand updateCommand =
+                eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(consumerThreshold, totalThreshold);
 
         List<Attribute> requirement = new ArrayList<>();
         if (params.customThresholdToCertifiedAttributeForDelegator) // Fruitore delegante
