@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties;
 import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.RandomUtils;
@@ -109,16 +110,15 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
 
     @Override
     public EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String openApiInterfacePath) {
-        return linkOpenApiInterface(eServiceRef, descriptorRef, openApiInterfacePath, "INTERFACE");
+        return linkOpenApiInterface(eServiceRef, descriptorRef, openApiInterfacePath, DocumentKind.INTERFACE);
     }
 
     @Override
     public EServiceDescriptor linkOpenApiCallbackInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String openApiInterfacePath) {
-        return linkOpenApiInterface(eServiceRef, descriptorRef, openApiInterfacePath, "ASYNC_EXCHANGE_CALLBACK_INTERFACE");
+        return linkOpenApiInterface(eServiceRef, descriptorRef, openApiInterfacePath, DocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE);
     }
 
-    // TODO DocumentKind dovrebbe essere un Enum
-    private EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String openApiInterfacePath, String documentKind) {
+    private EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String openApiInterfacePath, DocumentKind documentKind) {
         File openapiFile = FileUtils.loadClasspathResourceAsTempFile(openApiInterfacePath);
         String documentName = RandomUtils.randomAlphanumericName("interface") + ".yaml";
         DelayUtils.waitForSeconds(1); // Wait for a second to avoid potential eventual consistency error
@@ -126,7 +126,7 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
         return restClient.addDocument(
                         eServiceRef.id(),
                         descriptorRef.id(),
-                        documentKind,
+                        documentKind.name(),
                         documentName,
                         openapiFile
                 )
