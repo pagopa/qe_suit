@@ -5,11 +5,9 @@ import io.cucumber.java.en.Given;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.Attributes;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
-import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
-import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
-import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
@@ -20,7 +18,6 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +25,7 @@ import java.util.Map;
 public class EServiceJourneySteps {
 
     private final InteropJourney interopJourney;
+    private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EntityStore entityStore;
 
     @Given("un EService/eservice creato da/dal {tenant} con una richiesta di fruizione e una finalità associate da/dal {tenant}")
@@ -88,26 +86,16 @@ public class EServiceJourneySteps {
     @Given("crea un EService {asyncExchange} con un attributo certificato e soglia personalizzata per fruitore a {int}")
     public void createEServiceWithCertifiedAttributeAndCustomThreshold(boolean asyncExchange, int customThreshold, DataTable defaultThresholds) {
         Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
-
         interopJourney.createCertifiedAttribute();
 
-        EServiceCreationCommand eServiceCommand = new BffEServiceCreationCommand()
-                .name("e-service-" + Instant.now().getEpochSecond())
-                .description("Primo descrittore")
-                .technology(EServiceTechnology.REST)
-                .mode(EServiceMode.DELIVER)
-                .isAsync(asyncExchange)
-                .handlePersonalData(false)
-                .isConsumerDelegable(true);
-
-        UpdateEServiceDescriptorCommand updateCommand = new BffUpdateEServiceDescriptorCommand()
-                .dailyCallsPerConsumer(thresholdsMap.getOrDefault("consumerThreshold", 10))
-                .dailyCallsTotal(thresholdsMap.getOrDefault("totalThreshold", 20))
-                .voucherLifespan(60)
-                .audience(List.of("Audience"))
-                .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC);
+        EServiceCreationCommand eServiceCommand = eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(asyncExchange);
+        UpdateEServiceDescriptorCommand updateCommand = eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(
+                thresholdsMap.getOrDefault("consumerThreshold", 10),
+                thresholdsMap.getOrDefault("totalThreshold", 20)
+        );
 
         Attribute attribute = entityStore.getLastOrThrow(Attribute.class);
+        attribute = attribute.toBuilder().dailyCallsPerConsumer(customThreshold).build();
         Attributes attributes = Attributes.builder().certified(List.of(attribute)).build();
         updateCommand.attributes(attributes);
 
