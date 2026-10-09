@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.tenant.application;
 
-import it.pagopa.interop.common.attribute.domain.AttributeRef;
-import it.pagopa.interop.common.agreement.domain.AgreementRef;
+import it.pagopa.interop.common.kernel.domain.AttributeRef;
+import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.tenant.application.command.*;
 import org.springframework.plugin.core.Plugin;
@@ -18,5 +18,3 @@ public interface TenantRequestFactory extends Plugin<Channel> {
 
     RevokeVerifiedAttributeCommand revokeVerifiedAttributeCommand(AgreementRef agreementRef);
 }
-
-

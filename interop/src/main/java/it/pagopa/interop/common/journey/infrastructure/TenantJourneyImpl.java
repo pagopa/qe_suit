@@ -2,10 +2,10 @@ package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.agreement.domain.Agreement;
-import it.pagopa.interop.common.agreement.domain.AgreementRef;
 import it.pagopa.interop.common.attribute.domain.Attribute;
-import it.pagopa.interop.common.attribute.domain.AttributeRef;
 import it.pagopa.interop.common.journey.application.TenantJourney;
+import it.pagopa.interop.common.kernel.domain.AgreementRef;
+import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.tenant.application.TenantUseCase;
 import lombok.RequiredArgsConstructor;
