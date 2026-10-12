@@ -2,8 +2,10 @@
 
 Pagina `{baseUrl}/recapiti`, dalla voce "I tuoi recapiti" del menu laterale.
 
-- Page object: [`AddressPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/AddressPFPage.java)
-- Test: [`WebAddressPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebAddressPFContractTest.java)
+- Page object: [`AddressPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/AddressPFPage.java),
+  con le card comuni all'impresa in [`RecipientAddressPage`](../../src/main/java/it/pagopa/send/web/address/infrastructure/suit/RecipientAddressPage.java)
+- Test: [`WebAddressPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebAddressPFContractTest.java),
+  con le validazioni dei recapiti da aggiungere in [`RecipientAddressScenarios`](../../src/test/java/it/pagopa/send/suite/contract/RecipientAddressScenarios.java)
 - Utente: Lucrezia Borgia
 - Navigazione: `WebRecipientPfNavigationContractTest#shouldReachAddressPF`, vedi
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#i-tuoi-recapiti)
@@ -18,7 +20,7 @@ Lo usano anche gli step Cucumber dei recapiti.
 ## Cosa verifica il contract test
 
 I testi della pagina, il contenuto di ogni card e i messaggi di validazione. In rosso gli elementi controllati, esclusi
-i messaggi.
+i messaggi di errore.
 
 Con recapiti attivi (Lucrezia):
 

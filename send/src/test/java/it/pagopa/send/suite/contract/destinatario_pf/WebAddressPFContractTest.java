@@ -1,13 +1,11 @@
 package it.pagopa.send.suite.contract.destinatario_pf;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
-import it.pagopa.infrastructure.suit.component.Button;
-import it.pagopa.infrastructure.suit.component.TextField;
-import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.suite.contract.RecipientAddressScenarios;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AddressPFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +14,15 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.openqa.selenium.Keys;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
+
+import static it.pagopa.send.suite.contract.RecipientAddressScenarios.INVALID_ADDRESS;
+import static it.pagopa.send.suite.contract.RecipientAddressScenarios.SMS_QUESTION;
 
 /**
  * Contract test della pagina "I tuoi recapiti" del cittadino ({@code {baseUrl}/recapiti}).
@@ -87,7 +85,6 @@ public class WebAddressPFContractTest {
     private static final String EMAIL_TO_ADD_DESCRIPTION = "Aggiungi un indirizzo email su cui possiamo avvisarti quando c’è una notifica da leggere su SEND.";
     private static final String EMAIL_INPUT = "Indirizzo email";
     private static final String ADD_EMAIL = "Aggiungi email";
-    private static final String SMS_QUESTION = "Vuoi ricevere gli avvisi anche via SMS?";
     private static final String ADD_SMS = "Aggiungi numero di cellulare";
 
     // card del cellulare
@@ -97,16 +94,8 @@ public class WebAddressPFContractTest {
     private static final String SAVE_SMS = "Aggiungi numero";
     private static final String CANCEL = "Annulla";
 
-    // messaggi di validazione
+    // messaggi di validazione; quelli di email e cellulare e i dati di prova sono in RecipientAddressScenarios
     private static final String INVALID_PEC_MESSAGE = "Indirizzo PEC non valido";
-    private static final String INVALID_EMAIL_MESSAGE = "Indirizzo email non valido";
-    private static final String INVALID_SMS_MESSAGE = "Numero di cellulare non valido";
-    private static final String SPACES_AT_EDGES_MESSAGE = "Elimina gli spazi all'inizio o alla fine";
-
-    // dati di prova: non validi anche senza spazi, perché un valore valido avvierebbe la verifica del recapito
-
-    private static final String INVALID_ADDRESS = "abc";
-    private static final String INVALID_SMS = "123";
 
     private final WebBrowserContractValidator webContractValidator;
 
@@ -304,117 +293,39 @@ public class WebAddressPFContractTest {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
                 .on(AddressPFPage.class)
                 .tests(Stream.of(
-                        // recapiti attivi: "Modifica", nuovo valore e "Conferma"
-                        editScenario("se attiva, modifica PEC del domicilio non valida", INVALID_ADDRESS, INVALID_PEC_MESSAGE,
+                        // PEC attive: "Modifica", nuovo valore e "Conferma"
+                        RecipientAddressScenarios.<AddressPFPage>editScenario("se attiva, modifica PEC del domicilio non valida", INVALID_ADDRESS, INVALID_PEC_MESSAGE,
                                 page -> page.legalContactsContent().read().contains(PEC_DESCRIPTION),
                                 page -> page.pecContact().modifyPecButton(), page -> page.pecContact().editPecInput(),
                                 page -> page.pecContact().savePecButton(), page -> page.pecContact().editPecErrorMessage()),
-                        editScenario("se attiva, modifica PEC del domicilio vuota", "", INVALID_PEC_MESSAGE,
+                        RecipientAddressScenarios.<AddressPFPage>editScenario("se attiva, modifica PEC del domicilio vuota", "", INVALID_PEC_MESSAGE,
                                 page -> page.legalContactsContent().read().contains(PEC_DESCRIPTION),
                                 page -> page.pecContact().modifyPecButton(), page -> page.pecContact().editPecInput(),
                                 page -> page.pecContact().savePecButton(), page -> page.pecContact().editPecErrorMessage()),
-                        editScenario("se presente, modifica PEC per ente non valida", INVALID_ADDRESS, INVALID_PEC_MESSAGE,
+                        RecipientAddressScenarios.<AddressPFPage>editScenario("se presente, modifica PEC per ente non valida", INVALID_ADDRESS, INVALID_PEC_MESSAGE,
                                 page -> page.legalContactsContent().read().contains(SPECIAL_CONTACTS_TITLE),
                                 page -> page.specialContacts().firstModifyButton(), page -> page.specialContacts().firstEditInput(),
                                 page -> page.specialContacts().firstSaveButton(), page -> page.specialContacts().firstEditErrorMessage()),
-                        editScenario("se presente, modifica PEC per ente vuota", "", INVALID_PEC_MESSAGE,
+                        RecipientAddressScenarios.<AddressPFPage>editScenario("se presente, modifica PEC per ente vuota", "", INVALID_PEC_MESSAGE,
                                 page -> page.legalContactsContent().read().contains(SPECIAL_CONTACTS_TITLE),
                                 page -> page.specialContacts().firstModifyButton(), page -> page.specialContacts().firstEditInput(),
-                                page -> page.specialContacts().firstSaveButton(), page -> page.specialContacts().firstEditErrorMessage()),
-                        editScenario("se attiva, modifica email non valida", INVALID_ADDRESS, INVALID_EMAIL_MESSAGE,
-                                page -> page.emailContactContent().read().contains(EMAIL_DESCRIPTION),
-                                page -> page.emailContact().modifyEmailButton(), page -> page.emailContact().editEmailInput(),
-                                page -> page.emailContact().saveEmailButton(), page -> page.emailContact().editEmailErrorMessage()),
-                        editScenario("se attiva, modifica email vuota", "", INVALID_EMAIL_MESSAGE,
-                                page -> page.emailContactContent().read().contains(EMAIL_DESCRIPTION),
-                                page -> page.emailContact().modifyEmailButton(), page -> page.emailContact().editEmailInput(),
-                                page -> page.emailContact().saveEmailButton(), page -> page.emailContact().editEmailErrorMessage()),
-                        editScenario("se attivo, modifica cellulare non valido", INVALID_SMS, INVALID_SMS_MESSAGE,
-                                page -> page.content().read().contains(SMS_DESCRIPTION),
-                                page -> page.smsContact().modifySmsButton(), page -> page.smsContact().editSmsInput(),
-                                page -> page.smsContact().saveSmsButton(), page -> page.smsContact().editSmsErrorMessage()),
-                        editScenario("se attivo, modifica cellulare vuoto", "", INVALID_SMS_MESSAGE,
-                                page -> page.content().read().contains(SMS_DESCRIPTION),
-                                page -> page.smsContact().modifySmsButton(), page -> page.smsContact().editSmsInput(),
-                                page -> page.smsContact().saveSmsButton(), page -> page.smsContact().editSmsErrorMessage()),
-
-                        // recapiti da aggiungere: valore e "Aggiungi email" / "Aggiungi numero"
-                        addEmailScenario("se da aggiungere, email non valida", INVALID_ADDRESS, INVALID_EMAIL_MESSAGE),
-                        addEmailScenario("se da aggiungere, email vuota", "", INVALID_EMAIL_MESSAGE),
-                        // nel campo per aggiungere l'email gli spazi non hanno un messaggio dedicato
-                        addEmailScenario("se da aggiungere, email non valida con spazi all'inizio o alla fine", " " + INVALID_ADDRESS + " ", INVALID_EMAIL_MESSAGE),
-                        addSmsScenario("se da aggiungere, cellulare non valido", INVALID_SMS, INVALID_SMS_MESSAGE),
-                        addSmsScenario("se da aggiungere, cellulare vuoto", "", INVALID_SMS_MESSAGE),
-                        addSmsScenario("se da aggiungere, cellulare con spazi all'inizio o alla fine", " " + INVALID_SMS + " ", SPACES_AT_EDGES_MESSAGE)
+                                page -> page.specialContacts().firstSaveButton(), page -> page.specialContacts().firstEditErrorMessage())
                 ));
     }
 
-    /**
-     * Recapito attivo: preme "Modifica", sostituisce il valore, preme "Conferma" e controlla il messaggio. Se il recapito
-     * non è attivo lo scenario termina senza verificarlo.
-     */
-    private WebScenario<AddressPFPage> editScenario(String name, String value, String expectedMessage,
-                                                    Predicate<AddressPFPage> present,
-                                                    Function<AddressPFPage, Button> modify,
-                                                    Function<AddressPFPage, TextField> input,
-                                                    Function<AddressPFPage, Button> save,
-                                                    Function<AddressPFPage, Readable<String>> error) {
-        return new WebScenario<>(
-                name,
-                page -> {},
-                page -> {
-                    if (!present.test(page)) {
-                        // Il recapito non è attivo: "Modifica" non c'è, quindi il test termina senza verificarlo
-                        return;
-                    }
-                    modify.apply(page).click();
-                    input.apply(page).write(Keys.chord(Keys.CONTROL, "a") + Keys.DELETE + value);
-                    save.apply(page).click();
-                    error.apply(page).readAndAssert(h -> Assertions.assertThat(h).isEqualTo(expectedMessage));
-                }
-        );
+    // email e cellulare: "Modifica" o valore da aggiungere, comuni all'impresa
+
+    @TestFactory
+    Stream<DynamicTest> shouldValidateContactsToEdit() {
+        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+                .on(AddressPFPage.class)
+                .tests(RecipientAddressScenarios.editContactValidations(EMAIL_DESCRIPTION, SMS_DESCRIPTION));
     }
 
-    /**
-     * Email da aggiungere: scrive il valore, preme "Aggiungi email" e controlla il messaggio. Se l'email è già attiva lo
-     * scenario termina senza verificarlo.
-     */
-    private WebScenario<AddressPFPage> addEmailScenario(String name, String value, String expectedMessage) {
-        return new WebScenario<>(
-                name,
-                page -> {},
-                page -> {
-                    if (!page.emailContactContent().read().contains(EMAIL_TO_ADD_DESCRIPTION)) {
-                        // L'email è già attiva: il campo per aggiungerla non c'è, quindi il test termina senza verificarlo
-                        return;
-                    }
-                    AddressPFPage.EmailToAdd toAdd = page.emailToAdd();
-                    toAdd.emailInput().write(value);
-                    toAdd.addEmailButton().click();
-                    toAdd.emailErrorMessage().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(expectedMessage));
-                }
-        );
-    }
-
-    /**
-     * Cellulare da aggiungere: preme "Aggiungi numero di cellulare", scrive il valore, preme "Aggiungi numero" e controlla
-     * il messaggio. Se il pulsante per aggiungere il cellulare non c'è lo scenario termina senza verificarlo.
-     */
-    private WebScenario<AddressPFPage> addSmsScenario(String name, String value, String expectedMessage) {
-        return new WebScenario<>(
-                name,
-                page -> {},
-                page -> {
-                    if (!page.emailContactContent().read().contains(SMS_QUESTION)) {
-                        // Il pulsante per aggiungere il cellulare non c'è, quindi il test termina senza verificarlo
-                        return;
-                    }
-                    AddressPFPage.EmailToAdd toAdd = page.emailToAdd();
-                    toAdd.addSmsButton().click();
-                    toAdd.smsInput().write(value);
-                    toAdd.saveSmsButton().click();
-                    toAdd.smsErrorMessage().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(expectedMessage));
-                }
-        );
+    @TestFactory
+    Stream<DynamicTest> shouldValidateContactsToAdd() {
+        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+                .on(AddressPFPage.class)
+                .tests(RecipientAddressScenarios.addContactValidations(EMAIL_TO_ADD_DESCRIPTION));
     }
 }
