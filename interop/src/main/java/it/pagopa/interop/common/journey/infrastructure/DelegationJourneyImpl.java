@@ -23,17 +23,22 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
     private final UserJourneyImpl userJourney;
 
     @Override
+    public DelegationJourneyImpl createWaitingForApprovalProducerDelegation(
+            @NonNull Tenant delegator,
+            @NonNull Tenant delegate,
+            @NonNull EServiceRef eServiceRef
+    ) {
+        prepareProducerDelegation(delegator, delegate, eServiceRef);
+        return this;
+    }
+
+    @Override
     public DelegationJourneyImpl createActiveProducerDelegation(
             @NonNull Tenant delegator,
             @NonNull Tenant delegate,
             @NonNull EServiceRef eServiceRef
     ) {
-        userJourney.withProducer(delegate, UserRole.ADMIN);
-        tenantUseCase.enableProducerDelegationAvailability();
-
-        userJourney.withProducer(delegator, UserRole.ADMIN);
-        Delegation delegation = delegationUseCase.createProducerDelegation(
-                TenantRef.of(delegate.getOrganizationId()), eServiceRef);
+        Delegation delegation = prepareProducerDelegation(delegator, delegate, eServiceRef);
 
         userJourney.withProducer(delegate, UserRole.ADMIN);
         delegationUseCase.approveProducerDelegation(delegation.getRef());
@@ -50,5 +55,14 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
     public DelegationJourneyImpl approveConsumerDelegation(DelegationRef delegationRef) {
         delegationUseCase.approveConsumerDelegation(delegationRef);
         return this;
+    }
+
+    private Delegation prepareProducerDelegation(Tenant delegator, Tenant delegate, EServiceRef eServiceRef) {
+        userJourney.withProducer(delegate, UserRole.ADMIN);
+        tenantUseCase.enableProducerDelegationAvailability();
+
+        userJourney.withProducer(delegator, UserRole.ADMIN);
+        return delegationUseCase.createProducerDelegation(
+                TenantRef.of(delegate.getOrganizationId()), eServiceRef);
     }
 }

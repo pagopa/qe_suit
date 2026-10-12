@@ -7,6 +7,8 @@ import it.pagopa.interop.common.kernel.domain.TenantRef;
 
 public interface DelegationJourney<SELF extends DelegationJourney<SELF>> extends JourneyModule {
 
+    SELF createWaitingForApprovalProducerDelegation(Tenant delegator, Tenant delegate, EServiceRef eServiceRef);
+
     SELF createActiveProducerDelegation(Tenant delegator, Tenant delegate, EServiceRef eServiceRef);
 
     SELF createConsumerDelegation(TenantRef delegateRef, EServiceRef eServiceRef);
