@@ -9,6 +9,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedDiscreteTe
 import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RevokeVerifiedAttributeRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,24 @@ public class BffTenantRestClient extends RestClient {
     public BffTenantRestClient(TestChainFactory chainFactory, ApiClient apiClient) {
         super(chainFactory);
         this.tenantsApi = apiClient.tenants();
+    }
+
+    public TestChain<Tenant> getTenant(@Nonnull UUID tenantId) {
+        return execute(
+                () -> tenantsApi.getTenant()
+                        .tenantIdPath(tenantId)
+                        .execute(Function.identity()),
+                Tenant.class
+        );
+    }
+
+    public TestChain<Void> updateDelegatedFeatures(@Nonnull TenantDelegatedFeaturesFlagsUpdateSeed payload) {
+        return execute(
+                () -> tenantsApi.updateTenantDelegatedFeatures()
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
     }
 
     public TestChain<Void> addCertifiedAttribute(
@@ -124,4 +144,3 @@ public class BffTenantRestClient extends RestClient {
         );
     }
 }
-
