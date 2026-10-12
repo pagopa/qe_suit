@@ -14,8 +14,8 @@ public class UserSteps {
 
     private final CurrentUserSession currentUserSession;
 
-    @Given("un erogatore {userRole} del {tenant}")
-    @Given("un fruitore {userRole} del {tenant}")
+    @Given("un {userRole} appartenente all'erogatore {tenant}")
+    @Given("un {userRole} appartenente al fruitore {tenant}")
     public void setUser(UserRole userRole, Tenant tenant) {
         currentUserSession.set(User.getTenantUser(tenant, userRole), tenant);
     }
