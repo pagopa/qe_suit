@@ -30,7 +30,7 @@ public interface EServiceDetailPage extends
     // ------------------------------------------------------------------ Load
 
     /**
-     * and the four sections of the first tab panel. Does not assert matrix expectations.
+     * Waits for breadcrumbs, the page title, and the agreement action. Does not assert matrix expectations.
      */
     @Override
     default void assertLoaded() {
