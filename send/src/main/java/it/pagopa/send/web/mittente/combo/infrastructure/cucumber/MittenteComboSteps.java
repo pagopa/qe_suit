@@ -161,6 +161,7 @@ public class MittenteComboSteps {
                         ));
                         informalNotificationUseCase.addRecipient(sender, spec);
                         InformalNotificationDomain created = informalNotificationUseCase.sendNotification(sender);
+                        informalNotificationUseCase.getInformalNotification(created.getIun());
                         this.currentScenarioDynamicIun = created.getIun();
                         log.info("Creata notifica bonaria dinamica per campagna {} in stato {} con IUN: {}", campaignId, flowStatus, this.currentScenarioDynamicIun);
                     } finally {
