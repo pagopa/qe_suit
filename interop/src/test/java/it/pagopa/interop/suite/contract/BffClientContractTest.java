@@ -2,6 +2,8 @@ package it.pagopa.interop.suite.contract;
 
 import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.bff.client.application.BffClientCreationCommand;
+import it.pagopa.interop.bff.client.application.BffClientKeyCreationCommand;
 import it.pagopa.interop.bff.client.infrastructure.BffClientRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.common.client.domain.Client;
@@ -35,12 +37,13 @@ public class BffClientContractTest {
 
     @TestFactory
     Stream<DynamicTest> createConsumerClient() {
+        BffClientCreationCommand command = (BffClientCreationCommand) requestFactory.creationRequest();
         return httpContractValidator
                 .apiCall(() -> {
                     interopJourney.withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
                     return apiClient.clients().createConsumerClient();
                 })
-                .payload(requestFactory::creationRequest)
+                .payload(command::getClientSeed)
                 .tests();
     }
 
@@ -76,12 +79,16 @@ public class BffClientContractTest {
                     interopJourney.withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
                     return apiClient.clients().createApiClient();
                 })
-                .payload(requestFactory::creationRequest)
+                .payload(() -> {
+                    BffClientCreationCommand command = (BffClientCreationCommand) requestFactory.creationRequest();
+                    return command.getClientSeed();
+                })
                 .tests();
     }
 
     @TestFactory
     Stream<DynamicTest> createKey() {
+        BffClientKeyCreationCommand command = (BffClientKeyCreationCommand) requestFactory.keyCreationRequest();
         return httpContractValidator
                 .apiCall(() -> apiClient.clients().createKey())
                 .pathParams(() -> {
@@ -99,7 +106,7 @@ public class BffClientContractTest {
 
                     return Map.of("clientId", createdClient.getId());
                 })
-                .payload(requestFactory::keyCreationRequest)
+                .payload(command::getKeySeed)
                 .tests();
     }
 
