@@ -5,11 +5,11 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmission
 import it.pagopa.interop.common.agreement.application.AgreementGateway;
 import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
-import it.pagopa.interop.common.agreement.domain.AgreementRef;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
 import jakarta.annotation.Nullable;
