@@ -31,7 +31,11 @@ public class BffAttributeGateway implements AttributeGateway {
     }
 
     @Override
-    public Attribute createCertifiedAttribute(AttributeSeed seed) {
+    public Attribute createCertifiedAttribute(Attribute attribute) {
+        AttributeSeed seed = new AttributeSeed();
+        seed.name(attribute.getName());
+        seed.description(attribute.getDescription());
+
         TestChain<CreatedResource> createAttributeChain = restClient.createCertifiedAttribute(seed);
         return createAttributeChain
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
