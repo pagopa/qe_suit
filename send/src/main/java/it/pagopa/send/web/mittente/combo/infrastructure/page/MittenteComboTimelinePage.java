@@ -1,6 +1,7 @@
-package it.pagopa.send.web.mittente.combo;
+package it.pagopa.send.web.mittente.combo.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
+import it.frontend.e2e.framework.web.config.WebSuiteContext;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.mittente.combo.component.ComboTimelineComponent;
@@ -53,5 +54,11 @@ public interface MittenteComboTimelinePage extends Page {
                 .as("Caricamento Timeline Comunicazione Bonaria")
                 .doesNotThrowAnyException();
         softly.assertAll();
+    }
+
+    private void reload() {
+        WebSuiteContext.getConfiguration()
+                .getPresentationApiAdapters()
+                .forEach(it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter::refresh);
     }
 }
