@@ -1,7 +1,7 @@
 package it.pagopa.interop.suite;
 
 import it.pagopa.infrastructure.reporting.contract.lifecycle.GenerateContractReport;
-import it.pagopa.interop.suite.contract.WebEServiceCatalogDetailsContractTest;
+import it.pagopa.interop.suite.contract.eservicedetail.WebEServiceCatalogDetailsContractTest;
 import org.junit.platform.suite.api.*;
 
 @Suite
