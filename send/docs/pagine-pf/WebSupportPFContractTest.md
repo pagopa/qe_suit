@@ -18,7 +18,7 @@ In rosso quello che controlla `assertLoaded()`: il titolo, i campi e i pulsanti 
 
 I testi della pagina e del form (avviso sulla PEC, etichette, informativa privacy), i pulsanti, il link alla privacy
 policy dell'assistenza, il form vuoto all'apertura e le validazioni. In rosso gli elementi controllati, esclusi i
-messaggi.
+messaggi di errore.
 
 ![Come possiamo aiutarti?, elementi verificati](img/WebSupportPFContractTest/pagina.png)
 

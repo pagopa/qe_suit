@@ -18,7 +18,7 @@ contenuto.
 ## Cosa verifica il contract test
 
 Il titolo, "Esci" e i nomi dei due passi; per ogni passo testi e pulsanti, e i messaggi di validazione di email e
-cellulare. In rosso gli elementi controllati, esclusi i messaggi.
+cellulare. In rosso gli elementi controllati, esclusi i messaggi di errore.
 
 Passo 1, Attiva gli avvisi su IO:
 

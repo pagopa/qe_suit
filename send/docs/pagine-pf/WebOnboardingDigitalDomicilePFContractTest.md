@@ -17,7 +17,7 @@ In rosso quello che controlla `assertLoaded()`: che la pagina sia caricata. Ogni
 ## Cosa verifica il contract test
 
 Il titolo, "Esci" e i nomi dei quattro passi; poi, per ogni passo, testi e pulsanti, e i messaggi di validazione
-dell'email al passo 2. In rosso gli elementi controllati, esclusi i messaggi.
+dell'email al passo 2. In rosso gli elementi controllati, esclusi i messaggi di errore.
 
 Passo 1, Scegli un domicilio digitale, con la PEC in attivazione (Lucrezia):
 

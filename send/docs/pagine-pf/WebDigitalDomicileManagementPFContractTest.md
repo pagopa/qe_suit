@@ -19,7 +19,7 @@ In rosso quello che controlla `assertLoaded()`: il titolo, "Personalizza per ent
 
 Il titolo, lo stato e l'indirizzo del domicilio, le opzioni "Trasferisci su SEND" e "Personalizza per ente" con quello
 che aprono, e il form "Personalizza per ente" con i suoi messaggi. In rosso gli elementi controllati, esclusi i
-messaggi, la tendina "Tipologia" aperta e il wizard di trasferimento.
+messaggi di errore, la tendina "Tipologia" aperta e il wizard di trasferimento.
 
 Le opzioni:
 

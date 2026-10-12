@@ -17,7 +17,7 @@ In rosso quello che controlla `assertLoaded()`: il titolo del wizard, i tre pass
 ## Cosa verifica il contract test
 
 Il titolo e i nomi dei passi; per ogni passo testi e pulsanti; la finestra che si apre da "consegnata"; i messaggi di
-validazione di email e cellulare al passo 2. In rosso gli elementi controllati, esclusi i messaggi e la finestra.
+validazione di email e cellulare al passo 2. In rosso gli elementi controllati, esclusi i messaggi di errore e la finestra.
 
 Passo 1, Come funziona (Lucrezia):
 

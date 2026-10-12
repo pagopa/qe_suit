@@ -2,8 +2,10 @@
 
 Pagina `{baseUrl}/deleghe/nuova`, dal pulsante "Aggiungi una delega" della pagina Deleghe.
 
-- Page object: [`NewDelegationPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/NewDelegationPFPage.java)
-- Test: [`WebNewDelegationPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebNewDelegationPFContractTest.java)
+- Page object: [`NewDelegationPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/NewDelegationPFPage.java),
+  con il form comune all'impresa in [`NewDelegationFormPage`](../../src/main/java/it/pagopa/send/web/delegation/infrastructure/suit/NewDelegationFormPage.java)
+- Test: [`WebNewDelegationPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebNewDelegationPFContractTest.java),
+  con gli scenari in [`NewDelegationScenarios`](../../src/test/java/it/pagopa/send/suite/contract/NewDelegationScenarios.java)
 - Utente: Lucrezia Borgia (il form è uguale per tutti i cittadini)
 - Navigazione: `WebRecipientPfNavigationContractTest#shouldReachNewDelegationPF`, vedi
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#aggiungi-una-delega)
@@ -18,7 +20,7 @@ In rosso quello che controlla `assertLoaded()`: il titolo, i campi e i pulsanti 
 
 I testi della pagina e del form, il codice di verifica di 5 cifre, i valori iniziali (persona fisica, tutti gli enti,
 termine della delega a domani), i campi che cambiano con le scelte e i messaggi di validazione. In rosso gli elementi
-controllati, esclusi i messaggi.
+controllati, esclusi i messaggi di errore delle validazioni, che compaiono solo dopo aver compilato il form.
 
 All'apertura:
 

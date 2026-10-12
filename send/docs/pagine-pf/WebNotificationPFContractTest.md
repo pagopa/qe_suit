@@ -19,8 +19,7 @@ In rosso quello che controlla `assertLoaded()`: il titolo e i campi dei filtri. 
 ## Cosa verifica il contract test
 
 I testi della pagina e dei filtri, le opzioni di "Tipologia", la tabella con la paginazione, il filtro per tipologia,
-il banner per attivare il domicilio digitale e i messaggi dei filtri. In rosso gli elementi controllati, esclusi i
-messaggi e i menu aperti.
+il banner per attivare il domicilio digitale e i messaggi dei filtri. In rosso gli elementi controllati, esclusi i messaggi di errore e i menu aperti.
 
 Con domicilio digitale (Lucrezia):
 

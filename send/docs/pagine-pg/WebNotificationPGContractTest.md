@@ -21,7 +21,7 @@ anche il login PG degli step Cucumber.
 ## Cosa verifica il contract test
 
 Gli stessi controlli della pagina del cittadino ([WebNotificationPFContractTest](../pagine-pf/WebNotificationPFContractTest.md)),
-con il titolo "In arrivo per Le Epistolae srl". In rosso gli elementi controllati, esclusi i messaggi e i menu aperti.
+con il titolo "In arrivo per Le Epistolae srl". In rosso gli elementi controllati, esclusi i messaggi di errore e i menu aperti.
 
 ![In arrivo per Le Epistolae srl, elementi verificati](img/WebNotificationPGContractTest/pagina.png)
 

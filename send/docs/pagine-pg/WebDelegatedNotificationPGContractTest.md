@@ -21,8 +21,7 @@ In rosso quello che controlla `assertLoaded()`: il titolo "In arrivo dalle deleg
 
 Il titolo, le etichette dei filtri, i messaggi dei filtri e la tabella con la paginazione. Rispetto a
 [In arrivo per l'impresa](WebNotificationPGContractTest.md) la pagina non ha il filtro "Tipologia" e la tabella ha in
-più la colonna "Destinatario", con il codice fiscale del delegante. In rosso gli elementi controllati, esclusi i
-messaggi e i menu aperti.
+più la colonna "Destinatario", con il codice fiscale del delegante. In rosso gli elementi controllati, esclusi i messaggi di errore e i menu aperti.
 
 ![In arrivo dalle deleghe, elementi verificati](img/WebDelegatedNotificationPGContractTest/pagina.png)
 
