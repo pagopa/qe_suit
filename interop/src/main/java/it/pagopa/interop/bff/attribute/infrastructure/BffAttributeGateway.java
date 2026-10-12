@@ -36,10 +36,10 @@ import static org.instancio.Select.field;
 @RequiredArgsConstructor
 public class BffAttributeGateway implements AttributeGateway {
 
-    private final BffEServiceRestClient restClient;
+    private final BffAttributeRestClient restClient;
     private final BffEServiceDescriptorGateway descriptorGateway;
     private final EntityStore entityStore;
-    private final BffEServiceMapper mapper;
+    private final BffAttributeMapper mapper;
 
     @Override
     public Attribute getAttribute(AttributeRef attributeRef) {

@@ -1,10 +1,11 @@
 package it.pagopa.interop.web.attribute.infrastructure;
 
 import it.pagopa.interop.common.attribute.application.AttributeGateway;
+import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
-import it.pagopa.interop.web.eservice.infrastructure.WebEServiceGeneralDataGateway;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceEditPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceViewPage;
 import it.pagopa.interop.web.infrastructure.WebCommonGateway;
@@ -20,6 +21,16 @@ public class WebAttributeGateway implements AttributeGateway {
     private final EServiceEditPage eServiceEditPage;
     private final EServiceViewPage eServiceViewPage;
     private final WebCommonGateway webCommonGateway;
+
+    @Override
+    public Attribute createCertifiedAttribute(Attribute attribute) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Attribute getAttribute(AttributeRef attributeRef) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
 
     @Override
     public void removeCertifiedAttributeThresholdFromDraftEService(EServiceRef eServiceRef, EServiceDescriptorRef eServiceDescriptorRef, int groupIndex, int attributeIndex) {
