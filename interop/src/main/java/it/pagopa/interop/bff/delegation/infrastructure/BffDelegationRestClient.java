@@ -5,9 +5,11 @@ import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ConsumerDelegationsApi;
+import it.pagopa.interop.generated.openapi.clients.bff.api.DelegationsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerDelegationsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Delegation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Delegation;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +21,32 @@ public class BffDelegationRestClient extends RestClient {
 
     private final ConsumerDelegationsApi consumerDelegationsApi;
     private final ProducerDelegationsApi producerDelegationsApi;
+    private final DelegationsApi delegationsApi;
 
     public BffDelegationRestClient(TestChainFactory chainFactory, ApiClient apiClient) {
         super(chainFactory);
         this.consumerDelegationsApi = apiClient.consumerDelegations();
+        this.producerDelegationsApi = apiClient.producerDelegations();
+        this.delegationsApi = apiClient.delegations();
+    }
+
+    public TestChain<Void> approveProducerDelegation(@Nonnull UUID delegationId) {
+        return execute(
+                () -> producerDelegationsApi.approveProducerDelegation()
+                        .delegationIdPath(delegationId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Delegation> getDelegation(@Nonnull UUID delegationId) {
+        return execute(
+                () -> delegationsApi.getDelegation()
+                        .delegationIdPath(delegationId)
+                        .execute(Function.identity()),
+                Delegation.class
+        );
         this.producerDelegationsApi = apiClient.producerDelegations();
     }
 
@@ -41,18 +65,18 @@ public class BffDelegationRestClient extends RestClient {
         );
     }
 
-    public TestChain<Delegation> createProducerDelegation(
+    public TestChain<CreatedResource> createProducerDelegation(
             @Nonnull UUID delegateId,
             @Nonnull UUID eServiceId
     ) {
-        DelegationSeed seed = new DelegationSeed();
-        seed.setDelegateId(delegateId);
-        seed.setEserviceId(eServiceId);
+        DelegationSeed seed = new DelegationSeed()
+                .delegateId(delegateId)
+                .eserviceId(eServiceId);
         return execute(
                 () -> producerDelegationsApi.createProducerDelegation()
                         .body(seed)
                         .execute(Function.identity()),
-                Delegation.class
+                CreatedResource.class
         );
     }
 
@@ -65,6 +89,4 @@ public class BffDelegationRestClient extends RestClient {
                 Void.class
         );
     }
-
-
 }
