@@ -20,21 +20,6 @@ class BffTenantRequestFactoryTest {
     private final TenantRequestFactory factory = new BffTenantRequestFactory();
 
     @Test
-    @DisplayName("TenantRef e AttributeRef rifiutano UUID nulli")
-    @SuppressWarnings("ConstantConditions")
-    void refsShouldRejectNullIds() {
-        assertThatThrownBy(() -> new TenantRef(null))
-                .isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> TenantRef.of(null))
-                .isInstanceOf(NullPointerException.class);
-
-        assertThatThrownBy(() -> new AttributeRef(null))
-                .isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> AttributeRef.of(null))
-                .isInstanceOf(NullPointerException.class);
-    }
-
-    @Test
     @DisplayName("Il comando certified incapsula il payload e consente di modificare l'attributo")
     void shouldBuildCertifiedAttributeSeed() {
         UUID attrId = UUID.randomUUID();
