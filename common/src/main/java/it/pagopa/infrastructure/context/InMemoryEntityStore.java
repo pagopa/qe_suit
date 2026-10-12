@@ -39,6 +39,18 @@ public class InMemoryEntityStore implements EntityStore {
     }
 
     @Override
+    public <Model extends Identifiable> Optional<Model> getFirst(Class<Model> modelClass) {
+        List<Model> entries = entries(modelClass);
+        return entries.isEmpty() ? Optional.empty() : Optional.of(entries.get(0));
+    }
+
+    @Override
+    public <Model extends Identifiable> Model getFirstOrThrow(Class<Model> modelClass) {
+        return getFirst(modelClass)
+                .orElseThrow(() -> new NoSuchElementException("Nessun elemento trovato per il tipo: " + modelClass.getSimpleName()));
+    }
+
+    @Override
     public <Model extends Identifiable> Optional<Model> getLast(Class<Model> modelClass) {
         List<Model> entries = entries(modelClass);
         return entries.isEmpty() ? Optional.empty() : Optional.of(entries.get(entries.size() - 1));
