@@ -22,12 +22,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
@@ -57,6 +52,19 @@ public class ArchitectureRulesTest {
             noClasses()
                     .that().resideInAnyPackage("..domain..")
                     .should().dependOnClassesThat().resideInAnyPackage("..infrastructure..");
+    @ArchTest
+    static final ArchRule common_application_must_not_depend_on_infrastructure_or_generated =
+            noClasses()
+                    .that().resideInAnyPackage("..common..application..")
+                    .should().dependOnClassesThat()
+                    .resideInAnyPackage("..infrastructure..", "..generated..");
+
+    @ArchTest
+    static final ArchRule common_domain_must_not_depend_on_infrastructure_or_generated =
+            noClasses()
+                    .that().resideInAnyPackage("..common..domain..")
+                    .should().dependOnClassesThat()
+                    .resideInAnyPackage("..infrastructure..", "..generated..");
 
     @Test
     void packages_under_common_bff_web_must_follow_global_or_vertical_structure() {
