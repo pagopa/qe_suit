@@ -2,8 +2,10 @@
 
 Pagina `{baseUrl}/app-status`, dalla voce "Stato della piattaforma" del menu laterale.
 
-- Page object: [`AppStatusPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/AppStatusPFPage.java)
-- Test: [`WebAppStatusPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebAppStatusPFContractTest.java)
+- Page object: [`AppStatusPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/AppStatusPFPage.java),
+  con la pagina comune all'impresa in [`AppStatusPage`](../../src/main/java/it/pagopa/send/web/app_status/infrastructure/suit/AppStatusPage.java)
+- Test: [`WebAppStatusPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebAppStatusPFContractTest.java),
+  con gli scenari in [`AppStatusScenarios`](../../src/test/java/it/pagopa/send/suite/contract/AppStatusScenarios.java)
 - Utente: Lucrezia Borgia (la pagina è uguale per tutti i cittadini)
 - Navigazione: `WebRecipientPfNavigationContractTest#shouldReachAppStatusPF`, vedi
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#stato-della-piattaforma)
