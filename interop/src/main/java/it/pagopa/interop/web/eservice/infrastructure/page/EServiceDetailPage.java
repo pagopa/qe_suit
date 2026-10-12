@@ -156,7 +156,7 @@ public interface EServiceDetailPage extends Page {
     @XPath(GENERAL_SECTION + "//*[(self::a or self::button)][normalize-space()='Vedi i dettagli sullo scambio asincrono']")
     Label showAsyncExchangeDetailsAction();
 
-    @XPath(GENERAL_SECTION + "//*[(self::a or self::button)][.//span[normalize-space()='Visualizza i contatti dell’erogatore']]")
+    @XPath(GENERAL_SECTION + "//*[(self::a or self::button)][normalize-space()='Visualizza i contatti dell’erogatore']")
     Label showProducerContactsAction();
 
     // Closed MUI drawers are not mounted: any mounted drawer is an open one
@@ -189,8 +189,7 @@ public interface EServiceDetailPage extends Page {
     @XPath(SIGNAL_HUB_SECTION + "//*[normalize-space()='Disponibilità del servizio' and not(*)]")
     Label signalHubAvailabilityLabel();
 
-    // TODO controllare che sia valido
-    @XPath(SIGNAL_HUB_SECTION + "//*[normalize-space()='Disponibilità del servizio' and not(*)]/following-sibling::*[1]")
+    @XPath(SIGNAL_HUB_SECTION + "//p[normalize-space()='Disponibilità del servizio']/parent::div/following-sibling::div[1]//span")
     Label signalHubAvailabilityValue();
 
     // ----------------------------------------------- Thresholds and attributes
@@ -207,15 +206,13 @@ public interface EServiceDetailPage extends Page {
     @XPath(ATTRIBUTES_SECTION + "//*[normalize-space()='Soglia giornaliera per fruitore' and not(*)]")
     Label dailyCallsPerConsumerLabel();
 
-    // TODO controllare che sia valido
-    @XPath(ATTRIBUTES_SECTION + "//*[normalize-space()='Soglia giornaliera per fruitore' and not(*)]/following-sibling::*[1]")
+    @XPath(ATTRIBUTES_SECTION + "//*[normalize-space()='Soglia giornaliera per fruitore' and not(*)]/parent::div/following-sibling::div[1]//span")
     Label dailyCallsPerConsumerValue();
 
     @XPath(ATTRIBUTES_SECTION + "//*[normalize-space()='Soglia giornaliera totale' and not(*)]")
     Label dailyCallsTotalLabel();
 
-    // TODO controllare che sia valido
-    @XPath(ATTRIBUTES_SECTION + "//*[normalize-space()='Soglia giornaliera totale' and not(*)]/following-sibling::*[1]")
+    @XPath(ATTRIBUTES_SECTION + "//*[normalize-space()='Soglia giornaliera totale' and not(*)]/parent::div/following-sibling::div[1]//span")
     Label dailyCallsTotalValue();
 
     @XPath(ATTRIBUTES_SECTION + "//h3[normalize-space()='Soglie di chiamate API personalizzate']")
