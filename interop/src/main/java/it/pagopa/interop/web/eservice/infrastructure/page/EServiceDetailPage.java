@@ -46,8 +46,8 @@ public interface EServiceDetailPage extends Page {
     default void assertLoaded() {
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(breadcrumbs().getLastItemText()).as("Breadcrumbs last item text").isEqualTo("Visualizza e-service");
-            pageTitle().readAndAssert(title -> Assertions.assertThat(title).as("Page title is not blank").isNotBlank());
-            agreementButton().assertLoaded();
+            softly.assertThat(pageTitle().read()).as("Page title").isNotBlank();
+            softly.assertThat(agreementButton().get()).as("Request agreement button").isPresent();
         });
     }
 }
