@@ -1,12 +1,14 @@
 package it.pagopa.interop.bff.client.infrastructure;
 
+import it.pagopa.interop.bff.client.application.BffClientCreationCommand;
 import it.pagopa.interop.bff.client.application.BffClientKeyCreationCommand;
 import it.pagopa.interop.common.client.application.ClientRequestFactory;
+import it.pagopa.interop.common.client.application.command.ClientCreationCommand;
+import it.pagopa.interop.common.client.application.command.ClientKeyCreationCommand;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
 import org.jspecify.annotations.NonNull;
@@ -27,22 +29,24 @@ public class BffClientRequestFactory implements ClientRequestFactory {
     private final CurrentUserSession currentUserSession;
 
     @Override
-    public ClientSeed creationRequest() {
+    public ClientCreationCommand creationRequest() {
         User user = getUser();
         UUID userId = user != null ? user.getUserId() : DEFAULT_MEMBER_ID;
 
-        return Instancio.of(ClientSeed.class)
+        ClientSeed seed = Instancio.of(ClientSeed.class)
                 .set(field(ClientSeed::getName), randomAlphanumericName("client", 24))
                 .set(field(ClientSeed::getDescription), randomAlphanumericName("description", 32))
                 .set(field(ClientSeed::getMembers), List.of(userId))
                 .create();
+
+        return BffClientCreationCommand.from(seed);
     }
 
     @Override
-    public KeySeed keyCreationRequest() {
+    public ClientKeyCreationCommand keyCreationRequest() {
         BffClientKeyCreationCommand command = new BffClientKeyCreationCommand();
         command.randomClientKey();
-        return command.getKeySeed();
+        return command;
     }
 
     @Override
@@ -59,4 +63,3 @@ public class BffClientRequestFactory implements ClientRequestFactory {
         }
     }
 }
-
