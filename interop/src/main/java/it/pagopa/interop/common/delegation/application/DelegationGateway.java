@@ -10,6 +10,10 @@ import org.springframework.plugin.core.Plugin;
 
 public interface DelegationGateway extends Plugin<Channel> {
 
+    Delegation createProducerDelegation(TenantRef delegateRef, EServiceRef eServiceRef);
+
+    void approveProducerDelegation(DelegationRef delegationRef);
+
     Delegation createConsumerDelegation(TenantRef delegateRef, EServiceRef eServiceRef);
 
     Delegation createProducerDelegation(TenantRef delegateRef, EServiceRef eServiceRef);
