@@ -2,7 +2,6 @@ package it.pagopa.interop.common.attribute.application;
 
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeSeed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +18,10 @@ public class AttributeUseCase {
     }
 
     public Attribute createCertifiedAttribute() {
-        AttributeSeed seed = new AttributeSeed()
+        Attribute attribute = Attribute.builder()
                 .name("attribute-" + Instant.now().getEpochSecond() + "-CERTIFIED")
-                .description("Description Test");
-        return attributeGateway.createCertifiedAttribute(seed);
+                .description("Test Description")
+                .build();
+        return attributeGateway.createCertifiedAttribute(attribute);
     }
 }
