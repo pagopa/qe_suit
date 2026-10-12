@@ -1,6 +1,8 @@
-package it.pagopa.send.web.mittente.combo;
+package it.pagopa.send.web.mittente.combo.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
+import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
+import it.frontend.e2e.framework.web.config.WebSuiteContext;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.mittente.combo.component.ComboChannelsSection;
@@ -83,5 +85,11 @@ public interface MittenteComboDetailsPage extends Page {
                 .as("Caricamento Sezione Canali")
                 .doesNotThrowAnyException();
         softly.assertAll();
+    }
+
+    private void reload() {
+        WebSuiteContext.getConfiguration()
+                .getPresentationApiAdapters()
+                .forEach(IWebPresentationApiAdapter::refresh);
     }
 }

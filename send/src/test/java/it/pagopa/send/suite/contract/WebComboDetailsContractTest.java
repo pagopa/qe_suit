@@ -7,7 +7,7 @@ import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.user.domain.Recipient;
 import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.send.web.mittente.combo.MittenteComboDetailsPage;
+import it.pagopa.send.web.mittente.combo.infrastructure.page.MittenteComboDetailsPage;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
