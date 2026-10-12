@@ -11,12 +11,6 @@ public interface Page extends AbstractPage {
         );
     }
 
-    default void reload() {
-        WebSuiteContext.getConfiguration()
-                .getPresentationApiAdapters()
-                .forEach(it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter::refresh);
-    }
-
     default Url getUrl() {
         var annotation = findUrlAnnotation(this.getClass());
 
