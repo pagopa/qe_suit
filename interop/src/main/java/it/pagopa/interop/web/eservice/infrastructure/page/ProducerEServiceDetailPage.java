@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Dialog;
@@ -20,6 +21,12 @@ public interface ProducerEServiceDetailPage extends Page {
 
     @XPath(".//button[@aria-label='Apri men\u00f9 delle azioni']")
     Button actionsMenuButton();
+
+    @XPath("//ul[@role='menu']")
+    Component actionsMenu();
+
+    @XPath("//ul[@role='menu']/li[@role='menuitem']")
+    Component actionsMenuItems();
 
     @XPath("//li[@role='menuitem' and normalize-space(.)='Duplica e-service']")
     Button duplicateEServiceButton();
