@@ -9,6 +9,7 @@ import it.pagopa.send.common.user.domain.Recipient;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.AddressPGPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.ApiIntegrationPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.DelegatedNotificationPage;
+import it.pagopa.send.web.destinatario_pg.infrastructure.page.DigitalDomicileActivationPGPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.NewDelegationPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.OrganizationAuthorizedRepresentativesPage;
@@ -72,6 +73,11 @@ public class WebRecipientPgNavigationContractTest {
     @TestFactory
     Stream<DynamicTest> shouldReachAddress() {
         return reachabilityTest(AddressPGPage.class);
+    }
+
+    @TestFactory
+    Stream<DynamicTest> shouldReachDigitalDomicileActivation() {
+        return reachabilityTest(DigitalDomicileActivationPGPage.class);
     }
 
     @TestFactory

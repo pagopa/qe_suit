@@ -2,8 +2,10 @@
 
 Wizard `{baseUrl}/recapiti/domicilio-digitale/attivazione`, dalla card domicilio digitale di "I tuoi recapiti".
 
-- Page object: [`DigitalDomicileActivationPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/DigitalDomicileActivationPFPage.java)
-- Test: [`WebDigitalDomicileActivationPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebDigitalDomicileActivationPFContractTest.java)
+- Page object: [`DigitalDomicileActivationPFPage`](../../src/main/java/it/pagopa/send/web/destinatario_pf/infrastructure/page/DigitalDomicileActivationPFPage.java),
+  con il wizard comune all'impresa in [`DigitalDomicileActivationPage`](../../src/main/java/it/pagopa/send/web/address/infrastructure/suit/DigitalDomicileActivationPage.java)
+- Test: [`WebDigitalDomicileActivationPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebDigitalDomicileActivationPFContractTest.java),
+  con gli scenari comuni in [`DigitalDomicileActivationScenarios`](../../src/test/java/it/pagopa/send/suite/contract/DigitalDomicileActivationScenarios.java)
 - Utente: Lucrezia Borgia
 - Navigazione: `WebRecipientPfNavigationContractTest#shouldReachDigitalDomicileActivationPF`, vedi
   [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#attiva-domicilio-digitale-su-send)
