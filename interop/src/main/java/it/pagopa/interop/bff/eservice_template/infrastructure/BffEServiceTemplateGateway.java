@@ -7,11 +7,13 @@ import it.pagopa.interop.common.eservice_template.application.command.EServiceTe
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.DocumentKind;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
 import it.pagopa.utils.FileUtils;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -62,7 +64,12 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
-        EServiceTemplate refreshed = getVersion(template);
+        EServiceTemplate refreshed = PollingUtils.pollUntil(
+                () -> getVersion(template),
+                t -> t.getVersions().get(0).getInterfaceDocument() != null,
+                "Failed to refresh template version after interface upload"
+        );
+
         Assertions.assertThat(refreshed.getVersions().get(0).getInterfaceDocument().id())
                 .isEqualTo(createdDocument.getId());
         return refreshed;
@@ -75,10 +82,11 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
-        EServiceTemplate published = getVersion(template);
-        Assertions.assertThat(published.getVersions().get(0).getState())
-                .isEqualTo(it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState.PUBLISHED);
-        return published;
+        return PollingUtils.pollUntil(
+                () -> getVersion(template),
+                state -> state.getVersions().get(0).getState() == EServiceTemplateVersionState.PUBLISHED,
+                "Failed to refresh template version after publishing"
+        );
     }
 
     @Override
