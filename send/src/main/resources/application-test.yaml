@@ -47,6 +47,7 @@ url:
       notifiche-delegato: ${url.notifiche.persona-giuridica.base}/notifiche-delegato
       app-status: ${url.notifiche.persona-giuridica.base}/app-status
       integrazione-api: ${url.notifiche.persona-giuridica.base}/integrazione-api
+      integrazione-api-registra-chiave-pubblica: ${url.notifiche.persona-giuridica.base}/integrazione-api/registra-chiave-pubblica
       recapiti: ${url.notifiche.persona-giuridica.base}/recapiti
       recapiti-domicilio-digitale-attivazione: ${url.notifiche.persona-giuridica.base}/recapiti/domicilio-digitale/attivazione
       deleghe-a-carico: ${url.notifiche.persona-giuridica.base}/deleghe/a-carico
