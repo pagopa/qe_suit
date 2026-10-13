@@ -24,6 +24,7 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterfa
 import it.pagopa.interop.common.eservice_template.domain.RestOpenApiInterfaceVerifier;
 import it.pagopa.interop.common.eservice_template.domain.WsdlInterfaceVerifier;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
+@RequiredArgsConstructor
 public class EServiceTemplateInterfaceSteps {
     private final InteropJourney journey;
     private final EServiceTemplateUseCase templateUseCase;
@@ -46,29 +48,6 @@ public class EServiceTemplateInterfaceSteps {
     private List<SoapAddressConfiguration> expectedAddresses;
     private RestInterfaceConfiguration expectedRestConfiguration;
     private String interfaceFixture;
-    private EService createdEService;
-
-    @After
-    public void cleanupCreatedEServiceInstance() {
-        if (createdEService != null) {
-            log.info("PIN-10024 cleanup draft instance: eServiceId={}", createdEService.getId());
-            eServiceUseCase.deleteEService(createdEService);
-        }
-    }
-
-    public EServiceTemplateInterfaceSteps(
-            InteropJourney journey,
-            EServiceTemplateUseCase templateUseCase,
-            EServiceUseCase eServiceUseCase,
-            EServiceDescriptorUseCase descriptorUseCase,
-            EntityStore entityStore
-    ) {
-        this.journey = journey;
-        this.templateUseCase = templateUseCase;
-        this.eServiceUseCase = eServiceUseCase;
-        this.descriptorUseCase = descriptorUseCase;
-        this.entityStore = entityStore;
-    }
 
     @Given("un template e-service SOAP pubblicato con l'interfaccia {string}")
     public void givenPublishedSoapTemplate(String fixture) {
@@ -219,7 +198,6 @@ public class EServiceTemplateInterfaceSteps {
         EService eService = eServiceUseCase.createEServiceInstanceFromTemplate(
                 entityStore.getLastOrThrow(EServiceTemplate.class)
         );
-        createdEService = eService;
         log.info("PIN-10024 instance created: fixture={}, templateId={}, eServiceId={}, descriptorId={}",
                 interfaceFixture, entityStore.getLastOrThrow(EServiceTemplate.class).getId(),
                 eService.getId(), eService.getLastDraftDescriptor().getId());
