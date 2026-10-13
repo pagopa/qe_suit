@@ -1,17 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:pagopa:pin10024:soap11"
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:pagopa:pin10024:soap11"
              xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              targetNamespace="urn:pagopa:pin10024:soap11">
-  <documentation>Template immutabile: &amp;preserva quote ' e CDATA.</documentation>
-  <types><xsd:schema targetNamespace="urn:pagopa:pin10024:soap11"><xsd:element name="request" type="xsd:string"/></xsd:schema></types>
-  <message name="request"><part name="body" element="tns:request"/></message>
-  <portType name="ServizioPagamenti"><operation name="paga"><input message="tns:request"/></operation></portType>
-  <binding name="bindingUno" type="tns:ServizioPagamenti">
-    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-    <operation name="paga"><soap:operation soapAction="urn:paga"/><input><soap:body use="literal"/></input></operation>
-  </binding>
-  <service name="ServizioPagamenti">
-    <port name="PortaUno" binding="tns:bindingUno"><soap:address location='https://originale.example/pay'/></port>
-  </service>
-</definitions>
+    <wsdl:documentation>Template immutabile: &amp;preserva quote ' e CDATA.</wsdl:documentation>
+    <wsdl:types>
+        <xsd:schema targetNamespace="urn:pagopa:pin10024:soap11">
+            <xsd:element name="request" type="xsd:string"/>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="request">
+        <wsdl:part name="body" element="tns:request"/>
+    </wsdl:message>
+    <wsdl:portType name="ServizioPagamenti">
+        <wsdl:operation name="paga">
+            <wsdl:input message="tns:request"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="bindingUno" type="tns:ServizioPagamenti">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="paga">
+            <soap:operation soapAction="urn:paga"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="ServizioPagamenti">
+        <wsdl:port name="PortaUno" binding="tns:bindingUno">
+            <soap:address location="https://originale.example/pay"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
