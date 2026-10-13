@@ -2,6 +2,7 @@ package it.pagopa.interop.web.attribute.infrastructure;
 
 import it.pagopa.interop.common.attribute.application.AttributeGateway;
 import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
@@ -32,8 +33,7 @@ public class WebAttributeGateway implements AttributeGateway {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    @Override
-    public void removeCertifiedAttributeThresholdFromDraftEService(EServiceRef eServiceRef, EServiceDescriptorRef eServiceDescriptorRef, int groupIndex, int attributeIndex) {
+    private void removeCertifiedAttributeThresholdFromDraftEService(EServiceRef eServiceRef, EServiceDescriptorRef eServiceDescriptorRef, int groupIndex, int attributeIndex) {
 
         eServiceEditPage.navigateTo(eServiceRef.id().toString(), eServiceDescriptorRef.id().toString());
         eServiceEditPage.assertLoaded();
@@ -42,21 +42,6 @@ public class WebAttributeGateway implements AttributeGateway {
         if (!eServiceEditPage.thresholdAndAttributeWizard().attributesTabs().certifiedAttributesTab().isActive()) {
             eServiceEditPage.thresholdAndAttributeWizard().attributesTabs().certifiedAttributesTab().activate();
         }
-
-        /*var description = eServiceEditPage.thresholdAndAttributeWizard().attributesTabs().certifiedAttributesTab().description().read();
-        var groups = eServiceEditPage.thresholdAndAttributeWizard().attributesTabs().certifiedAttributesTab().certifiedAttributeGroups();
-        var group = groups.get(groupIndex - 1);
-        var deleteAttributeButton = group.deleteAttributeButton();
-        // deleteAttributeButton.click();
-
-        var attribute = group.certifiedAttributes().get(attributeIndex - 1);
-        var attributeName = attribute.name().read();
-        var attributeThresholdInfo = attribute.thresholdInfo().read();
-
-        attribute.removeThresholdValue();
-        // attribute.remove();
-
-        SuitUtils.debug(attribute.get().orElseThrow());*/
 
         var attribute = eServiceEditPage.thresholdAndAttributeWizard().attributesTabs()
                 .certifiedAttributesTab()
@@ -70,8 +55,7 @@ public class WebAttributeGateway implements AttributeGateway {
                 .isTrue();
     }
 
-    @Override
-    public void removeCertifiedAttributeThresholdFromPublishedEService(EServiceRef eServiceRef, EServiceDescriptorRef eServiceDescriptorRef, int groupIndex, int attributeIndex) {
+    private void removeCertifiedAttributeThresholdFromPublishedEService(EServiceRef eServiceRef, EServiceDescriptorRef eServiceDescriptorRef, int groupIndex, int attributeIndex) {
 
         eServiceViewPage.navigateTo(eServiceRef.id().toString(), eServiceDescriptorRef.id().toString());
         eServiceViewPage.assertLoaded();
@@ -83,7 +67,21 @@ public class WebAttributeGateway implements AttributeGateway {
     }
 
     @Override
-    public void certifiedAttributeThresholdRemoved() {
+    public void removeCertifiedAttributeThreshold(EServiceRef eServiceRef, EServiceDescriptorRef eServiceDescriptorRef, EServiceDescriptorState state, int groupIndex, int attributeIndex) {
+        switch (state) {
+            case DRAFT:
+                removeCertifiedAttributeThresholdFromDraftEService(eServiceRef, eServiceDescriptorRef, groupIndex, attributeIndex);
+                break;
+            case PUBLISHED:
+                removeCertifiedAttributeThresholdFromPublishedEService(eServiceRef, eServiceDescriptorRef, groupIndex, attributeIndex);
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupported state: " + state);
+        }
+    }
+
+    @Override
+    public void certifiedAttributeThresholdShouldBeRemoved() {
         String actualSuccessMessage = webCommonGateway.getSnackbarSuccessMessage();
         String successMessage = "Hai rimosso la soglia di chiamate API dell’attributo certificato.";
 

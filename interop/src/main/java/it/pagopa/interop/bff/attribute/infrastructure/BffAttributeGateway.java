@@ -10,6 +10,7 @@ import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRestClient;
 import it.pagopa.interop.common.attribute.application.AttributeGateway;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
@@ -70,17 +71,12 @@ public class BffAttributeGateway implements AttributeGateway {
     }
 
     @Override
-    public void removeCertifiedAttributeThresholdFromDraftEService(EServiceRef eServiceRef, EServiceDescriptorRef eServiceDescriptorRef, int groupIndex, int attributeIndex) {
+    public void removeCertifiedAttributeThreshold(EServiceRef eServiceRef, EServiceDescriptorRef eServiceDescriptorRef, EServiceDescriptorState state, int groupIndex, int attributeIndex) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
-    public void removeCertifiedAttributeThresholdFromPublishedEService(EServiceRef eServiceRef, EServiceDescriptorRef eServiceDescriptorRef, int groupIndex, int attributeIndex) {
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
-    @Override
-    public void certifiedAttributeThresholdRemoved() {
+    public void certifiedAttributeThresholdShouldBeRemoved() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 }
