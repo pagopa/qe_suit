@@ -50,10 +50,9 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
     @Override
     public EServiceTemplate uploadInterface(EServiceTemplate template, String fixturePath) {
         EServiceTemplateVersion version = template.getVersions().get(0);
-        log.info("PIN-10024 template interface upload: fixture={}, templateId={}, versionId={}",
-                fixturePath, template.getId(), version.getId());
         File document = FileUtils.loadClasspathResourceAsTempFile(fixturePath);
         String prettyName = Path.of(fixturePath).getFileName().toString();
+
         var createdDocument = restClient.createEServiceTemplateDocument(
                         template.getId(),
                         version.getId(),
@@ -67,11 +66,15 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
         EServiceTemplate refreshed = PollingUtils.pollUntil(
                 () -> getVersion(template),
                 t -> t.getVersions().get(0).getInterfaceDocument() != null,
-                "Failed to refresh template version after interface upload"
+                "EService template version interface document not created after upload"
         );
 
-        Assertions.assertThat(refreshed.getVersions().get(0).getInterfaceDocument().id())
-                .isEqualTo(createdDocument.getId());
+        if(createdDocument == null)
+            throw new IllegalStateException("Uploaded document is null");
+
+        if(!createdDocument.getId().equals(refreshed.getVersions().get(0).getInterfaceDocument().id()))
+            throw new IllegalStateException("Uploaded document ID does not match the refreshed template version interface document ID");
+
         return refreshed;
     }
 
@@ -85,7 +88,7 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
         return PollingUtils.pollUntil(
                 () -> getVersion(template),
                 state -> state.getVersions().get(0).getState() == EServiceTemplateVersionState.PUBLISHED,
-                "Failed to refresh template version after publishing"
+                "EService template version not published after publish request"
         );
     }
 
