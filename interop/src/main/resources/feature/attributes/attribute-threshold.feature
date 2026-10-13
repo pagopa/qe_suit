@@ -10,7 +10,7 @@ Feature: Soglie differenziate
     # "bozza" e "pubblicato" potrebbero essere parametri
     # va bene in CommonParameterTypes?
 
-    Given un e-service in bozza, creato dal Comune di Milano, con un attributo certificato e una soglia personalizzata per fruitore pari a 100, in fruizione al Comune di Pozzallo
+    Given un e-service in bozza, creato dal Comune di Milano, con un attributo certificato e una soglia personalizzata per fruitore pari a 100
       | consumerThreshold | 50 |
       | totalThreshold    | 1000 |
     When l'utente rimuove la soglia personalizzata dall'attributo certificato 1 del gruppo 1 dall'e-service
@@ -21,12 +21,14 @@ Feature: Soglie differenziate
 
 
   # Scenario: [ATTRIBUTE_THRESHOLD_REMOVE_2] - Rimozione della soglia differenziata impostata per l'attributo certificato dell'e-service pubblicato.
-    # Given un e-service attivo creato dal Comune di Milano con un attributo certificato e una soglia personalizzata
-    # When l'utente rimuove la soglia personalizzata dall'attributo certificato 1 del gruppo 1 dall'e-service attivo
-    # Then viene mostrata la snackbar con un messaggio di successo contenente "Hai rimosso la soglia di chiamate API dell’attributo certificato."
+  #   Given un e-service in pubblicato, creato dal Comune di Milano, con un attributo certificato e una soglia personalizzata per fruitore pari a 100, in fruizione al Comune di Pozzallo
+  #     | consumerThreshold | 50 |
+  #     | totalThreshold    | 1000 |
+  #   When l'utente rimuove la soglia personalizzata dall'attributo certificato 1 del gruppo 1 dall'e-service
+  #   Then viene confermato l'esito di successo per la rimozione della soglia personalizzata
 
   # Scenario: [ATTRIBUTE_THRESHOLD_REMOVE_3] - Rimozione della soglia differenziata impostata per l'attributo certificato della nuova versione e-service in bozza.
-    # Given una nuova versione dell'e-service in bozza creata dal Comune di Milano con un attributo certificato e una soglia personalizzata
+    # Given una nuova versione dell'e-service in bozza, creata dal Comune di Milano, con un attributo certificato e una soglia personalizzata per fruitore pari a 100, in fruizione al Comune di Pozzallo
 
   # Scenario: [ATTRIBUTE_THRESHOLD_REMOVE_4] - Rimozione della soglia differenziata impostata per l'attributo certificato della nuova versione e-service pubblicato.
     # Given una nuova versione dell'e-service attiva creata dal Comune di Milano con un attributo certificato e una soglia personalizzata
