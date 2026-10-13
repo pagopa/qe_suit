@@ -2,8 +2,11 @@ package it.pagopa.interop.web.eservice.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
+import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.Dialog;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 
@@ -14,6 +17,26 @@ public interface ProducerEServiceDetailPage extends Page {
     Readable<String> pageTitle();
 
     Breadcrumbs breadcrumbs();
+
+    @XPath(".//button[@aria-label='Apri men\u00f9 delle azioni']")
+    Button actionsMenuButton();
+
+    @XPath("//li[@role='menuitem' and normalize-space(.)='Duplica e-service']")
+    Button duplicateEServiceButton();
+
+    @XPath("//div[@role='dialog' and .//*[normalize-space(.)='Conferma clonazione e-service']]")
+    Dialog duplicationConfirmationDialog();
+
+    EServiceEditPage duplicatedEServicePage();
+
+    default void duplicateEService() {
+        actionsMenuButton().click();
+        Assertions.assertThat(duplicateEServiceButton().get(FindPolicy.CLICKABLE))
+                .as("Duplica e-service is visible and enabled")
+                .isPresent();
+        duplicateEServiceButton().click();
+        duplicationConfirmationDialog().confirmBtn().click();
+    }
 
     @Override
     default void assertLoaded() {
