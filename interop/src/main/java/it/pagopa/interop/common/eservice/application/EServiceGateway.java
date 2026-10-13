@@ -11,13 +11,9 @@ import org.springframework.plugin.core.Plugin;
 public interface EServiceGateway extends Plugin<Channel> {
     EService createEService(EServiceCreationCommand command);
 
-    default EService createEServiceInstanceFromTemplate(EServiceTemplate template) {
-        throw new UnsupportedOperationException("Creazione da template disponibile soltanto nel canale BFF");
-    }
+    EService createEServiceInstanceFromTemplate(EServiceTemplate template);
 
-    default void deleteEService(EService eService) {
-        throw new UnsupportedOperationException("Eliminazione E-service disponibile soltanto nel canale BFF");
-    }
+    void deleteEService(EService eService);
 
     EService getEService(EServiceRef eServiceRef);
 
