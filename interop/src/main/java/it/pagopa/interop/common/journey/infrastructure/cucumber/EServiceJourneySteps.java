@@ -14,6 +14,7 @@ import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescr
 import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
@@ -102,5 +103,41 @@ public class EServiceJourneySteps {
         interopJourney
                 .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
                 .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
+    }
+
+    @Given("un e-service in bozza, creato dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}, in fruizione al {tenant}")
+    public void createDraftEServiceDescriptor(Tenant producer, int customThreshold, Tenant consumer, DataTable defaultThresholds) {
+
+        Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
+
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createCertifiedAttribute()
+                .assignCertifiedAttribute(TenantRef.of(consumer.getOrganizationId()));
+
+
+
+        // Spostare questa logica nel journey
+
+        Attribute attribute = entityStore.getLastOrThrow(Attribute.class)
+                .toBuilder()
+                .dailyCallsPerConsumer(customThreshold)
+                .build();
+
+        Attributes attributes = Attributes.builder().certified(List.of(attribute)).build();
+
+        EServiceCreationCommand eServiceCommand = eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(false);
+        UpdateEServiceDescriptorCommand updateCommand = eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(
+            thresholdsMap.getOrDefault("consumerThreshold", thresholdsMap.get("consumerThreshold")),
+            thresholdsMap.getOrDefault("totalThreshold", thresholdsMap.get("totalThreshold"))
+        );
+        updateCommand.attributes(attributes);
+
+
+
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
+                .updateDescriptor(updateCommand, EServiceDescriptorState.DRAFT);
     }
 }
