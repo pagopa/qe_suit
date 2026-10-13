@@ -1,16 +1,13 @@
 package it.pagopa.interop.common.attribute.application;
 
 import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
-import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
 import java.time.Instant;
-
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +28,7 @@ public class AttributeUseCase {
 
     public void removeCertifiedAttributeThreshold(EService eService, int groupIndex, int attributeIndex) {
 
-        // Questo codice è solo per testare la funzionalità utilizzando un e-service disponibile,
+        /*// Questo codice è solo per testare la funzionalità utilizzando un e-service disponibile,
         // in attesa di avere gli step per la creazione degli e-service.
         UUID eServiceId;
         UUID descriptorId;
@@ -60,13 +57,15 @@ public class AttributeUseCase {
                     new EServiceRef(eServiceId), new EServiceDescriptorRef(descriptorId),
                     groupIndex, attributeIndex
             );
-        }
-
-        /*switch (eService.getActiveDescriptor().getState()) {
-            case PUBLISHED -> eServiceGateway.removeCertifiedAttributeThresholdFromPublishedEService(eService.getRef(), eService.getActiveDescriptor().getRef(), groupIndex, attributeIndex);
-            case DRAFT -> eServiceGateway.removeCertifiedAttributeThresholdFromDraftEService(eService.getRef(), eService.getActiveDescriptor().getRef(), groupIndex, attributeIndex);
-            default -> throw new IllegalStateException("Unexpected value: " + eService.getActiveDescriptor().getState());
         }*/
+
+        EServiceDescriptor lastEServiceDescriptor = eService.getLastDraftDescriptor();
+
+        switch (lastEServiceDescriptor.getState()) {
+            case PUBLISHED -> attributeGateway.removeCertifiedAttributeThresholdFromPublishedEService(eService.getRef(), lastEServiceDescriptor.getRef(), groupIndex, attributeIndex);
+            case DRAFT -> attributeGateway.removeCertifiedAttributeThresholdFromDraftEService(eService.getRef(), lastEServiceDescriptor.getRef(), groupIndex, attributeIndex);
+            default -> throw new IllegalStateException("Unexpected value: " + lastEServiceDescriptor.getState());
+        }
     }
 
     public void certifiedAttributeThresholdRemoved() {

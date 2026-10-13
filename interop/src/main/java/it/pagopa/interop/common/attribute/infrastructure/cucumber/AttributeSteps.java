@@ -12,13 +12,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AttributeSteps {
     private final AttributeUseCase attributeUseCase;
-    private final CurrentUserSession currentUserSession;
 
     @When("l'utente rimuove la soglia personalizzata dall'attributo certificato {int} del gruppo {int} dall'{currentEService}")
     public void removeCertifiedAttributeThreshold(int groupIndex, int attributeIndex, EService eService) {
-        // TODO Usare journey per recuperare l'utente corrente?
-        currentUserSession.set(User.S_MATTIA, Tenant.COMUNE_DI_MILANO);
-
         attributeUseCase.removeCertifiedAttributeThreshold(eService, groupIndex, attributeIndex);
     }
 
