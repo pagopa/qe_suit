@@ -105,8 +105,8 @@ public class EServiceJourneySteps {
                 .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
     }
 
-    @Given("un e-service in bozza, creato dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}, in fruizione al {tenant}")
-    public void createDraftEServiceDescriptor(Tenant producer, int customThreshold, Tenant consumer, DataTable defaultThresholds) {
+    @Given("un e-service in {eServiceDescriptorState}, creato dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}, in fruizione al {tenant}")
+    public void createDraftEServiceDescriptor(EServiceDescriptorState state, Tenant producer, int customThreshold, Tenant consumer, DataTable defaultThresholds) {
 
         Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
 
@@ -138,6 +138,6 @@ public class EServiceJourneySteps {
         interopJourney
                 .withProducer(producer, UserRole.ADMIN)
                 .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
-                .updateDescriptor(updateCommand, EServiceDescriptorState.DRAFT);
+                .updateDescriptor(updateCommand, state);
     }
 }
