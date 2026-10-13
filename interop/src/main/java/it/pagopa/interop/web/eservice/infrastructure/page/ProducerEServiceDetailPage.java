@@ -27,7 +27,7 @@ public interface ProducerEServiceDetailPage extends Page {
     @XPath("//div[@role='dialog' and .//*[normalize-space(.)='Conferma clonazione e-service']]")
     Dialog duplicationConfirmationDialog();
 
-    EServiceEditPage duplicatedEServicePage();
+    EServiceDraftEditPage duplicatedEServicePage();
 
     default void duplicateEService() {
         actionsMenuButton().click();
