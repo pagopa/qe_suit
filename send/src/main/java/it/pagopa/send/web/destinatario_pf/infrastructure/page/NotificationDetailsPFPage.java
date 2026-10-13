@@ -25,8 +25,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * ricezione e disservizi; una comunicazione ({@code {baseUrl}/comunicazione/<IUN>/dettaglio}) ha messaggio, documenti,
  * pagamenti e contatti del mittente. Le sezioni che implementano {@link NotificationDetailsPage} sono condivise con gli
  * step Cucumber.
- * L'assertLoaded verifica che la pagina sia caricata, cioè l'oggetto, il breadcrumb e lo IUN; intestazione e sezioni
- * sono verificate da {@code WebNotificationDetailsPFContractTest}.
+ * L'assertLoaded verifica che la pagina sia caricata, cioè l'oggetto, il breadcrumb e lo IUN. La pagina esiste solo se
+ * l'utente ha delle notifiche, quindi non ha un contract test: va verificata con dei test di business.
  */
 @Url("about:blank")
 public interface NotificationDetailsPFPage extends NotificationDetailsPage {

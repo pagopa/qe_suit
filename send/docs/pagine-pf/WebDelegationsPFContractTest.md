@@ -16,29 +16,21 @@ In rosso quello che controlla `assertLoaded()`: il titolo, "Aggiungi una delega"
 
 ## Cosa verifica il contract test
 
-I testi della pagina e delle sezioni, il pulsante e il link "Aggiungi una delega" con la pagina che aprono, e il
-contenuto di "I tuoi delegati" e "Deleghe a tuo carico". In rosso gli elementi controllati.
+Solo quello che c'è per tutti gli utenti. In rosso gli elementi controllati.
 
-Senza deleghe (Lucrezia):
+![Deleghe, elementi verificati](img/WebDelegationsPFContractTest/pagina.png)
 
-![Deleghe, utente senza deleghe](img/WebDelegationsPFContractTest/pagina.png)
+| Parte | Cosa si controlla |
+|---|---|
+| Intestazione | titolo e sottotitolo |
+| Sezioni | titoli "I tuoi delegati" e "Deleghe a tuo carico" |
+| Aggiungi una delega | il pulsante e la pagina "Aggiungi una delega" che apre |
 
-Con delegati e deleghe a carico:
+## Non verificato
 
-![Deleghe, utente con deleghe](img/WebDelegationsPFContractTest/con-deleghe.png)
-
-## Varianti
-
-Ogni sezione mostra un messaggio se è vuota, altrimenti la tabella delle deleghe. Il test controlla quello che trova.
-
-| Sezione | Vuota | Con deleghe |
-|---|---|---|
-| I tuoi delegati | "Non hai delegato nessuno…" e il link "Aggiungi una delega" | colonne e, per ogni riga, nome, date `gg/mm/aaaa`, permessi, stato e menu |
-| Deleghe a tuo carico | "Non hai deleghe a tuo carico." | come sopra; lo stato può essere "Accetta" |
-
-Le tabelle con le deleghe sono state provate il 06/10/2026 con un utente che ha sia delegati sia deleghe a carico.
+Il contenuto delle due sezioni dipende dalle deleghe dell'utente e non viene verificato: messaggio di sezione vuota con
+il link "Aggiungi una delega" oppure tabella delle deleghe.
 
 ## Note
 
 - Il test non crea, accetta, rifiuta o revoca deleghe.
-- Le due tabelle hanno la stessa struttura e usano lo stesso componente, `DelegationsTable`.

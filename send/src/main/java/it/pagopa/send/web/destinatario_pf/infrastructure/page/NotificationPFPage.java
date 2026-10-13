@@ -23,7 +23,8 @@ import java.util.Optional;
  * banner {@link AddDomicileBanner}. Il componente {@link NotificationsTable} mappa la tabella, che compare solo se
  * l'utente ha ricevuto almeno una notifica.
  * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo e i campi dei filtri; è usato anche dagli step
- * Cucumber. Testi, tabella, filtri e messaggi sono verificati da {@code WebNotificationPFContractTest}.
+ * Cucumber. Testi, filtri e messaggi sono verificati da {@code WebNotificationPFContractTest}, non la tabella, che
+ * dipende dalle notifiche dell'utente.
  */
 @Url("${url.notifiche.cittadino.notifiche}")
 public interface NotificationPFPage extends NotificationSearchPage {
@@ -230,7 +231,8 @@ public interface NotificationPFPage extends NotificationSearchPage {
     @Override
     default void assertLoaded() {
         oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
-        title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("In arrivo"));
+        // il titolo è "In arrivo" o, per chi ha deleghe a suo carico, "In arrivo per te": si controlla la parte comune
+        title().readAndAssert(h -> Assertions.assertThat(h).startsWith("In arrivo"));
         Assertions.assertThat(communicationTypeSelect().get(FindPolicy.PRESENT)).isPresent();
         Assertions.assertThat(iunSearchInput().get(FindPolicy.PRESENT)).isPresent();
         Assertions.assertThat(startDateSearchInput().get(FindPolicy.PRESENT)).isPresent();

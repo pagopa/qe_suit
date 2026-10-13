@@ -19,8 +19,9 @@ import org.assertj.core.api.Assertions;
  * ({@link SummarySection}).
  * Il passo mostrato all'apertura dipende dai recapiti dell'utente; con "Indietro" e "Avanti" ci si sposta tra i passi senza
  * salvare nulla, finché non si preme "Conferma" sull'ultimo.
- * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo "Il meglio di SEND", "Esci" e i quattro passi
- * dell'indicatore; i testi di ogni passo sono verificati da {@code WebOnboardingDigitalDomicilePFContractTest}.
+ * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo "Il meglio di SEND", "Esci" e i nomi dei quattro
+ * passi dell'indicatore. La pagina non ha un contract test: il contenuto dei passi dipende dai recapiti dell'utente, e
+ * il resto lo verifica già l'assertLoaded, eseguito da {@code WebRecipientPfNavigationContractTest}.
  */
 @Url("${url.notifiche.cittadino.onboarding-domicilio-digitale}")
 public interface OnboardingDigitalDomicilePFPage extends OnboardingWizardPFPage, Page {
@@ -154,6 +155,10 @@ public interface OnboardingDigitalDomicilePFPage extends OnboardingWizardPFPage,
         oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         wizardTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("Il meglio di SEND"));
         exitButton().assertLoaded();
-        progressItems().readAllAndAssert(h -> Assertions.assertThat(h).hasSize(4));
+        // i passi già superati mostrano un'icona al posto del numero, quindi il nome si confronta senza il numero
+        progressItems().readAllAndAssert(h -> Assertions.assertThat(h)
+                .map(item -> item.replaceFirst("^\\d+\\s*", ""))
+                .containsExactly("Scegli un domicilio digitale", "Associa una casella di posta", "Attiva gli avvisi su IO",
+                        "Controlla le opzioni scelte"));
     }
 }

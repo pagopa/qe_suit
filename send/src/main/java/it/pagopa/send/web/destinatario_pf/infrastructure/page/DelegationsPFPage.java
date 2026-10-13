@@ -18,7 +18,8 @@ import java.util.Optional;
  * Contiene la sezione "I tuoi delegati" (persone a cui l'utente ha delegato le proprie notifiche)
  * e la sezione "Deleghe a tuo carico" (persone che hanno delegato l'utente).
  * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo, il pulsante "Aggiungi una delega" e le due sezioni;
- * testi e contenuto delle sezioni, che dipende dalle deleghe dell'utente, sono verificati da {@code WebDelegationsPFContractTest}.
+ * i testi sono verificati da {@code WebDelegationsPFContractTest}, non il contenuto delle sezioni, che dipende dalle
+ * deleghe dell'utente.
  */
 @Url("${url.notifiche.cittadino.deleghe}")
 public interface DelegationsPFPage extends Page {

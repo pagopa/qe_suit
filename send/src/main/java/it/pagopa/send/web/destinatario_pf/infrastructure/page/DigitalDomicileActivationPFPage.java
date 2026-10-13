@@ -20,7 +20,8 @@ import java.util.Optional;
  * "Riepilogo" ({@link SummarySection}). Il contenuto del secondo passo e del riepilogo dipende dai recapiti di cortesia
  * dell'utente. Il pulsante "Conferma" del riepilogo attiva il domicilio digitale e nei test non va mai premuto.
  * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo del wizard, i tre passi, "Continua" e "Annulla";
- * testi e contenuto dei passi sono verificati da {@code WebDigitalDomicileActivationPFContractTest}.
+ * i testi comuni a tutti gli utenti dei primi due passi sono verificati da
+ * {@code WebDigitalDomicileActivationPFContractTest}.
  */
 @Url("${url.notifiche.cittadino.recapiti-domicilio-digitale-attivazione}")
 public interface DigitalDomicileActivationPFPage extends Page {

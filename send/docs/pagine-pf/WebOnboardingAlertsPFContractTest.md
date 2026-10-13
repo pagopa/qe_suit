@@ -17,46 +17,30 @@ contenuto.
 
 ## Cosa verifica il contract test
 
-Il titolo, "Esci" e i nomi dei due passi; per ogni passo testi e pulsanti, e i messaggi di validazione di email e
-cellulare. In rosso gli elementi controllati, esclusi i messaggi.
+Solo quello che c'è per tutti gli utenti. In rosso gli elementi controllati.
 
 Passo 1, Attiva gli avvisi su IO:
 
 ![Passo 1](img/WebOnboardingAlertsPFContractTest/passo-1.png)
 
-Passo 2, Email e SMS, con i recapiti già attivi (Lucrezia):
+Passo 2, Email e SMS:
 
-![Passo 2, recapiti attivi](img/WebOnboardingAlertsPFContractTest/passo-2.png)
+![Passo 2](img/WebOnboardingAlertsPFContractTest/passo-2.png)
 
-Passo 2 con i recapiti da inserire:
+| Parte | Cosa si controlla |
+|---|---|
+| Wizard | titolo, "Esci" e nomi dei passi "Attiva gli avvisi su IO" ed "Email e SMS" |
+| 1. Attiva gli avvisi su IO | titolo, descrizione, "Scarica l’app IO", "Ho già scaricato e installato l’app", "Indietro" e "Continua senza l'app IO" |
+| 2. Email e SMS | il banner "Più avvisi attivi…", "Indietro" e "Conferma" |
 
-![Passo 2, recapiti da inserire](img/WebOnboardingAlertsPFContractTest/passo-2-da-inserire.png)
+## Non verificato
 
-## Varianti
-
-Al passo 2 email e cellulare cambiano a seconda che il recapito sia già attivo.
-
-| Recapito | Già attivo (Lucrezia) | Da inserire |
-|---|---|---|
-| Email | "Avvisi via email attivi", l'indirizzo e Modifica | "Attiva gli avvisi via email", campo vuoto e "Verifica email" |
-| Cellulare | "Avvisi via SMS attivi", il numero e Modifica | "Attiva gli avvisi via SMS", campo vuoto, "Verifica numero" e "Annulla attivazione SMS" |
-
-I blocchi da inserire sono stati provati il 07/10/2026 con un utente senza recapiti di cortesia.
-
-## Validazioni
-
-Il test usa solo valori non validi anche togliendo gli spazi (`abc`, `123`): con un valore valido "Verifica" e
-"Conferma" invierebbero il codice di verifica. I messaggi compaiono dopo il clic sul pulsante.
-
-| Campo | Vuoto o non valido | Con spazi all'inizio o alla fine |
-|---|---|---|
-| Email da inserire | "Indirizzo email non valido" | "Elimina gli spazi all'inizio o alla fine" |
-| Cellulare da inserire | "Numero di cellulare non valido" | "Elimina gli spazi all'inizio o alla fine" |
-| Email o cellulare da modificare | "Indirizzo email non valido" / "Numero di cellulare non valido" | il portale toglie gli spazi prima di validare |
+Al passo 2 i blocchi dell'email e del cellulare dipendono dai recapiti dell'utente (recapito attivo con "Modifica"
+oppure campo per inserirlo) e non vengono verificati, con i loro messaggi di validazione.
 
 ## Note
 
-- Il test si sposta tra i passi con Indietro e Avanti, che non salvano nulla. Non compila i campi con valori validi e
-  non preme "Conferma" sull'ultimo passo.
-- I testi del blocco "Attiva SEND sull'app IO" sono gli stessi di "Tutto, sull'app IO" e de "Il meglio di SEND": le
-  costanti sono in `OnboardingIoExpectedTexts`.
+- Il test si sposta tra i passi con Indietro e Avanti, che non salvano nulla, e non preme "Conferma".
+- Il passo 2 si raggiunge con "Continua senza l'app IO": provato il 13/10/2026 con Lucrezia Borgia e con Giulio Cesare.
+- I testi del blocco "Attiva SEND sull'app IO" sono gli stessi di "Tutto, sull'app IO": le costanti sono in
+  `OnboardingIoExpectedTexts`.

@@ -17,35 +17,18 @@ Lo usano anche gli step Cucumber dei recapiti.
 
 ## Cosa verifica il contract test
 
-I testi della pagina, il contenuto di ogni card e i messaggi di validazione. In rosso gli elementi controllati, esclusi
-i messaggi.
+Solo quello che c'è per tutti gli utenti. In rosso gli elementi controllati.
 
-Con recapiti attivi (Lucrezia):
+![I tuoi recapiti, elementi verificati](img/WebAddressPFContractTest/pagina.png)
 
-![I tuoi recapiti, recapiti attivi](img/WebAddressPFContractTest/pagina.png)
+| Parte | Cosa si controlla |
+|---|---|
+| Intestazione | titolo e sottotitolo |
+| Card | titoli "Il tuo domicilio digitale", "SEND sull’app IO" e "Il tuo indirizzo email" |
+| Stato | che ci sia lo stato del domicilio digitale e di SEND sull'app IO, senza guardarne il valore |
 
-Senza recapiti:
+## Non verificato
 
-![I tuoi recapiti, recapiti da attivare](img/WebAddressPFContractTest/senza-recapiti.png)
-
-## Varianti
-
-Ogni card cambia con i recapiti dell'utente e il test controlla quella che trova.
-
-| Card | Recapito attivo | Da attivare |
-|---|---|---|
-| Domicilio digitale | PEC con Modifica, Gestisci e Disattiva; se ci sono, le PEC per ente con Modifica ed Elimina | Perché è utile?, i tre vantaggi e Inizia |
-| SEND sull'app IO | nessun utente di test ce l'ha attivo | descrizione e Scarica l'app IO |
-| Email | email con Modifica e Disattiva | campo vuoto e Aggiungi email |
-| Cellulare | card "Il tuo cellulare" con Modifica e Disattiva | Aggiungi numero di cellulare, che apre il campo con Aggiungi numero e Annulla |
-
-Le varianti "da attivare" sono state provate l'08/10/2026 con un utente senza recapiti.
-
-## Note
-
-- Il test non preme mai Disattiva, Elimina, Gestisci o Inizia.
-- Nelle validazioni usa solo valori non validi anche togliendo gli spazi (`abc`, `123`): con un valore valido il portale
-  invierebbe il codice di verifica.
-- Messaggi attesi: "Indirizzo PEC non valido", "Indirizzo email non valido" e "Numero di cellulare non valido".
-- Gli spazi all'inizio o alla fine hanno un messaggio dedicato solo per il cellulare ("Elimina gli spazi all'inizio o
-  alla fine"); per l'email il portale mostra quello generico.
+Il contenuto delle card dipende dai recapiti dell'utente (attivi o da attivare) e non viene verificato: valori, pulsanti
+Modifica, Gestisci e Disattiva, PEC personalizzate per ente, card del cellulare, campi per aggiungere i recapiti e i loro
+messaggi di validazione.

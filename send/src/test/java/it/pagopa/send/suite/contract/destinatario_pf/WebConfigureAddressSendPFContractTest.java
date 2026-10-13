@@ -29,7 +29,8 @@ import java.util.stream.Stream;
  *     <li>testi della pagina e delle card;</li>
  *     <li>pulsanti, compresi i wizard aperti dalle card.</li>
  * </ul>
- * Nessuno scenario preme "Salta e vai alle tue notifiche", che segna la configurazione come fatta, né conferma i wizard.
+ * La terza card, "Preferisco attivare solo SEND sull'app IO", è mostrata solo agli utenti senza recapiti di cortesia e
+ * non viene verificata. Nessuno scenario preme "Salta e vai alle tue notifiche", che segna la configurazione come fatta, né conferma i wizard.
  */
 @ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
@@ -62,12 +63,6 @@ public class WebConfigureAddressSendPFContractTest {
     );
     private static final String COURTESY_BUTTON = "Attiva solo gli avvisi";
 
-    private static final String IO_CARD = "Preferisco attivare solo SEND sull’app IO";
-    private static final List<String> IO_BULLETS = List.of(
-            "Ricevi avvisi e l’accesso alle comunicazioni a valore legale direttamente attraverso IO.",
-            "Se non apri la notifica SEND entro 5 giorni dalla ricezione, riceverai comunque una raccomandata con i relativi costi aggiuntivi."
-    );
-    private static final String IO_BUTTON = "Attiva SEND su IO";
 
     private static final String SKIP = "Salta e vai alle tue notifiche";
 
@@ -151,47 +146,6 @@ public class WebConfigureAddressSendPFContractTest {
                             page.courtesyButton().click();
                         },
                         page -> page.alertsWizard().assertLoaded()
-                )
-        );
-    }
-
-    // terza card: mostrata solo agli utenti senza recapiti di cortesia, quindi si verifica se presente
-
-    @TestFactory
-    Stream<DynamicTest> shouldShowConfigureSendIoCard() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
-                .on(ConfigureAddressSendPage.class)
-                .tests(ioCardScenarios());
-    }
-
-    private Stream<WebScenario<ConfigureAddressSendPage>> ioCardScenarios() {
-        return Stream.of(
-                new WebScenario<>(
-                        "se presente, testi della card app IO",
-                        page -> {},
-                        page -> {
-                            if (!page.isIoCardShown()) {
-                                // L'utente ha recapiti di cortesia: la card non è mostrata, quindi il test termina senza verificarla
-                                return;
-                            }
-                            page.cardTitles().readAllAndAssert(h -> Assertions.assertThat(h).contains(IO_CARD));
-                            page.ioBullets().readAllAndAssert(h -> Assertions.assertThat(h).containsExactlyElementsOf(IO_BULLETS));
-                            page.ioButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(IO_BUTTON));
-                        }
-                ),
-
-                new WebScenario<>(
-                        "se presente, attiva SEND su IO apre la pagina tutto, sull'app IO",
-                        page -> {},
-                        page -> {
-                            if (!page.isIoCardShown()) {
-                                // L'utente ha recapiti di cortesia: la card non è mostrata, quindi il test termina senza verificarla
-                                return;
-                            }
-                            page.oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);  // il banner dei cookie copre le card
-                            page.ioButton().click();
-                            page.ioPage().assertLoaded();
-                        }
                 )
         );
     }

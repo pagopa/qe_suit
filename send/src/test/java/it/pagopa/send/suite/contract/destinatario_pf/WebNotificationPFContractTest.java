@@ -23,7 +23,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -32,12 +31,10 @@ import java.util.stream.Stream;
  * I test sono organizzati per:
  * <ul>
  *     <li>testi della pagina e dei filtri;</li>
- *     <li>tabella delle notifiche, paginazione e filtro per tipologia;</li>
- *     <li>banner per attivare il domicilio digitale, mostrato solo a chi non ce l'ha;</li>
  *     <li>messaggi di validazione dei filtri.</li>
  * </ul>
- * La tabella e il banner dipendono dall'utente: ogni scenario li verifica se presenti. Gli scenari non aprono le
- * notifiche, perché aprirle le segna come lette, e non chiudono il banner.
+ * La tabella delle notifiche e il banner per attivare il domicilio digitale dipendono dall'utente (notifiche ricevute,
+ * domicilio attivo) e non vengono verificati.
  */
 @ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
@@ -52,6 +49,7 @@ public class WebNotificationPFContractTest {
 
     // testi attesi
 
+    // il titolo è "In arrivo" o, per chi ha deleghe a suo carico, "In arrivo per te": si controlla la parte comune
     private static final String TITLE = "In arrivo";
     private static final String COMMUNICATION_TYPE_LABEL = "Tipologia";
     private static final String IUN_LABEL = "Codice IUN";
@@ -59,19 +57,6 @@ public class WebNotificationPFContractTest {
     private static final String END_DATE_LABEL = "Al";
     private static final String FILTER = "Filtra";
     private static final List<String> COMMUNICATION_TYPES = List.of("Notifiche a valore legale", "Comunicazioni");
-
-    // tabella
-    private static final List<String> HEADERS = List.of("Data", "Mittente", "Oggetto", "Codice IUN", "");
-    private static final String DATE_PATTERN = "Oggi|Ieri|\\d{2}/\\d{2}/\\d{4}";
-    private static final String IUN_PATTERN = "[A-Z]{4}-[A-Z]{4}-[A-Z]{4}-\\d{6}-[A-Z]-[A-Z0-9]";
-    private static final String OPEN = "Apri";
-    private static final String LEGAL_TAG = "Notifica a valore legale";
-    private static final List<String> ROWS_PER_PAGE = List.of("10", "20", "50");
-
-    // banner
-    private static final String BANNER_TITLE = "Niente più documenti cartacei";
-    private static final String BANNER_DESCRIPTION = "Attiva un domicilio digitale per ricevere le prossime notifiche solo in digitale e risparmiare.";
-    private static final String BANNER_BUTTON = "Attiva domicilio digitale";
 
     // messaggi di validazione
     private static final String INVALID_IUN_MESSAGE = "Inserisci un codice IUN valido";
@@ -97,7 +82,7 @@ public class WebNotificationPFContractTest {
                                 "titolo, etichette dei filtri e filtra disabilitato",
                                 page -> {},
                                 page -> {
-                                    page.title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(TITLE));
+                                    page.title().readAndAssert(h -> Assertions.assertThat(h).startsWith(TITLE));
                                     page.communicationTypeLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(COMMUNICATION_TYPE_LABEL));
                                     page.iunSearchLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(IUN_LABEL));
                                     page.startDateSearchLabel().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(START_DATE_LABEL));
@@ -112,133 +97,6 @@ public class WebNotificationPFContractTest {
                                 "tipologia propone notifiche a valore legale e comunicazioni",
                                 page -> page.communicationTypeSelect().click(),
                                 page -> page.communicationTypeOptions().readAllAndAssert(h -> Assertions.assertThat(h).containsExactlyElementsOf(COMMUNICATION_TYPES))
-                        )
-                ));
-    }
-
-    // tabella delle notifiche
-
-    @TestFactory
-    Stream<DynamicTest> shouldShowNotificationsTable() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
-                .on(NotificationPFPage.class)
-                .tests(Stream.of(
-                        new WebScenario<>(
-                                "se presenti, intestazioni e righe con data, mittente, oggetto, IUN e apri",
-                                page -> {},
-                                page -> {
-                                    if (!page.content().read().contains(OPEN)) {
-                                        // Nessuna notifica ricevuta: la tabella non c'è, quindi il test termina
-                                        return;
-                                    }
-                                    NotificationPFPage.NotificationsTable table = page.notificationsTable();
-                                    table.headers().readAllAndAssert(h -> Assertions.assertThat(h).containsExactlyElementsOf(HEADERS));
-                                    int rows = table.openButtons().readAll().size();
-                                    table.dates().readAllAndAssert(h -> Assertions.assertThat(h).hasSize(rows).allSatisfy(v -> Assertions.assertThat(v).matches(DATE_PATTERN)));
-                                    table.senders().readAllAndAssert(h -> Assertions.assertThat(h).hasSize(rows).allSatisfy(v -> Assertions.assertThat(v).isNotBlank()));
-                                    table.subjects().readAllAndAssert(h -> Assertions.assertThat(h).hasSize(rows).allSatisfy(v -> Assertions.assertThat(v).isNotBlank()));
-                                    table.iuns().readAllAndAssert(h -> Assertions.assertThat(h).hasSize(rows).allSatisfy(v -> Assertions.assertThat(v).matches(IUN_PATTERN)));
-                                    table.openButtons().readAllAndAssert(h -> Assertions.assertThat(h).allSatisfy(v -> Assertions.assertThat(v).isEqualTo(OPEN)));
-                                }
-                        ),
-
-                        new WebScenario<>(
-                                "se presenti, paginazione da 10 righe sulla prima pagina",
-                                page -> {},
-                                page -> {
-                                    if (!page.content().read().contains(OPEN)) {
-                                        // Nessuna notifica ricevuta: la paginazione non c'è, quindi il test termina
-                                        return;
-                                    }
-                                    NotificationPFPage.NotificationsTable table = page.notificationsTable();
-                                    table.rowsPerPageButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(ROWS_PER_PAGE.get(0)));
-                                    Assertions.assertThat(table.openButtons().readAll()).hasSizeLessThanOrEqualTo(10);
-                                    Assertions.assertThat(table.previousPageButton().isDisabled()).isTrue();
-                                    table.firstPageButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo("1"));
-                                    Assertions.assertThat(table.nextPageButton().get(FindPolicy.PRESENT)).isPresent();
-                                }
-                        ),
-
-                        new WebScenario<>(
-                                "se presenti, righe per pagina propone 10, 20 e 50",
-                                page -> {},
-                                page -> {
-                                    if (!page.content().read().contains(OPEN)) {
-                                        // Nessuna notifica ricevuta: la paginazione non c'è, quindi il test termina
-                                        return;
-                                    }
-                                    page.notificationsTable().rowsPerPageButton().click();
-                                    page.rowsPerPageOptions().readAllAndAssert(h -> Assertions.assertThat(h).containsExactlyElementsOf(ROWS_PER_PAGE));
-                                }
-                        ),
-
-                        new WebScenario<>(
-                                "se presenti, filtro notifiche a valore legale mostra solo righe con l'etichetta",
-                                NotificationPFPage::filterLegalNotifications,
-                                page -> {
-                                    if (!page.content().read().contains(OPEN)) {
-                                        // Nessuna notifica a valore legale: la tabella non c'è, quindi il test termina
-                                        return;
-                                    }
-                                    List<String> subjects = filteredSubjects(page, s -> s.toLowerCase().contains(LEGAL_TAG.toLowerCase()));
-                                    // l'etichetta è mostrata in maiuscolo dallo stile della pagina
-                                    Assertions.assertThat(subjects).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).containsIgnoringCase(LEGAL_TAG));
-                                }
-                        ),
-
-                        new WebScenario<>(
-                                "se presenti, filtro comunicazioni mostra solo righe senza l'etichetta",
-                                page -> {
-                                    page.communicationTypeSelect().click();
-                                    page.communicationsOption().click();
-                                    page.filterButton().click();
-                                },
-                                page -> {
-                                    if (!page.content().read().contains(OPEN)) {
-                                        // Nessuna comunicazione: la tabella non c'è, quindi il test termina
-                                        return;
-                                    }
-                                    List<String> subjects = filteredSubjects(page, s -> !s.toLowerCase().contains(LEGAL_TAG.toLowerCase()));
-                                    Assertions.assertThat(subjects).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).doesNotContainIgnoringCase(LEGAL_TAG));
-                                }
-                        )
-                ));
-    }
-
-    // banner per attivare il domicilio digitale ("Chiudi" non viene premuto)
-
-    @TestFactory
-    Stream<DynamicTest> shouldShowAddDomicileBanner() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
-                .on(NotificationPFPage.class)
-                .tests(Stream.of(
-                        new WebScenario<>(
-                                "se l'utente non ha un domicilio digitale, banner con titolo, descrizione e pulsante",
-                                page -> {},
-                                page -> {
-                                    if (!page.content().read().contains(BANNER_TITLE)) {
-                                        // L'utente ha un domicilio digitale: il banner non c'è, quindi il test termina
-                                        return;
-                                    }
-                                    NotificationPFPage.AddDomicileBanner banner = page.addDomicileBanner();
-                                    banner.title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(BANNER_TITLE));
-                                    banner.description().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(BANNER_DESCRIPTION));
-                                    banner.activateButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(BANNER_BUTTON));
-                                    Assertions.assertThat(banner.closeButton().get(FindPolicy.PRESENT)).isPresent();
-                                }
-                        ),
-
-                        new WebScenario<>(
-                                "se presente, attiva domicilio digitale apre il wizard di attivazione",
-                                page -> {},
-                                page -> {
-                                    if (!page.content().read().contains(BANNER_TITLE)) {
-                                        // L'utente ha un domicilio digitale: il banner non c'è, quindi il test termina
-                                        return;
-                                    }
-                                    page.addDomicileBanner().activateButton().click();
-                                    page.digitalDomicileActivation().assertLoaded();
-                                }
                         )
                 ));
     }
@@ -279,24 +137,6 @@ public class WebNotificationPFContractTest {
                                 }
                         )
                 ));
-    }
-
-    /**
-     * Dopo "Filtra" la tabella si aggiorna con un breve ritardo: rilegge l'oggetto delle righe ogni secondo, per al massimo
-     * 10 secondi, finché tutte rispettano il filtro, e restituisce l'ultima lettura su cui fare le verifiche.
-     */
-    private static List<String> filteredSubjects(NotificationPFPage page, Predicate<String> filtered) {
-        List<String> subjects = page.notificationsTable().subjectCells().readAll();
-        for (int i = 0; i < 10 && !(subjects.size() > 0 && subjects.stream().allMatch(filtered)); i++) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                break;
-            }
-            subjects = page.notificationsTable().subjectCells().readAll();
-        }
-        return subjects;
     }
 
     // messaggio delle date fuori intervallo, calcolato sulla data di oggi

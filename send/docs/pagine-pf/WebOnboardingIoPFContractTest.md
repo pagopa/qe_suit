@@ -25,13 +25,8 @@ Il titolo, il titolo e la descrizione della sezione dell'app IO, il testo dei tr
 ## Da dove si arriva
 
 Nel portale la pagina si apre solo dalla terza card di "Configura SEND", "Preferisco attivare solo SEND sull'app IO",
-che compare solo a chi non ha recapiti di cortesia (email, SMS o app IO).
-
-![Configura SEND con la terza card](img/WebConfigureAddressSendPFContractTest/card-io.png)
-
-Il passaggio dalla card alla pagina lo controlla
-[`WebConfigureAddressSendPFContractTest`](WebConfigureAddressSendPFContractTest.md). Questo test apre la pagina
-dall'indirizzo, così funziona con qualunque utente.
+che compare solo a chi non ha recapiti di cortesia (email, SMS o app IO). La card dipende dall'utente e non viene
+verificata: questo test apre la pagina dall'indirizzo, così funziona con qualunque utente.
 
 ## Note
 

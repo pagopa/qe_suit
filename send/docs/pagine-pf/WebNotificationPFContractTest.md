@@ -16,32 +16,24 @@ In rosso quello che controlla `assertLoaded()`: il titolo e i campi dei filtri. 
 
 ## Cosa verifica il contract test
 
-I testi della pagina e dei filtri, le opzioni di "Tipologia", la tabella con la paginazione, il filtro per tipologia,
-il banner per attivare il domicilio digitale e i messaggi dei filtri. In rosso gli elementi controllati, esclusi i
-messaggi e i menu aperti.
-
-Con domicilio digitale (Lucrezia):
+Solo quello che c'è per tutti gli utenti: i testi della pagina e dei filtri, le opzioni di "Tipologia" e i messaggi dei
+filtri. In rosso gli elementi controllati, esclusi i messaggi e i menu aperti.
 
 ![In arrivo, elementi verificati](img/WebNotificationPFContractTest/pagina.png)
 
-Senza domicilio digitale, con il banner:
+| Parte | Cosa si controlla |
+|---|---|
+| Titolo | inizia con "In arrivo": chi ha deleghe a suo carico vede "In arrivo per te" |
+| Filtri | etichette Tipologia, Codice IUN, Dal e Al; "Filtra" disabilitato |
+| Tipologia | opzioni "Notifiche a valore legale" e "Comunicazioni" |
+| Messaggi | "Inserisci un codice IUN valido" con IUN `abc`; "Inserisci una data compresa tra … e …" con una data di più di 10 anni fa o futura, calcolate dal giorno corrente |
 
-![In arrivo, banner per attivare il domicilio digitale](img/WebNotificationPFContractTest/senza-domicilio.png)
+## Non verificato
 
-## Tabella e filtri
-
-- Colonne: Data, Mittente, Oggetto, Codice IUN e una senza titolo con "Apri".
-- Data: "Oggi", "Ieri" o `gg/mm/aaaa`. IUN nel formato `XXXX-XXXX-XXXX-AAAAMM-X-X`.
-- Paginazione: 10 righe, scelta tra 10, 20 e 50.
-- Con "Notifiche a valore legale" ogni riga ha l'etichetta "Notifica a valore legale", con "Comunicazioni" nessuna.
-- Messaggi: "Inserisci un codice IUN valido" con IUN `abc`; "Inserisci una data compresa tra … e …" con una data di più
-  di 10 anni fa o futura. Il test calcola le due date dal giorno corrente.
+Dipendono dall'utente e non vengono verificati: la tabella delle notifiche con la paginazione e il filtro per
+tipologia, e il banner "Niente più documenti cartacei", che compare solo a chi non ha un domicilio digitale.
 
 ## Note
 
-- Il test non apre le notifiche, perché aprirle le segna come lette, e non chiude il banner.
-- Il banner "Niente più documenti cartacei" compare solo a chi non ha un domicilio digitale; è stato provato
-  l'08/10/2026 con un utente senza recapiti. Nessun utente di test è senza notifiche.
-- Dopo "Filtra" la tabella si aggiorna con un po' di ritardo: il test rilegge le righe fino a 10 secondi.
-- Selenium legge l'etichetta in maiuscolo ("NOTIFICA A VALORE LEGALE") per via dello stile, quindi il confronto ignora
-  maiuscole e minuscole.
+- Il test non apre le notifiche, perché aprirle le segna come lette.
+- Il titolo "In arrivo per te" è stato visto il 13/10/2026 con Giulio Cesare, che ha deleghe a suo carico.

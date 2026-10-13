@@ -21,8 +21,8 @@ import java.util.Optional;
  * PEC per ente; "Trasferisci su SEND", presente solo con il domicilio su PEC, apre nella stessa pagina il wizard di
  * attivazione di SEND, il cui "Conferma" sostituisce la PEC. Nei test si usano solo valori non validi e non si
  * conferma il wizard.
- * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo, "Personalizza per ente" e "Indietro"; stato,
- * indirizzo, testi e form sono verificati da {@code WebDigitalDomicileManagementPFContractTest}.
+ * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo, "Personalizza per ente" e "Indietro". La pagina
+ * esiste solo con un domicilio digitale attivo, quindi non ha un contract test: va verificata con dei test di business.
  */
 @Url("${url.notifiche.cittadino.recapiti-domicilio-digitale-gestione}")
 public interface DigitalDomicileManagementPFPage extends Page {

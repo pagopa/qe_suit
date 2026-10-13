@@ -21,7 +21,8 @@ import java.util.Optional;
  * uno. Il contenuto delle card dipende dai recapiti dell'utente: ogni recapito attivo mostra il valore, "Modifica" e
  * "Disattiva" o "Elimina"; un recapito da attivare mostra il modo per inserirlo.
  * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo e le card del domicilio digitale, dell'app IO e
- * dell'email; testi, recapiti e validazioni sono verificati da {@code WebAddressPFContractTest}.
+ * dell'email; testi, titoli e stati delle card, comuni a tutti gli utenti, sono verificati da
+ * {@code WebAddressPFContractTest}.
  * L'assertLoaded è usato anche dagli step Cucumber dei recapiti.
  */
 @Url("${url.notifiche.cittadino.recapiti}")
