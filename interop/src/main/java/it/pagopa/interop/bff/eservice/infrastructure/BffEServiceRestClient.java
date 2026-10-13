@@ -108,7 +108,7 @@ public class BffEServiceRestClient extends RestClient {
     public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceSoap(
             @Nonnull UUID eserviceId,
             @Nonnull UUID descriptorId,
-            @Nonnull Object payload
+            @Nonnull TemplateInstanceInterfaceSOAPSeed payload
     ) {
         return execute(
                 () -> eservicesApi.addEServiceTemplateInstanceInterfaceSoap()
@@ -126,7 +126,7 @@ public class BffEServiceRestClient extends RestClient {
     public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceRest(
             @Nonnull UUID eserviceId,
             @Nonnull UUID descriptorId,
-            @Nonnull Object payload
+            @Nonnull TemplateInstanceInterfaceRESTSeed payload
     ) {
         return execute(
                 () -> eservicesApi.addEServiceTemplateInstanceInterfaceRest()
