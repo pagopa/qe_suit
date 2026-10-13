@@ -5,6 +5,7 @@ import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
@@ -12,6 +13,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
@@ -48,6 +50,27 @@ public class BffEServiceGateway implements EServiceGateway {
                     return savedEService;
                 })
                 .updateContext()
+                .get();
+    }
+
+    @Override
+    public EService createEServiceInstanceFromTemplate(EServiceTemplate template) {
+        var created = restClient.createEServiceInstanceFromTemplate(template.getId(), new InstanceEServiceSeed())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        final EServiceRef eServiceRef = EServiceRef.of(created.getId());
+        final EServiceDescriptorRef descriptorRef = EServiceDescriptorRef.of(created.getDescriptorId());
+        final EServiceDescriptor descriptor = descriptorGateway.getEServiceDescriptor(eServiceRef, descriptorRef);
+        final EService eService = getEService(eServiceRef);
+        eService.addDescriptor(descriptor);
+        return eService;
+    }
+
+    @Override
+    public void deleteEService(EService eService) {
+        restClient.deleteEService(eService.getId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
     }
 

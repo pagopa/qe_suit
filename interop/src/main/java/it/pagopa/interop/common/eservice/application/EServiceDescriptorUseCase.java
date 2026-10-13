@@ -7,6 +7,9 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice.domain.EServiceTemplateInterfaceFailureReason;
+import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
+import it.pagopa.interop.common.eservice.domain.SoapAddressConfiguration;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -76,5 +79,42 @@ public class EServiceDescriptorUseCase {
         command.dailyCallsPerConsumer(consumerThreshold);
         command.dailyCallsTotal(totalThreshold);
         return command;
+    }
+
+    public EServiceDescriptor configureTemplateInstanceSOAPInterface(
+            EService eService,
+            EServiceDescriptor descriptor,
+            List<SoapAddressConfiguration> addresses
+    ) {
+        return eServiceDescriptorGateway.configureTemplateInstanceSOAPInterface(
+                eService.getRef(), descriptor.getRef(), List.copyOf(addresses)
+        );
+    }
+
+    public void shouldFailToConfigureSOAPInterface(
+            EService eService,
+            EServiceDescriptor descriptor,
+            List<SoapAddressConfiguration> addresses,
+            EServiceTemplateInterfaceFailureReason reason
+    ) {
+        eServiceDescriptorGateway.shouldFailToConfigureSOAPInterface(
+                eService.getRef(), descriptor.getRef(), List.copyOf(addresses), reason
+        );
+    }
+
+    public EServiceDescriptor configureTemplateInstanceRESTInterface(
+            EService eService,
+            EServiceDescriptor descriptor,
+            RestInterfaceConfiguration configuration
+    ) {
+        return eServiceDescriptorGateway.configureTemplateInstanceRESTInterface(
+                eService.getRef(), descriptor.getRef(), configuration
+        );
+    }
+
+    public byte[] downloadInterfaceBytes(EService eService, EServiceDescriptor descriptor) {
+        return eServiceDescriptorGateway.downloadInterfaceBytes(
+                eService.getRef(), descriptor.getRef(), descriptor.getInterfaceDocument().getId()
+        );
     }
 }

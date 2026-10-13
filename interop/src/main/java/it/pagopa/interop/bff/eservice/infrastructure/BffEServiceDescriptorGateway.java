@@ -7,11 +7,16 @@ import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.DelayUtils;
 import it.pagopa.utils.async.PollingUtils;
+import it.pagopa.utils.async.DelayUtils;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.eservice.domain.EServiceTemplateInterfaceFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
+import it.pagopa.interop.common.eservice.domain.SoapAddressConfiguration;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -20,18 +25,25 @@ import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDaysSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorSeed;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.instancio.Instancio;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import static it.pagopa.interop.common.eservice.domain.EServiceDescriptorState.PUBLISHED;
 import static org.instancio.Select.field;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
 
     private final BffEServiceRestClient restClient;
@@ -49,6 +61,134 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
                 .updateContext()
                 .map(eService -> eService.findDescriptor(descriptorRef.id()))
                 .get();
+    }
+
+    @Override
+    public EServiceDescriptor configureTemplateInstanceSOAPInterface(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef,
+            List<SoapAddressConfiguration> addresses
+    ) {
+        log.info("PIN-10024 SOAP configuration: eServiceId={}, descriptorId={}, addresses={}",
+                eServiceRef.id(), descriptorRef.id(), addresses);
+        restClient.addEServiceTemplateInstanceInterfaceSoap(
+                        eServiceRef.id(), descriptorRef.id(), soapPayload(addresses)
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        EServiceDescriptor configured = PollingUtils.pollUntil(
+                () -> getEServiceDescriptor(eServiceRef, descriptorRef),
+                descriptor -> descriptor.getInterfaceDocument() != null
+        );
+        restClient.getEServiceDocumentById(
+                        eServiceRef.id(),
+                        descriptorRef.id(),
+                        configured.getInterfaceDocument().getId()
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+        return configured;
+    }
+
+    @Override
+    public void shouldFailToConfigureSOAPInterface(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef,
+            List<SoapAddressConfiguration> addresses,
+            EServiceTemplateInterfaceFailureReason reason
+    ) {
+        log.info("PIN-10024 expected SOAP rejection (HTTP 400): eServiceId={}, descriptorId={}, reason={}, addresses={}",
+                eServiceRef.id(), descriptorRef.id(), reason, addresses);
+        EServiceDescriptor beforeDescriptor = getEServiceDescriptor(eServiceRef, descriptorRef);
+        Document beforeDocument = beforeDescriptor.getInterfaceDocument();
+        byte[] beforeBytes = beforeDocument == null
+                ? null
+                : downloadDocument(eServiceRef, descriptorRef, beforeDocument.getId());
+
+        restClient.addEServiceTemplateInstanceInterfaceSoap(
+                        eServiceRef.id(), descriptorRef.id(), soapPayload(addresses)
+                )
+                .withoutPolling()
+                .assertStatusCode(400);
+
+        DelayUtils.waitForSeconds(15);
+
+        EServiceDescriptor afterDescriptor = getEServiceDescriptor(eServiceRef, descriptorRef);
+        Document afterDocument = afterDescriptor.getInterfaceDocument();
+        Assertions.assertThat(afterDocument).as("Interfaccia invariata dopo il rifiuto (%s)", reason)
+                .isEqualTo(beforeDocument);
+        if (beforeDocument != null) {
+            Assertions.assertThat(downloadDocument(eServiceRef, descriptorRef, afterDocument.getId()))
+                    .as("Byte dell'interfaccia invariati dopo il rifiuto (%s)", reason)
+                    .containsExactly(beforeBytes);
+        }
+    }
+
+    @Override
+    public EServiceDescriptor configureTemplateInstanceRESTInterface(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef,
+            RestInterfaceConfiguration configuration
+    ) {
+        Map<String, Object> payload = restPayload(configuration);
+        restClient.addEServiceTemplateInstanceInterfaceRest(eServiceRef.id(), descriptorRef.id(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        EServiceDescriptor configured = PollingUtils.pollUntil(
+                () -> getEServiceDescriptor(eServiceRef, descriptorRef),
+                descriptor -> descriptor.getInterfaceDocument() != null
+        );
+        restClient.getEServiceDocumentById(
+                        eServiceRef.id(),
+                        descriptorRef.id(),
+                        configured.getInterfaceDocument().getId()
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+        return configured;
+    }
+
+    private byte[] downloadDocument(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, UUID documentId) {
+        return restClient.getEServiceDocumentById(eServiceRef.id(), descriptorRef.id(), documentId)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    @Override
+    public byte[] downloadInterfaceBytes(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef,
+            UUID documentId
+    ) {
+        return downloadDocument(eServiceRef, descriptorRef, documentId);
+    }
+
+    static Map<String, Object> soapPayload(List<SoapAddressConfiguration> addresses) {
+        List<Map<String, String>> serverUrls = addresses.stream()
+                .map(address -> Map.of("url", address.address()))
+                .toList();
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("serverUrls", serverUrls);
+        return payload;
+    }
+
+    private static Map<String, Object> restPayload(RestInterfaceConfiguration configuration) {
+        List<Map<String, String>> serverUrls = configuration.serverUrls().stream()
+                .map(url -> Map.of("url", url))
+                .toList();
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("serverUrls", serverUrls);
+        payload.put("contactName", configuration.contactName());
+        payload.put("contactEmail", configuration.contactEmail());
+        if (configuration.contactUrl() != null) {
+            payload.put("contactUrl", configuration.contactUrl());
+        }
+        if (configuration.termsAndConditionsUrl() != null) {
+            payload.put("termsAndConditionsUrl", configuration.termsAndConditionsUrl());
+        }
+        return payload;
     }
 
     @Override
