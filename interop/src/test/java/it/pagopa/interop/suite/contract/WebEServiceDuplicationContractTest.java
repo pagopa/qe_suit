@@ -44,11 +44,13 @@ public class WebEServiceDuplicationContractTest {
     Stream<DynamicTest> shouldDuplicateEServiceWithActiveProducerDelegation() {
         Tenant delegator = Tenant.COMUNE_DI_MILANO;
         Tenant delegate = Tenant.COMUNE_DI_POZZALLO;
-        EService eService = createPublishedEService(delegator);
 
-        interopJourney.createActiveProducerDelegation(delegator, delegate, eService.getRef());
+        return Stream.of(UserRole.ADMIN, UserRole.API, UserRole.API_SECURITY).flatMap(role -> {
+            EService eService = createPublishedEService(delegator);
+            interopJourney.createActiveProducerDelegation(delegator, delegate, eService.getRef());
 
-        return duplicationContract(delegator, eService, "ACTIVE");
+            return duplicationContract(delegator, role, eService, "ACTIVE");
+        });
     }
 
     @TestFactory
@@ -56,11 +58,13 @@ public class WebEServiceDuplicationContractTest {
     Stream<DynamicTest> shouldDuplicateEServiceWithWaitingForApprovalProducerDelegation() {
         Tenant delegator = Tenant.COMUNE_DI_MILANO;
         Tenant delegate = Tenant.COMUNE_DI_POZZALLO;
-        EService eService = createPublishedEService(delegator);
 
-        interopJourney.createWaitingForApprovalProducerDelegation(delegator, delegate, eService.getRef());
+        return Stream.of(UserRole.ADMIN, UserRole.API, UserRole.API_SECURITY).flatMap(role -> {
+            EService eService = createPublishedEService(delegator);
+            interopJourney.createWaitingForApprovalProducerDelegation(delegator, delegate, eService.getRef());
 
-        return duplicationContract(delegator, eService, "WAITING_FOR_APPROVAL");
+            return duplicationContract(delegator, role, eService, "WAITING_FOR_APPROVAL");
+        });
     }
 
     @TestFactory
@@ -68,11 +72,13 @@ public class WebEServiceDuplicationContractTest {
     Stream<DynamicTest> shouldHideDuplicationFromDelegateWithActiveProducerDelegation() {
         Tenant delegator = Tenant.COMUNE_DI_MILANO;
         Tenant delegate = Tenant.COMUNE_DI_POZZALLO;
-        EService eService = createPublishedEService(delegator);
 
-        interopJourney.createActiveProducerDelegation(delegator, delegate, eService.getRef());
+        return Stream.of(UserRole.ADMIN, UserRole.API, UserRole.API_SECURITY).flatMap(role -> {
+            EService eService = createPublishedEService(delegator);
+            interopJourney.createActiveProducerDelegation(delegator, delegate, eService.getRef());
 
-        return unavailableDuplicationContract(delegate, eService, "ACTIVE");
+            return unavailableDuplicationContract(delegate, role, eService, "ACTIVE");
+        });
     }
 
     @TestFactory
@@ -80,11 +86,13 @@ public class WebEServiceDuplicationContractTest {
     Stream<DynamicTest> shouldHideDuplicationFromDelegateWithWaitingForApprovalProducerDelegation() {
         Tenant delegator = Tenant.COMUNE_DI_MILANO;
         Tenant delegate = Tenant.COMUNE_DI_POZZALLO;
-        EService eService = createPublishedEService(delegator);
 
-        interopJourney.createWaitingForApprovalProducerDelegation(delegator, delegate, eService.getRef());
+        return Stream.of(UserRole.ADMIN, UserRole.API, UserRole.API_SECURITY).flatMap(role -> {
+            EService eService = createPublishedEService(delegator);
+            interopJourney.createWaitingForApprovalProducerDelegation(delegator, delegate, eService.getRef());
 
-        return unavailableDuplicationContract(delegate, eService, "WAITING_FOR_APPROVAL");
+            return unavailableDuplicationContract(delegate, role, eService, "WAITING_FOR_APPROVAL");
+        });
     }
 
     private EService createPublishedEService(Tenant producer) {
@@ -95,16 +103,17 @@ public class WebEServiceDuplicationContractTest {
                 .get(EService.class);
     }
 
-    private Stream<DynamicTest> duplicationContract(Tenant delegator, EService eService, String delegationState) {
+    private Stream<DynamicTest> duplicationContract(
+            Tenant delegator, UserRole role, EService eService, String delegationState) {
         return webContractValidator
-                .as(User.getTenantAdmin(delegator), delegator)
+                .as(User.getTenantUser(delegator, role), delegator)
                 .on(
                         ProducerEServiceDetailPage.class,
                         eService.getId().toString(),
                         eService.getActiveDescriptor().getId().toString()
                 )
                 .tests(Stream.of(new WebScenario<>(
-                        "Duplica e-service disponibile al delegante ADMIN con delega " + delegationState
+                        "Duplica e-service disponibile al delegante " + role.name() + " con delega " + delegationState
                                 + ": navigazione alla modifica della nuova bozza",
                         page -> {
                             page.pageTitle().readAndAssert(eService.getName());
@@ -114,16 +123,17 @@ public class WebEServiceDuplicationContractTest {
                 )));
     }
 
-    private Stream<DynamicTest> unavailableDuplicationContract(Tenant delegate, EService eService, String delegationState) {
+    private Stream<DynamicTest> unavailableDuplicationContract(
+            Tenant delegate, UserRole role, EService eService, String delegationState) {
         return webContractValidator
-                .as(User.getTenantAdmin(delegate), delegate)
+                .as(User.getTenantUser(delegate, role), delegate)
                 .on(
                         ProducerEServiceDetailPage.class,
                         eService.getId().toString(),
                         eService.getActiveDescriptor().getId().toString()
                 )
                 .tests(Stream.of(new WebScenario<>(
-                        "Duplica e-service assente per il delegato ADMIN con delega " + delegationState,
+                        "Duplica e-service assente per il delegato " + role.name() + " con delega " + delegationState,
                         page -> {
                             page.pageTitle().readAndAssert(eService.getName());
                             page.actionsMenuButton().click();
