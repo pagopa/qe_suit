@@ -6,11 +6,11 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
-import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -105,39 +105,20 @@ public class EServiceJourneySteps {
                 .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
     }
 
-    @Given("un e-service in {eServiceDescriptorState}, creato dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}, in fruizione al {tenant}")
-    public void createDraftEServiceDescriptor(EServiceDescriptorState state, Tenant producer, int customThreshold, Tenant consumer, DataTable defaultThresholds) {
+    @Given("un e-service in {eServiceDescriptorState}, creato dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}")
+    public void createDraftEServiceDescriptor(EServiceDescriptorState state, Tenant producer, int customThreshold, DataTable defaultThresholds) {
+
+        // TODO rimuovere datatable?
 
         Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
 
         interopJourney
                 .withProducer(producer, UserRole.ADMIN)
                 .createCertifiedAttribute()
-                .assignCertifiedAttribute(TenantRef.of(consumer.getOrganizationId()));
-
-
-
-        // Spostare questa logica nel journey
-
-        Attribute attribute = entityStore.getLastOrThrow(Attribute.class)
-                .toBuilder()
-                .dailyCallsPerConsumer(customThreshold)
-                .build();
-
-        Attributes attributes = Attributes.builder().certified(List.of(attribute)).build();
-
-        EServiceCreationCommand eServiceCommand = eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(false);
-        UpdateEServiceDescriptorCommand updateCommand = eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(
-            thresholdsMap.getOrDefault("consumerThreshold", thresholdsMap.get("consumerThreshold")),
-            thresholdsMap.getOrDefault("totalThreshold", thresholdsMap.get("totalThreshold"))
-        );
-        updateCommand.attributes(attributes);
-
-
-
-        interopJourney
-                .withProducer(producer, UserRole.ADMIN)
-                .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
-                .updateDescriptor(updateCommand, state);
+                .createEService(EServiceDescriptorState.DRAFT)
+                .updateDescriptor(config -> config
+                        .dailyCallsPerConsumer(thresholdsMap.get("consumerThreshold"))
+                        .dailyCallsTotal(thresholdsMap.get("totalThreshold"))
+                        .attributes(interopJourney.certifiedAttributesWithDailyCallsPerConsumer(customThreshold)), state);
     }
 }
