@@ -1,12 +1,12 @@
 package it.pagopa.interop.bff.agreement.infrastructure;
 
+import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
+import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementDelegation;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementsEService;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactOrganization;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
-import it.pagopa.interop.common.agreement.domain.Agreement;
-import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

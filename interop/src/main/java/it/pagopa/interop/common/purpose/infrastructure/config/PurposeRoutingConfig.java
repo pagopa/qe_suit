@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.purpose.infrastructure.config;
 
-import it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor;
 import it.pagopa.infrastructure.channel.CurrentChannel;
+import it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import lombok.RequiredArgsConstructor;
