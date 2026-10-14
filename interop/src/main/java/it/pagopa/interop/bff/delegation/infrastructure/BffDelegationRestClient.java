@@ -5,8 +5,8 @@ import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ConsumerDelegationsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Delegation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationSeed;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 

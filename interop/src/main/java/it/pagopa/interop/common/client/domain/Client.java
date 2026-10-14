@@ -1,15 +1,18 @@
 package it.pagopa.interop.common.client.domain;
 
-import it.pagopa.kernel.security.Key;
 import it.pagopa.domain.Identifiable;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.kernel.security.Key;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 
 @Value
 @Builder(toBuilder = true)
