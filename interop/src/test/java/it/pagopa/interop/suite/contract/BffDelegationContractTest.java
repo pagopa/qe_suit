@@ -31,8 +31,10 @@ import org.springframework.test.context.TestConstructor;
 public class BffDelegationContractTest {
 
     private static final Tenant PRODUCER = Tenant.COMUNE_DI_MILANO;
+    private static final Tenant DELEGATE_PRODUCER = Tenant.COMUNE_DI_COMUN_NUOVO;
+
     private static final Tenant CONSUMER_DELEGATOR = Tenant.COMUNE_DI_COMUN_NUOVO;
-    private static final Tenant DELEGATE = Tenant.COMUNE_DI_POZZALLO;
+    private static final Tenant DELEGATE_CONSUMER = Tenant.COMUNE_DI_POZZALLO;
 
     private final ApiClient apiClient;
     private final InteropHttpContractValidator httpContractValidator;
@@ -58,7 +60,7 @@ public class BffDelegationContractTest {
     @TestFactory
     Stream<DynamicTest> rejectProducerDelegation() {
         return httpContractValidator
-            .as(DELEGATE, UserRole.ADMIN)
+            .as(DELEGATE_PRODUCER, UserRole.ADMIN)
             .apiCall(() -> apiClient.producerDelegations().rejectProducerDelegation())
             .pathParams(() -> Map.of("delegationId", createPendingProducerDelegationId()))
             .payload(requestFactory::rejectionRequest)
@@ -68,7 +70,7 @@ public class BffDelegationContractTest {
     @TestFactory
     Stream<DynamicTest> rejectConsumerDelegation() {
         return httpContractValidator
-            .as(DELEGATE, UserRole.ADMIN)
+            .as(DELEGATE_CONSUMER, UserRole.ADMIN)
             .apiCall(() -> apiClient.consumerDelegations().rejectConsumerDelegation())
             .pathParams(() -> Map.of("delegationId", createPendingConsumerDelegationId()))
             .payload(requestFactory::rejectionRequest)
@@ -79,7 +81,7 @@ public class BffDelegationContractTest {
         EService eService = createPublishedEService();
         interopJourney
             .withProducer(PRODUCER, UserRole.ADMIN)
-            .createProducerDelegation(TenantRef.of(DELEGATE.getOrganizationId()), eService.getRef());
+            .createProducerDelegation(TenantRef.of(DELEGATE_PRODUCER.getOrganizationId()), eService.getRef());
         return entityStore.getLastOrThrow(Delegation.class).getId();
     }
 
@@ -87,7 +89,7 @@ public class BffDelegationContractTest {
         EService eService = createPublishedEService();
         interopJourney
             .withConsumer(CONSUMER_DELEGATOR, UserRole.ADMIN)
-            .createConsumerDelegation(TenantRef.of(DELEGATE.getOrganizationId()), eService.getRef());
+            .createConsumerDelegation(TenantRef.of(DELEGATE_CONSUMER.getOrganizationId()), eService.getRef());
         return entityStore.getLastOrThrow(Delegation.class).getId();
     }
 
