@@ -22,59 +22,72 @@ public class BffClientRestClient extends RestClient {
         this.clientsApi = apiClient.clients();
     }
 
-    public TestChain<Client> getClient(@Nonnull UUID clientId) {
+    public TestChain<Client> getClient(UUID clientId) {
         return execute(
                 () -> clientsApi.getClient().clientIdPath(clientId).execute(Function.identity()),
                 Client.class
         );
     }
 
-    public TestChain<PublicKeys> getClientKeys(@Nonnull UUID clientId) {
+    public TestChain<PublicKeys> getClientKeys(UUID clientId) {
         return execute(
                 () -> clientsApi.getClientKeys().clientIdPath(clientId).execute(Function.identity()),
                 PublicKeys.class
         );
     }
 
-    public TestChain<CompactUser> getClientUsers(@Nonnull UUID clientId) {
+    public TestChain<CompactUser> getClientUsers(UUID clientId) {
         return execute(
                 () -> clientsApi.getClientUsers().clientIdPath(clientId).execute(Function.identity()),
                 CompactUser.class
         );
     }
 
-    public TestChain<CreatedResource> createApiClient(@Nonnull ClientSeed clientSeed) {
+    public TestChain<CreatedResource> createApiClient(ClientSeed clientSeed) {
         return execute(
                 () -> clientsApi.createApiClient().body(clientSeed).execute(Function.identity()),
                 CreatedResource.class
         );
     }
 
-    public TestChain<CreatedResource> createConsumerClient(@Nonnull ClientSeed clientSeed) {
+    public TestChain<CreatedResource> createConsumerClient(ClientSeed clientSeed) {
         return execute(
                 () -> clientsApi.createConsumerClient().body(clientSeed).execute(Function.identity()),
                 CreatedResource.class
         );
     }
 
-    public TestChain<Void> addKey(@Nonnull UUID clientId, @Nonnull KeySeed keySeed) {
+    public TestChain<Void> addKey(UUID clientId, KeySeed keySeed) {
         return execute(
                 () -> clientsApi.createKey().clientIdPath(clientId).body(keySeed).execute(Function.identity()),
                 Void.class
         );
     }
 
-    public TestChain<CreatedResource> addUsers(@Nonnull UUID clientId, @Nonnull AddUsersToClientRequest addUsersToClientRequest) {
+    public TestChain<CreatedResource> addUsers(UUID clientId, AddUsersToClientRequest addUsersToClientRequest) {
         return execute(
                 () -> clientsApi.addUsersToClient().clientIdPath(clientId).body(addUsersToClientRequest).execute(Function.identity()),
                 CreatedResource.class
         );
     }
 
-    public TestChain<Void> linkPurpose(@Nonnull UUID clientId, @Nonnull PurposeAdditionDetailsSeed purposeAdditionDetailsSeed) {
+    public TestChain<Void> linkPurpose(UUID clientId, PurposeAdditionDetailsSeed purposeAdditionDetailsSeed) {
         return execute(
                 () -> clientsApi.addClientPurpose().clientIdPath(clientId).body(purposeAdditionDetailsSeed).execute(Function.identity()),
                 Void.class
+        );
+    }
+
+    public TestChain<Client> setAdmin(UUID clientId, UUID adminId) {
+        SetAdminToClientRequest setAdminToClientRequest =
+                new SetAdminToClientRequest().adminId(adminId);
+
+        return execute(
+                () -> clientsApi.setAdminToClient()
+                        .clientIdPath(clientId)
+                        .body(setAdminToClientRequest)
+                        .execute(Function.identity()),
+                Client.class
         );
     }
 }
