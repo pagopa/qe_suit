@@ -6,7 +6,6 @@ import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ClientsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
