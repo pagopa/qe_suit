@@ -1,0 +1,65 @@
+name: QE SUIT AI quality checks
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_branch:
+        description: "Base branch della AI Coding Story"
+        required: false
+        default: develop
+        type: string
+
+
+permissions:
+  contents: read
+
+jobs:
+  validate-rules:
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Validate branch naming
+        shell: bash
+        run: bash .github/scripts/validate-branch-naming.sh
+
+      - name: Validate commit messages
+        shell: bash
+        env:
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          GITHUB_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_BEFORE_SHA: ${{ github.event.before }}
+          GITHUB_AFTER_SHA: ${{ github.sha }}
+          GITHUB_BASE_REF: ${{ inputs.base_branch || 'develop' }}
+        run: bash .github/scripts/validate-commit-messages.sh
+
+      - name: Run install SUIT
+        working-directory: frontend-e2e-framework
+        run: bash ./mvnw -B install
+
+      - name: Run COMMON unit tests
+        working-directory: common
+        run: bash ./mvnw install
+
+      - name: Build and test PST Maven plugin
+        working-directory: pst-maven-plugin
+        run: bash ./mvnw -B install
+
+      - name: Run interop tests (ci-rules profile)
+        working-directory: interop
+        run: bash ./mvnw -Pci-rules test
+
+      - name: Compile and package SEND (E2E not executed)
+        working-directory: send
+        run: bash ./mvnw -B -DskipTests package

@@ -6,7 +6,7 @@ import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.web.destinatario_pg.infrastructure.page.AddressPage;
+import it.pagopa.send.web.destinatario_pg.infrastructure.page.AddressPGPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.ApiIntegrationPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.DelegatedNotificationPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.NewDelegationPage;
@@ -71,7 +71,7 @@ public class WebRecipientPgNavigationContractTest {
 
     @TestFactory
     Stream<DynamicTest> shouldReachAddress() {
-        return reachabilityTest(AddressPage.class);
+        return reachabilityTest(AddressPGPage.class);
     }
 
     @TestFactory

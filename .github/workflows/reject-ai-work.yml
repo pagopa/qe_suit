@@ -1,0 +1,133 @@
+name: Reject AI work from Jira
+
+run-name: Reject ${{ inputs.jira_key }} from Jira
+
+on:
+  workflow_dispatch:
+    inputs:
+      jira_key:
+        description: "Jira key rifiutata"
+        required: true
+        type: string
+      issue_url:
+        description: "URL della GitHub issue associata"
+        required: true
+        type: string
+      pr_url:
+        description: "URL della Pull Request associata, se esiste"
+        required: false
+        type: string
+
+concurrency:
+  group: reject-ai-work-${{ inputs.jira_key }}
+  cancel-in-progress: false
+
+jobs:
+  reject:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+
+    permissions:
+      issues: write
+      pull-requests: read
+
+    steps:
+      - name: Validate Jira request and close issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JIRA_KEY: ${{ inputs.jira_key }}
+          ISSUE_URL: ${{ inputs.issue_url }}
+          PR_URL: ${{ inputs.pr_url }}
+        run: |
+          if [[ ! "$JIRA_KEY" =~ ^[A-Z][A-Z0-9_]*-[0-9]+$ ]]; then
+            echo "Jira key non valida: $JIRA_KEY"
+            exit 1
+          fi
+
+          ISSUE_PREFIX="https://github.com/$GITHUB_REPOSITORY/issues/"
+          ISSUE_NUMBER="${ISSUE_URL#"$ISSUE_PREFIX"}"
+          if [ "$ISSUE_URL" != "${ISSUE_PREFIX}${ISSUE_NUMBER}" ] || \
+             [[ ! "$ISSUE_NUMBER" =~ ^[0-9]+$ ]]; then
+            echo "Issue URL non valida o appartenente a un altro repository."
+            exit 1
+          fi
+
+          ISSUE_JSON="$(
+            gh issue view "$ISSUE_NUMBER" \
+              --repo "$GITHUB_REPOSITORY" \
+              --json title,state,stateReason,url
+          )"
+          ISSUE_TITLE="$(jq -r '.title' <<< "$ISSUE_JSON")"
+          ISSUE_STATE="$(jq -r '.state' <<< "$ISSUE_JSON")"
+          ISSUE_REASON="$(jq -r '.stateReason // ""' <<< "$ISSUE_JSON")"
+
+          case "$ISSUE_TITLE" in
+            "[$JIRA_KEY]"*) ;;
+            *)
+              echo "La issue non appartiene alla Jira key dichiarata."
+              exit 1
+              ;;
+          esac
+
+          if [ -n "$PR_URL" ]; then
+            PR_PREFIX="https://github.com/$GITHUB_REPOSITORY/pull/"
+            PR_NUMBER="${PR_URL#"$PR_PREFIX"}"
+            if [ "$PR_URL" != "${PR_PREFIX}${PR_NUMBER}" ] || \
+               [[ ! "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+              echo "PR URL non valida o appartenente a un altro repository."
+              exit 1
+            fi
+
+            PR_JSON="$(
+              gh pr view "$PR_NUMBER" \
+                --repo "$GITHUB_REPOSITORY" \
+                --json state,mergedAt,title,url
+            )"
+            PR_STATE="$(jq -r '.state' <<< "$PR_JSON")"
+            PR_MERGED_AT="$(jq -r '.mergedAt // ""' <<< "$PR_JSON")"
+            PR_TITLE="$(jq -r '.title' <<< "$PR_JSON")"
+
+            case "$PR_TITLE" in
+              "[$JIRA_KEY]"*) ;;
+              *)
+                echo "La PR non appartiene alla Jira key dichiarata."
+                exit 1
+                ;;
+            esac
+
+            if [ "$PR_STATE" != "CLOSED" ] || [ -n "$PR_MERGED_AT" ]; then
+              echo "La PR deve essere già chiusa senza merge prima del rifiuto."
+              exit 1
+            fi
+          fi
+
+          if [ "$ISSUE_STATE" = "CLOSED" ]; then
+            if [ "$ISSUE_REASON" = "NOT_PLANNED" ]; then
+              echo "La issue è già chiusa come not planned: nessuna azione necessaria."
+              exit 0
+            fi
+
+            echo "La issue è già chiusa con motivo $ISSUE_REASON; rifiuto interrotto."
+            exit 1
+          fi
+
+          COMMENT="Attività rifiutata definitivamente in Jira ($JIRA_KEY)."
+          if [ -n "$PR_URL" ]; then
+            COMMENT="$COMMENT La Pull Request associata è stata chiusa senza merge: $PR_URL"
+          fi
+
+          gh issue close "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --reason "not planned" \
+            --comment "$COMMENT"
+
+          {
+            echo "## Attività AI rifiutata"
+            echo
+            echo "- Jira: $JIRA_KEY"
+            echo "- Issue: $ISSUE_URL"
+            echo "- Stato issue: closed as not planned"
+            if [ -n "$PR_URL" ]; then
+              echo "- PR già chiusa senza merge: $PR_URL"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

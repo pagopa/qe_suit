@@ -63,7 +63,7 @@ Example:
 public class BffAgreementContractTest {
 
     private final ApiClient apiClient;
-    private final HttpContractValidator httpContractValidator;
+    private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final BffAgreementRequestFactory requestFactory;
 
@@ -71,20 +71,19 @@ public class BffAgreementContractTest {
     Stream<DynamicTest> createAgreement() {
 
         return httpContractValidator
-                .apiCall(() -> {
-                    interopJourney.withProducer(
-                            Tenant.COMUNE_DI_MILANO,
-                            UserRole.ADMIN
-                    );
-
-                    return apiClient
-                            .agreements()
-                            .createAgreement();
-                })
+                .as(
+                        Tenant.COMUNE_DI_MILANO,
+                        UserRole.ADMIN
+                )
+                .apiCall(() ->
+                        apiClient
+                                .agreements()
+                                .createAgreement()
+                )
                 .payload(() -> {
                     EService createdEservice = interopJourney
                             .withProducer(
-                                    Tenant.COMUNE_DI_MILANO,
+                                    Tenant.COMUNE_DI_TORINO,
                                     UserRole.ADMIN
                             )
                             .createEService(
@@ -127,6 +126,109 @@ This code creates valid test data.
 
 The contract test still validates the API contract rather than the business flow used to create the precondition.
 
+## Authentication and final API-call identity
+
+The final identity of the HTTP request is declared explicitly in the DSL through:
+
+```java
+.as(Tenant, User)
+```
+
+or:
+
+```java
+.as(Tenant, UserRole)
+```
+
+This is the identity that the generated API call must execute with.
+
+It is not just an initial setup step. It represents the final API-call identity for the generated `DynamicTest` execution.
+
+The recommended pattern is:
+
+```java
+return httpContractValidator
+        .as(
+                Tenant.COMUNE_DI_MILANO,
+                UserRole.ADMIN
+        )
+        .apiCall(() ->
+                apiClient
+                        .agreements()
+                        .createAgreement()
+        )
+        .payload(...)
+        .tests();
+```
+
+The authentication declared through `as(...)` is reapplied for every generated `DynamicTest` immediately before the corresponding API operation is materialized and executed.
+
+### Temporary session used by a precondition
+
+`payload(...)`, `pathParams(...)` and `queryParams(...)` are runtime suppliers. They can execute setup logic and temporarily switch session context.
+
+This is useful when a precondition needs a different user or tenant than the one used by the final API call.
+
+Example:
+
+```java
+return httpContractValidator
+        .as(
+                Tenant.COMUNE_DI_MILANO,
+                UserRole.ADMIN
+        )
+        .apiCall(() ->
+                apiClient
+                        .agreements()
+                        .createAgreement()
+        )
+        .payload(() -> {
+            EService createdEservice = interopJourney
+                    .withProducer(
+                            Tenant.COMUNE_DI_TORINO,
+                            UserRole.ADMIN
+                    )
+                    .createEService(
+                            EServiceDescriptorState.PUBLISHED
+                    )
+                    .get(EService.class);
+
+            return requestFactory.creationRequest(
+                    createdEservice,
+                    createdEservice.getActiveDescriptor(),
+                    null
+            );
+        })
+        .tests();
+```
+
+In this case:
+
+- `COMUNE_DI_TORINO` is the temporary session used only for the setup step;
+- that session does not become the authentication of the API call;
+- before the actual request is executed, the framework restores the identity declared in `as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)`;
+- the final HTTP request is executed as `COMUNE_DI_MILANO / ADMIN`.
+
+This is the fundamental semantic rule: the supplier used to build the valid request may authenticate differently during setup, but the request itself is always executed with the final identity declared in `as(...)`.
+
+### Anti-pattern: authenticating manually inside apiCall
+
+Avoid patterns like this:
+
+```java
+.apiCall(() -> {
+    interopJourney.withProducer(
+            Tenant.COMUNE_DI_MILANO,
+            UserRole.ADMIN
+    );
+    return apiClient.agreements().createAgreement();
+})
+```
+
+This is an anti-pattern for a contract test. The authentication of the final request must be declared with `as(...)`.
+
+The framework applies it automatically for each generated test case.
+
 ## API call definition
 
 Use `apiCall(...)` to provide the generated OpenAPI operation used by the test.
@@ -165,13 +267,36 @@ Whenever possible, use an existing request factory instead of constructing techn
 
 Path parameters are supplied through `pathParams(...)`.
 
-`pathParams` expects a JSON-like object with named properties.
-
-Do not pass an unnamed list of values.
-
-The property names must correspond to the endpoint path-parameter names.
+The same principle applies here: if a `pathParams(...)` supplier changes the session temporarily during precondition setup, that temporary session does not become the final API-call identity.
 
 Example:
+
+```java
+.pathParams(() -> {
+    // temporary session changes are allowed here
+    return Map.of(
+            "agreementId", agreementId,
+            "descriptorId", descriptorId
+    );
+})
+```
+
+The final request still uses the identity declared through `as(...)`.
+
+The public contract is intentionally simple: pass a map keyed by the OpenAPI path-parameter name, or provide a POJO/record whose property names match the path-parameter names.
+
+Preferred form for readability and clarity:
+
+```java
+.pathParams(() -> Map.of(
+        "agreementId", agreementId,
+        "descriptorId", descriptorId
+))
+```
+
+This is the recommended style for contract tests because the mapping is explicit and mirrors the generated OpenAPI operation signature (`agreementIdPath(...)`, `descriptorIdPath(...)`).
+
+The framework also supports POJO/record usage:
 
 ```java
 record AgreementPathParams(
@@ -183,12 +308,10 @@ record AgreementPathParams(
 Usage:
 
 ```java
-.pathParams(() ->
-        new AgreementPathParams(
-                agreementId,
-                descriptorId
-        )
-)
+.pathParams(() -> new AgreementPathParams(
+        agreementId,
+        descriptorId
+))
 ```
 
 Conceptually:
@@ -199,7 +322,44 @@ POJO / record property name
 OpenAPI path parameter name
 ```
 
-This allows path parameters to participate in the same structural mutation model used for payloads.
+The framework converts the supplied values to the concrete generated setter type before invoking the operation. For example, a UUID path parameter is bound to a method like:
+
+```java
+clientIdPath(UUID clientId)
+```
+
+not to `clientIdPath(Object)`. This is what makes the binding reliable for generated OpenAPI clients.
+
+This allows path parameters to participate in the same structural mutation model used for payloads, while keeping the API ergonomic for the test author.
+
+## Query parameters
+
+Query parameters are supplied through `queryParams(...)`, following exactly the same rules as `pathParams(...)`: a map keyed by the OpenAPI parameter name, or a POJO/record whose property names match the parameter names.
+
+Preferred form:
+
+```java
+.queryParams(() -> Map.of(
+        "offset", 0,
+        "limit", 10,
+        "states", List.of("ACTIVE")
+))
+```
+
+Values are bound to the generated `<name>Query(...)` methods. Lists are expanded into varargs, so array parameters are decomposed and fuzzed element by element as well.
+
+The supplied map is the baseline: the unmutated call must succeed. Query parameters have no generated DTO, therefore no validation annotation is available. At runtime every supplied parameter is treated as optional, so removing it or setting it to null is expected to succeed, while every other scenario is resolved by the contract policy. Use `scenario(...)` or `targets(...)` to override a specific expectation, for example when a parameter is in fact required:
+
+```java
+.queryParams(() -> Map.of("filter", "abc", "page", 1))
+.targets(
+        FuzzScenario.REMOVED,
+        response -> response.then().statusCode(400),
+        List.of(query -> query.get("filter"))
+)
+```
+
+The scopes are composable and order independent: `payload(...)`, `pathParams(...)` and `queryParams(...)` can be chained on the same API call, and each one contributes its own dynamic tests.
 
 ## Scenarios
 

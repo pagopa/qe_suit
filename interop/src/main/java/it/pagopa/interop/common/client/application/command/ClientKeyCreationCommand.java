@@ -2,7 +2,7 @@ package it.pagopa.interop.common.client.application.command;
 
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.jwt.JwtUtils;
-import it.pagopa.interop.common.kernel.domain.Key;
+import it.pagopa.kernel.security.Key;
 import it.pagopa.interop.common.kernel.domain.KeyUse;
 import it.pagopa.kernel.security.KeyAlgorithm;
 
@@ -12,7 +12,7 @@ public interface ClientKeyCreationCommand {
     ClientKeyCreationCommand use(KeyUse use);
     ClientKeyCreationCommand alg(String alg);
 
-    default ClientKeyCreationCommand randomClientConsumerKey(){
+    default ClientKeyCreationCommand randomClientKey(){
         KeyAlgorithm algorithm = KeyAlgorithm.RSA;
         Key key = Key.generate(algorithm);
 

@@ -101,6 +101,92 @@ class DefaultFuzzEngineTest {
     }
 
     @Test
+    void planner_preserves_rule_node_and_mutation_order_and_engine_results() {
+        ObjectMapper mapper = new ObjectMapper();
+        Node root = new Node(NodeKind.OBJECT, NodePath.root(), null, Payload.class);
+        Node name = new Node(NodeKind.SCALAR, path("/name"), "Mario", String.class);
+        Node role = new Node(NodeKind.SCALAR, path("/role"), "admin", String.class);
+        ObjectGraph graph = objectGraph(List.of(root, name, role));
+
+        FuzzMutation nameFirst = new FuzzMutation(
+                FuzzScenario.REPLACED_WITH_EMPTY_STRING,
+                FuzzMutationKind.REPLACE,
+                ""
+        );
+        FuzzMutation roleFirst = new FuzzMutation(
+                FuzzScenario.REPLACED_WITH_BLANK_STRING,
+                FuzzMutationKind.REPLACE,
+                "   "
+        );
+        FuzzMutation nameSecond = new FuzzMutation(
+                FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER,
+                FuzzMutationKind.REPLACE,
+                124
+        );
+        FuzzMutation rootSecond = new FuzzMutation(
+                FuzzScenario.REPLACED_WITH_NULL,
+                FuzzMutationKind.REPLACE,
+                null
+        );
+
+        FuzzRule firstRule = new StaticRule(NodeSelectors.scalar(), node -> switch (node.path().toString()) {
+            case "/name" -> List.of(nameFirst);
+            case "/role" -> List.of(roleFirst);
+            default -> List.of();
+        });
+        FuzzRule secondRule = new StaticRule(NodeSelectors.all(), node -> {
+            if (node.path().isRoot()) return List.of(rootSecond);
+            if (node.path().equals(name.path())) return List.of(nameSecond);
+            return List.of();
+        });
+        FuzzCasePlanner planner = new FuzzCasePlanner(List.of(firstRule, secondRule));
+
+        List<PlannedFuzzCase> planned = planner.plan(graph);
+        assertEquals(List.of(
+                new PlannedFuzzCase(name.path(), nameFirst),
+                new PlannedFuzzCase(role.path(), roleFirst),
+                new PlannedFuzzCase(NodePath.root(), rootSecond),
+                new PlannedFuzzCase(name.path(), nameSecond)
+        ), planned);
+
+        ObjectGraphDecomposer decomposer = mock(ObjectGraphDecomposer.class);
+        when(decomposer.decompose(any())).thenReturn(graph);
+        DefaultFuzzEngine engine = new DefaultFuzzEngine(
+                decomposer,
+                mapper,
+                new JacksonFuzzMutationApplier(mapper),
+                List.of(firstRule, secondRule)
+        );
+
+        List<FuzzCase> cases = engine.generate(new Payload("Mario", "admin"));
+        assertEquals(planned.size(), cases.size());
+        for (int i = 0; i < planned.size(); i++) {
+            PlannedFuzzCase plannedCase = planned.get(i);
+            FuzzCase fuzzCase = cases.get(i);
+            assertEquals(plannedCase.target(), fuzzCase.target());
+            assertEquals(plannedCase.mutation(), fuzzCase.mutation());
+        }
+        assertEquals("", cases.get(0).result().at("/name").asText());
+        assertEquals("admin", cases.get(0).result().at("/role").asText());
+        assertEquals("Mario", cases.get(1).result().at("/name").asText());
+        assertEquals("   ", cases.get(1).result().at("/role").asText());
+        assertTrue(cases.get(2).result().isNull());
+        assertEquals(124, cases.get(3).result().at("/name").asInt());
+        assertEquals("admin", cases.get(3).result().at("/role").asText());
+    }
+
+    @Test
+    void planner_returns_no_cases_when_rules_select_no_nodes() {
+        Node root = new Node(NodeKind.OBJECT, NodePath.root(), null, Payload.class);
+        ObjectGraph graph = objectGraph(List.of(root));
+        FuzzRule scalarRule = new StaticRule(NodeSelectors.scalar(), node -> List.of(
+                new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, "")
+        ));
+
+        assertTrue(new FuzzCasePlanner(List.of(scalarRule)).plan(graph).isEmpty());
+    }
+
+    @Test
     void generated_cases_are_independent_and_single_mutation_each() {
         ObjectMapper mapper = new ObjectMapper();
         ObjectGraphDecomposer decomposer = mock(ObjectGraphDecomposer.class);
@@ -288,10 +374,40 @@ class DefaultFuzzEngineTest {
         assertNull(byKey.get("#REMOVED").result());
     }
 
+    @Test
+    void map_of_object_preserves_runtime_uuid_type_for_scalar_mutations() {
+        ObjectMapper mapper = new ObjectMapper();
+        UUID agreementId = UUID.fromString("c0d9f3c0-9a43-4d8f-9a36-c97c870b13b9");
+        Map<String, Object> source = Map.of("agreementId", agreementId);
+
+        DefaultFuzzEngine engine = new DefaultFuzzEngine(
+                createRealDecomposer(mapper),
+                mapper,
+                new JacksonFuzzMutationApplier(mapper),
+                List.of(new ScalarRule())
+        );
+
+        List<FuzzCase> cases = engine.generate(source);
+        Map<FuzzScenario, FuzzCase> byScenario = cases.stream()
+                .filter(fuzzCase -> "/agreementId".equals(fuzzCase.target().toString()))
+                .collect(Collectors.toMap(c -> c.mutation().scenario(), Function.identity()));
+
+        assertEquals("not-a-valid-uuid-12345", byScenario.get(FuzzScenario.REPLACED_WITH_MALFORMED_UUID).result().at("/agreementId").asText());
+        assertEquals("00000000-0000-0000-0000-000000000000", byScenario.get(FuzzScenario.REPLACED_WITH_NIL_UUID).result().at("/agreementId").asText());
+        assertFalse(byScenario.containsKey(FuzzScenario.REPLACED_WITH_NULL));
+        assertFalse(byScenario.containsKey(FuzzScenario.REMOVED));
+    }
+
     private ObjectGraphDecomposer mockReturningGraph(ObjectGraph graph) {
         ObjectGraphDecomposer decomposer = mock(ObjectGraphDecomposer.class);
         when(decomposer.decompose(any())).thenReturn(graph);
         return decomposer;
+    }
+
+    private ObjectGraphDecomposer createRealDecomposer(ObjectMapper mapper) {
+        return new it.pagopa.infrastructure.objectgraph.DefaultObjectGraphDecomposer(
+                new it.pagopa.infrastructure.objectgraph.JacksonObjectDecomposer(mapper)
+        );
     }
 
     @SuppressWarnings("unchecked")

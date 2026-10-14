@@ -1,22 +1,18 @@
 package it.pagopa.interop.common.kernel.domain;
 
-import it.pagopa.interop.common.attribute.domain.Attributes;
-import it.pagopa.domain.Identifiable;
-import lombok.Builder;
-import lombok.Value;
-import lombok.extern.jackson.Jacksonized;
+import jakarta.annotation.Nonnull;
 
+import java.util.Objects;
 import java.util.UUID;
 
-@Value
-@Builder(toBuilder = true)
-@Jacksonized
-public class TenantRef implements Identifiable {
-    TenantRef tenant;
-    Attributes attributes;
+public record TenantRef(@Nonnull UUID id) {
+    public TenantRef {
+        Objects.requireNonNull(id, "id must not be null");
+    }
 
-    @Override
-    public UUID getId() {
-        return tenant.getId();
+    public static TenantRef of(@Nonnull UUID id) {
+        return new TenantRef(id);
     }
 }
+
+

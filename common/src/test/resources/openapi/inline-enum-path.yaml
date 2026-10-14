@@ -1,0 +1,18 @@
+openapi: 3.0.3
+info:
+  title: Inline enum fixture
+  version: 1.0.0
+paths:
+  /widgets/by-inline-kind/{kind}:
+    get:
+      operationId: getWidgetByInlineKind
+      parameters:
+        - name: kind
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [STANDARD, PREMIUM]
+      responses:
+        '200':
+          description: found

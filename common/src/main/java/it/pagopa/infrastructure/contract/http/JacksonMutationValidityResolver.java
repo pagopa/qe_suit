@@ -19,11 +19,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-final class JacksonMutationValidityResolver implements MutationValidityResolver {
+public final class JacksonMutationValidityResolver implements MutationValidityResolver {
     private final ObjectMapper objectMapper;
     private final Class<?> rootType;
 
-    JacksonMutationValidityResolver(ObjectMapper objectMapper, Class<?> rootType) {
+    public JacksonMutationValidityResolver(ObjectMapper objectMapper, Class<?> rootType) {
         this.objectMapper = objectMapper;
         this.rootType = rootType;
     }
@@ -53,6 +53,11 @@ final class JacksonMutationValidityResolver implements MutationValidityResolver 
         if (meta.notEmpty && value.isEmpty()) return ContractValidity.INVALID;
         if (meta.minSize != null && value.length() < meta.minSize) return ContractValidity.INVALID;
         if (meta.maxSize != null && value.length() > meta.maxSize) return ContractValidity.INVALID;
+
+        if (mutation.scenario() == FuzzScenario.REPLACED_WITH_XSS
+                || mutation.scenario() == FuzzScenario.REPLACED_WITH_SQL_INJECTION) {
+            return ContractValidity.UNKNOWN;
+        }
 
         if (meta.notBlank || meta.notEmpty || meta.minSize != null || meta.maxSize != null) return ContractValidity.VALID;
 

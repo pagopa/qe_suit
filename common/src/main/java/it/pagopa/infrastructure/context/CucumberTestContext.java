@@ -31,4 +31,9 @@ public class CucumberTestContext implements TestContext {
     public List<String> getEventualConsistencyErrors() {
         return eventualConsistencyErrors;
     }
+
+    @Override
+    public void clearEventualConsistencyErrors() {
+        eventualConsistencyErrors.clear();
+    }
 }

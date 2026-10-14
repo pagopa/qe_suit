@@ -18,4 +18,18 @@ public interface Breadcrumbs extends Component {
         }
         return breadcrumbItems.get(breadcrumbItems.size() - 1).read();
     }
+
+    default String getPath() {
+        List<Readable<String>> breadcrumbItems = items();
+        if (breadcrumbItems.isEmpty()) {
+            return null;
+        }
+
+        StringBuilder pathBuilder = new StringBuilder();
+        for (Readable<String> item : breadcrumbItems) {
+            if (!pathBuilder.isEmpty()) pathBuilder.append("/");
+            pathBuilder.append(item.read());
+        }
+        return pathBuilder.toString();
+    }
 }

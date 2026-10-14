@@ -32,7 +32,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"ignore"})
-@IncludeTags({"loadPage", "backstage"})
+@IncludeTags({"loadPage", "backstage", "sercqDomicilioDigitale"})
 public class NrtStandardSuite {
 
 }

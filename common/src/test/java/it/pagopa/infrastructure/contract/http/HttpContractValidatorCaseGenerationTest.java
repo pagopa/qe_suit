@@ -19,9 +19,12 @@ import org.mockito.Mockito;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,16 +33,15 @@ class HttpContractValidatorCaseGenerationTest {
 
     @Test
     void payloadAndPathParamsCasesMutateExactlyOneRequestPartAndUseFreshOperation() throws Throwable {
-        FuzzEngine fuzzEngine = source -> {
-            if (source instanceof Payload) {
-                JsonNode payload = objectMapper.createObjectNode().put("name", "");
-                return List.of(new FuzzCase(
-                        path("/name"),
-                        new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, ""),
-                        payload
-                ));
-            }
-
+        FuzzEngine payloadFuzzEngine = source -> {
+            JsonNode payload = objectMapper.createObjectNode().put("name", "");
+            return List.of(new FuzzCase(
+                    path("/name"),
+                    new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, ""),
+                    payload
+            ));
+        };
+        FuzzEngine pathParamsFuzzEngine = source -> {
             JsonNode params = objectMapper.createObjectNode().put("agreementId", "not-a-valid-uuid");
             return List.of(new FuzzCase(
                     path("/agreementId"),
@@ -50,7 +52,8 @@ class HttpContractValidatorCaseGenerationTest {
 
         HttpContractValidator contract = new HttpContractValidator(
                 objectMapper,
-                fuzzEngine,
+                payloadFuzzEngine,
+                pathParamsFuzzEngine,
                 createDecomposer(),
                 completePolicy()
         );
@@ -92,7 +95,7 @@ class HttpContractValidatorCaseGenerationTest {
 
     @Test
     void failingExpectationIncludesDetailedDiagnostics() {
-        FuzzEngine fuzzEngine = source -> List.of(new FuzzCase(
+        FuzzEngine payloadFuzzEngine = source -> List.of(new FuzzCase(
                 path("/name"),
                 new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, ""),
                 objectMapper.createObjectNode().put("name", "")
@@ -100,7 +103,8 @@ class HttpContractValidatorCaseGenerationTest {
 
         HttpContractValidator contract = new HttpContractValidator(
                 objectMapper,
-                fuzzEngine,
+                payloadFuzzEngine,
+                source -> List.of(),
                 createDecomposer(),
                 completePolicy()
         );
@@ -123,6 +127,51 @@ class HttpContractValidatorCaseGenerationTest {
         assertTrue(error.getMessage().contains("targetPath: /name"));
         assertTrue(error.getMessage().contains("responseStatus: 400"));
         assertTrue(error.getMessage().contains("payload: {\"name\":\"\"}"));
+    }
+
+    @Test
+    void payload_keeps_null_and_removed_while_path_params_uuid_only_keep_scalar_mutations() {
+        UUID agreementId = UUID.fromString("c0d9f3c0-9a43-4d8f-9a36-c97c870b13b9");
+        var payloadEngine = new it.pagopa.infrastructure.fuzzing.DefaultFuzzEngine(
+                createDecomposer(),
+                objectMapper,
+                new it.pagopa.infrastructure.fuzzing.JacksonFuzzMutationApplier(objectMapper),
+                List.of(new it.pagopa.infrastructure.fuzzing.NullAndMissingRule(), new it.pagopa.infrastructure.fuzzing.ScalarRule())
+        );
+        var pathParamsEngine = new it.pagopa.infrastructure.fuzzing.DefaultFuzzEngine(
+                createDecomposer(),
+                objectMapper,
+                new it.pagopa.infrastructure.fuzzing.JacksonFuzzMutationApplier(objectMapper),
+                List.of(new it.pagopa.infrastructure.fuzzing.ScalarRule())
+        );
+
+        HttpContractValidator contract = new HttpContractValidator(
+                objectMapper,
+                payloadEngine,
+                pathParamsEngine,
+                createDecomposer(),
+                completePolicy()
+        );
+
+        var tests = contract.apiCall(() -> new RecordingOper("op"))
+                .payload(new Payload("valid"))
+                .pathParams(Map.of("agreementId", agreementId))
+                .tests()
+                .toList();
+
+        Map<String, List<String>> scenariosByScope = tests.stream().collect(Collectors.groupingBy(
+                test -> test.getDisplayName().startsWith("[payload]") ? "payload" : "pathParams",
+                Collectors.mapping(org.junit.jupiter.api.DynamicTest::getDisplayName, Collectors.toList())
+        ));
+
+        assertTrue(scenariosByScope.get("payload").stream().anyMatch(name -> name.contains("REMOVED")));
+        assertTrue(scenariosByScope.get("payload").stream().anyMatch(name -> name.contains("REPLACED_WITH_NULL")));
+        assertTrue(scenariosByScope.get("pathParams").stream().noneMatch(name -> name.contains("REMOVED")));
+        assertTrue(scenariosByScope.get("pathParams").stream().noneMatch(name -> name.contains("REPLACED_WITH_NULL")));
+        assertTrue(scenariosByScope.get("pathParams").stream().anyMatch(name -> name.contains("REPLACED_WITH_NIL_UUID")));
+        assertTrue(scenariosByScope.get("pathParams").stream().anyMatch(name -> name.contains("REPLACED_WITH_MALFORMED_UUID")));
+        assertTrue(tests.stream().noneMatch(test -> test.getDisplayName().equals("[pathParams] REMOVED @ <root>")));
+        assertTrue(tests.stream().noneMatch(test -> test.getDisplayName().equals("[pathParams] REPLACED_WITH_NULL @ <root>")));
     }
 
     private HttpContractPolicy completePolicy() {

@@ -1,12 +1,16 @@
 package it.pagopa.interop.common.eservice.application;
 
+import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
+import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 @Service
@@ -40,16 +44,37 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.linkOpenApiInterface(eService.getRef(), descriptor.getRef(), openApiInterfacePath);
     }
 
+    public EServiceDescriptor archiveDescriptor(EService eService, EServiceDescriptor descriptor, GracePeriodDays gracePeriodDays) {
+        eServiceDescriptorGateway.archiveDescriptor(eService.getRef(), descriptor.getRef(), gracePeriodDays);
+        return descriptor;
+    }
+
     public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor,  Consumer<UpdateEServiceDescriptorCommand> config) {
         UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
         config.accept(command);
         return updateDescriptor(eService, descriptor, command);
     }
 
-    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor){
-        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand command){
+        if (command == null) command = requestFactory.defaultUpdateDescriptorCommand();
         EServiceDescriptor updatedDescriptor = updateDescriptor(eService, descriptor, command);
 
         return linkOpenApiInterface(eService, updatedDescriptor, "assets/origin-interface.yaml");
+    }
+
+    public EServiceCreationCommand getDefaultEServiceCreationCommand(boolean async) {
+        EServiceCreationCommand command = requestFactory.defaultCreationEServiceCommand();
+        command.isAsync(async);
+        return command;
+    }
+
+    public UpdateEServiceDescriptorCommand getUpdateEServiceDescriptorCommand(
+            int consumerThreshold,
+            int totalThreshold
+    ) {
+        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        command.dailyCallsPerConsumer(consumerThreshold);
+        command.dailyCallsTotal(totalThreshold);
+        return command;
     }
 }

@@ -13,6 +13,8 @@ import it.frontend.e2e.framework.core.model.selector.Selector;
 import java.lang.reflect.Proxy;
 import java.util.AbstractList;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
 
 public class PresentationElementList<T extends Capability, S extends Selector, L extends Location, E extends AbstractPresentationElement<S,L>> extends AbstractList<T> {
 
@@ -67,6 +69,14 @@ public class PresentationElementList<T extends Capability, S extends Selector, L
                         dispatcher,
                         new BindContext(scope)
                 )
+        );
+    }
+
+    @Override
+    public Spliterator<T> spliterator() {
+        return Spliterators.spliteratorUnknownSize(
+                iterator(),
+                Spliterator.ORDERED
         );
     }
 }

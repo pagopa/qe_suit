@@ -12,12 +12,15 @@ flowchart TB
     Common["common"]
     Interop["interop"]
     Send["send"]
+    Pst["pst-maven-plugin"]
 
     Common --> FE
     Interop --> Common
     Interop --> FE
     Send --> Common
     Send --> FE
+    Interop -. "pst:generate (build plugin)" .-> Pst
+    Pst -. "loads reflectively from project classpath" .-> Common
 ```
 
 ## Module roles
@@ -26,6 +29,7 @@ flowchart TB
 * `common`: shared infrastructure, utilities, and reusable components used across product-specific modules. It depends on suit only where common UI components are implemented using framework abstractions.
 * `interop`: Interop-specific test implementation.
 * `send`: SEND-specific test implementation.
+* `pst-maven-plugin`: Maven orchestration of the PST generator (`pst:generate`). It has no compile dependency on `common`: it loads the PST launcher from the consumer project classpath. See [PST generator](../guides/contract/pst-generator.md).
 
 ## Module boundaries
 * `suit` must not contain product-specific logic.

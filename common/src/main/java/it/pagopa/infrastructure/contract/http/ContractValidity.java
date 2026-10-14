@@ -1,6 +1,6 @@
 package it.pagopa.infrastructure.contract.http;
 
-enum ContractValidity {
+public enum ContractValidity {
     VALID,
     INVALID,
     UNKNOWN

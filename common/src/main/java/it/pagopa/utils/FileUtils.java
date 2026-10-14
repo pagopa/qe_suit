@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 public final class FileUtils {
@@ -34,7 +35,9 @@ public final class FileUtils {
             String prefix = fileName.contains(".") ? fileName.substring(0, fileName.lastIndexOf('.')) : fileName;
             String suffix = fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.')) : ".tmp";
 
-            File tempFile = File.createTempFile(prefix + "-", suffix);
+            Path tempPath = Files.createTempFile(prefix + "-", suffix);
+            File tempFile = tempPath.toFile();
+
             Files.copy(inputStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             tempFile.deleteOnExit();
             return tempFile;

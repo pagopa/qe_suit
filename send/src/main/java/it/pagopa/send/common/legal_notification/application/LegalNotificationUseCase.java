@@ -7,6 +7,7 @@ import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -46,7 +47,7 @@ public class LegalNotificationUseCase {
         return legalNotificationGateway.readNotification(iun);
     }
 
-    public LegalNotificationDomain searchNotification(Map<String, String> overrides) {
+    public List<LegalNotificationDomain> searchNotification(Map<String, String> overrides) {
         return legalNotificationGateway.searchNotification(overrides);
     }
 

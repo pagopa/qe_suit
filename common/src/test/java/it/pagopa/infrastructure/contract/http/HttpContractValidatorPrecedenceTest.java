@@ -45,6 +45,7 @@ class HttpContractValidatorPrecedenceTest {
         HttpContractValidator contract = new HttpContractValidator(
                 objectMapper,
                 fuzzEngine,
+                fuzzEngine,
                 createDecomposer(),
                 builder.build()
         );

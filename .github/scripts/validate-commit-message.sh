@@ -18,7 +18,7 @@ COMMIT_REGEX='^(feat|feature|fix|chore|docs|refactor|test|ci)(\([^)]*\))?[[:spac
 if [[ ! "$MSG" =~ $COMMIT_REGEX ]]; then
   echo "" >&2
   echo "========================================" >&2
-  echo "Invalid commit message format" >&2
+  echo "Commit message non conforme allo standard" >&2
   echo "========================================" >&2
   echo "Message: '$MSG'" >&2
   echo "" >&2

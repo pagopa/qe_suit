@@ -11,6 +11,10 @@ public interface EntityStore {
 
     <Model extends Identifiable> Optional<Model> getById(UUID id, Class<Model> modelClass);
 
+    <Model extends Identifiable> Optional<Model> getFirst(Class<Model> modelClass);
+
+    <Model extends Identifiable> Model getFirstOrThrow(Class<Model> modelClass);
+
     <Model extends Identifiable> Optional<Model> getLast(Class<Model> modelClass);
 
     <Model extends Identifiable> Model getLastOrThrow(Class<Model> modelClass);
