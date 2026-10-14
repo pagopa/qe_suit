@@ -18,14 +18,10 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
-import java.util.UUID;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 @SpringBootTest(
@@ -42,8 +38,16 @@ public class WebAgreementContractTest {
     private final WebBrowserContractValidator webContractValidator;
     private final InteropJourney interopJourney;
 
+
+    /**
+     * Verifies that the consumer sees the "obsolete, new version available" banner on an agreement
+     * bound to an archiving descriptor when a newer version of the e-service exists.
+     * <p>
+     * Setup: v1 published with an active agreement, v2 published (v1 becomes deprecated),
+     * then v1 is archived with a 60-day grace period.
+     */
     @TestFactory
-    Stream<DynamicTest> shouldSeeBanner1() {
+    Stream<DynamicTest> agreementOnArchivingDescriptorWithNewerVersionMustShowUpdateAvailableBanner() {
         Agreement agreement = interopJourney
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
@@ -64,13 +68,21 @@ public class WebAgreementContractTest {
                 .on(AgreementPage.class, agreement.getId().toString())
                 .tests(Stream.of(new WebScenario<>(
                         "Should see banner for agreement update to newer version",
-                        page -> {},
+                        page -> {
+                        },
                         page -> assertBannerIsVisible(page, DESIRED_MESSAGE_BANNER_1)
                 )));
     }
 
+    /**
+     * Verifies that the consumer sees the "obsolete" banner, without the new version notice,
+     * when the whole e-service is archiving and the agreement is still on v1.
+     * <p>
+     * Setup: v1 published with an active agreement, v2 published, then the e-service is archived
+     * with a 60-day grace period.
+     */
     @TestFactory
-    Stream<DynamicTest> shouldSeeBanner2() {
+    Stream<DynamicTest> agreementOnOlderVersionOfArchivingEServiceMustShowObsoleteBanner() {
         Agreement agreement = interopJourney
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
@@ -90,13 +102,20 @@ public class WebAgreementContractTest {
                 .on(AgreementPage.class, agreement.getId().toString())
                 .tests(Stream.of(new WebScenario<>(
                         "Should see obsolete version banner when e-service is archiving",
-                        page -> {},
+                        page -> {
+                        },
                         page -> assertBannerIsVisible(page, DESIRED_MESSAGE_BANNER_2)
                 )));
     }
 
+    /**
+     * Verifies that no obsolete banner is shown when the e-service is archiving but the agreement
+     * is already on the latest version, so there is nothing to update.
+     * <p>
+     * Setup: v1 and v2 published, agreement created afterwards, then the e-service is archived.
+     */
     @TestFactory
-    Stream<DynamicTest> shouldSeeNoBannerWhenEserviceInArchivingStateAndAgreementIsNonUpdatable() {
+    Stream<DynamicTest> agreementOnLatestVersionOfArchivingEServiceMustNotShowAnyBanner() {
         Agreement agreement = interopJourney
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
@@ -116,13 +135,21 @@ public class WebAgreementContractTest {
                 .on(AgreementPage.class, agreement.getId().toString())
                 .tests(Stream.of(new WebScenario<>(
                         "Should see no banner when e-service is archiving and agreement uses latest version",
-                        page -> {},
+                        page -> {
+                        },
                         this::assertNoBannerIsVisible
                 )));
     }
 
+    /**
+     * Verifies that the "obsolete" banner is shown when the descriptor linked to the agreement
+     * is archiving and the whole e-service is archiving as well.
+     * <p>
+     * Setup: v1 published with an active agreement, v2 published, v1 archived, then the whole
+     * e-service archived, all with a 60-day grace period.
+     */
     @TestFactory
-    Stream<DynamicTest> shouldSeeBanner2WhenDescriptorInArchivingStateAndEserviceInArchivingStateAndAgreementIsNonUpdatable() {
+    Stream<DynamicTest> agreementOnArchivingDescriptorOfArchivingEServiceMustShowObsoleteBanner() {
         Agreement agreement = interopJourney
                 .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
@@ -144,7 +171,8 @@ public class WebAgreementContractTest {
                 .on(AgreementPage.class, agreement.getId().toString())
                 .tests(Stream.of(new WebScenario<>(
                         "Should see obsolete version banner when descriptor and e-service are archiving",
-                        page -> {},
+                        page -> {
+                        },
                         page -> assertBannerIsVisible(page, DESIRED_MESSAGE_BANNER_2)
                 )));
     }
