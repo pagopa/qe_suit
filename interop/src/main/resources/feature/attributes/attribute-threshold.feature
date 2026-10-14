@@ -7,25 +7,19 @@ Feature: Soglie differenziate
   quando l'erogatore rimuove la soglia associata all'attributo certificato
   allora l'attributo non ha più una soglia personalizzata definita
 
-    # "bozza" e "pubblicato" potrebbero essere parametri
-    # va bene in CommonParameterTypes?
-
     Given un e-service in bozza, creato dal Comune di Milano, con un attributo certificato e una soglia personalizzata per fruitore pari a 100
       | consumerThreshold | 50 |
       | totalThreshold    | 1000 |
     When l'utente rimuove la soglia personalizzata dall'attributo certificato 1 del gruppo 1 dall'e-service
     Then viene confermato l'esito di successo per la rimozione della soglia personalizzata
 
+  Scenario: [ATTRIBUTE_THRESHOLD_REMOVE_2] - Rimozione della soglia differenziata impostata per l'attributo certificato dell'e-service pubblicato.
 
-
-
-
-  # Scenario: [ATTRIBUTE_THRESHOLD_REMOVE_2] - Rimozione della soglia differenziata impostata per l'attributo certificato dell'e-service pubblicato.
-  #   Given un e-service in pubblicato, creato dal Comune di Milano, con un attributo certificato e una soglia personalizzata per fruitore pari a 100, in fruizione al Comune di Pozzallo
-  #     | consumerThreshold | 50 |
-  #     | totalThreshold    | 1000 |
-  #   When l'utente rimuove la soglia personalizzata dall'attributo certificato 1 del gruppo 1 dall'e-service
-  #   Then viene confermato l'esito di successo per la rimozione della soglia personalizzata
+    Given un e-service in pubblicato, creato dal Comune di Milano, con un attributo certificato e una soglia personalizzata per fruitore pari a 100
+      | consumerThreshold | 50 |
+      | totalThreshold    | 1000 |
+    When l'utente rimuove la soglia personalizzata dall'attributo certificato 1 del gruppo 1 dall'e-service
+    Then viene confermato l'esito di successo per la rimozione della soglia personalizzata
 
   # Scenario: [ATTRIBUTE_THRESHOLD_REMOVE_3] - Rimozione della soglia differenziata impostata per l'attributo certificato della nuova versione e-service in bozza.
     # Given una nuova versione dell'e-service in bozza, creata dal Comune di Milano, con un attributo certificato e una soglia personalizzata per fruitore pari a 100, in fruizione al Comune di Pozzallo

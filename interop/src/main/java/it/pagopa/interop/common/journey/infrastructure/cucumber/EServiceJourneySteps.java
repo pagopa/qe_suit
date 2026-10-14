@@ -119,6 +119,9 @@ public class EServiceJourneySteps {
                 .updateDescriptor(config -> config
                         .dailyCallsPerConsumer(thresholdsMap.get("consumerThreshold"))
                         .dailyCallsTotal(thresholdsMap.get("totalThreshold"))
-                        .attributes(interopJourney.certifiedAttributesWithDailyCallsPerConsumer(customThreshold)), state);
+                        .attributes(interopJourney.certifiedAttributesWithDailyCallsPerConsumer(customThreshold)), state)
+                .waitUntilEService(eservice ->
+                        eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.PUBLISHED
+                );
     }
 }
