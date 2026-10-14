@@ -14,6 +14,9 @@ Feature: Soglie differenziate
     Then viene confermato l'esito di successo per la rimozione della soglia personalizzata
 
   Scenario: [ATTRIBUTE_THRESHOLD_REMOVE_2] - Rimozione della soglia differenziata impostata per l'attributo certificato dell'e-service pubblicato.
+  Dato un EService pubblicato con un attributo certificato e una soglia personalizzata configurata
+  quando l'erogatore rimuove la soglia associata all'attributo certificato
+  allora l'attributo non ha più una soglia personalizzata definita
 
     Given un e-service in pubblicato, creato dal Comune di Milano, con un attributo certificato e una soglia personalizzata per fruitore pari a 100
       | consumerThreshold | 50 |
