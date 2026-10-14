@@ -52,7 +52,7 @@ public class BffClientGateway implements ClientGateway {
             case CONSUMER -> restClient.createConsumerClient(bffCommand.getClientSeed());
         };
 
-        return createClientChain
+        Client createdClient = createClientChain
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(ref -> {
                     Client client = getClient(ClientRef.of(ref.getId()));
@@ -71,6 +71,11 @@ public class BffClientGateway implements ClientGateway {
                 })
                 .updateContext()
                 .get();
+
+        if(bffCommand.getAdmin() != null)
+            return setAdmin(createdClient, bffCommand.getAdmin());
+        else
+            return createdClient;
     }
 
     @Override
@@ -116,6 +121,18 @@ public class BffClientGateway implements ClientGateway {
         return restClient.linkPurpose(client.getId(), purposeSeed)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map((Void) -> getClient(ClientRef.of(client.getId())))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public Client setAdmin(Client client, UserRef admin) {
+        return restClient.setAdmin(client.getId(), admin.getUser().getUserId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(updatedClient ->{
+                    Optional<Client> maybeClient = entityStore.getById(updatedClient.getId(), Client.class);
+                    return mapper.toClientPreservingKeysAndUsers(updatedClient, maybeClient.orElse(null));
+                })
                 .updateContext()
                 .get();
     }

@@ -7,6 +7,7 @@ import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.application.context.TestContext;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.application.TestKind;
+import it.pagopa.infrastructure.logging.TestMdcKeys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -20,44 +21,45 @@ public class ApplicationHooks {
     private final TestContext testContext;
     private final CurrentChannel<Channel> currentChannel;
 
-    @Before
+    // Ordine minimo: l'MDC deve essere popolato prima di qualsiasi altro hook che logga.
+    @Before(order = Integer.MIN_VALUE)
     public void beforeScenario(Scenario scenario) {
         testContext.setCurrentTestKind(TestKind.FLOW);
-        MDC.put("scenario", scenario.getName());
+        MDC.clear();
+        testContext.clearEventualConsistencyErrors();
+
+        String scenarioName = ScenarioMdcSupport.scenarioName(scenario);
+        MDC.put(TestMdcKeys.TEST_CASE_ID, ScenarioMdcSupport.testCaseId(scenario));
+        MDC.put(TestMdcKeys.TEST_EXECUTION_ID, ScenarioMdcSupport.executionId(scenario));
+        MDC.put(TestMdcKeys.SCENARIO_NAME, scenarioName);
+        MDC.put(TestMdcKeys.SOURCE_FILE, ScenarioMdcSupport.sourceFile(scenario));
+
+        log.info("=== SCENARIO START: {} ===", scenarioName);
     }
 
-    @After
-    public void afterScenario() {
-        var errors = testContext.getEventualConsistencyErrors();
+    // Gli @After vengono eseguiti in ordine decrescente: l'ordine minimo garantisce
+    // che l'MDC resti popolato per tutti gli altri hook di cleanup.
+    @After(order = Integer.MIN_VALUE)
+    public void afterScenario(Scenario scenario) {
+        try{
+            var errors = testContext.getEventualConsistencyErrors();
 
-        if (!errors.isEmpty()) {
-            String formattedErrors = errors.stream()
-                    .map(error -> "- " + error)
-                    .collect(Collectors.joining(System.lineSeparator()));
+            if (!errors.isEmpty()) {
+                String formattedErrors = errors.stream()
+                        .map(error -> "- " + error)
+                        .collect(Collectors.joining(System.lineSeparator()));
 
-            log.error("Eventual consistency errors found:\n{}", formattedErrors);
+                log.error("Eventual consistency errors found:\n{}", formattedErrors);
+            }
+
+            log.info("=== SCENARIO END: {} | Status: {} ===",
+                    ScenarioMdcSupport.scenarioName(scenario),
+                    scenario.getStatus()
+            );
         }
-
-        MDC.remove("scenario");
-    }
-
-    @Before("@Business")
-    public void beforeBusinessScenario(Scenario scenario) {
-       testContext.setCurrentTestKind(TestKind.FLOW);
-    }
-
-    @Before("@Contract")
-    public void beforeContractScenario(Scenario scenario) {
-        testContext.setCurrentTestKind(TestKind.CONTRACT);
-    }
-
-    @Before("@BFF")
-    public void beforeBFFScenario(Scenario scenario) {
-        currentChannel.setCurrentChannel(Channel.BFF);
-    }
-
-    @Before("@WEB")
-    public void beforeWEBScenario(Scenario scenario) {
-        currentChannel.setCurrentChannel(Channel.WEB_BROWSER);
+        finally {
+            MDC.clear();
+            testContext.clearEventualConsistencyErrors();
+        }
     }
 }

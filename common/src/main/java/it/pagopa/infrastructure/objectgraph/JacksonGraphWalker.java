@@ -83,7 +83,10 @@ final class JacksonGraphWalker {
     }
 
     private Class<?> resolveJavaClass(JavaType declaredType, Object value) {
-        if (declaredType != null && declaredType.getRawClass() != null) return declaredType.getRawClass();
+        if (declaredType != null && declaredType.getRawClass() != null) {
+            Class<?> rawClass = declaredType.getRawClass();
+            if (rawClass != Object.class || value == null) return rawClass;
+        }
         if (value != null) return value.getClass();
         throw new ObjectGraphException("Cannot determine javaType for node");
     }

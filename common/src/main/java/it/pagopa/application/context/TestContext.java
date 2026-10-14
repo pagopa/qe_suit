@@ -9,4 +9,5 @@ public interface TestContext {
     void setCurrentTestKind(TestKind currentTestKind);
     void addEventualConsistencyError(String error);
     List<String> getEventualConsistencyErrors();
+    void clearEventualConsistencyErrors();
 }
