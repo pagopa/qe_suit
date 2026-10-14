@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.eservice_template.infrastructure.config;
 
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateGateway;
+import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceGateway;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor;
 import it.pagopa.interop.common.kernel.domain.Channel;

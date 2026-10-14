@@ -6,8 +6,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttr
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.util.Objects;
-
 public class BffAssignCertifiedAttributeCommand implements AssignCertifiedAttributeCommand {
     @Getter
     private final CertifiedTenantAttributeSeed bffPayload = new CertifiedTenantAttributeSeed();

@@ -3,11 +3,12 @@ package it.pagopa.interop.common.eservice_template.application;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateCreationCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.function.Consumer;
-import java.util.UUID;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor

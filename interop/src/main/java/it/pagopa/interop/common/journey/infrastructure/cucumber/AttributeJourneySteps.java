@@ -1,8 +1,10 @@
 package it.pagopa.interop.common.journey.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.TenantRef;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import lombok.RequiredArgsConstructor;
 
 

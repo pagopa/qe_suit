@@ -6,8 +6,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttri
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.util.Objects;
-
 public class BffAssignDeclaredAttributeCommand implements AssignDeclaredAttributeCommand {
     @Getter
     private final DeclaredTenantAttributeSeed bffPayload = new DeclaredTenantAttributeSeed();

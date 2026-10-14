@@ -1,14 +1,20 @@
 package it.pagopa.interop.bff.eservice_template.infrastructure;
 
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorMapper;
+import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
 import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
+import it.pagopa.interop.common.infrastructure.SharedMapper;
+import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.kernel.domain.DocumentRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
+import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
+import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;

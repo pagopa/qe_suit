@@ -3,19 +3,7 @@ package it.pagopa.interop.common.eservice_template.domain;
 import it.pagopa.interop.common.eservice.domain.SoapAddressConfiguration;
 import org.springframework.util.xml.StaxUtils;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public final class WsdlInterfaceVerifier {
     private static final String WSDL_NAMESPACE = "http://schemas.xmlsoap.org/wsdl/";
