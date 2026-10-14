@@ -7,8 +7,8 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.TextField;
-import it.pagopa.send.web.infrastructure.page.AddressPage;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
+import it.pagopa.send.web.infrastructure.page.AddressPage;
 import org.assertj.core.api.Assertions;
 
 import java.util.Optional;
