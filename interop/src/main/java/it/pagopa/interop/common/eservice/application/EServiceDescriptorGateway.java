@@ -1,11 +1,7 @@
 package it.pagopa.interop.common.eservice.application;
 
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
-import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.eservice.domain.EServiceTemplateInterfaceFailureReason;
-import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
-import it.pagopa.interop.common.eservice.domain.SoapAddressConfiguration;
-import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;

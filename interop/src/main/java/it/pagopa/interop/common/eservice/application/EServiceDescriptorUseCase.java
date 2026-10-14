@@ -1,19 +1,13 @@
 package it.pagopa.interop.common.eservice.application;
 
-import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
-import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
-import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
-import it.pagopa.interop.common.eservice.domain.EServiceTemplateInterfaceFailureReason;
-import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
-import it.pagopa.interop.common.eservice.domain.SoapAddressConfiguration;
+import it.pagopa.interop.common.eservice.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 @Service
@@ -97,9 +91,17 @@ public class EServiceDescriptorUseCase {
             List<SoapAddressConfiguration> addresses,
             EServiceTemplateInterfaceFailureReason reason
     ) {
+        var before = eServiceDescriptorGateway.readInterfaceSnapshot(eService.getRef(), descriptor.getRef());
+        before.filter(snapshot -> !snapshot.hasDownloadedContent()).ifPresent(snapshot -> {
+            throw new IllegalStateException("Snapshot interfaccia privo del contenuto binario scaricato");
+        });
+
         eServiceDescriptorGateway.shouldFailToConfigureSOAPInterface(
                 eService.getRef(), descriptor.getRef(), List.copyOf(addresses), reason
         );
+
+        var after = eServiceDescriptorGateway.readInterfaceSnapshotAfterDelay(eService.getRef(), descriptor.getRef());
+        assertSameSnapshot(before, after, reason);
     }
 
     public EServiceDescriptor configureTemplateInstanceRESTInterface(
@@ -112,9 +114,35 @@ public class EServiceDescriptorUseCase {
         );
     }
 
-    public byte[] downloadInterfaceBytes(EService eService, EServiceDescriptor descriptor) {
-        return eServiceDescriptorGateway.downloadInterfaceBytes(
-                eService.getRef(), descriptor.getRef(), descriptor.getInterfaceDocument().getId()
-        );
+    public EServiceDescriptor downloadInterface(EService eService, EServiceDescriptor descriptor) {
+        return eServiceDescriptorGateway.downloadInterface(eService.getRef(), descriptor.getRef());
+    }
+
+    private static void assertSameSnapshot(
+            java.util.Optional<it.pagopa.interop.common.eservice.domain.EServiceDescriptorInterface> before,
+            java.util.Optional<it.pagopa.interop.common.eservice.domain.EServiceDescriptorInterface> after,
+            EServiceTemplateSOAPInterfaceFailureReason reason
+    ) {
+        if (before.isEmpty() != after.isEmpty()) {
+            throw new AssertionError("La presenza dell'interfaccia è cambiata dopo il rifiuto (" + reason + ")");
+        }
+        if (before.isEmpty()) {
+            return;
+        }
+        var original = before.orElseThrow();
+        var current = after.orElseThrow();
+        if (!original.hasDownloadedContent() || !current.hasDownloadedContent()) {
+            throw new IllegalStateException("Snapshot interfaccia privo del contenuto binario scaricato");
+        }
+        if (!Objects.equals(original.getId(), current.getId())
+                || !Objects.equals(original.getChecksum(), current.getChecksum())
+                || !Objects.equals(original.getName(), current.getName())
+                || !Objects.equals(original.getPrettyName(), current.getPrettyName())
+                || !Objects.equals(original.getContentType(), current.getContentType())
+                || !Objects.equals(original.getEServiceRef(), current.getEServiceRef())
+                || !Objects.equals(original.getDescriptorRef(), current.getDescriptorRef())
+                || !java.util.Arrays.equals(original.getContent(), current.getContent())) {
+            throw new AssertionError("L'interfaccia è cambiata dopo il rifiuto (" + reason + ")");
+        }
     }
 }

@@ -6,7 +6,9 @@ import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
 import it.pagopa.utils.RandomUtils;
+import org.instancio.Instancio;
 import org.springframework.stereotype.Component;
 
 @Component

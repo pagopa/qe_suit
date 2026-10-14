@@ -1,12 +1,9 @@
 package it.pagopa.interop.common.eservice.domain;
 
+import it.pagopa.domain.Identifiable;
 import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.attribute.domain.Attributes;
-import it.pagopa.domain.Identifiable;
-import it.pagopa.interop.common.kernel.domain.Delegation;
-import it.pagopa.interop.common.kernel.domain.Document;
-import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
-import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
+import it.pagopa.interop.common.kernel.domain.*;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;

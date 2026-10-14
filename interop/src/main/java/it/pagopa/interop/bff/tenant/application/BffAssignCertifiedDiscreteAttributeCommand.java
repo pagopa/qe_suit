@@ -6,8 +6,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedDiscreteTe
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.util.Objects;
-
 public class BffAssignCertifiedDiscreteAttributeCommand implements AssignCertifiedDiscreteAttributeCommand {
     @Getter
     private final CertifiedDiscreteTenantAttributeSeed bffPayload = new CertifiedDiscreteTenantAttributeSeed();
