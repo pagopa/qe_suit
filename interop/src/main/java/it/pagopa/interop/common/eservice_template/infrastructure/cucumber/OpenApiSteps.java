@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 public class OpenApiSteps {
     private final OpenApiUseCase useCase;
 
-    @Then("la specifica OpenAPI del descriptor {eServiceDescriptor} contiene i seguenti dati:")
+    @Then("la specifica OpenAPI del {eServiceDescriptor} contiene i seguenti dati:")
     public void assertConfiguredValues(
             EServiceDescriptor descriptor,
             RestInterfaceConfiguration expected
@@ -20,7 +20,7 @@ public class OpenApiSteps {
         useCase.shouldContainConfiguration(descriptor, expected);
     }
 
-    @And("la specifica OpenAPI del descriptor {eServiceDescriptor} conserva schemi e riferimenti dell'interfaccia {templateVersion}")
+    @And("la specifica OpenAPI del {eServiceDescriptor} conserva schemi e riferimenti dell'interfaccia {templateVersion}")
     public void assertStructurePreserved(
             EServiceDescriptor descriptor,
             EServiceTemplateVersion templateVersion
@@ -28,7 +28,7 @@ public class OpenApiSteps {
         useCase.shouldPreserveStructure(templateVersion, descriptor);
     }
 
-    @And("la specifica OpenAPI del descriptor {eServiceDescriptor} è valida")
+    @And("la specifica OpenAPI del {eServiceDescriptor} è valida")
     public void assertValid(EServiceDescriptor descriptor) {
         useCase.shouldBeValid(descriptor);
     }

@@ -14,17 +14,17 @@ Feature: Conservazione dell'interfaccia nell'istanziazione da template e-service
     Given un template e-service preparato con la seguente configurazione:
       | tecnologia | stato     | interfaccia |
       | SOAP       | PUBLISHED | <fixture>   |
-    When l'erogatore crea un nuovo e-service dal template
-    When l'erogatore configura con successo l'interfaccia SOAP del descriptor appena creato per l'e-service appena creato con i seguenti indirizzi:
+    When l'erogatore istanzia un nuovo e-service dal template
+    When l'erogatore configura con successo l'interfaccia SOAP del descrittore dell'e-service appena istanziato con i seguenti indirizzi:
       | servizio          | porta    | indirizzo  |
       | ServizioPagamenti | PortaUno | <nuovoUrl> |
-    And l'erogatore recupera l'interfaccia del descriptor appena creato per l'e-service appena creato
-    Then il descriptor appena creato per l'e-service appena creato è la versione 1 in stato bozza
-    And ogni porta del WSDL del descriptor appena creato contiene l'indirizzo configurato per quella porta:
+    And l'erogatore recupera l'interfaccia del descrittore dell'e-service
+    Then il descrittore per l'e-service è la versione 1 in stato bozza
+    And ogni porta del WSDL del descrittore contiene l'indirizzo configurato per quella porta:
       | servizio          | porta    | indirizzo  |
       | ServizioPagamenti | PortaUno | <nuovoUrl> |
-    And il WSDL del descriptor appena creato è identico byte per byte all'interfaccia del template salvo gli indirizzi configurati
-    And il WSDL del descriptor appena creato è XML ben formato
+    And il WSDL del descrittore è identico byte per byte all'interfaccia del template salvo gli indirizzi configurati
+    And il WSDL del descrittore è XML ben formato
     And l'interfaccia del template è rimasta invariata
 
     Examples: Singolo indirizzo
@@ -53,19 +53,19 @@ Feature: Conservazione dell'interfaccia nell'istanziazione da template e-service
     Given un template e-service preparato con la seguente configurazione:
       | tecnologia | stato     | interfaccia |
       | SOAP       | PUBLISHED | <fixture>   |
-    When l'erogatore crea un nuovo e-service dal template
-    When l'erogatore configura con successo l'interfaccia SOAP del descriptor appena creato per l'e-service appena creato con i seguenti indirizzi:
+    When l'erogatore istanzia un nuovo e-service dal template
+    When l'erogatore configura con successo l'interfaccia SOAP del descrittore dell'e-service appena istanziato con i seguenti indirizzi:
       | servizio          | porta    | indirizzo                     |
       | ServizioPagamenti | PortaUno | https://erogatore.example/uno |
       | ServizioPagamenti | PortaDue | https://erogatore.example/due |
-    And l'erogatore recupera l'interfaccia del descriptor appena creato per l'e-service appena creato
-    Then il descriptor appena creato per l'e-service appena creato è la versione 1 in stato bozza
-    And ogni porta del WSDL del descriptor appena creato contiene l'indirizzo configurato per quella porta:
+    And l'erogatore recupera l'interfaccia del descrittore dell'e-service
+    Then il descrittore per l'e-service è la versione 1 in stato bozza
+    And ogni porta del WSDL del descrittore contiene l'indirizzo configurato per quella porta:
       | servizio          | porta    | indirizzo                     |
       | ServizioPagamenti | PortaUno | https://erogatore.example/uno |
       | ServizioPagamenti | PortaDue | https://erogatore.example/due |
-    And il WSDL del descriptor appena creato è identico byte per byte all'interfaccia del template salvo gli indirizzi configurati
-    And il WSDL del descriptor appena creato è XML ben formato
+    And il WSDL del descrittore è identico byte per byte all'interfaccia del template salvo gli indirizzi configurati
+    And il WSDL del descrittore è XML ben formato
     And l'interfaccia del template è rimasta invariata
 
     Examples: Più indirizzi e indirizzi originali uguali
@@ -80,11 +80,11 @@ Feature: Conservazione dell'interfaccia nell'istanziazione da template e-service
     Given un template e-service preparato con la seguente configurazione:
       | tecnologia | stato     | interfaccia |
       | SOAP       | PUBLISHED | <fixture>   |
-    When l'erogatore crea un nuovo e-service dal template
-    When l'erogatore tenta di configurare l'interfaccia SOAP del descriptor appena creato per l'e-service appena creato ottenendo un rifiuto per "numero di URL non corrispondente" con i seguenti indirizzi:
+    When l'erogatore istanzia un nuovo e-service dal template
+    When l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "numero di URL non corrispondente" con i seguenti indirizzi:
       | servizio          | porta    | indirizzo                     |
       | ServizioPagamenti | PortaUno | https://erogatore.example/uno |
-    Then non è disponibile un'interfaccia valida per il descriptor appena creato per l'e-service appena creato
+    Then non è disponibile un'interfaccia valida per il descrittore dell'e-service
     And l'interfaccia del template è rimasta invariata
 
     Examples: Due indirizzi attivi e uno fornito
@@ -97,12 +97,12 @@ Feature: Conservazione dell'interfaccia nell'istanziazione da template e-service
     Given un template e-service preparato con la seguente configurazione:
       | tecnologia | stato     | interfaccia |
       | SOAP       | PUBLISHED | <fixture>   |
-    When l'erogatore crea un nuovo e-service dal template
-    When l'erogatore tenta di configurare l'interfaccia SOAP del descriptor appena creato per l'e-service appena creato ottenendo un rifiuto per "numero di URL non corrispondente" con i seguenti indirizzi:
+    When l'erogatore istanzia un nuovo e-service dal template
+    When l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "numero di URL non corrispondente" con i seguenti indirizzi:
       | servizio          | porta    | indirizzo                     |
       | ServizioPagamenti | PortaUno | https://erogatore.example/uno |
       | ServizioPagamenti | PortaDue | https://erogatore.example/due |
-    Then non è disponibile un'interfaccia valida per il descriptor appena creato per l'e-service appena creato
+    Then non è disponibile un'interfaccia valida per il descrittore dell'e-service
     And l'interfaccia del template è rimasta invariata
 
     Examples: Un indirizzo attivo e due forniti
@@ -115,10 +115,10 @@ Feature: Conservazione dell'interfaccia nell'istanziazione da template e-service
     Given un template e-service preparato con la seguente configurazione:
       | tecnologia | stato     | interfaccia |
       | SOAP       | PUBLISHED | <fixture>   |
-    When l'erogatore crea un nuovo e-service dal template
-    When l'erogatore tenta di configurare l'interfaccia SOAP del descriptor appena creato per l'e-service appena creato ottenendo un rifiuto per "numero di URL non corrispondente" con i seguenti indirizzi:
+    When l'erogatore istanzia un nuovo e-service dal template
+    When l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "numero di URL non corrispondente" con i seguenti indirizzi:
       | servizio | porta | indirizzo |
-    Then non è disponibile un'interfaccia valida per il descriptor appena creato per l'e-service appena creato
+    Then non è disponibile un'interfaccia valida per il descrittore dell'e-service
     And l'interfaccia del template è rimasta invariata
 
     Examples: Nessun indirizzo fornito
@@ -131,11 +131,11 @@ Feature: Conservazione dell'interfaccia nell'istanziazione da template e-service
     Given un template e-service preparato con la seguente configurazione:
       | tecnologia | stato     | interfaccia |
       | SOAP       | PUBLISHED | <fixture>   |
-    When l'erogatore crea un nuovo e-service dal template
-    When l'erogatore tenta di configurare l'interfaccia SOAP del descriptor appena creato per l'e-service appena creato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:
+    When l'erogatore istanzia un nuovo e-service dal template
+    When l'erogatore tenta di configurare l'interfaccia SOAP del descrittore dell'e-service appena istanziato ottenendo un rifiuto per "URL non ammesso" con i seguenti indirizzi:
       | servizio          | porta    | indirizzo   |
       | ServizioPagamenti | PortaUno | <indirizzo> |
-    Then non è disponibile un'interfaccia valida per il descriptor appena creato per l'e-service appena creato
+    Then non è disponibile un'interfaccia valida per il descrittore dell'e-service
     And l'interfaccia del template è rimasta invariata
 
     Examples: Markup e virgolette
@@ -149,25 +149,25 @@ Feature: Conservazione dell'interfaccia nell'istanziazione da template e-service
     Given un template e-service preparato con la seguente configurazione:
       | tecnologia | stato     | interfaccia |
       | REST       | PUBLISHED | <fixture>   |
-    When l'erogatore crea un nuovo e-service dal template
-    When l'erogatore configura con successo l'interfaccia REST del descriptor appena creato per l'e-service appena creato con i seguenti dati:
+    When l'erogatore istanzia un nuovo e-service dal template
+    When l'erogatore configura con successo l'interfaccia REST del descrittore dell'e-service appena istanziato con i seguenti dati:
       | campo                 | valore                               |
       | serverUrls            | ["https://erogatore.example/api"]    |
       | contactName           | Referente Erogatore                  |
       | contactEmail          | referente@erogatore.example          |
       | contactUrl            | https://erogatore.example/contatti   |
       | termsAndConditionsUrl | https://erogatore.example/condizioni |
-    And l'erogatore recupera l'interfaccia del descriptor appena creato per l'e-service appena creato
-    Then il descriptor appena creato per l'e-service appena creato è la versione 1 in stato bozza
-    And la specifica OpenAPI del descriptor appena creato contiene i seguenti dati:
+    And l'erogatore recupera l'interfaccia del descrittore dell'e-service
+    Then il descrittore per l'e-service è la versione 1 in stato bozza
+    And la specifica OpenAPI del descrittore contiene i seguenti dati:
       | campo                 | valore                               |
       | serverUrls            | ["https://erogatore.example/api"]    |
       | contactName           | Referente Erogatore                  |
       | contactEmail          | referente@erogatore.example          |
       | contactUrl            | https://erogatore.example/contatti   |
       | termsAndConditionsUrl | https://erogatore.example/condizioni |
-    And la specifica OpenAPI del descriptor appena creato conserva schemi e riferimenti dell'interfaccia del template
-    And la specifica OpenAPI del descriptor appena creato è valida
+    And la specifica OpenAPI del descrittore conserva schemi e riferimenti dell'interfaccia del template
+    And la specifica OpenAPI del descrittore è valida
     And l'interfaccia del template è rimasta invariata
 
     Examples: JSON e YAML

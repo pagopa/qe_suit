@@ -13,19 +13,19 @@ import org.assertj.core.api.Assertions;
 public class EServiceDescriptorSteps {
     private final EServiceDescriptorUseCase descriptorUseCase;
 
-    @And("l'erogatore recupera l'interfaccia del descriptor {eServiceDescriptor} per l'{currentEService}")
+    @And("l'erogatore recupera l'interfaccia del {eServiceDescriptor} dell'{currentEService}")
     public void retrieveDescriptorInterface(EServiceDescriptor descriptor, EService eService) {
         descriptorUseCase.downloadInterface(eService, descriptor);
     }
 
-    @Then("il descriptor {eServiceDescriptor} per l'{currentEService} è la versione 1 in stato bozza")
+    @Then("il {eServiceDescriptor} per l'{currentEService} è la versione 1 in stato bozza")
     public void assertFirstDraftDescriptor(EServiceDescriptor descriptor, EService eService) {
         EServiceDescriptor refreshed = descriptorUseCase.getDescriptor(eService, descriptor);
         Assertions.assertThat(refreshed.getVersion()).isEqualTo("1");
         Assertions.assertThat(refreshed.getState()).isEqualTo(EServiceDescriptorState.DRAFT);
     }
 
-    @Then("non è disponibile un'interfaccia valida per il descriptor {eServiceDescriptor} per l'{currentEService}")
+    @Then("non è disponibile un'interfaccia valida per il {eServiceDescriptor} dell'{currentEService}")
     public void assertNoAcceptedInterface(EServiceDescriptor descriptor, EService eService) {
         EServiceDescriptor refreshed = descriptorUseCase.getDescriptor(eService, descriptor);
         Assertions.assertThat(refreshed.getInterfaceDocument()).isNull();

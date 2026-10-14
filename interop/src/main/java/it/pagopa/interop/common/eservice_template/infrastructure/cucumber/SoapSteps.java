@@ -14,7 +14,7 @@ import java.util.List;
 public class SoapSteps {
     private final SoapUseCase useCase;
 
-    @Then("ogni porta del WSDL del descriptor {eServiceDescriptor} contiene l'indirizzo configurato per quella porta:")
+    @Then("ogni porta del WSDL del {eServiceDescriptor} contiene l'indirizzo configurato per quella porta:")
     public void assertConfiguredWsdlAddresses(
             EServiceDescriptor descriptor,
             List<SoapAddressConfiguration> expected
@@ -22,7 +22,7 @@ public class SoapSteps {
         useCase.shouldContainAddresses(descriptor, expected);
     }
 
-    @And("il WSDL del descriptor {eServiceDescriptor} è identico byte per byte all'interfaccia {templateVersion} salvo gli indirizzi configurati")
+    @And("il WSDL del {eServiceDescriptor} è identico byte per byte all'interfaccia {templateVersion} salvo gli indirizzi configurati")
     public void assertOnlyAddressesChanged(
             EServiceDescriptor descriptor,
             EServiceTemplateVersion templateVersion
@@ -30,7 +30,7 @@ public class SoapSteps {
         useCase.shouldPreserveBytes(templateVersion, descriptor);
     }
 
-    @And("il WSDL del descriptor {eServiceDescriptor} è XML ben formato")
+    @And("il WSDL del {eServiceDescriptor} è XML ben formato")
     public void assertWellFormed(EServiceDescriptor descriptor) {
         useCase.shouldBeWellFormed(descriptor);
     }
