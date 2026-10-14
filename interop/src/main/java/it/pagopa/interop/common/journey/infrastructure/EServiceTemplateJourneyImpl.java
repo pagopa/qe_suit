@@ -43,7 +43,9 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
                 template, version, "assets/eservice-template/" + configuration.getInterfaceDocumentPath()
         );
         version = template.getVersion(Integer.parseInt(version.getVersion()));
-        useCase.publishEServiceTemplateVersion(template, version);
+        template = useCase.publishEServiceTemplateVersion(template, version);
+        version = template.getVersion(Integer.parseInt(version.getVersion()));
+        useCase.downloadInterface(template, version);
         return this;
     }
 }
