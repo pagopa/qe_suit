@@ -19,6 +19,7 @@ import it.pagopa.send.web.destinatario_pf.infrastructure.page.DigitalDomicileAct
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DigitalDomicileManagementPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NewDelegationPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationPFPage;
+import it.pagopa.send.web.destinatario_pg.infrastructure.page.AddressPGPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationTimelinePFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingAlertsPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingDigitalDomicilePFPage;

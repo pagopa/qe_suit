@@ -1,9 +1,10 @@
 package it.pagopa.interop.common.purpose.application;
 
-import it.pagopa.interop.common.kernel.domain.*;
+import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.DelegationRef;
+import it.pagopa.interop.common.kernel.domain.PurposeRef;
+import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
-import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
-import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import jakarta.annotation.Nullable;
 import org.springframework.plugin.core.Plugin;
 
