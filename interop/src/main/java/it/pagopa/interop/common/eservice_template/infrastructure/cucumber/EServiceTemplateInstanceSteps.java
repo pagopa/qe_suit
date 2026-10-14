@@ -18,12 +18,12 @@ public class EServiceTemplateInstanceSteps {
     private final EServiceTemplateInstanceUseCase instanceUseCase;
     private final EServiceDescriptorUseCase descriptorUseCase;
 
-    @When("l'erogatore crea un nuovo e-service dal {eServiceTemplate}")
+    @When("l'erogatore crea/istanzia un nuovo e-service dal {eServiceTemplate}")
     public void createTemplateInstance(EServiceTemplate template) {
         instanceUseCase.createEServiceInstance(template);
     }
 
-    @When("l'erogatore configura con successo l'interfaccia SOAP del descriptor {eServiceDescriptor} per l'{currentEService} con i seguenti indirizzi:")
+    @When("l'erogatore configura con successo l'interfaccia SOAP del {eServiceDescriptor} dell'{currentEService} con i seguenti indirizzi:")
     public void configureSoapInterface(
             EServiceDescriptor descriptor,
             EService eService,
@@ -34,7 +34,7 @@ public class EServiceTemplateInstanceSteps {
         );
     }
 
-    @When("l'erogatore tenta di configurare l'interfaccia SOAP del descriptor {eServiceDescriptor} per l'{currentEService} ottenendo un rifiuto per \"{soapInterfaceFailureReason}\" con i seguenti indirizzi:")
+    @When("l'erogatore tenta di configurare l'interfaccia SOAP del {eServiceDescriptor} dell'{currentEService} ottenendo un rifiuto per \"{soapInterfaceFailureReason}\" con i seguenti indirizzi:")
     public void rejectSoapInterface(
             EServiceDescriptor descriptor,
             EService eService,
@@ -49,7 +49,7 @@ public class EServiceTemplateInstanceSteps {
         );
     }
 
-    @When("l'erogatore configura con successo l'interfaccia REST del descriptor {eServiceDescriptor} per l'{currentEService} con i seguenti dati:")
+    @When("l'erogatore configura con successo l'interfaccia REST del {eServiceDescriptor} dell'{currentEService} con i seguenti dati:")
     public void configureRestInterface(
             EServiceDescriptor descriptor,
             EService eService,

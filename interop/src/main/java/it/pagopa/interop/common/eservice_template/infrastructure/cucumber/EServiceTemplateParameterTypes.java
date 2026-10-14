@@ -53,7 +53,7 @@ public class EServiceTemplateParameterTypes {
                 versionNumber(reference), "template");
     }
 
-    @ParameterType("appena creato|appena creata|versione appena creata|dell'e-service|versione dell'e-service|versione più recente dell'e-service|versione \\d+ dell'e-service")
+    @ParameterType("descrittore|descriptor|descriptor appena creato|appena creato|appena creata|versione appena creata|dell'e-service|versione dell'e-service|versione più recente dell'e-service|versione \\d+ dell'e-service")
     public EServiceDescriptor eServiceDescriptor(String reference) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         if (reference.contains("appena creat")) {
