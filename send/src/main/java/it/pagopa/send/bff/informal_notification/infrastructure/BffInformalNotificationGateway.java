@@ -36,7 +36,7 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
     private final BffInformalNotificationMapper mapper;
     private final EntityStore entityStore;
     private final Map<String, String> paDeliveryApiKeys;
-    @Value("${informal.delivery.api-key}")
+    @Value("${pa.delivery-api-key.PALERMO}")
     private String defaultApiKey;
 
     @Override

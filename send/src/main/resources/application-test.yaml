@@ -77,7 +77,8 @@ token:
 bff:
   api:
     base-url: https://webapi.test.notifichedigitali.it
-    bearer-token: ${pn.external.bearer-token.tokenBffApiTest:REPLACE_ME}
+    bearer-token: ${pn.external.bearer-token.tokenBffApiTest}
+
 
 # ============================================================================
 # GPD API Configuration (posizioni debitorie)

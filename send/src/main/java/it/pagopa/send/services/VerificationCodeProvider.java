@@ -9,7 +9,6 @@ import org.springframework.web.client.RestClient;
 import java.util.concurrent.TimeUnit;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class VerificationCodeProvider {
 
@@ -17,6 +16,10 @@ public class VerificationCodeProvider {
 
     @Value("${verification.code.service.url}")
     private String verificationCodeServiceUrl;
+
+    public VerificationCodeProvider() {
+        this.restClient = RestClient.create();
+    }
 
     public String makeRequest(String email) {
         try {
