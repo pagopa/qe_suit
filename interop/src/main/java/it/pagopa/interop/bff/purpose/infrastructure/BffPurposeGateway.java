@@ -2,6 +2,8 @@ package it.pagopa.interop.bff.purpose.infrastructure;
 
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.eservice.domain.EService;
+import java.util.UUID;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.PurposeRef;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 public class BffPurposeGateway implements PurposeGateway {
     private final BffPurposeRestClient restClient;
     private final BffPurposeMapper mapper;
+    private final BffPurposeRequestFactory requestFactory;
 
     @Override
     public Purpose getPurpose(PurposeRef purposeRef) {
@@ -44,6 +47,19 @@ public class BffPurposeGateway implements PurposeGateway {
     }
 
     @Override
+    public Purpose createReversePurpose(EService eService, UUID riskAnalysisId) {
+        return restClient.createReversePurpose(requestFactory.reverseCreationRequest(eService, riskAnalysisId))
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
+                .get();
+    }
+    @Override
+    public Purpose createPurposeFromTemplate(UUID purposeTemplateId, EService eService) {
+        return restClient.createPurposeFromTemplate(purposeTemplateId, requestFactory.creationFromTemplateRequest(eService))
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
+                .get();
+    }    @Override
     public Purpose activatePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef) {
         it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef delegation = getDelegation(delegationRef);
 

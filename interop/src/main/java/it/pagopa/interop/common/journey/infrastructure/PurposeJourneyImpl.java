@@ -29,6 +29,18 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
         return processLifecycle(draftPurpose, state);
     }
 
+    @Override
+    public PurposeJourneyImpl linkReversePurpose(EService eService, java.util.UUID riskAnalysisId, PurposeVersionState state) {
+        Purpose draftPurpose = purposeUseCase.addDraftReversePurpose(eService, riskAnalysisId);
+        return processLifecycle(draftPurpose, state);
+    }
+
+    @Override
+    public PurposeJourneyImpl linkPurposeFromTemplate(it.pagopa.interop.common.purpose_template.domain.PurposeTemplate purposeTemplate, EService eService, PurposeVersionState state) {
+        Purpose draftPurpose = purposeUseCase.addDraftPurposeFromTemplate(purposeTemplate.getId(), eService);
+        return processLifecycle(draftPurpose, state);
+    }
+
     private PurposeJourneyImpl processLifecycle(Purpose purpose, PurposeVersionState targetState) {
        switch (targetState) {
             case DRAFT -> {

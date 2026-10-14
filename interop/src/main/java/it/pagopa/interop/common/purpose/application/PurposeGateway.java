@@ -12,6 +12,10 @@ public interface PurposeGateway extends Plugin<Channel> {
 
     Purpose createPurpose(PurposeCreateCommand createCommand);
 
+    Purpose createReversePurpose(it.pagopa.interop.common.eservice.domain.EService eService, java.util.UUID riskAnalysisId);
+
+    Purpose createPurposeFromTemplate(java.util.UUID purposeTemplateId, it.pagopa.interop.common.eservice.domain.EService eService);
+
     Purpose activatePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
 
     Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
