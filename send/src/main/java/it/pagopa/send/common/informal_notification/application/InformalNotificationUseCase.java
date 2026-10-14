@@ -31,6 +31,10 @@ public class InformalNotificationUseCase {
         return informalNotificationGateway.getInformalNotification(iun);
     }
 
+    public FullSentInformalNotificationV1 getInformalNotification(String iun,int interval) {
+        return informalNotificationGateway.getInformalNotification(iun,interval);
+    }
+
     public FullSentInformalNotificationV1 getLastInformalNotification() {
         return informalNotificationGateway.getInformalNotification();
     }

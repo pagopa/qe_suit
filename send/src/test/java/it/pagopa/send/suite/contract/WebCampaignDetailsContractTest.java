@@ -93,17 +93,9 @@ public class WebCampaignDetailsContractTest {
     @TestFactory
     Stream<DynamicTest> dettaglioCampagnaRicerca() {
         String campaignId="BonarieAllChannels";
-        sendDefaultInformalNotification(campaignId);
-        String iun = sendJourney.getLastInformalNotification().getIun();
+        String iun = sendJourney.getInformalNotification(sendDefaultInformalNotification(campaignId),60).getIun();
         //questo step lo utilizzo per vedere se la campagna esiste o meno
         campaignId = campaignsGateway.getCampaignByID(campaignId).getCampaignId();
-        try {
-            log.info("Sospensione thread per attesa notifica...");
-            Thread.sleep(10000);
-        } catch (InterruptedException e)
-        {
-            throw new RuntimeException("Errore durante la sospensione del thread",e);
-        }
         return webContractValidator
                 .as(Tenant.GROSSINI, List.of())
                 .on(CampaignDetailPage.class,campaignId,personalSelfCareToken)
@@ -139,7 +131,7 @@ public class WebCampaignDetailsContractTest {
         ));
     }
 
-    private void sendDefaultInformalNotification(String campaignId) {
+    private String sendDefaultInformalNotification(String campaignId) {
         InformalRecipientSpec recipientSpec = informalRecipientSpecFactory.build(
                 Recipient.LUCREZIA,
                 Map.of(
@@ -153,13 +145,14 @@ public class WebCampaignDetailsContractTest {
                 )
         );
 
-        sendJourney
+        return sendJourney
                 .withInformalSender(Tenant.GROSSINI)
                 .prepareInformalNotification(Map.of(
                         "subject", "Test notifica bonaria Cucumber",
                         "campaignId", campaignId
                 ))
                 .withInformalRecipient(recipientSpec)
-                .sendInformalNotification(Tenant.GROSSINI);
+                .sendInformalNotification(Tenant.GROSSINI)
+                .getIun();
     }
 }

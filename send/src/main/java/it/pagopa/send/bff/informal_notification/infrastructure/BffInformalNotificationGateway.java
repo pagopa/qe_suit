@@ -72,27 +72,62 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
         assert response != null;
         String iun = new String(java.util.Base64.getDecoder().decode(response.getNotificationRequestId()));
 
-        if (!iun.isBlank()) {
-            final String finalIun = iun;
-            log.info("Attesa disponibilita comunicazione bonaria su BE per IUN {}...", finalIun);
-            try {
-                org.awaitility.Awaitility.await()
-                        .atMost(java.time.Duration.ofSeconds(90))
-                        .pollInterval(java.time.Duration.ofSeconds(1))
-                        .ignoreExceptions()
-                        .until(() -> {
-                            try {
-                                Response checkResp = informalDeliveryRestClient.getSentInformalNotification(apiKey, finalIun);
-                                return checkResp.getStatusCode() == 200;
-                            } catch (Exception e) {
-                                return false;
-                            }
-                        });
-                log.info("Comunicazione bonaria IUN {} confermata disponibile su backend (200 OK)!", finalIun);
-            } catch (Exception e) {
-                log.warn("Timeout o errore durante il polling BE per IUN {}: {}", finalIun, e.getMessage());
-            }
-        }
+//        if (!iun.isBlank()) {
+//            final String finalIun = iun;
+//            log.info("Attesa disponibilita comunicazione bonaria su BE per IUN {}...", finalIun);
+//            try {
+//                org.awaitility.Awaitility.await()
+//                        .atMost(java.time.Duration.ofSeconds(90))
+//                        .pollInterval(java.time.Duration.ofSeconds(1))
+//                        .ignoreExceptions()
+//                        .until(() -> {
+//                            try {
+//                                Response checkResp = informalDeliveryRestClient.getSentInformalNotification(apiKey, finalIun);
+//                                return checkResp.getStatusCode() == 200;
+//                            } catch (Exception e) {
+//                                return false;
+//                            }
+//                        });
+//                log.info("Comunicazione bonaria IUN {} confermata disponibile su backend (200 OK)!", finalIun);
+//            } catch (Exception e) {
+//                log.warn("Timeout o errore durante il polling BE per IUN {}: {}", finalIun, e.getMessage());
+//            }
+//        }
+
+        List<String> messageIds = request.recipients().stream()
+                .map(ResolvedInformalRecipient::messageId)
+                .toList();
+
+        InformalNotificationDomain domain = InformalNotificationDomain.builder()
+                .paProtocolNumber(request.paProtocolNumber())
+                .campaignId(request.campaignId())
+                .senderDenomination(request.senderDenomination())
+                .subject(request.subject())
+                .iun(iun)
+                .messageIds(messageIds)
+                .build();
+
+        entityStore.upsert(domain);
+        log.info("Comunicazione bonaria salvata in EntityStore: {}", domain);
+        return domain;
+    }
+
+    public InformalNotificationDomain sendNotification(Tenant sender, int interval) {
+        requestFactory.applySender(request, sender);
+
+        InformalNotificationRequestV1 payload = mapper.toRequestV1(request);
+        log.info("Payload invio informal request: {}", payload);
+        String apiKey = paDeliveryApiKeys.getOrDefault(sender.name(), defaultApiKey);
+
+
+        NewNotificationResponse response= informalNotificationRestClient
+                .createInformalRequest(payload)
+                .withoutPolling()
+                .get();
+
+        assert response != null;
+        String iun = new String(java.util.Base64.getDecoder().decode(response.getNotificationRequestId()));
+
 
         List<String> messageIds = request.recipients().stream()
                 .map(ResolvedInformalRecipient::messageId)
@@ -115,7 +150,14 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
     public FullSentInformalNotificationV1 getInformalNotification(String iun) {
         return informalNotificationRestClient
                 .getInformalRequest(iun)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS, Duration.of(120, ChronoUnit.SECONDS),Duration.of(30, ChronoUnit.SECONDS))
+                .withPolling(PollingStrategy.UNTIL_SUCCESS, Duration.of(90, ChronoUnit.SECONDS),Duration.of(7, ChronoUnit.SECONDS))
+                .get();
+    }
+
+    public FullSentInformalNotificationV1 getInformalNotification(String iun, int interval) {
+        return informalNotificationRestClient
+                .getInformalRequest(iun)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS, Duration.of(90, ChronoUnit.SECONDS),Duration.of(interval, ChronoUnit.SECONDS))
                 .get();
     }
 

@@ -14,5 +14,6 @@ public interface InformalNotificationGateway extends Plugin<Channel> {
     void addRecipient(Tenant sender, InformalRecipientSpec recipient);
     InformalNotificationDomain sendNotification(Tenant sender);
     FullSentInformalNotificationV1 getInformalNotification(String iun);
+    FullSentInformalNotificationV1 getInformalNotification(String iun,int interval);
     FullSentInformalNotificationV1 getInformalNotification();
 }

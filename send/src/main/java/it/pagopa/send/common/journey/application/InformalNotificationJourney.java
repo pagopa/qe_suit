@@ -13,5 +13,6 @@ public interface InformalNotificationJourney<SELF extends InformalNotificationJo
     SELF withInformalRecipient(InformalRecipientSpec recipient);
     InformalNotificationDomain sendInformalNotification(Tenant sender);
     FullSentInformalNotificationV1 getInformalNotification(String iun);
+    FullSentInformalNotificationV1 getInformalNotification(String iun,int interval);
     FullSentInformalNotificationV1 getLastInformalNotification();
 }
