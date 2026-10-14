@@ -56,6 +56,11 @@ public class InformalNotificationJourneyImpl implements InformalNotificationJour
     }
 
     @Override
+    public FullSentInformalNotificationV1 getInformalNotification(String iun,int interval){
+        return informalNotificationUseCase.getInformalNotification(iun,interval);
+    }
+
+    @Override
     public FullSentInformalNotificationV1 getLastInformalNotification(){
         return informalNotificationUseCase.getLastInformalNotification();
     }
