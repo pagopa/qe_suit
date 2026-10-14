@@ -43,7 +43,7 @@ public interface EServiceProducerDetailsPage extends Page {
     @XPath(".//main//section/div[1]//p[normalize-space() and not(descendant::p)]")
     Label explanations();
 
-    @XPath(".//main//section[not(ancestor::section)][3]//a")
+    @XPath(".//main//section[not(ancestor::section)][.//h2[normalize-space()='Specifiche tecniche e-service'] or .//h3[normalize-space()='Specifiche tecniche e-service']]//a")
     Label technicalLinks();
 
     @XPath(".//main//h2[not(ancestor::section)]/parent::*//div/span")
@@ -54,7 +54,9 @@ public interface EServiceProducerDetailsPage extends Page {
         title().get(FindPolicy.PRESENT).orElseThrow(
                 () -> new IllegalStateException("Producer e-service title is missing"));
         // Readiness only: the complete heading contract is checked by the scenarios.
-        if (headings().getAll().orElseThrow().stream()
+        if (headings().getAll()
+                .orElseThrow(() -> new IllegalStateException("Producer e-service headings are missing"))
+                .stream()
                 .noneMatch(heading -> "Informazioni generali".equals(heading.getText()))) {
             throw new IllegalStateException("Producer general information has not loaded");
         }

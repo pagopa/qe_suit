@@ -6,7 +6,7 @@ import it.pagopa.infrastructure.suit.component.Label;
 
 /** Reads a label/value row in the producer details panel, without prescribing its copy. */
 public interface EServiceDetailsField extends Component {
-    @XPath("./div[1]//p")
+    @XPath("./div[1]/descendant::p[1]")
     Label label();
 
     @XPath("./div[2]")
