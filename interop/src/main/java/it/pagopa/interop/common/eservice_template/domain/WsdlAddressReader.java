@@ -38,6 +38,8 @@ final class WsdlAddressReader {
         List<SoapAddress> addresses = new ArrayList<>();
         String serviceName = null;
         String portName = null;
+        boolean insideService = false;
+        boolean insidePort = false;
         try {
             XMLStreamReader reader = factory.createXMLStreamReader(new ByteArrayInputStream(document));
             while (reader.hasNext()) {
@@ -46,13 +48,29 @@ final class WsdlAddressReader {
                     String namespace = reader.getNamespaceURI();
                     String localName = reader.getLocalName();
                     if (WSDL_NAMESPACE.equals(namespace) && "service".equals(localName)) {
+                        insideService = true;
                         serviceName = reader.getAttributeValue(null, "name");
                     } else if (WSDL_NAMESPACE.equals(namespace) && "port".equals(localName)) {
+                        insidePort = true;
                         portName = reader.getAttributeValue(null, "name");
                     } else if (isSoapAddress(namespace, localName)) {
                         String location = reader.getAttributeValue(null, "location");
                         if (serviceName == null || portName == null || location == null) {
-                            throw new AssertionError("Elemento SOAP address privo di servizio, porta o location");
+                            throw new AssertionError("""
+                                    Impossibile identificare la porta SOAP nel WSDL: dati mancanti o contesto WSDL non riconosciuto.
+                                    Posizione XML: riga %d, colonna %d; elemento: %s.
+                                    servizio (wsdl:service/@name): %s
+                                    porta (wsdl:port/@name): %s
+                                    SOAP address/@location: %s
+                                    Il confronto con gli indirizzi attesi non e' stato eseguito.
+                                    """.formatted(
+                                    reader.getLocation().getLineNumber(),
+                                    reader.getLocation().getColumnNumber(),
+                                    reader.getName(),
+                                    nameDiagnostic(insideService, serviceName, "service"),
+                                    nameDiagnostic(insidePort, portName, "port"),
+                                    location == null ? "<attributo assente>" : "<presente>"
+                            ));
                         }
                         addresses.add(new SoapAddress(serviceName, portName, location));
                     }
@@ -60,8 +78,11 @@ final class WsdlAddressReader {
                     String namespace = reader.getNamespaceURI();
                     String localName = reader.getLocalName();
                     if (WSDL_NAMESPACE.equals(namespace) && "port".equals(localName)) {
+                        insidePort = false;
                         portName = null;
                     } else if (WSDL_NAMESPACE.equals(namespace) && "service".equals(localName)) {
+                        insideService = false;
+                        insidePort = false;
                         serviceName = null;
                         portName = null;
                     }
@@ -72,6 +93,13 @@ final class WsdlAddressReader {
             throw new AssertionError("Il WSDL non è XML ben formato", exception);
         }
         return addresses;
+    }
+
+    private static String nameDiagnostic(boolean insideElement, String name, String element) {
+        if (!insideElement) {
+            return "<nessun elemento wsdl:" + element + " attivo nel namespace " + WSDL_NAMESPACE + ">";
+        }
+        return name == null ? "<attributo name assente>" : name;
     }
 
     private static XMLInputFactory inputFactory() {
