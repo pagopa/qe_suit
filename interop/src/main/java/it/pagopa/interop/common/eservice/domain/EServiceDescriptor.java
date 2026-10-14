@@ -1,12 +1,9 @@
 package it.pagopa.interop.common.eservice.domain;
 
+import it.pagopa.domain.Identifiable;
 import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.attribute.domain.Attributes;
-import it.pagopa.domain.Identifiable;
-import it.pagopa.interop.common.kernel.domain.Delegation;
-import it.pagopa.interop.common.kernel.domain.Document;
-import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
-import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
+import it.pagopa.interop.common.kernel.domain.*;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
@@ -24,7 +21,7 @@ public class EServiceDescriptor implements Identifiable {
     String version;
     EServiceDescriptorState state;
     String description;
-    Document interfaceDocument;
+    EServiceDescriptorInterface interfaceDocument;
     Attributes attributes;
     Integer voucherLifespan;
     Integer dailyCallsPerConsumer;
@@ -52,7 +49,7 @@ public class EServiceDescriptor implements Identifiable {
     @Singular("doc")
     List<Document> docs;
 
-    public Document findDocument(UUID documentId) {
+    public DocumentMetadata findDocument(UUID documentId) {
         if (interfaceDocument != null && interfaceDocument.getId().equals(documentId)) {
             return interfaceDocument;
         }
@@ -73,7 +70,11 @@ public class EServiceDescriptor implements Identifiable {
     public EServiceDescriptor replaceDocument(UUID documentId, Document updatedDocument) {
         if (interfaceDocument != null && interfaceDocument.getId().equals(documentId)) {
             return this.toBuilder()
-                    .interfaceDocument(updatedDocument)
+                    .interfaceDocument(interfaceDocument.refresh(
+                            updatedDocument,
+                            interfaceDocument.getEServiceRef(),
+                            interfaceDocument.getDescriptorRef()
+                    ))
                     .build();
         }
 
