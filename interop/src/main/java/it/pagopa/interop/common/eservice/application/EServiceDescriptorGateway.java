@@ -35,7 +35,7 @@ public interface EServiceDescriptorGateway extends Plugin<Channel> {
             EServiceRef eServiceRef,
             EServiceDescriptorRef descriptorRef,
             List<SoapAddressConfiguration> addresses,
-            EServiceTemplateInterfaceFailureReason reason
+            EServiceTemplateSOAPInterfaceFailureReason reason
     );
 
     EServiceDescriptor configureTemplateInstanceRESTInterface(
@@ -44,9 +44,18 @@ public interface EServiceDescriptorGateway extends Plugin<Channel> {
             RestInterfaceConfiguration configuration
     );
 
-    byte[] downloadInterfaceBytes(
+    EServiceDescriptor downloadInterface(
             EServiceRef eServiceRef,
-            EServiceDescriptorRef descriptorRef,
-            java.util.UUID documentId
+            EServiceDescriptorRef descriptorRef
+    );
+
+    java.util.Optional<EServiceDescriptorInterface> readInterfaceSnapshot(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef
+    );
+
+    java.util.Optional<EServiceDescriptorInterface> readInterfaceSnapshotAfterDelay(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef
     );
 }

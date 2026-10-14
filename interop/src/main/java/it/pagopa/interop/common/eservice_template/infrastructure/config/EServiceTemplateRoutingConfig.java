@@ -17,7 +17,11 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 
 @Configuration
 @RequiredArgsConstructor
-@EnablePluginRegistries({EServiceTemplateGateway.class, EServiceTemplateRequestFactory.class})
+@EnablePluginRegistries({
+        EServiceTemplateGateway.class,
+        EServiceTemplateInstanceGateway.class,
+        EServiceTemplateRequestFactory.class
+})
 public class EServiceTemplateRoutingConfig {
     private final ObjectProvider<CurrentChannel<Channel>> currentChannelProvider;
 
@@ -39,5 +43,16 @@ public class EServiceTemplateRoutingConfig {
         factory.setInterfaces(EServiceTemplateRequestFactory.class);
         factory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
         return (EServiceTemplateRequestFactory) factory.getProxy();
+    }
+
+    @Bean
+    @Primary
+    public EServiceTemplateInstanceGateway transparentEServiceTemplateInstanceGateway(
+            PluginRegistry<EServiceTemplateInstanceGateway, Channel> registry
+    ) {
+        ProxyFactory factory = new ProxyFactory();
+        factory.setInterfaces(EServiceTemplateInstanceGateway.class);
+        factory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
+        return (EServiceTemplateInstanceGateway) factory.getProxy();
     }
 }

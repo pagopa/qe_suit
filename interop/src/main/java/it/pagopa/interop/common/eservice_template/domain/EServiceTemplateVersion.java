@@ -25,7 +25,7 @@ public class EServiceTemplateVersion implements Identifiable {
     Integer dailyCallsTotal;
     AgreementApprovalPolicy agreementApprovalPolicy;
     Attributes attributes;
-    DocumentRef interfaceDocument;
+    EServiceTemplateInterface interfaceDocument;
     Instant createdAt;
     Instant publishedAt;
     Instant suspendedAt;
@@ -40,4 +40,3 @@ public class EServiceTemplateVersion implements Identifiable {
     @Singular("serverUrl")
     List<String> serverUrls;
 }
-

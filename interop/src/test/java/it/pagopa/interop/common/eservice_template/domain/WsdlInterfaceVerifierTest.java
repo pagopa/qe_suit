@@ -99,6 +99,18 @@ class WsdlInterfaceVerifierTest {
     }
 
     @Test
+    void well_formedness_is_independent_from_wsdl_service_address_validation() {
+        byte[] xml = ("<definitions xmlns:s=\"http://schemas.xmlsoap.org/wsdl/soap/\">"
+                + "<s:address location=\"https://host.example\"/></definitions>")
+                .getBytes(StandardCharsets.UTF_8);
+
+        verifier.assertWellFormed(xml);
+        assertThatThrownBy(() -> verifier.assertAddresses(xml, List.of()))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("servizio");
+    }
+
+    @Test
     void detects_swapped_addresses_and_non_location_byte_changes() throws IOException {
         byte[] twoPorts = resource("soap11-due-indirizzi.wsdl");
         assertThatThrownBy(() -> verifier.assertAddresses(twoPorts, List.of(

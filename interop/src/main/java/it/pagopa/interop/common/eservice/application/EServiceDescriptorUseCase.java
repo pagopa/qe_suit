@@ -89,7 +89,7 @@ public class EServiceDescriptorUseCase {
             EService eService,
             EServiceDescriptor descriptor,
             List<SoapAddressConfiguration> addresses,
-            EServiceTemplateInterfaceFailureReason reason
+            EServiceTemplateSOAPInterfaceFailureReason reason
     ) {
         var before = eServiceDescriptorGateway.readInterfaceSnapshot(eService.getRef(), descriptor.getRef());
         before.filter(snapshot -> !snapshot.hasDownloadedContent()).ifPresent(snapshot -> {

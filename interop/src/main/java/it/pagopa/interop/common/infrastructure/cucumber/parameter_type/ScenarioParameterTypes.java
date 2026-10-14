@@ -37,7 +37,7 @@ public class ScenarioParameterTypes {
         return entityStore.getLastOrThrow(ClientAssertion.class);
     }
 
-    @ParameterType("e-service|EService|e-service creato|EService creato")
+    @ParameterType("e-service|EService|e-service creato|EService creato|e-service appena creato")
     public EService currentEService(String token) {
         return entityStore.getLastOrThrow(EService.class);
     }

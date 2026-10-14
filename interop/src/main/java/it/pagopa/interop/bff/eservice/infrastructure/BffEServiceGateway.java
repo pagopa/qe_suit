@@ -12,7 +12,6 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
@@ -50,20 +49,6 @@ public class BffEServiceGateway implements EServiceGateway {
                 })
                 .updateContext()
                 .get();
-    }
-
-    @Override
-    public EService createEServiceInstanceFromTemplate(EServiceTemplate template) {
-        var created = restClient.createEServiceInstanceFromTemplate(template.getId(), new InstanceEServiceSeed())
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .get();
-
-        final EServiceRef eServiceRef = EServiceRef.of(created.getId());
-        final EServiceDescriptorRef descriptorRef = EServiceDescriptorRef.of(created.getDescriptorId());
-        final EServiceDescriptor descriptor = descriptorGateway.getEServiceDescriptor(eServiceRef, descriptorRef);
-        final EService eService = getEService(eServiceRef);
-        eService.addDescriptor(descriptor);
-        return eService;
     }
 
     @Override
