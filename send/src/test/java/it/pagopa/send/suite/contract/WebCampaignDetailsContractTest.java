@@ -13,6 +13,7 @@ import it.pagopa.send.generated.openapi.clients.sender.informal.bff.model.Campai
 import it.pagopa.send.web.campaigns.infrastructure.page.CampaignDetailPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.DynamicTest;
@@ -38,6 +39,7 @@ import java.util.stream.Stream;
 })
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
+@Slf4j
 public class WebCampaignDetailsContractTest {
     private final WebBrowserContractValidator webContractValidator;
     private final CampaignsGateway campaignsGateway;
@@ -45,7 +47,7 @@ public class WebCampaignDetailsContractTest {
     private final InformalRecipientSpecFactory informalRecipientSpecFactory;
     @Value("${token.mittente}")
     private String veronaSelfCareToken;
-    private final String personalSelfCareToken="eyJraWQiOiJqd3QtZXhjaGFuZ2VfZWE6NDg6NTI6ZTQ6YWU6OGY6MzA6YjU6YWQ6M2M6ZDI6MDU6NzQ6Nzk6Yzk6ZWYiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJmaXNjYWxfbnVtYmVyIjoiUlNTR1BQODBCMDJHMjczSCIsIm5hbWUiOiJnaXVzZXBwZSIsImZhbWlseV9uYW1lIjoicm9zc2luaSIsInVpZCI6ImU5ZTRhOWM3LTk1ODYtNGI5Mi1hN2RkLWVlMWEwZTc3ZDM5OCIsInRlbmFudF9pZCI6IkFSIiwic3BpZF9sZXZlbCI6Imh0dHBzOi8vd3d3LnNwaWQuZ292Lml0L1NwaWRMMiIsImlzcyI6Imh0dHBzOi8vdWF0LnNlbGZjYXJlLnBhZ29wYS5pdCIsImF1ZCI6InNlbGZjYXJlLnRlc3Qubm90aWZpY2hlZGlnaXRhbGkuaXQiLCJpYXQiOjE3OTE5ODQ2MDIsImV4cCI6MTc5MTk4NTUwMiwianRpIjoiMjQ5MTg3YTAtNTBlOS00ZjYwLThlYzctZWFiYjZlZDViNWE4IiwiZW1haWwiOiJncm9zc2luaUB0ZXN0LmNlcnQuaXQiLCJvcmdhbml6YXRpb24iOnsiaWQiOiI1Yjk5NGQ0YS0wZmE4LTQ3YWMtOWM3Yi0zNTRmMWQ0NGExY2UiLCJuYW1lIjoiQ29tdW5lIGRpIFBhbGVybW8iLCJyb2xlcyI6W3sicGFydHlSb2xlIjoiU1VCX0RFTEVHQVRFIiwicm9sZSI6ImFkbWluIn1dLCJmaXNjYWxfY29kZSI6IjgwMDE2MzUwODIxIiwiaXBhQ29kZSI6ImNfZzI3MyJ9LCJkZXNpcmVkX2V4cCI6MTc5MjAxMzE3NCwic3ViIjoiZTllNGE5YzctOTU4Ni00YjkyLWE3ZGQtZWUxYTBlNzdkMzk4IiwidHlwIjoiSUQifQ.JkfjNMIi0SYssADrP8QW0B023JCI1osHddH-7TxLvSKepeWIwPsU42I-als5iwo_rxA3WX3CkJioSkPlD_KvJP3edhwp5cPeZykiPsJcT5rSr44nkSQVYNqZjHOzlnnpCzyl9Z2yNCk01YFa_rjmWSvDhkUYWP4JoKZhtIkbii645ZX2LMp_q61xVEKdUmq-VNt8Mq3qSqXO5WAbb0a3Y-rlS8sXE9Vp1yO-xZoef5c5QPRtfh_m4edM_Bz6Z0hwxYVabMi3EVNWN0d_pc_pvqNvSfaIXdDg_HuDQ6jfIA_OXbzXL9bKgewfRryLM0PR49_KC_Ws7YxTBlAeSiu-hg&lang=it";
+    private final String personalSelfCareToken="";
 
     @TestFactory
     Stream<DynamicTest> dettaglioCampagna() {
@@ -95,6 +97,13 @@ public class WebCampaignDetailsContractTest {
         String iun = sendJourney.getLastInformalNotification().getIun();
         //questo step lo utilizzo per vedere se la campagna esiste o meno
         campaignId = campaignsGateway.getCampaignByID(campaignId).getCampaignId();
+        try {
+            log.info("Sospensione thread per attesa notifica...");
+            Thread.sleep(10000);
+        } catch (InterruptedException e)
+        {
+            throw new RuntimeException("Errore durante la sospensione del thread",e);
+        }
         return webContractValidator
                 .as(Tenant.GROSSINI, List.of())
                 .on(CampaignDetailPage.class,campaignId,personalSelfCareToken)
