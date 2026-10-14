@@ -13,6 +13,57 @@ class WsdlInterfaceVerifierTest {
     private final WsdlInterfaceVerifier verifier = new WsdlInterfaceVerifier();
 
     @Test
+    void reports_missing_service_name_with_xml_position_and_other_field_statuses() {
+        byte[] xml = diagnosticWsdl("", "name=\"PortaUno\"", "location=\"https://host.example\"");
+
+        assertThatThrownBy(() -> verifier.assertAddresses(xml, List.of()))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("riga 5, colonna")
+                .hasMessageContaining("servizio (wsdl:service/@name): <attributo name assente>")
+                .hasMessageContaining("porta (wsdl:port/@name): PortaUno")
+                .hasMessageContaining("SOAP address/@location: <presente>")
+                .hasMessageContaining("confronto con gli indirizzi attesi non");
+    }
+
+    @Test
+    void reports_missing_port_name_separately_from_missing_location() {
+        assertThatThrownBy(() -> verifier.assertAddresses(
+                diagnosticWsdl("name=\"Servizio\"", "", "location=\"https://host.example\""), List.of()))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("servizio (wsdl:service/@name): Servizio")
+                .hasMessageContaining("porta (wsdl:port/@name): <attributo name assente>")
+                .hasMessageContaining("SOAP address/@location: <presente>");
+        assertThatThrownBy(() -> verifier.assertAddresses(
+                diagnosticWsdl("name=\"Servizio\"", "name=\"PortaUno\"", ""), List.of()))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("porta (wsdl:port/@name): PortaUno")
+                .hasMessageContaining("SOAP address/@location: <attributo assente>");
+    }
+
+    @Test
+    void distinguishes_unrecognized_wsdl_namespace_from_missing_name_attributes() {
+        String xml = new String(diagnosticWsdl("name=\"Servizio\"", "name=\"PortaUno\"",
+                "location=\"https://host.example\""), StandardCharsets.UTF_8)
+                .replace("http://schemas.xmlsoap.org/wsdl/\"", "urn:wrong-wsdl\"");
+
+        assertThatThrownBy(() -> verifier.assertAddresses(xml.getBytes(StandardCharsets.UTF_8), List.of()))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("nessun elemento wsdl:service attivo nel namespace http://schemas.xmlsoap.org/wsdl/")
+                .hasMessageContaining("nessun elemento wsdl:port attivo nel namespace http://schemas.xmlsoap.org/wsdl/");
+    }
+
+    private static byte[] diagnosticWsdl(String serviceAttributes, String portAttributes, String addressAttributes) {
+        return """
+                <w:definitions xmlns:w="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:s="http://schemas.xmlsoap.org/wsdl/soap/">
+                <w:service %s>
+                <w:port %s>
+                <s:address %s/>
+                </w:port></w:service></w:definitions>
+                """.formatted(serviceAttributes, portAttributes, addressAttributes).getBytes(StandardCharsets.UTF_8);
+    }
+
+    @Test
     void all_template_wsdl_fixtures_are_well_formed_and_use_expected_service_ports() throws IOException {
         List<String> fixtures = List.of(
                 "soap11-un-indirizzo.wsdl",
