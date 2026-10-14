@@ -4,7 +4,6 @@ import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.web.eservice.application.WebEServiceCreationCommand;
@@ -30,11 +29,6 @@ public class WebEServiceGateway implements EServiceGateway {
         generalDataGateway.fillEServiceGeneralData(creationCommand.getWebEServiceGeneralData());
 
         return generalDataGateway.readEServiceGeneralData();
-    }
-
-    @Override
-    public EService createEServiceInstanceFromTemplate(EServiceTemplate template) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

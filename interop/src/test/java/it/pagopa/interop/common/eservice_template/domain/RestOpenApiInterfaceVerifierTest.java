@@ -93,6 +93,27 @@ class RestOpenApiInterfaceVerifierTest {
         )).isInstanceOf(AssertionError.class).hasMessageContaining("Schemi OpenAPI");
     }
 
+    @Test
+    void inlined_reference_expansion_is_detected_as_a_path_structure_change() throws IOException {
+        String original = textResource("openapi3-riferimenti.json");
+        String expanded = original
+                .replace("https://originale.example/api", "https://erogatore.example/api")
+                .replace("\"version\": \"1.0.0\",", "\"version\": \"1.0.0\",\n    \"termsOfService\": \"https://erogatore.example/condizioni\",")
+                .replace("\"name\": \"Contatto originario\",", "\"name\": \"Referente Erogatore\",\n      \"url\": \"https://erogatore.example/contatti\",")
+                .replace("originario@example.test", "referente@erogatore.example")
+                .replace("\"$ref\": \"#/components/schemas/Pagamento\"",
+                        "\"type\": \"object\", \"required\": [\"importo\"], \"properties\": {"
+                                + "\"importo\": {\"type\": \"number\", \"format\": \"double\"},"
+                                + "\"causale\": {\"type\": \"string\"}}");
+
+        assertThatThrownBy(() -> verifier.assertCustomized(
+                original.getBytes(StandardCharsets.UTF_8),
+                expanded.getBytes(StandardCharsets.UTF_8),
+                expected,
+                false
+        )).isInstanceOf(AssertionError.class).hasMessageContaining("Path o riferimenti");
+    }
+
     private static String textResource(String name) throws IOException {
         try (var stream = RestOpenApiInterfaceVerifierTest.class.getResourceAsStream(
                 "/assets/eservice-template/" + name

@@ -1,19 +1,22 @@
 package it.pagopa.interop.common.eservice_template.domain;
 
 import it.pagopa.domain.Identifiable;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
 
+@Getter
+@EqualsAndHashCode
 public final class EServiceTemplateInterface implements Identifiable {
-    private final UUID id;
+    private final Document metadata;
     private final EServiceTemplateRef templateRef;
     private final EServiceTemplateVersionRef versionRef;
-    private final String name;
-    private final String contentType;
     private final byte[] content;
 
     public EServiceTemplateInterface(
@@ -24,53 +27,81 @@ public final class EServiceTemplateInterface implements Identifiable {
             String contentType,
             byte[] content
     ) {
-        this.id = Objects.requireNonNull(id);
+        this(id, templateRef, versionRef, name, contentType, name, null, content);
+    }
+
+    public EServiceTemplateInterface(
+            UUID id,
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String name,
+            String contentType,
+            String prettyName,
+            String checksum,
+            byte[] content
+    ) {
+        this(Document.builder()
+                        .id(id)
+                        .name(name)
+                        .contentType(contentType)
+                        .prettyName(prettyName)
+                        .checksum(checksum)
+                        .build(),
+                templateRef, versionRef, content);
+    }
+
+    private EServiceTemplateInterface(
+            Document metadata,
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            byte[] content
+    ) {
+        this.metadata = Objects.requireNonNull(metadata);
         this.templateRef = Objects.requireNonNull(templateRef);
         this.versionRef = Objects.requireNonNull(versionRef);
-        this.name = Objects.requireNonNull(name);
-        this.contentType = Objects.requireNonNull(contentType);
-        this.content = Arrays.copyOf(Objects.requireNonNull(content), content.length);
+        this.content = content == null ? null : Arrays.copyOf(content, content.length);
     }
 
     @Override
     public UUID getId() {
-        return id;
-    }
-
-    public EServiceTemplateRef getTemplateRef() {
-        return templateRef;
-    }
-
-    public EServiceTemplateVersionRef getVersionRef() {
-        return versionRef;
+        return metadata.getId();
     }
 
     public String getName() {
-        return name;
+        return metadata.getName();
     }
 
     public String getContentType() {
-        return contentType;
+        return metadata.getContentType();
+    }
+
+    public String getPrettyName() {
+        return metadata.getPrettyName();
+    }
+
+    public String getChecksum() {
+        return metadata.getChecksum();
     }
 
     public byte[] getContent() {
-        return Arrays.copyOf(content, content.length);
+        return content == null ? null : Arrays.copyOf(content, content.length);
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) return true;
-        if (!(other instanceof EServiceTemplateInterface that)) return false;
-        return id.equals(that.id)
-                && templateRef.equals(that.templateRef)
-                && versionRef.equals(that.versionRef)
-                && name.equals(that.name)
-                && contentType.equals(that.contentType)
-                && Arrays.equals(content, that.content);
+    public boolean hasDownloadedContent() {
+        return content != null;
     }
 
-    @Override
-    public int hashCode() {
-        return 31 * Objects.hash(id, templateRef, versionRef, name, contentType) + Arrays.hashCode(content);
+    public EServiceTemplateInterface withContent(byte[] bytes) {
+        return new EServiceTemplateInterface(metadata, templateRef, versionRef, bytes);
     }
+
+    public EServiceTemplateInterface refreshMetadata(EServiceTemplateInterface updated) {
+        byte[] retained = metadata.getId().equals(updated.getId())
+                && metadata.getChecksum() != null
+                && metadata.getChecksum().equals(updated.getChecksum()) ? content : null;
+        return new EServiceTemplateInterface(
+                updated.metadata, updated.templateRef, updated.versionRef, retained
+        );
+    }
+
 }

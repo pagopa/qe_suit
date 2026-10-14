@@ -18,4 +18,7 @@ public interface EServiceTemplateCreationCommand {
     EServiceTemplateCreationCommand dailyCallsPerConsumer(Integer dailyCallsPerConsumer);
     EServiceTemplateCreationCommand dailyCallsTotal(Integer dailyCallsTotal);
     EServiceTemplateCreationCommand agreementApprovalPolicy(AgreementApprovalPolicy policy);
+    EServiceTemplateCreationCommand interfaceDocumentPath(String path);
+
+    String getInterfaceDocumentPath();
 }

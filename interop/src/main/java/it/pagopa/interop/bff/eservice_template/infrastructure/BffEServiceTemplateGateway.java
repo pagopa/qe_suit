@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.eservice_template.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.eservice_template.application.BffEServiceTemplateCreationCommand;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateGateway;
@@ -16,125 +17,138 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVer
 import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.assertj.core.api.Assertions;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
     private final BffEServiceTemplateRestClient restClient;
     private final BffEServiceTemplateMapper mapper;
+    private final EntityStore entityStore;
 
     @Override
     public EServiceTemplate createEServiceTemplate(EServiceTemplateCreationCommand command) {
-        if (!(command instanceof BffEServiceTemplateCreationCommand bffCommand)) {
+        if (!(command instanceof BffEServiceTemplateCreationCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of BffEServiceTemplateCreationCommand");
-        }
 
         var created = restClient.createEServiceTemplate(bffCommand.getBffCreationPayload())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
-        return restClient.getEServiceTemplateVersion(created.getId(), created.getVersionId())
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(mapper::toEServiceTemplate)
-                .updateContext()
-                .get();
+        return refresh(new EServiceTemplateRef(created.getId()), new EServiceTemplateVersionRef(created.getVersionId()));
     }
 
     @Override
-    public EServiceTemplate uploadInterface(EServiceTemplate template, String fixturePath) {
-        EServiceTemplateVersion version = template.getVersions().get(0);
+    public EServiceTemplate uploadInterface(EServiceTemplate template, EServiceTemplateVersion version, String fixturePath) {
         File document = FileUtils.loadClasspathResourceAsTempFile(fixturePath);
         String prettyName = Path.of(fixturePath).getFileName().toString();
 
-        var createdDocument = restClient.createEServiceTemplateDocument(
-                        template.getId(),
-                        version.getId(),
-                        DocumentKind.INTERFACE.name(),
-                        prettyName,
-                        document
+        var created = restClient.createEServiceTemplateDocument(
+                        template.getId(), version.getId(), DocumentKind.INTERFACE.name(), prettyName, document
                 )
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
-        EServiceTemplate refreshed = PollingUtils.pollUntil(
-                () -> getVersion(template),
-                t -> t.getVersions().get(0).getInterfaceDocument() != null,
-                "EService template version interface document not created after upload"
+        return PollingUtils.pollUntil(
+                () -> refresh(template.getRef(), new EServiceTemplateVersionRef(version.getId())),
+                current -> interfaceDocument(current, version.getId())
+                        .map(metadata -> metadata.getId().equals(created.getId()))
+                        .orElse(false),
+                "EService template interface was not visible after upload"
         );
-
-        if(createdDocument == null)
-            throw new IllegalStateException("Uploaded document is null");
-
-        if(!createdDocument.getId().equals(refreshed.getVersions().get(0).getInterfaceDocument().id()))
-            throw new IllegalStateException("Uploaded document ID does not match the refreshed template version interface document ID");
-
-        return refreshed;
     }
 
     @Override
-    public EServiceTemplate publishEServiceTemplateVersion(EServiceTemplate template) {
-        EServiceTemplateVersion version = template.getVersions().get(0);
+    public EServiceTemplate publishEServiceTemplateVersion(EServiceTemplate template, EServiceTemplateVersion version) {
         restClient.publishEServiceTemplateVersion(template.getId(), version.getId())
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .get();
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
 
         return PollingUtils.pollUntil(
-                () -> getVersion(template),
-                state -> state.getVersions().get(0).getState() == EServiceTemplateVersionState.PUBLISHED,
-                "EService template version not published after publish request"
+                () -> refresh(template.getRef(), new EServiceTemplateVersionRef(version.getId())),
+                current -> selectedVersion(current, version.getId()).getState() == EServiceTemplateVersionState.PUBLISHED,
+                "EService template version was not published"
         );
     }
 
     @Override
-    public EServiceTemplate getEServiceTemplateVersion(EServiceTemplate template) {
-        return getVersion(template);
+    public EServiceTemplate getEServiceTemplateVersion(EServiceTemplate template, EServiceTemplateVersion version) {
+        return refresh(template.getRef(), new EServiceTemplateVersionRef(version.getId()));
     }
 
     @Override
-    public EServiceTemplateInterface downloadInterface(EServiceTemplate template) {
-        EServiceTemplateVersion version = template.getVersions().get(0);
-        UUID documentId = version.getInterfaceDocument().id();
-        var details = restClient.getEServiceTemplateVersion(template.getId(), version.getId())
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .get();
-        var metadata = details.getInterface();
+    public EServiceTemplateInterface downloadInterface(EServiceTemplate template, EServiceTemplateVersion version) {
+        EServiceTemplate current = refresh(template.getRef(), new EServiceTemplateVersionRef(version.getId()));
+        EServiceTemplateInterface metadata = interfaceDocument(current, version.getId())
+                .orElseThrow(() -> new IllegalStateException("La versione del template non ha un'interfaccia"));
 
-        return restClient.getEServiceTemplateDocumentById(template.getId(), version.getId(), documentId)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(bytes -> new EServiceTemplateInterface(
-                        documentId,
-                        new EServiceTemplateRef(template.getId()),
-                        new EServiceTemplateVersionRef(template.getId()),
-                        metadata.getName(),
-                        metadata.getContentType(),
-                        bytes
-                ))
-                .updateContext()
-                .get();
+        byte[] content = download(template.getId(), version.getId(), metadata.getId());
+
+        EServiceTemplateInterface downloaded = metadata.withContent(content);
+        EServiceTemplate enriched = replaceInterface(current, version.getId(), downloaded);
+        entityStore.upsert(enriched);
+
+        return downloaded;
     }
 
     @Override
-    public byte[] downloadInterfaceBytes(EServiceTemplate template, UUID documentId) {
-        EServiceTemplateVersion version = template.getVersions().get(0);
-        return restClient.getEServiceTemplateDocumentById(template.getId(), version.getId(), documentId)
+    public Optional<EServiceTemplateInterface> readCurrentInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
+        EServiceTemplateVersionDetails details = getDetails(templateRef.templateId(), versionRef.versionId());
+        if (details.getInterface() == null) return Optional.empty();
+
+        EServiceTemplate metadataOnly = mapper.toEServiceTemplate(details);
+        EServiceTemplateInterface metadata = interfaceDocument(metadataOnly, versionRef.versionId())
+                .orElseThrow(() -> new IllegalStateException("Metadati interfaccia non mappati"));
+
+        return Optional.of(metadata.withContent(
+                download(templateRef.templateId(), versionRef.versionId(), metadata.getId())
+        ));
+    }
+
+    private EServiceTemplate refresh(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
+        EServiceTemplate existing = entityStore.getById(templateRef.templateId(), EServiceTemplate.class).orElse(null);
+        EServiceTemplate mapped = mapper.toEServiceTemplate(
+                getDetails(templateRef.templateId(), versionRef.versionId()), existing
+        );
+        entityStore.upsert(mapped);
+        return mapped;
+    }
+
+    private EServiceTemplateVersionDetails getDetails(UUID templateId, UUID versionId) {
+        return restClient.getEServiceTemplateVersion(templateId, versionId)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
     }
 
-    private EServiceTemplate getVersion(EServiceTemplate template) {
-        return restClient.getEServiceTemplateVersion(template.getId(), template.getVersions().get(0).getId())
+    private byte[] download(UUID templateId, UUID versionId, UUID documentId) {
+        return restClient.getEServiceTemplateDocumentById(templateId, versionId, documentId)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(mapper::toEServiceTemplate)
-                .updateContext()
                 .get();
+    }
+
+    private static EServiceTemplateVersion selectedVersion(EServiceTemplate template, UUID versionId) {
+        return template.getVersions().stream()
+                .filter(version -> version.getId().equals(versionId))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Versione template non presente: " + versionId));
+    }
+
+    private static Optional<EServiceTemplateInterface> interfaceDocument(EServiceTemplate template, UUID versionId) {
+        return Optional.ofNullable(selectedVersion(template, versionId).getInterfaceDocument());
+    }
+
+    private static EServiceTemplate replaceInterface(EServiceTemplate template, UUID versionId, EServiceTemplateInterface document) {
+        List<EServiceTemplateVersion> versions = template.getVersions().stream()
+                .map(version -> version.getId().equals(versionId)
+                        ? version.toBuilder().interfaceDocument(document).build()
+                        : version)
+                .toList();
+        return template.toBuilder().versions(versions).build();
     }
 
     @Override

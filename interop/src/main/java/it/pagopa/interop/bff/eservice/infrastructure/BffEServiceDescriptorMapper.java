@@ -33,6 +33,20 @@ public interface BffEServiceDescriptorMapper {
     @Mapping(target = "serverUrls", source = "serverUrls", qualifiedByName = "mapServerUrls")
     EServiceDescriptor toEServiceDescriptor(ProducerEServiceDescriptor source);
 
+    default EServiceDescriptorInterface toDescriptorInterface(EServiceDoc source) {
+        if (source == null) {
+            return null;
+        }
+        Document metadata = Document.builder()
+                .id(source.getId())
+                .name(source.getName())
+                .prettyName(source.getPrettyName())
+                .contentType(source.getContentType())
+                .checksum(source.getChecksum())
+                .build();
+        return new EServiceDescriptorInterface(metadata, null, null, null);
+    }
+
     @Mapping(target = "id", source = "eservice.id")
     @Mapping(target = "name", source = "eservice.name")
     @Mapping(target = "producerId", source = "eservice.producer.id")
@@ -59,6 +73,27 @@ public interface BffEServiceDescriptorMapper {
 
         // 2. Convertiamo la sorgente nel descrittore di dominio custom (Generato da MapStruct)
         EServiceDescriptor newDescriptor = toEServiceDescriptor(source);
+        EServiceDescriptor oldDescriptor = existingEService == null
+                ? null
+                : existingEService.findDescriptor(newDescriptor.getId());
+        if (newDescriptor.getInterfaceDocument() != null) {
+            var updatedInterface = newDescriptor.getInterfaceDocument();
+            if (oldDescriptor != null && oldDescriptor.getInterfaceDocument() != null) {
+                updatedInterface = oldDescriptor.getInterfaceDocument().refresh(
+                        updatedInterface.getMetadata(),
+                        EServiceRef.of(updatedBase.getId()),
+                        newDescriptor.getRef()
+                );
+            } else {
+                updatedInterface = new it.pagopa.interop.common.eservice.domain.EServiceDescriptorInterface(
+                        updatedInterface.getMetadata(),
+                        EServiceRef.of(updatedBase.getId()),
+                        newDescriptor.getRef(),
+                        null
+                );
+            }
+            newDescriptor = newDescriptor.toBuilder().interfaceDocument(updatedInterface).build();
+        }
 
         // 3. Prepariamo la nuova lista unificata dei descrittori
         List<EServiceDescriptor> finalDescriptors = new ArrayList<>();

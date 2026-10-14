@@ -21,7 +21,7 @@ public class EServiceDescriptor implements Identifiable {
     String version;
     EServiceDescriptorState state;
     String description;
-    Document interfaceDocument;
+    EServiceDescriptorInterface interfaceDocument;
     Attributes attributes;
     Integer voucherLifespan;
     Integer dailyCallsPerConsumer;
@@ -49,7 +49,7 @@ public class EServiceDescriptor implements Identifiable {
     @Singular("doc")
     List<Document> docs;
 
-    public Document findDocument(UUID documentId) {
+    public DocumentMetadata findDocument(UUID documentId) {
         if (interfaceDocument != null && interfaceDocument.getId().equals(documentId)) {
             return interfaceDocument;
         }
@@ -70,7 +70,11 @@ public class EServiceDescriptor implements Identifiable {
     public EServiceDescriptor replaceDocument(UUID documentId, Document updatedDocument) {
         if (interfaceDocument != null && interfaceDocument.getId().equals(documentId)) {
             return this.toBuilder()
-                    .interfaceDocument(updatedDocument)
+                    .interfaceDocument(interfaceDocument.refresh(
+                            updatedDocument,
+                            interfaceDocument.getEServiceRef(),
+                            interfaceDocument.getDescriptorRef()
+                    ))
                     .build();
         }
 

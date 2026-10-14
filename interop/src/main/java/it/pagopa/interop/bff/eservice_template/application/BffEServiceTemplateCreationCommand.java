@@ -12,6 +12,8 @@ public class BffEServiceTemplateCreationCommand implements EServiceTemplateCreat
     @Getter
     private final EServiceTemplateSeed bffCreationPayload;
 
+    private String interfaceDocumentPath;
+
     public BffEServiceTemplateCreationCommand() {
         this(new EServiceTemplateSeed());
     }
@@ -102,6 +104,17 @@ public class BffEServiceTemplateCreationCommand implements EServiceTemplateCreat
                 it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy.fromValue(policy.name())
         );
         return this;
+    }
+
+    @Override
+    public EServiceTemplateCreationCommand interfaceDocumentPath(String path) {
+        this.interfaceDocumentPath = path;
+        return this;
+    }
+
+    @Override
+    public String getInterfaceDocumentPath() {
+        return this.interfaceDocumentPath;
     }
 
     private VersionSeedForEServiceTemplateCreation versionSeed() {

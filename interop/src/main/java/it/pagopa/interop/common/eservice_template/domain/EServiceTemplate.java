@@ -37,4 +37,23 @@ public class EServiceTemplate implements Identifiable {
 
     @Singular("riskAnalysis")
     List<EServiceRiskAnalysis> riskAnalyses;
+
+    public EServiceTemplateVersion getLatestVersion() {
+        return versions.stream()
+                .max(Comparator.comparingInt(version -> Integer.parseInt(version.getVersion())))
+                .orElseThrow(() -> new NoSuchElementException("Nessuna versione trovata per template " + id));
+    }
+
+    public EServiceTemplateRef getRef() {
+        return new EServiceTemplateRef(id);
+    }
+
+    public EServiceTemplateVersion getVersion(int versionNumber) {
+        return versions.stream()
+                .filter(version -> Integer.parseInt(version.getVersion()) == versionNumber)
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException(
+                        "Versione " + versionNumber + " non trovata per template " + id
+                ));
+    }
 }
