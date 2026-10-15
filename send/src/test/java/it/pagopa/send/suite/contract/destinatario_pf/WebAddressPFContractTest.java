@@ -47,6 +47,11 @@ public class WebAddressPFContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
+    /**
+     * Intestazione (titolo e sottotitolo), titoli delle card "Il tuo domicilio digitale", "SEND sull’app IO" e "Il tuo
+     * indirizzo email" e presenza dello stato del domicilio digitale e di SEND sull'app IO, senza verificarne il
+     * valore.
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowAddressTexts() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)

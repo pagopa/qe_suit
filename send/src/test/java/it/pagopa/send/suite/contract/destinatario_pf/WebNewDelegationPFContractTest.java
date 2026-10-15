@@ -72,8 +72,10 @@ public class WebNewDelegationPFContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    // testi della pagina e del form
-
+    /**
+     * Testi della pagina e del form: intestazione, scelta del soggetto giuridico, campi della persona fisica, scelta
+     * degli enti, periodo di validità della delega e codice di verifica.
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowNewDelegationTexts() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -147,8 +149,12 @@ public class WebNewDelegationPFContractTest {
         );
     }
 
-    // presenza degli elementi e dei pulsanti, compresi quelli che compaiono in base alle scelte
-
+    /**
+     * Elementi e pulsanti: codice di verifica di 5 cifre con il pulsante per copiarlo e "Invia la richiesta". Con
+     * "Persona giuridica" compare la ragione sociale al posto di nome e cognome; con "Solo enti selezionati" compare
+     * l'elenco degli enti, di cui si verifica solo che non sia vuoto perché i nomi dipendono dagli enti attivi sulla
+     * piattaforma.
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowNewDelegationElements() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -198,8 +204,10 @@ public class WebNewDelegationPFContractTest {
         );
     }
 
-    // stato del form all'apertura della pagina
-
+    /**
+     * Stato del form all'apertura della pagina: persona fisica selezionata, tutti gli enti selezionati e termine della
+     * delega precompilato a domani.
+     */
     @TestFactory
     Stream<DynamicTest> shouldStartWithDefaultValues() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -230,8 +238,12 @@ public class WebNewDelegationPFContractTest {
         );
     }
 
-    // messaggi di validazione mostrati dal portale
-
+    /**
+     * Messaggi di validazione mostrati dal portale sotto il campo: codice fiscale non valido (persona fisica e
+     * giuridica), spazi all'inizio o alla fine in nome, cognome e ragione sociale, termine della delega vuoto e data
+     * errata (passata, 31 febbraio, incompleta). Se un campo obbligatorio è vuoto il browser mostra il fumetto "Compila
+     * questo campo.", che non fa parte della pagina: per questo gli scenari compilano i campi obbligatori.
+     */
     @TestFactory
     Stream<DynamicTest> shouldValidateNewDelegationForm() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)

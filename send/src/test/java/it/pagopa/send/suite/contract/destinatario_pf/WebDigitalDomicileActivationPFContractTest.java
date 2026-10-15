@@ -71,8 +71,10 @@ public class WebDigitalDomicileActivationPFContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    // testi comuni a tutti i passi
-
+    /**
+     * Testi comuni a tutti i passi: titolo del wizard e nomi dei passi "Come funziona", "Inserisci la tua email" e
+     * "Riepilogo".
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowActivationWizardTexts() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -92,8 +94,11 @@ public class WebDigitalDomicileActivationPFContractTest {
                 ));
     }
 
-    // passo 1: come funziona
-
+    /**
+     * Passo 1, "Come funziona": titolo, i tre punti con titolo e descrizione, "Continua" e "Annulla", di cui si
+     * controlla solo il testo perché torna alla pagina precedente nella cronologia del browser. Il link "consegnata"
+     * apre la finestra sul valore giuridico della notifica, con titolo, descrizione e "Ok, ho capito".
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowHowItWorksStep() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -127,8 +132,9 @@ public class WebDigitalDomicileActivationPFContractTest {
                 ));
     }
 
-    // passo 2: inserisci la tua email
-
+    /**
+     * Passo 2, "Inserisci la tua email": titolo, descrizione, "Continua" e "Indietro".
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowEmailStep() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
