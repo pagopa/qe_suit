@@ -69,22 +69,21 @@ public class WebEServiceProducerDetailsContractTest {
                 .on(EServiceProducerDetailsPage.class, service.getId().toString(),
                         service.getActiveDescriptor().getId().toString())
                 .tests(Stream.of(
-                        new WebScenario<>("Visual - producer details headings and identity", page -> {},
-                                page -> assertHeadings(page, service)),
-                        new WebScenario<>("Visual - published version actions and enabled states", page -> {},
-                                page -> assertActions(page, service)),
-                        new WebScenario<>("Visual - initial details and keychains tabs", page -> {},
-                                WebEServiceProducerDetailsContractTest::assertTabs),
-                        new WebScenario<>("Visual - producer detail field labels and values", page -> {},
-                                page -> assertFields(page, service)),
-                        new WebScenario<>("Visual - explanatory copy and empty attribute groups", page -> {},
-                                WebEServiceProducerDetailsContractTest::assertSectionCopy)
+                        new WebScenario<>("Visual - producer details page complete DOM contract", page -> {}, page -> {
+                            // All assertions share the same browser session.
+                            assertHeadings(page, service);
+                            assertActions(page, service);
+                            assertTabs(page);
+                            assertFields(page, service);
+                            assertSectionCopy(page);
+                        })
                 ));
     }
 
     static void assertHeadings(EServiceProducerDetailsPage page, EService service) {
         assertThat(texts(page.title())).as("Single resource title").containsExactly(service.getName());
-        assertThat(texts(page.breadcrumbs())).as("Producer breadcrumb")
+        assertThat(texts(page.breadcrumbs()))
+                .as("The path in the breadcrumbs must be Erogazione/I miei e-service/Visualizza e-service")
                 .containsExactly("Erogazione", "I miei e-service", "Visualizza e-service");
         var headingTexts = texts(page.headings());
         assertThat(headingTexts).isNotEmpty();
