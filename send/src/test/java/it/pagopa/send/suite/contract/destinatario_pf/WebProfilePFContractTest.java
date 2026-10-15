@@ -52,8 +52,9 @@ public class WebProfilePFContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    // testi della pagina
-
+    /**
+     * Testi della pagina: titolo, sottotitolo ed etichette "Nome", "Cognome" e "Codice fiscale".
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowProfileTexts() {
         return webContractValidator.asRecipient(RECIPIENT)
@@ -76,8 +77,9 @@ public class WebProfilePFContractTest {
                 ));
     }
 
-    // dati dell'utente collegato
-
+    /**
+     * Nome, cognome e codice fiscale dell'utente collegato, confrontati con quelli di {@link Recipient}.
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowProfileData() {
         return webContractValidator.asRecipient(RECIPIENT)

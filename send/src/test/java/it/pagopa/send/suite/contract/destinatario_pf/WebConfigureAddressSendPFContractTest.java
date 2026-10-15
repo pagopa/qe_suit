@@ -68,8 +68,9 @@ public class WebConfigureAddressSendPFContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    // testi della pagina e delle card
-
+    /**
+     * Testi della pagina e delle due card mostrate a tutti, "Scelgo il meglio di SEND" e "Voglio solo gli avvisi".
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowConfigureSendTexts() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -109,8 +110,11 @@ public class WebConfigureAddressSendPFContractTest {
         );
     }
 
-    // pulsanti, compresi i wizard aperti dalle card
-
+    /**
+     * Pulsanti "Attiva il meglio di SEND", "Attiva solo gli avvisi" e "Salta e vai alle tue notifiche", che non viene
+     * premuto. "Attiva il meglio di SEND" apre il wizard "Il meglio di SEND" ({@code /onboarding/domicilio-digitale}),
+     * "Attiva solo gli avvisi" il wizard "Attivazione avvisi" ({@code /onboarding/avvisi}).
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowConfigureSendButtons() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
