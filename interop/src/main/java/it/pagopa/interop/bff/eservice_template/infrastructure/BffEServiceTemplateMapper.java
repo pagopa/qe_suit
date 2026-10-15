@@ -91,98 +91,6 @@ public interface BffEServiceTemplateMapper {
     @Mapping(target = "riskAnalysis", ignore = true)
     EServiceTemplate toTemplateFromVersionDetails(EServiceTemplateVersionDetails source, EServiceTemplate existing);
 
-    default EServiceTemplate toEServiceTemplatePreservingVersions(EServiceTemplateDetails source, EServiceTemplate existingTemplate) {
-        if (source == null) {
-            return existingTemplate;
-        }
-
-        EServiceTemplate mapped = toTemplateBase(source);
-
-        List<EServiceTemplateVersion> mergedVersions =
-                existingTemplate != null && existingTemplate.getVersions() != null
-                        ? new ArrayList<>(existingTemplate.getVersions())
-                        : new ArrayList<>();
-
-        if (source.getVersions() != null) {
-            source.getVersions().stream()
-                    .map(this::toTemplateVersion)
-                    .forEach(version -> upsertVersion(mergedVersions, version));
-        }
-
-        if (source.getDraftVersion() != null) {
-            upsertVersion(
-                    mergedVersions,
-                    toTemplateVersion(source.getDraftVersion())
-            );
-        }
-
-        List<EServiceRiskAnalysis> riskAnalyses =
-                existingTemplate != null && existingTemplate.getRiskAnalyses() != null
-                        ? new ArrayList<>(existingTemplate.getRiskAnalyses())
-                        : new ArrayList<>();
-
-        return mapped.toBuilder()
-                .versions(mergedVersions)
-                .riskAnalyses(riskAnalyses)
-                .build();
-    }
-
-    default EServiceTemplate toEServiceTemplate(EServiceTemplateVersionDetails source) {
-        return toEServiceTemplate(source, null);
-    }
-
-    default EServiceTemplate toEServiceTemplate(EServiceTemplateVersionDetails source, EServiceTemplate existing) {
-        if (source == null) {
-            return existing;
-        }
-
-        EServiceTemplateVersion version = toDetailedTemplateVersion(source);
-
-        List<EServiceTemplateVersion> versions =
-                existing != null && existing.getVersions() != null
-                        ? new ArrayList<>(existing.getVersions())
-                        : new ArrayList<>();
-
-        int existingVersionIndex = -1;
-
-        for (int i = 0; i < versions.size(); i++) {
-            EServiceTemplateVersion previous = versions.get(i);
-
-            if (previous.getId().equals(version.getId())) {
-                existingVersionIndex = i;
-
-                EServiceTemplateInterface incomingInterface =
-                        version.getInterfaceDocument();
-
-                EServiceTemplateInterface previousInterface =
-                        previous.getInterfaceDocument();
-
-                if (incomingInterface != null
-                        && previousInterface != null
-                        && previousInterface.getId().equals(incomingInterface.getId())) {
-                    version = version.toBuilder()
-                            .interfaceDocument(
-                                    previousInterface.refreshMetadata(incomingInterface)
-                            )
-                            .build();
-                }
-
-                break;
-            }
-        }
-
-        if (existingVersionIndex >= 0) {
-            versions.set(existingVersionIndex, version);
-        } else {
-            versions.add(version);
-        }
-
-        EServiceTemplate mapped = toTemplateFromVersionDetails(source, existing);
-        return mapped.toBuilder()
-                .versions(versions)
-                .build();
-    }
-
     @Named("resolveTemplateState")
     default EServiceTemplateState resolveTemplateState(EServiceTemplateDetails source) {
         if (source == null) {
@@ -207,25 +115,6 @@ public interface BffEServiceTemplateMapper {
         return hasPublished
                 ? EServiceTemplateState.PUBLISHED
                 : EServiceTemplateState.UNKNOWN;
-    }
-
-    private static void upsertVersion(List<EServiceTemplateVersion> versions, EServiceTemplateVersion incoming) {
-        for (int i = 0; i < versions.size(); i++) {
-            EServiceTemplateVersion current = versions.get(i);
-
-            if (current.getId().equals(incoming.getId())) {
-                versions.set(
-                        i,
-                        current.toBuilder()
-                                .version(incoming.getVersion())
-                                .state(incoming.getState())
-                                .build()
-                );
-                return;
-            }
-        }
-
-        versions.add(incoming);
     }
 
     default EServiceTemplateInterface toInterface(EServiceDoc source, UUID templateId, UUID versionId) {

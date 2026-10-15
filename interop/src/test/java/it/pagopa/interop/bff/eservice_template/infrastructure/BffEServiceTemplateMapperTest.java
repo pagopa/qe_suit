@@ -23,6 +23,8 @@ class BffEServiceTemplateMapperTest {
 
     private final BffEServiceTemplateMapper mapper =
             Mappers.getMapper(BffEServiceTemplateMapper.class);
+    private final BffEServiceTemplateAssembler assembler =
+            new BffEServiceTemplateAssembler(mapper);
 
     @BeforeEach
     void injectMapperDependencies() {
@@ -80,7 +82,7 @@ class BffEServiceTemplateMapperTest {
                 .riskAnalysis(List.of());
 
         EServiceTemplate mapped =
-                mapper.toEServiceTemplatePreservingVersions(source, existingTemplate);
+                assembler.toEServiceTemplatePreservingVersions(source, existingTemplate);
 
         assertDoesNotThrow(() -> mapped.addVersion(
                 EServiceTemplateVersion.builder()
@@ -145,7 +147,7 @@ class BffEServiceTemplateMapperTest {
                         ))
                         .eserviceTemplate(template);
 
-        EServiceTemplate mapped = mapper.toEServiceTemplate(response);
+        EServiceTemplate mapped = assembler.toEServiceTemplate(response);
 
         assertThat(mapped.getId()).isEqualTo(templateId);
         assertThat(mapped.getState()).isEqualTo(EServiceTemplateState.PUBLISHED);
@@ -221,7 +223,7 @@ class BffEServiceTemplateMapperTest {
         );
 
         EServiceTemplate refreshed =
-                mapper.toEServiceTemplate(sameChecksum, existing);
+                assembler.toEServiceTemplate(sameChecksum, existing);
 
         assertThat(refreshed.getVersions())
                 .extracting(EServiceTemplateVersion::getId)
@@ -230,7 +232,7 @@ class BffEServiceTemplateMapperTest {
         assertThat(refreshed.getVersion(2).getInterfaceDocument().getContent())
                 .containsExactly((byte) 1, (byte) 2, (byte) 3);
 
-        EServiceTemplate changedChecksum = mapper.toEServiceTemplate(
+        EServiceTemplate changedChecksum = assembler.toEServiceTemplate(
                 templateVersionDetails(
                         templateId,
                         versionTwo,
@@ -296,7 +298,7 @@ class BffEServiceTemplateMapperTest {
                 ));
 
         EServiceTemplate mapped =
-                mapper.toEServiceTemplatePreservingVersions(source, existing);
+                assembler.toEServiceTemplatePreservingVersions(source, existing);
 
         assertThat(mapped.getVersions()).hasSize(1);
 
