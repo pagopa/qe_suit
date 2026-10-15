@@ -23,7 +23,7 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
     private final BffEServiceTemplateRestClient restClient;
     private final BffEServiceTemplateVersionGateway versionGateway;
     private final EntityStore entityStore;
-    private final BffEServiceTemplateAssembler assembler;
+    private final BffEServiceTemplateMappingService assembler;
 
     @Override
     public EServiceTemplate createEServiceTemplate(EServiceTemplateCreationCommand command) {
