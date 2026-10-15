@@ -65,17 +65,18 @@ Environment: QA
 
 ## Scope
 
-The contract test must validate:
+The contract test validates:
 
-- presence of expected elements in the DOM
-- absence of forbidden elements when explicitly required
-- correctness of approved copy
-- initial state of interactive controls
-- visibility when explicitly required
+- presence of expected elements
+- page-level content
+- approved filter labels
+- initial filter state
+- table structure
+- table header content
+- table row consistency
+- presence of navigation and pagination controls
 
-Presence and visibility are considered different assertions and must be validated independently.
-
-Layout, fonts, colors and visual appearance remain under manual verification and are out of scope.
+Layout, spacing, colors, fonts and visual rendering remain outside the scope of the contract and are validated manually.
 
 ---
 
@@ -92,7 +93,7 @@ PageContainer
  └─ Pagination
 ```
 
-The page also defines three filters:
+The page exposes the following filters:
 
 ```text
 E-Service
@@ -100,20 +101,20 @@ Producer
 Agreement Status
 ```
 
-and an agreements table containing:
+The agreements table contains:
 
 ```text
-E-Service column
-Provider column
-Agreement Status column
-Actions column
+E-Service
+Provider
+Agreement Status
+Actions
 ```
 
 ---
 
 # Contract Matrix
 
-## CON-AGRE-001
+## CON-AGREE-01
 
 Context
 
@@ -132,48 +133,30 @@ Page title
 Property
 
 ```text
-Presence in DOM
+Content
 ```
 
 Expected Result
 
 ```text
-Present
+Not blank
+```
+
+Implementation
+
+```java
+page.pageTitle().read()
+```
+
+Assertion
+
+```text
+isNotBlank()
 ```
 
 ---
 
-## CON-AGRE-002
-
-Context
-
-```text
-Authenticated user
-Comune di Milano
-Admin
-```
-
-Element
-
-```text
-Page title
-```
-
-Property
-
-```text
-Visibility
-```
-
-Expected Result
-
-```text
-Visible
-```
-
----
-
-## CON-AGRE-003
+## CON-AGREE-02
 
 Context
 
@@ -192,18 +175,30 @@ Page description
 Property
 
 ```text
-Presence in DOM
+Content
 ```
 
 Expected Result
 
 ```text
-Present
+Not blank
+```
+
+Implementation
+
+```java
+page.pageDescription().read()
+```
+
+Assertion
+
+```text
+isNotBlank()
 ```
 
 ---
 
-## CON-AGRE-004
+## CON-AGREE-03
 
 Context
 
@@ -216,24 +211,30 @@ Admin
 Element
 
 ```text
-Page description
+E-Service filter label
 ```
 
 Property
 
 ```text
-Visibility
+Copy validation
 ```
 
 Expected Result
 
 ```text
-Visible
+Cerca per e-service
+```
+
+Implementation
+
+```java
+page.eServiceFilterLabel().read()
 ```
 
 ---
 
-## CON-AGRE-005
+## CON-AGREE-04
 
 Context
 
@@ -246,24 +247,36 @@ Admin
 Element
 
 ```text
-Filters container
+E-Service filter input
 ```
 
 Property
 
 ```text
-Presence in DOM
+Initial state
 ```
 
 Expected Result
 
 ```text
-Present
+Empty value
+```
+
+Implementation
+
+```java
+page.eServiceFilterInput().read()
+```
+
+Assertion
+
+```text
+isEmpty()
 ```
 
 ---
 
-## CON-AGRE-006
+## CON-AGREE-05
 
 Context
 
@@ -276,24 +289,30 @@ Admin
 Element
 
 ```text
-Filters container
+Producer filter label
 ```
 
 Property
 
 ```text
-Visibility
+Copy validation
 ```
 
 Expected Result
 
 ```text
-Visible
+Cerca per erogatore
+```
+
+Implementation
+
+```java
+page.producerFilterLabel().read()
 ```
 
 ---
 
-## CON-AGRE-007
+## CON-AGREE-06
 
 Context
 
@@ -306,24 +325,36 @@ Admin
 Element
 
 ```text
-E-Service filter
+Producer filter input
 ```
 
 Property
 
 ```text
-Presence in DOM
+Initial state
 ```
 
 Expected Result
 
 ```text
-Present
+Empty value
+```
+
+Implementation
+
+```java
+page.producerFilterInput().read()
+```
+
+Assertion
+
+```text
+isEmpty()
 ```
 
 ---
 
-## CON-AGRE-008
+## CON-AGREE-07
 
 Context
 
@@ -336,24 +367,30 @@ Admin
 Element
 
 ```text
-E-Service filter
+Status filter label
 ```
 
 Property
 
 ```text
-Visibility
+Copy validation
 ```
 
 Expected Result
 
 ```text
-Visible
+Stato della richiesta
+```
+
+Implementation
+
+```java
+page.statusFilterLabel().read()
 ```
 
 ---
 
-## CON-AGRE-009
+## CON-AGREE-08
 
 Context
 
@@ -366,114 +403,36 @@ Admin
 Element
 
 ```text
-Producer filter
+Status filter input
 ```
 
 Property
 
 ```text
-Presence in DOM
+Initial state
 ```
 
 Expected Result
 
 ```text
-Present
+Empty value
+```
+
+Implementation
+
+```java
+page.statusFilterInput().read()
+```
+
+Assertion
+
+```text
+isEmpty()
 ```
 
 ---
 
-## CON-AGRE-010
-
-Context
-
-```text
-Authenticated user
-Comune di Milano
-Admin
-```
-
-Element
-
-```text
-Producer filter
-```
-
-Property
-
-```text
-Visibility
-```
-
-Expected Result
-
-```text
-Visible
-```
-
----
-
-## CON-AGRE-011
-
-Context
-
-```text
-Authenticated user
-Comune di Milano
-Admin
-```
-
-Element
-
-```text
-Agreement Status filter
-```
-
-Property
-
-```text
-Presence in DOM
-```
-
-Expected Result
-
-```text
-Present
-```
-
----
-
-## CON-AGRE-012
-
-Context
-
-```text
-Authenticated user
-Comune di Milano
-Admin
-```
-
-Element
-
-```text
-Agreement Status filter
-```
-
-Property
-
-```text
-Visibility
-```
-
-Expected Result
-
-```text
-Visible
-```
-
----
-
-## CON-AGRE-013
+## CON-AGREE-09
 
 Context
 
@@ -501,9 +460,21 @@ Expected Result
 Present
 ```
 
+Implementation
+
+```java
+page.agreementsTable().get().isPresent()
+```
+
+Assertion
+
+```text
+true
+```
+
 ---
 
-## CON-AGRE-014
+## CON-AGREE-10
 
 Context
 
@@ -516,24 +487,44 @@ Admin
 Element
 
 ```text
-Consumer agreements table
+Table header
 ```
 
 Property
 
 ```text
-Visibility
+Header structure and copy
 ```
 
 Expected Result
 
 ```text
-Visible
+Column 1 = E-service
+Column 2 = Erogatore
+Column 3 = Stato richiesta
+```
+
+Implementation
+
+```java
+TableRow header=
+        page.agreementsTable()
+        .tHead()
+        .rows()
+        .get(0);
+```
+
+Validations
+
+```java
+header.cells().get(0).read().equals("E-service")
+        header.cells().get(1).read().equals("Erogatore")
+        header.cells().get(2).read().equals("Stato richiesta")
 ```
 
 ---
 
-## CON-AGRE-015
+## CON-AGREE-11
 
 Context
 
@@ -546,102 +537,64 @@ Admin
 Element
 
 ```text
-Table column: E-Service
+Agreement table rows
 ```
 
 Property
 
 ```text
-Presence in DOM
+Row structure and content validation
 ```
 
 Expected Result
 
+For every row:
+
 ```text
-Present
+Column 1 contains a non-empty E-Service value
+Column 2 contains a non-empty Provider value
+Column 3 contains a non-empty Status value
+Column 4 contains the text "Visualizza"
 ```
 
-Source
+Implementation
 
-```text
-ConsumerAgreementsTable.headLabels
+```java
+page.agreementsTable()
+        .tBody()
+        .rows()
 ```
 
----
-
-## CON-AGRE-016
-
-Context
+Validation Rules
 
 ```text
-Authenticated user
-Comune di Milano
-Admin
+cell[0] -> not blank
+cell[1] -> not blank
+cell[2] -> not blank
+cell[3] -> equals "Visualizza"
 ```
 
-Element
+Failure Reporting
 
 ```text
-Table column: Provider
+Each row is validated independently.
+
+Error messages include the failing row index
+to simplify defect identification.
 ```
 
-Property
+Examples
 
 ```text
-Presence in DOM
-```
-
-Expected Result
-
-```text
-Present
-```
-
-Source
-
-```text
-ConsumerAgreementsTable.headLabels
-```
-
----
-
-## CON-AGRE-017
-
-Context
-
-```text
-Authenticated user
-Comune di Milano
-Admin
-```
-
-Element
-
-```text
-Table column: Agreement Status
-```
-
-Property
-
-```text
-Presence in DOM
-```
-
-Expected Result
-
-```text
-Present
-```
-
-Source
-
-```text
-ConsumerAgreementsTable.headLabels
+E-Service cell value at row 15
+Provider cell value at row 15
+Status cell value at row 15
+Cell with detail button at row 15
 ```
 
 ---
 
-## CON-AGRE-018
+## CON-AGREE-12
 
 Context
 
@@ -669,364 +622,83 @@ Expected Result
 Present
 ```
 
----
-
-## CON-AGRE-019
-
-Context
-
-```text
-Authenticated user
-Comune di Milano
-Admin
-```
-
-Element
-
-```text
-Pagination component
-```
-
-Property
-
-```text
-Visibility
-```
-
-Expected Result
-
-```text
-Visible
-```
-
----
-
-## CON-AGRE-020
-
-Context
-
-```text
-Authenticated user
-Comune di Milano
-Admin
-```
-
-Element
-
-```text
-Agreement action button
-```
-
-Property
-
-```text
-Presence in DOM
-```
-
-Expected Result
-
-```text
-Present when at least one agreement row is available
-```
-
-Source
-
-```text
-ConsumerAgreementsTableRow
-```
-
----
-
-## CON-AGRE-021
-
-Context
-
-```text
-Authenticated user
-Comune di Milano
-Admin
-```
-
-Element
-
-```text
-Agreement Action Menu
-```
-
-Property
-
-```text
-Presence in DOM
-```
-
-Expected Result
-
-```text
-Present when at least one agreement row is available
-```
-
-Source
-
-```text
-ConsumerAgreementsTableRow
-```
-
----
-
-## CON-AGRE-022
-
-Context
-
-```text
-Authenticated user
-Comune di Milano
-Admin
-```
-
-Element
-
-```text
-Agreement Status Chip
-```
-
-Property
-
-```text
-Presence in DOM
-```
-
-Expected Result
-
-```text
-Present when at least one agreement row is available
-```
-
-Source
-
-```text
-ConsumerAgreementsTableRow
-```
-
----
-
-## CON-AGRE-023
-
-Context
-
-```text
-Authenticated user
-Comune di Milano
-Admin
-```
-
-Element
-
-```text
-E-Service filter
-```
-
-Property
-
-```text
-Initial state
-```
-
-Expected Result
-
-```text
-Enabled
-```
-
-Rationale
-
-```text
-No frontend logic disables the component on page load.
-```
-
----
-
-## CON-AGRE-024
-
-Context
-
-```text
-Authenticated user
-Comune di Milano
-Admin
-```
-
-Element
-
-```text
-Producer filter
-```
-
-Property
-
-```text
-Initial state
-```
-
-Expected Result
-
-```text
-Enabled
-```
-
-Rationale
-
-```text
-No frontend logic disables the component on page load.
-```
-
----
-
-## CON-AGRE-025
-
-Context
-
-```text
-Authenticated user
-Comune di Milano
-Admin
-```
-
-Element
-
-```text
-Agreement Status filter
-```
-
-Property
-
-```text
-Initial state
-```
-
-Expected Result
-
-```text
-Enabled
-```
-
-Rationale
-
-```text
-No frontend logic disables the component on page load.
-```
-
----
-
-# Proposed Scenarios
-
-The contract implementation should create one WebScenario for each expectation.
-
-Example:
+Implementation
 
 ```java
-new WebScenario<>(
-    "Title should be visible",
-    page -> {},
-    page -> Assertions.assertThat(
-        page.title().isVisible()
-    ).isTrue()
-)
+page.pagination().get().isPresent()
 ```
 
-Example:
+Assertion
 
-```java
-new WebScenario<>(
-    "Agreement status filter should be present",
-    page -> {},
-    page -> Assertions.assertThat(
-        page.statusFilter().isPresent()
-    ).isTrue()
-)
-```
-
-Example:
-
-```java
-new WebScenario<>(
-    "Pagination should be visible",
-    page -> {},
-    page -> Assertions.assertThat(
-        page.pagination().isVisible()
-    ).isTrue()
-)
+```text
+true
 ```
 
 ---
 
-# Page Object Responsibilities
+# Implemented Page Model
 
-Create:
-
-```text
-ConsumerAgreementsListPage
-```
+## ConsumerAgreementsListPage
 
 Responsibilities:
 
 - route definition
 - assertLoaded()
-- title access
-- description access
-- filters access
-- table access
+- page title access
+- page description access
+- filter label access
+- filter input access
+- agreements table access
 - pagination access
-- column header access
-- agreement row access
 
-Suggested API:
+Current API:
 
 ```java
-page.title()
-page.description()
+page.pageTitle()
+        page.pageDescription()
 
-page.eserviceFilter()
-page.producerFilter()
-page.statusFilter()
+        page.eServiceFilterLabel()
+        page.eServiceFilterInput()
 
-page.agreementsTable()
+        page.producerFilterLabel()
+        page.producerFilterInput()
 
-page.eserviceColumn()
-page.providerColumn()
-page.statusColumn()
+        page.statusFilterLabel()
+        page.statusFilterInput()
 
-page.pagination()
+        page.agreementsTable()
+
+        page.pagination()
 ```
 
 ---
 
-# Known Limitations
+# Table Component Hierarchy
 
-The following validations are intentionally excluded because a definitive approved source has not yet been provided:
-
-- page title copy
-- page description copy
-- filter labels copy
-- table header copy
-- empty state copy
-- inspect/edit button copy
-- tooltip copy
-- delegated agreement labels
-- notification badge behaviour
-- absence checks for forbidden components
-
-These controls may be added once the approved translations and TM checklist become available.
-
----
-
-# Current Status
+The agreements table is validated through reusable infrastructure components.
 
 ```text
-READY FOR REVIEW
+Table
+ ├─ TableHead
+ │   └─ TableRow
+ │       └─ TableCell
+ └─ TableBody
+     └─ TableRow
+         └─ TableCell
+```
 
-Page structure identified.
-Contract matrix drafted.
+Header access:
 
-Additional approved copy sources are required
-before implementing copy-validation scenarios.
+```java
+page.agreementsTable()
+        .tHead()
+        .rows()
+```
+
+Body access:
+
+```java
+page.agreementsTable()
+        .tBody()
+        .rows()
 ```

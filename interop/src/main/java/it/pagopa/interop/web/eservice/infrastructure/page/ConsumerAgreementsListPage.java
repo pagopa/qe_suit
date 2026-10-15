@@ -5,10 +5,10 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Label;
+import it.pagopa.infrastructure.suit.component.Pagination;
+import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.infrastructure.suit.component.TextField;
 import org.openqa.selenium.WebElement;
-
-//TODO MATTEO: XPath andranno verificati sul DOM reale
 
 @Url("${interop.web.base-url}/fruizione/richieste")
 public interface ConsumerAgreementsListPage extends Page {
@@ -18,16 +18,6 @@ public interface ConsumerAgreementsListPage extends Page {
 
         @XPath(".//p")
         Readable<String> pageDescription();
-
-//        @XPath("//input[contains(@name,'eservicesIds')]")
-//        WebElement eServiceFilter();
-//
-//        @XPath("//input[contains(@name,'producersIds')]")
-//        WebElement producerFilter();
-//
-//        @XPath("//input[contains(@name,'states')]")
-//        WebElement statusFilter();
-
 
         @XPath("(//div[contains(@class,'MuiFormControl-root')])[1]//label")
         Label eServiceFilterLabel();
@@ -48,25 +38,13 @@ public interface ConsumerAgreementsListPage extends Page {
         TextField statusFilterInput();
 
         @XPath("//table")
-        WebElement agreementsTable();
+        Table agreementsTable();
 
-        @XPath("//thead")
-        WebElement tableHeader();
-
-        @XPath("//th[1]")
-        Readable<String> eServiceColumn();
-
-        @XPath("//th[2]")
-        Readable<String> providerColumn();
-
-        @XPath("//th[3]")
-        Readable<String> statusColumn();
-
-        @XPath("//nav[contains(@class,'pagination')]")
-        WebElement pagination();
+        @XPath("//nav[contains(@aria-label,'pagination')]")
+        Pagination pagination();
 
         @Override
         default void assertLoaded() {
-            pageTitle().readAndAssert("Richieste di fruizione inoltrate");
+                pageTitle().readAndAssert("Richieste di fruizione inoltrate");
         }
 }
