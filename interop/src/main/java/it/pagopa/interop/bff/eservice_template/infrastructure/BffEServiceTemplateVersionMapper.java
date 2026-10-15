@@ -2,25 +2,21 @@ package it.pagopa.interop.bff.eservice_template.infrastructure;
 
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
 import it.pagopa.interop.common.attribute.domain.Attributes;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateState;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
+import it.pagopa.interop.common.eservice_template.domain.*;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.kernel.domain.DocumentRef;
+import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
+import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttribute;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.Named;
-import org.mapstruct.ValueMapping;
+import org.mapstruct.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Mapper(
         config = TestMapperConfig.class,
@@ -31,7 +27,7 @@ public interface BffEServiceTemplateVersionMapper {
     DocumentRef toDocumentRef(EServiceDoc source);
 
     @Mapping(target = "version", expression = "java(source.getVersion() == null ? null : String.valueOf(source.getVersion()))")
-    @Mapping(target = "interfaceDocument", source = "interface")
+    @Mapping(target = "interfaceDocument", expression = "java(toInterface(source.getInterface(), source.getEserviceTemplate().getId(), source.getId()))")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "publishedAt", ignore = true)
     @Mapping(target = "suspendedAt", ignore = true)
@@ -53,7 +49,9 @@ public interface BffEServiceTemplateVersionMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "versions", ignore = true)
+    @Mapping(target = "version", ignore = true)
     @Mapping(target = "riskAnalyses", ignore = true)
+    @Mapping(target = "riskAnalysis", ignore = true)
     EServiceTemplate toTemplateBase(EServiceTemplateVersionDetails source);
 
     @Mapping(target = "certified", source = "certified", qualifiedByName = "flattenAttributes")
@@ -67,6 +65,21 @@ public interface BffEServiceTemplateVersionMapper {
     EServiceTemplateVersionState toDomainVersionState(
             it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState source
     );
+
+    default EServiceTemplateInterface toInterface(EServiceDoc source, UUID templateId, UUID versionId) {
+        return source == null
+                ? null
+                : new EServiceTemplateInterface(
+                source.getId(),
+                new EServiceTemplateRef(templateId),
+                new EServiceTemplateVersionRef(versionId),
+                source.getName(),
+                source.getContentType(),
+                source.getPrettyName(),
+                source.getChecksum(),
+                null
+        );
+    }
 
     default EServiceTemplate toTemplateWithUpsertVersion(
             EServiceTemplateVersionDetails source,
@@ -161,6 +174,5 @@ public interface BffEServiceTemplateVersionMapper {
         versions.add(incoming);
     }
 }
-
 
 
