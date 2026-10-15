@@ -3,10 +3,12 @@ package it.pagopa.interop.bff.infrastructure.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.infrastructure.contract.http.HttpContractPolicy;
 import it.pagopa.infrastructure.contract.http.HttpContractValidator;
-import it.pagopa.infrastructure.fuzzing.*;
+import it.pagopa.infrastructure.fuzzing.FuzzEngine;
+import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
 import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +25,7 @@ public class BffApiContractConfig {
             @Qualifier("pathParamsFuzzEngine") FuzzEngine pathParamsFuzzEngine,
             @Qualifier("queryParamsFuzzEngine") FuzzEngine queryParamsFuzzEngine,
             ObjectGraphDecomposer objectGraphDecomposer,
-            HttpContractPolicy bffApiContractPolicy
+            @Qualifier("bffApiContractPolicy") HttpContractPolicy bffApiContractPolicy
     ) {
         return new HttpContractValidator(
                 objectMapper,
@@ -35,15 +37,16 @@ public class BffApiContractConfig {
         );
     }
 
-    @Bean
+    @Bean("bffInteropHttpContractValidator")
     InteropHttpContractValidator interopHttpContractValidator(
-            HttpContractValidator bffApiContract,
-            CurrentUserSession currentUserSession
+            @Qualifier("bffApiContract") HttpContractValidator bffApiContract,
+            CurrentUserSession currentUserSession,
+            CurrentM2MSession currentM2MSession
     ) {
-        return new InteropHttpContractValidator(bffApiContract, currentUserSession);
+        return new InteropHttpContractValidator(bffApiContract, currentUserSession, currentM2MSession);
     }
 
-    @Bean
+    @Bean("bffApiContractPolicy")
     HttpContractPolicy bffApiContractPolicy() {
         return HttpContractPolicy.builder()
                 .successStatus(200)
@@ -62,9 +65,9 @@ public class BffApiContractConfig {
                         FuzzScenario.REPLACED_WITH_MIN_VALUE,
                         FuzzScenario.REPLACED_WITH_MAX_VALUE,
                         FuzzScenario.REPLACED_WITH_MALFORMED_UUID,
-                        FuzzScenario.REPLACED_WITH_NIL_UUID,
                         FuzzScenario.REPLACED_WITH_UNKNOWN_ENUM
                 ), 400)
+                .scenarioStatus(FuzzScenario.REPLACED_WITH_NIL_UUID, 404)
                 .scenarioStatus(FuzzScenario.REPLACED_WITH_XSS, 403)
                 .build();
     }

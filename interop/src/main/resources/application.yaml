@@ -32,6 +32,8 @@ interop:
   api:
     openapi-url:
       bff: @bff.openapi.url@
+      m2m:
+        v3: @m2m.v3.openapi.url@
 
 contract-report:
   channels:
@@ -44,3 +46,8 @@ contract-report:
       label: WEB
       class-prefix: Web
       target-type: PAGE
+    m2m-v3:
+      label: M2M V3
+      class-prefix: M2Mv3
+      target-type: OPENAPI
+      openapi: @m2m.v3.openapi.url@

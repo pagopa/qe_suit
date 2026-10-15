@@ -66,9 +66,16 @@ class PstPipelineEquivalenceTest {
         PstConfig config = loadConfig(false);
         PstGenerator pstGenerator = generator();
         var document = pstGenerator.generate(config);
+
         OperationSeed seed = seedFactory().create(
-                new OpenApiOperationDiscovery().discover(apiConfiguration(), java.util.Set.of("updateResource")).get(0)
+                new OpenApiOperationDiscovery()
+                        .discover(
+                                apiConfiguration(),
+                                java.util.Set.of("updateResource")
+                        )
+                        .get(0)
         );
+
         Object payload = seed.requestBody().orElseThrow();
         Object pathParams = seed.pathParameters();
 
@@ -79,67 +86,123 @@ class PstPipelineEquivalenceTest {
                 queryPlanner,
                 new QueryParameterValidityResolver(QUERY_METADATA)
         );
+
         HttpContractPolicy policy = runtimePolicy(config);
         ContractCasePlanner runtimePlanner = new ContractCasePlanner(
                 objectMapper,
                 new MockitoObjectGraphQueryResolver(),
                 policy
         );
-        List<GeneratedContractCase> runtimeCases = runtimePlanner.planCases(payloadState, pathState, queryState);
+
+        List<GeneratedContractCase> runtimeCases = runtimePlanner.planCases(
+                payloadState,
+                pathState,
+                queryState
+        );
 
         List<ScenarioTuple> runtime = runtimeCases.stream()
-                .map(testCase -> runtimeTuple(testCase, payloadState, pathState, queryState))
+                .map(testCase ->
+                        runtimeTuple(testCase, payloadState, pathState, queryState))
                 .toList();
+
         List<ScenarioTuple> pst = document.operations().get(0).scenarios().stream()
                 .map(PstPipelineEquivalenceTest::pstTuple)
                 .toList();
 
         assertEquals(runtime, pst);
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.validity() == ContractValidity.VALID));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.validity() == ContractValidity.INVALID));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.validity() == ContractValidity.UNKNOWN));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.target().equals("/simple")
-                && tuple.scenario() == FuzzScenario.REPLACED_WITH_EMPTY_STRING
-                && tuple.validity() == ContractValidity.UNKNOWN));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.target().equals("/sized")
-                && tuple.scenario() == FuzzScenario.REPLACED_WITH_SQL_INJECTION
-                && tuple.validity() == ContractValidity.VALID));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.target().equals("/sized")
-                && tuple.scenario() == FuzzScenario.REPLACED_WITH_EMPTY_STRING
-                && tuple.validity() == ContractValidity.INVALID));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.target().equals("/nullable")
-                && tuple.scenario() == FuzzScenario.REPLACED_WITH_NULL
-                && tuple.validity() == ContractValidity.VALID));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.target().equals("/optional")
-                && tuple.scenario() == FuzzScenario.REMOVED
-                && tuple.validity() == ContractValidity.VALID));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.target().equals("/required")
-                && tuple.scenario() == FuzzScenario.REMOVED
-                && tuple.validity() == ContractValidity.INVALID));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.target().equals("/id")
-                && tuple.scenario() == FuzzScenario.REPLACED_WITH_MALFORMED_UUID));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.target().equals("/count")
-                && tuple.scenario() == FuzzScenario.REPLACED_WITH_ZERO));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.target().equals("/kind")
-                && tuple.scenario() == FuzzScenario.REPLACED_WITH_UNKNOWN_ENUM));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.target().equals("/nested/value")));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.target().equals("/items/0/value")));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.scope() == RequestScope.PATH_PARAMS
-                && tuple.validity() == ContractValidity.UNKNOWN));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.scope() == RequestScope.PATH_PARAMS
-                && tuple.target().equals("/id")
-                && tuple.scenario() == FuzzScenario.REPLACED_WITH_MALFORMED_UUID));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.scope() == RequestScope.QUERY_PARAMS
-                && tuple.target().equals("/page")
-                && tuple.scenario() == FuzzScenario.REMOVED
-                && tuple.validity() == ContractValidity.VALID));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.scope() == RequestScope.QUERY_PARAMS
-                && tuple.target().equals("/filter")
-                && tuple.scenario() == FuzzScenario.REMOVED
-                && tuple.validity() == ContractValidity.INVALID));
-        assertTrue(pst.stream().anyMatch(tuple -> tuple.scope() == RequestScope.QUERY_PARAMS
-                && tuple.target().equals("/filter")
-                && tuple.scenario() == FuzzScenario.REPLACED_WITH_SQL_INJECTION));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.validity() == ContractValidity.VALID));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.validity() == ContractValidity.INVALID));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.validity() == ContractValidity.UNKNOWN));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.target().equals("/simple")
+                        && tuple.scenario() == FuzzScenario.REPLACED_WITH_EMPTY_STRING
+                        && tuple.validity() == ContractValidity.UNKNOWN));
+
+        ScenarioTuple sqlInjection = pst.stream()
+                .filter(tuple -> tuple.scope() == RequestScope.PAYLOAD)
+                .filter(tuple -> tuple.target().equals("/sized"))
+                .filter(tuple ->
+                        tuple.scenario() == FuzzScenario.REPLACED_WITH_SQL_INJECTION)
+                .findFirst()
+                .orElseThrow();
+
+        assertEquals(ContractValidity.UNKNOWN, sqlInjection.validity());
+        assertEquals(ExpectationOrigin.POLICY_UNKNOWN, sqlInjection.origin());
+        assertEquals(
+                config.statusFor(FuzzScenario.REPLACED_WITH_SQL_INJECTION),
+                sqlInjection.expectedStatus()
+        );
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.target().equals("/sized")
+                        && tuple.scenario() == FuzzScenario.REPLACED_WITH_EMPTY_STRING
+                        && tuple.validity() == ContractValidity.INVALID));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.target().equals("/nullable")
+                        && tuple.scenario() == FuzzScenario.REPLACED_WITH_NULL
+                        && tuple.validity() == ContractValidity.VALID));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.target().equals("/optional")
+                        && tuple.scenario() == FuzzScenario.REMOVED
+                        && tuple.validity() == ContractValidity.VALID));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.target().equals("/required")
+                        && tuple.scenario() == FuzzScenario.REMOVED
+                        && tuple.validity() == ContractValidity.INVALID));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.target().equals("/id")
+                        && tuple.scenario() == FuzzScenario.REPLACED_WITH_MALFORMED_UUID));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.target().equals("/count")
+                        && tuple.scenario() == FuzzScenario.REPLACED_WITH_ZERO));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.target().equals("/kind")
+                        && tuple.scenario() == FuzzScenario.REPLACED_WITH_UNKNOWN_ENUM));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.target().equals("/nested/value")));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.target().equals("/items/0/value")));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.scope() == RequestScope.PATH_PARAMS
+                        && tuple.validity() == ContractValidity.UNKNOWN));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.scope() == RequestScope.PATH_PARAMS
+                        && tuple.target().equals("/id")
+                        && tuple.scenario() == FuzzScenario.REPLACED_WITH_MALFORMED_UUID));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.scope() == RequestScope.QUERY_PARAMS
+                        && tuple.target().equals("/page")
+                        && tuple.scenario() == FuzzScenario.REMOVED
+                        && tuple.validity() == ContractValidity.VALID));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.scope() == RequestScope.QUERY_PARAMS
+                        && tuple.target().equals("/filter")
+                        && tuple.scenario() == FuzzScenario.REMOVED
+                        && tuple.validity() == ContractValidity.INVALID));
+
+        assertTrue(pst.stream().anyMatch(tuple ->
+                tuple.scope() == RequestScope.QUERY_PARAMS
+                        && tuple.target().equals("/filter")
+                        && tuple.scenario() == FuzzScenario.REPLACED_WITH_SQL_INJECTION));
     }
 
     @Test

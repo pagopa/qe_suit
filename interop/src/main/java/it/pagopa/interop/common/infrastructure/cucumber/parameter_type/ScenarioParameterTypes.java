@@ -1,13 +1,13 @@
 package it.pagopa.interop.common.infrastructure.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.application.context.EntityStore;
-import it.pagopa.interop.common.kernel.security.DPoPProof;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.kernel.security.DPoPProof;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -37,7 +37,7 @@ public class ScenarioParameterTypes {
         return entityStore.getLastOrThrow(ClientAssertion.class);
     }
 
-    @ParameterType("e-service|EService|e-service creato|EService creato")
+    @ParameterType("e-service|EService|e-service creato|EService creato|e-service appena creato|e-service appena istanziato")
     public EService currentEService(String token) {
         return entityStore.getLastOrThrow(EService.class);
     }

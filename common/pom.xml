@@ -57,6 +57,16 @@
         </dependency>
 
         <!-- ========================= -->
+        <!-- Lombok -->
+        <!-- ========================= -->
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ========================= -->
         <!-- Logging -->
         <!-- ========================= -->
 
@@ -136,15 +146,6 @@
             <artifactId>jackson-datatype-jsr310</artifactId>
         </dependency>
 
-
-        <!-- ========================= -->
-        <!-- Jakarta Validation -->
-        <!-- ========================= -->
-
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
 
         <!-- ========================= -->
         <!-- Mockito -->

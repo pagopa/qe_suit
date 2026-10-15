@@ -1,6 +1,6 @@
 package it.pagopa.interop.common.producer_keychain.domain;
 
-import it.pagopa.interop.common.kernel.domain.Key;
+import it.pagopa.kernel.security.Key;
 import it.pagopa.domain.Identifiable;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import lombok.Builder;

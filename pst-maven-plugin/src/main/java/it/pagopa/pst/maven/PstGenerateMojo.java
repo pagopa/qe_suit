@@ -34,19 +34,27 @@ import java.util.Map;
 @Execute(phase = LifecyclePhase.COMPILE)
 public class PstGenerateMojo extends AbstractMojo {
 
-    /** Id of the {@code org.openapitools:openapi-generator-maven-plugin} execution to design. */
+    /**
+     * Id of the {@code org.openapitools:openapi-generator-maven-plugin} execution to design.
+     */
     @Parameter(property = "pst.openapiExecution")
     private String openapiExecution;
 
-    /** PST YAML configuration file (relative paths are resolved against the project base directory). */
+    /**
+     * PST YAML configuration file (relative paths are resolved against the project base directory).
+     */
     @Parameter(property = "pst.config")
     private File config;
 
-    /** Fully qualified name of the {@code FuzzingProfile} shared with the runtime contract tests. */
+    /**
+     * Fully qualified name of the {@code FuzzingProfile} shared with the runtime contract tests.
+     */
     @Parameter(property = "pst.fuzzingProfile")
     private String fuzzingProfile;
 
-    /** Report path. Default: {@code ${project.build.directory}/pst/<openapiExecution>/pst-report.html}. */
+    /**
+     * Report path. Default: {@code ${project.build.directory}/pst/<openapiExecution>/pst-report.html}.
+     */
     @Parameter(property = "pst.output")
     private File output;
 
@@ -86,7 +94,11 @@ public class PstGenerateMojo extends AbstractMojo {
 
         Map<?, ?> result;
         try (URLClassLoader classLoader = ProjectClassLoaderFactory.create(project)) {
-            result = PstLauncherInvoker.invoke(classLoader, arguments);
+            try {
+                result = PstLauncherInvoker.invoke(classLoader, arguments);
+            } finally {
+                stopProjectLogging(classLoader);
+            }
         } catch (IOException exception) {
             throw new MojoExecutionException("Cannot close PST project class loader", exception);
         }
@@ -95,4 +107,29 @@ public class PstGenerateMojo extends AbstractMojo {
         getLog().info("PST scenarios designed: " + result.get("scenarioCount"));
         getLog().info("PST report generated: " + result.get("reportPath"));
     }
+
+    /**
+     * Stops the Logback context loaded in the project class loader and deregisters its JVM
+     * shutdown hook: the hook loads classes lazily and would fail once the loader is closed.
+     */
+    private static void stopProjectLogging(ClassLoader classLoader) {
+        try {
+            Object factory = Class.forName("org.slf4j.LoggerFactory", true, classLoader)
+                    .getMethod("getILoggerFactory").invoke(null);
+            Class<?> contextBase = Class.forName("ch.qos.logback.core.ContextBase", true, classLoader);
+            if (!contextBase.isInstance(factory)) {
+                return;
+            }
+            String hookKey = (String) Class.forName("ch.qos.logback.core.CoreConstants", true, classLoader)
+                    .getField("SHUTDOWN_HOOK_THREAD").get(null);
+            if (contextBase.getMethod("getObject", String.class).invoke(factory, hookKey) instanceof Thread hook) {
+                Runtime.getRuntime().removeShutdownHook(hook);
+            }
+            contextBase.getMethod("stop").invoke(factory);
+        } catch (ReflectiveOperationException | RuntimeException ignored) {
+            // Best-effort: logging shutdown must never fail the goal.
+        }
+    }
 }
+
+
