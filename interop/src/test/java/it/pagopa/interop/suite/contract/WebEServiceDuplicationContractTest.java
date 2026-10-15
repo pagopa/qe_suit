@@ -12,6 +12,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.web.eservice.infrastructure.WebEServiceGateway;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class WebEServiceDuplicationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
     private final InteropJourney interopJourney;
+    private final WebEServiceGateway webEServiceGateway;
 
     @TestFactory
     @ResourceLock("producer-delegation-availability:COMUNE_DI_POZZALLO")
@@ -117,7 +119,7 @@ public class WebEServiceDuplicationContractTest {
                                 + ": navigazione alla modifica della nuova bozza",
                         page -> {
                             page.pageTitle().readAndAssert(eService.getName());
-                            page.duplicateEService();
+                            webEServiceGateway.duplicateEService(page);
                         },
                         page -> page.duplicatedEServicePage().assertLoaded()
                 )));
@@ -136,7 +138,7 @@ public class WebEServiceDuplicationContractTest {
                         "Duplica e-service assente per il delegato " + role.name() + " con delega " + delegationState,
                         page -> {
                             page.pageTitle().readAndAssert(eService.getName());
-                            page.actionsMenuButton().click();
+                            page.getActionsMenuButton().click();
                         },
                         this::assertDuplicationIsAbsentFromOpenMenu
                 )));
