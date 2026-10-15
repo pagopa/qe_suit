@@ -89,6 +89,11 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void shouldFailToRequestEServiceArchiving(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason) {
+        throw new UnsupportedOperationException("Verification of delegated EService archiving request rejection is not supported on the BFF channel");
+    }
+
+    @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
     }
