@@ -18,4 +18,6 @@ public interface EServiceGateway extends Plugin<Channel> {
     void archiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays);
 
     void shouldFailToArchiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason);
+
+    void shouldFailToRequestEServiceArchiving(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason);
 }
