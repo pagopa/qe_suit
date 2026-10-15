@@ -8,7 +8,6 @@ import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Pagination;
 import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.infrastructure.suit.component.TextField;
-import org.openqa.selenium.WebElement;
 
 @Url("${interop.web.base-url}/fruizione/richieste")
 public interface ConsumerAgreementsListPage extends Page {
