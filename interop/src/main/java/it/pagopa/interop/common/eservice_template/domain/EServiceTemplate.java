@@ -8,6 +8,7 @@ import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
+import lombok.experimental.NonFinal;
 import lombok.extern.jackson.Jacksonized;
 
 import java.time.Instant;
@@ -30,6 +31,7 @@ public class EServiceTemplate implements Identifiable {
     Instant updatedAt;
 
     @Singular("version")
+    @NonFinal
     List<EServiceTemplateVersion> versions;
 
     @Singular("riskAnalysis")
@@ -74,15 +76,18 @@ public class EServiceTemplate implements Identifiable {
         Objects.requireNonNull(version.getId(), "version.id cannot be null");
         Objects.requireNonNull(versions, "versions cannot be null");
 
-        for (int i = 0; i < versions.size(); i++) {
-            EServiceTemplateVersion current = versions.get(i);
+        List<EServiceTemplateVersion> updatedVersions = new ArrayList<>(versions);
+        for (int i = 0; i < updatedVersions.size(); i++) {
+            EServiceTemplateVersion current = updatedVersions.get(i);
             if (current.getId().equals(version.getId())) {
-                versions.set(i, version);
+                updatedVersions.set(i, version);
+                versions = updatedVersions;
                 return;
             }
         }
 
-        versions.add(version);
+        updatedVersions.add(version);
+        versions = updatedVersions;
     }
 
     private EServiceTemplateVersion getUniqueVersionByState(EServiceTemplateVersionState state) {
