@@ -45,6 +45,7 @@ public class WebEServiceCreatePageContractTest {
      *       "Scopri di più su quali attributi usare" link points to the most used attributes guide.</li>
      * </ul>
      *
+     *  Bug: https://pagopa.atlassian.net/browse/PIN-11075
      * @return a stream of dynamic tests, one for each checked link or description
      * @implNote Covers [PIN-10560].
      */
