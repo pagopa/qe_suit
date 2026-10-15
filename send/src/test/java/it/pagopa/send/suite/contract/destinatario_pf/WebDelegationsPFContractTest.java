@@ -52,8 +52,9 @@ public class WebDelegationsPFContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    // testi della pagina
-
+    /**
+     * Testi della pagina: titolo, sottotitolo e titoli delle sezioni "I tuoi delegati" e "Deleghe a tuo carico".
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowDelegationsTexts() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -83,8 +84,9 @@ public class WebDelegationsPFContractTest {
         );
     }
 
-    // presenza dei pulsanti
-
+    /**
+     * Pulsante "Aggiungi una delega" e la pagina "Aggiungi una delega" che apre.
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowDelegationsButtons() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)

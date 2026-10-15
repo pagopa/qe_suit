@@ -68,8 +68,9 @@ public class WebSupportPFContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    // testi della pagina e del form
-
+    /**
+     * Testi della pagina e del form: intestazione, avviso sulla PEC, etichette dei campi e informativa privacy.
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowSupportTexts() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -111,8 +112,9 @@ public class WebSupportPFContractTest {
         );
     }
 
-    // presenza degli elementi e dei pulsanti
-
+    /**
+     * Pulsanti "Avanti" e "Indietro" e link alla privacy policy dell'assistenza.
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowSupportElements() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -143,8 +145,9 @@ public class WebSupportPFContractTest {
         );
     }
 
-    // stato del form all'apertura della pagina
-
+    /**
+     * Stato del form all'apertura della pagina: campi email vuoti e "Avanti" disabilitato.
+     */
     @TestFactory
     Stream<DynamicTest> shouldStartWithDefaultValues() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -171,8 +174,17 @@ public class WebSupportPFContractTest {
         );
     }
 
-    // messaggi di validazione e abilitazione di "Avanti" (che non viene mai premuto)
-
+    /**
+     * Messaggi di validazione e abilitazione di "Avanti", che non viene mai premuto. I messaggi compaiono uscendo dal
+     * campo, per questo gli scenari premono TAB dopo averlo compilato.
+     * <ul>
+     *     <li>email non valida o con spazi all'inizio o alla fine: "L'indirizzo email non è valido", "Avanti" disabilitato;</li>
+     *     <li>conferma diversa dall'email, anche solo per le maiuscole: "L'indirizzo email di conferma non è uguale
+     *     all'indirizzo email inserito", "Avanti" disabilitato;</li>
+     *     <li>email senza conferma: "Avanti" disabilitato;</li>
+     *     <li>email valide e uguali: "Avanti" abilitato.</li>
+     * </ul>
+     */
     @TestFactory
     Stream<DynamicTest> shouldValidateSupportForm() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
