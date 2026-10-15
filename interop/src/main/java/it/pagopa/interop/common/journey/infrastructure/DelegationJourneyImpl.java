@@ -22,6 +22,12 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
     }
 
     @Override
+    public DelegationJourneyImpl createProducerDelegation(TenantRef delegateRef, EServiceRef eServiceRef) {
+        delegationUseCase.createProducerDelegation(delegateRef, eServiceRef);
+        return this;
+    }
+
+    @Override
     public DelegationJourneyImpl approveConsumerDelegation(DelegationRef delegationRef) {
         delegationUseCase.approveConsumerDelegation(delegationRef);
         return this;
