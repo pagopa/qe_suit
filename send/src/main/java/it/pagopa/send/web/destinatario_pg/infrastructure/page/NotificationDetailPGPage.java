@@ -75,6 +75,10 @@ public interface NotificationDetailPGPage extends Page {
     @XPath("//*[@data-testid=\"aarDownload\"]//h2")
     Readable<String> notificationDetailsTitle();
 
+    // pagina "Stato della notifica" aperta con "Vai al dettaglio"
+    @XPath("//main")
+    NotificationTimelinePGPage notificationTimeline();
+
     @Override
     default void assertLoaded() {
         title().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
