@@ -1,5 +1,6 @@
 package it.pagopa.interop.web.eservice.infrastructure;
 
+import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -8,7 +9,9 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.web.eservice.application.WebEServiceCreationCommand;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreationPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
 import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.Assertions;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -49,5 +52,14 @@ public class WebEServiceGateway implements EServiceGateway {
     @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.WEB_BROWSER;
+    }
+
+    public void duplicateEService(ProducerEServiceDetailPage detailPage) {
+        detailPage.getActionsMenuButton().click();
+        Assertions.assertThat(detailPage.getDuplicateEServiceButton().get(FindPolicy.CLICKABLE))
+                .as("Duplica e-service is visible and enabled")
+                .isPresent();
+        detailPage.getDuplicateEServiceButton().click();
+        detailPage.getDuplicationConfirmationDialog().confirmBtn().click();
     }
 }
