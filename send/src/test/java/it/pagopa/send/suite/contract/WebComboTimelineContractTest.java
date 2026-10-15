@@ -22,7 +22,7 @@ import org.springframework.core.env.Environment;
 import java.util.List;
 import java.util.stream.Stream;
 
-@ActiveProfiles({"dev", "junit"})
+@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
@@ -67,6 +67,38 @@ public class WebComboTimelineContractTest {
                                 item.title().readAndAssert(org.junit.jupiter.api.Assertions::assertNotNull);
                                 item.timestamp().readAndAssert(org.junit.jupiter.api.Assertions::assertNotNull);
                             });
+                        }
+                ),
+                new WebScenario<>(
+                        "Controllo log ed eventi di dettaglio per canale nella timeline",
+                        page -> {},
+                        page -> {
+                            var items = page.timeline().items();
+                            org.assertj.core.api.Assertions.assertThat(items)
+                                    .as("La timeline deve contenere gli eventi di tracciamento dei canali")
+                                    .isNotEmpty();
+                            items.forEach(item -> {
+                                item.assertLoaded();
+                                item.content().readAndAssert(c ->
+                                        org.assertj.core.api.Assertions.assertThat(c).as("Contenuto log canale non nullo").isNotBlank());
+                            });
+                        }
+                ),
+                new WebScenario<>(
+                        "Controllo esito finale e box informativo apicale nella timeline",
+                        page -> {},
+                        page -> {
+                            var items = page.timeline().items();
+                            org.assertj.core.api.Assertions.assertThat(items)
+                                    .as("La timeline deve contenere almeno un evento per l'esito finale")
+                                    .isNotEmpty();
+                            var topItem = items.get(0);
+                            topItem.title().readAndAssert(title ->
+                                    org.assertj.core.api.Assertions.assertThat(title).as("Titolo evento apicale non nullo").isNotBlank());
+                            String fullText = topItem.read();
+                            org.assertj.core.api.Assertions.assertThat(fullText)
+                                    .as("Testo esito finale nel box timeline non nullo")
+                                    .isNotBlank();
                         }
                 )
         );

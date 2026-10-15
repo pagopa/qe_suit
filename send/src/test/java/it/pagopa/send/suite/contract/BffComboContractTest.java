@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class BffComboContractTest {
 
     private final BffComboRestClient bffComboRestClient;
+    private final Environment environment;
 
     // ===========================
     // Contratti Dettaglio - GET /campaigns/{campaignId}/communications/{iun}
@@ -53,15 +54,38 @@ public class BffComboContractTest {
     }
 
     /**
-     * [SCENARIO_4_NEGATIVO_403] Verifica che il dettaglio BFF ritorni 403
-     * quando la PA autenticata non e' proprietaria della comunicazione richiesta.
+     * [SCENARIO_4_NEGATIVO_404_OBSCURITY] Verifica che il dettaglio BFF ritorni 404 (Obscurity)
+     * quando la PA autenticata richiede una comunicazione non propria o non esistente.
      */
     @Test
-    void shouldReturn403WhenComboDetailBelongsToAnotherPa() {
-        log.info("Verifica contratto API: GET dettaglio combo di altra PA -> 404");
+    void shouldReturn404WhenComboDetailNotFoundOrUnauthorizedDueToObscurity() {
+        log.info("Verifica contratto API: GET dettaglio combo di altra PA o inesistente -> 404 (Obscurity)");
         bffComboRestClient.getComboDetails("CAMP_002", "ZZZZ-YYYY-XXXX-202609-Z-A")
                 .withoutPolling()
                 .assertStatusCode(404);
+    }
+
+    /**
+     * Verifica la struttura del payload di risposta per il dettaglio della comunicazione bonaria (schema DTO e campi obbligatori).
+     * Migrato da dettaglio-combo-bff.feature.
+     */
+    @Test
+    void shouldValidateComboDetailResponseContract() {
+        log.info("Verifica contratto API: schema e campi obbligatori del dettaglio combo");
+        String campaignId = environment.getProperty("combo.campaign.fattord", "FattOrd");
+        String iun = environment.getProperty("combo.iun.fattord.pf", "HDUX-MWKW-HRHY-202609-Q-A");
+
+        var response = bffComboRestClient.getComboDetails(campaignId, iun)
+                .withoutPolling();
+
+        response.assertStatusCode(200);
+        var detail = response.get();
+        Assertions.assertThat(detail).isNotNull();
+        Assertions.assertThat(detail.getIun()).isNotNull();
+        Assertions.assertThat(detail.getSenderDenomination()).isNotNull();
+        Assertions.assertThat(detail.getRecipients()).isNotNull().isNotEmpty();
+        Assertions.assertThat(detail.getRecipients().get(0).getMessage()).isNotNull();
+        Assertions.assertThat(detail.getChannelsStatus()).isNotNull();
     }
 
     // ===========================
@@ -69,40 +93,44 @@ public class BffComboContractTest {
     // ===========================
 
     /**
-     * Verifica la struttura del payload di risposta per il dettaglio della comunicazione bonaria.
-     */
-    @Test
-    void shouldValidateComboDetailResponseContract() {
-        log.info("Verifica contratto API: schema e campi obbligatori del dettaglio combo");
-        var response = bffComboRestClient.getComboDetails("FattOrd", "HDUX-MWKW-HRHY-202609-Q-A")
-                .withoutPolling();
-
-        if (response.getRaw() instanceof it.pagopa.infrastructure.response.ApiResponse apiResponse
-                && apiResponse.getStatusCode() == 200) {
-            var detail = response.get();
-            org.assertj.core.api.Assertions.assertThat(detail).isNotNull();
-            org.assertj.core.api.Assertions.assertThat(detail.getIun()).isNotNull();
-            org.assertj.core.api.Assertions.assertThat(detail.getSenderDenomination()).isNotNull();
-            org.assertj.core.api.Assertions.assertThat(detail.getRecipients()).isNotNull();
-        }
-    }
-
-    /**
-     * Verifica la struttura del payload di risposta per la timeline della comunicazione bonaria.
+     * Verifica la struttura del payload e l'ordinamento cronologico decrescente degli eventi della timeline combo.
+     * Migrato da timeline-combo-bff.feature.
      */
     @Test
     void shouldValidateComboTimelineResponseContract() {
-        log.info("Verifica contratto API: schema e campi obbligatori della timeline combo");
-        var response = bffComboRestClient.getComboTimeline("FattOrd", "HDUX-MWKW-HRHY-202609-Q-A")
+        log.info("Verifica contratto API: schema, campi obbligatori e ordinamento cronologico della timeline combo");
+        String campaignId = environment.getProperty("combo.campaign.fattord", "FattOrd");
+        String iun = environment.getProperty("combo.iun.fattord.pf", "HDUX-MWKW-HRHY-202609-Q-A");
+
+        var response = bffComboRestClient.getComboTimeline(campaignId, iun)
                 .withoutPolling();
 
-        if (response.getRaw() instanceof it.pagopa.infrastructure.response.ApiResponse apiResponse
-                && apiResponse.getStatusCode() == 200) {
-            var timeline = response.get();
-            org.assertj.core.api.Assertions.assertThat(timeline).isNotNull();
-            org.assertj.core.api.Assertions.assertThat(timeline.getIun()).isNotNull();
-            org.assertj.core.api.Assertions.assertThat(timeline.getNotificationStatusHistory()).isNotNull();
-            org.assertj.core.api.Assertions.assertThat(timeline.getCommunicationOutcomes()).isNotNull();
+        response.assertStatusCode(200);
+        var timeline = response.get();
+        Assertions.assertThat(timeline).isNotNull();
+        Assertions.assertThat(timeline.getIun()).isNotNull();
+        Assertions.assertThat(timeline.getRecipients()).isNotNull().isNotEmpty();
+        Assertions.assertThat(timeline.getNotificationStatusHistory()).isNotNull().isNotEmpty();
+        Assertions.assertThat(timeline.getCommunicationOutcomes()).isNotNull();
+
+        // Verifica ordinamento cronologico rigoroso dal più recente al meno recente (descending)
+        List<BffInformalNotificationTimelineStatusHistoryV1> history = timeline.getNotificationStatusHistory();
+        for (int i = 0; i < history.size() - 1; i++) {
+            String currentStr = history.get(i).getActiveFrom();
+            String nextStr = history.get(i + 1).getActiveFrom();
+            if (currentStr != null && nextStr != null) {
+                OffsetDateTime currentTimestamp = OffsetDateTime.parse(currentStr);
+                OffsetDateTime nextTimestamp = OffsetDateTime.parse(nextStr);
+                Assertions.assertThat(currentTimestamp)
+                        .as("Timeline history at index %d (%s) must be after or equal to index %d (%s)",
+                                i, currentTimestamp, i + 1, nextTimestamp)
+                        .isAfterOrEqualTo(nextTimestamp);
+            }
         }
+
+        // Verifica feedback e tracciamento step per i canali
+        boolean hasSteps = history.stream()
+                .anyMatch(h -> h.getSteps() != null && !h.getSteps().isEmpty());
+        Assertions.assertThat(hasSteps).as("La timeline deve tracciare gli step dei canali").isTrue();
     }
 }
