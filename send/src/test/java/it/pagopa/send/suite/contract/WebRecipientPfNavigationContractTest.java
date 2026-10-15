@@ -57,7 +57,9 @@ public class WebRecipientPfNavigationContractTest {
 
     // notifiche
 
-    // In arrivo
+    /**
+     * "In arrivo" ({@code /notifiche}): {@code assertLoaded()} controlla il titolo e i campi dei filtri.
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachNotificationListPF() {
         return reachabilityTest(NotificationPFPage.class);
@@ -65,13 +67,19 @@ public class WebRecipientPfNavigationContractTest {
 
     // recapiti
 
-    // I tuoi recapiti
+    /**
+     * "I tuoi recapiti" ({@code /recapiti}): {@code assertLoaded()} controlla il titolo e le card del domicilio
+     * digitale, dell'app IO e dell'email.
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachAddressPF() {
         return reachabilityTest(AddressPFPage.class);
     }
 
-    // Attiva domicilio digitale su SEND
+    /**
+     * "Attiva domicilio digitale su SEND" ({@code /recapiti/domicilio-digitale/attivazione}): {@code assertLoaded()}
+     * controlla il titolo del wizard, i tre passi, "Continua" e "Annulla".
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachDigitalDomicileActivationPF() {
         return reachabilityTest(DigitalDomicileActivationPFPage.class);
@@ -79,13 +87,18 @@ public class WebRecipientPfNavigationContractTest {
 
     // deleghe
 
-    // Deleghe
+    /**
+     * "Deleghe" ({@code /deleghe}): {@code assertLoaded()} controlla il titolo, "Aggiungi una delega" e le due sezioni.
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachDelegationsPF() {
         return reachabilityTest(DelegationsPFPage.class);
     }
 
-    // Aggiungi una delega
+    /**
+     * "Aggiungi una delega" ({@code /deleghe/nuova}): {@code assertLoaded()} controlla il titolo, i campi e i pulsanti
+     * del form.
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachNewDelegationPF() {
         return reachabilityTest(NewDelegationPFPage.class);
@@ -93,21 +106,27 @@ public class WebRecipientPfNavigationContractTest {
 
     // onboarding
 
-    // Configura SEND (onboarding)
+    /**
+     * "Configura SEND" ({@code /onboarding}): {@code assertLoaded()} controlla il titolo, i pulsanti delle due card
+     * mostrate a tutti e "Salta e vai alle tue notifiche".
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachOnboardingPF() {
         return reachabilityTest(ConfigureAddressSendPage.class);
     }
 
-    // Onboarding: Il meglio di SEND
+    /**
+     * "Il meglio di SEND" ({@code /onboarding/domicilio-digitale}): {@code assertLoaded()} controlla il titolo, "Esci"
+     * e i nomi dei quattro passi.
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachOnboardingDigitalDomicilePF() {
         return reachabilityTest(OnboardingDigitalDomicilePFPage.class);
     }
 
-    // Onboarding: Attivazione avvisi
     /**
-     * Verifica tutti i passi del wizard senza premere "Conferma".
+     * "Attivazione avvisi" ({@code /onboarding/avvisi}): verifica tutti i passi del wizard, ognuno con un contenuto,
+     * senza premere "Conferma".
      */
     @TestFactory
     Stream<DynamicTest> shouldReachOnboardingAlertsPF() {
@@ -126,7 +145,10 @@ public class WebRecipientPfNavigationContractTest {
                 )));
     }
 
-    // Onboarding: Tutto, sull'app IO
+    /**
+     * "Tutto, sull'app IO" ({@code /onboarding/io}): {@code assertLoaded()} controlla il titolo, "Esci", "Scarica l'app
+     * IO" e "Ho già scaricato e installato l'app".
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachOnboardingIoPF() {
         return reachabilityTest(OnboardingIoPFPage.class);
@@ -134,31 +156,44 @@ public class WebRecipientPfNavigationContractTest {
 
     // altre pagine
 
-    // Stato della piattaforma
+    /**
+     * "Stato della piattaforma" ({@code /app-status}): {@code assertLoaded()} controlla il titolo, lo stato attuale e
+     * l'ultimo aggiornamento.
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachAppStatusPF() {
         return reachabilityTest(AppStatusPFPage.class);
     }
 
-    // Assistenza
+    /**
+     * "Assistenza" ({@code /assistenza}): {@code assertLoaded()} controlla il titolo, i campi e i pulsanti del form.
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachSupportPF() {
         return reachabilityTest(SupportPFPage.class);
     }
 
-    // I tuoi dati
+    /**
+     * "I tuoi dati" ({@code /profilo}): {@code assertLoaded()} controlla il titolo e le tre righe dei dati.
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachProfilePF() {
         return reachabilityTest(ProfilePFPage.class);
     }
 
-    // Termini di servizio
+    /**
+     * "Termini di servizio" ({@code /termini-di-servizio}): {@code assertLoaded()} controlla il titolo e la presenza di
+     * almeno una sezione.
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachTermsOfServicePF() {
         return reachabilityTest(TermsOfServicePFPage.class);
     }
 
-    // Termini di servizio SERCQ
+    /**
+     * "Termini di servizio SERCQ" ({@code /termini-di-servizio/sercq-send}): {@code assertLoaded()} controlla il titolo
+     * e la presenza di almeno una sezione.
+     */
     @TestFactory
     Stream<DynamicTest> shouldReachSercqTermsOfServicePF() {
         return reachabilityTest(SercqTermsOfServicePFPage.class);

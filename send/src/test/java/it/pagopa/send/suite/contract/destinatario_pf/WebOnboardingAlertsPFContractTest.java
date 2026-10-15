@@ -69,8 +69,9 @@ public class WebOnboardingAlertsPFContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    // testi comuni a tutti i passi
-
+    /**
+     * Testi comuni a tutti i passi: titolo, "Esci" e nomi dei passi "Attiva gli avvisi su IO" ed "Email e SMS".
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowAlertsWizardTexts() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -91,8 +92,10 @@ public class WebOnboardingAlertsPFContractTest {
                 ));
     }
 
-    // passo 1: attiva gli avvisi su IO
-
+    /**
+     * Passo 1, "Attiva gli avvisi su IO": titolo, descrizione, "Scarica l’app IO", "Ho già scaricato e installato
+     * l’app", "Indietro" e "Continua senza l'app IO".
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowIoSection() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -114,8 +117,9 @@ public class WebOnboardingAlertsPFContractTest {
                 ));
     }
 
-    // passo 2: email e SMS ("Conferma" non viene mai premuto)
-
+    /**
+     * Passo 2, "Email e SMS": banner "Più avvisi attivi…", "Indietro" e "Conferma", che non viene mai premuto.
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowEmailSmsSection() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
