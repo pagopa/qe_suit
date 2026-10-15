@@ -8,6 +8,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.EServiceProviderListFilters;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.EServiceProviderListTable;
+import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 
 import java.util.List;
@@ -17,8 +18,7 @@ public interface EServiceProviderListPage extends Page {
     @XPath(".//main//h1")
     Readable<String> pageTitle();
 
-    @XPath(".//main//nav[contains(concat(' ', normalize-space(@class), ' '), ' MuiBreadcrumbs-root ')]//li[not(@aria-hidden='true')]")
-    Readable<String> breadcrumbs();
+    Breadcrumbs breadcrumbs();
 
     @XPath(".//main//button[contains(concat(' ', normalize-space(@class), ' '), ' MuiButton-root ')]")
     List<Button> primaryActions();
