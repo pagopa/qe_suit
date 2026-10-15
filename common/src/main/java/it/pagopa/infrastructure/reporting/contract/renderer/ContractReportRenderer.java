@@ -1,9 +1,9 @@
 package it.pagopa.infrastructure.reporting.contract.renderer;
 
+import it.pagopa.infrastructure.reporting.HtmlTemplateEngineFactory;
 import it.pagopa.infrastructure.reporting.contract.model.ContractReport;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -16,14 +16,7 @@ public class ContractReportRenderer {
     private final ContractReportFormatters formatters = new ContractReportFormatters();
 
     public ContractReportRenderer() {
-        ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
-        resolver.setPrefix("templates/");
-        resolver.setSuffix(".html");
-        resolver.setTemplateMode("HTML");
-        resolver.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        resolver.setCacheable(false);
-        templateEngine = new TemplateEngine();
-        templateEngine.setTemplateResolver(resolver);
+        templateEngine = HtmlTemplateEngineFactory.classpathHtmlEngine();
     }
 
     public void render(ContractReport report, Path outputPath) {

@@ -115,6 +115,12 @@ public class CucumberEntityStore implements EntityStore {
         return entryList.isEmpty() ? Optional.empty() : Optional.of(entryList.get(0).getItem());
     }
 
+    @Override
+    public <Model extends Identifiable> Model getFirstOrThrow(Class<Model> modelClass) {
+        return getFirst(modelClass)
+                .orElseThrow(() -> new NoSuchElementException("Nessun elemento trovato per il tipo: " + modelClass.getSimpleName()));
+    }
+
     /**
      * Recupera il primo elemento del tipo richiesto che soddisfa il predicato specificato.
      */

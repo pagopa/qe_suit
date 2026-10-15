@@ -36,4 +36,9 @@ public class InMemoryTestContext implements TestContext {
     public List<String> getEventualConsistencyErrors() {
         return List.copyOf(eventualConsistencyErrors);
     }
+
+    @Override
+    public void clearEventualConsistencyErrors() {
+        eventualConsistencyErrors.clear();
+    }
 }
