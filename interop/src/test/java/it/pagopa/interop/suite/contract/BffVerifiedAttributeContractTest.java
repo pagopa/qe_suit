@@ -8,6 +8,7 @@ import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValid
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,21 +18,12 @@ import java.util.stream.Stream;
 
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+@RequiredArgsConstructor
 public class BffVerifiedAttributeContractTest {
 
     private final ApiClient apiClient;
     private final InteropHttpContractValidator httpContractValidator;
     private final BffAttributeRequestFactory requestFactory;
-
-    public BffVerifiedAttributeContractTest(
-            ApiClient apiClient,
-            InteropHttpContractValidator httpContractValidator,
-            BffAttributeRequestFactory requestFactory
-    ) {
-        this.apiClient = apiClient;
-        this.httpContractValidator = httpContractValidator;
-        this.requestFactory = requestFactory;
-    }
 
     @TestFactory
     Stream<DynamicTest> createVerifiedAttribute() {
