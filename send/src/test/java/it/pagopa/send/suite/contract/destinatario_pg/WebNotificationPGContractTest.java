@@ -46,6 +46,9 @@ public class WebNotificationPGContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
+    /**
+     * Titolo "In arrivo per &lt;impresa&gt;": con Francesco Petrarca, "In arrivo per Le Epistolae srl".
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowNotificationListTexts() {
         return webContractValidator.asRecipient(RECIPIENT)

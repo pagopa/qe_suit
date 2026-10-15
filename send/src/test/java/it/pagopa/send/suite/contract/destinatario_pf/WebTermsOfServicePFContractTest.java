@@ -73,8 +73,9 @@ public class WebTermsOfServicePFContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    // testi della pagina
-
+    /**
+     * Testi della pagina: titolo, inizio dell'introduzione e titoli delle 15 sezioni.
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowTermsOfServiceTexts() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -101,8 +102,11 @@ public class WebTermsOfServicePFContractTest {
         );
     }
 
-    // indice delle sezioni
-
+    /**
+     * Indice delle sezioni: le voci, nell'ordine, e il link di ognuna a una sezione della pagina ({@code
+     * #otnotice-section-…}). La pagina ha due indici, uno per desktop e uno nascosto per mobile: si usa quello per
+     * desktop.
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowTermsOfServiceIndex() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)

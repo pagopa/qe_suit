@@ -41,6 +41,9 @@ public class WebDelegatedNotificationPGContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
+    /**
+     * Titolo "In arrivo dalle deleghe".
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowDelegatedNotificationListTexts() {
         return webContractValidator.asRecipient(Recipient.PETRARCA)
@@ -54,8 +57,10 @@ public class WebDelegatedNotificationPGContractTest {
                 ));
     }
 
-    // componenti di "In arrivo per <impresa>" che questa pagina non ha mai
-
+    /**
+     * Componenti di "In arrivo per &lt;impresa&gt;" che questa pagina non ha mai: filtro "Tipologia" e banner per
+     * attivare il domicilio digitale, entrambi assenti dal DOM.
+     */
     @TestFactory
     Stream<DynamicTest> shouldNotShowNotificationListOnlyComponents() {
         return webContractValidator.asRecipient(Recipient.PETRARCA)
