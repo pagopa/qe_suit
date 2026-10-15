@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:pagopa:pin10024:soap11:equal"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             targetNamespace="urn:pagopa:pin10024:soap11:equal">
+  <wsdl:types><xsd:schema targetNamespace="urn:pagopa:pin10024:soap11:equal"><xsd:element name="request" type="xsd:string"/></xsd:schema></wsdl:types>
+  <wsdl:message name="request"><wsdl:part name="body" element="tns:request"/></wsdl:message>
+  <wsdl:portType name="ServizioPagamenti"><wsdl:operation name="paga"><wsdl:input message="tns:request"/></wsdl:operation></wsdl:portType>
+  <wsdl:binding name="bindingUno" type="tns:ServizioPagamenti"><soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/></wsdl:binding>
+  <wsdl:binding name="bindingDue" type="tns:ServizioPagamenti"><soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/></wsdl:binding>
+  <wsdl:service name="ServizioPagamenti">
+    <wsdl:port name="PortaUno" binding="tns:bindingUno"><soap:address location="https://originale.example/stesso"/></wsdl:port>
+    <wsdl:port name="PortaDue" binding="tns:bindingDue"><soap:address location="https://originale.example/stesso"/></wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
