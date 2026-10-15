@@ -59,6 +59,16 @@ public class WebNotificationDetailPGContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
+    /**
+     * Testi del dettaglio dell'ultima notifica a valore legale della lista:
+     * <ul>
+     *     <li>breadcrumb: "In arrivo per &lt;impresa&gt;" e, come voce corrente, il titolo della notifica;</li>
+     *     <li>riepilogo: etichetta "Notifica a valore legale", logo del mittente, mittente non vuoto, "Notifica
+     *     depositata il giorno gg/mm/aaaa", "Codice IUN" con lo IUN nel suo formato e l'informativa su SEND;</li>
+     *     <li>sezioni: "Documenti allegati", "Stato della notifica" con lo stato corrente non vuoto e "Vai al
+     *     dettaglio" abilitato, "Dettaglio della notifica".</li>
+     * </ul>
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowNotificationDetailTexts() {
         return webContractValidator.asRecipient(RECIPIENT)
