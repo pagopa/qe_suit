@@ -6,6 +6,8 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.interop.common.infrastructure.suit.component.AttributeTabs;
 
+// TODO DEPRECATED
+
 @XPath("//*[contains(@class, 'MuiStepper-root')]/parent::div/parent::div")
 public interface ThresholdAndAttributeWizard extends Component {
 
