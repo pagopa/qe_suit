@@ -56,8 +56,9 @@ public class WebAppStatusPFContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    // testi della pagina
-
+    /**
+     * Testi della pagina: titolo, sottotitolo e titolo "Storico dei disservizi".
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowAppStatusTexts() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -80,8 +81,10 @@ public class WebAppStatusPFContractTest {
                 ));
     }
 
-    // stato attuale dei servizi
-
+    /**
+     * Stato attuale dei servizi: presenza del messaggio, che cambia se è in corso un disservizio, e data dell'ultimo
+     * aggiornamento nel formato "Ultimo aggiornamento - &lt;giorno&gt;, ore hh:mm".
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowCurrentStatus() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -102,8 +105,12 @@ public class WebAppStatusPFContractTest {
                 ));
     }
 
-    // storico dei disservizi
-
+    /**
+     * Storico dei disservizi: colonne della tabella e, per ogni riga, data di inizio nel formato {@code gg/mm/aaaa, ore
+     * hh:mm}, servizio e stato; paginazione con 10 righe per pagina, prima pagina selezionata e "Indietro"
+     * disabilitato. La data di fine e "Scarica l'attestazione" ci sono solo per i disservizi risolti e non vengono
+     * verificati.
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowDowntimeHistory() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
