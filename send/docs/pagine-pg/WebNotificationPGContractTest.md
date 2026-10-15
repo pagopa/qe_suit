@@ -15,10 +15,7 @@ Pagina `{baseUrl}/notifiche`: si apre dopo il login e dalla voce "In arrivo per 
 
 ## La pagina
 
-In rosso quello che controlla `assertLoaded()`: il titolo, che inizia con "In arrivo per ". Lo usa anche il login PG
-degli step Cucumber.
-
-![In arrivo per Le Epistolae srl](img/NotificationPage.png)
+`assertLoaded()` controlla il titolo, che inizia con "In arrivo per ". Lo usa anche il login PG degli step Cucumber.
 
 ## Cosa verifica il contract test
 
@@ -42,12 +39,9 @@ sempre presente:
 | Messaggio "Qui vedrai le notifiche a valore legale e le altre comunicazioni" con "Vai ai recapiti" | solo se l'impresa non ha notifiche |
 | Banner "Niente più documenti cartacei" | solo agli amministratori senza gruppo, e solo se l'impresa non ha un domicilio digitale |
 
-Con notifiche (Francesco Petrarca, Le Epistolae srl): filtri e tabella.
+Sul portale di test:
 
-![Con notifiche](img/WebNotificationPGContractTest/con-notifiche.png)
+- Le Epistolae srl (Francesco Petrarca), che ha notifiche, vede filtri e tabella;
+- Infinito srl (Giacomo Leopardi), che non ne ha, vede al loro posto il messaggio con "Vai ai recapiti".
 
-Senza notifiche (Giacomo Leopardi, Infinito srl): niente filtri né tabella, al loro posto il messaggio con "Vai ai recapiti".
-
-![Senza notifiche](img/WebNotificationPGContractTest/senza-notifiche.png)
-
-In entrambi i casi l'impresa non ha un domicilio digitale, quindi c'è il banner.
+Nessuna delle due imprese ha un domicilio digitale, quindi entrambe vedono il banner.
