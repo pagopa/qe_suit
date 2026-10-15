@@ -6,25 +6,15 @@ Wizard `{baseUrl}/recapiti/domicilio-digitale/attivazione`, dalla card domicilio
 - Test: [`WebDigitalDomicileActivationPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebDigitalDomicileActivationPFContractTest.java)
 - Utente: Lucrezia Borgia
 - Navigazione: `WebRecipientPfNavigationContractTest#shouldReachDigitalDomicileActivationPF`, vedi
-  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#attiva-domicilio-digitale-su-send)
+  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md)
 
 ## La pagina
 
-In rosso quello che controlla `assertLoaded()`: il titolo del wizard, i tre passi, "Continua" e "Annulla".
-
-![Attiva domicilio digitale su SEND](img/DigitalDomicileActivationPFPage.png)
+`assertLoaded()` controlla il titolo del wizard, i tre passi, "Continua" e "Annulla".
 
 ## Cosa verifica il contract test
 
-Solo quello che c'è per tutti gli utenti. In rosso gli elementi controllati, esclusa la finestra.
-
-Passo 1, Come funziona:
-
-![Passo 1: Come funziona](img/WebDigitalDomicileActivationPFContractTest/passo-1.png)
-
-Passo 2, Inserisci la tua email:
-
-![Passo 2: Inserisci la tua email](img/WebDigitalDomicileActivationPFContractTest/passo-2.png)
+Solo quello che c'è per tutti gli utenti, nei primi due passi del wizard.
 
 | Parte | Cosa si controlla |
 |---|---|

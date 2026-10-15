@@ -6,20 +6,16 @@ Pagina `{baseUrl}/notifiche`: si apre dopo il login e dalla voce "In arrivo" del
 - Test: [`WebNotificationPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebNotificationPFContractTest.java)
 - Utente: Lucrezia Borgia
 - Navigazione: `WebRecipientPfNavigationContractTest#shouldReachNotificationListPF`, vedi
-  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#in-arrivo)
+  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md)
 
 ## La pagina
 
-In rosso quello che controlla `assertLoaded()`: il titolo e i campi dei filtri. Lo usano anche gli step Cucumber.
-
-![In arrivo](img/NotificationPFPage.png)
+`assertLoaded()` controlla il titolo e i campi dei filtri. Lo usano anche gli step Cucumber.
 
 ## Cosa verifica il contract test
 
 Solo quello che c'è per tutti gli utenti: i testi della pagina e dei filtri, le opzioni di "Tipologia" e i messaggi dei
-filtri. In rosso gli elementi controllati, esclusi i messaggi e i menu aperti.
-
-![In arrivo, elementi verificati](img/WebNotificationPFContractTest/pagina.png)
+filtri.
 
 | Parte | Cosa si controlla |
 |---|---|
@@ -36,4 +32,3 @@ tipologia, e il banner "Niente più documenti cartacei", che compare solo a chi 
 ## Note
 
 - Il test non apre le notifiche, perché aprirle le segna come lette.
-- Il titolo "In arrivo per te" è stato visto il 13/10/2026 con Giulio Cesare, che ha deleghe a suo carico.

@@ -6,19 +6,15 @@ Pagina `{baseUrl}/deleghe`, dalla voce "Deleghe" del menu laterale.
 - Test: [`WebDelegationsPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebDelegationsPFContractTest.java)
 - Utente: Lucrezia Borgia
 - Navigazione: `WebRecipientPfNavigationContractTest#shouldReachDelegationsPF`, vedi
-  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#deleghe)
+  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md)
 
 ## La pagina
 
-In rosso quello che controlla `assertLoaded()`: il titolo, "Aggiungi una delega" e le due sezioni.
-
-![Deleghe](img/DelegationsPFPage.png)
+`assertLoaded()` controlla il titolo, "Aggiungi una delega" e le due sezioni.
 
 ## Cosa verifica il contract test
 
-Solo quello che c'è per tutti gli utenti. In rosso gli elementi controllati.
-
-![Deleghe, elementi verificati](img/WebDelegationsPFContractTest/pagina.png)
+Solo quello che c'è per tutti gli utenti.
 
 | Parte | Cosa si controlla |
 |---|---|
