@@ -16,9 +16,7 @@ proprietà `url.notifiche.persona-giuridica.base` del profilo attivo, ad esempio
 
 ## La pagina
 
-In rosso quello che controlla `assertLoaded()`: il titolo, cioè l'oggetto della notifica, il breadcrumb e il codice IUN.
-
-![Dettaglio della notifica](img/NotificationDetailPGPage.png)
+`assertLoaded()` controlla il titolo, cioè l'oggetto della notifica, il breadcrumb e il codice IUN.
 
 ## Cosa verifica il contract test
 
@@ -41,5 +39,3 @@ solo quello che c'è in ogni notifica a valore legale:
 | Stato corrente | Testo | non vuoto | `NotificationTimelineBox.tsx`, stato più recente della notifica |
 | "Vai al dettaglio" | Testo e stato iniziale | "Vai al dettaglio", abilitato | `locales/it/notifiche.json`, chiave `go-to-detail` |
 | Dettaglio della notifica | Testo | "Dettaglio della notifica" | `locales/it/notifiche.json`, chiave `detail.notification-detail-section.title` |
-
-![Dettaglio della notifica, elementi verificati](img/WebNotificationDetailPGContractTest/pagina.png)
