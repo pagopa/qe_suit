@@ -106,9 +106,7 @@ public class EServiceJourneySteps {
     }
 
     @Given("un e-service in {eServiceDescriptorState}, creato dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}")
-    public void createDraftEServiceDescriptor(EServiceDescriptorState state, Tenant producer, int customThreshold, DataTable defaultThresholds) {
-
-        // TODO rimuovere datatable?
+    public void createEServiceDescriptor(EServiceDescriptorState state, Tenant producer, int customThreshold, DataTable defaultThresholds) {
 
         Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
 
@@ -121,7 +119,22 @@ public class EServiceJourneySteps {
                         .dailyCallsTotal(thresholdsMap.get("totalThreshold"))
                         .attributes(interopJourney.certifiedAttributesWithDailyCallsPerConsumer(customThreshold)), state)
                 .waitUntilEService(eservice ->
-                        eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.PUBLISHED
+                        eservice.getDescriptors().get(0).getState() == state
                 );
+    }
+
+    @Given("una nuova versione dell'e-service in {eServiceDescriptorState}, creata dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}")
+    public void createNewInstanceDraftEService(EServiceDescriptorState state, Tenant producer, int customThreshold, DataTable defaultThresholds) {
+        Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
+
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createCertifiedAttribute()
+                .createEService(EServiceDescriptorState.DRAFT)
+                .updateDescriptor(config -> config
+                        .dailyCallsPerConsumer(thresholdsMap.get("consumerThreshold"))
+                        .dailyCallsTotal(thresholdsMap.get("totalThreshold"))
+                        .attributes(interopJourney.certifiedAttributesWithDailyCallsPerConsumer(customThreshold)), EServiceDescriptorState.PUBLISHED)
+                .addDescriptor(state);
     }
 }
