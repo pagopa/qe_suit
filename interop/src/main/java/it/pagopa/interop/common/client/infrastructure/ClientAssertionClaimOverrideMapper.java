@@ -1,8 +1,8 @@
 package it.pagopa.interop.common.client.infrastructure;
 
 import it.pagopa.interop.common.client.domain.ClientAssertionClaimOverride;
-import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
+import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.utils.jwt.JwtBuilder;
 import org.mapstruct.Mapper;
 

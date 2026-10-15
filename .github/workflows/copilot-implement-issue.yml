@@ -1,0 +1,629 @@
+name: Copilot implement issue
+
+run-name: Copilot implement issue #${{ github.event.issue.number || inputs.issue_number }}
+
+on:
+  issues:
+    types: [opened]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: "Numero della GitHub issue"
+        required: true
+        type: string
+
+concurrency:
+  group: copilot-issue-${{ github.event.issue.number || inputs.issue_number }}
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      contains(github.event.issue.labels.*.name, 'ready-for-ai')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    permissions:
+      contents: read
+      issues: read
+      copilot-requests: write
+
+    outputs:
+      base_branch: ${{ steps.base-branch.outputs.base_branch }}
+      base_sha: ${{ steps.feature-branch.outputs.base_sha }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Load authorized issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+        run: |
+          gh issue view "$ISSUE_NUMBER" \
+            --repo "$GITHUB_REPOSITORY" \
+            --json number,title,body,url,labels \
+            > "$RUNNER_TEMP/issue.json"
+
+          jq -e \
+            '.labels | any(.name | ascii_downcase == "ready-for-ai")' \
+            "$RUNNER_TEMP/issue.json"
+
+          {
+            echo "Implementa la GitHub issue riportata di seguito."
+            echo "Puoi creare o modificare esclusivamente:"
+            echo "- sorgenti, test e risorse sotto common/src/"
+            echo "- sorgenti, test e risorse sotto interop/src/"
+            echo "- sorgenti, test e risorse sotto send/src/"
+            echo "- sorgenti, test e risorse sotto pst-maven-plugin/src/"
+            echo "- sorgenti, test e risorse sotto frontend-e2e-framework/src/"
+            echo "- sorgenti, test e risorse sotto frontend-e2e-framework/annotations/src/"
+            echo "- sorgenti, test e risorse sotto frontend-e2e-framework/processor/src/"
+            echo "- sorgenti, test e risorse sotto frontend-e2e-framework/core/src/"
+            echo "- sorgenti, test e risorse sotto frontend-e2e-framework/web-core/src/"
+            echo
+            echo "Non modificare file fuori da queste directory."
+            echo "In particolare non modificare workflow, dipendenze, script,"
+            echo "configurazioni, dati operativi o istruzioni dell'agente."
+            echo "Leggi .github/copilot-instructions.md, README.md e"
+            echo "docs/architecture/repository-map.md prima di intervenire."
+            echo "Mantieni la modifica piccola e aggiungi o aggiorna i test necessari."
+            echo
+            echo "Titolo:"
+            jq -r '.title' "$RUNNER_TEMP/issue.json"
+            echo
+            echo "Descrizione:"
+            jq -r '.body' "$RUNNER_TEMP/issue.json"
+          } > "$RUNNER_TEMP/copilot-prompt.txt"
+
+      - name: Resolve requested Copilot model
+        run: |
+          REQUESTED_MODEL="$(
+            jq -r '.body // ""' "$RUNNER_TEMP/issue.json" \
+              | sed -n 's/^- \*\*Modello AI richiesto:\*\*[[:space:]]*//p' \
+              | head -n 1 \
+              | tr -d '\r'
+          )"
+
+          case "$REQUESTED_MODEL" in
+            ""|auto)
+              REQUESTED_MODEL="auto"
+              ;;
+            *)
+              echo "Modello Copilot non autorizzato: $REQUESTED_MODEL" >&2
+              echo "Valori consentiti: auto" >&2
+              exit 1
+              ;;
+          esac
+
+          echo "Modello Copilot richiesto: $REQUESTED_MODEL"
+          printf 'COPILOT_REQUESTED_MODEL=%s\n' "$REQUESTED_MODEL" >> "$GITHUB_ENV"
+
+      - name: Resolve requested base branch
+        id: base-branch
+        run: |
+          BASE_BRANCH="$(
+            jq -r '.body // ""' "$RUNNER_TEMP/issue.json" \
+              | sed -n 's/^- \*\*Base branch:\*\*[[:space:]]*//p' \
+              | head -n 1 \
+              | tr -d '\r'
+          )"
+
+          # La base arriva dalla AI Coding Story condivisa con il progetto Jira.
+          # Se il campo e assente, il fallback per qe_suit e develop.
+          BASE_BRANCH="${BASE_BRANCH:-develop}"
+
+          case "$BASE_BRANCH" in
+            main|develop) ;;
+            feature/*|feat/*|release/*|hotfix/*)
+              if ! printf '%s' "$BASE_BRANCH" | grep -Eq '^(feature|feat|release|hotfix)/[A-Za-z0-9][A-Za-z0-9._/-]*$'; then
+                echo "Formato Base branch non autorizzato: $BASE_BRANCH" >&2
+                exit 1
+              fi
+              ;;
+            *)
+              echo "Base branch non autorizzato: $BASE_BRANCH" >&2
+              echo "Valori consentiti: main, develop, feature/*, feat/*, release/*, hotfix/*" >&2
+              exit 1
+              ;;
+          esac
+
+          if ! git ls-remote --exit-code --heads \
+            "https://github.com/$GITHUB_REPOSITORY.git" \
+            "refs/heads/$BASE_BRANCH" > /dev/null; then
+            echo "Base branch inesistente su GitHub: $BASE_BRANCH" >&2
+            exit 1
+          fi
+
+          echo "Base branch autorizzato: $BASE_BRANCH"
+          printf 'base_branch=%s\n' "$BASE_BRANCH" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout selected base branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.base-branch.outputs.base_branch }}
+          persist-credentials: false
+
+      - name: Create feature branch from selected base commit
+        id: feature-branch
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+        run: |
+          [[ "$ISSUE_NUMBER" =~ ^[0-9]+$ ]] || exit 1
+          echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          git switch -c "feature/ai-issue-${ISSUE_NUMBER}-${GITHUB_RUN_ID}"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install tools
+        run: |
+          npm install -g @github/copilot
+          copilot version > "$RUNNER_TEMP/copilot-cli-version.txt"
+
+      # Copilot può scrivere soltanto nelle directory rese modificabili qui.
+      # Il runner è effimero e non contiene credenziali con accesso in scrittura
+      # al repository durante la generazione.
+      - name: Restrict workspace writes
+        run: |
+          chmod -R a-w .
+          chmod -R u+w common/src interop/src send/src pst-maven-plugin/src frontend-e2e-framework/src frontend-e2e-framework/annotations/src frontend-e2e-framework/processor/src frontend-e2e-framework/core/src frontend-e2e-framework/web-core/src
+
+      - name: Generate change with Copilot
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          COPILOT_OTEL_ENABLED: "true"
+          COPILOT_OTEL_EXPORTER_TYPE: file
+          COPILOT_OTEL_FILE_EXPORTER_PATH: ${{ runner.temp }}/copilot-otel.jsonl
+          OTEL_SERVICE_NAME: qe-suit-copilot-implement
+          OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT: "false"
+          OTEL_RESOURCE_ATTRIBUTES: github.repository=${{ github.repository }},github.run_id=${{ github.run_id }},github.run_attempt=${{ github.run_attempt }}
+        run: |
+          date -u +%Y-%m-%dT%H:%M:%SZ > "$RUNNER_TEMP/copilot-started-at.txt"
+          copilot \
+            --model "$COPILOT_REQUESTED_MODEL" \
+            --silent \
+            --no-ask-user \
+            --available-tools='view,grep,glob,edit,create,apply_patch' \
+            --allow-tool='write' \
+            < "$RUNNER_TEMP/copilot-prompt.txt" \
+            | tee "$RUNNER_TEMP/copilot-output.txt"
+
+      - name: Restore workspace permissions
+        if: always()
+        run: chmod -R u+w .
+
+      - name: Build Copilot technical report
+        if: always()
+        continue-on-error: true
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+        run: |
+          date -u +%Y-%m-%dT%H:%M:%SZ > "$RUNNER_TEMP/copilot-finished-at.txt"
+          python .github/scripts/extract_copilot_telemetry.py \
+            --telemetry "$RUNNER_TEMP/copilot-otel.jsonl" \
+            --issue "$RUNNER_TEMP/issue.json" \
+            --cli-version "$RUNNER_TEMP/copilot-cli-version.txt" \
+            --started-at "$RUNNER_TEMP/copilot-started-at.txt" \
+            --finished-at "$RUNNER_TEMP/copilot-finished-at.txt" \
+            --output "$RUNNER_TEMP/copilot-technical-report.json"
+          cat "$RUNNER_TEMP/copilot-technical-report.json"
+
+      - name: Upload Copilot technical report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: copilot-technical-report-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/copilot-technical-report.json
+            ${{ runner.temp }}/copilot-otel.jsonl
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Validate changed files
+        run: |
+          git add -A
+          CHANGED_FILES="$(git diff --cached --no-renames --name-only)"
+
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "Copilot non ha prodotto alcuna modifica."
+            exit 1
+          fi
+
+          CHANGED_COUNT="$(printf '%s\n' "$CHANGED_FILES" | wc -l | tr -d ' ')"
+          if [ "$CHANGED_COUNT" -gt 12 ]; then
+            echo "Troppi file modificati: $CHANGED_COUNT (massimo 12)."
+            exit 1
+          fi
+
+          while IFS= read -r file; do
+            case "$file" in
+              common/src/*|interop/src/*|send/src/*|pst-maven-plugin/src/*|frontend-e2e-framework/src/*|frontend-e2e-framework/annotations/src/*|frontend-e2e-framework/processor/src/*|frontend-e2e-framework/core/src/*|frontend-e2e-framework/web-core/src/*)
+                ;;
+              *)
+                echo "File non autorizzato: $file"
+                exit 1
+                ;;
+            esac
+
+            MODE="$(git ls-files --stage -- "$file" | awk 'NR == 1 { print $1 }')"
+            if [ "$MODE" = "120000" ] || [ "$MODE" = "160000" ]; then
+              echo "Symlink o submodule non autorizzato: $file"
+              exit 1
+            fi
+          done <<< "$CHANGED_FILES"
+
+          if git diff --cached --numstat | grep -q $'^-	-	'; then
+            echo "I file binari non sono autorizzati."
+            exit 1
+          fi
+
+          CHANGED_LINES="$(
+            git diff --cached --numstat |
+              awk '{ added += $1; deleted += $2 } END { print added + deleted }'
+          )"
+          if [ "$CHANGED_LINES" -gt 800 ]; then
+            echo "Modifica troppo ampia: $CHANGED_LINES righe (massimo 800)."
+            exit 1
+          fi
+
+          echo "Modifica autorizzata: $CHANGED_COUNT file, $CHANGED_LINES righe."
+          printf '%s\n' "$CHANGED_FILES"
+
+      - name: Run quality checks
+        run: |
+          (cd frontend-e2e-framework && bash ./mvnw -B install)
+          (cd common && bash ./mvnw -B install)
+          (cd pst-maven-plugin && bash ./mvnw -B install)
+          (cd interop && bash ./mvnw -B -Pci-rules test)
+          (cd send && bash ./mvnw -B -DskipTests package)
+
+      - name: Create patch
+        run: git diff --cached --binary > copilot.patch
+
+      - name: Upload validated patch
+        uses: actions/upload-artifact@v4
+        with:
+          name: copilot-change
+          path: copilot.patch
+          retention-days: 1
+
+  publish:
+    needs: generate
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+
+    permissions:
+      actions: write
+      contents: write
+      issues: read
+      pull-requests: write
+      statuses: write
+
+    steps:
+      - name: Checkout selected base branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.generate.outputs.base_sha }}
+
+      - name: Download validated patch
+        uses: actions/download-artifact@v4
+        with:
+          name: copilot-change
+          path: ${{ runner.temp }}/copilot-change
+
+      - name: Download Copilot technical report
+        continue-on-error: true
+        uses: actions/download-artifact@v4
+        with:
+          name: copilot-technical-report-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/copilot-technical-report
+
+      - name: Create branch, commit and Draft PR
+        id: publish-pr
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+          BASE_BRANCH: ${{ needs.generate.outputs.base_branch }}
+        run: |
+          BRANCH_NAME="feature/ai-issue-${ISSUE_NUMBER}-${GITHUB_RUN_ID}"
+
+          git switch -c "$BRANCH_NAME"
+          git apply --index "$RUNNER_TEMP/copilot-change/copilot.patch"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          ISSUE_TITLE="$(
+            gh issue view "$ISSUE_NUMBER" \
+              --repo "$GITHUB_REPOSITORY" \
+              --json title \
+              --jq '.title'
+          )"
+          JIRA_KEY="$(
+            printf '%s\n' "$ISSUE_TITLE" |
+              sed -nE 's/^\[([A-Z][A-Z0-9_]*-[0-9]+)\].*/\1/p'
+          )"
+
+          [[ "$JIRA_KEY" =~ ^[A-Z][A-Z0-9]*-[0-9]+$ ]] || exit 1
+
+          git commit -m "chore: [$JIRA_KEY] implement issue #${ISSUE_NUMBER}"
+          git push --set-upstream origin "$BRANCH_NAME"
+
+
+          {
+            echo "Closes #${ISSUE_NUMBER}"
+            echo
+            echo "Modifica generata da GitHub Copilot CLI."
+            echo
+            echo "Controlli eseguiti:"
+            echo "- Maven: install framework, common e plugin PST; test interop (profilo ci-rules)"
+            echo "- SEND: package con test saltati; E2E da verificare separatamente"
+            echo
+            echo "La Pull Request resta Draft e richiede revisione umana."
+          } > "$RUNNER_TEMP/pr-body.md"
+
+          PR_URL="$(
+            gh pr create \
+              --repo "$GITHUB_REPOSITORY" \
+              --base "$BASE_BRANCH" \
+              --head "$BRANCH_NAME" \
+              --draft \
+              --title "$ISSUE_TITLE" \
+              --body-file "$RUNNER_TEMP/pr-body.md"
+          )"
+
+          {
+            echo "jira_key=$JIRA_KEY"
+            echo "pr_url=$PR_URL"
+          } >> "$GITHUB_OUTPUT"
+
+          HEAD_SHA="$(git rev-parse HEAD)"
+          STATUS_CONTEXT="QE SUIT AI CI / required"
+
+          set_ci_status() {
+            local state="$1"
+            local description="$2"
+            local target_url="$3"
+
+            gh api \
+              --method POST \
+              "repos/$GITHUB_REPOSITORY/statuses/$HEAD_SHA" \
+              -f state="$state" \
+              -f context="$STATUS_CONTEXT" \
+              -f description="$description" \
+              -f target_url="$target_url" \
+              > /dev/null
+          }
+
+          # workflow_dispatch esegue la CI sul commit corretto, ma GitHub non
+          # mostra i suoi job nel riquadro Checks della PR. Questo commit status
+          # rende visibile l'esito e rimanda all'esecuzione auditabile completa.
+          set_ci_status pending "Avvio della CI ordinaria" "$PR_URL"
+
+          if ! gh workflow run ai-quality-checks.yml \
+            --repo "$GITHUB_REPOSITORY" \
+            --ref "$BRANCH_NAME" \
+            -f "base_branch=$BASE_BRANCH"; then
+            set_ci_status failure "Impossibile avviare la CI ordinaria" "$PR_URL"
+            exit 1
+          fi
+
+          CI_RUN_ID=""
+          for attempt in $(seq 1 20); do
+            CI_RUN_ID="$(
+              gh run list \
+                --repo "$GITHUB_REPOSITORY" \
+                --workflow ai-quality-checks.yml \
+                --branch "$BRANCH_NAME" \
+                --event workflow_dispatch \
+                --limit 20 \
+                --json databaseId,headSha \
+                --jq "[.[] | select(.headSha == \"$HEAD_SHA\")][0].databaseId // empty"
+            )"
+
+            if [ -n "$CI_RUN_ID" ]; then
+              break
+            fi
+
+            sleep 3
+          done
+
+          if [ -z "$CI_RUN_ID" ]; then
+            set_ci_status failure "Esecuzione CI non trovata" "$PR_URL"
+            exit 1
+          fi
+
+          CI_URL="https://github.com/$GITHUB_REPOSITORY/actions/runs/$CI_RUN_ID"
+          set_ci_status pending "CI ordinaria in esecuzione" "$CI_URL"
+
+          if gh run watch "$CI_RUN_ID" \
+            --repo "$GITHUB_REPOSITORY" \
+            --exit-status \
+            --interval 5; then
+            set_ci_status success "CI ordinaria completata" "$CI_URL"
+          else
+            set_ci_status failure "CI ordinaria non superata" "$CI_URL"
+            exit 1
+          fi
+
+          {
+            echo "## Draft Pull Request creata"
+            echo
+            echo "$PR_URL"
+            echo
+            echo "QE SUIT AI CI completata e pubblicata sulla PR: $CI_URL"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Notify Jira that the Draft PR was created
+        if: >-
+          success() &&
+          steps.publish-pr.outputs.jira_key != '' &&
+          steps.publish-pr.outputs.pr_url != ''
+        env:
+          JIRA_WEBHOOK_URL: ${{ secrets.JIRA_AUTOMATION_WEBHOOK_URL }}
+          JIRA_WEBHOOK_SECRET: ${{ secrets.JIRA_AUTOMATION_WEBHOOK_SECRET }}
+          JIRA_KEY: ${{ steps.publish-pr.outputs.jira_key }}
+          PR_URL: ${{ steps.publish-pr.outputs.pr_url }}
+        run: |
+          test -n "$JIRA_WEBHOOK_URL"
+          test -n "$JIRA_WEBHOOK_SECRET"
+
+          REPORT_PATH="$RUNNER_TEMP/copilot-technical-report/copilot-technical-report.json"
+          if [ -f "$REPORT_PATH" ] && jq -e . "$REPORT_PATH" > /dev/null; then
+            REPORT_JSON="$(cat "$REPORT_PATH")"
+          else
+            REPORT_JSON='{}'
+          fi
+
+          RUN_URL="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+
+          PAYLOAD="$(
+            jq -n \
+              --arg jiraKey "$JIRA_KEY" \
+              --arg event "pr_created" \
+              --arg prUrl "$PR_URL" \
+              --arg runUrl "$RUN_URL" \
+              --argjson report "$REPORT_JSON" \
+              '
+                def display($value):
+                  if $value == null then "non disponibile" else ($value | tostring) end;
+                def model:
+                  if (($report.copilot.resolved_models // []) | length) > 0 then
+                    ($report.copilot.resolved_models | join(", "))
+                  elif (($report.copilot.requested_models // []) | length) > 0 then
+                    ($report.copilot.requested_models | join(", "))
+                  else
+                    "non disponibile"
+                  end;
+                {
+                  jiraKey: $jiraKey,
+                  event: $event,
+                  prUrl: $prUrl,
+                  aiExecution: {
+                    model: model,
+                    inputTokens: display($report.copilot.input_tokens),
+                    outputTokens: display($report.copilot.output_tokens),
+                    cachedInputTokens: display($report.copilot.cache_read_input_tokens),
+                    turnCount: display($report.copilot.turn_count),
+                    aiUnits: display($report.copilot.ai_units),
+                    telemetryStatus: ($report.copilot.telemetry_status // "unavailable"),
+                    runUrl: $runUrl
+                  }
+                }
+              '
+          )"
+
+          curl \
+            --request POST \
+            --fail-with-body \
+            --silent \
+            --show-error \
+            --retry 3 \
+            --retry-all-errors \
+            --connect-timeout 10 \
+            --max-time 30 \
+            --header "Content-Type: application/json" \
+            --header "X-Automation-Webhook-Token: $JIRA_WEBHOOK_SECRET" \
+            --data "$PAYLOAD" \
+            "$JIRA_WEBHOOK_URL"
+
+  notify-jira-failure:
+    needs: [generate, publish]
+    if: >-
+      always() &&
+      (needs.generate.result == 'failure' || needs.publish.result == 'failure')
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    permissions:
+      issues: read
+
+    steps:
+      - name: Notify Jira that implementation failed
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+          JIRA_WEBHOOK_URL: ${{ secrets.JIRA_AUTOMATION_WEBHOOK_URL }}
+          JIRA_WEBHOOK_SECRET: ${{ secrets.JIRA_AUTOMATION_WEBHOOK_SECRET }}
+          GENERATE_RESULT: ${{ needs.generate.result }}
+          PUBLISH_RESULT: ${{ needs.publish.result }}
+        run: |
+          test -n "$JIRA_WEBHOOK_URL"
+          test -n "$JIRA_WEBHOOK_SECRET"
+
+          ISSUE_JSON="$(
+            gh issue view "$ISSUE_NUMBER" \
+              --repo "$GITHUB_REPOSITORY" \
+              --json title,url
+          )"
+          ISSUE_TITLE="$(jq -r '.title' <<< "$ISSUE_JSON")"
+          ISSUE_URL="$(jq -r '.url' <<< "$ISSUE_JSON")"
+          JIRA_KEY="$(
+            printf '%s\n' "$ISSUE_TITLE" |
+              sed -nE 's/^\[([A-Z][A-Z0-9_]*-[0-9]+)\].*/\1/p'
+          )"
+
+          if [ -z "$JIRA_KEY" ]; then
+            echo "La Jira key non è presente nel titolo della issue."
+            exit 1
+          fi
+
+          RUN_URL="https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          MESSAGE="Copilot implementation failed: generate=$GENERATE_RESULT, publish=$PUBLISH_RESULT"
+          PAYLOAD="$(
+            jq -n \
+              --arg jiraKey "$JIRA_KEY" \
+              --arg event "ai_implementation_failed" \
+              --arg issueUrl "$ISSUE_URL" \
+              --arg runUrl "$RUN_URL" \
+              --arg message "$MESSAGE" \
+              '{
+                jiraKey: $jiraKey,
+                event: $event,
+                issueUrl: $issueUrl,
+                runUrl: $runUrl,
+                message: $message
+              }'
+          )"
+
+          curl \
+            --request POST \
+            --fail-with-body \
+            --silent \
+            --show-error \
+            --retry 3 \
+            --retry-all-errors \
+            --connect-timeout 10 \
+            --max-time 30 \
+            --header "Content-Type: application/json" \
+            --header "X-Automation-Webhook-Token: $JIRA_WEBHOOK_SECRET" \
+            --data "$PAYLOAD" \
+            "$JIRA_WEBHOOK_URL"
+
+          {
+            echo "## Jira notificato del fallimento"
+            echo
+            echo "- Jira: $JIRA_KEY"
+            echo "- Issue: $ISSUE_URL"
+            echo "- Run: $RUN_URL"
+            echo "- Generate: $GENERATE_RESULT"
+            echo "- Publish: $PUBLISH_RESULT"
+          } >> "$GITHUB_STEP_SUMMARY"

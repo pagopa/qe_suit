@@ -78,6 +78,21 @@ public class EService implements Identifiable {
                 );
     }
 
+    public EServiceDescriptor getLatestDescriptor() {
+        return descriptors.stream()
+                .max(Comparator.comparingInt(descriptor -> Integer.parseInt(descriptor.getVersion())))
+                .orElseThrow(() -> new NoSuchElementException("Nessun descriptor trovato per EService " + id));
+    }
+
+    public EServiceDescriptor getDescriptor(int versionNumber) {
+        return descriptors.stream()
+                .filter(descriptor -> Integer.parseInt(descriptor.getVersion()) == versionNumber)
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException(
+                        "Versione " + versionNumber + " non trovata per EService " + id
+                ));
+    }
+
     public void addDescriptor(@NonNull EServiceDescriptor descriptor) {
         Objects.requireNonNull(descriptor.getId(), "descriptor.id non può essere null");
 
