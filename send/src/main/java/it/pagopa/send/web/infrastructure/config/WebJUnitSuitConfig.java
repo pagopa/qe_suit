@@ -14,6 +14,7 @@ import it.pagopa.send.web.infrastructure.config.WebConfig;
 import it.pagopa.send.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityHandler;
 import it.pagopa.send.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityImpl;
 import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
+import it.pagopa.send.web.login.infrastructure.DynamicUserTokenProvider;
 import it.pagopa.send.web.login.infrastructure.SelfCareSessionPayloadFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -64,7 +65,8 @@ public class WebJUnitSuitConfig {
             WebConfig webConfig,
             Environment environment,
             SelfCareSessionPayloadFactory sessionPayloadFactory,
-            CurrentUserSession currentUserSession
+            CurrentUserSession currentUserSession,
+            DynamicUserTokenProvider tokenProvider
     ) {
         BrowserSettings settings = BrowserSettings.of(
                 webConfig.getBrowser(),
@@ -77,7 +79,7 @@ public class WebJUnitSuitConfig {
         webBrowserContext.setCurrentUser(currentUserSession.getCurrentActor());
 
         AuthenticatedLocatableCapabilityImpl capability = new AuthenticatedLocatableCapabilityImpl(
-                adapter, webBrowserContext, sessionPayloadFactory, environment);
+                adapter, webBrowserContext, sessionPayloadFactory, tokenProvider);
         AuthenticatedLocatableCapabilityHandler handler = new AuthenticatedLocatableCapabilityHandler(capability);
 
         return WebSuiteBuilder.builder()

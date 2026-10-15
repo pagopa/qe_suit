@@ -23,9 +23,12 @@ public interface EServiceAttributesLocators {
     Label dailyCallsTotalValue();
     @XPath(ATTRIBUTES_SECTION + "//h3[normalize-space()='Soglie di chiamate API personalizzate']")
     Label customizedThresholdsTitle();
+    @XPath(ATTRIBUTES_SECTION + "//p[normalize-space()='Per il tuo ente']/parent::div/following-sibling::div//span")
+    Label yourTenantDailyThreshold();
+    @XPath(ATTRIBUTES_SECTION + "//h3[normalize-space()='Soglie di chiamate API personalizzate']/ancestor::section[1]//p[not(normalize-space()='Per il tuo ente')]/parent::div/following-sibling::div//span")
+    Label otherTenantDailyThreshold();
     @XPath(ATTRIBUTES_SECTION + "//h3[normalize-space()='Attributi']")
     Label attributesTitle();
-    // TODO controllare che sia valido
     @XPath(ATTRIBUTES_SECTION + "//*[normalize-space()='Questo e-service non richiede attributi' and not(*)]")
     Label noAttributesRequiredMessage();
     @XPath(ATTRIBUTES_SECTION + "//h3[normalize-space()='Attributi Certificati']")

@@ -268,15 +268,15 @@ public class WebCatalogEServiceContractTest {
                         "Should see correct values for thresholds and custom thresholds",
                         page -> {},
                         page -> {
-                            Assertions.assertThat(page.thresholdsAndAttributesTitle().read()).as("Section title").isNotBlank();
-                            Assertions.assertThat(page.apiCallsThresholdTitle().read()).as("Subsection title").isNotBlank();
-                            assertLabelEqualsTo(page.consumerDailyThreshold(), String.valueOf(consumerThreshold));
-                            assertLabelEqualsTo(page.totalDailyThreshold(), String.valueOf(totalThreshold));
+                            Assertions.assertThat(page.attributesSectionTitle().read()).as("Section title").isNotBlank();
+                            Assertions.assertThat(page.thresholdsTitle().read()).as("Subsection title").isNotBlank();
+                            assertLabelEqualsTo(page.dailyCallsPerConsumerValue(), String.valueOf(consumerThreshold));
+                            assertLabelEqualsTo(page.dailyCallsTotalValue(), String.valueOf(totalThreshold));
                             if (params.shouldSeeCustomThresholds) {
-                                Assertions.assertThat(page.customApiCallsThresholdTitle().read()).as("Subsection title").isNotBlank();
+                                Assertions.assertThat(page.customizedThresholdsTitle().read()).as("Subsection title").isNotBlank();
                                 assertLabelEqualsTo(page.yourTenantDailyThreshold(), String.valueOf(customThresholdForYourTenant));
                             } else {
-                                Assertions.assertThat(page.customApiCallsThresholdTitle().get().isPresent()).isFalse();
+                                Assertions.assertThat(page.customizedThresholdsTitle().get().isPresent()).isFalse();
                                 Assertions.assertThat(page.yourTenantDailyThreshold().get().isPresent()).isFalse();
                                 Assertions.assertThat(page.otherTenantDailyThreshold().get().isPresent()).isFalse();
                             }
@@ -339,17 +339,17 @@ public class WebCatalogEServiceContractTest {
                         "Should see correct values for thresholds and custom thresholds",
                         page -> {},
                         page -> {
-                            Assertions.assertThat(page.thresholdsAndAttributesTitle().read()).as("Section title").isNotBlank();
-                            Assertions.assertThat(page.apiCallsThresholdTitle().read()).as("Subsection title").isNotBlank();
-                            assertLabelEqualsTo(page.consumerDailyThreshold(), String.valueOf(consumerThreshold));
-                            assertLabelEqualsTo(page.totalDailyThreshold(), String.valueOf(totalThreshold));
+                            Assertions.assertThat(page.attributesSectionTitle().read()).as("Section title").isNotBlank();
+                            Assertions.assertThat(page.thresholdsTitle().read()).as("Subsection title").isNotBlank();
+                            assertLabelEqualsTo(page.dailyCallsPerConsumerValue(), String.valueOf(consumerThreshold));
+                            assertLabelEqualsTo(page.dailyCallsTotalValue(), String.valueOf(totalThreshold));
                             if (params.shouldSeeCustomThresholds) {
-                                Assertions.assertThat(page.customApiCallsThresholdTitle().read()).as("Subsection title").isNotBlank();
+                                Assertions.assertThat(page.customizedThresholdsTitle().read()).as("Subsection title").isNotBlank();
                                 assertLabelEqualsTo(page.yourTenantDailyThreshold(), String.valueOf(customThresholdForDelegatee));
                                 if (params.certifiedAttributeToDelegator)
                                     assertLabelEqualsTo(page.otherTenantDailyThreshold(), String.valueOf(customThresholdForDelegator));
                             } else {
-                                Assertions.assertThat(page.customApiCallsThresholdTitle().get().isPresent()).isFalse();
+                                Assertions.assertThat(page.customizedThresholdsTitle().get().isPresent()).isFalse();
                                 Assertions.assertThat(page.yourTenantDailyThreshold().get().isPresent()).isFalse();
                                 Assertions.assertThat(page.otherTenantDailyThreshold().get().isPresent()).isFalse();
                             }
