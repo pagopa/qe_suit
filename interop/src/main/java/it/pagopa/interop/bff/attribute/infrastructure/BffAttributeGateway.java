@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.attribute.infrastructure;
 
 import it.pagopa.infrastructure.template.action.TestChain;
+import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
