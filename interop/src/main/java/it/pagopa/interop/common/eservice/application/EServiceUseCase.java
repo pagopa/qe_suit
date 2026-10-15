@@ -41,4 +41,8 @@ public class EServiceUseCase {
     public void shouldFailToArchiveEService(EService eService, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason) {
         eServiceGateway.shouldFailToArchiveEService(eService.getRef(), gracePeriodDays, reason);
     }
+
+    public void shouldFailToRequestEServiceArchiving(EService eService, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason) {
+        eServiceGateway.shouldFailToRequestEServiceArchiving(eService.getRef(), gracePeriodDays, reason);
+    }
 }
