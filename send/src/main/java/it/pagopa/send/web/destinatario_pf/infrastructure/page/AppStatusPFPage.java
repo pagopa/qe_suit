@@ -17,8 +17,8 @@ import java.util.Optional;
  * Contiene lo stato attuale dei servizi SEND, con l'ora dell'ultimo aggiornamento, e lo storico dei disservizi con le
  * attestazioni scaricabili. Stato e storico cambiano nel tempo: tabella e paginazione dello storico compaiono solo se la
  * piattaforma ha registrato almeno un disservizio.
- * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo, lo stato attuale e l'ultimo aggiornamento; testi,
- * formato dello stato e dello storico sono verificati da {@code WebAppStatusPFContractTest}.
+ * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo, lo stato attuale e l'ultimo aggiornamento; testi e
+ * formato dello stato sono verificati da {@code WebAppStatusPFContractTest}.
  */
 @Url("${url.notifiche.cittadino.app-status}")
 public interface AppStatusPFPage extends Page {
