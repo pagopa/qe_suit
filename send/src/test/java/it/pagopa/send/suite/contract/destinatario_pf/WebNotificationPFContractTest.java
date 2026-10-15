@@ -71,8 +71,10 @@ public class WebNotificationPFContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    // testi della pagina e dei filtri
-
+    /**
+     * Testi della pagina e dei filtri: titolo (inizia con "In arrivo": chi ha deleghe a suo carico vede "In arrivo per
+     * te"), etichette Tipologia, Codice IUN, Dal e Al, "Filtra" disabilitato e opzioni di "Tipologia".
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowNotificationListTexts() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -101,8 +103,10 @@ public class WebNotificationPFContractTest {
                 ));
     }
 
-    // messaggi di validazione dei filtri
-
+    /**
+     * Messaggi di validazione dei filtri: "Inserisci un codice IUN valido" con IUN {@code abc}; "Inserisci una data
+     * compresa tra … e …" con una data di più di 10 anni fa o futura, calcolate sul giorno corrente.
+     */
     @TestFactory
     Stream<DynamicTest> shouldValidateNotificationFilters() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)

@@ -54,8 +54,9 @@ public class WebOnboardingIoPFContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    // testi della pagina
-
+    /**
+     * Testi della pagina: titolo, titolo e descrizione della sezione dell'app IO.
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowOnboardingIoTexts() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
@@ -82,8 +83,11 @@ public class WebOnboardingIoPFContractTest {
         );
     }
 
-    // pulsanti
-
+    /**
+     * Pulsanti "Esci", "Scarica l'app IO" e "Ho già scaricato e installato l'app", ed "Esci" che riporta a "Configura
+     * SEND". I pulsanti della sezione dell'app IO non vengono premuti; "Indietro" e "Conferma" del wizard sono nella
+     * pagina ma nascosti, perché il wizard ha un solo passo, e non sono mappati.
+     */
     @TestFactory
     Stream<DynamicTest> shouldShowOnboardingIoButtons() {
         return webContractValidator.asRecipient(Recipient.LUCREZIA)
