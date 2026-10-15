@@ -31,7 +31,7 @@ public class WebConsumerAgreementsListPageContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
     private static final AtomicInteger TEST_INDEX_COUNTER = new AtomicInteger(1);
-    private static final String TEST_NAME_PREFIX = "CON-AGREE-";
+    private static final String TEST_NAME_PREFIX = "CON-AGREE";
 
     @TestFactory
     Stream<DynamicTest> consumerAgreementsListPageContract() {
