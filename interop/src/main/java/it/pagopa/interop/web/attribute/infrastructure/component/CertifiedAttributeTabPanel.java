@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.pagopa.infrastructure.suit.component.Link;
 
+@XPath(".//*[contains(@class, 'MuiTabPanel')]")
 public interface CertifiedAttributeTabPanel extends AttributeTabPanel {
     @XPath(".//p")
     Readable<String> description();
