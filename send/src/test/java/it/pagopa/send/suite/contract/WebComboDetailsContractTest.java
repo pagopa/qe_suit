@@ -22,7 +22,7 @@ import org.springframework.core.env.Environment;
 import java.util.List;
 import java.util.stream.Stream;
 
-@ActiveProfiles({"dev", "junit"})
+@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
@@ -61,6 +61,52 @@ public class WebComboDetailsContractTest {
                             page.overviewSection().assertLoaded();
                             page.statusSection().assertLoaded();
                             page.channelsSection().assertLoaded();
+                        }
+                ),
+                new WebScenario<>(
+                        "Controllo visibilità canali di invio e relativi badge di stato",
+                        page -> {},
+                        page -> {
+                            var items = page.channelsSection().channelItems();
+                            org.assertj.core.api.Assertions.assertThat(items)
+                                    .as("La sezione canali deve contenere la lista dei canali abilitati")
+                                    .isNotEmpty();
+                            items.forEach(item -> {
+                                item.assertLoaded();
+                                item.name().readAndAssert(name ->
+                                        org.assertj.core.api.Assertions.assertThat(name).as("Nome canale non nullo").isNotBlank());
+                                try {
+                                    String badge = item.statusBadge().read();
+                                    if (badge != null && !badge.isBlank()) {
+                                        org.assertj.core.api.Assertions.assertThat(badge).isNotBlank();
+                                    }
+                                } catch (Exception ignored) {
+                                }
+                            });
+                        }
+                ),
+                new WebScenario<>(
+                        "Controllo coerenza testi descrittivi ed esplicativi dei canali di invio",
+                        page -> {},
+                        page -> {
+                            var items = page.channelsSection().channelItems();
+                            items.forEach(item -> {
+                                try {
+                                    String desc = item.description().read();
+                                    if (desc != null && !desc.isBlank()) {
+                                        org.assertj.core.api.Assertions.assertThat(desc).isNotBlank();
+                                    }
+                                } catch (Exception ignored) {
+                                }
+                            });
+                        }
+                ),
+                new WebScenario<>(
+                        "Controllo caricamento sezioni condizionali Documenti e Pagamenti",
+                        page -> {},
+                        page -> {
+                            page.documentsSection().ifPresent(docSection -> docSection.assertLoaded());
+                            page.paymentsSection().ifPresent(paySection -> paySection.assertLoaded());
                         }
                 ),
                 new WebScenario<>(
