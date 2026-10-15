@@ -276,13 +276,6 @@ public class MittenteComboSteps {
         }
     }
 
-    @And("è presente il pulsante per accedere alla timeline")
-    public void verifyTimelineButtonPresent() {
-        Assertions.assertThat(comboDetailsPage.statusSection().openTimelineButton())
-                .as("Pulsante Vai alla Timeline")
-                .isNotNull();
-    }
-
     @Then("la sezione dettaglio invio per canale mostra esclusivamente i canali {string}")
     public void verifyChannelsList(String expectedChannelsStr) {
         List<String> expectedChannels = Arrays.stream(expectedChannelsStr.split(","))
