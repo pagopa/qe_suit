@@ -23,8 +23,8 @@ class BffEServiceTemplateMapperTest {
 
     private final BffEServiceTemplateMapper mapper =
             Mappers.getMapper(BffEServiceTemplateMapper.class);
-    private final BffEServiceTemplateAssembler assembler =
-            new BffEServiceTemplateAssembler(mapper);
+    private final BffEServiceTemplateMappingService assembler =
+            new BffEServiceTemplateMappingService(mapper);
 
     @BeforeEach
     void injectMapperDependencies() {

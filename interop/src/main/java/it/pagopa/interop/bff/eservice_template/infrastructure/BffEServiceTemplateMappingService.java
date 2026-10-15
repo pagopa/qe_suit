@@ -14,7 +14,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class BffEServiceTemplateAssembler {
+public class BffEServiceTemplateMappingService {
 
     private final BffEServiceTemplateMapper mapper;
 
