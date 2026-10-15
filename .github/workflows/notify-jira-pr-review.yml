@@ -1,0 +1,88 @@
+name: Notify Jira when PR changes are requested
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+jobs:
+  notify-jira:
+    if: >-
+      github.event.review.state == 'changes_requested' &&
+      (github.event.pull_request.base.ref == 'main' ||
+       github.event.pull_request.base.ref == 'develop' ||
+       startsWith(github.event.pull_request.base.ref, 'feature/') ||
+       startsWith(github.event.pull_request.base.ref, 'feat/') ||
+       startsWith(github.event.pull_request.base.ref, 'release/') ||
+       startsWith(github.event.pull_request.base.ref, 'hotfix/')) &&
+      startsWith(github.event.pull_request.head.ref, 'feature/ai-issue-')
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Notify Jira
+        env:
+          JIRA_WEBHOOK_URL: ${{ secrets.JIRA_AUTOMATION_WEBHOOK_URL }}
+          JIRA_WEBHOOK_SECRET: ${{ secrets.JIRA_AUTOMATION_WEBHOOK_SECRET }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          REVIEWER: ${{ github.event.review.user.login }}
+          REVIEW_BODY: ${{ github.event.review.body }}
+          REVIEW_URL: ${{ github.event.review.html_url }}
+        run: |
+          test -n "$JIRA_WEBHOOK_URL"
+          test -n "$JIRA_WEBHOOK_SECRET"
+
+          JIRA_KEY="$(
+            printf '%s\n' "$PR_TITLE" |
+              sed -nE 's/^\[([A-Z][A-Z0-9_]*-[0-9]+)\].*/\1/p'
+          )"
+
+          if [ -z "$JIRA_KEY" ]; then
+            echo "La Jira key non è presente nel titolo della PR."
+            exit 1
+          fi
+
+          PAYLOAD="$(
+            jq -n \
+              --arg jiraKey "$JIRA_KEY" \
+              --arg event "pr_changes_requested" \
+              --arg prUrl "$PR_URL" \
+              --arg reviewer "$REVIEWER" \
+              --arg reviewBody "$REVIEW_BODY" \
+              --arg reviewUrl "$REVIEW_URL" \
+              '{
+                jiraKey: $jiraKey,
+                event: $event,
+                prUrl: $prUrl,
+                reviewer: $reviewer,
+                reviewBody: $reviewBody,
+                reviewUrl: $reviewUrl
+              }'
+          )"
+
+          curl \
+            --request POST \
+            --fail-with-body \
+            --silent \
+            --show-error \
+            --retry 3 \
+            --retry-all-errors \
+            --connect-timeout 10 \
+            --max-time 30 \
+            --header "Content-Type: application/json" \
+            --header "X-Automation-Webhook-Token: $JIRA_WEBHOOK_SECRET" \
+            --data "$PAYLOAD" \
+            "$JIRA_WEBHOOK_URL"
+
+          {
+            echo "## Jira notificato"
+            echo
+            echo "- Jira: $JIRA_KEY"
+            echo "- PR: $PR_URL"
+            echo "- Reviewer: $REVIEWER"
+            echo "- Evento: pr_changes_requested"
+          } >> "$GITHUB_STEP_SUMMARY"
