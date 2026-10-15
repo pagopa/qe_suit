@@ -47,4 +47,9 @@ public class CommonParameterTypes {
     public PurposeVersionState purposeState(String name) {
         return PurposeVersionState.valueOf(name.toUpperCase());
     }
+
+    @ParameterType("sincrono|asincrono")
+    public Boolean asyncExchange(String name) {
+        return "asincrono".equals(name);
+    }
 }
