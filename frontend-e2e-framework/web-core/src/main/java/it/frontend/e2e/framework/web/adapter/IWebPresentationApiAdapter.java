@@ -15,6 +15,12 @@ public interface IWebPresentationApiAdapter
     Optional<String> getCookieValue(String name);
     Optional<WebPresentationElement> findElement(XPathSelector selector, FindPolicy findPolicy);
     Optional<List<WebPresentationElement>> findElements(XPathSelector selector, FindPolicy policy);
+    /**
+     * Checks DOM presence without explicit waits or retries, regardless of visibility.
+     * Requires a zero implicit wait for an immediate result. Lookup failures propagate.
+     */
+    boolean isPresentNow(XPathSelector selector);
+
     Optional<String> getLocalStorageItem(String key);
     Optional<String> getSessionStorageItem(String key);
     void setLocalStorageItem(String key, String value);

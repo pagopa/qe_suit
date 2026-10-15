@@ -30,4 +30,9 @@ public class GettableImpl extends AbstractCapabilityImpl implements Gettable {
     public Optional<WebPresentationElement> get(FindPolicy policy) {
         return adapter.findElement(xPathSelector.get(), policy);
     }
+
+    @Override
+    public boolean isPresentNow() {
+        return adapter.isPresentNow(xPathSelector.get());
+    }
 }

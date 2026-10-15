@@ -66,6 +66,11 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     }
 
     @Override
+    public boolean isPresentNow(XPathSelector selector) {
+        return !driver.findElements(toBy(selector)).isEmpty();
+    }
+
+    @Override
     public Optional<WebPresentationElement> findElementAndAssert(XPathSelector selector, AssertionAction<WebPresentationElement> assertion) {
         Optional<WebPresentationElement> element = findElement(selector);
         element.ifPresent(found -> applyAssertion(found, assertion));
