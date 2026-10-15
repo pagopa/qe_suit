@@ -10,6 +10,17 @@ record ScopePlanState<T>(
         Class<T> sourceType,
         ObjectGraph graph,
         List<FuzzCase> fuzzCases,
-        ScopeOverrides overrides
+        ScopeOverrides overrides,
+        /** Optional contract metadata for the scope; when null the planner applies its default. */
+        MutationValidityResolver validityResolver
 ) {
+    ScopePlanState(
+            T source,
+            Class<T> sourceType,
+            ObjectGraph graph,
+            List<FuzzCase> fuzzCases,
+            ScopeOverrides overrides
+    ) {
+        this(source, sourceType, graph, fuzzCases, overrides, null);
+    }
 }

@@ -2,20 +2,19 @@ package it.pagopa.send.web.login.infrastructure;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.send.common.domain.Recipient;
-import it.pagopa.send.common.domain.Tenant;
-import it.pagopa.send.common.domain.User;
-import it.pagopa.send.domain.web.commons.pages.login.AbstractOneIdPage;
-import it.pagopa.send.domain.web.commons.pages.login.OneIdPage;
-import it.pagopa.send.domain.web.pages.destinatario.pf.NotificationPFPage;
-import it.pagopa.send.domain.web.pages.destinatario.pf.login.PfLoginPage;
-import it.pagopa.send.domain.web.pages.destinatario.pg.NotificationPage;
-import it.pagopa.send.domain.web.pages.destinatario.pg.login.PgLoginPage;
-import it.pagopa.send.domain.web.pages.mittente.DashboardPage;
-import it.pagopa.send.domain.web.pages.mittente.login.TenantSelectionPage;
+import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.web.login.infrastructure.page.AbstractOneIdPage;
+import it.pagopa.send.web.login.infrastructure.page.OneIdPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationPFPage;
+import it.pagopa.send.web.login.infrastructure.page.PfLoginPage;
+import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationPage;
+import it.pagopa.send.web.login.infrastructure.page.PgLoginPage;
+import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
+import it.pagopa.send.web.login.infrastructure.page.TenantSelectionPage;
 import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -28,7 +27,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LoginService {
     private static final String SESSION_STORAGE_KEY = "user";
-    private static final String SESSION_TOKEN_PROPERTY = "token.session.%s";
 
     private final WebPresentationGateway uiGateway;
     private final WebBrowserContext webBrowserContext;
@@ -37,7 +35,7 @@ public class LoginService {
     private final NotificationPage notificationPage;
     private final NotificationPFPage notificationPFPage;
     private final SelfCareSessionPayloadFactory sessionPayloadFactory;
-    private final Environment environment;
+    private final DynamicUserTokenProvider tokenProvider;
 
     public void loginAsTenant(Tenant tenant) {
         OneIdPage loginPage = uiGateway.bind(OneIdPage.class);
@@ -79,13 +77,12 @@ public class LoginService {
     }
 
     private String sessionTokenFor(User user) {
-        return environment.getProperty(SESSION_TOKEN_PROPERTY.formatted(user.getUsername().toLowerCase()));
+        return tokenProvider.getToken(user.getUsername());
     }
 
     private void forceSession(String sessionPayload, Page landingPage) {
         landingPage.navigateTo();
         uiGateway.setSessionStorageItem(SESSION_STORAGE_KEY, sessionPayload);
-
 
         landingPage.navigateTo();
         landingPage.assertLoaded();

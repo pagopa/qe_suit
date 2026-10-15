@@ -10,6 +10,7 @@ import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -26,6 +27,19 @@ public class BffEServiceRestClient extends RestClient {
     public TestChain<CreatedEServiceDescriptor> createEService(@Nonnull EServiceSeed payload) {
         return execute(
                 () -> eservicesApi.createEService().body(payload).execute(Function.identity()),
+                CreatedEServiceDescriptor.class
+        );
+    }
+
+    public TestChain<CreatedEServiceDescriptor> createEServiceInstanceFromTemplate(
+            @Nonnull UUID templateId,
+            @Nonnull InstanceEServiceSeed payload
+    ) {
+        return execute(
+                () -> eservicesApi.createEServiceInstanceFromTemplate()
+                        .templateIdPath(templateId)
+                        .body(payload)
+                        .execute(Function.identity()),
                 CreatedEServiceDescriptor.class
         );
     }
@@ -69,6 +83,77 @@ public class BffEServiceRestClient extends RestClient {
                         .body(payload)
                         .execute(Function.identity()),
                 Void.class
+        );
+    }
+
+    public TestChain<Void> deleteEService(@Nonnull UUID eserviceId) {
+        return execute(
+                () -> eservicesApi.deleteEService()
+                        .eServiceIdPath(eserviceId)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Void> scheduleArchiveEserviceDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull GracePeriodDaysSeed payload) {
+        return execute(
+                () -> eservicesApi.scheduleArchiveEserviceDescriptor()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceSoap(
+            @Nonnull UUID eserviceId,
+            @Nonnull UUID descriptorId,
+            @Nonnull Map<String, Object> payload
+    ) {
+        return execute(
+                () -> eservicesApi.addEServiceTemplateInstanceInterfaceSoap()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .reqSpec(builder -> {
+                            builder.setContentType("application/json");
+                            builder.setBody(payload);
+                        })
+                        .execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
+    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceRest(
+            @Nonnull UUID eserviceId,
+            @Nonnull UUID descriptorId,
+            @Nonnull Map<String, Object> payload
+    ) {
+        return execute(
+                () -> eservicesApi.addEServiceTemplateInstanceInterfaceRest()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .reqSpec(builder -> {
+                            builder.setContentType("application/json");
+                            builder.setBody(payload);
+                        })
+                        .execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
+    public TestChain<byte[]> getEServiceDocumentById(
+            @Nonnull UUID eserviceId,
+            @Nonnull UUID descriptorId,
+            @Nonnull UUID documentId
+    ) {
+        return execute(
+                () -> eservicesApi.getEServiceDocumentById()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .documentIdPath(documentId)
+                        .execute(Function.identity()),
+                byte[].class
         );
     }
 

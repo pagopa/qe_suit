@@ -1,12 +1,12 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
-import it.pagopa.interop.common.infrastructure.SharedMapper;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.kernel.domain.DocumentRef;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServiceDetails;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

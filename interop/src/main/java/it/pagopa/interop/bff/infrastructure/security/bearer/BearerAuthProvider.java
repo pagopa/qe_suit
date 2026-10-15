@@ -21,11 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -38,7 +34,12 @@ public class BearerAuthProvider {
     @Cacheable(cacheNames = "sessionToken", key = "@bearerAuthProvider.cacheKey(#user, #tenant)")
     public String getToken(User user, Tenant tenant) {
         try {
-            String role = user.getRole().name().toLowerCase();
+            String role = user.getRole().getName().toLowerCase();
+            List<Map<String, String>> roles = new ArrayList<>();;
+
+            for(String rawRole: role.split(",")) {
+                roles.add(Map.of("partyRole", "MANAGER", "role", rawRole.trim()));
+            }
 
             long now = Instant.now().getEpochSecond();
             long exp = now + properties.durationSec();
@@ -65,10 +66,7 @@ public class BearerAuthProvider {
             payload.put("organization", Map.of(
                     "id", tenant.getOrganizationId().toString(),
                     "name", tenant.getName(),
-                    "roles", List.of(Map.of(
-                            "partyRole", "MANAGER",
-                            "role", role
-                    ))
+                    "roles", roles
             ));
             payload.put("selfcareId", tenant.getSelfcareId().toString());
             payload.put("user-roles", role);
