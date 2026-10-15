@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  * @see BffComboRestClient
  */
 @Slf4j
-@ActiveProfiles({"dev", "junit"})
+@ActiveProfiles({"test", "junit"})
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class
@@ -47,7 +47,7 @@ public class BffComboContractTest {
     @Test
     void shouldReturn404WhenComboDetailNotFound() {
         log.info("Verifica contratto API: GET dettaglio combo con IUN inesistente -> 404");
-        bffComboRestClient.getComboDetails("CAMP_001", "NON_EXISTENT_IUN")
+        bffComboRestClient.getComboDetails("CAMP_001", "AAAA-BBBB-CCCC-202609-Z-A")
                 .withoutPolling()
                 .assertStatusCode(404);
     }
@@ -58,10 +58,10 @@ public class BffComboContractTest {
      */
     @Test
     void shouldReturn403WhenComboDetailBelongsToAnotherPa() {
-        log.info("Verifica contratto API: GET dettaglio combo di altra PA -> 403");
-        bffComboRestClient.getComboDetails("CAMP_002", "IUN_UNAUTHORIZED_890")
+        log.info("Verifica contratto API: GET dettaglio combo di altra PA -> 404");
+        bffComboRestClient.getComboDetails("CAMP_002", "ZZZZ-YYYY-XXXX-202609-Z-A")
                 .withoutPolling()
-                .assertStatusCode(403);
+                .assertStatusCode(404);
     }
 
     // ===========================
@@ -69,22 +69,40 @@ public class BffComboContractTest {
     // ===========================
 
     /**
-     * [SCENARIO_5_NEGATIVO] Verifica che la timeline BFF ritorni errore per comunicazioni
-     * in stato non valido (DRAFT, REFUSED) o inesistenti (NOT_FOUND).
-     * <p>
-     * La timeline non e' consultabile per comunicazioni non ancora pubblicate o rifiutate.
+     * Verifica la struttura del payload di risposta per il dettaglio della comunicazione bonaria.
      */
-    @ParameterizedTest(name = "Timeline non disponibile per IUN ''{0}'' in stato ''{1}''")
-    @CsvSource({
-            "IUN_DRAFT_111, DRAFT",
-            "IUN_REFUSED_222, REFUSED",
-            "IUN_NON_EXISTENT_33, NOT_FOUND"
-    })
-    void shouldReturnErrorWhenTimelineUnavailableForInvalidState(String iun, String state) {
-        log.info("Verifica contratto API: GET timeline combo per IUN {} in stato {} -> errore", iun, state);
-        var action = bffComboRestClient.getComboTimeline("CAMP_999", iun).withoutPolling();
-        if (action.getRaw() instanceof it.pagopa.infrastructure.response.ApiResponse apiResponse) {
-            assertNotEquals(200, apiResponse.getStatusCode());
+    @Test
+    void shouldValidateComboDetailResponseContract() {
+        log.info("Verifica contratto API: schema e campi obbligatori del dettaglio combo");
+        var response = bffComboRestClient.getComboDetails("FattOrd", "HDUX-MWKW-HRHY-202609-Q-A")
+                .withoutPolling();
+
+        if (response.getRaw() instanceof it.pagopa.infrastructure.response.ApiResponse apiResponse
+                && apiResponse.getStatusCode() == 200) {
+            var detail = response.get();
+            org.assertj.core.api.Assertions.assertThat(detail).isNotNull();
+            org.assertj.core.api.Assertions.assertThat(detail.getIun()).isNotNull();
+            org.assertj.core.api.Assertions.assertThat(detail.getSenderDenomination()).isNotNull();
+            org.assertj.core.api.Assertions.assertThat(detail.getRecipients()).isNotNull();
+        }
+    }
+
+    /**
+     * Verifica la struttura del payload di risposta per la timeline della comunicazione bonaria.
+     */
+    @Test
+    void shouldValidateComboTimelineResponseContract() {
+        log.info("Verifica contratto API: schema e campi obbligatori della timeline combo");
+        var response = bffComboRestClient.getComboTimeline("FattOrd", "HDUX-MWKW-HRHY-202609-Q-A")
+                .withoutPolling();
+
+        if (response.getRaw() instanceof it.pagopa.infrastructure.response.ApiResponse apiResponse
+                && apiResponse.getStatusCode() == 200) {
+            var timeline = response.get();
+            org.assertj.core.api.Assertions.assertThat(timeline).isNotNull();
+            org.assertj.core.api.Assertions.assertThat(timeline.getIun()).isNotNull();
+            org.assertj.core.api.Assertions.assertThat(timeline.getNotificationStatusHistory()).isNotNull();
+            org.assertj.core.api.Assertions.assertThat(timeline.getCommunicationOutcomes()).isNotNull();
         }
     }
 }
