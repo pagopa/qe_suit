@@ -8,6 +8,7 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Dialog;
+import it.pagopa.interop.web.eservice.infrastructure.page.component.EServiceArchivingDialog;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 
@@ -22,6 +23,10 @@ public interface ProducerEServiceDetailPage extends Page {
     @XPath(".//button[@aria-label='Apri men\u00f9 delle azioni']")
     Button actionsMenuButton();
 
+    default Button getActionsMenuButton() {
+        return actionsMenuButton();
+    }
+
     @XPath("//ul[@role='menu']")
     Component actionsMenu();
 
@@ -30,6 +35,12 @@ public interface ProducerEServiceDetailPage extends Page {
 
     @XPath("//li[@role='menuitem' and normalize-space(.)='Duplica e-service']")
     Button duplicateEServiceButton();
+
+    @XPath("//li[@role='menuitem' and normalize-space(.)='Archivia e-service']")
+    Button getArchiveEServiceButton();
+
+    @XPath("//div[@role='dialog' and .//*[normalize-space(.)='Archivia e-service']]")
+    EServiceArchivingDialog getArchivingDialog();
 
     @XPath("//div[@role='dialog' and .//*[normalize-space(.)='Conferma clonazione e-service']]")
     Dialog duplicationConfirmationDialog();
