@@ -14,9 +14,7 @@ del profilo attivo, ad esempio `https://imprese.test.notifichedigitali.it` sul p
 
 ## La pagina
 
-In rosso quello che controlla `assertLoaded()`: il titolo "In arrivo dalle deleghe".
-
-![In arrivo dalle deleghe](img/DelegatedNotificationPage.png)
+`assertLoaded()` controlla il titolo "In arrivo dalle deleghe".
 
 ## Cosa verifica il contract test
 
@@ -29,7 +27,6 @@ all'impresa (vedi sotto).
 | Titolo | Testo | "In arrivo dalle deleghe" | pn-frontend, `locales/it/notifiche.json`, chiave `title-delegated-notifications` |
 | Filtro "Tipologia" | Presenza nel DOM | Assente | pn-frontend, `components/Notifications/FilterNotifications.tsx`, `showCommunicationType={!isDelegatedPage}` |
 | Banner per attivare il domicilio digitale | Presenza nel DOM | Assente | pn-frontend, `Notifiche.page.tsx`, il banner richiede `!isDelegatedPage` |
-
 
 ## Perché non si verificano filtri e tabella
 
@@ -47,10 +44,7 @@ solo il titolo è sempre presente, e il filtro "Tipologia" e il banner non ci so
 | Filtro "Tipologia" | mai |
 | Banner "Niente più documenti cartacei" | mai |
 
-Con notifiche delegate (Francesco Petrarca, Le Epistolae srl): filtri e tabella.
+Sul portale di test:
 
-![Con notifiche delegate](img/WebDelegatedNotificationPGContractTest/con-notifiche.png)
-
-Senza notifiche delegate (Dante Alighieri, Impresa di Dante): niente filtri né tabella, al loro posto il messaggio.
-
-![Senza notifiche delegate](img/WebDelegatedNotificationPGContractTest/senza-notifiche.png)
+- Le Epistolae srl (Francesco Petrarca), che ha notifiche delegate, vede filtri e tabella;
+- Impresa di Dante (Dante Alighieri), che non ne ha, vede al loro posto il messaggio.
