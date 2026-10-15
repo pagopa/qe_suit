@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice_template.application;
 
 import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.function.Consumer;
 @RequiredArgsConstructor
 public class EServiceTemplateUseCase {
     private final EServiceTemplateGateway eServiceTemplateGateway;
+    private final EServiceTemplateVersionGateway eServiceTemplateVersionGateway;
     private final EServiceTemplateRequestFactory requestFactory;
 
     public EServiceTemplate createEServiceTemplate(Consumer<EServiceTemplateCreationCommand> config) {
@@ -75,19 +77,22 @@ public class EServiceTemplateUseCase {
     }
 
     public EServiceTemplate uploadInterface(EServiceTemplate template, EServiceTemplateVersion version, String fixturePath) {
-        return eServiceTemplateGateway.uploadInterface(template, version, fixturePath);
+        eServiceTemplateVersionGateway.uploadInterface(template.getRef(), version.getRef(), fixturePath);
+        return eServiceTemplateGateway.getEServiceTemplate(template.getRef());
     }
 
     public EServiceTemplate publishEServiceTemplateVersion(EServiceTemplate template, EServiceTemplateVersion version) {
-        return eServiceTemplateGateway.publishEServiceTemplateVersion(template, version);
+        eServiceTemplateVersionGateway.publishEServiceTemplateVersion(template.getRef(), version.getRef());
+        return eServiceTemplateGateway.getEServiceTemplate(template.getRef());
     }
 
     public EServiceTemplate getEServiceTemplateVersion(EServiceTemplate template, EServiceTemplateVersion version) {
-        return eServiceTemplateGateway.getEServiceTemplateVersion(template, version);
+        eServiceTemplateVersionGateway.getEServiceTemplateVersion(template.getRef(), version.getRef());
+        return eServiceTemplateGateway.getEServiceTemplate(template.getRef());
     }
 
     public EServiceTemplateInterface downloadInterface(EServiceTemplate template, EServiceTemplateVersion version) {
-        return eServiceTemplateGateway.downloadInterface(template, version);
+        return eServiceTemplateVersionGateway.downloadInterface(template.getRef(), version.getRef());
     }
 
     public void shouldHaveUnchangedInterface(EServiceTemplateVersion baseline) {
@@ -98,7 +103,7 @@ public class EServiceTemplateUseCase {
         if (!original.hasDownloadedContent())
             throw new IllegalStateException("Il contenuto baseline dell'interfaccia non è stato scaricato");
 
-        EServiceTemplateInterface current = gateway.readCurrentInterface(
+        EServiceTemplateInterface current = eServiceTemplateVersionGateway.readCurrentInterface(
                 original.getTemplateRef(), original.getVersionRef()
         ).orElseThrow(() -> new AssertionError("L'interfaccia del template non è più presente"));
 
@@ -115,4 +120,3 @@ public class EServiceTemplateUseCase {
             throw new AssertionError("I byte dell'interfaccia del template sono cambiati");
     }
 }
-
