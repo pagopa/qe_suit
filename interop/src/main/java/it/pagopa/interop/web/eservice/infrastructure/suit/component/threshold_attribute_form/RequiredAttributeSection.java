@@ -12,7 +12,7 @@ import it.pagopa.interop.web.attribute.infrastructure.component.VerifiedAttribut
 @XPath(".//*[contains(@class, 'MuiPaper-root') and (.//h2)[1][normalize-space(.)='Requisiti di accesso']]")
 public interface RequiredAttributeSection extends Component {
     @XPath(".//h2")
-    it.frontend.e2e.framework.web.capability.core.Readable<String> title();
+    Readable<String> title();
 
     @XPath(".//p")
     Readable<String> description();
