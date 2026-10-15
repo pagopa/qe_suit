@@ -8,6 +8,7 @@ import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValid
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,26 +16,17 @@ import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
-@SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
-@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 /*21/09/2026: al momento il test per URL injection fallisce, coerentemente con il fatto che
  * qui https://pagopa.atlassian.net/browse/PIN-6881 l'api non risulta coperta per
  * questo rilascio. Presumibilmente verrà coperta in futuro. */
+@SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
+@TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+@RequiredArgsConstructor
 public class BffCertifiedDiscreteAttributeContractTest {
 
     private final ApiClient apiClient;
     private final InteropHttpContractValidator httpContractValidator;
     private final BffAttributeRequestFactory requestFactory;
-
-    public BffCertifiedDiscreteAttributeContractTest(
-            ApiClient apiClient,
-            InteropHttpContractValidator httpContractValidator,
-            BffAttributeRequestFactory requestFactory
-    ) {
-        this.apiClient = apiClient;
-        this.httpContractValidator = httpContractValidator;
-        this.requestFactory = requestFactory;
-    }
 
     @TestFactory
     Stream<DynamicTest> createCertifiedDiscreteAttribute() {
