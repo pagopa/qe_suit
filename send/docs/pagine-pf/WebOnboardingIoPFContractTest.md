@@ -6,21 +6,17 @@ Pagina di onboarding `{baseUrl}/onboarding/io`.
 - Test: [`WebOnboardingIoPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebOnboardingIoPFContractTest.java)
 - Utente: Lucrezia Borgia
 - Navigazione: `WebRecipientPfNavigationContractTest#shouldReachOnboardingIoPF`, vedi
-  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#onboarding-tutto-sullapp-io)
+  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md)
 
 ## La pagina
 
-In rosso quello che controlla `assertLoaded()`: il titolo e i pulsanti "Esci", "Scarica l'app IO" e "Ho già scaricato
+`assertLoaded()` controlla il titolo e i pulsanti "Esci", "Scarica l'app IO" e "Ho già scaricato
 e installato l'app".
-
-![Tutto, sull'app IO](img/OnboardingIoPFPage.png)
 
 ## Cosa verifica il contract test
 
 Il titolo, il titolo e la descrizione della sezione dell'app IO, il testo dei tre pulsanti e che "Esci" riporti a
-"Configura SEND". In rosso gli elementi controllati.
-
-![Tutto, sull'app IO, elementi verificati](img/WebOnboardingIoPFContractTest/pagina.png)
+"Configura SEND".
 
 ## Da dove si arriva
 

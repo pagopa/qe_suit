@@ -6,26 +6,16 @@ Wizard di onboarding `{baseUrl}/onboarding/avvisi`, dalla card "Voglio solo gli 
 - Test: [`WebOnboardingAlertsPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebOnboardingAlertsPFContractTest.java)
 - Utente: Lucrezia Borgia
 - Navigazione: `WebRecipientPfNavigationContractTest#shouldReachOnboardingAlertsPF`, vedi
-  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#onboarding-attivazione-avvisi)
+  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md)
 
 ## La pagina
 
-In rosso quello che controlla `assertLoaded()`: che la pagina sia caricata. Ogni passo controlla solo di avere un
+`assertLoaded()` controlla che la pagina sia caricata. Ogni passo controlla solo di avere un
 contenuto.
-
-![Attivazione avvisi](img/OnboardingAlertsPFPage.png)
 
 ## Cosa verifica il contract test
 
-Solo quello che c'è per tutti gli utenti. In rosso gli elementi controllati.
-
-Passo 1, Attiva gli avvisi su IO:
-
-![Passo 1](img/WebOnboardingAlertsPFContractTest/passo-1.png)
-
-Passo 2, Email e SMS:
-
-![Passo 2](img/WebOnboardingAlertsPFContractTest/passo-2.png)
+Solo quello che c'è per tutti gli utenti, nei due passi del wizard.
 
 | Parte | Cosa si controlla |
 |---|---|
@@ -37,10 +27,3 @@ Passo 2, Email e SMS:
 
 Al passo 2 i blocchi dell'email e del cellulare dipendono dai recapiti dell'utente (recapito attivo con "Modifica"
 oppure campo per inserirlo) e non vengono verificati, con i loro messaggi di validazione.
-
-## Note
-
-- Il test si sposta tra i passi con Indietro e Avanti, che non salvano nulla, e non preme "Conferma".
-- Il passo 2 si raggiunge con "Continua senza l'app IO": provato il 13/10/2026 con Lucrezia Borgia e con Giulio Cesare.
-- I testi del blocco "Attiva SEND sull'app IO" sono gli stessi di "Tutto, sull'app IO": le costanti sono in
-  `OnboardingIoExpectedTexts`.

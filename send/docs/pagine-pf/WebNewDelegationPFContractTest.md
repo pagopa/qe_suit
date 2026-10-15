@@ -6,31 +6,21 @@ Pagina `{baseUrl}/deleghe/nuova`, dal pulsante "Aggiungi una delega" della pagin
 - Test: [`WebNewDelegationPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebNewDelegationPFContractTest.java)
 - Utente: Lucrezia Borgia (il form è uguale per tutti i cittadini)
 - Navigazione: `WebRecipientPfNavigationContractTest#shouldReachNewDelegationPF`, vedi
-  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#aggiungi-una-delega)
+  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md)
 
 ## La pagina
 
-In rosso quello che controlla `assertLoaded()`: il titolo, i campi e i pulsanti del form.
-
-![Aggiungi una delega](img/NewDelegationPFPage.png)
+`assertLoaded()` controlla il titolo, i campi e i pulsanti del form.
 
 ## Cosa verifica il contract test
 
 I testi della pagina e del form, il codice di verifica di 5 cifre, i valori iniziali (persona fisica, tutti gli enti,
-termine della delega a domani), i campi che cambiano con le scelte e i messaggi di validazione. In rosso gli elementi
-controllati, esclusi i messaggi.
+termine della delega a domani), i campi che cambiano con le scelte e i messaggi di validazione.
 
-All'apertura:
+I campi che cambiano con le scelte:
 
-![Aggiungi una delega, elementi verificati](img/WebNewDelegationPFContractTest/pagina.png)
-
-Con "Persona giuridica", la ragione sociale al posto di nome e cognome:
-
-![Aggiungi una delega, persona giuridica](img/WebNewDelegationPFContractTest/persona-giuridica.png)
-
-Con "Solo enti selezionati" e l'elenco degli enti aperto:
-
-![Aggiungi una delega, solo enti selezionati](img/WebNewDelegationPFContractTest/solo-enti-selezionati.png)
+- con "Persona giuridica", la ragione sociale al posto di nome e cognome;
+- con "Solo enti selezionati", l'elenco degli enti da cui scegliere.
 
 ## Validazioni
 

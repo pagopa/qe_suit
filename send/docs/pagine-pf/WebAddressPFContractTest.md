@@ -6,20 +6,16 @@ Pagina `{baseUrl}/recapiti`, dalla voce "I tuoi recapiti" del menu laterale.
 - Test: [`WebAddressPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebAddressPFContractTest.java)
 - Utente: Lucrezia Borgia
 - Navigazione: `WebRecipientPfNavigationContractTest#shouldReachAddressPF`, vedi
-  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#i-tuoi-recapiti)
+  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md)
 
 ## La pagina
 
-In rosso quello che controlla `assertLoaded()`: il titolo e le card del domicilio digitale, dell'app IO e dell'email.
+`assertLoaded()` controlla il titolo e le card del domicilio digitale, dell'app IO e dell'email.
 Lo usano anche gli step Cucumber dei recapiti.
-
-![I tuoi recapiti](img/AddressPFPage.png)
 
 ## Cosa verifica il contract test
 
-Solo quello che c'è per tutti gli utenti. In rosso gli elementi controllati.
-
-![I tuoi recapiti, elementi verificati](img/WebAddressPFContractTest/pagina.png)
+Solo quello che c'è per tutti gli utenti.
 
 | Parte | Cosa si controlla |
 |---|---|

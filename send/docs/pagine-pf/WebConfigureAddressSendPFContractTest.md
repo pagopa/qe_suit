@@ -7,22 +7,17 @@ configurazione; si raggiunge sempre dall'indirizzo e dal pulsante "Esci" delle p
 - Test: [`WebConfigureAddressSendPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebConfigureAddressSendPFContractTest.java)
 - Utente: Lucrezia Borgia
 - Navigazione: `WebRecipientPfNavigationContractTest#shouldReachOnboardingPF`, vedi
-  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#configura-send-onboarding)
+  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md)
 
 ## La pagina
 
-In rosso quello che controlla `assertLoaded()`: il titolo, i pulsanti delle due card mostrate a tutti e "Salta e vai
+`assertLoaded()` controlla il titolo, i pulsanti delle due card mostrate a tutti e "Salta e vai
 alle tue notifiche". Lo usa anche lo step Cucumber "se presente, viene saltata la configurazione del prodotto SEND" per
 capire se la pagina è mostrata.
 
-![Configura SEND](img/ConfigureAddressSendPage.png)
-
 ## Cosa verifica il contract test
 
-I testi della pagina e delle due card mostrate a tutti, i pulsanti e la pagina che apre ogni card. In rosso gli elementi
-controllati.
-
-![Configura SEND, elementi verificati](img/WebConfigureAddressSendPFContractTest/pagina.png)
+I testi della pagina e delle due card mostrate a tutti, i pulsanti e la pagina che apre ogni card.
 
 | Card | Pulsante | Apre |
 |---|---|---|

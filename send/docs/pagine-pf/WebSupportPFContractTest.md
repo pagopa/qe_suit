@@ -6,32 +6,27 @@ Pagina di assistenza `{baseUrl}/assistenza`, dal link "Assistenza" in alto nella
 - Test: [`WebSupportPFContractTest`](../../src/test/java/it/pagopa/send/suite/contract/destinatario_pf/WebSupportPFContractTest.java)
 - Utente: Lucrezia Borgia (il form è uguale per tutti i cittadini)
 - Navigazione: `WebRecipientPfNavigationContractTest#shouldReachSupportPF`, vedi
-  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md#assistenza)
+  [WebRecipientPfNavigationContractTest.md](WebRecipientPfNavigationContractTest.md)
 
 ## La pagina
 
-In rosso quello che controlla `assertLoaded()`: il titolo, i campi e i pulsanti del form.
-
-![Come possiamo aiutarti?](img/SupportPFPage.png)
+`assertLoaded()` controlla il titolo, i campi e i pulsanti del form.
 
 ## Cosa verifica il contract test
 
 I testi della pagina e del form (avviso sulla PEC, etichette, informativa privacy), i pulsanti, il link alla privacy
-policy dell'assistenza, il form vuoto all'apertura e le validazioni. In rosso gli elementi controllati, esclusi i
-messaggi.
-
-![Come possiamo aiutarti?, elementi verificati](img/WebSupportPFContractTest/pagina.png)
+policy dell'assistenza, il form vuoto all'apertura e le validazioni.
 
 ## Validazioni
 
 Regole del form viste sul portale il 06/10/2026:
 
-| Caso | Messaggio | Avanti |
-|---|---|---|
+| Caso | Messaggio | Tasto Avanti |
+|---|---|--------------|
 | form vuoto, o email senza conferma | nessuno | disabilitato |
 | email non valida o con spazi all'inizio o alla fine | "L'indirizzo email non è valido" | disabilitato |
 | conferma diversa dall'email, anche solo per le maiuscole | "L'indirizzo email di conferma non è uguale all'indirizzo email inserito" | disabilitato |
-| email valide e uguali | nessuno | abilitato |
+| email valide e uguali | nessuno | abilitato    |
 
 ## Note
 
