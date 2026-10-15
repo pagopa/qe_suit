@@ -23,7 +23,7 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
     private final BffEServiceTemplateRestClient restClient;
     private final BffEServiceTemplateVersionGateway versionGateway;
     private final EntityStore entityStore;
-    private final BffEServiceTemplateMapper mapper;
+    private final BffEServiceTemplateAssembler assembler;
 
     @Override
     public EServiceTemplate createEServiceTemplate(EServiceTemplateCreationCommand command) {
@@ -43,7 +43,7 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(templateDetails -> {
                     Optional<EServiceTemplate> maybeTemplate = entityStore.getById(templateRef.id(), EServiceTemplate.class);
-                    return mapper.toEServiceTemplatePreservingVersions(templateDetails, maybeTemplate.orElse(null));
+                    return assembler.toEServiceTemplatePreservingVersions(templateDetails, maybeTemplate.orElse(null));
                 })
                 .updateContext()
                 .get();
