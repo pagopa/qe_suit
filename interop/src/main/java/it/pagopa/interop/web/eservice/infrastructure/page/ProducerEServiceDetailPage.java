@@ -42,6 +42,9 @@ public interface ProducerEServiceDetailPage extends Page {
     @XPath("//div[@role='dialog' and .//*[normalize-space(.)='Archivia e-service']]")
     EServiceArchivingDialog getArchivingDialog();
 
+    @XPath("//div[@role='dialog' and .//*[normalize-space(.)='Richiedi archiviazione e-service']]")
+    EServiceArchivingDialog getArchivingRequestDialog();
+
     @XPath("//div[@role='dialog' and .//*[normalize-space(.)='Conferma clonazione e-service']]")
     Dialog duplicationConfirmationDialog();
 
