@@ -15,6 +15,7 @@ import it.pagopa.send.web.mittente.infrastructure.page.StatisticsPage;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -25,6 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -44,10 +46,12 @@ import java.util.stream.Stream;
 })
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
+@Slf4j
 public class WebMittenteNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
     private final String token = "";
+
     @TestFactory
     Stream<DynamicTest> shouldReachDashboard() {
         return reachabilityTest(DashboardPage.class);
@@ -101,15 +105,17 @@ public class WebMittenteNavigationContractTest {
                         page -> {},
                         page ->
                         {
+                            log.info("Controllo presenza della colonna...");
                             boolean checkGruppiPresence = false;
                             List<TableCell> headerCells =page
                                     .notifications()
                                     .header()
                                     .cells();
 
+                            log.info("Headers presenti in tabella: {}", headerCells.stream().map(x -> x.read()).collect(Collectors.joining(", ")));
                             for (TableCell elem : headerCells){
-                                System.out.println(elem.read());
                                 if(elem.read().equals("Gruppi")) {
+                                    log.info("Trovato elemento nella lista!");
                                     checkGruppiPresence = true;
                                     break;
                                 }
