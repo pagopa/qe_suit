@@ -38,10 +38,10 @@ public interface NewDelegationPFPage extends Page {
     @XPath("//*[@id=\"personType\"]")
     Readable<String> personType();
 
-    @XPath("//*[@id=\"recipient-pf\"]")
+    @XPath("//*[@id=\"recipient-pf\"]/ancestor-or-self::label[1]")
     RadioButton naturalPersonRadio();
 
-    @XPath("//*[@id=\"recipent-pg\"]")
+    @XPath("//*[@id=\"recipent-pg\"]/ancestor-or-self::label[1]")
     RadioButton legalPersonRadio();
 
     @XPath("//*[@id=\"nome-label\"]")
@@ -83,10 +83,10 @@ public interface NewDelegationPFPage extends Page {
     @XPath("//*[@id=\"selectEntities\"]")
     Readable<String> entitiesLabel();
 
-    @XPath("//*[@id=\"tutti-gli-enti-selezionati\"]")
+    @XPath("//*[@id=\"tutti-gli-enti-selezionati\"]/ancestor-or-self::label[1]")
     RadioButton allEntitiesRadio();
 
-    @XPath("//*[@id=\"enti-selezionati\"]")
+    @XPath("//*[@id=\"enti-selezionati\"]/ancestor-or-self::label[1]")
     RadioButton selectedEntitiesRadio();
 
     @XPath("//*[@id=\"enti-label\"]")

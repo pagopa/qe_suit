@@ -256,6 +256,8 @@ public class WebNewDelegationPFContractTest {
                 new WebScenario<>(
                         "codice fiscale non valido",
                         page -> {
+                            page.firstNameInput().fill(FIRST_NAME);
+                            page.lastNameInput().fill(LAST_NAME);
                             page.taxIdInput().fill(INVALID_TAX_ID);
                             page.submitButton().click();
                         },
