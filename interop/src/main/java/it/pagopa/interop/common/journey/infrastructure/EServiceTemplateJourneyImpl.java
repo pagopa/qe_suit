@@ -23,10 +23,7 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     private final EntityStore entityStore;
 
     @Override
-    public EServiceTemplateJourneyImpl createEServiceTemplate(
-            EServiceTemplateCreationCommand command,
-            EServiceTemplateVersionState targetState
-    ) {
+    public EServiceTemplateJourneyImpl createEServiceTemplate(EServiceTemplateCreationCommand command, EServiceTemplateVersionState targetState) {
         EServiceTemplate draftTemplate = eServiceTemplateUseCase.createEServiceTemplate(command);
         return processLifecycle(draftTemplate, draftTemplate.getLastDraftVersion(), targetState);
     }
@@ -85,13 +82,9 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
         };
     }
 
-    private EServiceTemplateJourneyImpl publishPipeline(
-            EServiceTemplate eServiceTemplate,
-            EServiceTemplateVersion eServiceTemplateVersion
-    ) {
+    private EServiceTemplateJourneyImpl publishPipeline(EServiceTemplate eServiceTemplate, EServiceTemplateVersion eServiceTemplateVersion) {
         eServiceTemplateVersionUseCase.prepareVersionForPublication(eServiceTemplate, eServiceTemplateVersion);
         eServiceTemplateVersionUseCase.publishVersion(eServiceTemplate, eServiceTemplateVersion);
         return this;
     }
 }
-
