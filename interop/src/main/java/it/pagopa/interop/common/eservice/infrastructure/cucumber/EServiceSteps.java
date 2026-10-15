@@ -32,4 +32,11 @@ public class EServiceSteps {
                 eService, gracePeriodDays, EServiceArchivingFailureReason.ARCHIVING_BEFORE_DESCRIPTOR
         );
     }
+
+    @When("il delegato tenta di richiedere al delegante l'archiviazione dell'intero {currentEService} con un periodo di preavviso di {gracePeriodDays} giorni e una motivazione valida")
+    public void rejectEServiceArchivingRequest(EService eService, GracePeriodDays gracePeriodDays) {
+        eServiceUseCase.shouldFailToRequestEServiceArchiving(
+                eService, gracePeriodDays, EServiceArchivingFailureReason.ARCHIVING_BEFORE_DESCRIPTOR
+        );
+    }
 }
