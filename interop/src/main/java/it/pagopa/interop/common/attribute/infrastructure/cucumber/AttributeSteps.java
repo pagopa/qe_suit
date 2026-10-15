@@ -4,9 +4,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.attribute.application.AttributeUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
