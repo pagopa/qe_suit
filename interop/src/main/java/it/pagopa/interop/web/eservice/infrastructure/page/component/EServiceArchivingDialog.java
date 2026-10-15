@@ -21,6 +21,9 @@ public interface EServiceArchivingDialog extends Component {
     @XPath(".//button[normalize-space(.)='Archivia']")
     Button getArchiveButton();
 
+    @XPath(".//button[normalize-space(.)='Richiedi archiviazione']")
+    Button getRequestArchivingButton();
+
     default EServiceArchivingDialog setGracePeriodDays(GracePeriodDays gracePeriodDays) {
         getGracePeriodDaysField().selectLike(gracePeriodDays.getDays() + " giorni");
         return this;
