@@ -3,42 +3,41 @@ package it.pagopa.send.web.infrastructure.config.suit;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.capability.impl.LocatableCapabilityImpl;
 import it.frontend.e2e.framework.web.model.location.Url;
-import it.pagopa.send.common.domain.Recipient;
-import it.pagopa.send.common.domain.Tenant;
-import it.pagopa.send.common.domain.User;
+import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
+import it.pagopa.send.web.login.infrastructure.DynamicUserTokenProvider;
 import it.pagopa.send.web.login.infrastructure.SelfCareSessionPayloadFactory;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImpl {
 
     private static final String SESSION_STORAGE_KEY = "user";
-    private static final String SESSION_TOKEN_PROPERTY = "token.session.%s";
 
     private final IWebPresentationApiAdapter adapter;
     private final WebBrowserContext webBrowserContext;
     private final SelfCareSessionPayloadFactory sessionPayloadFactory;
-    private final Environment environment;
+    private final DynamicUserTokenProvider tokenProvider;
 
     public AuthenticatedLocatableCapabilityImpl(
             IWebPresentationApiAdapter adapter,
             WebBrowserContext webBrowserContext,
             SelfCareSessionPayloadFactory sessionPayloadFactory,
-            Environment environment
+            DynamicUserTokenProvider tokenProvider
     ) {
         super(adapter);
         this.adapter = adapter;
         this.webBrowserContext = webBrowserContext;
         this.sessionPayloadFactory = sessionPayloadFactory;
-        this.environment = environment;
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
     public void navigateTo(String... pathParams) {
         User currentUser = webBrowserContext.getCurrentUser();
-        Url targetUrl = urlSupplier.get();
+        Url targetUrl = resolveUrl(pathParams, urlSupplier.get().getUrl());
 
         // Nessun utente noto: pagine del flusso SPID reale (OneIdPage, PfLoginPage, ...),
         // navigazione semplice senza toccare il sessionStorage.
@@ -64,7 +63,7 @@ public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImp
     }
 
     private String sessionTokenFor(User user) {
-        return environment.getProperty(SESSION_TOKEN_PROPERTY.formatted(user.getUsername().toLowerCase()));
+        return tokenProvider.getToken(user.getUsername());
     }
 
     private String buildSessionPayload(User user, String sessionToken) {

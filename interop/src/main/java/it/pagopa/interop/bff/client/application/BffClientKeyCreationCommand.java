@@ -1,10 +1,10 @@
 package it.pagopa.interop.bff.client.application;
 
 import it.pagopa.interop.common.client.application.command.ClientKeyCreationCommand;
-import it.pagopa.utils.jwt.JwtUtils;
-import it.pagopa.interop.common.kernel.domain.Key;
 import it.pagopa.interop.common.kernel.domain.KeyUse;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
+import it.pagopa.kernel.security.Key;
+import it.pagopa.utils.jwt.JwtUtils;
 import lombok.Getter;
 
 @Getter

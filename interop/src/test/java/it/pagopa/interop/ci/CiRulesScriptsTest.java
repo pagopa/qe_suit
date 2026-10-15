@@ -13,8 +13,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CiRulesScriptsTest {
 
-    private static final Path BRANCH_SCRIPT = Path.of(".github/scripts/validate-branch-naming.sh").toAbsolutePath().normalize();
-    private static final Path COMMIT_SCRIPT = Path.of(".github/scripts/validate-commit-messages.sh").toAbsolutePath().normalize();
+    private static final Path SCRIPTS_DIR = locateScriptsDir();
+    private static final Path BRANCH_SCRIPT = SCRIPTS_DIR.resolve("validate-branch-naming.sh");
+    private static final Path COMMIT_SCRIPT = SCRIPTS_DIR.resolve("validate-commit-messages.sh");
+
+    /**
+     * Scripts live in the repository root, while the working directory is the Maven module
+     * (or whatever the IDE run configuration sets), so the root is located by walking up.
+     */
+    private static Path locateScriptsDir() {
+        Path current = Path.of("").toAbsolutePath().normalize();
+        while (current != null) {
+            Path candidate = current.resolve(".github/scripts");
+            if (Files.isDirectory(candidate)) {
+                return candidate;
+            }
+            current = current.getParent();
+        }
+        throw new IllegalStateException("Cannot locate .github/scripts from " + Path.of("").toAbsolutePath());
+    }
 
     @Test
     void branch_script_accepts_standard_and_long_lived_branches() throws Exception {

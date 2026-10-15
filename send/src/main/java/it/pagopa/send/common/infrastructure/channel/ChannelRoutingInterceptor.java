@@ -1,6 +1,6 @@
 package it.pagopa.send.common.infrastructure.channel;
 
-import it.pagopa.send.common.kernel.context.CurrentChannel;
+import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.send.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -16,7 +16,7 @@ public class ChannelRoutingInterceptor<T extends Plugin<Channel>>
         implements MethodInterceptor {
 
     private final PluginRegistry<T, Channel> registry;
-    private final ObjectProvider<CurrentChannel> currentChannelProvider;
+    private final ObjectProvider<CurrentChannel<Channel>> currentChannelProvider;
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {

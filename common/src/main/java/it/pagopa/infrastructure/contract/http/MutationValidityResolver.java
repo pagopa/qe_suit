@@ -3,7 +3,7 @@ package it.pagopa.infrastructure.contract.http;
 import it.pagopa.infrastructure.fuzzing.FuzzMutation;
 import it.pagopa.infrastructure.objectgraph.Node;
 
-interface MutationValidityResolver {
+public interface MutationValidityResolver {
 
-    ContractValidity resolve(Node node, FuzzMutation mutation);
+    public ContractValidity resolve(Node node, FuzzMutation mutation);
 }

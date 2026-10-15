@@ -1,94 +1,79 @@
 package it.pagopa.send.common.journey.infrastructure;
 
-import io.cucumber.spring.ScenarioScope;
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.journey.application.LegalNotificationJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
-import it.pagopa.send.common.notification.domain.LegalNotificationDomain;
-import it.pagopa.send.controller.creazione_notifica.NotificationContext;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
-import it.pagopa.send.common.domain.Tenant;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffRequestStatus;
-import it.pagopa.send.legalnotification.application.LegalNotificationUseCase;
-import it.pagopa.send.model.LegalNotificationType;
-import it.pagopa.send.model.RecipientSpec;
-import it.pagopa.send.utils.IUNHelper;
-import it.pagopa.send.utils.factory.LegalNotificationRequestFactory;
-import lombok.Getter;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
+import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
+import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
+import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Orchestratore fluente per la creazione di una notifica legale, sul modello dei Journey di
- * interop: accumula mittente/destinatari/override attraverso gli step di uno stesso scenario e
- * delega la costruzione della request a {@link LegalNotificationRequestFactory}, mantenendo
- * request/response dell'ultimo invio per gli step di asserzione successivi.
+ * Composer fluente per la creazione di una notifica legale: raggruppa più chiamate a
+ * {@link LegalNotificationUseCase} in un solo step Cucumber (es. "crea e annulla una notifica"),
+ * sul modello dei Journey di interop. Bean singleton semplice, non {@code @ScenarioScope}: non ha
+ * campi di stato propri, solo dipendenze iniettate ({@link LegalNotificationUseCase},
+ * {@link CurrentUserSession}, {@link EntityStore}), che sono loro a essere scoped in modo diverso
+ * per Cucumber (scenario) o JUnit (singleton in-memory) — lo stesso identico pattern dei Journey di
+ * interop. Grazie a questo, la stessa istanza funziona sia dentro uno scenario Cucumber sia in un
+ * test JUnit puro (es. un contract test). Quando un flusso richiede più step Cucumber distinti (es.
+ * il flusso multi-destinatario) gli step chiamano {@link LegalNotificationUseCase} direttamente,
+ * senza passare da qui.
  */
 @Slf4j
 @Component
-@ScenarioScope
 @RequiredArgsConstructor
 public class LegalNotificationJourneyImpl implements LegalNotificationJourney<LegalNotificationJourneyImpl> {
 
     private final LegalNotificationUseCase legalNotificationUseCase;
-
-    private final LegalNotificationRequestFactory requestFactory;
-
     private final CurrentUserSession currentUserSession;
-
-    private final List<RecipientSpec> recipients = new ArrayList<>();
-    private final Map<String, String> overrides = new HashMap<>();
-    private Tenant sender;
-    private LegalNotificationType type = LegalNotificationType.SIMPLE;
-
-    @Getter
-    private final NotificationContext notificationContext;
+    private final EntityStore entityStore;
 
     @Override
-    public LegalNotificationJourneyImpl withSender(Tenant sender) {
-        this.sender = sender;
-        currentUserSession.setSender(sender);
-        return this;
-    }
-
-    @Override
-    public LegalNotificationJourneyImpl withType(LegalNotificationType type) {
-        this.type = type;
+    public LegalNotificationJourneyImpl withSender(Tenant tenant) {
+        currentUserSession.setSender(tenant);
         return this;
     }
 
     @Override
     public LegalNotificationJourneyImpl withRecipient(RecipientSpec recipient) {
-        this.recipients.add(recipient);
-        currentUserSession.setRecipients(this.recipients.stream().map(RecipientSpec::recipient).toList());
+        legalNotificationUseCase.addRecipient(recipient);
+        currentUserSession.setRecipients(List.of(recipient.recipient()));
         return this;
     }
 
     @Override
-    public LegalNotificationJourneyImpl withOverrides(Map<String, String> overrides) {
-        this.overrides.putAll(overrides);
+    public LegalNotificationJourneyImpl prepareNotification(Map<String, String> data) {
+        legalNotificationUseCase.prepareNotification(data);
         return this;
     }
 
     @Override
-    public LegalNotificationJourneyImpl sendNotification(BffNotificationStatus targetStatus) {
-        BffNewNotificationRequest request = requestFactory.build(type, sender, List.copyOf(recipients), overrides);
-        legalNotificationUseCase.sendNotification(request, targetStatus);
-        log.info("Notifica legale inviata: {}", notificationContext.getBffNewNotificationResponse());
+    public LegalNotificationJourneyImpl sendNotification(Tenant sender, NotificationStatus targetStatus) {
+        currentUserSession.setSender(sender);
+        legalNotificationUseCase.sendNotification(sender, targetStatus);
+        log.info("Notifica legale inviata, stato raggiunto: {}", targetStatus);
+        return this;
+    }
+
+    @Override
+    public LegalNotificationJourneyImpl waitForNotificationStatus(NotificationStatus targetStatus) {
+        String iun = entityStore.getLastOrThrow(LegalNotificationDomain.class).getIun();
+        legalNotificationUseCase.waitForNotificationStatus(targetStatus);
+        log.info("Notifica legale con IUN {} ha raggiunto lo stato: {}", iun, targetStatus);
         return this;
     }
 
     @Override
     public LegalNotificationJourneyImpl deleteNotification() {
-        String iun = IUNHelper.extractFromBffNewNotificationResponse(notificationContext.getBffNewNotificationResponse());
+        String iun = entityStore.getLastOrThrow(LegalNotificationDomain.class).getIun();
         legalNotificationUseCase.deleteNotification(iun);
         log.info("Notifica legale con IUN {} eliminata", iun);
         return this;
@@ -96,8 +81,7 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
 
     @Override
     public LegalNotificationJourneyImpl readNotification() {
-//        String iun = IUNHelper.extractFromBffNewNotificationResponse(notificationContext.getBffNewNotificationResponse());
-        String iun = "WTXW-MNDW-JQLK-202609-W-1";
+        String iun = entityStore.getLastOrThrow(LegalNotificationDomain.class).getIun();
         LegalNotificationDomain response = legalNotificationUseCase.readNotification(iun);
         log.info("Notifica legale con IUN {} letta: {}", iun, response);
         return this;
@@ -105,7 +89,7 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
 
     @Override
     public LegalNotificationJourneyImpl searchNotification() {
-        legalNotificationUseCase.searchNotification(overrides);
-        return null;
+        legalNotificationUseCase.searchNotification(Map.of());
+        return this;
     }
 }

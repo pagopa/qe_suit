@@ -22,4 +22,5 @@ public interface NotificationSearchPage extends Page {
     void searchNotification(Map<String, String> searchParams);
 
     void goToNotificationDetails();
+
 }

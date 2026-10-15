@@ -76,7 +76,7 @@ token:
 bff:
   api:
     base-url: https://webapi.dev.notifichedigitali.it
-    bearer-token: eyJhbGciOiAiUlMyNTYiLCJ0eXAiOiAiSldUIiwia2lkIjogImEzYjYyYTVlLTNiYWEtNGI5Yy05ZjQyLTk3NDQxYmNlNDU3ZiJ9.eyJpYXQiOiAxNzg0MjgwODkxLCJleHAiOiAxODE1ODE2ODkxLCAidWlkIjogImU5ZTRhOWM3LTk1ODYtNGI5Mi1hN2RkLWVlMWEwZTc3ZDM5OCIsImlzcyI6ICJodHRwczovL3dlYmFwaS5kZXYubm90aWZpY2hlZGlnaXRhbGkuaXQiLCJhdWQiOiAid2ViYXBpLmRldi5ub3RpZmljaGVkaWdpdGFsaS5pdCIsICJvcmdhbml6YXRpb24iOiB7ICJpZCI6ICI1Yjk5NGQ0YS0wZmE4LTQ3YWMtOWM3Yi0zNTRmMWQ0NGExY2UiLCAicm9sZSI6ICJhZG1pbiIsImZpc2NhbF9jb2RlIjogIjgwMDE2MzUwODIxIn19.Xzt4gO_67oGDLvjgNa_nr5LW0fhJyF8zn9ft1OHVpUUggXxE5MHH0_uiB2WP-Uyttw32q8YkcEJQcTwbwsM_4ErsaVf9Lbq9qC6d-wqKU-nNSY2ihrzS0_aLEQ5BYfxmShcEiqOxsNKeT4x2htzwxOqbgwhXllknmMo5gTc9gIPFq86JdV6PX_T7qKlF3R4bB-wUZnrAvwR1udHaUKDfruPJhfmS5rSvQ63eiZZz1-TNXeClSkc1s0xFebKubTPOvm9FyAXRtqFosajWC2UBDK2AX5fgYxt82Juuwz16Gg03KtZ6uFotQ-RgK3JXS-HMS2ThQ4LJiDjOOrgWrIeBAA
+    bearer-token: ${pn.external.bearer-token.tokenBffApiDev:REPLACE_ME}
 
 # ============================================================================
 # GPD API Configuration (posizioni debitorie)
