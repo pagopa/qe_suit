@@ -70,8 +70,8 @@ public class WebEServiceProviderListContractTest {
     private void assertPageIdentity(EServiceProviderListPage page) {
         Assertions.assertThat(page.pageTitle().read()).as("Provider e-service page title")
                 .isEqualTo("I miei e-service");
-        Assertions.assertThat(page.breadcrumbs().readAll()).as("Provider e-service breadcrumbs")
-                .containsExactly("Erogazione", "I miei e-service");
+        Assertions.assertThat(page.breadcrumbs().getPath()).as("Provider e-service breadcrumbs")
+                .isEqualTo("Erogazione/I miei e-service");
     }
 
     private void assertPrimaryActions(EServiceProviderListPage page) {
