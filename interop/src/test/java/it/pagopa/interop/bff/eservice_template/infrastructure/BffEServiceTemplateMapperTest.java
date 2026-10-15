@@ -1,16 +1,17 @@
 package it.pagopa.interop.bff.eservice_template.infrastructure;
 
+import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorMapper;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
+import it.pagopa.interop.common.eservice_template.domain.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +23,15 @@ class BffEServiceTemplateMapperTest {
 
     private final BffEServiceTemplateMapper mapper =
             Mappers.getMapper(BffEServiceTemplateMapper.class);
+
+    @BeforeEach
+    void injectMapperDependencies() {
+        ReflectionTestUtils.setField(
+                mapper,
+                "bffEServiceDescriptorMapper",
+                Mappers.getMapper(BffEServiceDescriptorMapper.class)
+        );
+    }
 
     @Test
     void preservingVersions_keeps_version_list_mutable() {
@@ -104,7 +114,14 @@ class BffEServiceTemplateMapperTest {
                         it.pagopa.interop.generated.openapi.clients.bff.model
                                 .EServiceMode.DELIVER
                 )
-                .personalData(false);
+                .personalData(false)
+                .versions(List.of(
+                        new CompactEServiceTemplateVersion()
+                                .state(
+                                        it.pagopa.interop.generated.openapi.clients.bff.model
+                                                .EServiceTemplateVersionState.PUBLISHED
+                                )
+                ));
 
         EServiceTemplateVersionDetails response =
                 new EServiceTemplateVersionDetails()
@@ -131,6 +148,7 @@ class BffEServiceTemplateMapperTest {
         EServiceTemplate mapped = mapper.toEServiceTemplate(response);
 
         assertThat(mapped.getId()).isEqualTo(templateId);
+        assertThat(mapped.getState()).isEqualTo(EServiceTemplateState.PUBLISHED);
         assertThat(mapped.getTechnology()).isEqualTo(EServiceTechnology.REST);
         assertThat(mapped.getMode()).isEqualTo(EServiceMode.DELIVER);
         assertThat(mapped.getVersions()).hasSize(1);
@@ -147,7 +165,7 @@ class BffEServiceTemplateMapperTest {
 
         assertThat(interfaceDocument).isNotNull();
         assertThat(interfaceDocument.getId()).isEqualTo(interfaceId);
-        assertThat(interfaceDocument.getTemplateRef().templateId())
+        assertThat(interfaceDocument.getTemplateRef().id())
                 .isEqualTo(templateId);
         assertThat(interfaceDocument.getVersionRef().versionId())
                 .isEqualTo(versionId);
