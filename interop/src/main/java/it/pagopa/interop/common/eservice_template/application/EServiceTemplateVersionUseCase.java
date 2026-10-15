@@ -32,7 +32,7 @@ public class EServiceTemplateVersionUseCase {
             throw new IllegalStateException("Cannot publish a template version that is in state " + version.getState());
         }
 
-        return eServiceTemplateVersionGateway.publishVersion(eServiceTemplate.getRef(), version.getRef());
+        return eServiceTemplateVersionGateway.publishEServiceTemplateVersion(eServiceTemplate.getRef(), version.getRef());
     }
 
     public EServiceTemplateVersion updateDraftVersion(
@@ -48,7 +48,7 @@ public class EServiceTemplateVersionUseCase {
             EServiceTemplateVersion version,
             String openApiInterfacePath
     ) {
-        return eServiceTemplateVersionGateway.linkOpenApiInterface(eServiceTemplate.getRef(), version.getRef(), openApiInterfacePath);
+        return eServiceTemplateVersionGateway.uploadInterface(eServiceTemplate.getRef(), version.getRef(), openApiInterfacePath);
     }
 
     public EServiceTemplateVersion prepareVersionForPublication(
@@ -69,4 +69,3 @@ public class EServiceTemplateVersionUseCase {
         return linkOpenApiInterface(eServiceTemplate, version, "assets/origin-interface.yaml");
     }
 }
-
