@@ -68,6 +68,8 @@ class PstMojoParametersTest {
 
     @Test
     void fuzzingProfileIsRequired() throws Exception {
+        assertThrows(MojoFailureException.class,
+                () -> PstMojoParameters.requireFuzzingProfile(null));
         MojoFailureException error = assertThrows(MojoFailureException.class,
                 () -> PstMojoParameters.requireFuzzingProfile(" "));
         assertTrue(error.getMessage().contains("pst.fuzzingProfile is required"));
