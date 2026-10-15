@@ -3,7 +3,8 @@ package it.pagopa.interop.bff.infrastructure.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.infrastructure.contract.http.HttpContractPolicy;
 import it.pagopa.infrastructure.contract.http.HttpContractValidator;
-import it.pagopa.infrastructure.fuzzing.*;
+import it.pagopa.infrastructure.fuzzing.FuzzEngine;
+import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
 import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Configuration(proxyBeanMethods = false)
 public class BffApiContractConfig {
+    public static final int DEFAULT_SUCCESS_STATUS_CODE = 200;
 
     @Bean("bffApiContract")
     HttpContractValidator bffApiContract(
@@ -48,7 +50,7 @@ public class BffApiContractConfig {
     @Bean("bffApiContractPolicy")
     HttpContractPolicy bffApiContractPolicy() {
         return HttpContractPolicy.builder()
-                .successStatus(200)
+                .successStatus(DEFAULT_SUCCESS_STATUS_CODE)
                 .scenarioStatus(List.of(
                         FuzzScenario.REPLACED_WITH_NULL,
                         FuzzScenario.REMOVED,
@@ -56,6 +58,7 @@ public class BffApiContractConfig {
                         FuzzScenario.REPLACED_WITH_BLANK_STRING,
                         FuzzScenario.REPLACED_WITH_LONG_STRING,
                         FuzzScenario.REPLACED_WITH_SQL_INJECTION,
+                        FuzzScenario.REPLACED_WITH_URL_INJECTION,
                         FuzzScenario.REPLACED_WITH_WRONG_TYPE_STRING,
                         FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER,
                         FuzzScenario.REPLACED_WITH_WRONG_TYPE_DECIMAL,

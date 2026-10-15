@@ -32,8 +32,13 @@ public class WebEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void deleteEService(EService eService) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public EService getEService(EServiceRef eServiceRef) {
-        return null;
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

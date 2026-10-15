@@ -1,11 +1,7 @@
 package it.pagopa.interop.common.client.domain;
 
 import it.pagopa.domain.Identifiable;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 
 import java.util.List;
