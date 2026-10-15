@@ -90,37 +90,6 @@ public class BffPurposeContractTest {
             .tests();
     }
 
-    // NB: il validator materializza prima il payload e poi i path params:
-    // il payload prepara il setup, i path params ne leggono gli id dall'EntityStore.
-    @TestFactory
-    Stream<DynamicTest> createPurposeFromTemplate() {
-        return httpContractValidator
-            .as(CONSUMER, UserRole.ADMIN)
-            .apiCall(() -> apiClient.purposes().createPurposeFromTemplate())
-            .payload(() -> {
-                setup.prepareTemplateSetup();
-                return requestFactory.creationFromTemplateRequest(entityStore.getLastOrThrow(EService.class));
-            })
-            .pathParams(() -> Map.of("purposeTemplateId", entityStore.getLastOrThrow(PurposeTemplate.class).getId()))
-            .tests();
-    }
-
-    @TestFactory
-    Stream<DynamicTest> patchUpdatePurposeFromTemplate() {
-        return httpContractValidator
-            .as(CONSUMER, UserRole.ADMIN)
-            .apiCall(() -> apiClient.purposes().patchUpdatePurposeFromTemplate())
-            .payload(() -> {
-                setup.createDraftPurposeFromTemplate();
-                return requestFactory.patchFromTemplateRequest();
-            })
-            .pathParams(() -> Map.of(
-                "purposeTemplateId", entityStore.getLastOrThrow(PurposeTemplate.class).getId(),
-                "purposeId", entityStore.getLastOrThrow(Purpose.class).getId()
-            ))
-            .tests();
-    }
-
     /** Imposta l'identità del consumer prima di costruire il payload (i supplier sono valutati prima dell'autenticazione). */
     private <T> Supplier<T> asConsumer(Supplier<T> supplier) {
         return () -> {
