@@ -16,6 +16,10 @@ public interface EServiceCatalogPage extends Page {
     @XPath(".//h1")
     Readable<String> pageTitle();
 
+    // Cerca il primo paragrafo (o elemento di testo) che si trova subito dopo l'h1
+    @XPath("//h1/following-sibling::*[contains(@class, 'MuiTypography-root')] | //h1/parent::*//p")
+    Readable<String> pageDescription();
+
     // Campi di ricerca
     @XPath("//input[@placeholder='Cerca per nome']")
     Readable<String> searchByName();

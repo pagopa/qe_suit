@@ -15,9 +15,6 @@ import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
-//TODO
-//Verificare la descrizione che è sotto il titolo della pagin
-//è necessario validare la struttura della card?
 @SpringBootTest
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
@@ -25,6 +22,7 @@ import java.util.stream.Stream;
 public class WebEServiceCatalogContractTest {
 
     private static final String EXPECTED_PAGE_TITLE = "Catalogo degli e-service";
+    private static final String EXPECTED_PAGE_DESCRIPTION = "Il catalogo degli e-service contiene tutte le basi dati che altri enti hanno reso disponibili. Puoi aderire a quelli di tuo interesse.";
     private static final String EXPECTED_SEARCH_NAME_PLACEHOLDER = "Cerca per nome";
     private static final String EXPECTED_SEARCH_PROVIDER_PLACEHOLDER = "Cerca per erogatore";
     private static final String EXPECTED_CARD_BUTTON_LABEL = "Visualizza";
@@ -38,11 +36,14 @@ public class WebEServiceCatalogContractTest {
                 .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
                 .on(EServiceCatalogPage.class)
                 .tests(Stream.of(
-                        // CATALOG-01, 02, 03: Titolo Principale (h1)
+                        // CATALOG-01, 02, 03: Titolo h1 e Descrizione
                         new WebScenario<>(
-                                "CATALOG-01..03: Verifica presenza, visibilità e copy h1",
+                                "CATALOG-01..03: Verifica presenza, visibilità e copy h1 e descrizione",
                                 page -> {},
-                                page -> page.pageTitle().readAndAssert(EXPECTED_PAGE_TITLE)
+                                page -> {
+                                    page.pageTitle().readAndAssert(EXPECTED_PAGE_TITLE); //Verifica del titolo
+                                    page.pageDescription().readAndAssert(EXPECTED_PAGE_DESCRIPTION); //Verifica della descrizione
+                                }
                         ),
 
                         // CATALOG-04..07: Filtro Cerca per Nome
