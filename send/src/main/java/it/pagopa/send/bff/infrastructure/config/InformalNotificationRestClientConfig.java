@@ -1,6 +1,9 @@
 package it.pagopa.send.bff.infrastructure.config;
 
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.config.ObjectMapperConfig;
+import io.restassured.config.RestAssuredConfig;
+import it.pagopa.send.generated.openapi.clients.informal.JacksonObjectMapper;
 import it.pagopa.send.generated.openapi.clients.informal.api.NewInformalNotificationApi;
 import it.pagopa.send.generated.openapi.clients.informal.api.SenderReadInformalNotificationB2BApi;
 import it.pagopa.send.generated.openapi.clients.sender.informal.bff.api.SenderInformalNotificationsApi;
@@ -19,6 +22,9 @@ public class InformalNotificationRestClientConfig {
                 .newInformalNotification(
                         () -> new RequestSpecBuilder()
                                 .setBaseUri(baseUrl)
+                                .setConfig(RestAssuredConfig.config()
+                                        .objectMapperConfig(ObjectMapperConfig.objectMapperConfig()
+                                                .defaultObjectMapper(JacksonObjectMapper.jackson())))
                 )
                 .reqSpec(spec ->
                         spec.addHeader(
@@ -37,6 +43,9 @@ public class InformalNotificationRestClientConfig {
                 .senderReadInformalNotificationB2B(
                         () -> new RequestSpecBuilder()
                                 .setBaseUri(baseUrl)
+                                .setConfig(RestAssuredConfig.config()
+                                        .objectMapperConfig(ObjectMapperConfig.objectMapperConfig()
+                                                .defaultObjectMapper(JacksonObjectMapper.jackson())))
                 )
                 .reqSpec(spec ->
                         spec.addHeader(
