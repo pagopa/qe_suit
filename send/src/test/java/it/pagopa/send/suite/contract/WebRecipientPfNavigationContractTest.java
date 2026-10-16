@@ -6,7 +6,6 @@ import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AddressPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AppStatusPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DelegationsPFPage;
@@ -21,13 +20,11 @@ import it.pagopa.send.web.destinatario_pf.infrastructure.page.SercqTermsOfServic
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.SupportPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.TermsOfServicePFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
+import static org.assertj.core.api.Assertions.assertThat;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import it.pagopa.send.web.infrastructure.page.ConfigureAddressSendPage;
-import lombok.RequiredArgsConstructor;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
@@ -145,7 +142,7 @@ public class WebRecipientPfNavigationContractTest {
                         page -> {
                             // ogni passo si raggiunge con "Indietro" e "Avanti", senza fare scelte
                             for (String section : page.progressItems().readAll()) {
-                                Assertions.assertThat(page.goToSection(section)).as("passo %s raggiunto", section).isTrue();
+                                assertThat(page.goToSection(section)).as("passo %s raggiunto", section).isTrue();
                                 page.currentSection().assertLoaded();
                             }
                         }
