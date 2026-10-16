@@ -41,3 +41,18 @@ public interface Switch extends Component, Clickable {
     }
 }
 
+import it.frontend.e2e.framework.web.domain.Component;
+
+@XPath(".//*[contains(@class, 'MuiSwitch-switchBase')]")
+public interface Switch extends Component, Clickable {
+
+    default void toggle() {
+        this.click();
+    }
+
+    default boolean isChecked() {
+        return get()
+                .map(we -> we.getClasses().contains("Mui-checked"))
+                .orElse(false);
+    }
+}
