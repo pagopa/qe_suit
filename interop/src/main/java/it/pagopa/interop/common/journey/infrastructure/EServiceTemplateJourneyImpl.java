@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateUseCase;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateVersionUseCase;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateCreationCommand;
@@ -20,12 +21,13 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
 
     private final EServiceTemplateUseCase eServiceTemplateUseCase;
     private final EServiceTemplateVersionUseCase eServiceTemplateVersionUseCase;
+    private final EServiceTemplateRequestFactory requestFactory;
     private final EntityStore entityStore;
 
     @Override
     public EServiceTemplateJourneyImpl createEServiceTemplate(EServiceTemplateCreationCommand command, EServiceTemplateVersionState targetState) {
         EServiceTemplate draftTemplate = eServiceTemplateUseCase.createEServiceTemplate(command);
-        return processLifecycle(draftTemplate, draftTemplate.getLastDraftVersion(), targetState);
+        return processLifecycle(draftTemplate, draftTemplate.getLastDraftVersion(), targetState, command);
     }
 
     @Override
@@ -66,25 +68,29 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
         return this;
     }
 
-    private EServiceTemplateJourneyImpl processLifecycle(
-            EServiceTemplate eServiceTemplate,
-            EServiceTemplateVersion eServiceTemplateVersion,
-            EServiceTemplateVersionState targetState
-    ) {
-        entityStore.upsert(eServiceTemplate);
+
+    private EServiceTemplateJourneyImpl processLifecycle(EServiceTemplate template, EServiceTemplateVersion version, EServiceTemplateVersionState targetState, EServiceTemplateCreationCommand configuration) {
+        entityStore.upsert(template);
 
         return switch (targetState) {
             case DRAFT -> this;
-            case PUBLISHED -> publishPipeline(eServiceTemplate, eServiceTemplateVersion);
+
+            case PUBLISHED -> publishPipeline(template, version, configuration);
+
             default -> throw new UnsupportedOperationException(
-                    String.format("Transition to state %s is not yet supported in Template Journey.", targetState)
+                    String.format("La transizione allo stato %s non è ancora supportata nel Journey.", targetState)
             );
         };
     }
 
-    private EServiceTemplateJourneyImpl publishPipeline(EServiceTemplate eServiceTemplate, EServiceTemplateVersion eServiceTemplateVersion) {
-        eServiceTemplateVersionUseCase.prepareVersionForPublication(eServiceTemplate, eServiceTemplateVersion);
-        eServiceTemplateVersionUseCase.publishVersion(eServiceTemplate, eServiceTemplateVersion);
+    private EServiceTemplateJourneyImpl processLifecycle(EServiceTemplate template, EServiceTemplateVersion version, EServiceTemplateVersionState targetState) {
+        return processLifecycle(template, version, targetState, requestFactory.defaultCreationEServiceTemplateCommand());
+    }
+
+    private EServiceTemplateJourneyImpl publishPipeline(EServiceTemplate eServiceTemplate, EServiceTemplateVersion eServiceTemplateVersion, EServiceTemplateCreationCommand configuration) {
+        var enrichedVersion = eServiceTemplateVersionUseCase.prepareVersionForPublishing(eServiceTemplate, eServiceTemplateVersion);
+        var publishedVersion = eServiceTemplateVersionUseCase.publishVersion(eServiceTemplate, enrichedVersion);
+        eServiceTemplateVersionUseCase.downloadInterface(eServiceTemplate, publishedVersion);
         return this;
     }
 }

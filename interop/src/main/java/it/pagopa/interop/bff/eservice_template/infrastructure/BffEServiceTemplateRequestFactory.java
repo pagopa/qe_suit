@@ -3,7 +3,6 @@ package it.pagopa.interop.bff.eservice_template.infrastructure;
 import it.pagopa.interop.bff.eservice_template.application.*;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.application.command.*;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplatePreparationConfiguration;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.instancio.Instancio;
@@ -20,17 +19,6 @@ public class BffEServiceTemplateRequestFactory implements EServiceTemplateReques
     @Override
     public EServiceTemplateCreationCommand defaultCreationEServiceTemplateCommand() {
         return BffEServiceTemplateCreationCommand.from(creationRequest());
-    }
-
-
-    @Override
-    //TODO: passarlo come metodo di default in EServiceTemplateRequestFactory
-    public EServiceTemplateCreationCommand defaultCreationEServiceTemplateCommand(EServiceTemplatePreparationConfiguration configuration) {
-        var command = defaultCreationEServiceTemplateCommand();
-        command.technology(configuration.getTechnology());
-        command.interfaceDocumentPath(configuration.getInterfaceFixture());
-
-        return command;
     }
 
     @Override

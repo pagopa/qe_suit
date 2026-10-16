@@ -1,19 +1,20 @@
 package it.pagopa.interop.common.eservice_template.application;
 
-import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateCreationCommand;
+import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplatePreparationConfiguration;
-import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateCommand;
-import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateDescriptionCommand;
-import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateIntendedTargetCommand;
-import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateNameCommand;
-import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import org.springframework.plugin.core.Plugin;
 
 public interface EServiceTemplateRequestFactory extends Plugin<Channel> {
     EServiceTemplateCreationCommand defaultCreationEServiceTemplateCommand();
 
-    EServiceTemplateCreationCommand defaultCreationEServiceTemplateCommand(EServiceTemplatePreparationConfiguration configuration);
+    default EServiceTemplateCreationCommand defaultCreationEServiceTemplateCommand(EServiceTemplatePreparationConfiguration configuration) {
+        var command = defaultCreationEServiceTemplateCommand();
+        command.technology(configuration.getTechnology());
+        command.interfaceDocumentPath(configuration.getInterfaceFixture());
+
+        return command;
+    }
 
     UpdateEServiceTemplateCommand defaultUpdateEServiceTemplateCommand();
 

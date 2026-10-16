@@ -1,7 +1,6 @@
 package it.pagopa.interop.suite.contract;
 
 import it.pagopa.interop.TestBootApp;
-import it.pagopa.interop.bff.eservice_template.application.BffEServiceTemplateCreationCommand;
 import it.pagopa.interop.bff.eservice_template.infrastructure.BffEServiceTemplateRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
@@ -74,10 +73,7 @@ public class BffEServiceTemplateContractTest {
     private UUID createPublishedEServiceTemplateId() {
         EServiceTemplate eServiceTemplate = interopJourney
                 .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
-                .createEServiceTemplate(
-                        BffEServiceTemplateCreationCommand.from(requestFactory.creationRequest()),
-                        EServiceTemplateVersionState.PUBLISHED
-                )
+                .createEServiceTemplate(EServiceTemplateVersionState.PUBLISHED)
                 .get(EServiceTemplate.class);
 
         return eServiceTemplate.getId();
