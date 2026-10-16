@@ -110,8 +110,8 @@ public class WebEServiceThresholdContractTest {
 
     private void fillThresholdsAndSave(EServiceCreatePage page, String dailyCallsPerConsumer, String dailyCallsTotal) {
         var thresholdSection = page.thresholdAndAttributeForm().apiCallThresholdSection();
-        thresholdSection.dailyCallsPerConsumerInput().fill(dailyCallsPerConsumer);
-        thresholdSection.dailyCallsTotalInput().fill(dailyCallsTotal);
+        thresholdSection.dailyCallsPerConsumerInput().cleanAndWrite(dailyCallsPerConsumer);
+        thresholdSection.dailyCallsTotalInput().cleanAndWrite(dailyCallsTotal);
         page.thresholdAndAttributeForm().saveDraftButton().click();
     }
 
