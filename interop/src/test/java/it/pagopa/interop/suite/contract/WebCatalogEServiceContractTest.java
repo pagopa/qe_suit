@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
@@ -42,6 +43,7 @@ import java.util.stream.Stream;
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
+@Tag("wait_for_qa")
 public class WebCatalogEServiceContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
