@@ -8,6 +8,8 @@ import org.springframework.plugin.core.Plugin;
 
 public interface TenantGateway extends Plugin<Channel> {
 
+    void enableProducerDelegationAvailability();
+
     void assignCertifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef);
 
     void assignCertifiedDiscreteAttribute(TenantRef tenantRef, AttributeRef attributeRef, int value);

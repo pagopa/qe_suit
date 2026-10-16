@@ -3,14 +3,21 @@ package it.pagopa.interop.bff.tenant.infrastructure;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.tenant.application.*;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.tenant.application.TenantGateway;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +25,33 @@ public class BffTenantGateway implements TenantGateway {
 
     private final BffTenantRestClient restClient;
     private final BffTenantRequestFactory requestFactory;
+    private final CurrentUserSession currentUserSession;
+
+    @Override
+    public void enableProducerDelegationAvailability() {
+        UUID tenantId = currentUserSession.getTenant().getOrganizationId();
+        Tenant tenant = restClient.getTenant(tenantId)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        if (isProducerDelegationEnabled(tenant)) {
+            return;
+        }
+
+        boolean consumerEnabled = isConsumerDelegationEnabled(tenant);
+        var payload = new TenantDelegatedFeaturesFlagsUpdateSeed()
+                .isDelegatedProducerFeatureEnabled(true)
+                .isDelegatedConsumerFeatureEnabled(consumerEnabled);
+        executeWithPolling(restClient.updateDelegatedFeatures(payload));
+
+        Tenant updatedTenant = restClient.getTenant(tenantId)
+                .withPolling(response -> response.isSuccess()
+                        && isProducerDelegationEnabled(response.as(Tenant.class)))
+                .get();
+        assertThat(isConsumerDelegationEnabled(updatedTenant))
+                .as("Consumer delegation availability must remain unchanged")
+                .isEqualTo(consumerEnabled);
+    }
 
     @Override
     public void assignCertifiedAttribute(@NonNull TenantRef tenantRef, @NonNull AttributeRef attributeRef) {
@@ -79,5 +113,13 @@ public class BffTenantGateway implements TenantGateway {
 
     private static void executeWithPolling(TestChain<Void> chain) {
         chain.withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+    }
+
+    private static boolean isProducerDelegationEnabled(Tenant tenant) {
+        return tenant.getFeatures().stream().anyMatch(feature -> feature.getDelegatedProducer() != null);
+    }
+
+    private static boolean isConsumerDelegationEnabled(Tenant tenant) {
+        return tenant.getFeatures().stream().anyMatch(feature -> feature.getDelegatedConsumer() != null);
     }
 }
