@@ -10,5 +10,7 @@ public interface DelegationJourney<SELF extends DelegationJourney<SELF>> extends
 
     SELF createProducerDelegation(TenantRef delegateRef, EServiceRef eServiceRef);
 
+    SELF createProducerDelegation(TenantRef delegateRef);
+
     SELF approveConsumerDelegation(DelegationRef delegationRef);
 }
