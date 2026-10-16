@@ -510,14 +510,10 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
             } catch (StaleElementReferenceException | ElementClickInterceptedException | TimeoutException e) {
                 lastException = e;
                 try {
-                    log.info("Eccezione durante l'azione ({}), esecuzione refresh della pagina nel browser...", e.getClass().getSimpleName());
-                    driver.navigate().refresh();
-                    Thread.sleep(1000);
+                    Thread.sleep(500);
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                     throw new RuntimeException("Interrupted during retry", ie);
-                } catch (Exception refreshEx) {
-                    log.warn("Errore durante il refresh del browser nel retry: {}", refreshEx.getMessage());
                 }
             }
         }
