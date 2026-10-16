@@ -1,9 +1,10 @@
 package it.pagopa.interop.common.eservice_template.domain;
 
+import it.pagopa.domain.Identifiable;
 import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.kernel.domain.DocumentRef;
-import it.pagopa.domain.Identifiable;
+import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
@@ -25,7 +26,7 @@ public class EServiceTemplateVersion implements Identifiable {
     Integer dailyCallsTotal;
     AgreementApprovalPolicy agreementApprovalPolicy;
     Attributes attributes;
-    DocumentRef interfaceDocument;
+    EServiceTemplateInterface interfaceDocument;
     Instant createdAt;
     Instant publishedAt;
     Instant suspendedAt;
@@ -39,5 +40,9 @@ public class EServiceTemplateVersion implements Identifiable {
 
     @Singular("serverUrl")
     List<String> serverUrls;
+
+    public EServiceTemplateVersionRef getRef() {
+        return EServiceTemplateVersionRef.of(this.id);
+    }
 }
 

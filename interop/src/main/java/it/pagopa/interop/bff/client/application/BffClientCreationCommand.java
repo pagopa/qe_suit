@@ -8,21 +8,32 @@ import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 @Getter
+@NoArgsConstructor
 public class BffClientCreationCommand implements ClientCreationCommand {
 
     @NotNull
-    private final ClientSeed clientSeed = new ClientSeed();
+    private ClientSeed clientSeed = new ClientSeed();
+    private UserRef admin;
     private final List<UserRef> users = new ArrayList<>();
     private final List<BffClientKeyCreationCommand> keysCommands = new ArrayList<>();
 
     @NotNull
     private ClientKind clientKind;
+
+    private BffClientCreationCommand(ClientSeed clientSeed) {
+        this.clientSeed = clientSeed;
+    }
+
+    public static BffClientCreationCommand from(ClientSeed seed) {
+        return new BffClientCreationCommand(seed);
+    }
 
     @Override
     public ClientCreationCommand name(String name) {
@@ -55,6 +66,12 @@ public class BffClientCreationCommand implements ClientCreationCommand {
                         .toList()
         );
 
+        return this;
+    }
+
+    @Override
+    public ClientCreationCommand admin(UserRef adminRef) {
+        this.admin = adminRef;
         return this;
     }
 }

@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Slf4jLogger implements ILogger {
-    private static final Logger logger = LoggerFactory.getLogger("E2E-Framework");
+    private static final Logger logger = LoggerFactory.getLogger(Slf4jLogger.class);
 
     @Override
     public void logAction(String selector, String actionType, String details) {

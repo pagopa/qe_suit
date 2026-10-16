@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 record HttpContractRequest(
         JsonNode payload,
         boolean payloadPresent,
-        JsonNode pathParams
+        JsonNode pathParams,
+        JsonNode queryParams
 ) {
+    HttpContractRequest(JsonNode payload, boolean payloadPresent, JsonNode pathParams) {
+        this(payload, payloadPresent, pathParams, null);
+    }
 }

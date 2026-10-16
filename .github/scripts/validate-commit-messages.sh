@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT_DIR="$(git rev-parse --show-toplevel)"
-VALIDATOR="$ROOT_DIR/.github/scripts/validate-commit-message.sh"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VALIDATOR="$SCRIPT_DIR/validate-commit-message.sh"
 
 RANGE="${1:-}"
 MAX_COMMITS="${MAX_COMMITS:-50}"

@@ -94,6 +94,11 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
         <!-- ========================= -->
         <!-- SPRING PLUGIN -->
         <!-- ========================= -->
@@ -293,6 +298,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <testClassesDirectory>${project.build.outputDirectory}</testClassesDirectory>
+                    <includes>
+                        <include>**/suite/**</include>
+                    </includes>
                     <useModulePath>false</useModulePath>
                 </configuration>
             </plugin>
