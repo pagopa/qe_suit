@@ -1,10 +1,7 @@
 package it.pagopa.interop.suite;
 
 import it.pagopa.infrastructure.reporting.contract.lifecycle.GenerateContractReport;
-import it.pagopa.interop.suite.contract.WebAgreementContractTest;
-import it.pagopa.interop.suite.contract.WebConsumerPurposeTemplateCatalogPageContractTest;
-import it.pagopa.interop.suite.contract.WebDebugClientAssertionContractTest;
-import it.pagopa.interop.suite.contract.WebTOSContractTest;
+import it.pagopa.interop.suite.contract.*;
 import org.junit.platform.suite.api.*;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
@@ -14,7 +11,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @IncludeEngines({"cucumber", "junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
 @SelectClasses({
-        WebAgreementContractTest.class,
+        WebConsumerAgreementContractTest.class,
         WebConsumerPurposeTemplateCatalogPageContractTest.class,
         WebDebugClientAssertionContractTest.class,
         WebTOSContractTest.class
