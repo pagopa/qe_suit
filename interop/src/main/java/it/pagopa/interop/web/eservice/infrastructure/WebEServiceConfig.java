@@ -5,6 +5,7 @@ import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCatalogPage;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceDetailPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Bean;
@@ -31,6 +32,12 @@ public class WebEServiceConfig {
     @ScenarioScope
     public EServiceDetailPage eServiceDetailPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(EServiceDetailPage.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public ProducerEServiceDetailPage producerEServiceDetailPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(ProducerEServiceDetailPage.class);
     }
 
 }

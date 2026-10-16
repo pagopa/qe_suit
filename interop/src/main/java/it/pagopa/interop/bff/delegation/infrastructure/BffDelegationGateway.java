@@ -7,6 +7,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,17 +21,25 @@ public class BffDelegationGateway implements DelegationGateway {
     private final BffDelegationMapper mapper;
 
     @Override
-    public Delegation createConsumerDelegation(@NonNull TenantRef delegateRef, @NonNull EServiceRef eServiceRef) {
-        return restClient.createConsumerDelegation(delegateRef.id(), eServiceRef.id())
+    public Delegation createProducerDelegation(@NonNull TenantRef delegateRef, @NonNull EServiceRef eServiceRef) {
+        return restClient.createProducerDelegation(delegateRef.id(), eServiceRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(mapper::toDelegation)
-                .updateContext()
+                .map(createdResource -> awaitDelegation(
+                        DelegationRef.of(createdResource.getId()), DelegationState.WAITING_FOR_APPROVAL))
                 .get();
     }
 
     @Override
-    public Delegation createProducerDelegation(@NonNull TenantRef delegateRef, @NonNull EServiceRef eServiceRef) {
-        return restClient.createProducerDelegation(delegateRef.id(), eServiceRef.id())
+    public void approveProducerDelegation(@NonNull DelegationRef delegationRef) {
+        restClient.approveProducerDelegation(delegationRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+        awaitDelegation(delegationRef, DelegationState.ACTIVE);
+    }
+
+    @Override
+    public Delegation createConsumerDelegation(@NonNull TenantRef delegateRef, @NonNull EServiceRef eServiceRef) {
+        return restClient.createConsumerDelegation(delegateRef.id(), eServiceRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(mapper::toDelegation)
                 .updateContext()
@@ -45,5 +54,15 @@ public class BffDelegationGateway implements DelegationGateway {
     @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
+    }
+
+    private Delegation awaitDelegation(DelegationRef delegationRef, DelegationState expectedState) {
+        return restClient.getDelegation(delegationRef.id())
+                .withPolling(response -> response.isSuccess()
+                        && response.as(it.pagopa.interop.generated.openapi.clients.bff.model.Delegation.class)
+                        .getState() == expectedState)
+                .map(mapper::toDelegation)
+                .updateContext()
+                .get();
     }
 }
