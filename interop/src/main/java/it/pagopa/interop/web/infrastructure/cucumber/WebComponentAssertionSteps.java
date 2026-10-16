@@ -18,10 +18,10 @@ public class WebComponentAssertionSteps {
                 .isEqualTo(successMessage);
     }
 
-    @Then("viene mostrata la snackbar con un messaggio di errore contenente {string}")
+    @Then("viene mostrata la snackbar con un messaggio di errore {string}")
     public void assertSnackbar(String errorMessage) {
         assertThat(webCommonGateway.getSnackbarErrorMessage())
                 .as("Messaggio di errore visualizzato nella snackbar")
-                .contains(errorMessage);
+                .isEqualTo(errorMessage);
     }
 }
