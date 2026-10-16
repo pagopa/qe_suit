@@ -11,8 +11,8 @@ import org.assertj.core.api.SoftAssertions;
 
 import java.util.List;
 
-@Url("${interop.web.agreement}/${agreementId}")
-public interface AgreementPage extends Page {
+@Url("${interop.web.consumer-agreement-list}/${agreementId}")
+public interface ConsumerAgreementPage extends Page {
 
     @XPath(".//h2")
     Readable<String> pageTitle();
