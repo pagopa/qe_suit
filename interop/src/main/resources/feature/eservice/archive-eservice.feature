@@ -7,10 +7,11 @@ Feature: Coerenza dell'archiviazione di un e-service e delle sue versioni
   Affinché l'e-service non venga archiviato prima di una sua versione.
 
   Scenario: [ESERVICE_ARCHIVING_GRACE_PERIOD_1] - Impossibilità di archiviare un e-service prima di una sua versione
-  Dato un e-service con una richiesta di fruizione attiva sulla prima versione e una seconda versione pubblicata
-  e la prima versione in fase di archiviazione con un periodo di preavviso di 120 giorni
-  quando l'erogatore proprietario tenta di archiviare l'intero e-service con un periodo di preavviso di 60 giorni
-  allora il sistema rifiuta l'operazione e mostra il messaggio specifico di errore
+  Dato un e-service con due versioni: la prima, meno recente, in stato ARCHIVING e con una richiesta di fruizione attiva
+  e la seconda, più recente, in stato PUBLISHED
+  Quando l'erogatore proprietario tenta di archiviare l'intero e-service
+  scegliendo un preavviso che ne prevede l'archiviazione prima della data già pianificata per la prima versione,
+  allora il sistema rifiuta l'operazione e mostra il messaggio di errore che invita a selezionare una durata più lunga
 
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     And un admin appartenente all'erogatore Comune di Milano
