@@ -32,5 +32,4 @@ public class WebEServiceConfig {
     public EServiceDetailPage eServiceDetailPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(EServiceDetailPage.class);
     }
-
 }

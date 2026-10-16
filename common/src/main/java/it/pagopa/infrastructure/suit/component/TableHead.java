@@ -7,7 +7,7 @@ import java.util.List;
 
 @XPath(".//*[contains(@class, 'MuiTableHead-root')]")
 public interface TableHead extends Component {
-    
+
     @XPath(".//tr")
     List<TableRow> rows();
 }
