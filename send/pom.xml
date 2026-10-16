@@ -444,41 +444,6 @@
                             </configOptions>
                         </configuration>
                     </execution>
-
-                    <!-- Pn Template Engine -->
-                    <execution>
-                        <id>generate-template-internal-client</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <typeMappings>
-                                <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
-                            </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-templates-engine/refs/tags/v1.17.0-RC.1/docs/openapi/pn-internal-templates-v1.yaml</inputSpec>
-                            <generatorName>java</generatorName>
-                            <library>rest-assured</library>
-                            <generateApiTests>false</generateApiTests>
-                            <generateModelTests>false</generateModelTests>
-                            <skipValidateSpec>true</skipValidateSpec>
-                            <configOptions>
-                                <apiPackage>it.pagopa.send.generated.openapi.clients.internal.template.api</apiPackage>
-                                <modelPackage>it.pagopa.send.generated.openapi.clients.internal.template.model</modelPackage>
-                                <dateLibrary>java8</dateLibrary>
-                                <annotationLibrary>none</annotationLibrary>
-                                <documentationProvider>source</documentationProvider>
-                                <openApiNullable>false</openApiNullable>
-                                <useAbstractionForFiles>true</useAbstractionForFiles>
-                                <useBeanValidation>false</useBeanValidation>
-                                <serializableModel>true</serializableModel>
-                                <serializationLibrary>jackson</serializationLibrary>
-                                <additionalModelTypeAnnotations>
-                                    @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
-                                </additionalModelTypeAnnotations>
-                            </configOptions>
-                        </configuration>
-                    </execution>
                 </executions>
             </plugin>
 
