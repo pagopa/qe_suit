@@ -2,14 +2,7 @@ package it.pagopa.interop.bff.eservice_template.infrastructure;
 
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorMapper;
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
-import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
-import it.pagopa.interop.common.attribute.domain.Attributes;
-import it.pagopa.interop.common.eservice.domain.EServiceMode;
-import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
+import it.pagopa.interop.common.eservice_template.domain.*;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.kernel.domain.DocumentRef;
@@ -17,99 +10,117 @@ import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServiceTemplateVersion;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
-import org.mapstruct.Mapper;
+import org.mapstruct.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Mapper(
         config = TestMapperConfig.class,
-        uses = {BffEServiceDescriptorMapper.class, SharedMapper.class, BffCommonMapper.class}
+        uses = {
+                BffEServiceDescriptorMapper.class,
+                SharedMapper.class,
+                BffCommonMapper.class
+        }
 )
 public interface BffEServiceTemplateMapper {
 
-    default EServiceTemplate toEServiceTemplate(EServiceTemplateVersionDetails source) {
-        return toEServiceTemplate(source, null);
-    }
+    @Mapping(target = "creatorId", source = "creator.id")
+    @Mapping(target = "state", source = ".", qualifiedByName = "resolveTemplateState")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "versions", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "riskAnalyses", ignore = true)
+    @Mapping(target = "riskAnalysis", ignore = true)
+    EServiceTemplate toTemplateBase(EServiceTemplateDetails source);
 
-    default EServiceTemplate toEServiceTemplate(
-            EServiceTemplateVersionDetails source,
-            EServiceTemplate existing
-    ) {
-        var template = source.getEserviceTemplate();
-        var document = source.getInterface();
-        EServiceTemplateVersion oldVersion = existing == null ? null : existing.getVersions().stream()
-                .filter(version -> version.getId().equals(source.getId()))
-                .findFirst()
-                .orElse(null);
-        EServiceTemplateInterface interfaceDocument = toInterface(document, template.getId(), source.getId());
-        if (interfaceDocument != null && oldVersion != null && oldVersion.getInterfaceDocument() != null
-                && oldVersion.getInterfaceDocument().getId().equals(interfaceDocument.getId())) {
-            EServiceTemplateInterface previous = oldVersion.getInterfaceDocument();
-            interfaceDocument = previous.refreshMetadata(interfaceDocument);
+    @Mapping(
+            target = "version",
+            expression = "java(source.getVersion() == null ? null : String.valueOf(source.getVersion()))"
+    )
+    @Mapping(target = "voucherLifespan", ignore = true)
+    @Mapping(target = "dailyCallsPerConsumer", ignore = true)
+    @Mapping(target = "dailyCallsTotal", ignore = true)
+    @Mapping(target = "agreementApprovalPolicy", ignore = true)
+    @Mapping(target = "attributes", ignore = true)
+    @Mapping(target = "interfaceDocument", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "publishedAt", ignore = true)
+    @Mapping(target = "suspendedAt", ignore = true)
+    @Mapping(target = "archivedAt", ignore = true)
+    @Mapping(target = "docs", expression = "java(new java.util.ArrayList<>())")
+    @Mapping(target = "audience", expression = "java(new java.util.ArrayList<>())")
+    @Mapping(target = "serverUrls", expression = "java(new java.util.ArrayList<>())")
+    EServiceTemplateVersion toTemplateVersion(CompactEServiceTemplateVersion source);
+
+    @Mapping(target = "version", expression = "java(source.getVersion() == null ? null : String.valueOf(source.getVersion()))")
+    @Mapping(target = "interfaceDocument", expression = "java(toInterface(source.getInterface(), source.getEserviceTemplate().getId(), source.getId()))")
+    @Mapping(target = "docs", source = "docs", qualifiedByName = "templateDocumentRefs")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "publishedAt", ignore = true)
+    @Mapping(target = "suspendedAt", ignore = true)
+    @Mapping(target = "archivedAt", ignore = true)
+    @Mapping(target = "audience", expression = "java(new java.util.ArrayList<>())")
+    @Mapping(target = "serverUrls", expression = "java(new java.util.ArrayList<>())")
+    EServiceTemplateVersion toDetailedTemplateVersion(EServiceTemplateVersionDetails source);
+
+    @ValueMapping(source = MappingConstants.ANY_REMAINING, target = "UNKNOWN")
+    EServiceTemplateVersionState toDomainVersionState(it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState source);
+
+    @Mapping(target = "id", source = "source.eserviceTemplate.id")
+    @Mapping(target = "creatorId", source = "source.eserviceTemplate.creator.id")
+    @Mapping(target = "name", source = "source.eserviceTemplate.name")
+    @Mapping(target = "description", source = "source.eserviceTemplate.description")
+    @Mapping(target = "intendedTarget", source = "source.eserviceTemplate.intendedTarget")
+    @Mapping(target = "technology", source = "source.eserviceTemplate.technology")
+    @Mapping(target = "mode", source = "source.eserviceTemplate.mode")
+    @Mapping(target = "state", source = "source.eserviceTemplate", qualifiedByName = "resolveTemplateState")
+    @Mapping(target = "personalData", source = "source.eserviceTemplate.personalData")
+    @Mapping(target = "createdAt", source = "existing.createdAt")
+    @Mapping(target = "updatedAt", source = "existing.updatedAt")
+    @Mapping(target = "versions", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "riskAnalyses", expression = "java(resolveRiskAnalyses(source, existing))")
+    @Mapping(target = "riskAnalysis", ignore = true)
+    EServiceTemplate toTemplateFromVersionDetails(EServiceTemplateVersionDetails source, EServiceTemplate existing);
+
+    @Named("resolveTemplateState")
+    default EServiceTemplateState resolveTemplateState(EServiceTemplateDetails source) {
+        if (source == null) {
+            return EServiceTemplateState.UNKNOWN;
         }
 
-        EServiceTemplateVersion version = EServiceTemplateVersion.builder()
-                .id(source.getId())
-                .version(source.getVersion() == null ? null : source.getVersion().toString())
-                .state(EServiceTemplateVersionState.valueOf(source.getState().getValue()))
-                .voucherLifespan(source.getVoucherLifespan())
-                .dailyCallsPerConsumer(source.getDailyCallsPerConsumer())
-                .dailyCallsTotal(source.getDailyCallsTotal())
-                .agreementApprovalPolicy(source.getAgreementApprovalPolicy() == null
-                        ? null
-                        : AgreementApprovalPolicy.valueOf(source.getAgreementApprovalPolicy().getValue()))
-                .attributes(source.getAttributes() == null ? null : toAttributes(source.getAttributes()))
-                .interfaceDocument(interfaceDocument)
-                .docs(toDocumentRefs(source.getDocs()))
-                .build();
-
-        List<EServiceTemplateVersion> versions = new ArrayList<>();
-        if (existing != null) {
-            existing.getVersions().stream()
-                    .filter(currentVersion -> !currentVersion.getId().equals(versionId(source)))
-                    .forEach(versions::add);
+        if (source.getDraftVersion() != null) {
+            return EServiceTemplateState.DRAFT;
         }
-        versions.add(version);
-        var templateBuilder = EServiceTemplate.builder()
-                .id(template.getId())
-                .creatorId(template.getCreator() == null ? null : template.getCreator().getId())
-                .name(template.getName())
-                .description(template.getDescription())
-                .intendedTarget(template.getIntendedTarget())
-                .technology(EServiceTechnology.valueOf(template.getTechnology().getValue()))
-                .mode(EServiceMode.valueOf(template.getMode().getValue()))
-                .personalData(template.getPersonalData())
-                .versions(versions);
 
-        if (template.getRiskAnalysis() != null) {
-            template.getRiskAnalysis().stream()
-                    .map(riskAnalysis -> EServiceRiskAnalysis.builder()
-                            .id(riskAnalysis.getId())
-                            .name(riskAnalysis.getName())
-                            .riskAnalysisForm(riskAnalysis.getRiskAnalysisForm() == null
-                                    ? null
-                                    : RiskAnalysisForm.builder()
-                                            .version(riskAnalysis.getRiskAnalysisForm().getVersion())
-                                            .answers(riskAnalysis.getRiskAnalysisForm().getAnswers())
-                                            .build())
-                            .build())
-                    .forEach(templateBuilder::riskAnalysis);
-        } else if (existing != null) {
-            existing.getRiskAnalyses().forEach(templateBuilder::riskAnalysis);
+        if (source.getVersions() == null || source.getVersions().isEmpty()) {
+            return EServiceTemplateState.UNKNOWN;
         }
-        return templateBuilder.build();
+
+        boolean hasPublished = source.getVersions().stream()
+                .anyMatch(version ->
+                        version.getState()
+                                == it.pagopa.interop.generated.openapi.clients.bff.model
+                                .EServiceTemplateVersionState.PUBLISHED
+                );
+
+        return hasPublished
+                ? EServiceTemplateState.PUBLISHED
+                : EServiceTemplateState.UNKNOWN;
     }
 
-    private static UUID versionId(EServiceTemplateVersionDetails source) {
-        return source.getId();
-    }
-
-    private static EServiceTemplateInterface toInterface(EServiceDoc source, UUID templateId, UUID versionId) {
-        return source == null ? null : new EServiceTemplateInterface(
+    default EServiceTemplateInterface toInterface(EServiceDoc source, UUID templateId, UUID versionId) {
+        return source == null
+                ? null
+                : new EServiceTemplateInterface(
                 source.getId(),
                 new EServiceTemplateRef(templateId),
                 new EServiceTemplateVersionRef(versionId),
@@ -122,18 +133,51 @@ public interface BffEServiceTemplateMapper {
     }
 
     default DocumentRef toDocumentRef(EServiceDoc source) {
-        return source == null ? null : DocumentRef.builder().id(source.getId()).build();
+        return source == null
+                ? null
+                : DocumentRef.builder()
+                .id(source.getId())
+                .build();
     }
 
+    @Named("templateDocumentRefs")
     default List<DocumentRef> toDocumentRefs(List<EServiceDoc> source) {
         return source == null
-                ? List.of()
-                : source.stream().map(this::toDocumentRef).toList();
+                ? new ArrayList<>()
+                : source.stream()
+                .map(this::toDocumentRef)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
-    default Attributes toAttributes(
-            it.pagopa.interop.generated.openapi.clients.bff.model.DescriptorAttributes source
-    ) {
-        return org.mapstruct.factory.Mappers.getMapper(BffEServiceDescriptorMapper.class).toAttributes(source);
+    default List<EServiceRiskAnalysis> resolveRiskAnalyses(EServiceTemplateVersionDetails source, EServiceTemplate existing) {
+        var riskAnalyses = source.getEserviceTemplate().getRiskAnalysis();
+
+        if (riskAnalyses == null) {
+            return existing != null && existing.getRiskAnalyses() != null
+                    ? new ArrayList<>(existing.getRiskAnalyses())
+                    : new ArrayList<>();
+        }
+
+        return riskAnalyses.stream()
+                .map(riskAnalysis -> EServiceRiskAnalysis.builder()
+                        .id(riskAnalysis.getId())
+                        .name(riskAnalysis.getName())
+                        .riskAnalysisForm(
+                                riskAnalysis.getRiskAnalysisForm() == null
+                                        ? null
+                                        : RiskAnalysisForm.builder()
+                                        .version(
+                                                riskAnalysis.getRiskAnalysisForm()
+                                                        .getVersion()
+                                        )
+                                        .answers(
+                                                riskAnalysis.getRiskAnalysisForm()
+                                                        .getAnswers()
+                                        )
+                                        .build()
+                        )
+                        .build()
+                )
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }
