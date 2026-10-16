@@ -24,7 +24,7 @@ import org.springframework.test.context.TestConstructor;
 import java.util.List;
 import java.util.stream.Stream;
 
-@ActiveProfiles({"test", "junit"})
+@ActiveProfiles({"hotfix", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
