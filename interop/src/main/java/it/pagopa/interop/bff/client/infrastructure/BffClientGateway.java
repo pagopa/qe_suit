@@ -1,15 +1,18 @@
 package it.pagopa.interop.bff.client.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.template.action.TestChain;
+import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.client.application.BffClientCreationCommand;
 import it.pagopa.interop.bff.client.application.BffClientKeyCreationCommand;
 import it.pagopa.interop.common.client.application.ClientGateway;
 import it.pagopa.interop.common.client.application.command.ClientCreationCommand;
 import it.pagopa.interop.common.client.application.command.ClientKeyCreationCommand;
 import it.pagopa.interop.common.client.domain.Client;
-import it.pagopa.infrastructure.template.action.TestChain;
-import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
-import it.pagopa.application.context.EntityStore;
-import it.pagopa.interop.common.kernel.domain.*;
+import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.ClientRef;
+import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AddUsersToClientRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
@@ -52,7 +55,7 @@ public class BffClientGateway implements ClientGateway {
             case CONSUMER -> restClient.createConsumerClient(bffCommand.getClientSeed());
         };
 
-        return createClientChain
+        Client createdClient = createClientChain
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(ref -> {
                     Client client = getClient(ClientRef.of(ref.getId()));
@@ -71,6 +74,11 @@ public class BffClientGateway implements ClientGateway {
                 })
                 .updateContext()
                 .get();
+
+        if(bffCommand.getAdmin() != null)
+            return setAdmin(createdClient, bffCommand.getAdmin());
+        else
+            return createdClient;
     }
 
     @Override
@@ -116,6 +124,18 @@ public class BffClientGateway implements ClientGateway {
         return restClient.linkPurpose(client.getId(), purposeSeed)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map((Void) -> getClient(ClientRef.of(client.getId())))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public Client setAdmin(Client client, UserRef admin) {
+        return restClient.setAdmin(client.getId(), admin.getUser().getUserId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(updatedClient ->{
+                    Optional<Client> maybeClient = entityStore.getById(updatedClient.getId(), Client.class);
+                    return mapper.toClientPreservingKeysAndUsers(updatedClient, maybeClient.orElse(null));
+                })
                 .updateContext()
                 .get();
     }

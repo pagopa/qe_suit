@@ -1,8 +1,8 @@
 package it.pagopa.interop.common.infrastructure.context;
 
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.User;
 
 public class CucumberCurrentUserSession implements CurrentUserSession {
     private User currentUser;
@@ -24,13 +24,6 @@ public class CucumberCurrentUserSession implements CurrentUserSession {
     public Tenant getTenant() {
         if (currentTenant == null) throw new IllegalStateException("Current tenant is not set");
         return currentTenant;
-    }
-
-    public boolean isLoggedIn(User user, Tenant tenant) {
-        return this.currentUser != null
-                && this.currentTenant != null
-                && this.currentUser == user
-                && this.currentTenant == tenant;
     }
 
     public void reset() {
