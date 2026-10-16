@@ -3,14 +3,20 @@ package it.pagopa.send.suite.contract;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.bff.delivery.infrastructure.BffComboRestClient;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.send.generated.openapi.clients.sender.informal.bff.model.BffInformalNotificationTimelineStatusHistoryV1;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
+
+import java.time.OffsetDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -22,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  * file Gherkin (scenari @negativo) ma, non essendo flussi di business bensì verifiche di contratto
  * API, sono stati spostati qui come indicato durante la code review (mmancini95 - PR #39).
  *
- * @see BffComboRestClient
  */
 @Slf4j
 @ActiveProfiles({"test", "junit"})

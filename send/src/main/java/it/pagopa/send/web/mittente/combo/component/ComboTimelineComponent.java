@@ -12,6 +12,9 @@ public interface ComboTimelineComponent extends Component {
     @XPath(".//li[contains(@class, 'MuiTimelineItem-root')]")
     List<ComboTimelineItemComponent> items();
 
+    @XPath(".//li[contains(@class, 'MuiTimelineItem-root') and .//*[@data-testid='dateItem']]")
+    List<ComboTimelineItemComponent> itemsWithTimestamp();
+
     @Override
     default void assertLoaded() {
         SoftAssertions softly = new SoftAssertions();
