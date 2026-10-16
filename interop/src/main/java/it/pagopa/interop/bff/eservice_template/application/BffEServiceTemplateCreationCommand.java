@@ -12,12 +12,14 @@ public class BffEServiceTemplateCreationCommand implements EServiceTemplateCreat
     @Getter
     private final EServiceTemplateSeed bffCreationPayload;
 
-    private BffEServiceTemplateCreationCommand(EServiceTemplateSeed bffCreationPayload) {
-        this.bffCreationPayload = bffCreationPayload;
-    }
+    private String interfaceDocumentPath;
 
     public BffEServiceTemplateCreationCommand() {
         this.bffCreationPayload = new EServiceTemplateSeed();
+    }
+
+    private BffEServiceTemplateCreationCommand(EServiceTemplateSeed bffCreationPayload) {
+        this.bffCreationPayload = bffCreationPayload;
     }
 
     public static BffEServiceTemplateCreationCommand from(EServiceTemplateSeed seed) {
@@ -31,14 +33,14 @@ public class BffEServiceTemplateCreationCommand implements EServiceTemplateCreat
     }
 
     @Override
-    public EServiceTemplateCreationCommand intendedTarget(String intendedTarget) {
-        bffCreationPayload.setIntendedTarget(intendedTarget);
+    public EServiceTemplateCreationCommand description(String description) {
+        bffCreationPayload.setDescription(description);
         return this;
     }
 
     @Override
-    public EServiceTemplateCreationCommand description(String description) {
-        bffCreationPayload.setDescription(description);
+    public EServiceTemplateCreationCommand intendedTarget(String intendedTarget) {
+        bffCreationPayload.setIntendedTarget(intendedTarget);
         return this;
     }
 
@@ -55,14 +57,14 @@ public class BffEServiceTemplateCreationCommand implements EServiceTemplateCreat
     }
 
     @Override
-    public EServiceTemplateCreationCommand isSignalHubEnabled(Boolean isSignalHubEnabled) {
-        bffCreationPayload.setIsSignalHubEnabled(isSignalHubEnabled);
+    public EServiceTemplateCreationCommand handlePersonalData(Boolean handlePersonalData) {
+        bffCreationPayload.setPersonalData(handlePersonalData);
         return this;
     }
 
     @Override
-    public EServiceTemplateCreationCommand handlePersonalData(Boolean handlePersonalData) {
-        bffCreationPayload.setPersonalData(handlePersonalData);
+    public EServiceTemplateCreationCommand isSignalHubEnabled(Boolean isSignalHubEnabled) {
+        bffCreationPayload.setIsSignalHubEnabled(isSignalHubEnabled);
         return this;
     }
 
@@ -73,44 +75,54 @@ public class BffEServiceTemplateCreationCommand implements EServiceTemplateCreat
     }
 
     @Override
-    public EServiceTemplateCreationCommand versionDescription(String description) {
-        getOrCreateVersionSeed().setDescription(description);
+    public EServiceTemplateCreationCommand versionDescription(String versionDescription) {
+        versionSeed().setDescription(versionDescription);
         return this;
     }
 
     @Override
     public EServiceTemplateCreationCommand voucherLifespan(Integer voucherLifespan) {
-        getOrCreateVersionSeed().setVoucherLifespan(voucherLifespan);
+        versionSeed().setVoucherLifespan(voucherLifespan);
         return this;
     }
 
     @Override
     public EServiceTemplateCreationCommand dailyCallsPerConsumer(Integer dailyCallsPerConsumer) {
-        getOrCreateVersionSeed().setDailyCallsPerConsumer(dailyCallsPerConsumer);
+        versionSeed().setDailyCallsPerConsumer(dailyCallsPerConsumer);
         return this;
     }
 
     @Override
     public EServiceTemplateCreationCommand dailyCallsTotal(Integer dailyCallsTotal) {
-        getOrCreateVersionSeed().setDailyCallsTotal(dailyCallsTotal);
+        versionSeed().setDailyCallsTotal(dailyCallsTotal);
         return this;
     }
 
     @Override
-    public EServiceTemplateCreationCommand agreementApprovalPolicy(AgreementApprovalPolicy agreementApprovalPolicy) {
-        getOrCreateVersionSeed().setAgreementApprovalPolicy(
-                it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy.fromValue(
-                        agreementApprovalPolicy.name()
-                )
+    public EServiceTemplateCreationCommand agreementApprovalPolicy(AgreementApprovalPolicy policy) {
+        versionSeed().setAgreementApprovalPolicy(
+                it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy.fromValue(policy.name())
         );
         return this;
     }
 
-    private VersionSeedForEServiceTemplateCreation getOrCreateVersionSeed() {
-        if (bffCreationPayload.getVersion() == null) {
-            bffCreationPayload.setVersion(new VersionSeedForEServiceTemplateCreation());
+    @Override
+    public EServiceTemplateCreationCommand interfaceDocumentPath(String path) {
+        this.interfaceDocumentPath = path;
+        return this;
+    }
+
+    @Override
+    public String getInterfaceDocumentPath() {
+        return this.interfaceDocumentPath;
+    }
+
+    private VersionSeedForEServiceTemplateCreation versionSeed() {
+        VersionSeedForEServiceTemplateCreation version = bffCreationPayload.getVersion();
+        if (version == null) {
+            version = new VersionSeedForEServiceTemplateCreation();
+            bffCreationPayload.setVersion(version);
         }
-        return bffCreationPayload.getVersion();
+        return version;
     }
 }
-

@@ -16,9 +16,9 @@ import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.utils.RandomUtils;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -27,22 +27,13 @@ import java.util.stream.Stream;
 
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
+@RequiredArgsConstructor
 public class BffClientContractTest {
 
     private final ApiClient apiClient;
     private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final BffClientRequestFactory requestFactory;
-
-    public BffClientContractTest(ApiClient apiClient,
-        @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
-        InteropJourney interopJourney,
-        BffClientRequestFactory requestFactory) {
-            this.apiClient = apiClient;
-            this.httpContractValidator = httpContractValidator;
-            this.interopJourney = interopJourney;
-            this.requestFactory = requestFactory;
-    }
 
     @TestFactory
     Stream<DynamicTest> createConsumerClient() {

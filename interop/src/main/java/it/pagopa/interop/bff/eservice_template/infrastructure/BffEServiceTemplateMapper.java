@@ -1,26 +1,33 @@
 package it.pagopa.interop.bff.eservice_template.infrastructure;
 
+import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorMapper;
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateState;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
-import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
+import it.pagopa.interop.common.eservice_template.domain.*;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
+import it.pagopa.interop.common.kernel.domain.DocumentRef;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
+import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
+import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CompactEServiceTemplateVersion;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDoc;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.Named;
-import org.mapstruct.ValueMapping;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
+import org.mapstruct.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Mapper(
         config = TestMapperConfig.class,
-        uses = {SharedMapper.class, BffCommonMapper.class}
+        uses = {
+                BffEServiceDescriptorMapper.class,
+                SharedMapper.class,
+                BffCommonMapper.class
+        }
 )
 public interface BffEServiceTemplateMapper {
 
@@ -29,10 +36,15 @@ public interface BffEServiceTemplateMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "versions", ignore = true)
+    @Mapping(target = "version", ignore = true)
     @Mapping(target = "riskAnalyses", ignore = true)
+    @Mapping(target = "riskAnalysis", ignore = true)
     EServiceTemplate toTemplateBase(EServiceTemplateDetails source);
 
-    @Mapping(target = "version", expression = "java(source.getVersion() == null ? null : String.valueOf(source.getVersion()))")
+    @Mapping(
+            target = "version",
+            expression = "java(source.getVersion() == null ? null : String.valueOf(source.getVersion()))"
+    )
     @Mapping(target = "voucherLifespan", ignore = true)
     @Mapping(target = "dailyCallsPerConsumer", ignore = true)
     @Mapping(target = "dailyCallsTotal", ignore = true)
@@ -48,46 +60,36 @@ public interface BffEServiceTemplateMapper {
     @Mapping(target = "serverUrls", expression = "java(new java.util.ArrayList<>())")
     EServiceTemplateVersion toTemplateVersion(CompactEServiceTemplateVersion source);
 
+    @Mapping(target = "version", expression = "java(source.getVersion() == null ? null : String.valueOf(source.getVersion()))")
+    @Mapping(target = "interfaceDocument", expression = "java(toInterface(source.getInterface(), source.getEserviceTemplate().getId(), source.getId()))")
+    @Mapping(target = "docs", source = "docs", qualifiedByName = "templateDocumentRefs")
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "publishedAt", ignore = true)
+    @Mapping(target = "suspendedAt", ignore = true)
+    @Mapping(target = "archivedAt", ignore = true)
+    @Mapping(target = "audience", expression = "java(new java.util.ArrayList<>())")
+    @Mapping(target = "serverUrls", expression = "java(new java.util.ArrayList<>())")
+    EServiceTemplateVersion toDetailedTemplateVersion(EServiceTemplateVersionDetails source);
+
     @ValueMapping(source = MappingConstants.ANY_REMAINING, target = "UNKNOWN")
-    EServiceTemplateVersionState toDomainVersionState(
-            it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState source
-    );
+    EServiceTemplateVersionState toDomainVersionState(it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState source);
 
-    default EServiceTemplate toEServiceTemplatePreservingVersions(
-            EServiceTemplateDetails source,
-            EServiceTemplate existingTemplate
-    ) {
-        if (source == null) {
-            return existingTemplate;
-        }
-
-        EServiceTemplate mapped = toTemplateBase(source);
-        List<EServiceTemplateVersion> mergedVersions = new ArrayList<>();
-
-        if (existingTemplate != null && existingTemplate.getVersions() != null) {
-            mergedVersions.addAll(existingTemplate.getVersions());
-        }
-
-        if (source.getVersions() != null) {
-            source.getVersions().stream()
-                    .map(this::toTemplateVersion)
-                    .forEach(version -> upsertVersion(mergedVersions, version, true));
-        }
-
-        if (source.getDraftVersion() != null) {
-            upsertVersion(mergedVersions, toTemplateVersion(source.getDraftVersion()), true);
-        }
-
-        List<it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis> riskAnalyses =
-                existingTemplate != null && existingTemplate.getRiskAnalyses() != null
-                        ? new ArrayList<>(existingTemplate.getRiskAnalyses())
-                        : new ArrayList<>();
-
-        return mapped.toBuilder()
-                .versions(new ArrayList<>(mergedVersions))
-                .riskAnalyses(riskAnalyses)
-                .build();
-    }
+    @Mapping(target = "id", source = "source.eserviceTemplate.id")
+    @Mapping(target = "creatorId", source = "source.eserviceTemplate.creator.id")
+    @Mapping(target = "name", source = "source.eserviceTemplate.name")
+    @Mapping(target = "description", source = "source.eserviceTemplate.description")
+    @Mapping(target = "intendedTarget", source = "source.eserviceTemplate.intendedTarget")
+    @Mapping(target = "technology", source = "source.eserviceTemplate.technology")
+    @Mapping(target = "mode", source = "source.eserviceTemplate.mode")
+    @Mapping(target = "state", source = "source.eserviceTemplate", qualifiedByName = "resolveTemplateState")
+    @Mapping(target = "personalData", source = "source.eserviceTemplate.personalData")
+    @Mapping(target = "createdAt", source = "existing.createdAt")
+    @Mapping(target = "updatedAt", source = "existing.updatedAt")
+    @Mapping(target = "versions", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "riskAnalyses", expression = "java(resolveRiskAnalyses(source, existing))")
+    @Mapping(target = "riskAnalysis", ignore = true)
+    EServiceTemplate toTemplateFromVersionDetails(EServiceTemplateVersionDetails source, EServiceTemplate existing);
 
     @Named("resolveTemplateState")
     default EServiceTemplateState resolveTemplateState(EServiceTemplateDetails source) {
@@ -103,34 +105,79 @@ public interface BffEServiceTemplateMapper {
             return EServiceTemplateState.UNKNOWN;
         }
 
-        boolean hasPublished = source.getVersions().stream().anyMatch(
-                version -> version.getState() == it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionState.PUBLISHED
-        );
+        boolean hasPublished = source.getVersions().stream()
+                .anyMatch(version ->
+                        version.getState()
+                                == it.pagopa.interop.generated.openapi.clients.bff.model
+                                .EServiceTemplateVersionState.PUBLISHED
+                );
 
-        return hasPublished ? EServiceTemplateState.PUBLISHED : EServiceTemplateState.UNKNOWN;
+        return hasPublished
+                ? EServiceTemplateState.PUBLISHED
+                : EServiceTemplateState.UNKNOWN;
     }
 
-    private static void upsertVersion(
-            List<EServiceTemplateVersion> versions,
-            EServiceTemplateVersion incoming,
-            boolean overwriteCompactFields
-    ) {
-        for (int i = 0; i < versions.size(); i++) {
-            EServiceTemplateVersion current = versions.get(i);
-            if (current.getId().equals(incoming.getId())) {
-                if (overwriteCompactFields) {
-                    versions.set(i, current.toBuilder()
-                            .version(incoming.getVersion())
-                            .state(incoming.getState())
-                            .build());
-                }
-                return;
-            }
+    default EServiceTemplateInterface toInterface(EServiceDoc source, UUID templateId, UUID versionId) {
+        return source == null
+                ? null
+                : new EServiceTemplateInterface(
+                source.getId(),
+                new EServiceTemplateRef(templateId),
+                new EServiceTemplateVersionRef(versionId),
+                source.getName(),
+                source.getContentType(),
+                source.getPrettyName(),
+                source.getChecksum(),
+                null
+        );
+    }
+
+    default DocumentRef toDocumentRef(EServiceDoc source) {
+        return source == null
+                ? null
+                : DocumentRef.builder()
+                .id(source.getId())
+                .build();
+    }
+
+    @Named("templateDocumentRefs")
+    default List<DocumentRef> toDocumentRefs(List<EServiceDoc> source) {
+        return source == null
+                ? new ArrayList<>()
+                : source.stream()
+                .map(this::toDocumentRef)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    default List<EServiceRiskAnalysis> resolveRiskAnalyses(EServiceTemplateVersionDetails source, EServiceTemplate existing) {
+        var riskAnalyses = source.getEserviceTemplate().getRiskAnalysis();
+
+        if (riskAnalyses == null) {
+            return existing != null && existing.getRiskAnalyses() != null
+                    ? new ArrayList<>(existing.getRiskAnalyses())
+                    : new ArrayList<>();
         }
 
-        versions.add(incoming);
+        return riskAnalyses.stream()
+                .map(riskAnalysis -> EServiceRiskAnalysis.builder()
+                        .id(riskAnalysis.getId())
+                        .name(riskAnalysis.getName())
+                        .riskAnalysisForm(
+                                riskAnalysis.getRiskAnalysisForm() == null
+                                        ? null
+                                        : RiskAnalysisForm.builder()
+                                        .version(
+                                                riskAnalysis.getRiskAnalysisForm()
+                                                        .getVersion()
+                                        )
+                                        .answers(
+                                                riskAnalysis.getRiskAnalysisForm()
+                                                        .getAnswers()
+                                        )
+                                        .build()
+                        )
+                        .build()
+                )
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }
-
-
-
