@@ -21,6 +21,19 @@ public enum Recipient implements User {
             "PTRFNC04A01C352E",
             List.of(new OrganizationRole("MANAGER", "pg-admin"))
     ),
+    DANTE(
+            PG,
+            "DanteAlighieri",
+            "test",
+            "Vita Nova Sas",
+            "12666810299",
+            "Dante Alighieri",
+            "Alighieri",
+            "8f409ca6-fc3d-46c3-8da7-69cd9a1e9e62",
+            "e490f02e-9429-4b38-bb11-ddb8a561fb62",
+            "LGHDNT00P14D612D",
+            List.of(new OrganizationRole("MANAGER", "pg-admin"))
+    ),
     LUCREZIA(PF,
             "lucrezia",
             "password123",
