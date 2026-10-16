@@ -5,6 +5,7 @@ import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ConsumerDelegationsApi;
+import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerDelegationsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Delegation;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationSeed;
 import jakarta.annotation.Nonnull;
@@ -17,10 +18,12 @@ import java.util.function.Function;
 public class BffDelegationRestClient extends RestClient {
 
     private final ConsumerDelegationsApi consumerDelegationsApi;
+    private final ProducerDelegationsApi producerDelegationsApi;
 
     public BffDelegationRestClient(TestChainFactory chainFactory, ApiClient apiClient) {
         super(chainFactory);
         this.consumerDelegationsApi = apiClient.consumerDelegations();
+        this.producerDelegationsApi = apiClient.producerDelegations();
     }
 
     public TestChain<Delegation> createConsumerDelegation(
@@ -38,6 +41,21 @@ public class BffDelegationRestClient extends RestClient {
         );
     }
 
+    public TestChain<Delegation> createProducerDelegation(
+            @Nonnull UUID delegateId,
+            @Nonnull UUID eServiceId
+    ) {
+        DelegationSeed seed = new DelegationSeed();
+        seed.setDelegateId(delegateId);
+        seed.setEserviceId(eServiceId);
+        return execute(
+                () -> producerDelegationsApi.createProducerDelegation()
+                        .body(seed)
+                        .execute(Function.identity()),
+                Delegation.class
+        );
+    }
+
     public TestChain<Void> approveConsumerDelegation(@Nonnull UUID delegationId) {
         return execute(
                 () -> consumerDelegationsApi.approveConsumerDelegation()
@@ -47,4 +65,6 @@ public class BffDelegationRestClient extends RestClient {
                 Void.class
         );
     }
+
+
 }
