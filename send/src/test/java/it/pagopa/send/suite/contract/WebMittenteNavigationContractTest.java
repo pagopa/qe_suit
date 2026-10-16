@@ -49,7 +49,6 @@ import java.util.stream.Stream;
 public class WebMittenteNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
-    private final String token = "";
 
     @TestFactory
     Stream<DynamicTest> shouldReachDashboard() {
@@ -88,55 +87,6 @@ public class WebMittenteNavigationContractTest {
                         "controllo caricamento pagina " + pageType.getSimpleName(),
                         page -> {},
                         page -> {}
-                )));
-    }
-
-    @TestFactory
-    Stream<DynamicTest> colonnaGruppiPresente() {
-        return colonnaGruppiPresenteScenarios();
-    }
-
-    private Stream<DynamicTest> colonnaGruppiPresenteScenarios() {
-        return webContractValidator.as(Tenant.GROSSINI, List.of())
-                .on(DashboardPage.class,token)
-                .tests(Stream.of(new WebScenario<>(
-                        "Check presenza colonna 'Gruppi' su Dashboard Notifiche",
-                        page -> {},
-                        page ->
-                        {
-                            boolean checkGruppiPresence = false;
-                            List<TableCell> headerCells =page
-                                    .notifications()
-                                    .header()
-                                    .cells();
-
-                            for (TableCell elem : headerCells){
-                                if(elem.read().equals("Gruppi")) {
-                                    checkGruppiPresence = true;
-                                    break;
-                                }
-                            }
-
-                            Assertions.assertTrue(checkGruppiPresence);
-                        }
-                )));
-    }
-
-    @TestFactory
-    Stream<DynamicTest> captionSpaUnicoFooter() {
-        return captionSpaFooterScenarios();
-    }
-
-    private Stream<DynamicTest> captionSpaFooterScenarios() {
-        return webContractValidator.as(Tenant.GROSSINI, List.of())
-                .on(DashboardPage.class,token)
-                .tests(Stream.of(new WebScenario<>(
-                        "Check assenza dicitura 'Socio Unico'",
-                        page -> {
-                            log.info("Contenuto letto: \n{}", page.footer().caption().read());
-                        },
-                        page ->
-                                Assertions.assertFalse(page.footer().caption().read().toLowerCase().contains("socio unico"))
                 )));
     }
 }

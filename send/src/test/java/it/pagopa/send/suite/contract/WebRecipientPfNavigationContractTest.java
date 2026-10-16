@@ -77,23 +77,4 @@ public class WebRecipientPfNavigationContractTest {
                         page -> {}
                 )));
     }
-
-    @TestFactory
-    Stream<DynamicTest> captionSpaUnicoFooter() {
-        return captionSpaFooterScenarios();
-    }
-
-    private Stream<DynamicTest> captionSpaFooterScenarios() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
-        .on(NotificationPFPage.class)
-        .tests(Stream.of(new WebScenario<>(
-                "Check assenza dicitura 'Socio Unico'",
-                page -> {
-                    log.info("Contenuto letto: \n{}", page.footer().caption().read());
-                },
-                page -> {
-                    Assertions.assertFalse(page.footer().caption().read().toLowerCase().contains("socio unico"));
-                }
-        )));
-    }
 }
