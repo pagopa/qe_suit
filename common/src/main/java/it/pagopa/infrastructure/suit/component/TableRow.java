@@ -8,6 +8,6 @@ import java.util.List;
 @XPath(".//*[contains(@class, 'MuiTableRow-root')]")
 public interface TableRow extends Component {
 
-    @XPath(".//th | .//td")
+    @XPath("./*[self::th or self::td]")
     List<TableCell> cells();
 }
