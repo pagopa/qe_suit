@@ -80,7 +80,7 @@ token:
   supporto: ${pn.external.bearer-token.tokenSupporto}
   session:
     grossini: ${pn.external.session-token.grossini:REPLACE_ME}
-    francescopetrarca: REPLACE_ME
+    francescopetrarca: ${pn.external.session-token.francescopetrarca:REPLACE_ME}
     lucrezia: ${pn.external.session-token.lucrezia:REPLACE_ME}
 
 # ============================================================================
