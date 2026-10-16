@@ -92,12 +92,25 @@ public class WebMittenteNavigationContractTest {
                 )));
     }
 
+    /**
+     * Verifica la presenza della colonna "Gruppi" nella tabella delle notifiche
+     *
+     * <p>Il test recupera le celle dell'intestazione della tabella, ne registra
+     * i valori nei log e verifica che almeno una di esse contenga esattamente
+     * la dicitura "Gruppi".</p>
+     *
+     * <p>Il test fallisce se la colonna "Gruppi" non è presente tra le
+     * intestazioni della tabella.</p>
+     *
+     * @return uno {@link Stream} di {@link DynamicTest} contenente
+     *         lo scenario di verifica della colonna "Gruppi"
+     */
     @TestFactory
-    Stream<DynamicTest> colonnaGruppiPresente() {
-        return colonnaGruppiPresenteScenarios();
+    Stream<DynamicTest> checkColumnGroups() {
+        return checkColumnGroupsScenarios();
     }
 
-    private Stream<DynamicTest> colonnaGruppiPresenteScenarios() {
+    private Stream<DynamicTest> checkColumnGroupsScenarios() {
         return webContractValidator.as(Tenant.GROSSINI, List.of())
                 .on(DashboardPage.class,token)
                 .tests(Stream.of(new WebScenario<>(
@@ -106,7 +119,7 @@ public class WebMittenteNavigationContractTest {
                         page ->
                         {
                             log.info("Controllo presenza della colonna...");
-                            boolean checkGruppiPresence = false;
+                            boolean checkGroupsPresence = false;
                             List<TableCell> headerCells =page
                                     .notifications()
                                     .header()
@@ -116,12 +129,12 @@ public class WebMittenteNavigationContractTest {
                             for (TableCell elem : headerCells){
                                 if(elem.read().equals("Gruppi")) {
                                     log.info("Trovato elemento nella lista!");
-                                    checkGruppiPresence = true;
+                                    checkGroupsPresence = true;
                                     break;
                                 }
                             }
 
-                            Assertions.assertTrue(checkGruppiPresence);
+                            Assertions.assertTrue(checkGroupsPresence);
                         }
                 )));
     }
