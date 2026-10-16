@@ -1,18 +1,21 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
-import it.pagopa.application.context.EntityStore;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @Component
@@ -22,6 +25,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     private final EServiceUseCase eServiceUseCase;
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EntityStore entityStore;
+    private final EServiceRequestFactory requestFactory;
 
     @Override
     public EServiceJourneyImpl createEService(EServiceCreationCommand command, EServiceDescriptorState targetState) {
@@ -50,9 +54,33 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
+    public EServiceJourneyImpl updateDescriptor(UpdateEServiceDescriptorCommand command, EServiceDescriptorState state) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        EServiceDescriptor eServiceDescriptor = eService.getLastDraftDescriptor();
+        EServiceDescriptor updatedDescriptor = eServiceDescriptorUseCase.updateDescriptor(eService, eServiceDescriptor, command);
+        eService.addDescriptor(updatedDescriptor);
+        return processLifecycle(eService, updatedDescriptor, state, command);
+    }
+
+    @Override
+    public EServiceJourneyImpl updateDescriptor(Consumer<UpdateEServiceDescriptorCommand> commandConfig, EServiceDescriptorState state) {
+        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        commandConfig.accept(command);
+        return updateDescriptor(command, state);
+    }
+
+    @Override
     public EServiceJourneyImpl archiveEService(GracePeriodDays gracePeriodDays) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         eServiceUseCase.archiveEService(eService, gracePeriodDays);
+        return this;
+    }
+
+    @Override
+    public EServiceJourneyImpl archiveFirstEServiceDescriptor(GracePeriodDays gracePeriodDays) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        EServiceDescriptor descriptor = eService.getLastDeprecatedDescriptor();
+        eServiceDescriptorUseCase.archiveDescriptor(eService, descriptor, gracePeriodDays);
         return this;
     }
 
@@ -74,12 +102,16 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState targetState) {
+        return processLifecycle(eService, eServiceDescriptor, targetState, null);
+    }
+
+    private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState targetState, UpdateEServiceDescriptorCommand command) {
         entityStore.upsert(eService);
 
         return switch (targetState) {
             case DRAFT -> this;
 
-            case PUBLISHED -> publishPipeline(eService, eServiceDescriptor);
+            case PUBLISHED -> publishPipeline(eService, eServiceDescriptor, command);
 
             // Facilmente estensibile in futuro senza toccare i metodi pubblici:
             // case SUSPENDED -> publishPipeline(eService).suspendPipeline(eService);
@@ -90,8 +122,8 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         };
     }
 
-    private EServiceJourneyImpl publishPipeline(EService eService, EServiceDescriptor eServiceDescriptor) {
-        eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor);
+    private EServiceJourneyImpl publishPipeline(EService eService, EServiceDescriptor eServiceDescriptor, UpdateEServiceDescriptorCommand command) {
+        eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor, command);
         eServiceDescriptorUseCase.publishDescriptor(eService, eServiceDescriptor);
         return this;
     }
