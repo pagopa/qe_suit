@@ -59,7 +59,8 @@ public class WebDelegatedNotificationPGContractTest {
 
     /**
      * Componenti di "In arrivo per &lt;impresa&gt;" che questa pagina non ha mai: filtro "Tipologia" e banner per
-     * attivare il domicilio digitale, entrambi assenti dal DOM.
+     * attivare il domicilio digitale, entrambi assenti dal DOM. L'assenza si verifica cercando il {@code main} della
+     * pagina solo se non li contiene, per non attendere il timeout del framework su un elemento che non c'è.
      */
     @TestFactory
     Stream<DynamicTest> shouldNotShowNotificationListOnlyComponents() {
@@ -69,15 +70,15 @@ public class WebDelegatedNotificationPGContractTest {
                         new WebScenario<>(
                                 "filtro Tipologia assente",
                                 page -> {},
-                                page -> Assertions.assertThat(page.communicationTypeSelect().get(FindPolicy.PRESENT))
-                                        .as("filtro Tipologia").isNotPresent()
+                                page -> Assertions.assertThat(page.noCommunicationTypeSelect().get(FindPolicy.PRESENT))
+                                        .as("filtro Tipologia assente").isPresent()
                         ),
 
                         new WebScenario<>(
                                 "banner per attivare il domicilio digitale assente",
                                 page -> {},
-                                page -> Assertions.assertThat(page.addDomicileBanner().get(FindPolicy.PRESENT))
-                                        .as("banner del domicilio digitale").isNotPresent()
+                                page -> Assertions.assertThat(page.noAddDomicileBanner().get(FindPolicy.PRESENT))
+                                        .as("banner del domicilio digitale assente").isPresent()
                         )
                 ));
     }
