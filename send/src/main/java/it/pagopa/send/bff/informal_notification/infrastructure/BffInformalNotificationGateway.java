@@ -64,7 +64,7 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
         String apiKey = paDeliveryApiKeys.getOrDefault(sender.name(), defaultApiKey);
 
 
-        NewNotificationResponse response= informalNotificationRestClient
+        NewNotificationResponse response = informalNotificationRestClient
                 .createInformalRequest(payload)
                 .withoutPolling()
                 .get();
@@ -109,6 +109,8 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
 
         entityStore.upsert(domain);
         log.info("Comunicazione bonaria salvata in EntityStore: {}", domain);
+        request.recipients().clear();
+        request.documents().clear();
         return domain;
     }
 
@@ -120,7 +122,7 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
         String apiKey = paDeliveryApiKeys.getOrDefault(sender.name(), defaultApiKey);
 
 
-        NewNotificationResponse response= informalNotificationRestClient
+        NewNotificationResponse response = informalNotificationRestClient
                 .createInformalRequest(payload)
                 .withoutPolling()
                 .get();
@@ -144,6 +146,8 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
 
         entityStore.upsert(domain);
         log.info("Comunicazione bonaria salvata in EntityStore: {}", domain);
+        request.recipients().clear();
+        request.documents().clear();
         return domain;
     }
 

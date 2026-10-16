@@ -6,6 +6,10 @@ import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.user.domain.Recipient;
 import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.informal_notification.domain.InformalNotificationDomain;
+import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
+import it.pagopa.send.common.informal_notification.infrastructure.factory.InformalRecipientSpecFactory;
+import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.send.web.mittente.combo.infrastructure.page.MittenteComboTimelinePage;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +21,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
-import org.springframework.core.env.Environment;
-
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
@@ -41,14 +44,25 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class WebComboTimelineContractTest {
 
+    private final SendJourney sendJourney;
+    private final InformalRecipientSpecFactory informalRecipientSpecFactory;
     private final WebBrowserContractValidator webContractValidator;
-    private final Environment environment;
 
     @TestFactory
     Stream<DynamicTest> shouldValidateComboTimelinePageLayout() {
-        String campaignId = environment.getProperty("combo.campaign.fattord", "FattOrd");
-        String iun = environment.getProperty("combo.iun.fattord.flow-io-fail-email-ok",
-                environment.getProperty("combo.iun.fattord.pf", "XKDZ-PXRU-ARWP-202609-J-A"));
+        InformalRecipientSpec lucrezia = informalRecipientSpecFactory.build(Recipient.LUCREZIA, Map.of());
+
+        InformalNotificationDomain created = sendJourney
+                .withInformalSender(Tenant.GROSSINI)
+                .prepareInformalNotification(Map.of(
+                        "subject", "Test notifica bonaria per contratto Web Timeline",
+                        "campaignId", "FattOrd"
+                ))
+                .withInformalRecipient(lucrezia)
+                .sendInformalNotification(Tenant.GROSSINI);
+
+        String campaignId = created.getCampaignId();
+        String iun = created.getIun();
 
         return webContractValidator.as(Tenant.GROSSINI, List.of(Recipient.LUCREZIA))
                 .on(MittenteComboTimelinePage.class, campaignId, iun)
