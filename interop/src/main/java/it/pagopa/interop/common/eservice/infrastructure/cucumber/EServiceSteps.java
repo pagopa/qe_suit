@@ -26,6 +26,11 @@ public class EServiceSteps {
         );
     }
 
+    @When("l'erogatore archivia l'{currentEService} con un periodo di preavviso di {gracePeriodDays} giorni e una motivazione valida")
+    public void archiveEService(EService eService, GracePeriodDays gracePeriodDays) {
+        eServiceUseCase.archiveEService(eService, gracePeriodDays);
+    }
+
     @When("l'erogatore tenta di archiviare l'{currentEService} con un periodo di preavviso di {gracePeriodDays} giorni e una motivazione valida")
     public void rejectEServiceArchiving(EService eService, GracePeriodDays gracePeriodDays) {
         eServiceUseCase.shouldFailToArchiveEService(
