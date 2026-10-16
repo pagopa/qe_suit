@@ -34,10 +34,8 @@ import java.util.stream.Stream;
  * Contract test della pagina di dettaglio di una notifica a valore legale della persona giuridica
  * ({@code {baseUrl}/notifiche/<IUN>/dettaglio}).
  * <p>
- * Ogni scenario apre "In arrivo per &lt;impresa&gt;" e il dettaglio dell'ultima notifica a valore legale della lista.
- * Se nella prima pagina della lista non ci sono notifiche a valore legale, ne viene inviata una all'impresa (mittente
- * Grossini) e si apre quella, attendendo che compaia nella lista: la notifica è creata una sola volta per esecuzione,
- * anche con gli scenari in parallelo.
+ * Prima degli scenari viene inviata una notifica a valore legale all'impresa (mittente Grossini); ogni scenario ne apre
+ * il dettaglio direttamente dall'URL, con il suo IUN.
  * Si verifica quello che c'è in ogni notifica: breadcrumb, riepilogo e titoli delle sezioni. Banner, pagamenti, avvisi e
  * disservizi dipendono dalla notifica e dall'utente: non vengono verificati.
  */
@@ -52,7 +50,8 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class WebNotificationDetailPGContractTest {
 
-    private static final Recipient RECIPIENT = Recipient.PETRARCA;
+    // l'impresa deve avere un codice fiscale numerico: SEND non accetta altri codici per i destinatari PG
+    private static final Recipient RECIPIENT = Recipient.DANTE;
 
     // testi attesi
 
@@ -69,9 +68,6 @@ public class WebNotificationDetailPGContractTest {
     private static final String TIMELINE_DETAILS = "Vai al dettaglio";
     private static final String NOTIFICATION_DETAILS_TITLE = "Dettaglio della notifica";
 
-    private static final Object LOCK = new Object();
-    private static String createdIun;
-
     private final WebBrowserContractValidator webContractValidator;
     private final SendJourney sendJourney;
     private final RecipientSpecFactory recipientSpecFactory;
@@ -79,7 +75,7 @@ public class WebNotificationDetailPGContractTest {
     private final LegalNotificationCreationRequest creationRequest;
 
     /**
-     * Testi del dettaglio dell'ultima notifica a valore legale della lista:
+     * Testi del dettaglio della notifica inviata all'impresa:
      * <ul>
      *     <li>breadcrumb: "In arrivo per &lt;impresa&gt;" e, come voce corrente, il titolo della notifica;</li>
      *     <li>riepilogo: etichetta "Notifica a valore legale", logo del mittente, mittente non vuoto, "Notifica
@@ -90,14 +86,15 @@ public class WebNotificationDetailPGContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowNotificationDetailTexts() {
+        LegalNotificationDomain createdNotification = sendLegalNotification();
+
         return webContractValidator.asRecipient(RECIPIENT)
-                .on(NotificationPage.class)
+                .on(NotificationDetailPGPage.class, createdNotification.getIun())
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "breadcrumb con il nome dell'impresa e l'oggetto della notifica",
-                                this::openDetail,
-                                page -> {
-                                    NotificationDetailPGPage detail = loadedDetail(page);
+                                detail -> {},
+                                detail -> {
                                     detail.notificationsBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(NOTIFICATIONS_BREADCRUMB));
                                     String title = detail.title().read();
                                     detail.currentBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(title));
@@ -106,9 +103,8 @@ public class WebNotificationDetailPGContractTest {
 
                         new WebScenario<>(
                                 "riepilogo: valore legale, mittente, data di deposito, codice IUN e informativa",
-                                this::openDetail,
-                                page -> {
-                                    NotificationDetailPGPage detail = loadedDetail(page);
+                                detail -> {},
+                                detail -> {
                                     // l'etichetta è resa in maiuscolo dal CSS
                                     detail.legalValueChip().readAndAssert(h -> Assertions.assertThat(h).isEqualToIgnoringCase(LEGAL_VALUE));
                                     Assertions.assertThat(detail.senderLogo().get(FindPolicy.PRESENT)).as("logo del mittente").isPresent();
@@ -122,9 +118,8 @@ public class WebNotificationDetailPGContractTest {
 
                         new WebScenario<>(
                                 "sezioni documenti, stato della notifica con stato corrente e vai al dettaglio, dettaglio della notifica",
-                                this::openDetail,
-                                page -> {
-                                    NotificationDetailPGPage detail = loadedDetail(page);
+                                detail -> {},
+                                detail -> {
                                     detail.documentsTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(DOCUMENTS_TITLE));
                                     detail.statusTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(STATUS_TITLE));
                                     detail.currentStatus().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
@@ -137,60 +132,38 @@ public class WebNotificationDetailPGContractTest {
                 ));
     }
 
-    // apre il dettaglio dell'ultima notifica a valore legale della lista; se non ce n'è, la crea e apre quella
-    private void openDetail(NotificationPage page) {
-        if (page.hasLegalNotification()) {
-            page.lastLegalNotificationOpenButton().click();
-        } else {
-            page.openNewLegalNotification(ensureLegalNotification());
+    private LegalNotificationDomain sendLegalNotification() {
+        // destinatario: l'impresa, con la sua denominazione invece del nome della persona che accede
+        RecipientSpec recipient = recipientSpecFactory.build(RECIPIENT, Map.of(
+                "denomination", RECIPIENT.getOrganization(),
+                "physicalAddress_address", "Via@ok_890",
+                "physicalAddress_municipality", "COLLELUNGO",
+                "physicalAddress_province", "TR",
+                "physicalAddress_zip", "05010",
+                "pagoPA_number", "0",
+                "F24_number", "0"
+        ));
+        // la richiesta di creazione è condivisa (singleton) e non viene svuotata tra un invio e l'altro: senza
+        // svuotarla, la notifica includerebbe anche i destinatari rimasti da invii precedenti
+        creationRequest.getRecipients().clear();
+        try {
+            return sendJourney
+                    .withSender(Tenant.GROSSINI)
+                    .prepareNotification(Map.of(
+                            "subject", "Notifica di test per il dettaglio PG",
+                            "physicalCommunication", "REGISTERED_LETTER_890",
+                            "feePolicy", "FLAT_RATE"
+                    ))
+                    .withRecipient(recipient)
+                    .sendNotification(Tenant.GROSSINI, NotificationStatus.ACCEPTED)
+                    .get(LegalNotificationDomain.class);
         }
-    }
-
-    // gli scenari girano in parallelo: la notifica viene creata una sola volta per esecuzione e ne viene restituito lo IUN
-    private String ensureLegalNotification() {
-        synchronized (LOCK) {
-            if (createdIun != null) {
-                return createdIun;
-            }
-            // destinatario: l'impresa, con la sua denominazione invece del nome della persona che accede
-            RecipientSpec recipient = recipientSpecFactory.build(RECIPIENT, Map.of(
-                    "denomination", RECIPIENT.getOrganization(),
-                    "physicalAddress_address", "Via@ok_890",
-                    "physicalAddress_municipality", "COLLELUNGO",
-                    "physicalAddress_province", "TR",
-                    "physicalAddress_zip", "05010",
-                    "pagoPA_number", "0",
-                    "F24_number", "0"
-            ));
-            // la richiesta di creazione è condivisa (singleton) e non viene svuotata tra un invio e l'altro: senza
-            // svuotarla, la notifica includerebbe anche i destinatari rimasti da invii precedenti
+        finally {
+            // anche dopo un invio fallito: i destinatari non restano per gli invii successivi
             creationRequest.getRecipients().clear();
-            try {
-                createdIun = sendJourney
-                        .withSender(Tenant.GROSSINI)
-                        .prepareNotification(Map.of(
-                                "subject", "Notifica di test per il dettaglio PG",
-                                "physicalCommunication", "REGISTERED_LETTER_890",
-                                "feePolicy", "FLAT_RATE"
-                        ))
-                        .withRecipient(recipient)
-                        .sendNotification(Tenant.GROSSINI, NotificationStatus.ACCEPTED)
-                        .get(LegalNotificationDomain.class)
-                        .getIun();
-                return createdIun;
-            } finally {
-                // anche dopo un invio fallito: i destinatari non restano per gli invii successivi
-                creationRequest.getRecipients().clear();
-                // l'invio imposta il mittente sul thread: senza azzerarlo, gli scenari successivi sullo stesso thread
-                // aprirebbero il portale come Grossini invece che come l'impresa
-                currentUserSession.setSender(null);
-            }
+            // l'invio imposta il mittente sul thread: senza azzerarlo, gli scenari sullo stesso thread aprirebbero il
+            // portale come Grossini invece che come l'impresa
+            currentUserSession.setSender(null);
         }
-    }
-
-    private static NotificationDetailPGPage loadedDetail(NotificationPage page) {
-        NotificationDetailPGPage detail = page.notificationDetail();
-        detail.assertLoaded();
-        return detail;
     }
 }
