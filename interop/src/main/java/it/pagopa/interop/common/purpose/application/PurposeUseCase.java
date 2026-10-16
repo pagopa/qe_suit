@@ -8,6 +8,7 @@ import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
 import java.util.function.Consumer;
 
 @Service
@@ -26,6 +27,14 @@ public class PurposeUseCase {
     public Purpose addDraftPurpose(EService eService) {
         PurposeCreateCommand command = purposeCommandFactory.validFullPopulatedCreateCommand(eService);
         return purposeGateway.createPurpose(command);
+    }
+
+    public Purpose addDraftReversePurpose(EService eService, UUID riskAnalysisId) {
+        return purposeGateway.createReversePurpose(eService, riskAnalysisId);
+    }
+
+    public Purpose addDraftPurposeFromTemplate(UUID purposeTemplateId, EService eService) {
+        return purposeGateway.createPurposeFromTemplate(purposeTemplateId, eService);
     }
 
     public Purpose activatePurpose(Purpose purpose, PurposeVersion purposeVersion, @Nullable DelegationRef delegationRef) {
