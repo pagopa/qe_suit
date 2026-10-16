@@ -105,9 +105,9 @@ delivery:
 # ogni costante di Tenant, univoca per PA e per ambiente (qui: hotfix)
 pa:
   groups-api-key:
-    GROSSINI: 2a36ad69-fce0-416b-b94e-7242773e638b
+    GROSSINI: ${pn.external.groups-api-key.grossini}
 
 # api-key per le API B2B delivery (header x-api-key), una entry per ogni costante di Tenant,
 # univoca per PA e per ambiente (qui: hotfix)
   delivery-api-key:
-    GROSSINI: 5df3a854-110c-46e9-a94b-274e2e74132d
+    GROSSINI: ${pn.external.delivery-api-key.grossini}
