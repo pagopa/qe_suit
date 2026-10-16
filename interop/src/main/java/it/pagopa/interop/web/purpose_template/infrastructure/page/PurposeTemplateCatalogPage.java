@@ -58,24 +58,14 @@ public interface PurposeTemplateCatalogPage extends Page {
     }
 
     /**
-     * Legge l'URL corrente del browser (dopo il redirect avvenuto in seguito
-     * alla conferma) interrogando direttamente l'adapter di presentazione,
-     * senza dipendere dal {@link it.pagopa.interop.web.infrastructure.cucumber.WebBrowserContext}
-     * (che viene aggiornato solo sulle navigazioni esplicite via {@code navigateTo()}).
+     * Estrae l'id del template di finalità appena creato dall'URL corrente.
      */
-    default String getCurrentBrowserUrl() {
-        return WebSuiteContext.getConfiguration()
+    default UUID currentTemplateIdFromUrl() {
+        String url = WebSuiteContext.getConfiguration()
                 .getPresentationApiAdapters()
                 .get(0)
                 .getLocation()
                 .getUrl();
-    }
-
-    /**
-     * Estrae l'id del template di finalità appena creato dall'URL corrente.
-     */
-    default UUID currentTemplateIdFromUrl() {
-        String url = getCurrentBrowserUrl();
         Matcher matcher = UUID_PATTERN.matcher(url);
 
         if (!matcher.find()) {
