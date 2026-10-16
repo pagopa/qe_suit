@@ -36,10 +36,12 @@ Feature: Coerenza dell'archiviazione di un e-service e delle sue versioni
     Then viene mostrata la snackbar con un messaggio di errore "Non puoi archiviare l’e-service prima di una versione già in fase di archiviazione. Seleziona una durata più lunga."
 
   Scenario Outline: [ESERVICE_ARCHIVING_GRACE_PERIOD_3] - Archiviazione di un e-service con un preavviso compatibile con quello di una sua versione
-  Dato un e-service con una richiesta di fruizione attiva sulla prima versione e una seconda versione pubblicata
-  e la prima versione in fase di archiviazione con un periodo di preavviso di <descriptor_grace_period> giorni
-  quando l'erogatore proprietario avvia l'archiviazione dell'intero e-service con un preavviso maggiore o uguale a quello della prima versione
-  allora il sistema accetta l'operazione e mostra il messaggio di successo senza l'errore sul periodo di preavviso
+  Dato un e-service con due versioni:
+  la prima, meno recente, in stato ARCHIVING e con una richiesta di fruizione attiva,
+  e la seconda, più recente, in stato PUBLISHED.
+  Quando l'erogatore proprietario richiede l'archiviazione dell'intero e-service,
+  scegliendo un preavviso che comporta una data di archiviazione uguale o successiva a quella già pianificata per la prima versione,
+  allora il sistema avvia l'archiviazione dell'intero e-service e mostra il messaggio di successo.
 
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     And un admin appartenente all'erogatore Comune di Milano
