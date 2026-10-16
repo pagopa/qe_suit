@@ -20,14 +20,15 @@ public class WebPurposeTemplateConfig {
         return webPresentationGateway.bind(PurposeTemplateCatalogPage.class);
     }
 
-    public ConsumerPurposeTemplateCatalogPage consumerPurposeTemplateCatalogPage(WebPresentationGateway webPresentationGateway) {
-        return webPresentationGateway.bind(ConsumerPurposeTemplateCatalogPage.class);
-    }
-
     @Bean
     @ScenarioScope
     public PurposeTemplateCreationPage purposeTemplateCreationPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(PurposeTemplateCreationPage.class);
     }
+
+    public ConsumerPurposeTemplateCatalogPage consumerPurposeTemplateCatalogPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(ConsumerPurposeTemplateCatalogPage.class);
+    }
+
 }
 
