@@ -8,8 +8,8 @@ import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.web.eservice.application.WebEServiceCreationCommand;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreationPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class WebEServiceGateway implements EServiceGateway {
 
-    private final EServiceCreationPage eServiceCreationPage;
+    private final EServiceCreatePage eServiceCreatePage;
     private final WebEServiceGeneralDataGateway generalDataGateway;
 
     @Override
@@ -26,8 +26,8 @@ public class WebEServiceGateway implements EServiceGateway {
         if (!(command instanceof WebEServiceCreationCommand creationCommand))
             throw new IllegalArgumentException("Invalid command type");
 
-        eServiceCreationPage.navigateTo();
-        eServiceCreationPage.assertLoaded();
+        eServiceCreatePage.navigateTo();
+        eServiceCreatePage.assertLoaded();
 
         generalDataGateway.fillEServiceGeneralData(creationCommand.getWebEServiceGeneralData());
 
