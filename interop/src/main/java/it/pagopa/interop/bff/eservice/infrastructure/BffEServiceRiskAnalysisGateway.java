@@ -44,7 +44,16 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
-        return PollingUtils.pollUntil(() -> getRiskAnalysis(eServiceRef), java.util.Objects::nonNull);
+        return PollingUtils.pollUntil(
+                () -> restClient.readEService(eServiceRef.id())
+                        .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                        .map(details -> details.getRiskAnalysis().stream()
+                                .filter(analysis -> payload.getName().equals(analysis.getName()))
+                                .findFirst()
+                                .map(this::toDomain))
+                        .get(),
+                java.util.Optional::isPresent
+        ).orElseThrow();
     }
 
     private EServiceRiskAnalysis toDomain(it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis source) {
