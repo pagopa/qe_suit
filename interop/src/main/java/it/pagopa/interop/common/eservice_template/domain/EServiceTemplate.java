@@ -1,19 +1,18 @@
 package it.pagopa.interop.common.eservice_template.domain;
 
+import it.pagopa.domain.Identifiable;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
-import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
-import it.pagopa.domain.Identifiable;
+import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import lombok.Builder;
+import lombok.Singular;
 import lombok.Value;
+import lombok.experimental.NonFinal;
 import lombok.extern.jackson.Jacksonized;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 @Value
 @Builder(toBuilder = true)
@@ -31,9 +30,31 @@ public class EServiceTemplate implements Identifiable {
     Instant createdAt;
     Instant updatedAt;
 
+    @Singular("version")
+    @NonFinal
     List<EServiceTemplateVersion> versions;
 
+    @Singular("riskAnalysis")
     List<EServiceRiskAnalysis> riskAnalyses;
+
+    public EServiceTemplateVersion getLatestVersion() {
+        return versions.stream()
+                .max(Comparator.comparingInt(version -> Integer.parseInt(version.getVersion())))
+                .orElseThrow(() -> new NoSuchElementException("Nessuna versione trovata per template " + id));
+    }
+
+    public EServiceTemplateRef getRef() {
+        return new EServiceTemplateRef(id);
+    }
+
+    public EServiceTemplateVersion getVersion(int versionNumber) {
+        return versions.stream()
+                .filter(version -> Integer.parseInt(version.getVersion()) == versionNumber)
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException(
+                        "Versione " + versionNumber + " non trovata per template " + id
+                ));
+    }
 
     public EServiceTemplateVersion findVersion(UUID versionId) {
         return versions.stream()
@@ -55,19 +76,18 @@ public class EServiceTemplate implements Identifiable {
         Objects.requireNonNull(version.getId(), "version.id cannot be null");
         Objects.requireNonNull(versions, "versions cannot be null");
 
-        for (int i = 0; i < versions.size(); i++) {
-            EServiceTemplateVersion current = versions.get(i);
+        List<EServiceTemplateVersion> updatedVersions = new ArrayList<>(versions);
+        for (int i = 0; i < updatedVersions.size(); i++) {
+            EServiceTemplateVersion current = updatedVersions.get(i);
             if (current.getId().equals(version.getId())) {
-                versions.set(i, version);
+                updatedVersions.set(i, version);
+                versions = updatedVersions;
                 return;
             }
         }
 
-        versions.add(version);
-    }
-
-    public EServiceTemplateRef getRef() {
-        return EServiceTemplateRef.of(this.id);
+        updatedVersions.add(version);
+        versions = updatedVersions;
     }
 
     private EServiceTemplateVersion getUniqueVersionByState(EServiceTemplateVersionState state) {

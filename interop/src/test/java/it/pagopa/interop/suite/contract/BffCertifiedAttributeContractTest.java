@@ -1,35 +1,36 @@
 package it.pagopa.interop.suite.contract;
 
-import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.attribute.infrastructure.BffAttributeRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
-import it.pagopa.interop.suite.AbstractBffAttributeTest;
-import org.springframework.beans.factory.annotation.Qualifier;
+import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-public class BffCertifiedAttributeContractTest extends AbstractBffAttributeTest {
+@RequiredArgsConstructor
+public class BffCertifiedAttributeContractTest {
+    private final ApiClient apiClient;
+    private final InteropHttpContractValidator httpContractValidator;
+    private final BffAttributeRequestFactory requestFactory;
 
-    public BffCertifiedAttributeContractTest(
-            ApiClient apiClient,
-            @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
-            InteropJourney interopJourney,
-            BffAttributeRequestFactory requestFactory
-    ) {
-        super(apiClient, httpContractValidator, interopJourney, requestFactory);
-    }
-
-    @Override
-    protected Supplier<?> createAttributeImpl() {
-        return () -> apiClient.attributes().createCertifiedAttribute();
+    @TestFactory
+    Stream<DynamicTest> createCertifiedAttribute() {
+        return httpContractValidator
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.attributes().createCertifiedAttribute())
+                .payload(requestFactory::creationRequest)
+                .tests();
     }
 }
 

@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice_template.infrastructure.config;
 
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateGateway;
+import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceGateway;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateVersionGateway;
 import it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor;
@@ -19,6 +20,7 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 @RequiredArgsConstructor
 @EnablePluginRegistries({
         EServiceTemplateGateway.class,
+        EServiceTemplateInstanceGateway.class,
         EServiceTemplateVersionGateway.class,
         EServiceTemplateRequestFactory.class
 })
@@ -40,6 +42,27 @@ public class EServiceTemplateRoutingConfig {
 
     @Bean
     @Primary
+    public EServiceTemplateRequestFactory transparentEServiceTemplateRequestFactory(
+            PluginRegistry<EServiceTemplateRequestFactory, Channel> registry) {
+        ProxyFactory factory = new ProxyFactory();
+        factory.setInterfaces(EServiceTemplateRequestFactory.class);
+        factory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
+        return (EServiceTemplateRequestFactory) factory.getProxy();
+    }
+
+    @Bean
+    @Primary
+    public EServiceTemplateInstanceGateway transparentEServiceTemplateInstanceGateway(
+            PluginRegistry<EServiceTemplateInstanceGateway, Channel> registry
+    ) {
+        ProxyFactory factory = new ProxyFactory();
+        factory.setInterfaces(EServiceTemplateInstanceGateway.class);
+        factory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
+        return (EServiceTemplateInstanceGateway) factory.getProxy();
+    }
+
+    @Bean
+    @Primary
     public EServiceTemplateVersionGateway transparentEServiceTemplateVersionGateway(
             PluginRegistry<EServiceTemplateVersionGateway, Channel> registry
     ) {
@@ -49,17 +72,4 @@ public class EServiceTemplateRoutingConfig {
 
         return (EServiceTemplateVersionGateway) proxyFactory.getProxy();
     }
-
-    @Bean
-    @Primary
-    public EServiceTemplateRequestFactory transparentEServiceTemplateRequestFactory(
-            PluginRegistry<EServiceTemplateRequestFactory, Channel> registry
-    ) {
-        ProxyFactory proxyFactory = new ProxyFactory();
-        proxyFactory.setInterfaces(EServiceTemplateRequestFactory.class);
-        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
-
-        return (EServiceTemplateRequestFactory) proxyFactory.getProxy();
-    }
 }
-

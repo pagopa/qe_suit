@@ -7,21 +7,21 @@ import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 public interface EServiceTemplateCreationCommand {
     EServiceTemplateCreationCommand name(String name);
 
-    EServiceTemplateCreationCommand intendedTarget(String intendedTarget);
-
     EServiceTemplateCreationCommand description(String description);
+
+    EServiceTemplateCreationCommand intendedTarget(String intendedTarget);
 
     EServiceTemplateCreationCommand technology(EServiceTechnology technology);
 
     EServiceTemplateCreationCommand mode(EServiceMode mode);
 
-    EServiceTemplateCreationCommand isSignalHubEnabled(Boolean isSignalHubEnabled);
-
     EServiceTemplateCreationCommand handlePersonalData(Boolean handlePersonalData);
+
+    EServiceTemplateCreationCommand isSignalHubEnabled(Boolean isSignalHubEnabled);
 
     EServiceTemplateCreationCommand isAsync(Boolean isAsync);
 
-    EServiceTemplateCreationCommand versionDescription(String description);
+    EServiceTemplateCreationCommand versionDescription(String versionDescription);
 
     EServiceTemplateCreationCommand voucherLifespan(Integer voucherLifespan);
 
@@ -29,6 +29,9 @@ public interface EServiceTemplateCreationCommand {
 
     EServiceTemplateCreationCommand dailyCallsTotal(Integer dailyCallsTotal);
 
-    EServiceTemplateCreationCommand agreementApprovalPolicy(AgreementApprovalPolicy agreementApprovalPolicy);
-}
+    EServiceTemplateCreationCommand agreementApprovalPolicy(AgreementApprovalPolicy policy);
 
+    EServiceTemplateCreationCommand interfaceDocumentPath(String path);
+
+    String getInterfaceDocumentPath();
+}

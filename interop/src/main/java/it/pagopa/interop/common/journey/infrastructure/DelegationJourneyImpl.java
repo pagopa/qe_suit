@@ -1,10 +1,10 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
+import it.pagopa.interop.common.delegation.application.DelegationUseCase;
 import it.pagopa.interop.common.journey.application.DelegationJourney;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
-import it.pagopa.interop.common.delegation.application.DelegationUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -5,16 +5,7 @@ import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EserviceTemplatesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedEServiceTemplateVersion;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDescriptionUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateIntendedTargetUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateNameUpdateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTemplateVersionDetails;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
@@ -118,7 +109,7 @@ public class BffEServiceTemplateRestClient extends RestClient {
         );
     }
 
-    public TestChain<EServiceTemplateVersionDetails> getVersion(
+    public TestChain<EServiceTemplateVersionDetails> getEServiceTemplateVersion(
             @Nonnull UUID templateId,
             @Nonnull UUID versionId
     ) {
@@ -132,7 +123,7 @@ public class BffEServiceTemplateRestClient extends RestClient {
         );
     }
 
-    public TestChain<Void> publishVersion(@Nonnull UUID templateId, @Nonnull UUID versionId) {
+    public TestChain<Void> publishEServiceTemplateVersion(@Nonnull UUID templateId, @Nonnull UUID versionId) {
         return execute(
                 () -> eServiceTemplatesApi
                         .publishEServiceTemplateVersion()
@@ -160,7 +151,7 @@ public class BffEServiceTemplateRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedResource> addDocument(
+    public TestChain<CreatedResource> createEServiceTemplateDocument(
             @Nonnull UUID templateId,
             @Nonnull UUID versionId,
             @Nonnull String documentKind,
@@ -179,5 +170,20 @@ public class BffEServiceTemplateRestClient extends RestClient {
                 CreatedResource.class
         );
     }
-}
 
+    public TestChain<byte[]> getEServiceTemplateDocumentById(
+            @Nonnull UUID templateId,
+            @Nonnull UUID versionId,
+            @Nonnull UUID documentId
+    ) {
+        return execute(
+                () -> eServiceTemplatesApi
+                        .getEServiceTemplateDocumentById()
+                        .eServiceTemplateIdPath(templateId)
+                        .eServiceTemplateVersionIdPath(versionId)
+                        .documentIdPath(documentId)
+                        .execute(Function.identity()),
+                byte[].class
+        );
+    }
+}
