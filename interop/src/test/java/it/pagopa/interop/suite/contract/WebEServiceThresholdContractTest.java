@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
@@ -21,7 +19,6 @@ import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePag
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(
         classes = {
                 TestBootApp.class,
