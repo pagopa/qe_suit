@@ -32,9 +32,12 @@ public class PurposeUseCase {
     public Purpose addDraftReversePurpose(EService eService, UUID riskAnalysisId) {
         return purposeGateway.createReversePurpose(eService, riskAnalysisId);
     }
+
     public Purpose addDraftPurposeFromTemplate(UUID purposeTemplateId, EService eService) {
         return purposeGateway.createPurposeFromTemplate(purposeTemplateId, eService);
-    }    public Purpose activatePurpose(Purpose purpose, PurposeVersion purposeVersion, @Nullable DelegationRef delegationRef) {
+    }
+
+    public Purpose activatePurpose(Purpose purpose, PurposeVersion purposeVersion, @Nullable DelegationRef delegationRef) {
         return purposeGateway.activatePurpose(purpose.getRef(), purposeVersion.getRef(), delegationRef);
     }
 
