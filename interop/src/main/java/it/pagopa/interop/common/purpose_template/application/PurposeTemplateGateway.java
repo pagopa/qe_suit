@@ -7,9 +7,6 @@ import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import org.springframework.plugin.core.Plugin;
 
-
-
-
 public interface PurposeTemplateGateway extends Plugin<Channel> {
 
     PurposeTemplate createPurposeTemplate(Tenant targetTenant, RiskAnalysisForm riskAnalysisForm);
