@@ -44,7 +44,10 @@ public class WebEServiceGateway implements EServiceGateway {
 
     @Override
     public void archiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
-        throw new UnsupportedOperationException("Archiving an EService is not supported on the WEB_BROWSER channel");
+        openEServiceArchivingDialog(eServiceRef);
+        EServiceArchivingDialog dialog = producerEServiceDetailPage.getArchivingDialog();
+        fillArchivingDialog(dialog, gracePeriodDays);
+        dialog.getArchiveButton().click();
     }
 
     @Override
