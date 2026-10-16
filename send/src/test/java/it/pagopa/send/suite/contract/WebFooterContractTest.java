@@ -37,6 +37,20 @@ import java.util.stream.Stream;
 public class WebFooterContractTest {
     private final WebBrowserContractValidator webContractValidator;
 
+
+    /**
+     * Verifica l'assenza della dicitura "Socio Unico" nel footer
+     * della Dashboard per PA.
+     *
+     * <p>Il test legge il contenuto testuale del footer, lo registra
+     * nei log e verifica che non contenga la dicitura "socio unico",
+     * indipendentemente dalla combinazione di lettere maiuscole e minuscole.</p>
+     *
+     * <p>Il test fallisce se la dicitura è presente nel footer.</p>
+     *
+     * @return uno {@link Stream} di {@link DynamicTest} contenente
+     *         lo scenario di verifica del footer della Dashboard PA
+     */
     @TestFactory
     Stream<DynamicTest> captionOnlySpaPAFooter() {
         return captionOnlySpaPAFooterScenarios();
@@ -57,6 +71,22 @@ public class WebFooterContractTest {
                 )));
     }
 
+
+    /**
+     * Verifica l'assenza della dicitura "Socio Unico" nel footer
+     * della pagina di notifica destinata a una Persona Fisica (PF).
+     *
+     * <p>Il test viene eseguito e controlla
+     * che il contenuto testuale del footer non includa la dicitura
+     * "socio unico", indipendentemente dalla combinazione di lettere
+     * maiuscole e minuscole.</p>
+     *
+     * <p>Il contenuto del footer viene registrato nei log.
+     * Il test fallisce se la dicitura è presente.</p>
+     *
+     * @return uno {@link Stream} di {@link DynamicTest} contenente
+     *         lo scenario di verifica del footer della notifica PF
+     */
     @TestFactory
     Stream<DynamicTest> captionOnlySpaPFFooter() {
         return captionOnlySpaPFFooterScenarios();
@@ -76,11 +106,25 @@ public class WebFooterContractTest {
                 )));
     }
 
+    /**
+     * Verifica l'assenza della dicitura "Socio Unico" nel footer
+     * della pagina di notifica destinata a una Persona Giuridica (PG).
+     *
+     * <p>Il test viene eseguito e controlla
+     * che il contenuto testuale del footer non includa la dicitura
+     * "socio unico", indipendentemente dalla combinazione di lettere
+     * maiuscole e minuscole.</p>
+     *
+     * <p>Il contenuto del footer viene registrato nei log.
+     * Il test fallisce se la dicitura è presente.</p>
+     *
+     * @return uno {@link Stream} di {@link DynamicTest} contenente
+     *         lo scenario di verifica del footer della notifica PG
+     */
     @TestFactory
     Stream<DynamicTest> captionOnlySpaPGFooter() {
         return captionOnlySpaPGScenarios();
     }
-
 
     private Stream<DynamicTest> captionOnlySpaPGScenarios() {
         String token = "";
