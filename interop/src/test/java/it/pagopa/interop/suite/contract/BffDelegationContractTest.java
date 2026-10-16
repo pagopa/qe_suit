@@ -17,14 +17,15 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
-import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
+
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
@@ -44,64 +45,65 @@ public class BffDelegationContractTest {
     private final EntityStore entityStore;
 
     public BffDelegationContractTest(ApiClient apiClient,
-        @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
-        InteropJourney interopJourney,
-        BffDelegationRequestFactory requestFactory,
-        EServiceDescriptorUseCase eServiceDescriptorUseCase,
-        EntityStore entityStore) {
-            this.apiClient = apiClient;
-            this.httpContractValidator = httpContractValidator;
-            this.interopJourney = interopJourney;
-            this.requestFactory = requestFactory;
-            this.eServiceDescriptorUseCase = eServiceDescriptorUseCase;
-            this.entityStore = entityStore;
+                                     @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
+                                     InteropJourney interopJourney,
+                                     BffDelegationRequestFactory requestFactory,
+                                     EServiceDescriptorUseCase eServiceDescriptorUseCase,
+                                     EntityStore entityStore) {
+        this.apiClient = apiClient;
+        this.httpContractValidator = httpContractValidator;
+        this.interopJourney = interopJourney;
+        this.requestFactory = requestFactory;
+        this.eServiceDescriptorUseCase = eServiceDescriptorUseCase;
+        this.entityStore = entityStore;
     }
 
     @TestFactory
     Stream<DynamicTest> rejectProducerDelegation() {
         return httpContractValidator
-            .as(DELEGATE_PRODUCER, UserRole.ADMIN)
-            .apiCall(() -> apiClient.producerDelegations().rejectProducerDelegation())
-            .pathParams(() -> Map.of("delegationId", createPendingProducerDelegationId()))
-            .payload(requestFactory::rejectionRequest)
-            .tests();
+                .as(DELEGATE_PRODUCER, UserRole.ADMIN)
+                .apiCall(() -> apiClient.producerDelegations().rejectProducerDelegation())
+                .pathParams(() -> Map.of("delegationId", createPendingProducerDelegationId()))
+                .payload(requestFactory::rejectionRequest)
+                .tests();
     }
 
     @TestFactory
     Stream<DynamicTest> rejectConsumerDelegation() {
         return httpContractValidator
-            .as(DELEGATE_CONSUMER, UserRole.ADMIN)
-            .apiCall(() -> apiClient.consumerDelegations().rejectConsumerDelegation())
-            .pathParams(() -> Map.of("delegationId", createPendingConsumerDelegationId()))
-            .payload(requestFactory::rejectionRequest)
-            .tests();
+                .as(DELEGATE_CONSUMER, UserRole.ADMIN)
+                .apiCall(() -> apiClient.consumerDelegations().rejectConsumerDelegation())
+                .pathParams(() -> Map.of("delegationId", createPendingConsumerDelegationId()))
+                .payload(requestFactory::rejectionRequest)
+                .tests();
     }
 
     private UUID createPendingProducerDelegationId() {
-        EService eService = createPublishedEService();
-        interopJourney
-            .withProducer(PRODUCER, UserRole.ADMIN)
-            .createProducerDelegation(TenantRef.of(DELEGATE_PRODUCER.getOrganizationId()), eService.getRef());
-        return entityStore.getLastOrThrow(Delegation.class).getId();
+        return interopJourney
+                .withProducer(PRODUCER, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .createProducerDelegation(TenantRef.of(DELEGATE_PRODUCER.getOrganizationId()))
+                .get(Delegation.class)
+                .getId();
     }
 
     private UUID createPendingConsumerDelegationId() {
         EService eService = createPublishedEService();
         interopJourney
-            .withConsumer(CONSUMER_DELEGATOR, UserRole.ADMIN)
-            .createConsumerDelegation(TenantRef.of(DELEGATE_CONSUMER.getOrganizationId()), eService.getRef());
+                .withConsumer(CONSUMER_DELEGATOR, UserRole.ADMIN)
+                .createConsumerDelegation(TenantRef.of(DELEGATE_CONSUMER.getOrganizationId()), eService.getRef());
         return entityStore.getLastOrThrow(Delegation.class).getId();
     }
 
     private EService createPublishedEService() {
         EServiceCreationCommand eServiceCommand = eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(false);
         UpdateEServiceDescriptorCommand updateCommand =
-            eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(10, 20);
+                eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(10, 20);
 
         interopJourney
-            .withProducer(PRODUCER, UserRole.ADMIN)
-            .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
-            .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
+                .withProducer(PRODUCER, UserRole.ADMIN)
+                .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
+                .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
 
         return entityStore.getLastOrThrow(EService.class);
     }
