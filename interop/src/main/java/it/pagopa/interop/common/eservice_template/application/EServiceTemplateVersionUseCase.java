@@ -11,9 +11,14 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import static it.pagopa.interop.common.eservice.domain.EServiceTechnology.REST;
+
 @Service
 @RequiredArgsConstructor
 public class EServiceTemplateVersionUseCase {
+    private final static String STANDARD_WSDL_PATH = "assets/eseervice-template/soap11-due-indirizzi.wsdl";
+    private final static String STANDARD_OPEN_API_PATH = "assets/origin-interface.yaml";
+
     private final EServiceTemplateVersionGateway eServiceTemplateVersionGateway;
     private final EServiceTemplateRequestFactory requestFactory;
 
@@ -37,10 +42,25 @@ public class EServiceTemplateVersionUseCase {
         return eServiceTemplateVersionGateway.publishEServiceTemplateVersion(eServiceTemplate.getRef(), version.getRef());
     }
 
+    public EServiceTemplateVersion prepareVersionForPublishing(EServiceTemplate eServiceTemplate, EServiceTemplateVersion version) {
+        if (version.getState() == EServiceTemplateVersionState.PUBLISHED) return version;
+
+        if (version.getState() != EServiceTemplateVersionState.DRAFT)
+            throw new IllegalStateException("Cannot prepare a template version for publishing that is in state " + version.getState());
+
+        if (version.getInterfaceDocument() == null)
+            return uploadInterface(
+                    eServiceTemplate, version,
+                    eServiceTemplate.getTechnology() == REST ? STANDARD_OPEN_API_PATH : STANDARD_WSDL_PATH
+            );
+
+        return version;
+    }
+
     public EServiceTemplateVersion updateDraftVersion(EServiceTemplate eServiceTemplate, EServiceTemplateVersion version, UpdateEServiceTemplateVersionCommand command) {
         return eServiceTemplateVersionGateway.updateDraftVersion(eServiceTemplate.getRef(), version.getRef(), command);
     }
-    
+
     public EServiceTemplateVersion updateDraftVersion(EServiceTemplate eServiceTemplate, EServiceTemplateVersion version, Consumer<UpdateEServiceTemplateVersionCommand> config) {
         UpdateEServiceTemplateVersionCommand command = requestFactory.defaultUpdateTemplateVersionCommand();
         config.accept(command);
