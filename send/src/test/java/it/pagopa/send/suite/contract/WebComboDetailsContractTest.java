@@ -22,6 +22,14 @@ import org.springframework.core.env.Environment;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Test di contratto per la pagina Web di Dettaglio Comunicazione Bonaria (Combo).
+ * <p>
+ * Verifica il caricamento atomico delle sezioni della pagina, la presenza delle componenti
+ * di overview, stato, canali di invio e relativi badge, oltre alle sezioni condizionali
+ * Documenti e Pagamenti e al corretto comportamento nel layout desktop e mobile.
+ *
+ */
 @ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
@@ -75,12 +83,11 @@ public class WebComboDetailsContractTest {
                                 item.assertLoaded();
                                 item.name().readAndAssert(name ->
                                         org.assertj.core.api.Assertions.assertThat(name).as("Nome canale non nullo").isNotBlank());
-                                try {
+                                if (item.hasStatusBadge()) {
                                     String badge = item.statusBadge().read();
                                     if (badge != null && !badge.isBlank()) {
                                         org.assertj.core.api.Assertions.assertThat(badge).isNotBlank();
                                     }
-                                } catch (Exception ignored) {
                                 }
                             });
                         }
@@ -91,12 +98,11 @@ public class WebComboDetailsContractTest {
                         page -> {
                             var items = page.channelsSection().channelItems();
                             items.forEach(item -> {
-                                try {
+                                if (item.hasDescription()) {
                                     String desc = item.description().read();
                                     if (desc != null && !desc.isBlank()) {
                                         org.assertj.core.api.Assertions.assertThat(desc).isNotBlank();
                                     }
-                                } catch (Exception ignored) {
                                 }
                             });
                         }

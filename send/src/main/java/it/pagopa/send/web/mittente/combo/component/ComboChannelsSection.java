@@ -28,6 +28,14 @@ public interface ComboChannelsSection extends Component {
         @XPath(".//span[contains(@class, 'MuiTypography-caption') or contains(@class, 'css-1qg6hcb')]")
         Readable<String> description();
 
+        default boolean hasStatusBadge() {
+            return statusBadge().read() != null;
+        }
+
+        default boolean hasDescription() {
+            return description().read() != null;
+        }
+
         @Override
         default void assertLoaded() {
             SoftAssertions softly = new SoftAssertions();

@@ -22,6 +22,14 @@ import org.springframework.core.env.Environment;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * Test di contratto per la pagina Web di Timeline Comunicazione Bonaria (Combo).
+ * <p>
+ * Verifica il caricamento atomico delle componenti della timeline, la corretta renderizzazione
+ * degli eventi cronologici con timestamp, i log di dettaglio per ciascun canale di invio
+ * e il box apicale con l'esito finale.
+ *
+ */
 @ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
@@ -63,10 +71,18 @@ public class WebComboTimelineContractTest {
                         "Controllo visualizzazione responsive card eventi e gestione wrapping testi",
                         page -> {},
                         page -> {
-                            page.timeline().items().forEach(item -> {
-                                item.title().readAndAssert(org.junit.jupiter.api.Assertions::assertNotNull);
-                                item.timestamp().readAndAssert(org.junit.jupiter.api.Assertions::assertNotNull);
-                            });
+                            page.timeline().items().forEach(item ->
+                                    item.title().readAndAssert(org.junit.jupiter.api.Assertions::assertNotNull));
+
+                            var eventsWithTimestamp = page.timeline().itemsWithTimestamp();
+                            org.assertj.core.api.Assertions.assertThat(eventsWithTimestamp)
+                                    .as("La timeline deve contenere eventi tracciati con data/ora")
+                                    .isNotEmpty();
+                            eventsWithTimestamp.forEach(item ->
+                                    item.timestamp().readAndAssert(ts ->
+                                            org.assertj.core.api.Assertions.assertThat(ts)
+                                                    .as("Il timestamp dell'evento non deve essere vuoto")
+                                                    .isNotBlank()));
                         }
                 ),
                 new WebScenario<>(

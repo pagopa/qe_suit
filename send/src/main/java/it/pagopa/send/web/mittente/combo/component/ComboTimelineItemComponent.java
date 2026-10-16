@@ -14,6 +14,10 @@ public interface ComboTimelineItemComponent extends Component, Readable<String> 
     @XPath(".//*[@data-testid='dateItem' or contains(@class, 'MuiTimelineOppositeContent-root')]")
     Readable<String> timestamp();
 
+    default boolean hasTimestamp() {
+        return timestamp().read() != null;
+    }
+
     @XPath(".//div[contains(@class, 'MuiTimelineContent-root')]")
     Readable<String> content();
 
