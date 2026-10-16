@@ -15,15 +15,15 @@ public class BffEServiceTemplateCreationCommand implements EServiceTemplateCreat
     private String interfaceDocumentPath;
 
     public BffEServiceTemplateCreationCommand() {
-        this(new EServiceTemplateSeed());
+        this.bffCreationPayload = new EServiceTemplateSeed();
     }
 
     private BffEServiceTemplateCreationCommand(EServiceTemplateSeed bffCreationPayload) {
         this.bffCreationPayload = bffCreationPayload;
     }
 
-    public static BffEServiceTemplateCreationCommand from(EServiceTemplateSeed creationSeed) {
-        return new BffEServiceTemplateCreationCommand(creationSeed);
+    public static BffEServiceTemplateCreationCommand from(EServiceTemplateSeed seed) {
+        return new BffEServiceTemplateCreationCommand(seed);
     }
 
     @Override
