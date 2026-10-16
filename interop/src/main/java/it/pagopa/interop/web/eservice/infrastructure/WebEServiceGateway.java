@@ -116,7 +116,7 @@ public class WebEServiceGateway implements EServiceGateway {
     private void assertArchivingRejection(WebCommonGateway webCommonGateway, String expectedMessage, EServiceArchivingFailureReason reason) {
         assertThat(webCommonGateway.getSnackbarErrorMessage())
                 .as("EService archiving rejection: %s", reason)
-                .contains(expectedMessage);
+                .isEqualTo(expectedMessage);
     }
 
     @Override
