@@ -17,6 +17,10 @@ public class VerificationCodeProvider {
     @Value("${verification.code.service.url:}")
     private String verificationCodeServiceUrl;
 
+    public VerificationCodeProvider() {
+        this.restClient = RestClient.create();
+    }
+
     public String makeRequest(String email) {
         if (verificationCodeServiceUrl.isBlank()) {
             throw new IllegalStateException("Proprietà 'verification.code.service.url' non configurata per il profilo attivo");

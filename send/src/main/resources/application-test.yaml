@@ -59,6 +59,7 @@ url:
       new-api-key: ${url.notifiche.mittente.api-keys}/nuova-api-key
       app-status: ${url.notifiche.mittente.base}/app-status
       statistics: ${url.notifiche.mittente.base}/statistiche
+      campaigns: ${url.notifiche.mittente.base}/campaigns
     supporto:
       base: https://uat.selfcare.pagopa.it
 
@@ -89,7 +90,8 @@ token:
 bff:
   api:
     base-url: https://webapi.test.notifichedigitali.it
-    bearer-token: ${pn.external.bearer-token.tokenBffApiTest:REPLACE_ME}
+    bearer-token: ${pn.external.bearer-token.tokenBffApiTest}
+
 
 # ============================================================================
 # GPD API Configuration (posizioni debitorie)
@@ -111,8 +113,13 @@ external-registries:
 # Pn Delivery B2B API Configuration (lettura notifiche via SenderReadB2BApi)
 # ============================================================================
 delivery:
+  push:
+    base-url: http://localhost:8889
   api:
     base-url: https://api.test.notifichedigitali.it
+  informal:
+    api:
+      base-url: https://api.test.notifichedigitali.it/informal
 
 # api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
 # ogni costante di Tenant, univoca per PA e per ambiente (qui: test)
@@ -124,3 +131,52 @@ pa:
 # univoca per PA e per ambiente (qui: test)
   delivery-api-key:
     GROSSINI: 5df3a854-110c-46e9-a94b-274e2e74132d
+    PALERMO: 5df3a854-110c-46e9-a94b-274e2e74132d
+
+# ============================================================================
+# Comunicazioni Bonarie (Combo) IUN Configuration for Test
+# ============================================================================
+combo:
+  iun:
+    fattord:
+      pf: ${COMBO_IUN_FATTORD_PF:QNWG-TEMV-JRUQ-202610-E-A}
+      in-progress: ${COMBO_IUN_FATTORD_IN_PROGRESS:QNWG-TEMV-JRUQ-202610-E-A}
+      delivered-email: ${COMBO_IUN_FATTORD_DELIVERED_EMAIL:HDUX-MWKW-HRHY-202609-Q-A}
+      delivered-io: ${COMBO_IUN_FATTORD_DELIVERED_IO:HUGP-WEMT-NWEZ-202609-L-A}
+      pg: ${COMBO_IUN_FATTORD_PG:ZYDM-MUQU-YWTQ-202609-E-A}
+      pg-viewed: ${COMBO_IUN_FATTORD_PG_VIEWED:ZDVD-VWKD-PYHJ-202609-E-A}
+      flow-io-fail-email-ok: ${COMBO_IUN_FATTORD_FLOW_IO_FAIL_EMAIL_OK:HDUX-MWKW-HRHY-202609-Q-A}
+      flow-email-unavail: ${COMBO_IUN_FATTORD_EMAIL_UNAVAIL:DMZW-RETX-GDPD-202609-U-A}
+      no-docs-no-payments: ${COMBO_IUN_FATTORD_NO_DOCS_NO_PAYMENTS:JWVH-HKUY-RWXH-202608-D-A}
+      flow-io-ok-email-unavail: ${COMBO_IUN_FATTORD_FLOW_IO_OK_EMAIL_UNAVAIL:HUGP-WEMT-NWEZ-202609-L-A}
+      flow-unreached: ${COMBO_IUN_FATTORD_UNREACHED:HDLY-EZWT-PKJG-202609-V-A}
+      pf-unreached: ${COMBO_IUN_FATTORD_PF_UNREACHED:HDLY-EZWT-PKJG-202609-V-A}
+      pg-unreached: ${COMBO_IUN_FATTORD_PG_UNREACHED:MTJK-GTPN-QYKX-202608-N-A}
+      viewed: ${COMBO_IUN_FATTORD_VIEWED:YVXD-MEDH-AGYQ-202608-M-A}
+    reminder:
+      pf: ${COMBO_IUN_REMINDER_PF:TDKP-EYHD-MXJR-202609-M-A}
+      in-progress: ${COMBO_IUN_REMINDER_IN_PROGRESS:TDKP-EYHD-MXJR-202609-M-A}
+      completed-sms: ${COMBO_IUN_REMINDER_COMPLETED_SMS:EZXD-NVHR-RHWL-202608-M-A}
+      pg: ${COMBO_IUN_REMINDER_PG:XLAX-NDKL-ZJMD-202609-M-A}
+      pg-viewed: ${COMBO_IUN_REMINDER_PG_VIEWED:QMUA-AKLW-TWDT-202609-W-A}
+      pf-unreached: ${COMBO_IUN_REMINDER_PF_UNREACHED:NMQN-KENP-HKLZ-202609-Q-A}
+      pg-unreached: ${COMBO_IUN_REMINDER_PG_UNREACHED:TGAU-HWPH-DJEL-202609-P-A}
+      flow-io-fail-email-ok: ${COMBO_IUN_REMINDER_FLOW_IO_FAIL_EMAIL_OK:TDKP-EYHD-MXJR-202609-M-A}
+      flow-io-fail-ok: ${COMBO_IUN_REMINDER_FLOW_IO_FAIL_OK:EZXD-NVHR-RHWL-202608-M-A}
+      flow-io-fail-email-delivered: ${COMBO_IUN_REMINDER_FLOW_IO_FAIL_EMAIL_DELIVERED:EZXD-NVHR-RHWL-202608-M-A}
+      flow-io-fail-excluded: ${COMBO_IUN_REMINDER_PF_EXCLUDED:DUMQ-LGJY-PDKQ-202608-J-A}
+      flow-io-fail-excl: ${COMBO_IUN_REMINDER_PF_EXCLUDED:DUMQ-LGJY-PDKQ-202608-J-A}
+      flow-pec-fail-sms-ok: ${COMBO_IUN_REMINDER_PG_PEC_FAIL_SMS_OK:EKUK-YRGJ-TNDV-202608-U-A}
+      flow-pec-fail-sms-unavail: ${COMBO_IUN_REMINDER_PG_PEC_FAIL_SMS_UNAVAIL:TGAU-HWPH-DJEL-202609-P-A}
+      viewed: ${COMBO_IUN_REMINDER_VIEWED:RXVL-JVWY-NJLZ-202608-V-A}
+      interrupted: ${COMBO_IUN_REMINDER_INTERRUPTED:QJZV-UTRJ-XDYP-202610-G-A}
+    messamora:
+      pf: ${COMBO_IUN_MESSAMORA_PF:NPZE-HEAE-PKWJ-202608-V-A}
+      pg: ${COMBO_IUN_MESSAMORA_PG:XYZY-EHWU-NPAT-202609-Q-A}
+      pg-viewed: ${COMBO_IUN_MESSAMORA_PG_VIEWED:XYZY-EHWU-NPAT-202609-Q-A}
+      pg-unreached: ${COMBO_IUN_MESSAMORA_PG_UNREACHED:LZPZ-YQZH-AZYV-202608-N-A}
+      flow-io-fail-analog: ${COMBO_IUN_MESSAMORA_PF:NPZE-HEAE-PKWJ-202608-V-A}
+      flow-io-ok-analog: ${COMBO_IUN_MESSAMORA_PF_ANALOG:VGAK-PKJE-DGYR-202609-R-A}
+      viewed: ${COMBO_IUN_MESSAMORA_VIEWED:MRGH-DEJL-VYEA-202609-M-A}
+
+    PALERMO: 5df3a854-110c-46e9-a94b-274e2e74132d
