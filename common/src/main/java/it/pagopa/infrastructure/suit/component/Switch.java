@@ -44,4 +44,3 @@ public interface Switch extends Component, Clickable {
                 ));
     }
 }
-
