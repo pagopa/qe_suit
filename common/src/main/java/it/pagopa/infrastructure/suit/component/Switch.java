@@ -10,6 +10,10 @@ public interface Switch extends Component, Clickable {
     String CHECKED_CLASS = "Mui-checked";
     String DISABLED_CLASS = "Mui-disabled";
 
+    default void toggle() {
+        this.click();
+    }
+
     default boolean isChecked() {
         return this.get(FindPolicy.PRESENT)
                 .map(we -> we.getClasses().contains(CHECKED_CLASS))
@@ -38,21 +42,5 @@ public interface Switch extends Component, Clickable {
                 .orElseThrow(() -> new java.util.NoSuchElementException(
                         "Impossibile verificare lo stato dello switch: l'elemento UI non è presente nella pagina."
                 ));
-    }
-}
-
-import it.frontend.e2e.framework.web.domain.Component;
-
-@XPath(".//*[contains(@class, 'MuiSwitch-switchBase')]")
-public interface Switch extends Component, Clickable {
-
-    default void toggle() {
-        this.click();
-    }
-
-    default boolean isChecked() {
-        return get()
-                .map(we -> we.getClasses().contains("Mui-checked"))
-                .orElse(false);
     }
 }
