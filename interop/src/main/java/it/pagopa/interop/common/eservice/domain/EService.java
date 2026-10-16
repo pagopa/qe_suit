@@ -49,10 +49,6 @@ public class EService implements Identifiable {
                 .build();
     }
 
-    public EServiceDescriptor getLastDescriptor() {
-        return descriptors.get(descriptors.size() - 1);
-    }
-
     public EServiceDescriptor getLastDraftDescriptor() {
         return getUniqueDescriptorByState(EServiceDescriptorState.DRAFT);
     }

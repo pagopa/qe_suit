@@ -27,7 +27,7 @@ public class AttributeUseCase {
     }
 
     public void removeCertifiedAttributeThreshold(EService eService, int groupIndex, int attributeIndex) {
-        EServiceDescriptor lastEServiceDescriptor = eService.getLastDescriptor();
+        EServiceDescriptor lastEServiceDescriptor = eService.getLatestDescriptor();
         attributeGateway.removeCertifiedAttributeThreshold(eService.getRef(), lastEServiceDescriptor.getRef(), lastEServiceDescriptor.getState(), groupIndex, attributeIndex);
     }
 
