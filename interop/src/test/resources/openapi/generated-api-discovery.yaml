@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info:
+  title: Generated API reflection fixture
+  version: 1.0.0
+paths:
+  /agreements:
+    post:
+      operationId: createAgreement
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: created
+  /agreements/{agreementId}:
+    get:
+      operationId: getAgreementById
+      parameters:
+        - name: agreementId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: found

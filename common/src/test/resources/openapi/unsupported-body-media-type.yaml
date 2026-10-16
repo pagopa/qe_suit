@@ -1,0 +1,18 @@
+openapi: 3.0.3
+info:
+  title: Unsupported request body media type fixture
+  version: 1.0.0
+paths:
+  /widgets/raw:
+    post:
+      operationId: uploadWidgetRaw
+      requestBody:
+        required: true
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        '201':
+          description: created

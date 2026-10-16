@@ -3,13 +3,13 @@ package it.pagopa.interop.common.journey.infrastructure.cucumber;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.client.application.command.ClientKeyCreationCommand;
 import it.pagopa.interop.common.client.domain.ClientKind;
-import it.pagopa.utils.RandomUtils;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class ClientJourneySteps {
                                 .name(RandomUtils.randomAlphanumericName("client"))
                                 .kind(ClientKind.CONSUMER)
                                 .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
-                                .keys(List.of(ClientKeyCreationCommand::randomClientConsumerKey))
+                                .keys(List.of(ClientKeyCreationCommand::randomClientKey))
                 )
                 .linkPurposeToClient(purpose);
     }
@@ -41,7 +41,7 @@ public class ClientJourneySteps {
                                 .name(RandomUtils.randomAlphanumericName("client"))
                                 .kind(ClientKind.API)
                                 .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
-                                .keys(List.of(ClientKeyCreationCommand::randomClientConsumerKey))
+                                .keys(List.of(ClientKeyCreationCommand::randomClientKey))
                 );
     }
 }
