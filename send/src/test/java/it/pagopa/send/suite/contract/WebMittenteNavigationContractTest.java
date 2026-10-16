@@ -7,6 +7,7 @@ import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
+import it.pagopa.send.web.infrastructure.page.component.TableCell;
 import it.pagopa.send.web.mittente.infrastructure.page.APIKeyPage;
 import it.pagopa.send.web.mittente.infrastructure.page.NewAPIKeyPage;
 import it.pagopa.send.web.mittente.infrastructure.page.PlatformStatusPage;
@@ -14,6 +15,8 @@ import it.pagopa.send.web.mittente.infrastructure.page.StatisticsPage;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
@@ -42,6 +45,7 @@ import java.util.stream.Stream;
 })
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
+@Slf4j
 public class WebMittenteNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;

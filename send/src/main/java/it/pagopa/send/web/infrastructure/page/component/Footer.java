@@ -2,6 +2,7 @@ package it.pagopa.send.web.infrastructure.page.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
+import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 
 public interface Footer extends Component {
@@ -49,6 +50,9 @@ public interface Footer extends Component {
             }
         }
     }
+
+    @XPath(".//p[contains(., 'PagoPA S.p.A.')]")
+    Readable<String> caption();
 
     LanguageSelector languageSelector();
 
