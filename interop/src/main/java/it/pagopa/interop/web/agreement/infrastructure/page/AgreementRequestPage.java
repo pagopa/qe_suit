@@ -9,7 +9,7 @@ import it.pagopa.interop.web.agreement.infrastructure.page.component.AgreementRe
 
 import java.util.Optional;
 
-@Url("${interop.web.agreement-requests}?limit=${limit}&offset=${offset}")
+@Url("${interop.web.consumer-agreement-list}?limit=${limit}&offset=${offset}")
 public interface AgreementRequestPage extends Page {
 
     @XPath(".//h1")
@@ -24,4 +24,3 @@ public interface AgreementRequestPage extends Page {
         pageTitle().readAndAssert("Richieste di fruizione inoltrate");
     }
 }
-
