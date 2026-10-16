@@ -57,6 +57,13 @@ public class WebComponentAssertionSteps {
                 .isEqualTo(expectedErrorMessage);
     }
 
+    @Then("viene mostrata la snackbar con un messaggio di successo {string}")
+    public void assertSnackbarSuccess(String successMessage) {
+        assertThat(webCommonGateway.getSnackbarSuccessMessage())
+                .as("Messaggio di successo visualizzato nella snackbar")
+                .isEqualTo(successMessage);
+    }
+
     @Then("viene mostrata la snackbar con un messaggio di errore contenente {string}")
     public void assertSnackbar(String errorMessage) {
         String actualErrorMessage = webCommonGateway.getSnackbarErrorMessage();
