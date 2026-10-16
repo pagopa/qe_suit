@@ -41,7 +41,16 @@ public class BffDelegationGateway implements DelegationGateway {
     public Delegation createConsumerDelegation(@NonNull TenantRef delegateRef, @NonNull EServiceRef eServiceRef) {
         return restClient.createConsumerDelegation(delegateRef.id(), eServiceRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(consumerDelegation -> mapper.toDelegation(consumerDelegation))
+                .map(mapper::toDelegation)
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public Delegation createProducerDelegation(@NonNull TenantRef delegateRef, @NonNull EServiceRef eServiceRef) {
+        return restClient.createProducerDelegation(delegateRef.id(), eServiceRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(mapper::toDelegation)
                 .updateContext()
                 .get();
     }

@@ -62,6 +62,7 @@ public class BffDelegationRestClient extends RestClient {
                         .execute(Function.identity()),
                 Delegation.class
         );
+        this.producerDelegationsApi = apiClient.producerDelegations();
     }
 
     public TestChain<Delegation> createConsumerDelegation(

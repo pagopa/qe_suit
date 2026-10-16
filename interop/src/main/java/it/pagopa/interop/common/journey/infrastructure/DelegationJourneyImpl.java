@@ -1,12 +1,14 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.delegation.application.DelegationUseCase;
+import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.DelegationJourney;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.common.delegation.application.DelegationUseCase;
 import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.tenant.application.TenantUseCase;
 import lombok.NonNull;
@@ -21,6 +23,7 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
     private final DelegationUseCase delegationUseCase;
     private final TenantUseCase tenantUseCase;
     private final UserJourneyImpl userJourney;
+    private final EntityStore entityStore;
 
     @Override
     public DelegationJourneyImpl createWaitingForApprovalProducerDelegation(
@@ -48,6 +51,18 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
     @Override
     public DelegationJourneyImpl createConsumerDelegation(TenantRef delegateRef, EServiceRef eServiceRef) {
         delegationUseCase.createConsumerDelegation(delegateRef, eServiceRef);
+        return this;
+    }
+
+    @Override
+    public DelegationJourneyImpl createProducerDelegation(TenantRef delegateRef, EServiceRef eServiceRef) {
+        delegationUseCase.createProducerDelegation(delegateRef, eServiceRef);
+        return this;
+    }
+
+    @Override
+    public DelegationJourneyImpl createProducerDelegation(TenantRef delegateRef) {
+        delegationUseCase.createProducerDelegation(delegateRef, entityStore.getLastOrThrow(EService.class).getRef());
         return this;
     }
 
