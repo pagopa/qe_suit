@@ -69,6 +69,7 @@ public class InformalNotificationRequestFactory {
             includeAttachment = false;
         }
 
+        request.documents().clear();
         if (includeAttachment) {
             int docsCount = 1;
             if (overrides.containsKey("documentsCount")) {

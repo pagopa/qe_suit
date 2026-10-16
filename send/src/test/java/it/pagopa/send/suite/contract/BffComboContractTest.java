@@ -1,8 +1,15 @@
 package it.pagopa.send.suite.contract;
 
+import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.bff.delivery.infrastructure.BffComboRestClient;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.send.common.informal_notification.domain.InformalNotificationDomain;
+import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
+import it.pagopa.send.common.informal_notification.infrastructure.factory.InformalRecipientSpecFactory;
+import it.pagopa.send.common.journey.application.SendJourney;
+import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.generated.openapi.clients.sender.informal.bff.model.BffInformalNotificationTimelineStatusHistoryV1;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +18,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -40,7 +49,21 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 public class BffComboContractTest {
 
     private final BffComboRestClient bffComboRestClient;
-    private final Environment environment;
+    private final SendJourney sendJourney;
+    private final InformalRecipientSpecFactory informalRecipientSpecFactory;
+
+    private InformalNotificationDomain createComboNotification(String subject) {
+        InformalRecipientSpec lucrezia = informalRecipientSpecFactory.build(Recipient.LUCREZIA, Map.of());
+
+        return sendJourney
+                .withInformalSender(Tenant.GROSSINI)
+                .prepareInformalNotification(Map.of(
+                        "subject", subject,
+                        "campaignId", "FattOrd"
+                ))
+                .withInformalRecipient(lucrezia)
+                .sendInformalNotification(Tenant.GROSSINI);
+    }
 
     // ===========================
     // Contratti Dettaglio - GET /campaigns/{campaignId}/communications/{iun}
@@ -77,11 +100,10 @@ public class BffComboContractTest {
     @Test
     void shouldValidateComboDetailResponseContract() {
         log.info("Verifica contratto API: schema e campi obbligatori del dettaglio combo");
-        String campaignId = environment.getProperty("combo.campaign.fattord", "FattOrd");
-        String iun = environment.getProperty("combo.iun.fattord.pf", "HDUX-MWKW-HRHY-202609-Q-A");
+        InformalNotificationDomain created = createComboNotification("Test notifica bonaria per contratto BFF Dettaglio");
 
-        var response = bffComboRestClient.getComboDetails(campaignId, iun)
-                .withoutPolling();
+        var response = bffComboRestClient.getComboDetails(created.getCampaignId(), created.getIun())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS, Duration.of(90, ChronoUnit.SECONDS), Duration.of(3, ChronoUnit.SECONDS));
 
         response.assertStatusCode(200);
         var detail = response.get();
@@ -104,14 +126,30 @@ public class BffComboContractTest {
     @Test
     void shouldValidateComboTimelineResponseContract() {
         log.info("Verifica contratto API: schema, campi obbligatori e ordinamento cronologico della timeline combo");
-        String campaignId = environment.getProperty("combo.campaign.fattord", "FattOrd");
-        String iun = environment.getProperty("combo.iun.fattord.pf", "HDUX-MWKW-HRHY-202609-Q-A");
+        InformalNotificationDomain created = createComboNotification("Test notifica bonaria per contratto BFF Timeline");
 
-        var response = bffComboRestClient.getComboTimeline(campaignId, iun)
+        var response = bffComboRestClient.getComboTimeline(created.getCampaignId(), created.getIun())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS, Duration.of(90, ChronoUnit.SECONDS), Duration.of(3, ChronoUnit.SECONDS));
+
+        // Attesa che la timeline sia arricchita degli step dei canali
+        org.awaitility.Awaitility.await()
+                .atMost(Duration.ofSeconds(60))
+                .pollInterval(Duration.ofSeconds(3))
+                .until(() -> {
+                    var currentTimeline = bffComboRestClient.getComboTimeline(created.getCampaignId(), created.getIun())
+                            .withoutPolling()
+                            .get();
+                    return currentTimeline != null
+                            && currentTimeline.getNotificationStatusHistory() != null
+                            && currentTimeline.getNotificationStatusHistory().stream()
+                                    .anyMatch(h -> h.getSteps() != null && !h.getSteps().isEmpty());
+                });
+
+        var finalResponse = bffComboRestClient.getComboTimeline(created.getCampaignId(), created.getIun())
                 .withoutPolling();
+        finalResponse.assertStatusCode(200);
+        var timeline = finalResponse.get();
 
-        response.assertStatusCode(200);
-        var timeline = response.get();
         Assertions.assertThat(timeline).isNotNull();
         Assertions.assertThat(timeline.getIun()).isNotNull();
         Assertions.assertThat(timeline.getRecipients()).isNotNull().isNotEmpty();
