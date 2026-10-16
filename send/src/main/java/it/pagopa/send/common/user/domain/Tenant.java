@@ -44,6 +44,18 @@ public enum Tenant implements User {
         return UserType.PA;
     }
 
+    // per un ente la denominazione della persona è il nome dell'operatore che accede
+    @Override
+    public String getDenomination() {
+        return name;
+    }
+
+    // per un ente il codice fiscale personale è quello dell'operatore che accede
+    @Override
+    public String getPersonalTaxId() {
+        return fiscalNumber;
+    }
+
     public static Tenant fromUsername(String username) {
         for (Tenant tenant : values()) {
             if (tenant.username.equalsIgnoreCase(username)) {
