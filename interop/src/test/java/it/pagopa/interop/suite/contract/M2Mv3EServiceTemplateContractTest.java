@@ -3,6 +3,9 @@ package it.pagopa.interop.suite.contract;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceUseCase;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
@@ -13,6 +16,7 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.InstanceEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateEServiceTemplateInstanceSeed;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import it.pagopa.interop.m2m.v3.infrastructure.config.M2Mv3ApiContractConfig;
 import org.junit.jupiter.api.DynamicTest;
@@ -26,6 +30,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, M2Mv3ApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class M2Mv3EServiceTemplateContractTest {
@@ -33,16 +39,19 @@ public class M2Mv3EServiceTemplateContractTest {
     private final ApiClient apiClient;
     private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
+    private final EServiceTemplateInstanceUseCase instanceUseCase;
 
     public M2Mv3EServiceTemplateContractTest(
             ApiClient apiClient,
             @Qualifier("m2mV3InteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
             InteropJourney interopJourney,
+            EServiceTemplateInstanceUseCase instanceUseCase,
             CurrentChannel<Channel> currentChannel
     ) {
         this.apiClient = apiClient;
         this.httpContractValidator = httpContractValidator;
         this.interopJourney = interopJourney;
+        this.instanceUseCase = instanceUseCase;
         currentChannel.setCurrentChannel(Channel.M2M_V3);
     }
 
@@ -73,16 +82,60 @@ public class M2Mv3EServiceTemplateContractTest {
                 .tests();
     }
 
+    @TestFactory
+    Stream<DynamicTest> updateEServiceTemplateInstance() {
+        return httpContractValidator
+                .as(Tenant.COMUNE_DI_MILANO, M2MRole.M2M_ADMIN)
+                .apiCall(() -> apiClient.eserviceTemplates().updateEServiceTemplateInstance())
+                .pathParams(() -> Map.of("eserviceId", createDraftEServiceInstanceId()))
+                .payload(() -> new UpdateEServiceTemplateInstanceSeed()
+                        .isSignalHubEnabled(false)
+                        .isConsumerDelegable(false)
+                        .isClientAccessDelegable(false)
+                        .instanceLabel("aggiornata"))
+                .scenario(FuzzScenario.REPLACED_WITH_NULL, response -> response.then().statusCode(400))
+                .scenario(FuzzScenario.REMOVED, response -> response.then().statusCode(200))
+                .targets(
+                        FuzzScenario.REMOVED,
+                        response -> response.then().statusCode(400),
+                        List.of(seed -> seed)
+                )
+                .targets(
+                        FuzzScenario.REPLACED_WITH_BLANK_STRING,
+                        response -> response.then().statusCode(200),
+                        List.of(UpdateEServiceTemplateInstanceSeed::getInstanceLabel)
+                )
+                .tests();
+    }
+
     private UUID createPublishedEServiceTemplateId() {
         interopJourney.switchChannel(Channel.BFF);
         try {
-            return interopJourney
-                    .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
-                    .createEServiceTemplate(EServiceTemplateVersionState.PUBLISHED)
-                    .get(EServiceTemplate.class)
-                    .getId();
+            return createPublishedEServiceTemplate().getId();
         } finally {
             interopJourney.resetChannel(Channel.M2M_V3);
         }
+    }
+
+    private UUID createDraftEServiceInstanceId() {
+        interopJourney.switchChannel(Channel.BFF);
+        try {
+            EService instance = instanceUseCase.createEServiceInstance(createPublishedEServiceTemplate());
+            assertEquals(
+                    EServiceDescriptorState.DRAFT,
+                    instance.getLatestDescriptor().getState(),
+                    "The template instance must be in draft before the contract request"
+            );
+            return instance.getId();
+        } finally {
+            interopJourney.resetChannel(Channel.M2M_V3);
+        }
+    }
+
+    private EServiceTemplate createPublishedEServiceTemplate() {
+        return interopJourney
+                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .createEServiceTemplate(EServiceTemplateVersionState.PUBLISHED)
+                .get(EServiceTemplate.class);
     }
 }
