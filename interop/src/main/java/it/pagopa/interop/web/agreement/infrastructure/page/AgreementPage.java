@@ -2,15 +2,14 @@ package it.pagopa.interop.web.agreement.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
+import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Alert;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
-import it.frontend.e2e.framework.web.capability.core.Readable;
 
 import java.util.List;
-import java.util.Optional;
 
 @Url("${interop.web.agreement}/${agreementId}")
 public interface AgreementPage extends Page {
