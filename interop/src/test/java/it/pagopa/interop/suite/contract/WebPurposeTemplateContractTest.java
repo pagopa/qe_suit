@@ -15,16 +15,13 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DynamicTest;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
+import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.UUID;
 import java.util.stream.Stream;
 
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(
         classes = {
                 TestBootApp.class,
@@ -34,7 +31,6 @@ import java.util.stream.Stream;
         properties = {
                 "spring.profiles.include=junit",
                 "channel.web.browser=chrome",
-                "channel.web.headless=true",
         }
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
@@ -43,18 +39,30 @@ public class WebPurposeTemplateContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    private void run(WebScenario<PurposeTemplateCatalogPage> scenario) throws Throwable {
-        DynamicTest dynamicTest = webContractValidator
+    @TestFactory
+    Stream<DynamicTest> createPurposeTemplate() {
+        return webContractValidator
                 .as(
                         User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
                         Tenant.COMUNE_DI_MILANO
                 )
                 .on(PurposeTemplateCatalogPage.class)
-                .tests(Stream.of(scenario))
-                .findFirst()
-                .orElseThrow();
+                .tests(createPurposeTemplateScenarios());
+    }
 
-        dynamicTest.getExecutable().execute();
+    private Stream<WebScenario<PurposeTemplateCatalogPage>> createPurposeTemplateScenarios() {
+        return Stream.of(
+                new WebScenario<>(
+                        "creating purpose template with personal data treatment enabled",
+                        page -> page.openCreationForm().setPersonalData(true).confirmCreation(),
+                        this::assertLandedOnCreatedTemplate
+                ),
+                new WebScenario<>(
+                        "creating purpose template with personal data treatment disabled",
+                        page -> page.openCreationForm().setPersonalData(false).confirmCreation(),
+                        this::assertLandedOnCreatedTemplate
+                )
+        );
     }
 
     private void assertLandedOnCreatedTemplate(PurposeTemplateCatalogPage page) {
@@ -92,23 +100,4 @@ public class WebPurposeTemplateContractTest {
                     .isEmpty();
         });
     }
-
-    @Test
-    void shouldCreatePurposeTemplateAndLandOnConfirmationPage() throws Throwable {
-        run(new WebScenario<>(
-                "creating purpose template with personal data treatment enabled",
-                page -> page.openCreationForm().setPersonalData(true).confirmCreation(),
-                this::assertLandedOnCreatedTemplate
-        ));
-    }
-
-    @Test
-    void shouldCreatePurposeTemplateWithoutPersonalDataAndLandOnConfirmationPage() throws Throwable {
-        run(new WebScenario<>(
-                "creating purpose template with personal data treatment disabled",
-                page -> page.openCreationForm().setPersonalData(false).confirmCreation(),
-                this::assertLandedOnCreatedTemplate
-        ));
-    }
 }
-
