@@ -16,7 +16,7 @@ Feature: Coerenza dell'archiviazione di un e-service e delle sue versioni
     And un admin appartenente all'erogatore Comune di Milano
     And la versione 1 dell'e-service è in fase di archiviazione con un periodo di preavviso di 120 giorni
     When l'erogatore tenta di archiviare l'e-service con un periodo di preavviso di 60 giorni e una motivazione valida
-    Then viene mostrata la snackbar con un messaggio di errore contenente "Non puoi archiviare l’e-service prima di una versione già in fase di archiviazione. Seleziona una durata più lunga."
+    Then viene mostrata la snackbar con un messaggio di errore "Non puoi archiviare l’e-service prima di una versione già in fase di archiviazione. Seleziona una durata più lunga."
 
   Scenario: [ESERVICE_ARCHIVING_GRACE_PERIOD_2] - Impossibilità per il delegato di richiedere l'archiviazione di un e-service prima di una sua versione
   Dato un e-service con una richiesta di fruizione attiva sulla prima versione e una seconda versione pubblicata
@@ -31,7 +31,7 @@ Feature: Coerenza dell'archiviazione di un e-service e delle sue versioni
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega attiva
     And un admin appartenente al delegato Comune di Pozzallo
     When il delegato tenta di richiedere al delegante l'archiviazione dell'intero e-service con un periodo di preavviso di 60 giorni e una motivazione valida
-    Then viene mostrata la snackbar con un messaggio di errore contenente "Non puoi archiviare l’e-service prima di una versione già in fase di archiviazione. Seleziona una durata più lunga."
+    Then viene mostrata la snackbar con un messaggio di errore "Non puoi archiviare l’e-service prima di una versione già in fase di archiviazione. Seleziona una durata più lunga."
 
   Scenario Outline: [ESERVICE_ARCHIVING_GRACE_PERIOD_3] - Archiviazione di un e-service con un preavviso compatibile con quello di una sua versione
   Dato un e-service con una richiesta di fruizione attiva sulla prima versione e una seconda versione pubblicata
