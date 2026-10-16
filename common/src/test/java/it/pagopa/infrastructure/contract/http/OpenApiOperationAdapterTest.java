@@ -62,6 +62,140 @@ class OpenApiOperationAdapterTest {
         assertEquals(true, exception.getMessage().contains("Cannot bind path parameter 'agreementId'"));
     }
 
+    @Test
+    void bindsFormFieldsWhenOperationHasNoBodyMethod() {
+        FakeFormOperation operation = new FakeFormOperation();
+        ObjectNode payload = objectMapper.createObjectNode();
+        payload.put("name", "mario");
+        payload.put("revision", 7);
+
+        adapter.execute(operation, new HttpContractRequest(payload, true, null));
+
+        assertEquals("mario", operation.boundFormParams.get("name"));
+        assertEquals(7, ((Number) operation.boundFormParams.get("revision")).intValue());
+        verify(operation.requestSpecBuilder, never()).setBody(anyString());
+    }
+
+    @Test
+    void bindsNullFormFieldValueAsNullLiteral() {
+        FakeFormOperation operation = new FakeFormOperation();
+        ObjectNode payload = objectMapper.createObjectNode();
+        payload.set("name", NullNode.instance);
+
+        adapter.execute(operation, new HttpContractRequest(payload, true, null));
+
+        assertEquals("null", operation.boundFormParams.get("name"));
+    }
+
+    @Test
+    void removedFormFieldIsNotBound() {
+        FakeFormOperation operation = new FakeFormOperation();
+        ObjectNode payload = objectMapper.createObjectNode();
+        payload.put("revision", 1);
+
+        adapter.execute(operation, new HttpContractRequest(payload, true, null));
+
+        assertFalse(operation.boundFormParams.containsKey("name"));
+    }
+
+    @Test
+    void missingFormFieldBindingMethodFailsFast() {
+        FakeFormOperation operation = new FakeFormOperation();
+        ObjectNode payload = objectMapper.createObjectNode().put("unknown", "x");
+
+        ContractHttpException exception = assertThrows(
+                ContractHttpException.class,
+                () -> adapter.execute(operation, new HttpContractRequest(payload, true, null))
+        );
+        assertEquals(true, exception.getMessage().contains("Cannot bind form field 'unknown'"));
+    }
+
+    @Test
+    void bindsQueryParametersAndExpandsArraysAsVarargs() {
+        FakeQueryOperation operation = new FakeQueryOperation();
+        ObjectNode query = objectMapper.createObjectNode();
+        query.put("limit", 10);
+        query.putArray("states").add("ACTIVE").add("DRAFT");
+
+        adapter.execute(operation, new HttpContractRequest(null, false, null, query));
+
+        assertEquals(1, operation.boundQueryParams.get("limit").length);
+        assertEquals(10, ((Number) operation.boundQueryParams.get("limit")[0]).intValue());
+        assertEquals(2, operation.boundQueryParams.get("states").length);
+        assertEquals("ACTIVE", operation.boundQueryParams.get("states")[0]);
+    }
+
+    @Test
+    void removedQueryParameterIsNotBound() {
+        FakeQueryOperation operation = new FakeQueryOperation();
+        ObjectNode query = objectMapper.createObjectNode().put("limit", 1);
+
+        adapter.execute(operation, new HttpContractRequest(null, false, null, query));
+
+        assertFalse(operation.boundQueryParams.containsKey("states"));
+    }
+
+    @Test
+    void missingQueryBindingMethodFailsFast() {
+        FakeQueryOperation operation = new FakeQueryOperation();
+        ObjectNode query = objectMapper.createObjectNode().put("unknown", "x");
+
+        ContractHttpException exception = assertThrows(
+                ContractHttpException.class,
+                () -> adapter.execute(operation, new HttpContractRequest(null, false, null, query))
+        );
+        assertEquals(true, exception.getMessage().contains("Cannot bind query parameter 'unknown'"));
+    }
+
+    static class FakeQueryOperation {
+        final Response response = Mockito.mock(Response.class);
+        final Map<String, Object[]> boundQueryParams = new LinkedHashMap<>();
+
+        public FakeQueryOperation reqSpec(Consumer<RequestSpecBuilder> customizer) {
+            customizer.accept(new RequestSpecBuilder());
+            return this;
+        }
+
+        public FakeQueryOperation limitQuery(Object... values) {
+            boundQueryParams.put("limit", values);
+            return this;
+        }
+
+        public FakeQueryOperation statesQuery(Object... values) {
+            boundQueryParams.put("states", values);
+            return this;
+        }
+
+        public <T> T execute(Function<Response, T> handler) {
+            return handler.apply(response);
+        }
+    }
+
+    static class FakeFormOperation {
+        final RequestSpecBuilder requestSpecBuilder = Mockito.spy(new RequestSpecBuilder());
+        final Response response = Mockito.mock(Response.class);
+        final Map<String, Object> boundFormParams = new LinkedHashMap<>();
+
+        public FakeFormOperation reqSpec(Consumer<RequestSpecBuilder> customizer) {
+            customizer.accept(requestSpecBuilder);
+            return this;
+        }
+
+        public FakeFormOperation nameForm(Object... values) {
+            boundFormParams.put("name", values[0]);
+            return this;
+        }
+
+        public FakeFormOperation revisionForm(Object... values) {
+            boundFormParams.put("revision", values[0]);
+            return this;
+        }
+
+        public <T> T execute(Function<Response, T> handler) {
+            return handler.apply(response);
+        }
+    }
+
     static class FakeOperation  {
         final RequestSpecBuilder requestSpecBuilder = Mockito.spy(new RequestSpecBuilder());
         final Response response = Mockito.mock(Response.class);

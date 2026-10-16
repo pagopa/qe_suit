@@ -20,4 +20,6 @@ public interface ClientCreationCommand {
     ClientCreationCommand keys(
             List<Consumer<ClientKeyCreationCommand>> keys
     );
+
+    ClientCreationCommand admin(UserRef adminRef);
 }

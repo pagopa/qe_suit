@@ -1,0 +1,49 @@
+openapi: 3.0.3
+info:
+  title: Widget PST fixture
+  version: 1.0.0
+paths:
+  /widgets/{widgetId}:
+    put:
+      operationId: updateWidget
+      parameters:
+        - name: widgetId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Widget'
+      responses:
+        '200':
+          description: updated
+    get:
+      operationId: getWidget
+      parameters:
+        - name: widgetId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: found
+components:
+  schemas:
+    Widget:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          maxLength: 20
+        quantity:
+          type: integer
+          format: int32
