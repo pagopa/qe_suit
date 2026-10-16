@@ -7,6 +7,7 @@ import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
@@ -75,6 +76,7 @@ public class WebNotificationDetailPGContractTest {
     private final SendJourney sendJourney;
     private final RecipientSpecFactory recipientSpecFactory;
     private final CurrentUserSession currentUserSession;
+    private final LegalNotificationCreationRequest creationRequest;
 
     /**
      * Testi del dettaglio dell'ultima notifica a valore legale della lista:
@@ -160,6 +162,9 @@ public class WebNotificationDetailPGContractTest {
                     "pagoPA_number", "0",
                     "F24_number", "0"
             ));
+            // la richiesta di creazione è condivisa (singleton) e non viene svuotata tra un invio e l'altro: senza
+            // svuotarla, la notifica includerebbe anche i destinatari rimasti da invii precedenti
+            creationRequest.getRecipients().clear();
             try {
                 createdIun = sendJourney
                         .withSender(Tenant.GROSSINI)
@@ -174,6 +179,8 @@ public class WebNotificationDetailPGContractTest {
                         .getIun();
                 return createdIun;
             } finally {
+                // anche dopo un invio fallito: i destinatari non restano per gli invii successivi
+                creationRequest.getRecipients().clear();
                 // l'invio imposta il mittente sul thread: senza azzerarlo, gli scenari successivi sullo stesso thread
                 // aprirebbero il portale come Grossini invece che come l'impresa
                 currentUserSession.setSender(null);

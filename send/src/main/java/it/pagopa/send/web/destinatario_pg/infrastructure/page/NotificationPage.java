@@ -8,6 +8,9 @@ import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.notification_search.infrastructure.suit.RecipientNotificationsPage;
 import org.assertj.core.api.Assertions;
 
+import java.util.List;
+import java.util.Optional;
+
 /**
  * {@code {baseUrl}/notifiche}
  * Pagina "In arrivo per &lt;impresa&gt;" della persona giuridica, pagina iniziale del portale dopo il login.
@@ -38,9 +41,9 @@ public interface NotificationPage extends RecipientNotificationsPage {
     @XPath("(" + LEGAL_NOTIFICATION_ROW + "//*[@data-testid=\"" + OPEN_BUTTON_TEST_ID + "\"])[last()]")
     Button lastLegalNotificationOpenButton();
 
-    // "Apri" della prima notifica a valore legale della lista, la più recente
-    @XPath("(" + LEGAL_NOTIFICATION_ROW + "//*[@data-testid=\"" + OPEN_BUTTON_TEST_ID + "\"])[1]")
-    Button firstLegalNotificationOpenButton();
+    // "Apri" di tutte le notifiche a valore legale della lista
+    @XPath(LEGAL_NOTIFICATION_ROW + "//*[@data-testid=\"" + OPEN_BUTTON_TEST_ID + "\"]")
+    List<Button> legalNotificationOpenButtons();
 
     // "Apri" se c'è una notifica a valore legale, altrimenti il main della lista caricata (tabella o stato vuoto) senza
     // notifiche a valore legale: la ricerca attende il caricamento e trova sempre un elemento, senza il timeout del
@@ -79,21 +82,31 @@ public interface NotificationPage extends RecipientNotificationsPage {
     }
 
     /**
-     * Apre la notifica a valore legale appena inviata con lo IUN indicato: è la più recente, quindi la prima della lista.
-     * Dopo l'accettazione può comparire nella lista con qualche istante di ritardo: finché la prima notifica a valore
-     * legale non è quella cercata (il pulsante "Apri" riporta lo IUN nell'aria-label) la lista viene ricaricata, ogni
-     * {@value #NEW_NOTIFICATION_POLL_MILLIS} ms e per al massimo {@value #NEW_NOTIFICATION_WAIT_MILLIS} ms.
+     * "Apri" della notifica a valore legale con lo IUN indicato, se è nella pagina corrente della lista: il pulsante
+     * riporta lo IUN nell'aria-label ("Apri dettaglio notifica con IUN: &lt;IUN&gt;").
+     */
+    default Optional<Button> legalNotificationOpenButton(String iun) {
+        return legalNotificationOpenButtons().stream()
+                .filter(button -> button.get(FindPolicy.PRESENT)
+                        .map(element -> element.getAttributes().get("aria-label"))
+                        .map(label -> label.endsWith(iun))
+                        .orElse(false))
+                .findFirst();
+    }
+
+    /**
+     * Apre la notifica a valore legale appena inviata con lo IUN indicato, in qualunque riga della lista si trovi.
+     * Dopo l'accettazione può comparire nella lista con qualche istante di ritardo: finché non c'è, la lista viene
+     * ricaricata, ogni {@value #NEW_NOTIFICATION_POLL_MILLIS} ms e per al massimo {@value #NEW_NOTIFICATION_WAIT_MILLIS}
+     * ms.
      */
     default void openNewLegalNotification(String iun) {
         long deadline = System.currentTimeMillis() + NEW_NOTIFICATION_WAIT_MILLIS;
         while (true) {
             navigateTo();
-            boolean shown = hasLegalNotification() && firstLegalNotificationOpenButton().get(FindPolicy.PRESENT)
-                    .map(element -> element.getAttributes().get("aria-label"))
-                    .map(label -> label.endsWith(iun))
-                    .orElse(false);
-            if (shown) {
-                firstLegalNotificationOpenButton().click();
+            Optional<Button> openButton = hasLegalNotification() ? legalNotificationOpenButton(iun) : Optional.empty();
+            if (openButton.isPresent()) {
+                openButton.get().click();
                 return;
             }
             if (System.currentTimeMillis() >= deadline) {
