@@ -20,6 +20,7 @@ import java.util.HashMap;
 public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGateway {
 
     private final BffEServiceRestClient restClient;
+    private final BffEServiceRiskAnalysisMapper mapper;
 
     /**
      * Recupera la prima {@link EServiceRiskAnalysis} associata all'e-service.
@@ -37,7 +38,7 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(details -> details.getRiskAnalysis().stream()
                         .findFirst()
-                        .map(this::toDomain)
+                        .map(mapper::toDomain)
                         .orElse(null))
                 .get();
     }
@@ -60,22 +61,12 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
                         .map(details -> details.getRiskAnalysis().stream()
                                 .filter(analysis -> payload.getName().equals(analysis.getName()))
                                 .findFirst()
-                                .map(this::toDomain))
+                                .map(mapper::toDomain))
                         .get(),
                 java.util.Optional::isPresent
         ).orElseThrow();
     }
 
-    private EServiceRiskAnalysis toDomain(it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysis source) {
-        return EServiceRiskAnalysis.builder()
-                .id(source.getId())
-                .name(source.getName())
-                .riskAnalysisForm(RiskAnalysisForm.builder()
-                        .version(source.getRiskAnalysisForm().getVersion())
-                        .answers(source.getRiskAnalysisForm().getAnswers())
-                        .build())
-                .build();
-    }
 
     @Override
     public boolean supports(Channel delimiter) {
