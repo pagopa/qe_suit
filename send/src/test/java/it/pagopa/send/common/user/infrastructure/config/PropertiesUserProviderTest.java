@@ -7,7 +7,6 @@ import it.pagopa.send.common.user.domain.UserType;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
-import org.springframework.mock.env.MockEnvironment;
 
 import java.util.Map;
 
@@ -62,8 +61,7 @@ class PropertiesUserProviderTest {
         runnerFor(FAKE_ENVIRONMENT).run(context -> assertThatThrownBy(
                 () -> context.getBean(PropertiesUserProvider.class).resolve(UserAlias.USER_1))
                 .isInstanceOf(MissingUserConfigurationException.class)
-                .hasMessage("Utenza USER_1 non configurata per l'ambiente 'fake-env': aggiungere la chiave 'user-1'"
-                        + " in application-users-fake-env.yaml"));
+                .hasMessage("Utenza USER_1 non configurata nel file delle utenze dell'ambiente"));
     }
 
     @Test
@@ -72,20 +70,18 @@ class PropertiesUserProviderTest {
 
         assertThatThrownBy(() -> provider.resolve(UserAlias.USER_2))
                 .isInstanceOf(MissingUserConfigurationException.class)
-                .hasMessage("Utenza USER_2 non configurata per l'ambiente 'fake-env': aggiungere la chiave 'user-2'"
-                        + " in application-users-fake-env.yaml");
+                .hasMessage("Utenza USER_2 non configurata nel file delle utenze dell'ambiente");
     }
 
     @Test
     void shouldFailWhenUserIsPlaceholder() {
         UsersProperties.UserEntry placeholder = new UsersProperties.UserEntry("REPLACE_ME", null, null, null, null,
                 null, null, null, null, null, null, false, null, null, null);
-        PropertiesUserProvider provider = providerWith(new UsersProperties(Map.of("comune-1", placeholder)));
+        PropertiesUserProvider provider = providerWith(new UsersProperties(Map.of(UserAlias.COMUNE_1, placeholder)));
 
         assertThatThrownBy(() -> provider.resolve(UserAlias.COMUNE_1))
                 .isInstanceOf(MissingUserConfigurationException.class)
-                .hasMessageContaining("COMUNE_1")
-                .hasMessageContaining("'fake-env'");
+                .hasMessageContaining("COMUNE_1");
     }
 
     @Test
@@ -94,13 +90,10 @@ class PropertiesUserProviderTest {
 
         assertThatThrownBy(() -> provider.resolve(UserAlias.COMUNE_2))
                 .isInstanceOf(MissingUserConfigurationException.class)
-                .hasMessageContaining("COMUNE_2")
-                .hasMessageContaining("'fake-env'");
+                .hasMessageContaining("COMUNE_2");
     }
 
     private static PropertiesUserProvider providerWith(UsersProperties properties) {
-        MockEnvironment environment = new MockEnvironment();
-        environment.setActiveProfiles(FAKE_ENVIRONMENT);
-        return new PropertiesUserProvider(properties, environment);
+        return new PropertiesUserProvider(properties);
     }
 }

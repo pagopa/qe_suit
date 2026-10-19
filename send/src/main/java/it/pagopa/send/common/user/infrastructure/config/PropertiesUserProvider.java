@@ -6,7 +6,6 @@ import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.common.user.domain.UserType;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,7 +15,7 @@ import java.util.Map;
  * Risolve le utenze generiche dal file delle utenze dell'ambiente attivo ({@link UsersProperties}).
  * <p>
  * Fail-fast: se l'utenza manca, o è ancora un segnaposto {@code REPLACE_ME}, lancia
- * {@link MissingUserConfigurationException} con alias e ambiente, invece di restituire dati vuoti o finti.
+ * {@link MissingUserConfigurationException} con l'alias, invece di restituire dati vuoti o finti.
  */
 @Component
 @EnableConfigurationProperties(UsersProperties.class)
@@ -25,30 +24,23 @@ public class PropertiesUserProvider implements UserProvider {
     private static final String PLACEHOLDER = "REPLACE_ME";
 
     private final UsersProperties properties;
-    private final Environment environment;
 
-    public PropertiesUserProvider(UsersProperties properties, Environment environment) {
+    public PropertiesUserProvider(UsersProperties properties) {
         this.properties = properties;
-        this.environment = environment;
     }
 
     @Override
     public User resolve(UserAlias alias) {
-        Map<String, UsersProperties.UserEntry> users = properties.users();
-        UsersProperties.UserEntry entry = users != null ? users.get(alias.key()) : null;
+        Map<UserAlias, UsersProperties.UserEntry> users = properties.users();
+        UsersProperties.UserEntry entry = users != null ? users.get(alias) : null;
         if (entry == null || isPlaceholder(entry.username())) {
-            throw new MissingUserConfigurationException(alias, activeEnvironment());
+            throw new MissingUserConfigurationException(alias);
         }
         return toUser(entry, alias.getType());
     }
 
     private static boolean isPlaceholder(String username) {
         return username == null || username.isBlank() || username.contains(PLACEHOLDER);
-    }
-
-    private String activeEnvironment() {
-        String[] profiles = environment.getActiveProfiles();
-        return profiles.length > 0 ? String.join(",", profiles) : "default";
     }
 
     private static User toUser(UsersProperties.UserEntry entry, UserType type) {
