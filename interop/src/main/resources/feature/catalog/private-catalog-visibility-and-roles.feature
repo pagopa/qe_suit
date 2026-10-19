@@ -16,9 +16,11 @@ Feature: Visibilità degli e-service nel catalogo privato
 
   Scenario Outline: [PRIVATE_CATALOG_VISIBILITY_1] Visibilità in base allo stato delle versioni
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                   | descrizione               | stato della versione |
-      | ES-1  | Comune di Milano | E-service di <esempio> | Descrizione di <esempio>. | <stato>              |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano          |
+      | nome                 | E-service di <esempio>    |
+      | descrizione          | Descrizione di <esempio>. |
+      | stato della versione | <stato>                   |
     When PagoPA cerca nel catalogo la parola "<esempio>"
     Then tra i risultati <esito> l'e-service predisposto "ES-1"
 
@@ -41,19 +43,24 @@ Feature: Visibilità degli e-service nel catalogo privato
 
   Scenario: [PRIVATE_CATALOG_VISIBILITY_2] Un e-service con sola bozza non compare nemmeno per il produttore
     Given un admin appartenente all'erogatore Comune di Milano
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome            | descrizione               | stato della versione |
-      | ES-1  | Comune di Milano | E-service Bozza | E-service con sola bozza. | in bozza             |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano          |
+      | nome                 | E-service Bozza           |
+      | descrizione          | E-service con sola bozza. |
+      | stato della versione | in bozza                  |
     When Comune di Milano cerca nel catalogo la parola "E-service Bozza"
     Then la ricerca termina senza errori
     And tra i risultati non compare l'e-service predisposto "ES-1"
 
   Scenario: [PRIVATE_CATALOG_VISIBILITY_3] Versione pubblicata e nuova bozza: compare solo la versione pubblicata
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome             | descrizione             | stato della versione |
-      | ES-1  | Comune di Milano | E-service Doppio | E-service con due fasi. | pubblicata           |
-    And all'e-service predisposto "ES-1" viene aggiunta una nuova versione in bozza
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano        |
+      | nome                 | E-service Doppio        |
+      | descrizione          | E-service con due fasi. |
+      | stato della versione | pubblicata              |
+    And all'e-service "ES-1" viene aggiunta una versione con la seguente configurazione:
+      | stato della versione | bozza |
     When PagoPA cerca nel catalogo la parola "E-service Doppio"
     Then tra i risultati compare l'e-service predisposto "ES-1"
     And per l'e-service predisposto "ES-1" il risultato riporta:
@@ -62,10 +69,13 @@ Feature: Visibilità degli e-service nel catalogo privato
 
   Scenario Outline: [PRIVATE_CATALOG_VISIBILITY_4] Versione presentata nel risultato
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome               | descrizione            | stato della versione |
-      | ES-1  | Comune di Milano | E-service Versioni | E-service con versioni | <prima versione>     |
-    And all'e-service predisposto "ES-1" viene aggiunta una versione nello stato "<seconda versione>"
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano       |
+      | nome                 | E-service Versioni     |
+      | descrizione          | E-service con versioni |
+      | stato della versione | <prima versione>       |
+    And all'e-service "ES-1" viene aggiunta una versione con la seguente configurazione:
+      | stato della versione | <seconda versione> |
     When PagoPA cerca nel catalogo la parola "E-service Versioni"
     Then tra i risultati compare l'e-service predisposto "ES-1"
     And per l'e-service predisposto "ES-1" il risultato riporta:
@@ -81,9 +91,11 @@ Feature: Visibilità degli e-service nel catalogo privato
 
   Scenario Outline: [PRIVATE_CATALOG_VISIBILITY_5] Stessa lista per produttore, fruitore e delegato
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome            | descrizione          | stato della versione |
-      | ES-1  | Comune di Milano | E-service Ruoli | E-service per ruoli. | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano     |
+      | nome                 | E-service Ruoli      |
+      | descrizione          | E-service per ruoli. |
+      | stato della versione | pubblicata           |
     And l'erogatore Comune di Milano ha delegato l'erogazione dell'e-service predisposto "ES-1" al Comune di Pozzallo con delega attiva
     When <tenant> cerca nel catalogo la parola "E-service Ruoli"
     Then tra i risultati compare l'e-service predisposto "ES-1"
@@ -98,9 +110,11 @@ Feature: Visibilità degli e-service nel catalogo privato
   # non è replicabile sul frontend): non estenderlo agli altri canali.
   Scenario Outline: [PRIVATE_CATALOG_VISIBILITY_6] Indicazione "è mio" solo per il produttore
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome          | descrizione        | stato della versione |
-      | ES-1  | Comune di Milano | E-service Mio | E-service proprio. | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano   |
+      | nome                 | E-service Mio      |
+      | descrizione          | E-service proprio. |
+      | stato della versione | pubblicata         |
     And l'erogatore Comune di Milano ha delegato l'erogazione dell'e-service predisposto "ES-1" al Comune di Pozzallo con delega attiva
     When <tenant> cerca nel catalogo la parola "E-service Mio"
     Then per l'e-service predisposto "ES-1" il risultato riporta:
@@ -115,9 +129,11 @@ Feature: Visibilità degli e-service nel catalogo privato
 
   Scenario: [PRIVATE_CATALOG_VISIBILITY_7] Notifica non letta presente per un ente abilitato alle notifiche
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                 | descrizione           | stato della versione |
-      | ES-1  | Comune di Milano | E-service Notificato | E-service notificato. | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano      |
+      | nome                 | E-service Notificato  |
+      | descrizione          | E-service notificato. |
+      | stato della versione | pubblicata            |
     And viene generata una notifica non letta per il fruitore sull'e-service predisposto "ES-1"
     When PagoPA cerca nel catalogo la parola "E-service Notificato"
     Then per l'e-service predisposto "ES-1" il risultato riporta:
@@ -129,9 +145,11 @@ Feature: Visibilità degli e-service nel catalogo privato
   # del servizio notifiche: lo scenario verifica solo che la lista risponda.
   Scenario: [PRIVATE_CATALOG_VISIBILITY_8] Nessuna notifica per un ente non abilitato alle notifiche
     Given un admin appartenente al fruitore Comune di Pozzallo
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                     | descrizione               | stato della versione |
-      | ES-1  | Comune di Milano | E-service Non Notificato | E-service non notificato. | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano          |
+      | nome                 | E-service Non Notificato  |
+      | descrizione          | E-service non notificato. |
+      | stato della versione | pubblicata                |
     And viene generata una notifica non letta per il fruitore sull'e-service predisposto "ES-1"
     When Comune di Pozzallo cerca nel catalogo la parola "E-service Non Notificato"
     Then la ricerca termina senza errori

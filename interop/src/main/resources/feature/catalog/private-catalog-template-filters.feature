@@ -21,9 +21,11 @@ Feature: Filtri sui template nel catalogo privato
     And sono predisposte le seguenti istanze di template:
       | alias | template | stato della versione |
       | ES-2  | TPL-1    | pubblicata           |
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                   | descrizione | stato della versione |
-      | ES-1  | Comune di Milano | E-service Modello Beta | E-service.  | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano       |
+      | nome                 | E-service Modello Beta |
+      | descrizione          | E-service.             |
+      | stato della versione | pubblicata             |
     When PagoPA cerca nel catalogo la parola "Modello" con i seguenti filtri:
       | filtro              | valore |
       | istanze di template | sì     |
@@ -38,9 +40,11 @@ Feature: Filtri sui template nel catalogo privato
     And sono predisposte le seguenti istanze di template:
       | alias | template | stato della versione |
       | ES-2  | TPL-1    | pubblicata           |
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                 | descrizione | stato della versione |
-      | ES-1  | Comune di Milano | E-service Forma Beta | E-service.  | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano     |
+      | nome                 | E-service Forma Beta |
+      | descrizione          | E-service.           |
+      | stato della versione | pubblicata           |
     When PagoPA cerca nel catalogo la parola "Forma"
     Then tra i risultati compaiono gli e-service predisposti:
       | alias |

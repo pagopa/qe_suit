@@ -15,11 +15,21 @@ Feature: Combinazioni di filtri nel catalogo privato
 
   Scenario: [PRIVATE_CATALOG_FILTER_COMBINATIONS_1] Parola chiave e solo e-service attivi
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                      | descrizione | stato della versione |
-      | ES-1  | Comune di Milano | E-service Attivo Nebula   | E-service.  | pubblicata           |
-      | ES-2  | Comune di Milano | E-service Sospeso Nebula  | E-service.  | sospesa              |
-      | ES-3  | Comune di Milano | E-service Estraneo Cumulo | E-service.  | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano        |
+      | nome                 | E-service Attivo Nebula |
+      | descrizione          | E-service.              |
+      | stato della versione | pubblicata              |
+    And l'e-service "ES-2" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano         |
+      | nome                 | E-service Sospeso Nebula |
+      | descrizione          | E-service.               |
+      | stato della versione | sospesa                  |
+    And l'e-service "ES-3" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano          |
+      | nome                 | E-service Estraneo Cumulo |
+      | descrizione          | E-service.                |
+      | stato della versione | pubblicata                |
     When PagoPA cerca nel catalogo la parola "Nebula" con i seguenti filtri:
       | filtro                | valore |
       | solo e-service attivi | sì     |
@@ -31,15 +41,23 @@ Feature: Combinazioni di filtri nel catalogo privato
 
   Scenario: [PRIVATE_CATALOG_FILTER_COMBINATIONS_2] E-service richiedibili e non ancora sottoscritti
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                        | descrizione | stato della versione |
-      | ES-1  | Comune di Milano | E-service Fruibile Libero   | E-service.  | pubblicata           |
-      | ES-2  | Comune di Milano | E-service Fruibile Iscritto | E-service.  | pubblicata           |
-      | ES-3  | Comune di Milano | E-service Fruibile Bloccato | E-service.  | pubblicata           |
-    And all'e-service predisposto "ES-3" sono richiesti i seguenti gruppi di attributi:
-      | tipo        | attributi                            |
-      | certificati | un attributo non posseduto da PagoPA |
-    And PagoPA ha un'adesione attiva all'e-service predisposto "ES-2"
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano          |
+      | nome                 | E-service Fruibile Libero |
+      | descrizione          | E-service.                |
+      | stato della versione | pubblicata                |
+    And l'e-service "ES-2" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano            |
+      | nome                 | E-service Fruibile Iscritto |
+      | descrizione          | E-service.                  |
+      | stato della versione | pubblicata                  |
+    And l'e-service "ES-3" è predisposto a catalogo con la seguente configurazione:
+      | erogatore             | Comune di Milano                     |
+      | nome                  | E-service Fruibile Bloccato          |
+      | descrizione           | E-service.                           |
+      | stato della versione  | pubblicata                           |
+      | attributi certificati | un attributo non posseduto da PagoPA |
+    And PagoPA ha una richiesta di fruizione attiva per l'e-service predisposto "ES-2"
     When PagoPA cerca nel catalogo la parola "Fruibile" con i seguenti filtri:
       | filtro                    | valore |
       | richiedibili dal fruitore | sì     |
@@ -59,9 +77,11 @@ Feature: Combinazioni di filtri nel catalogo privato
       | alias | template | stato della versione |
       | ES-1  | TPL-1    | pubblicata           |
       | ES-2  | TPL-1    | pubblicata           |
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                  | descrizione | stato della versione |
-      | ES-3  | Comune di Milano | E-service Giunto Beta | E-service.  | pubblicata           |
+    And l'e-service "ES-3" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano      |
+      | nome                 | E-service Giunto Beta |
+      | descrizione          | E-service.            |
+      | stato della versione | pubblicata            |
     And all'e-service predisposto "ES-1" è collegato un template di finalità pubblicato
     And all'e-service predisposto "ES-3" è collegato un template di finalità pubblicato
     When PagoPA cerca nel catalogo la parola "Giunto" con i seguenti filtri:
@@ -76,11 +96,21 @@ Feature: Combinazioni di filtri nel catalogo privato
 
   Scenario: [PRIVATE_CATALOG_FILTER_COMBINATIONS_4] Ruolo di delegato ed erogatore
     Given un admin appartenente al fruitore Comune di Pozzallo
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                       | descrizione | stato della versione |
-      | ES-1  | Comune di Milano | E-service Mandato Delegato | E-service.  | pubblicata           |
-      | ES-2  | Comune di Milano | E-service Mandato Libero   | E-service.  | pubblicata           |
-      | ES-3  | Sogecap          | E-service Mandato Estraneo | E-service.  | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano           |
+      | nome                 | E-service Mandato Delegato |
+      | descrizione          | E-service.                 |
+      | stato della versione | pubblicata                 |
+    And l'e-service "ES-2" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano         |
+      | nome                 | E-service Mandato Libero |
+      | descrizione          | E-service.               |
+      | stato della versione | pubblicata               |
+    And l'e-service "ES-3" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Sogecap                    |
+      | nome                 | E-service Mandato Estraneo |
+      | descrizione          | E-service.                 |
+      | stato della versione | pubblicata                 |
     And l'erogatore Comune di Milano ha delegato l'erogazione dell'e-service predisposto "ES-1" al Comune di Pozzallo con delega attiva
     And l'erogatore Sogecap ha delegato l'erogazione dell'e-service predisposto "ES-3" al Comune di Pozzallo con delega attiva
     When Comune di Pozzallo cerca nel catalogo la parola "Mandato" con i seguenti filtri:
@@ -95,13 +125,46 @@ Feature: Combinazioni di filtri nel catalogo privato
 
   Scenario: [PRIVATE_CATALOG_FILTER_COMBINATIONS_5] Modalità, scambio asincrono e Signal Hub non attivo
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                       | descrizione | stato della versione | modalità   | scambio asincrono | Signal Hub    |
-      | ES-1  | Comune di Milano | E-service Canale Giusto    | E-service.  | pubblicata           | erogazione | sì                | non attivo    |
-      | ES-2  | Comune di Milano | E-service Canale Libero    | E-service.  | pubblicata           | erogazione | sì                | non impostato |
-      | ES-3  | Comune di Milano | E-service Canale Attivo    | E-service.  | pubblicata           | erogazione | sì                | attivo        |
-      | ES-4  | Comune di Milano | E-service Canale Ricezione | E-service.  | pubblicata           | ricezione  | sì                | non attivo    |
-      | ES-5  | Comune di Milano | E-service Canale Sincrono  | E-service.  | pubblicata           | erogazione | no                | non attivo    |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano        |
+      | nome                 | E-service Canale Giusto |
+      | descrizione          | E-service.              |
+      | stato della versione | pubblicata              |
+      | modalità             | erogazione              |
+      | scambio asincrono    | sì                      |
+      | Signal Hub           | non attivo              |
+    And l'e-service "ES-2" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano        |
+      | nome                 | E-service Canale Libero |
+      | descrizione          | E-service.              |
+      | stato della versione | pubblicata              |
+      | modalità             | erogazione              |
+      | scambio asincrono    | sì                      |
+      | Signal Hub           | non impostato           |
+    And l'e-service "ES-3" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano        |
+      | nome                 | E-service Canale Attivo |
+      | descrizione          | E-service.              |
+      | stato della versione | pubblicata              |
+      | modalità             | erogazione              |
+      | scambio asincrono    | sì                      |
+      | Signal Hub           | attivo                  |
+    And l'e-service "ES-4" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano           |
+      | nome                 | E-service Canale Ricezione |
+      | descrizione          | E-service.                 |
+      | stato della versione | pubblicata                 |
+      | modalità             | ricezione                  |
+      | scambio asincrono    | sì                         |
+      | Signal Hub           | non attivo                 |
+    And l'e-service "ES-5" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano          |
+      | nome                 | E-service Canale Sincrono |
+      | descrizione          | E-service.                |
+      | stato della versione | pubblicata                |
+      | modalità             | erogazione                |
+      | scambio asincrono    | no                        |
+      | Signal Hub           | non attivo                |
     When PagoPA cerca nel catalogo la parola "Canale" con i seguenti filtri:
       | filtro            | valore     |
       | modalità          | erogazione |
@@ -129,11 +192,21 @@ Feature: Combinazioni di filtri nel catalogo privato
     And sono predisposte le seguenti istanze di template:
       | alias | template | stato della versione |
       | ES-1  | TPL-1    | pubblicata           |
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                      | descrizione | stato della versione |
-      | ES-2  | Comune di Milano | E-service Sintesi Beta    | E-service.  | pubblicata           |
-      | ES-3  | Sogecap          | E-service Sintesi Gamma   | E-service.  | pubblicata           |
-      | ES-4  | Comune di Milano | E-service Estraneo Quarzo | E-service.  | pubblicata           |
+    And l'e-service "ES-2" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano       |
+      | nome                 | E-service Sintesi Beta |
+      | descrizione          | E-service.             |
+      | stato della versione | pubblicata             |
+    And l'e-service "ES-3" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Sogecap                 |
+      | nome                 | E-service Sintesi Gamma |
+      | descrizione          | E-service.              |
+      | stato della versione | pubblicata              |
+    And l'e-service "ES-4" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano          |
+      | nome                 | E-service Estraneo Quarzo |
+      | descrizione          | E-service.                |
+      | stato della versione | pubblicata                |
     When PagoPA cerca nel catalogo la parola "Sintesi" con i seguenti filtri:
       | filtro                   | valore |
       | categoria dell'erogatore | CAT-1  |

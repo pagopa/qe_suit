@@ -14,10 +14,16 @@ Feature: Filtro per ruolo di delega nel catalogo privato
 
   Scenario Outline: [PRIVATE_CATALOG_DELEGATIONS_1] Ruolo di delegato: conta solo la delega attiva
     Given un admin appartenente al fruitore Comune di Pozzallo
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                    | descrizione | stato della versione |
-      | ES-1  | Comune di Milano | E-service Delegato Alfa | E-service.  | pubblicata           |
-      | ES-2  | Comune di Milano | E-service Delegato Beta | E-service.  | pubblicata           |
+    And l'e-service "ES-1" è predisposto con la seguente configurazione:
+      | erogatore            | Comune di Milano        |
+      | nome                 | E-service Delegato Alfa |
+      | descrizione          | E-service.              |
+      | stato della versione | pubblicata              |
+    And l'e-service "ES-2" è predisposto con la seguente configurazione:
+      | erogatore            | Comune di Milano        |
+      | nome                 | E-service Delegato Beta |
+      | descrizione          | E-service.              |
+      | stato della versione | pubblicata              |
     And l'erogatore Comune di Milano ha delegato l'erogazione dell'e-service predisposto "ES-1" al Comune di Pozzallo con delega <stato delega>
     When Comune di Pozzallo cerca nel catalogo la parola "Delegato" con i seguenti filtri:
       | filtro          | valore   |
@@ -34,10 +40,16 @@ Feature: Filtro per ruolo di delega nel catalogo privato
 
   Scenario Outline: [PRIVATE_CATALOG_DELEGATIONS_2] Ruolo di delegante: conta solo la delega attiva
     Given un admin appartenente all'erogatore Comune di Milano
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                     | descrizione | stato della versione |
-      | ES-1  | Comune di Milano | E-service Delegante Alfa | E-service.  | pubblicata           |
-      | ES-2  | Comune di Milano | E-service Delegante Beta | E-service.  | pubblicata           |
+    And l'e-service "ES-1" è predisposto con la seguente configurazione:
+      | erogatore            | Comune di Milano         |
+      | nome                 | E-service Delegante Alfa |
+      | descrizione          | E-service.               |
+      | stato della versione | pubblicata               |
+    And l'e-service "ES-2" è predisposto con la seguente configurazione:
+      | erogatore            | Comune di Milano         |
+      | nome                 | E-service Delegante Beta |
+      | descrizione          | E-service.               |
+      | stato della versione | pubblicata               |
     And l'erogatore Comune di Milano ha delegato l'erogazione dell'e-service predisposto "ES-1" al Comune di Pozzallo con delega <stato delega>
     When Comune di Milano cerca nel catalogo la parola "Delegante" con i seguenti filtri:
       | filtro          | valore    |
@@ -54,11 +66,21 @@ Feature: Filtro per ruolo di delega nel catalogo privato
 
   Scenario: [PRIVATE_CATALOG_DELEGATIONS_3] Entrambi i ruoli: unione dei risultati
     Given un admin appartenente al fruitore Comune di Pozzallo
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore          | nome                   | descrizione | stato della versione |
-      | ES-1  | Comune di Milano   | E-service Unione Alfa  | E-service.  | pubblicata           |
-      | ES-2  | Comune di Pozzallo | E-service Unione Beta  | E-service.  | pubblicata           |
-      | ES-3  | Sogecap            | E-service Unione Gamma | E-service.  | pubblicata           |
+    And l'e-service "ES-1" è predisposto con la seguente configurazione:
+      | erogatore            | Comune di Milano      |
+      | nome                 | E-service Unione Alfa |
+      | descrizione          | E-service.            |
+      | stato della versione | pubblicata            |
+    And l'e-service "ES-2" è predisposto con la seguente configurazione:
+      | erogatore            | Comune di Pozzallo    |
+      | nome                 | E-service Unione Beta |
+      | descrizione          | E-service.            |
+      | stato della versione | pubblicata            |
+    And l'e-service "ES-3" è predisposto con la seguente configurazione:
+      | erogatore            | Sogecap                |
+      | nome                 | E-service Unione Gamma |
+      | descrizione          | E-service.             |
+      | stato della versione | pubblicata             |
     And l'erogatore Comune di Milano ha delegato l'erogazione dell'e-service predisposto "ES-1" al Comune di Pozzallo con delega attiva
     And l'erogatore Comune di Pozzallo ha delegato l'erogazione dell'e-service predisposto "ES-2" a Sogecap con delega attiva
     When Comune di Pozzallo cerca nel catalogo la parola "Unione" con i seguenti filtri:
@@ -72,10 +94,16 @@ Feature: Filtro per ruolo di delega nel catalogo privato
 
   Scenario: [PRIVATE_CATALOG_DELEGATIONS_4] Senza filtro per ruolo di delega nessuna restrizione
     Given un admin appartenente al fruitore Comune di Pozzallo
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                  | descrizione | stato della versione |
-      | ES-1  | Comune di Milano | E-service Libero Alfa | E-service.  | pubblicata           |
-      | ES-2  | Comune di Milano | E-service Libero Beta | E-service.  | pubblicata           |
+    And l'e-service "ES-1" è predisposto con la seguente configurazione:
+      | erogatore            | Comune di Milano      |
+      | nome                 | E-service Libero Alfa |
+      | descrizione          | E-service.            |
+      | stato della versione | pubblicata            |
+    And l'e-service "ES-2" è predisposto con la seguente configurazione:
+      | erogatore            | Comune di Milano      |
+      | nome                 | E-service Libero Beta |
+      | descrizione          | E-service.            |
+      | stato della versione | pubblicata            |
     And l'erogatore Comune di Milano ha delegato l'erogazione dell'e-service predisposto "ES-1" al Comune di Pozzallo con delega attiva
     When Comune di Pozzallo cerca nel catalogo la parola "Libero"
     Then tra i risultati compaiono gli e-service predisposti:

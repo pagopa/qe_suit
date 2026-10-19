@@ -16,12 +16,26 @@ Feature: Ricerca testuale nel catalogo privato degli e-service
 
   Scenario Outline: [PRIVATE_CATALOG_TEXT_SEARCH_1] Ricerca nei campi dell'e-service e dell'erogatore
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                           | descrizione                               | stato della versione |
-      | ES-1  | Comune di Milano | Pratiche Sogecap               | Consultazione delle pratiche scolastiche. | pubblicata           |
-      | ES-2  | Comune di Milano | Catalogo pratiche scolastiche  | Informazioni sui servizi di Sogecap.      | pubblicata           |
-      | ES-3  | Sogecap          | Catalogo pratiche assicurative | Consultazione dei servizi assicurativi.   | pubblicata           |
-      | ES-4  | Comune di Milano | Archivio pratiche comunali     | Consultazione degli atti amministrativi.  | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano                          |
+      | nome                 | Pratiche Sogecap                          |
+      | descrizione          | Consultazione delle pratiche scolastiche. |
+      | stato della versione | pubblicata                                |
+    And l'e-service "ES-2" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano                     |
+      | nome                 | Catalogo pratiche scolastiche        |
+      | descrizione          | Informazioni sui servizi di Sogecap. |
+      | stato della versione | pubblicata                           |
+    And l'e-service "ES-3" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Sogecap                                 |
+      | nome                 | Catalogo pratiche assicurative          |
+      | descrizione          | Consultazione dei servizi assicurativi. |
+      | stato della versione | pubblicata                              |
+    And l'e-service "ES-4" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano                         |
+      | nome                 | Archivio pratiche comunali               |
+      | descrizione          | Consultazione degli atti amministrativi. |
+      | stato della versione | pubblicata                               |
     When PagoPA cerca nel catalogo la parola "<parola>"
     Then tra i risultati compaiono gli e-service predisposti:
       | alias |
@@ -38,11 +52,21 @@ Feature: Ricerca testuale nel catalogo privato degli e-service
 
   Scenario Outline: [PRIVATE_CATALOG_TEXT_SEARCH_2] Normalizzazione di accenti, punteggiatura e forme della stessa radice
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                       | descrizione                        | stato della versione |
-      | ES-1  | Comune di Milano | Servizi di Sanità          | Consultazione dei dati sanitari.   | pubblicata           |
-      | ES-2  | Comune di Milano | Pagamento dei Tributi      | Gestione dei pagamenti dovuti.     | pubblicata           |
-      | ES-3  | Comune di Milano | Archivio pratiche comunali | Consultazione degli atti comunali. | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano                 |
+      | nome                 | Servizi di Sanità                |
+      | descrizione          | Consultazione dei dati sanitari. |
+      | stato della versione | pubblicata                       |
+    And l'e-service "ES-2" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano               |
+      | nome                 | Pagamento dei Tributi          |
+      | descrizione          | Gestione dei pagamenti dovuti. |
+      | stato della versione | pubblicata                     |
+    And l'e-service "ES-3" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano                   |
+      | nome                 | Archivio pratiche comunali         |
+      | descrizione          | Consultazione degli atti comunali. |
+      | stato della versione | pubblicata                         |
     When PagoPA cerca nel catalogo la parola "<parola>"
     Then tra i risultati compare l'e-service predisposto "<incluso>"
     And tra i risultati non compare l'e-service predisposto "ES-3"
@@ -62,10 +86,16 @@ Feature: Ricerca testuale nel catalogo privato degli e-service
 
   Scenario: [PRIVATE_CATALOG_TEXT_SEARCH_3] Ricerca senza indicare alcuna parola
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                       | descrizione                           | stato della versione |
-      | ES-1  | Comune di Milano | Pratiche scolastiche       | Consultazione dei servizi scolastici. | pubblicata           |
-      | ES-2  | Comune di Milano | Archivio pratiche comunali | Consultazione degli atti comunali.    | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano                      |
+      | nome                 | Pratiche scolastiche                  |
+      | descrizione          | Consultazione dei servizi scolastici. |
+      | stato della versione | pubblicata                            |
+    And l'e-service "ES-2" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano                   |
+      | nome                 | Archivio pratiche comunali         |
+      | descrizione          | Consultazione degli atti comunali. |
+      | stato della versione | pubblicata                         |
     When PagoPA cerca nel catalogo senza indicare alcuna parola
     Then tra i risultati compaiono gli e-service predisposti:
       | alias |
@@ -74,10 +104,16 @@ Feature: Ricerca testuale nel catalogo privato degli e-service
 
   Scenario: [PRIVATE_CATALOG_TEXT_SEARCH_4] Ricerca con una parola composta soltanto da spazi
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                       | descrizione                           | stato della versione |
-      | ES-1  | Comune di Milano | Pratiche scolastiche       | Consultazione dei servizi scolastici. | pubblicata           |
-      | ES-2  | Comune di Milano | Archivio pratiche comunali | Consultazione degli atti comunali.    | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano                      |
+      | nome                 | Pratiche scolastiche                  |
+      | descrizione          | Consultazione dei servizi scolastici. |
+      | stato della versione | pubblicata                            |
+    And l'e-service "ES-2" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano                   |
+      | nome                 | Archivio pratiche comunali         |
+      | descrizione          | Consultazione degli atti comunali. |
+      | stato della versione | pubblicata                         |
     When PagoPA cerca nel catalogo una parola composta soltanto da spazi
     Then tra i risultati compaiono gli e-service predisposti:
       | alias |
@@ -86,9 +122,11 @@ Feature: Ricerca testuale nel catalogo privato degli e-service
 
   Scenario Outline: [PRIVATE_CATALOG_TEXT_SEARCH_5] Parola composta soltanto da caratteri eliminati dalla normalizzazione
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                 | descrizione                           | stato della versione |
-      | ES-1  | Comune di Milano | Pratiche scolastiche | Consultazione dei servizi scolastici. | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano                      |
+      | nome                 | Pratiche scolastiche                  |
+      | descrizione          | Consultazione dei servizi scolastici. |
+      | stato della versione | pubblicata                            |
     When PagoPA cerca nel catalogo la parola "<parola>"
     Then tra i risultati non compare l'e-service predisposto "ES-1"
 
@@ -101,10 +139,16 @@ Feature: Ricerca testuale nel catalogo privato degli e-service
 
   Scenario: [PRIVATE_CATALOG_TEXT_SEARCH_6] Ricerca approssimata con un refuso
     Given un admin appartenente al fruitore PagoPA
-    And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                       | descrizione                        | stato della versione |
-      | ES-1  | Comune di Milano | Anagrafe                   | Consultazione dei dati anagrafici. | pubblicata           |
-      | ES-2  | Comune di Milano | Archivio pratiche comunali | Consultazione degli atti comunali. | pubblicata           |
+    And l'e-service "ES-1" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano                   |
+      | nome                 | Anagrafe                           |
+      | descrizione          | Consultazione dei dati anagrafici. |
+      | stato della versione | pubblicata                         |
+    And l'e-service "ES-2" è predisposto a catalogo con la seguente configurazione:
+      | erogatore            | Comune di Milano                   |
+      | nome                 | Archivio pratiche comunali         |
+      | descrizione          | Consultazione degli atti comunali. |
+      | stato della versione | pubblicata                         |
     When PagoPA cerca nel catalogo la parola "anagrfe"
     Then tra i risultati compare l'e-service predisposto "ES-1"
     And tra i risultati non compare l'e-service predisposto "ES-2"
