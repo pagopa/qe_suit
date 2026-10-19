@@ -22,9 +22,11 @@ Feature: Filtri sui template nel catalogo privato
       | alias | template | stato della versione |
       | ES-2  | TPL-1    | pubblicata           |
     And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                  | descrizione | stato della versione |
-      | ES-1  | Comune di Milano | Servizio Modello Beta | Servizio.   | pubblicata           |
-    When PagoPA cerca nel catalogo la parola "Modello" solo tra le istanze di template
+      | alias | erogatore        | nome                   | descrizione | stato della versione |
+      | ES-1  | Comune di Milano | E-service Modello Beta | E-service.  | pubblicata           |
+    When PagoPA cerca nel catalogo la parola "Modello" con i seguenti filtri:
+      | filtro              | valore |
+      | istanze di template | sì     |
     Then tra i risultati compare l'e-service predisposto "ES-2"
     And tra i risultati non compare l'e-service predisposto "ES-1"
 
@@ -37,8 +39,8 @@ Feature: Filtri sui template nel catalogo privato
       | alias | template | stato della versione |
       | ES-2  | TPL-1    | pubblicata           |
     And sono predisposti a catalogo i seguenti e-service:
-      | alias | erogatore        | nome                | descrizione | stato della versione |
-      | ES-1  | Comune di Milano | Servizio Forma Beta | Servizio.   | pubblicata           |
+      | alias | erogatore        | nome                 | descrizione | stato della versione |
+      | ES-1  | Comune di Milano | E-service Forma Beta | E-service.  | pubblicata           |
     When PagoPA cerca nel catalogo la parola "Forma"
     Then tra i risultati compaiono gli e-service predisposti:
       | alias |
@@ -56,7 +58,9 @@ Feature: Filtri sui template nel catalogo privato
       | ES-1  | TPL-1    | pubblicata           |
       | ES-2  | TPL-1    | pubblicata           |
       | ES-3  | TPL-2    | pubblicata           |
-    When PagoPA cerca nel catalogo la parola "Stampo" solo tra le istanze del template TPL-1
+    When PagoPA cerca nel catalogo la parola "Stampo" con i seguenti filtri:
+      | filtro               | valore |
+      | istanza del template | TPL-1  |
     Then tra i risultati compaiono gli e-service predisposti:
       | alias |
       | ES-1  |
@@ -72,6 +76,8 @@ Feature: Filtri sui template nel catalogo privato
     And sono predisposte le seguenti istanze di template:
       | alias | template | stato della versione |
       | ES-1  | TPL-2    | pubblicata           |
-    When PagoPA cerca nel catalogo la parola "Vuoto" solo tra le istanze del template TPL-1
+    When PagoPA cerca nel catalogo la parola "Vuoto" con i seguenti filtri:
+      | filtro               | valore |
+      | istanza del template | TPL-1  |
     Then la ricerca termina senza errori
     And tra i risultati non compare l'e-service predisposto "ES-1"

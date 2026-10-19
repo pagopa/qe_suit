@@ -20,7 +20,9 @@ Feature: Filtri sulle proprietà dell'e-service nel catalogo privato
       | alias | erogatore        | nome                        | descrizione | stato della versione | modalità   |
       | ES-1  | Comune di Milano | E-service Canale Erogazione | E-service.  | pubblicata           | erogazione |
       | ES-2  | Comune di Milano | E-service Canale Ricezione  | E-service.  | pubblicata           | ricezione  |
-    When PagoPA cerca nel catalogo la parola "Canale" solo tra gli e-service in modalità <modalità>
+    When PagoPA cerca nel catalogo la parola "Canale" con i seguenti filtri:
+      | filtro   | valore     |
+      | modalità | <modalità> |
     Then tra i risultati compare l'e-service predisposto "<incluso>"
     And tra i risultati non compare l'e-service predisposto "<escluso>"
 
@@ -48,7 +50,9 @@ Feature: Filtri sulle proprietà dell'e-service nel catalogo privato
       | ES-1  | Comune di Milano | E-service Tempo Attivo | E-service.  | pubblicata           | sì                |
       | ES-2  | Comune di Milano | E-service Tempo Spento | E-service.  | pubblicata           | no                |
       | ES-3  | Comune di Milano | E-service Tempo Libero | E-service.  | pubblicata           | non impostato     |
-    When PagoPA cerca nel catalogo la parola "Tempo" solo tra gli e-service con scambio asincrono
+    When PagoPA cerca nel catalogo la parola "Tempo" con i seguenti filtri:
+      | filtro            | valore |
+      | scambio asincrono | sì     |
     Then tra i risultati compare l'e-service predisposto "ES-1"
     And tra i risultati non compaiono gli e-service predisposti:
       | alias |
@@ -62,7 +66,9 @@ Feature: Filtri sulle proprietà dell'e-service nel catalogo privato
       | ES-1  | Comune di Milano | E-service Ritmo Attivo | E-service.  | pubblicata           | sì                |
       | ES-2  | Comune di Milano | E-service Ritmo Spento | E-service.  | pubblicata           | no                |
       | ES-3  | Comune di Milano | E-service Ritmo Libero | E-service.  | pubblicata           | non impostato     |
-    When PagoPA cerca nel catalogo la parola "Ritmo" solo tra gli e-service senza scambio asincrono
+    When PagoPA cerca nel catalogo la parola "Ritmo" con i seguenti filtri:
+      | filtro            | valore |
+      | scambio asincrono | no     |
     Then tra i risultati compaiono gli e-service predisposti:
       | alias |
       | ES-2  |

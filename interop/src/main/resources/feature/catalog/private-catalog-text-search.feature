@@ -7,6 +7,13 @@ Feature: Ricerca testuale nel catalogo privato degli e-service
   Voglio cercare e-service usando una parola chiave
   Per trovare quelli che la contengono nel nome, nella descrizione o nel nome dell'erogatore.
 
+  Assunzioni:
+  - gli e-service predisposti sono eliminati o archiviati al termine dello scenario da un hook;
+  - nomi e parole cercate sono improbabili: il rischio che altre risorse dell'ambiente QA condiviso
+    corrispondano alla ricerca (anche approssimata) è accettato;
+  - nelle ricerche che non restringono il perimetro (senza parola, solo spazi, solo caratteri eliminati)
+    la ricerca scorre le pagine fino a trovare gli e-service predisposti.
+
   Scenario Outline: [PRIVATE_CATALOG_TEXT_SEARCH_1] Ricerca nei campi dell'e-service e dell'erogatore
     Given un admin appartenente al fruitore PagoPA
     And sono predisposti a catalogo i seguenti e-service:
