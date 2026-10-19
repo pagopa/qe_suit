@@ -5,6 +5,8 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.frontend.e2e.framework.web.capability.core.Writable;
+import it.pagopa.send.web.infrastructure.page.component.Footer;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.notification_search.infrastructure.suit.NotificationSearchPage;
@@ -52,6 +54,9 @@ public interface NotificationPFPage extends NotificationSearchPage, RecipientNot
     // pagina del wizard di attivazione, aperta da "Attiva domicilio digitale" del banner
     @XPath("//main")
     DigitalDomicileActivationPFPage digitalDomicileActivation();
+
+    @XPath("//footer[contains(@class, 'MuiBox-root')]")
+    Footer footer();
 
     @Override
     default void goToNotificationDetails() {
