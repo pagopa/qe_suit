@@ -10,7 +10,8 @@ import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
-import it.pagopa.interop.common.eservice.domain.*;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.journey.application.InteropJourney;
@@ -18,7 +19,7 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDetailPage;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceDetailPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
@@ -34,12 +36,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+// TODO: 15/10 questa classe attende il deploy in DEV/QA per il tuning
 @SpringBootTest(
         classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
         properties = {"spring.profiles.include=junit", "channel.web.browser=chrome"}
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
+@Tag("wait_for_qa")
 public class WebCatalogEServiceContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
