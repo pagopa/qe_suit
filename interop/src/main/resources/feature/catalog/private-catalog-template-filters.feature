@@ -79,5 +79,4 @@ Feature: Filtri sui template nel catalogo privato
     When PagoPA cerca nel catalogo la parola "Vuoto" con i seguenti filtri:
       | filtro               | valore |
       | istanza del template | TPL-1  |
-    Then la ricerca termina senza errori
-    And tra i risultati non compare l'e-service predisposto "ES-1"
+    Then tra i risultati non compare l'e-service predisposto "ES-1"

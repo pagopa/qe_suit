@@ -69,8 +69,7 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
     When PagoPA cerca nel catalogo la parola "Assente" con i seguenti filtri:
       | filtro                   | valore |
       | categoria dell'erogatore | CAT-2  |
-    Then la ricerca termina senza errori
-    And tra i risultati non compare l'e-service predisposto "ES-1"
+    Then tra i risultati non compare l'e-service predisposto "ES-1"
 
   Scenario: [PRIVATE_CATALOG_PRODUCER_CATEGORIES_4] Elenco di categorie vuoto: nessuna restrizione
     Given un admin appartenente al fruitore PagoPA

@@ -138,4 +138,4 @@ Feature: Ordinamento e paginazione nel catalogo privato
     And all'e-service predisposto "ES-1" è collegato un template di finalità pubblicato
     And PagoPA ha un'adesione attiva all'e-service predisposto "ES-1"
     When PagoPA cerca nel catalogo la parola "Nodi"
-    Then l'e-service predisposto "ES-1" compare esattamente una volta nei risultati
+    Then tra i risultati compare una sola volta l'e-service predisposto "ES-1"

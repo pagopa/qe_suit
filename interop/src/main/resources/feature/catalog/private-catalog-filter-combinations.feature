@@ -36,7 +36,9 @@ Feature: Combinazioni di filtri nel catalogo privato
       | ES-1  | Comune di Milano | E-service Fruibile Libero   | E-service.  | pubblicata           |
       | ES-2  | Comune di Milano | E-service Fruibile Iscritto | E-service.  | pubblicata           |
       | ES-3  | Comune di Milano | E-service Fruibile Bloccato | E-service.  | pubblicata           |
-    And all'e-service predisposto "ES-3" è richiesto un gruppo di attributi certificati: un attributo non posseduto da PagoPA
+    And all'e-service predisposto "ES-3" sono richiesti i seguenti gruppi di attributi:
+      | tipo        | attributi                            |
+      | certificati | un attributo non posseduto da PagoPA |
     And PagoPA ha un'adesione attiva all'e-service predisposto "ES-2"
     When PagoPA cerca nel catalogo la parola "Fruibile" con i seguenti filtri:
       | filtro                    | valore |

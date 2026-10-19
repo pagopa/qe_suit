@@ -56,7 +56,9 @@ Feature: Visibilità degli e-service nel catalogo privato
     And all'e-service predisposto "ES-1" viene aggiunta una nuova versione in bozza
     When PagoPA cerca nel catalogo la parola "E-service Doppio"
     Then tra i risultati compare l'e-service predisposto "ES-1"
-    And per l'e-service predisposto "ES-1" è presentata la versione 1
+    And per l'e-service predisposto "ES-1" il risultato riporta:
+      | proprietà           | valore |
+      | versione presentata | 1      |
 
   Scenario Outline: [PRIVATE_CATALOG_VISIBILITY_4] Versione presentata nel risultato
     Given un admin appartenente al fruitore PagoPA
@@ -66,7 +68,9 @@ Feature: Visibilità degli e-service nel catalogo privato
     And all'e-service predisposto "ES-1" viene aggiunta una versione nello stato "<seconda versione>"
     When PagoPA cerca nel catalogo la parola "E-service Versioni"
     Then tra i risultati compare l'e-service predisposto "ES-1"
-    And per l'e-service predisposto "ES-1" è presentata la versione <versione presentata>
+    And per l'e-service predisposto "ES-1" il risultato riporta:
+      | proprietà           | valore                |
+      | versione presentata | <versione presentata> |
 
     Examples:
       | prima versione | seconda versione          | versione presentata |
@@ -80,7 +84,7 @@ Feature: Visibilità degli e-service nel catalogo privato
     And sono predisposti a catalogo i seguenti e-service:
       | alias | erogatore        | nome            | descrizione          | stato della versione |
       | ES-1  | Comune di Milano | E-service Ruoli | E-service per ruoli. | pubblicata           |
-    And l'erogatore Comune di Milano ha delegato l'erogazione dell'e-service predisposto "ES-1" al Comune di Pozzallo
+    And l'erogatore Comune di Milano ha delegato l'erogazione dell'e-service predisposto "ES-1" al Comune di Pozzallo con delega attiva
     When <tenant> cerca nel catalogo la parola "E-service Ruoli"
     Then tra i risultati compare l'e-service predisposto "ES-1"
 
@@ -97,15 +101,17 @@ Feature: Visibilità degli e-service nel catalogo privato
     And sono predisposti a catalogo i seguenti e-service:
       | alias | erogatore        | nome          | descrizione        | stato della versione |
       | ES-1  | Comune di Milano | E-service Mio | E-service proprio. | pubblicata           |
-    And l'erogatore Comune di Milano ha delegato l'erogazione dell'e-service predisposto "ES-1" al Comune di Pozzallo
+    And l'erogatore Comune di Milano ha delegato l'erogazione dell'e-service predisposto "ES-1" al Comune di Pozzallo con delega attiva
     When <tenant> cerca nel catalogo la parola "E-service Mio"
-    Then per l'e-service predisposto "ES-1" l'indicazione "è mio" è <valore>
+    Then per l'e-service predisposto "ES-1" il risultato riporta:
+      | proprietà | valore   |
+      | è mio     | <valore> |
 
     Examples:
       | tenant             | valore |
-      | Comune di Milano   | vera   |
-      | PagoPA             | falsa  |
-      | Comune di Pozzallo | falsa  |
+      | Comune di Milano   | sì     |
+      | PagoPA             | no     |
+      | Comune di Pozzallo | no     |
 
   Scenario: [PRIVATE_CATALOG_VISIBILITY_7] Notifica non letta presente per un ente abilitato alle notifiche
     Given un admin appartenente al fruitore PagoPA
@@ -114,7 +120,9 @@ Feature: Visibilità degli e-service nel catalogo privato
       | ES-1  | Comune di Milano | E-service Notificato | E-service notificato. | pubblicata           |
     And viene generata una notifica non letta per il fruitore sull'e-service predisposto "ES-1"
     When PagoPA cerca nel catalogo la parola "E-service Notificato"
-    Then per l'e-service predisposto "ES-1" risultano notifiche non lette
+    Then per l'e-service predisposto "ES-1" il risultato riporta:
+      | proprietà           | valore |
+      | notifiche non lette | sì     |
 
   # Assunzione: il Comune di Pozzallo non è abilitato a ricevere notifiche.
   # Un esito "nessuna notifica" non distingue l'assenza di notifiche da un errore
@@ -127,4 +135,6 @@ Feature: Visibilità degli e-service nel catalogo privato
     And viene generata una notifica non letta per il fruitore sull'e-service predisposto "ES-1"
     When Comune di Pozzallo cerca nel catalogo la parola "E-service Non Notificato"
     Then la ricerca termina senza errori
-    And per l'e-service predisposto "ES-1" non risultano notifiche non lette
+    And per l'e-service predisposto "ES-1" il risultato riporta:
+      | proprietà           | valore |
+      | notifiche non lette | no     |

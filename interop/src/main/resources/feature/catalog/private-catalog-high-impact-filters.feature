@@ -113,51 +113,67 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | richiedibili dal fruitore | sì     |
     Then tra i risultati compare l'e-service predisposto "ES-1"
 
-  Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_7] Fruibilità in base agli attributi certificati
+  Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_7] Fruibilità con un solo gruppo di attributi certificati
     Given un admin appartenente al fruitore PagoPA
     And sono predisposti a catalogo i seguenti e-service:
       | alias | erogatore        | nome           | descrizione    | stato della versione |
       | ES-1  | Comune di Milano | E-service Gelu | Con requisiti. | pubblicata           |
-    And all'e-service predisposto "ES-1" è richiesto un gruppo di attributi certificati: <gruppo 1>
-    And all'e-service predisposto "ES-1" è richiesto un gruppo di attributi certificati: <gruppo 2>
+    And all'e-service predisposto "ES-1" sono richiesti i seguenti gruppi di attributi:
+      | tipo        | attributi   |
+      | certificati | <attributi> |
     When PagoPA cerca nel catalogo la parola "Gelu" con i seguenti filtri:
       | filtro                    | valore |
       | richiedibili dal fruitore | sì     |
     Then tra i risultati <esito> l'e-service predisposto "ES-1"
 
-    Examples: Un solo gruppo
-      | gruppo 1                             | gruppo 2            | esito       |
-      | un attributo posseduto da PagoPA     | nessun altro gruppo | compare     |
-      | un attributo non posseduto da PagoPA | nessun altro gruppo | non compare |
+    Examples:
+      | attributi                                            | esito       |
+      | un attributo posseduto da PagoPA                     | compare     |
+      | un attributo non posseduto da PagoPA                 | non compare |
+      | un attributo non posseduto e uno posseduto da PagoPA | compare     |
 
-    Examples: Attributi alternativi nello stesso gruppo
-      | gruppo 1                                             | gruppo 2            | esito   |
-      | un attributo non posseduto e uno posseduto da PagoPA | nessun altro gruppo | compare |
+  Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_8] Fruibilità con più gruppi di attributi certificati: tutti devono essere soddisfatti
+    Given un admin appartenente al fruitore PagoPA
+    And sono predisposti a catalogo i seguenti e-service:
+      | alias | erogatore        | nome               | descrizione    | stato della versione |
+      | ES-1  | Comune di Milano | E-service Gelu bis | Con requisiti. | pubblicata           |
+    And all'e-service predisposto "ES-1" sono richiesti i seguenti gruppi di attributi:
+      | tipo        | attributi  |
+      | certificati | <gruppo 1> |
+      | certificati | <gruppo 2> |
+    When PagoPA cerca nel catalogo la parola "Gelu" con i seguenti filtri:
+      | filtro                    | valore |
+      | richiedibili dal fruitore | sì     |
+    Then tra i risultati <esito> l'e-service predisposto "ES-1"
 
-    Examples: Più gruppi, tutti devono essere soddisfatti
+    Examples:
       | gruppo 1                         | gruppo 2                             | esito       |
       | un attributo posseduto da PagoPA | un attributo posseduto da PagoPA     | compare     |
       | un attributo posseduto da PagoPA | un attributo non posseduto da PagoPA | non compare |
 
-  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_8] Attributi dichiarati e verificati non limitano la fruibilità
+  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_9] Attributi dichiarati e verificati non limitano la fruibilità
     Given un admin appartenente al fruitore PagoPA
     And sono predisposti a catalogo i seguenti e-service:
       | alias | erogatore        | nome            | descrizione          | stato della versione |
       | ES-1  | Comune di Milano | E-service Hiems | Con altri requisiti. | pubblicata           |
-    And all'e-service predisposto "ES-1" è richiesto un gruppo di attributi dichiarati: un attributo non posseduto da PagoPA
-    And all'e-service predisposto "ES-1" è richiesto un gruppo di attributi verificati: un attributo non posseduto da PagoPA
+    And all'e-service predisposto "ES-1" sono richiesti i seguenti gruppi di attributi:
+      | tipo       | attributi                            |
+      | dichiarati | un attributo non posseduto da PagoPA |
+      | verificati | un attributo non posseduto da PagoPA |
     When PagoPA cerca nel catalogo la parola "Hiems" con i seguenti filtri:
       | filtro                    | valore |
       | richiedibili dal fruitore | sì     |
     Then tra i risultati compare l'e-service predisposto "ES-1"
 
   @flag-discrete-attribute-on
-  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_9] Gli attributi discreti limitano la fruibilità
+  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_10] Gli attributi discreti limitano la fruibilità
     Given un admin appartenente al fruitore PagoPA
     And sono predisposti a catalogo i seguenti e-service:
       | alias | erogatore        | nome            | descrizione            | stato della versione |
       | ES-1  | Comune di Milano | E-service Iubar | Con attributo discreto | pubblicata           |
-    And all'e-service predisposto "ES-1" è richiesto un gruppo di attributi discreti: un attributo non posseduto da PagoPA
+    And all'e-service predisposto "ES-1" sono richiesti i seguenti gruppi di attributi:
+      | tipo     | attributi                            |
+      | discreti | un attributo non posseduto da PagoPA |
     When PagoPA cerca nel catalogo la parola "Iubar" con i seguenti filtri:
       | filtro                    | valore |
       | richiedibili dal fruitore | sì     |
@@ -165,7 +181,7 @@ Feature: Filtri ad alto impatto nel catalogo privato
 
   # --- hasLinkedPurposeTemplates ---
 
-  Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_10] Solo e-service con template di finalità collegati
+  Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_11] Solo e-service con template di finalità collegati
     Given un admin appartenente al fruitore PagoPA
     And sono predisposti a catalogo i seguenti e-service:
       | alias | erogatore        | nome            | descrizione              | stato della versione |
@@ -181,7 +197,7 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | pubblicato     | compare     |
       | in bozza       | non compare |
 
-  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_11] Template di finalità collegato a una versione precedente
+  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_12] Template di finalità collegato a una versione precedente
     Given un admin appartenente al fruitore PagoPA
     And sono predisposti a catalogo i seguenti e-service:
       | alias | erogatore        | nome           | descrizione   | stato della versione |
@@ -195,7 +211,7 @@ Feature: Filtri ad alto impatto nel catalogo privato
 
   # --- onlySignalHubEnabled ---
 
-  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_12] Signal Hub attivo: compaiono solo gli e-service con Signal Hub attivo
+  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_13] Signal Hub attivo: compaiono solo gli e-service con Signal Hub attivo
     Given un admin appartenente al fruitore PagoPA
     And sono predisposti a catalogo i seguenti e-service:
       | alias | erogatore        | nome                 | descrizione | stato della versione | Signal Hub    |
@@ -211,7 +227,7 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | ES-2  |
       | ES-3  |
 
-  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_13] Signal Hub non attivo: include anche i valori non impostati
+  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_14] Signal Hub non attivo: include anche i valori non impostati
     Given un admin appartenente al fruitore PagoPA
     And sono predisposti a catalogo i seguenti e-service:
       | alias | erogatore        | nome                 | descrizione | stato della versione | Signal Hub    |
@@ -227,7 +243,7 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | ES-3  |
     And tra i risultati non compare l'e-service predisposto "ES-1"
 
-  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_14] Senza filtro Signal Hub nessuna restrizione
+  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_15] Senza filtro Signal Hub nessuna restrizione
     Given un admin appartenente al fruitore PagoPA
     And sono predisposti a catalogo i seguenti e-service:
       | alias | erogatore        | nome                | descrizione | stato della versione | Signal Hub    |
