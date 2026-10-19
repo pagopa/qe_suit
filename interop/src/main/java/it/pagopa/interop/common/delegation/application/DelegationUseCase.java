@@ -18,6 +18,10 @@ public class DelegationUseCase {
         return delegationGateway.createConsumerDelegation(delegateRef, eServiceRef);
     }
 
+    public Delegation createProducerDelegation(TenantRef delegateRef, EServiceRef eServiceRef) {
+        return delegationGateway.createProducerDelegation(delegateRef, eServiceRef);
+    }
+
     public void approveConsumerDelegation(DelegationRef delegationRef) {
         delegationGateway.approveConsumerDelegation(delegationRef);
     }
