@@ -14,18 +14,15 @@ Feature: Filtri sui template nel catalogo privato
   - gli e-service e i template predisposti sono eliminati o archiviati al termine dello scenario da un hook.
 
   Scenario: [PRIVATE_CATALOG_TEMPLATE_FILTERS_1] Solo istanze di template
-    Given i seguenti template di e-service predisposti:
-      | alias | nome                  | tecnologia | stato     | interfaccia              |
-      | TPL-1 | Template Modello Alfa | SOAP       | PUBLISHED | soap11-un-indirizzo.wsdl |
-    And le seguenti istanze di template predisposte:
+    Given i seguenti template e-service pubblicati:
+      | alias | nome                  | tecnologia |
+      | TPL-1 | Template Modello Alfa | SOAP       |
+    And le seguenti istanze di template pubblicate:
       | alias | template |
       | ES-2  | TPL-1    |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Modello Beta |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
+    And i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                   |
+      | ES-1  | Comune di Milano | E-service Modello Beta |
     When PagoPA cerca nel catalogo "Modello" con i seguenti filtri:
       | filtro              | valore |
       | istanze di template | sì     |
@@ -33,18 +30,15 @@ Feature: Filtri sui template nel catalogo privato
     And l'e-service "ES-1" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_TEMPLATE_FILTERS_2] Senza filtro compaiono sia le istanze sia gli altri e-service
-    Given i seguenti template di e-service predisposti:
-      | alias | nome                | tecnologia | stato     | interfaccia              |
-      | TPL-1 | Template Forma Alfa | SOAP       | PUBLISHED | soap11-un-indirizzo.wsdl |
-    And le seguenti istanze di template predisposte:
+    Given i seguenti template e-service pubblicati:
+      | alias | nome                | tecnologia |
+      | TPL-1 | Template Forma Alfa | SOAP       |
+    And le seguenti istanze di template pubblicate:
       | alias | template |
       | ES-2  | TPL-1    |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Forma Beta |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
+    And i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                 |
+      | ES-1  | Comune di Milano | E-service Forma Beta |
     When PagoPA cerca nel catalogo "Forma"
     Then tra i risultati della ricerca sono presenti i seguenti e-service:
       | alias |
@@ -52,21 +46,15 @@ Feature: Filtri sui template nel catalogo privato
       | ES-2  |
 
   Scenario: [PRIVATE_CATALOG_TEMPLATE_FILTERS_3] Solo istanze di un template specifico
-    Given i seguenti template di e-service predisposti:
-      | alias | nome                 | tecnologia | stato     | interfaccia              |
-      | TPL-1 | Template Stampo Alfa | SOAP       | PUBLISHED | soap11-un-indirizzo.wsdl |
-      | TPL-2 | Template Stampo Beta | SOAP       | PUBLISHED | soap11-un-indirizzo.wsdl |
-    And le seguenti istanze di template predisposte:
+    Given i seguenti template di e-service pubblicati:
+      | alias | nome                 | tecnologia |
+      | TPL-1 | Template Stampo Alfa | SOAP       |
+      | TPL-2 | Template Stampo Beta | SOAP       |
+    And le seguenti istanze di template pubblicate:
       | alias | template |
       | ES-1  | TPL-1    |
       | ES-2  | TPL-1    |
       | ES-3  | TPL-2    |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" pubblicata
     When PagoPA cerca nel catalogo "Stampo" con i seguenti filtri:
       | filtro               | valore |
       | istanza del template | TPL-1  |
@@ -77,15 +65,13 @@ Feature: Filtri sui template nel catalogo privato
     And l'e-service "ES-3" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_TEMPLATE_FILTERS_4] Template senza istanze
-    Given i seguenti template di e-service predisposti:
-      | alias | nome                | tecnologia | stato     | interfaccia              |
-      | TPL-1 | Template Vuoto Alfa | SOAP       | PUBLISHED | soap11-un-indirizzo.wsdl |
-      | TPL-2 | Template Vuoto Beta | SOAP       | PUBLISHED | soap11-un-indirizzo.wsdl |
-    And le seguenti istanze di template predisposte:
+    Given i seguenti template di e-service pubblicati:
+      | alias | nome                | tecnologia |
+      | TPL-1 | Template Vuoto Alfa | SOAP       |
+      | TPL-2 | Template Vuoto Beta | SOAP       |
+    And le seguenti istanze di template pubblicate:
       | alias | template |
       | ES-1  | TPL-2    |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
     When PagoPA cerca nel catalogo "Vuoto" con i seguenti filtri:
       | filtro               | valore |
       | istanza del template | TPL-1  |

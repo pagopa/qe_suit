@@ -14,18 +14,11 @@ Feature: Ordinamento e paginazione nel catalogo privato
   - gli e-service predisposti sono eliminati o archiviati al termine dello scenario da un hook.
 
   Scenario: [PRIVATE_CATALOG_ORDERING_PAGINATION_1] Ordinamento predefinito: dal più recente
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Ordine Alfa |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Ordine Beta |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Ordine Gamma |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                   |
+      | ES-1  | Comune di Milano | E-service Ordine Alfa  |
+      | ES-2  | Comune di Milano | E-service Ordine Beta  |
+      | ES-3  | Comune di Milano | E-service Ordine Gamma |
     When PagoPA cerca nel catalogo "Ordine"
     Then tra i risultati della ricerca sono presenti, in quest'ordine, i seguenti e-service:
       | alias |
@@ -34,18 +27,11 @@ Feature: Ordinamento e paginazione nel catalogo privato
       | ES-1  |
 
   Scenario Outline: [PRIVATE_CATALOG_ORDERING_PAGINATION_2] Ordinamenti richiesti esplicitamente
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Sorte Beta |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Sorte Gamma |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Sorte Alfa |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                  |
+      | ES-1  | Comune di Milano | E-service Sorte Beta  |
+      | ES-2  | Comune di Milano | E-service Sorte Gamma |
+      | ES-3  | Comune di Milano | E-service Sorte Alfa  |
     When PagoPA cerca nel catalogo "Sorte" con i seguenti filtri:
       | filtro      | valore        |
       | ordinamento | <ordinamento> |
@@ -63,14 +49,10 @@ Feature: Ordinamento e paginazione nel catalogo privato
       | data di creazione decrescente | ES-3  | ES-2    | ES-1  |
 
   Scenario: [PRIVATE_CATALOG_ORDERING_PAGINATION_3] Con una parola chiave la rilevanza precede l'ordinamento richiesto
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | Zeta Quarzo |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | Alfa Pratiche |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome          |
+      | ES-1  | Comune di Milano | Zeta Quarzo   |
+      | ES-2  | Comune di Milano | Alfa Pratiche |
     When PagoPA cerca nel catalogo "Quarzo" con i seguenti filtri:
       | filtro      | valore         |
       | ordinamento | nome crescente |
@@ -80,26 +62,13 @@ Feature: Ordinamento e paginazione nel catalogo privato
       | ES-2  |
 
   Scenario: [PRIVATE_CATALOG_ORDERING_PAGINATION_4] Pagine consecutive senza duplicati e senza omissioni
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Pagina Uno |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Pagina Due |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Pagina Tre |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" pubblicata
-    And l'e-service "ES-4" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Pagina Quattro |
-    And la versione 1 dell'e-service "ES-4" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-4" pubblicata
-    And l'e-service "ES-5" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Pagina Cinque |
-    And la versione 1 dell'e-service "ES-5" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-5" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                     |
+      | ES-1  | Comune di Milano | E-service Pagina Uno     |
+      | ES-2  | Comune di Milano | E-service Pagina Due     |
+      | ES-3  | Comune di Milano | E-service Pagina Tre     |
+      | ES-4  | Comune di Milano | E-service Pagina Quattro |
+      | ES-5  | Comune di Milano | E-service Pagina Cinque  |
     When PagoPA cerca nel catalogo "Pagina" con i seguenti filtri:
       | filtro               | valore |
       | risultati per pagina | 2      |
@@ -118,14 +87,10 @@ Feature: Ordinamento e paginazione nel catalogo privato
       | ES-5  |
 
   Scenario: [PRIVATE_CATALOG_ORDERING_PAGINATION_5] Pagina oltre l'ultima
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Oltre Uno |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Oltre Due |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                |
+      | ES-1  | Comune di Milano | E-service Oltre Uno |
+      | ES-2  | Comune di Milano | E-service Oltre Due |
     When PagoPA cerca nel catalogo "Oltre" con i seguenti filtri:
       | filtro                  | valore |
       | a partire dal risultato | 10     |
@@ -134,31 +99,13 @@ Feature: Ordinamento e paginazione nel catalogo privato
     And la pagina è vuota e il totale dichiarato è 2
 
   Scenario: [PRIVATE_CATALOG_ORDERING_PAGINATION_6] Il totale tiene conto dei filtri applicati
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Conta Uno |
-      | Signal Hub | attivo              |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Conta Due |
-      | Signal Hub | non attivo          |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Conta Tre |
-      | Signal Hub | attivo              |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" pubblicata
-    And l'e-service "ES-4" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Conta Quattro |
-      | Signal Hub | non impostato           |
-    And la versione 1 dell'e-service "ES-4" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-4" pubblicata
-    And l'e-service "ES-5" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Conta Cinque |
-      | Signal Hub | attivo                 |
-    And la versione 1 dell'e-service "ES-5" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-5" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                    | Signal Hub    |
+      | ES-1  | Comune di Milano | E-service Conta Uno     | attivo        |
+      | ES-2  | Comune di Milano | E-service Conta Due     | non attivo    |
+      | ES-3  | Comune di Milano | E-service Conta Tre     | attivo        |
+      | ES-4  | Comune di Milano | E-service Conta Quattro | non impostato |
+      | ES-5  | Comune di Milano | E-service Conta Cinque  | attivo        |
     When PagoPA cerca nel catalogo "Conta" con i seguenti filtri:
       | filtro               | valore |
       | Signal Hub           | attivo |
@@ -175,13 +122,10 @@ Feature: Ordinamento e paginazione nel catalogo privato
       | ES-5  |
 
   Scenario: [PRIVATE_CATALOG_ORDERING_PAGINATION_7] Un e-service con molte relazioni compare una sola volta
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Molti Nodi |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And la versione 2 dell'e-service "ES-1" predisposta per la pubblicazione
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                 |
+      | ES-1  | Comune di Milano | E-service Molti Nodi |
     And la versione 2 dell'e-service "ES-1" pubblicata
-    And la versione 3 dell'e-service "ES-1" predisposta per la pubblicazione
     And la versione 3 dell'e-service "ES-1" pubblicata
     And l'e-service "ES-1" collegato a un template di finalità pubblicato
     And l'e-service "ES-1" collegato a un template di finalità pubblicato

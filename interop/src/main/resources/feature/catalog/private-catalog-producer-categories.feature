@@ -21,18 +21,11 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
       | Comune di Milano   | CAT-1     |
       | Comune di Pozzallo | CAT-1     |
       | Sogecap            | CAT-2     |
-    And l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Categoria Alfa |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Pozzallo con i seguenti dati:
-      | nome | E-service Categoria Beta |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto da Sogecap con i seguenti dati:
-      | nome | E-service Categoria Gamma |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" pubblicata
+    And i seguenti e-service pubblicati:
+      | alias | erogatore          | nome                      |
+      | ES-1  | Comune di Milano   | E-service Categoria Alfa  |
+      | ES-2  | Comune di Pozzallo | E-service Categoria Beta  |
+      | ES-3  | Sogecap            | E-service Categoria Gamma |
     When PagoPA cerca nel catalogo "Categoria" con i seguenti filtri:
       | filtro                   | valore |
       | categoria dell'erogatore | CAT-1  |
@@ -48,18 +41,11 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
       | Comune di Milano | CAT-1     |
       | Sogecap          | CAT-2     |
       | AgID             | CAT-3     |
-    And l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Duo Alfa |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto da Sogecap con i seguenti dati:
-      | nome | E-service Duo Beta |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto da AgID con i seguenti dati:
-      | nome | E-service Duo Gamma |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" pubblicata
+    And i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                |
+      | ES-1  | Comune di Milano | E-service Duo Alfa  |
+      | ES-2  | Sogecap          | E-service Duo Beta  |
+      | ES-3  | AgID             | E-service Duo Gamma |
     When PagoPA cerca nel catalogo "Duo" con i seguenti filtri:
       | filtro                   | valore        |
       | categoria dell'erogatore | CAT-1 e CAT-2 |
@@ -74,10 +60,9 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
       | ente             | categoria |
       | Comune di Milano | CAT-1     |
       | Sogecap          | CAT-2     |
-    And l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Assente Alfa |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
+    And i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                   |
+      | ES-1  | Comune di Milano | E-service Assente Alfa |
     When PagoPA cerca nel catalogo "Assente" con i seguenti filtri:
       | filtro                   | valore |
       | categoria dell'erogatore | CAT-2  |
@@ -88,14 +73,10 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
       | ente             | categoria |
       | Comune di Milano | CAT-1     |
       | Sogecap          | CAT-2     |
-    And l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Ambito Alfa |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto da Sogecap con i seguenti dati:
-      | nome | E-service Ambito Beta |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
+    And i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                  |
+      | ES-1  | Comune di Milano | E-service Ambito Alfa |
+      | ES-2  | Sogecap          | E-service Ambito Beta |
     When PagoPA cerca nel catalogo "Ambito" con i seguenti filtri:
       | filtro                   | valore       |
       | categoria dell'erogatore | elenco vuoto |

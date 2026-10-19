@@ -12,18 +12,11 @@ Feature: Filtro per erogatore nel catalogo privato
   - ogni scenario usa una parola chiave improbabile per delimitare il perimetro dei risultati.
 
   Scenario: [PRIVATE_CATALOG_PRODUCER_FILTER_1] Un solo erogatore
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Erogo Alfa |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Pozzallo con i seguenti dati:
-      | nome | E-service Erogo Beta |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto da Sogecap con i seguenti dati:
-      | nome | E-service Erogo Gamma |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore          | nome                  |
+      | ES-1  | Comune di Milano   | E-service Erogo Alfa  |
+      | ES-2  | Comune di Pozzallo | E-service Erogo Beta  |
+      | ES-3  | Sogecap            | E-service Erogo Gamma |
     When PagoPA cerca nel catalogo "Erogo" con i seguenti filtri:
       | filtro    | valore           |
       | erogatore | Comune di Milano |
@@ -34,18 +27,11 @@ Feature: Filtro per erogatore nel catalogo privato
       | ES-3  |
 
   Scenario: [PRIVATE_CATALOG_PRODUCER_FILTER_2] Più erogatori in alternativa
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Duplo Alfa |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Pozzallo con i seguenti dati:
-      | nome | E-service Duplo Beta |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto da Sogecap con i seguenti dati:
-      | nome | E-service Duplo Gamma |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore          | nome                  |
+      | ES-1  | Comune di Milano   | E-service Duplo Alfa  |
+      | ES-2  | Comune di Pozzallo | E-service Duplo Beta  |
+      | ES-3  | Sogecap            | E-service Duplo Gamma |
     When PagoPA cerca nel catalogo "Duplo" con i seguenti filtri:
       | filtro    | valore                                |
       | erogatore | Comune di Milano e Comune di Pozzallo |
@@ -56,14 +42,10 @@ Feature: Filtro per erogatore nel catalogo privato
     And l'e-service "ES-3" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_PRODUCER_FILTER_3] Elenco di erogatori vuoto: nessuna restrizione
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Perimetro Alfa |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Pozzallo con i seguenti dati:
-      | nome | E-service Perimetro Beta |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore          | nome                     |
+      | ES-1  | Comune di Milano   | E-service Perimetro Alfa |
+      | ES-2  | Comune di Pozzallo | E-service Perimetro Beta |
     When PagoPA cerca nel catalogo "Perimetro" con i seguenti filtri:
       | filtro    | valore       |
       | erogatore | elenco vuoto |
@@ -73,10 +55,9 @@ Feature: Filtro per erogatore nel catalogo privato
       | ES-2  |
 
   Scenario: [PRIVATE_CATALOG_PRODUCER_FILTER_4] Erogatore senza e-service corrispondenti
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Nessuno Uno |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                  |
+      | ES-1  | Comune di Milano | E-service Nessuno Uno |
     When PagoPA cerca nel catalogo "Nessuno" con i seguenti filtri:
       | filtro    | valore             |
       | erogatore | Comune di Pozzallo |

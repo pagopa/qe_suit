@@ -15,16 +15,10 @@ Feature: Filtri sulle proprietà dell'e-service nel catalogo privato
   - ogni scenario usa una parola chiave improbabile per delimitare il perimetro dei risultati.
 
   Scenario Outline: [PRIVATE_CATALOG_E_SERVICE_PROPERTIES_1] Filtro per modalità
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome     | E-service Canale Erogazione |
-      | modalità | erogazione                  |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome     | E-service Canale Ricezione |
-      | modalità | ricezione                  |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                        | modalità   |
+      | ES-1  | Comune di Milano | E-service Canale Erogazione | erogazione |
+      | ES-2  | Comune di Milano | E-service Canale Ricezione  | ricezione  |
     When PagoPA cerca nel catalogo "Canale" con i seguenti filtri:
       | filtro   | valore     |
       | modalità | <modalità> |
@@ -37,16 +31,10 @@ Feature: Filtri sulle proprietà dell'e-service nel catalogo privato
       | ricezione  | ES-2    | ES-1    |
 
   Scenario: [PRIVATE_CATALOG_E_SERVICE_PROPERTIES_2] Senza filtro per modalità compaiono entrambe
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome     | E-service Flusso Erogazione |
-      | modalità | erogazione                  |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome     | E-service Flusso Ricezione |
-      | modalità | ricezione                  |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                        | modalità   |
+      | ES-1  | Comune di Milano | E-service Flusso Erogazione | erogazione |
+      | ES-2  | Comune di Milano | E-service Flusso Ricezione  | ricezione  |
     When PagoPA cerca nel catalogo "Flusso"
     Then tra i risultati della ricerca sono presenti i seguenti e-service:
       | alias |
@@ -54,24 +42,11 @@ Feature: Filtri sulle proprietà dell'e-service nel catalogo privato
       | ES-2  |
 
   Scenario: [PRIVATE_CATALOG_E_SERVICE_PROPERTIES_3] Scambio asincrono: solo gli e-service con scambio asincrono
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Tempo Attivo |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" configurata con i seguenti dati:
-      | scambio asincrono | sì |
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Tempo Spento |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" configurata con i seguenti dati:
-      | scambio asincrono | no |
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Tempo Libero |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" configurata con i seguenti dati:
-      | scambio asincrono | non impostato |
-    And la versione 1 dell'e-service "ES-3" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                   | scambio asincrono |
+      | ES-1  | Comune di Milano | E-service Tempo Attivo | sì                |
+      | ES-2  | Comune di Milano | E-service Tempo Spento | no                |
+      | ES-3  | Comune di Milano | E-service Tempo Libero | non impostato     |
     When PagoPA cerca nel catalogo "Tempo" con i seguenti filtri:
       | filtro            | valore |
       | scambio asincrono | sì     |
@@ -82,24 +57,11 @@ Feature: Filtri sulle proprietà dell'e-service nel catalogo privato
       | ES-3  |
 
   Scenario: [PRIVATE_CATALOG_E_SERVICE_PROPERTIES_4] Scambio non asincrono: include anche i valori non impostati
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Ritmo Attivo |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" configurata con i seguenti dati:
-      | scambio asincrono | sì |
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Ritmo Spento |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" configurata con i seguenti dati:
-      | scambio asincrono | no |
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Ritmo Libero |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" configurata con i seguenti dati:
-      | scambio asincrono | non impostato |
-    And la versione 1 dell'e-service "ES-3" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                   | scambio asincrono |
+      | ES-1  | Comune di Milano | E-service Ritmo Attivo | sì                |
+      | ES-2  | Comune di Milano | E-service Ritmo Spento | no                |
+      | ES-3  | Comune di Milano | E-service Ritmo Libero | non impostato     |
     When PagoPA cerca nel catalogo "Ritmo" con i seguenti filtri:
       | filtro            | valore |
       | scambio asincrono | no     |
@@ -110,24 +72,11 @@ Feature: Filtri sulle proprietà dell'e-service nel catalogo privato
     And l'e-service "ES-1" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_E_SERVICE_PROPERTIES_5] Senza filtro sullo scambio asincrono nessuna restrizione
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Onda Attivo |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" configurata con i seguenti dati:
-      | scambio asincrono | sì |
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Onda Spento |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" configurata con i seguenti dati:
-      | scambio asincrono | no |
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Onda Libero |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" configurata con i seguenti dati:
-      | scambio asincrono | non impostato |
-    And la versione 1 dell'e-service "ES-3" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                  | scambio asincrono |
+      | ES-1  | Comune di Milano | E-service Onda Attivo | si                |
+      | ES-2  | Comune di Milano | E-service Onda Spento | no                |
+      | ES-3  | Comune di Milano | E-service Onda Libero | non impostato     |
     When PagoPA cerca nel catalogo "Onda"
     Then tra i risultati della ricerca sono presenti i seguenti e-service:
       | alias |

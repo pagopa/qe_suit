@@ -16,11 +16,10 @@ Feature: Filtri ad alto impatto nel catalogo privato
   # --- onlyActiveEservices ---
 
   Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_1] Solo e-service attivi
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service attivo Auroria |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    Given i seguenti e-service predisposti per la pubblicazione:
+      | alias | erogatore        | nome                     |
+      | ES-1  | Comune di Milano | E-service attivo Auroria |
     And la versione 1 dell'e-service "ES-1" <prima versione>
-    And la versione 2 dell'e-service "ES-1" predisposta per la pubblicazione
     And la versione 2 dell'e-service "ES-1" <seconda versione>
     When PagoPA cerca nel catalogo "Auroria" con i seguenti filtri:
       | filtro                | valore |
@@ -43,17 +42,13 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | pubblicata     | in bozza         | è presente |
 
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_2] Solo e-service attivi con una catena di tre versioni
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service catena Brumalis |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    Given i seguenti e-service predisposti per la pubblicazione:
+      | alias | erogatore        | nome                      |
+      | ES-1  | Comune di Milano | E-service catena Brumalis |
+      | ES-2  | Comune di Milano | E-service solo Brumalis   |
     And la versione 1 dell'e-service "ES-1" sospesa
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service solo Brumalis |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
     And la versione 1 dell'e-service "ES-2" sospesa
-    And la versione 2 dell'e-service "ES-1" predisposta per la pubblicazione
     And la versione 2 dell'e-service "ES-1" deprecata
-    And la versione 3 dell'e-service "ES-1" predisposta per la pubblicazione
     And la versione 3 dell'e-service "ES-1" pubblicata
     When PagoPA cerca nel catalogo "Brumalis" con i seguenti filtri:
       | filtro                | valore |
@@ -62,13 +57,11 @@ Feature: Filtri ad alto impatto nel catalogo privato
     And l'e-service "ES-2" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_3] Senza il filtro compaiono anche gli e-service non attivi
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Cirrus |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    Given i seguenti e-service predisposti per la pubblicazione:
+      | alias | erogatore        | nome                 |
+      | ES-1  | Comune di Milano | E-service Cirrus     |
+      | ES-2  | Comune di Milano | E-service Cirrus bis |
     And la versione 1 dell'e-service "ES-1" sospesa
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Cirrus bis |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
     And la versione 1 dell'e-service "ES-2" pubblicata
     When PagoPA cerca nel catalogo "Cirrus"
     Then tra i risultati della ricerca sono presenti i seguenti e-service:
@@ -79,10 +72,9 @@ Feature: Filtri ad alto impatto nel catalogo privato
   # --- subscribedByRequester ---
 
   Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_4] Solo e-service a cui il fruitore è iscritto
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Dorsum |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome             |
+      | ES-1  | Comune di Milano | E-service Dorsum |
     And l'e-service "ES-1" sottoscritto da PagoPA con richiesta di fruizione <stato richiesta>
     When PagoPA cerca nel catalogo "Dorsum" con i seguenti filtri:
       | filtro                    | valore |
@@ -97,14 +89,10 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | archiviata      | non è presente |
 
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_5] L'iscrizione di un altro ente non conta
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Ebrio |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Ebrio bis |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                |
+      | ES-1  | Comune di Milano | E-service Ebrio     |
+      | ES-2  | Comune di Milano | E-service Ebrio bis |
     And l'e-service "ES-1" sottoscritto da PagoPA con richiesta di fruizione attiva
     And l'e-service "ES-2" sottoscritto dal Comune di Pozzallo con richiesta di fruizione attiva
     When PagoPA cerca nel catalogo "Ebrio" con i seguenti filtri:
@@ -116,19 +104,18 @@ Feature: Filtri ad alto impatto nel catalogo privato
   # --- availableForRequester ---
 
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_6] Nessun requisito: e-service richiedibile da tutti
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Fulgor |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome             |
+      | ES-1  | Comune di Milano | E-service Fulgor |
     When PagoPA cerca nel catalogo "Fulgor" con i seguenti filtri:
       | filtro                    | valore |
       | richiedibili dal fruitore | sì     |
     Then l'e-service "ES-1" è presente tra i risultati della ricerca
 
   Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_7] Fruibilità con un solo gruppo di attributi certificati
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Gelu |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    Given i seguenti e-service predisposti per la pubblicazione:
+      | alias | erogatore        | nome           |
+      | ES-1  | Comune di Milano | E-service Gelu |
     And la versione 1 dell'e-service "ES-1" configurata con i seguenti attributi richiesti:
       | tipo        | gruppo | attributo   |
       | certificato | 1      | <attributi> |
@@ -145,9 +132,9 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | un attributo non posseduto e uno posseduto da PagoPA | è presente     |
 
   Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_8] Fruibilità con più gruppi di attributi certificati: tutti devono essere soddisfatti
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Gelu bis |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    Given i seguenti e-service predisposti per la pubblicazione:
+      | alias | erogatore        | nome               |
+      | ES-1  | Comune di Milano | E-service Gelu bis |
     And la versione 1 dell'e-service "ES-1" configurata con i seguenti attributi richiesti:
       | tipo        | gruppo | attributo            |
       | certificato | 1      | <attributo gruppo 1> |
@@ -164,9 +151,9 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | un attributo posseduto da PagoPA | un attributo non posseduto da PagoPA | non è presente |
 
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_9] Attributi dichiarati e verificati non limitano la fruibilità
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Hiems |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    Given i seguenti e-service predisposti per la pubblicazione:
+      | alias | erogatore        | nome            |
+      | ES-1  | Comune di Milano | E-service Hiems |
     And la versione 1 dell'e-service "ES-1" configurata con i seguenti attributi richiesti:
       | tipo       | gruppo | attributo                            |
       | dichiarato | 1      | un attributo non posseduto da PagoPA |
@@ -179,9 +166,9 @@ Feature: Filtri ad alto impatto nel catalogo privato
 
   @flag-discrete-attribute-on
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_10] Gli attributi discreti limitano la fruibilità
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Iubar |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    Given i seguenti e-service predisposti per la pubblicazione:
+      | alias | erogatore        | nome            |
+      | ES-1  | Comune di Milano | E-service Iubar |
     And la versione 1 dell'e-service "ES-1" configurata con i seguenti attributi richiesti:
       | tipo     | gruppo | attributo                            |
       | discreto | 1      | un attributo non posseduto da PagoPA |
@@ -194,10 +181,9 @@ Feature: Filtri ad alto impatto nel catalogo privato
   # --- hasLinkedPurposeTemplates ---
 
   Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_11] Solo e-service con template di finalità collegati
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Lumen |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome            |
+      | ES-1  | Comune di Milano | E-service Lumen |
     And l'e-service "ES-1" collegato a un template di finalità <stato template>
     When PagoPA cerca nel catalogo "Lumen" con i seguenti filtri:
       | filtro                             | valore |
@@ -210,12 +196,10 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | in bozza       | non è presente |
 
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_12] Template di finalità collegato a una versione precedente
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome | E-service Mare |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome           |
+      | ES-1  | Comune di Milano | E-service Mare |
     And l'e-service "ES-1" collegato a un template di finalità pubblicato
-    And la versione 2 dell'e-service "ES-1" predisposta per la pubblicazione
     And la versione 2 dell'e-service "ES-1" pubblicata
     When PagoPA cerca nel catalogo "Mare" con i seguenti filtri:
       | filtro                             | valore |
@@ -225,21 +209,11 @@ Feature: Filtri ad alto impatto nel catalogo privato
   # --- onlySignalHubEnabled ---
 
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_13] Signal Hub attivo: compaiono solo gli e-service con Signal Hub attivo
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Nox attivo |
-      | Signal Hub | attivo               |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Nox spento |
-      | Signal Hub | non attivo           |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Nox libero |
-      | Signal Hub | non impostato        |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                 | Signal Hub    |
+      | ES-1  | Comune di Milano | E-service Nox attivo | attivo        |
+      | ES-2  | Comune di Milano | E-service Nox spento | non attivo    |
+      | ES-3  | Comune di Milano | E-service Nox libero | non impostato |
     When PagoPA cerca nel catalogo "Nox" con i seguenti filtri:
       | filtro     | valore |
       | Signal Hub | attivo |
@@ -250,21 +224,11 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | ES-3  |
 
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_14] Signal Hub non attivo: include anche i valori non impostati
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Pix attivo |
-      | Signal Hub | attivo               |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Pix spento |
-      | Signal Hub | non attivo           |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Pix libero |
-      | Signal Hub | non impostato        |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                 | Signal Hub    |
+      | ES-1  | Comune di Milano | E-service Pix attivo | attivo        |
+      | ES-2  | Comune di Milano | E-service Pix spento | non attivo    |
+      | ES-3  | Comune di Milano | E-service Pix libero | non impostato |
     When PagoPA cerca nel catalogo "Pix" con i seguenti filtri:
       | filtro     | valore     |
       | Signal Hub | non attivo |
@@ -275,21 +239,11 @@ Feature: Filtri ad alto impatto nel catalogo privato
     And l'e-service "ES-1" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_15] Senza filtro Signal Hub nessuna restrizione
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Ox attivo |
-      | Signal Hub | attivo              |
-    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Ox spento |
-      | Signal Hub | non attivo          |
-    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-2" pubblicata
-    And l'e-service "ES-3" predisposto dal Comune di Milano con i seguenti dati:
-      | nome       | E-service Ox libero |
-      | Signal Hub | non impostato       |
-    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
-    And la versione 1 dell'e-service "ES-3" pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                | Signal Hub    |
+      | ES-1  | Comune di Milano | E-service Ox attivo | attivo        |
+      | ES-2  | Comune di Milano | E-service Ox spento | non attivo    |
+      | ES-3  | Comune di Milano | E-service Ox libero | non impostato |
     When PagoPA cerca nel catalogo "Ox"
     Then tra i risultati della ricerca sono presenti i seguenti e-service:
       | alias |
