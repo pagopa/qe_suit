@@ -4,7 +4,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AddressPFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,7 @@ public class WebAddressPFContractTest {
     private static final String EMAIL_TITLE = "Il tuo indirizzo email";
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Intestazione (titolo e sottotitolo), titoli delle card "Il tuo domicilio digitale", "SEND sull’app IO" e "Il tuo
@@ -54,7 +56,7 @@ public class WebAddressPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowAddressTexts() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(AddressPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(

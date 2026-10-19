@@ -5,7 +5,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AddressPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AppStatusPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DelegationsPFPage;
@@ -58,6 +59,7 @@ import java.util.stream.Stream;
 public class WebRecipientPfNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     // notifiche
 
@@ -134,7 +136,7 @@ public class WebRecipientPfNavigationContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldReachOnboardingAlertsPF() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(OnboardingAlertsPFPage.class)
                 .tests(Stream.of(new WebScenario<>(
                         "controllo passi wizard Attivazione avvisi",
@@ -204,7 +206,7 @@ public class WebRecipientPfNavigationContractTest {
     }
 
     private <P extends Page> Stream<DynamicTest> reachabilityTest(Class<P> pageType) {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(pageType)
                 .tests(Stream.of(new WebScenario<>(
                         "controllo caricamento pagina " + pageType.getSimpleName(),

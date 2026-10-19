@@ -6,7 +6,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.SupportPFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -67,13 +68,14 @@ public class WebSupportPFContractTest {
     private static final String INVALID_MAIL_ADDRESS = "abc";
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Testi della pagina e del form: intestazione, avviso sulla PEC, etichette dei campi e informativa privacy.
      */
     @TestFactory
     Stream<DynamicTest> shouldShowSupportTexts() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(SupportPFPage.class)
                 .tests(textScenarios());
     }
@@ -117,7 +119,7 @@ public class WebSupportPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowSupportElements() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(SupportPFPage.class)
                 .tests(elementScenarios());
     }
@@ -150,7 +152,7 @@ public class WebSupportPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldStartWithDefaultValues() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(SupportPFPage.class)
                 .tests(defaultValueScenarios());
     }
@@ -187,7 +189,7 @@ public class WebSupportPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldValidateSupportForm() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(SupportPFPage.class)
                 .tests(validationScenarios());
     }

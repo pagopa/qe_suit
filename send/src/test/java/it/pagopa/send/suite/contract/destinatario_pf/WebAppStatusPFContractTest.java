@@ -4,7 +4,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AppStatusPFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -50,13 +51,14 @@ public class WebAppStatusPFContractTest {
     private static final String LAST_CHECK_PATTERN = "Ultimo aggiornamento - .+, ore \\d{2}:\\d{2}";
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Testi della pagina: titolo, sottotitolo e titolo "Storico dei disservizi".
      */
     @TestFactory
     Stream<DynamicTest> shouldShowAppStatusTexts() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(AppStatusPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
@@ -82,7 +84,7 @@ public class WebAppStatusPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowCurrentStatus() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(AppStatusPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(

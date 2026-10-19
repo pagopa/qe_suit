@@ -4,7 +4,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DigitalDomicileActivationPFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,7 @@ public class WebDigitalDomicileActivationPFContractTest {
     private static final String EMAIL_STEP_DESCRIPTION = "L’email dove ti avviseremo quando ricevi una comunicazione a valore legale su SEND.";
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Testi comuni a tutti i passi: titolo del wizard e nomi dei passi "Come funziona", "Inserisci la tua email" e
@@ -77,7 +79,7 @@ public class WebDigitalDomicileActivationPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowActivationWizardTexts() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(DigitalDomicileActivationPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
@@ -101,7 +103,7 @@ public class WebDigitalDomicileActivationPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowHowItWorksStep() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(DigitalDomicileActivationPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
@@ -137,7 +139,7 @@ public class WebDigitalDomicileActivationPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowEmailStep() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(DigitalDomicileActivationPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(

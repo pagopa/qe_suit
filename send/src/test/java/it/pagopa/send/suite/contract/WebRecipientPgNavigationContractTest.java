@@ -5,7 +5,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.AddressPGPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.ApiIntegrationPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.DelegatedNotificationPage;
@@ -47,6 +48,7 @@ import java.util.stream.Stream;
 public class WebRecipientPgNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     @TestFactory
     Stream<DynamicTest> shouldReachNotifications() {
@@ -89,7 +91,7 @@ public class WebRecipientPgNavigationContractTest {
     }
 
     private <P extends Page> Stream<DynamicTest> reachabilityTest(Class<P> pageType) {
-        return webContractValidator.asRecipient(Recipient.PETRARCA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.IMPRESA_2))
                 .on(pageType)
                 .tests(Stream.of(new WebScenario<>(
                         "controllo caricamento pagina " + pageType.getSimpleName(),

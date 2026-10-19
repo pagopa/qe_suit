@@ -5,7 +5,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.SercqTermsOfServicePFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -67,13 +68,14 @@ public class WebSercqTermsOfServicePFContractTest {
     ).flatMap(s -> s).toList();
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Testi della pagina: titolo, inizio dell'introduzione e titoli delle 10 sezioni.
      */
     @TestFactory
     Stream<DynamicTest> shouldShowSercqTermsOfServiceTexts() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(SercqTermsOfServicePFPage.class)
                 .tests(textScenarios());
     }
@@ -104,7 +106,7 @@ public class WebSercqTermsOfServicePFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowSercqTermsOfServiceIndex() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(SercqTermsOfServicePFPage.class)
                 .tests(indexScenarios());
     }

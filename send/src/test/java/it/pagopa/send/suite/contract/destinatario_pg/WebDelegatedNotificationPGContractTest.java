@@ -5,7 +5,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.DelegatedNotificationPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -40,13 +41,14 @@ import java.util.stream.Stream;
 public class WebDelegatedNotificationPGContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Titolo "In arrivo dalle deleghe".
      */
     @TestFactory
     Stream<DynamicTest> shouldShowDelegatedNotificationListTexts() {
-        return webContractValidator.asRecipient(Recipient.PETRARCA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.IMPRESA_2))
                 .on(DelegatedNotificationPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
@@ -64,7 +66,7 @@ public class WebDelegatedNotificationPGContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldNotShowNotificationListOnlyComponents() {
-        return webContractValidator.asRecipient(Recipient.PETRARCA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.IMPRESA_2))
                 .on(DelegatedNotificationPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(

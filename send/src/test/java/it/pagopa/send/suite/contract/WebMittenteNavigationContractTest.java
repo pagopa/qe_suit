@@ -5,7 +5,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.send.web.infrastructure.page.component.TableCell;
 import it.pagopa.send.web.mittente.infrastructure.page.APIKeyPage;
@@ -51,6 +52,7 @@ public class WebMittenteNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
     private final String token = "";
+    private final UserProvider userProvider;
 
     @TestFactory
     Stream<DynamicTest> shouldReachDashboard() {
@@ -83,7 +85,7 @@ public class WebMittenteNavigationContractTest {
     }
 
     private <P extends Page> Stream<DynamicTest> reachabilityTest(Class<P> pageType) {
-        return webContractValidator.as(Tenant.GROSSINI, List.of())
+        return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1), List.of())
                 .on(pageType)
                 .tests(Stream.of(new WebScenario<>(
                         "controllo caricamento pagina " + pageType.getSimpleName(),
@@ -111,7 +113,7 @@ public class WebMittenteNavigationContractTest {
     }
 
     private Stream<DynamicTest> checkColumnGroupsScenarios() {
-        return webContractValidator.as(Tenant.GROSSINI, List.of())
+        return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1), List.of())
                 .on(DashboardPage.class,token)
                 .tests(Stream.of(new WebScenario<>(
                         "Check presenza colonna 'Gruppi' su Dashboard Notifiche",

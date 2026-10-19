@@ -4,7 +4,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingIoPFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -53,13 +54,14 @@ public class WebOnboardingIoPFContractTest {
     private static final String EXIT = "Esci";
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Testi della pagina: titolo, titolo e descrizione della sezione dell'app IO.
      */
     @TestFactory
     Stream<DynamicTest> shouldShowOnboardingIoTexts() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(OnboardingIoPFPage.class)
                 .tests(textScenarios());
     }
@@ -90,7 +92,7 @@ public class WebOnboardingIoPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowOnboardingIoButtons() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(OnboardingIoPFPage.class)
                 .tests(buttonScenarios());
     }

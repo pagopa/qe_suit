@@ -5,7 +5,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationPFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,7 @@ public class WebNotificationPFContractTest {
     private static final String FUTURE_DATE = "01/01/2099";
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Testi della pagina e dei filtri: titolo (inizia con "In arrivo": chi ha deleghe a suo carico vede "In arrivo per
@@ -77,7 +79,7 @@ public class WebNotificationPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowNotificationListTexts() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(NotificationPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
@@ -109,7 +111,7 @@ public class WebNotificationPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldValidateNotificationFilters() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(NotificationPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
