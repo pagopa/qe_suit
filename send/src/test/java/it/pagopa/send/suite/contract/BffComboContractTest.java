@@ -15,8 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
+import it.pagopa.send.JunitActiveProfilesResolver;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
@@ -26,8 +25,6 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * Test di contratto per le API BFF delle comunicazioni bonarie.
@@ -39,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  *
  */
 @Slf4j
-@ActiveProfiles({"test", "junit"})
+@ActiveProfiles(resolver = JunitActiveProfilesResolver.class)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class

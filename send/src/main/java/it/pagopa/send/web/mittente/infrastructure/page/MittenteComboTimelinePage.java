@@ -1,10 +1,9 @@
-package it.pagopa.send.web.mittente.combo.infrastructure.page;
+package it.pagopa.send.web.mittente.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
-import it.frontend.e2e.framework.web.config.WebSuiteContext;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
-import it.pagopa.send.web.mittente.combo.component.ComboTimelineComponent;
+import it.pagopa.send.web.mittente.infrastructure.page.component.ComboTimelineComponent;
 import org.assertj.core.api.SoftAssertions;
 
 import java.util.Optional;

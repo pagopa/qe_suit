@@ -18,7 +18,6 @@ public class VerificationCodeProvider {
     private String verificationCodeServiceUrl;
 
     public VerificationCodeProvider() {
-        this.restClient = RestClient.create();
     }
 
     public String makeRequest(String email) {

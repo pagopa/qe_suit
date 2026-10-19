@@ -116,6 +116,9 @@ public class SelfCareSessionPayloadFactory {
      * alla radice dell'oggetto sessionStorage esattamente come li valida il portale.
      */
     private Map<String, Object> extractClaims(String sessionToken) {
+        if (sessionToken == null || sessionToken.isBlank()) {
+            throw new IllegalStateException("Nessun sessionToken fornito o configurato (il token potrebbe essere mancante, vuoto o scaduto)");
+        }
         String[] segments = sessionToken.split("\\.");
         if (segments.length < 2) {
             throw new IllegalArgumentException("sessionToken non è un JWT valido: " + sessionToken);

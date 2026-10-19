@@ -1,15 +1,13 @@
-package it.pagopa.send.web.mittente.combo.infrastructure.page;
+package it.pagopa.send.web.mittente.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
-import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
-import it.frontend.e2e.framework.web.config.WebSuiteContext;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
-import it.pagopa.send.web.mittente.combo.component.ComboChannelsSection;
-import it.pagopa.send.web.mittente.combo.component.ComboDocumentsSection;
-import it.pagopa.send.web.mittente.combo.component.ComboOverviewSection;
-import it.pagopa.send.web.mittente.combo.component.ComboPaymentsSection;
-import it.pagopa.send.web.mittente.combo.component.ComboStatusSection;
+import it.pagopa.send.web.mittente.infrastructure.page.component.ComboChannelsSection;
+import it.pagopa.send.web.mittente.infrastructure.page.component.ComboDocumentsSection;
+import it.pagopa.send.web.mittente.infrastructure.page.component.ComboOverviewSection;
+import it.pagopa.send.web.mittente.infrastructure.page.component.ComboPaymentsSection;
+import it.pagopa.send.web.mittente.infrastructure.page.component.ComboStatusSection;
 import org.assertj.core.api.SoftAssertions;
 
 import java.util.Optional;
