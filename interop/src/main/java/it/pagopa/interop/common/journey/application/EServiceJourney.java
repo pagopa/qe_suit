@@ -27,6 +27,18 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
 
     SELF updateDescriptor(Consumer<UpdateEServiceDescriptorCommand> commandConfig, EServiceDescriptorState state) ;
 
+    SELF updateDescriptorWithContextAttributes(
+            UpdateEServiceDescriptorCommand command,
+            int dailyCallsPerConsumer,
+            EServiceDescriptorState state
+    );
+
+    SELF updateDescriptorWithContextAttributes(
+            Consumer<UpdateEServiceDescriptorCommand> commandConfig,
+            int dailyCallsPerConsumer,
+            EServiceDescriptorState state
+    );
+
     SELF archiveEService(GracePeriodDays gracePeriodDays);
 
     SELF archiveFirstEServiceDescriptor(GracePeriodDays gracePeriodDays);

@@ -11,7 +11,6 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
-import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -105,7 +104,7 @@ public class EServiceJourneySteps {
     }
 
     @Given("un e-service in {eServiceDescriptorState}, creato dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}")
-    public void createEServiceDescriptor(EServiceDescriptorState state, Tenant producer, int customThreshold, DataTable defaultThresholds) {
+    public void createEService(EServiceDescriptorState state, Tenant producer, int customThreshold, DataTable defaultThresholds) {
 
         Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
 
@@ -113,12 +112,15 @@ public class EServiceJourneySteps {
                 .withProducer(producer, UserRole.ADMIN)
                 .createCertifiedAttribute()
                 .createEService(EServiceDescriptorState.DRAFT)
-                .updateDescriptor(config -> config
-                        .dailyCallsPerConsumer(thresholdsMap.get("consumerThreshold"))
-                        .dailyCallsTotal(thresholdsMap.get("totalThreshold"))
-                        .attributes(interopJourney.certifiedAttributesWithDailyCallsPerConsumer(customThreshold)), state)
-                .waitUntilEService(eservice ->
-                        eservice.getDescriptors().get(0).getState() == state
+                .updateDescriptorWithContextAttributes(
+                        config -> config
+                                .dailyCallsPerConsumer(thresholdsMap.get("consumerThreshold"))
+                                .dailyCallsTotal(thresholdsMap.get("totalThreshold")),
+                        customThreshold,
+                        state
+                )
+                .waitUntilEService(eService ->
+                        eService.getLatestDescriptor().getState() == state
                 );
     }
 
@@ -130,10 +132,19 @@ public class EServiceJourneySteps {
                 .withProducer(producer, UserRole.ADMIN)
                 .createCertifiedAttribute()
                 .createEService(EServiceDescriptorState.DRAFT)
-                .updateDescriptor(config -> config
-                        .dailyCallsPerConsumer(thresholdsMap.get("consumerThreshold"))
-                        .dailyCallsTotal(thresholdsMap.get("totalThreshold"))
-                        .attributes(interopJourney.certifiedAttributesWithDailyCallsPerConsumer(customThreshold)), EServiceDescriptorState.PUBLISHED)
-                .addDescriptor(state);
+                .updateDescriptorWithContextAttributes(
+                        config -> config
+                                .dailyCallsPerConsumer(thresholdsMap.get("consumerThreshold"))
+                                .dailyCallsTotal(thresholdsMap.get("totalThreshold")),
+                        customThreshold,
+                        EServiceDescriptorState.PUBLISHED
+                )
+                .waitUntilEService(eService ->
+                        eService.getLatestDescriptor().getState() == EServiceDescriptorState.PUBLISHED
+                )
+                .addDescriptor(state)
+                .waitUntilEService(eService ->
+                        eService.getDescriptors().size() == 2 && eService.getLatestDescriptor().getState() == state
+                );
     }
 }
