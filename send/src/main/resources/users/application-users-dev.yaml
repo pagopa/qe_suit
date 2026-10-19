@@ -67,8 +67,7 @@ qe:
           role: admin
     comune-2:
       username: albino63
-      # REPLACE_ME: password SPID dell'utenza in dev
-      password: REPLACE_ME
+      password: test
       organization: "Comune di Mantova"
       tax-id: "00189800204"
       organization-id: 614b68f2-f80f-4ebc-be30-2ad87e88aa10
