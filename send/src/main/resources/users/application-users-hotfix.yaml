@@ -62,6 +62,9 @@ qe:
       email: email@libero.it
       ipa-code: p_CO
       has-groups: true
+      # api-key delle chiamate B2B (header x-api-key): gruppi della PA e notifiche
+      groups-api-key: ${pn.external.groups-api-key.grossini:}
+      delivery-api-key: ${pn.external.delivery-api-key.grossini:}
       roles:
         - party-role: DELEGATE
           role: admin

@@ -16,6 +16,7 @@ import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.RecipientSpecFactory;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.boot.convert.ApplicationConversionService;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -30,7 +31,7 @@ public class LegalNotificationJourneySteps {
 
     @Given("una notifica di tipo {legalNotificationType} creata dalla PA {tenant} per il destinatario {string} in stato {string}")
     public void createLegalNotification(LegalNotificationType type, User sender, String recipient, String targetStatus) {
-        RecipientSpec recipientSpec = recipientSpecFactory.build(userProvider.resolve(UserAlias.fromKey(recipient)), type.recipientOverrides());
+        RecipientSpec recipientSpec = recipientSpecFactory.build(userProvider.resolve(ApplicationConversionService.getSharedInstance().convert(recipient, UserAlias.class)), type.recipientOverrides());
         sendJourney
                 .prepareNotification(Map.of())
                 .withRecipient(recipientSpec)
@@ -39,7 +40,7 @@ public class LegalNotificationJourneySteps {
 
     @Given("la PA {tenant} ha creato ed annullato una notifica di tipo {legalNotificationType} per il destinatario {string}")
     public void createAndCancelLegalNotification(User sender, LegalNotificationType type, String recipient) {
-        RecipientSpec recipientSpec = recipientSpecFactory.build(userProvider.resolve(UserAlias.fromKey(recipient)), type.recipientOverrides());
+        RecipientSpec recipientSpec = recipientSpecFactory.build(userProvider.resolve(ApplicationConversionService.getSharedInstance().convert(recipient, UserAlias.class)), type.recipientOverrides());
         sendJourney
                 .prepareNotification(Map.of())
                 .withRecipient(recipientSpec)

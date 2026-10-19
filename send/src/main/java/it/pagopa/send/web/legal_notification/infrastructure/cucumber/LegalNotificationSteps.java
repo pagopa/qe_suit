@@ -17,6 +17,7 @@ import it.pagopa.send.common.legal_notification.infrastructure.factory.Recipient
 import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.convert.ApplicationConversionService;
 import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -69,7 +70,7 @@ public class LegalNotificationSteps {
 
     // utenza generica a partire dalla chiave scritta nella feature, es. "comune-1" o "user-1"
     private User resolve(String userKey) {
-        return userProvider.resolve(UserAlias.fromKey(userKey));
+        return userProvider.resolve(ApplicationConversionService.getSharedInstance().convert(userKey, UserAlias.class));
     }
 
     @Then("la notifica legale creata è in stato {string}")
