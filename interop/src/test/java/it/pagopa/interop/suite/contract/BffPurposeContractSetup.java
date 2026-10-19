@@ -85,7 +85,7 @@ class BffPurposeContractSetup {
         EService eService = createPublishedEServiceWithActiveAgreement();
         interopJourney
             .withConsumer(CONSUMER, UserRole.ADMIN)
-            .linkPurpose(eService, PurposeVersionState.DRAFT);
+            .createPurposeAndLinkToEService(eService, PurposeVersionState.DRAFT);
         return entityStore.getLastOrThrow(Purpose.class).getId();
     }
 
@@ -93,7 +93,7 @@ class BffPurposeContractSetup {
         ReceiveEServiceSetup setup = createPublishedReceiveEServiceWithActiveAgreement();
         interopJourney
             .withConsumer(CONSUMER, UserRole.ADMIN)
-            .linkReversePurpose(setup.eService(), setup.riskAnalysisId(), PurposeVersionState.DRAFT);
+            .createReversePurposeAndLinkToEService(setup.eService(), setup.riskAnalysisId(), PurposeVersionState.DRAFT);
         return entityStore.getLastOrThrow(Purpose.class).getId();
     }
 
@@ -118,7 +118,7 @@ class BffPurposeContractSetup {
         EService eService = entityStore.getLastOrThrow(EService.class);
         interopJourney
             .withConsumer(CONSUMER, UserRole.ADMIN)
-            .createPurposeFromTemplate(purposeTemplate, eService, PurposeVersionState.DRAFT);
+            .createPurposeFromTemplateAndLinkToEService(purposeTemplate, eService, PurposeVersionState.DRAFT);
     }
 }
 
