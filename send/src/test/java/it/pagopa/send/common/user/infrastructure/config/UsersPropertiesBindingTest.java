@@ -36,8 +36,7 @@ class UsersPropertiesBindingTest {
 
                     Map<String, UsersProperties.UserEntry> users = context.getBean(UsersProperties.class).users();
                     for (UserAlias alias : UserAlias.values()) {
-                        String key = alias.name().toLowerCase().replace('_', '-');
-                        assertThat(users).as("utenza %s nel profilo %s", alias, profile).containsKey(key);
+                        assertThat(users).as("utenza %s nel profilo %s", alias, profile).containsKey(alias.key());
                     }
                 });
     }

@@ -26,4 +26,11 @@ public enum UserAlias {
         }
         throw new IllegalStateException("Prefisso non riconosciuto per l'utenza " + name);
     }
+
+    /**
+     * Chiave dell'utenza nella configurazione: il nome in minuscolo e in kebab-case ({@code USER_1} → {@code user-1}).
+     */
+    public String key() {
+        return name().toLowerCase().replace('_', '-');
+    }
 }
