@@ -1,6 +1,5 @@
 package it.pagopa.send.services;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,9 +11,10 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class VerificationCodeProvider {
 
-    private final RestClient restClient;
+    private final RestClient restClient = RestClient.create();
 
-    @Value("${verification.code.service.url}")
+    // Default vuoto: la proprietà serve solo agli scenari SERCQ e non deve bloccare l'avvio del contesto
+    @Value("${verification.code.service.url:}")
     private String verificationCodeServiceUrl;
 
     public VerificationCodeProvider() {
@@ -22,6 +22,9 @@ public class VerificationCodeProvider {
     }
 
     public String makeRequest(String email) {
+        if (verificationCodeServiceUrl.isBlank()) {
+            throw new IllegalStateException("Proprietà 'verification.code.service.url' non configurata per il profilo attivo");
+        }
         try {
             TimeUnit.SECONDS.sleep(5);
             //Attendi un po' prima di fare la richiesta per assicurarti che il codice sia generato
