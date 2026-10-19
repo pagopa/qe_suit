@@ -1,9 +1,10 @@
 package it.pagopa.interop.bff.purpose.infrastructure;
 
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
-import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysisRef;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.purpose.application.PurposeCommandFactory;
 import it.pagopa.interop.common.purpose.application.PurposeRequestFactory;
@@ -16,7 +17,6 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 import static it.pagopa.utils.RandomUtils.randomAlphanumericName;
 import static org.instancio.Select.field;
@@ -39,13 +39,13 @@ public class BffPurposeRequestFactory implements PurposeRequestFactory {
         return delimiter == Channel.BFF;
     }
 
-    public PurposeSeed creationRequest(EService eService) {
+    public PurposeSeed creationRequest(EServiceRef eServiceRef) {
         BffPurposeCreateCommand command =
-                (BffPurposeCreateCommand) purposeCommandFactory.validFullPopulatedCreateCommand(eService);
+                (BffPurposeCreateCommand) purposeCommandFactory.validFullPopulatedCreateCommand(eServiceRef);
         return command.getBffCreationPayload();
     }
 
-    public PurposeEServiceSeed reverseCreationRequest(EService eService, UUID riskAnalysisId) {
+    public PurposeEServiceSeed reverseCreationRequest(EServiceRef eServiceRef, EServiceRiskAnalysisRef riskAnalysisRef) {
         Tenant consumer = currentUserSession.getTenant();
         return Instancio.of(PurposeEServiceSeed.class)
                 .set(field(PurposeEServiceSeed::getTitle), randomAlphanumericName("purpose"))
@@ -53,9 +53,9 @@ public class BffPurposeRequestFactory implements PurposeRequestFactory {
                 .set(field(PurposeEServiceSeed::getIsFreeOfCharge), true)
                 .set(field(PurposeEServiceSeed::getFreeOfChargeReason), randomAlphanumericName("reason"))
                 .set(field(PurposeEServiceSeed::getDailyCalls), 1)
-                .set(field(PurposeEServiceSeed::getEserviceId), eService.getId())
+                .set(field(PurposeEServiceSeed::getEserviceId), eServiceRef.id())
                 .set(field(PurposeEServiceSeed::getConsumerId), consumer.getOrganizationId())
-                .set(field(PurposeEServiceSeed::getRiskAnalysisId), riskAnalysisId)
+                .set(field(PurposeEServiceSeed::getRiskAnalysisId), riskAnalysisRef.id())
                 .create();
     }
 
@@ -81,12 +81,12 @@ public class BffPurposeRequestFactory implements PurposeRequestFactory {
                 .create();
     }
 
-    public PurposeFromTemplateSeed creationFromTemplateRequest(EService eService) {
+    public PurposeFromTemplateSeed creationFromTemplateRequest(EServiceRef eServiceRef) {
         Tenant consumer = currentUserSession.getTenant();
         return Instancio.of(PurposeFromTemplateSeed.class)
                 .set(field(PurposeFromTemplateSeed::getTitle), randomAlphanumericName("purpose"))
                 .set(field(PurposeFromTemplateSeed::getDailyCalls), 1)
-                .set(field(PurposeFromTemplateSeed::getEserviceId), eService.getId())
+                .set(field(PurposeFromTemplateSeed::getEserviceId), eServiceRef.id())
                 .set(field(PurposeFromTemplateSeed::getConsumerId), consumer.getOrganizationId())
                 .ignore(field(PurposeFromTemplateSeed::getRiskAnalysisForm))
                 .create();
