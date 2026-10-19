@@ -1,12 +1,13 @@
 package it.pagopa.interop.bff.purpose.infrastructure;
 
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.common.eservice.domain.EService;
-import java.util.UUID;
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysisRef;
 import it.pagopa.interop.common.kernel.domain.PurposeRef;
+import it.pagopa.interop.common.kernel.domain.PurposeTemplateRef;
 import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
@@ -48,8 +49,8 @@ public class BffPurposeGateway implements PurposeGateway {
     }
 
     @Override
-    public Purpose createReversePurpose(EService eService, UUID riskAnalysisId) {
-        return restClient.createReversePurpose(requestFactory.reverseCreationRequest(eService, riskAnalysisId))
+    public Purpose createReversePurpose(EServiceRef eServiceRef, EServiceRiskAnalysisRef riskAnalysisRef) {
+        return restClient.createReversePurpose(requestFactory.reverseCreationRequest(eServiceRef, riskAnalysisRef))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
                 .updateContext()
@@ -57,8 +58,8 @@ public class BffPurposeGateway implements PurposeGateway {
     }
 
     @Override
-    public Purpose createPurposeFromTemplate(UUID purposeTemplateId, EService eService) {
-        return restClient.createPurposeFromTemplate(purposeTemplateId, requestFactory.creationFromTemplateRequest(eService))
+    public Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef) {
+        return restClient.createPurposeFromTemplate(purposeTemplateRef.id(), requestFactory.creationFromTemplateRequest(eServiceRef))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
                 .updateContext()

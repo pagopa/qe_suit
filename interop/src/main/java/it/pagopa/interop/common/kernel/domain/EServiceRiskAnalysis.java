@@ -23,4 +23,8 @@ public class EServiceRiskAnalysis implements Identifiable {
     UUID id;
     String name;
     RiskAnalysisForm riskAnalysisForm;
+
+    public EServiceRiskAnalysisRef getRef() {
+        return EServiceRiskAnalysisRef.of(this.id);
+    }
 }

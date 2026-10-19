@@ -1,9 +1,9 @@
 package it.pagopa.interop.bff.purpose.infrastructure;
 
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
-import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.purpose.application.PurposeCommandFactory;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
@@ -37,7 +37,7 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
     }
 
     @Override
-    public PurposeCreateCommand validFullPopulatedCreateCommand(EService eService) {
+    public PurposeCreateCommand validFullPopulatedCreateCommand(EServiceRef eServiceRef) {
         Tenant consumer = currentUserSession.getTenant();
         UUID consumerId = consumer.getOrganizationId();
 
@@ -56,7 +56,7 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
                 .set(field(PurposeSeed::getIsFreeOfCharge), true)
                 .set(field(PurposeSeed::getFreeOfChargeReason), RandomUtils.randomAlphanumericName("reason"))
                 .set(field(PurposeSeed::getDailyCalls), 1)
-                .set(field(PurposeSeed::getEserviceId), eService.getId())
+                .set(field(PurposeSeed::getEserviceId), eServiceRef.id())
                 .set(field(PurposeSeed::getConsumerId), consumerId)
                 .set(field(PurposeSeed::getRiskAnalysisForm), riskAnalysisFormSeed)
                 .create();
