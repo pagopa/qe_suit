@@ -1,4 +1,4 @@
-package it.pagopa.send.web.mittente.combo.component;
+package it.pagopa.send.web.mittente.infrastructure.page.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
@@ -52,4 +52,3 @@ public interface ComboChannelsSection extends Component {
         softly.assertAll();
     }
 }
-

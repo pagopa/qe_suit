@@ -11,12 +11,11 @@ import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.informal_notification.infrastructure.factory.InformalRecipientSpecFactory;
 import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.send.web.mittente.combo.infrastructure.page.MittenteComboDetailsPage;
+import it.pagopa.send.web.mittente.infrastructure.page.MittenteComboDetailsPage;
+import it.pagopa.send.JunitActiveProfilesResolver;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
@@ -33,8 +32,7 @@ import java.util.stream.Stream;
  * Documenti e Pagamenti e al corretto comportamento nel layout desktop e mobile.
  *
  */
-@ActiveProfiles({"test", "junit"})
-@Execution(ExecutionMode.CONCURRENT)
+@ActiveProfiles(resolver = JunitActiveProfilesResolver.class)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,

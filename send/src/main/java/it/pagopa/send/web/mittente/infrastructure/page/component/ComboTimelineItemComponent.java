@@ -1,4 +1,4 @@
-package it.pagopa.send.web.mittente.combo.component;
+package it.pagopa.send.web.mittente.infrastructure.page.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
@@ -21,8 +21,6 @@ public interface ComboTimelineItemComponent extends Component, Readable<String> 
     @XPath(".//div[contains(@class, 'MuiTimelineContent-root')]")
     Readable<String> content();
 
-
-
     @Override
     default void assertLoaded() {
         SoftAssertions softly = new SoftAssertions();
@@ -30,5 +28,3 @@ public interface ComboTimelineItemComponent extends Component, Readable<String> 
         softly.assertAll();
     }
 }
-
-
