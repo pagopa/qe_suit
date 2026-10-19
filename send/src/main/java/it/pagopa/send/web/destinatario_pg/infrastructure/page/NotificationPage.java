@@ -1,6 +1,10 @@
 package it.pagopa.send.web.destinatario_pg.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
+import it.frontend.e2e.framework.annotation.selector.XPath;
+import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.send.web.infrastructure.page.component.Footer;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.notification_search.infrastructure.suit.RecipientNotificationsPage;
 import org.assertj.core.api.Assertions;
@@ -15,11 +19,14 @@ import org.assertj.core.api.Assertions;
  * filtri, tabella e banner dipendono dalle notifiche ricevute, dai recapiti e dal ruolo. È usato anche dal login degli
  * step Cucumber. Il titolo completo è verificato da {@code WebNotificationPGContractTest}.
  */
-@Url("${url.notifiche.persona-giuridica.notifiche}")
+@Url("${url.notifiche.persona-giuridica.notifiche}#selfCareToken=${token}")
 public interface NotificationPage extends RecipientNotificationsPage {
 
     // il titolo contiene il nome dell'impresa, per esempio "In arrivo per Le Epistolae srl"
     String TITLE_PREFIX = "In arrivo per ";
+
+    @XPath("//footer[contains(@class, 'MuiBox-root')]")
+    Footer footer();
 
     @Override
     default void assertLoaded() {
