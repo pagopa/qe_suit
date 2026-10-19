@@ -21,6 +21,16 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
 
     private final BffEServiceRestClient restClient;
 
+    /**
+     * Recupera la prima {@link EServiceRiskAnalysis} associata all'e-service.
+     * <p>
+     * TODO (Domain gap): attualmente {@link EServiceRiskAnalysis} è gestita come entità a sé stante
+     * (es. salvata separatamente nell'{@code EntityStore}) senza alcun riferimento all'{@code EService}
+     * e senza che {@code EService} mantenga una collezione {@code List<EServiceRiskAnalysis> riskAnalyses}
+     * (come invece avviene in {@code EServiceTemplate}), necessaria in particolare quando l'e-service
+     * è in modalità {@code RECEIVE}. In futuro, senza modellare questa relazione nel dominio di {@code EService},
+     * si rischia di non avere più l'informazione per associare una {@code EServiceRiskAnalysis} al relativo e-service.
+     */
     @Override
     public EServiceRiskAnalysis getRiskAnalysis(EServiceRef eServiceRef) {
         return restClient.readEService(eServiceRef.id())
