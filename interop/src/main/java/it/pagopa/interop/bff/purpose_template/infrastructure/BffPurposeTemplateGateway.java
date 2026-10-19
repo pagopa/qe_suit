@@ -72,7 +72,11 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
-        return store(purposeTemplate.toBuilder().state(PurposeTemplateState.PUBLISHED).build());
+        return store(
+                purposeTemplate.toBuilder()
+                        .state(PurposeTemplateState.PUBLISHED)
+                        .build()
+        );
     }
 
     @Override
@@ -85,7 +89,11 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
-        return store(purposeTemplate.toBuilder().eserviceId(eServiceRef.id()).build());
+        return store(
+                purposeTemplate.toBuilder()
+                        .eserviceId(eServiceRef.id())
+                        .build()
+        );
     }
 
     private PurposeTemplate store(PurposeTemplate purposeTemplate) {
