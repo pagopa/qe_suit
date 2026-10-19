@@ -36,4 +36,17 @@ public enum UserAlias {
         // Locale.ROOT: la chiave non deve dipendere dalla lingua della JVM (con il turco IMPRESA_1 → "ımpresa-1")
         return name().toLowerCase(Locale.ROOT).replace('_', '-');
     }
+
+    /**
+     * Utenza a partire dalla sua chiave, come scritta nelle feature e nella configurazione ({@code user-1} →
+     * {@code USER_1}).
+     */
+    public static UserAlias fromKey(String key) {
+        for (UserAlias alias : values()) {
+            if (alias.key().equals(key)) {
+                return alias;
+            }
+        }
+        throw new IllegalArgumentException("Utenza generica non riconosciuta: " + key);
+    }
 }

@@ -61,6 +61,9 @@ qe:
       email: grossini@test.cert.it
       ipa-code: c_g273
       has-groups: false
+      # api-key delle chiamate B2B (header x-api-key): gruppi della PA e notifiche
+      groups-api-key: 2a36ad69-fce0-416b-b94e-7242773e638b
+      delivery-api-key: 5df3a854-110c-46e9-a94b-274e2e74132d
       roles:
         - party-role: SUB_DELEGATE
           role: admin

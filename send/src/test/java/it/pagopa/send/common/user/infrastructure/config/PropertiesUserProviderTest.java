@@ -79,7 +79,7 @@ class PropertiesUserProviderTest {
     @Test
     void shouldFailWhenUserIsPlaceholder() {
         UsersProperties.UserEntry placeholder = new UsersProperties.UserEntry("REPLACE_ME", null, null, null, null,
-                null, null, null, null, null, null, false, null);
+                null, null, null, null, null, null, false, null, null, null);
         PropertiesUserProvider provider = providerWith(new UsersProperties(Map.of("comune-1", placeholder)));
 
         assertThatThrownBy(() -> provider.resolve(UserAlias.COMUNE_1))

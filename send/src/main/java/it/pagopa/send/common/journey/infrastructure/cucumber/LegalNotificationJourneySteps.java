@@ -2,8 +2,9 @@ package it.pagopa.send.common.journey.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
@@ -25,10 +26,11 @@ public class LegalNotificationJourneySteps {
     private final RecipientSpecFactory recipientSpecFactory;
     private final CurrentChannel<Channel> currentChannel;
     private final CurrentUserSession currentUserSession;
+    private final UserProvider userProvider;
 
     @Given("una notifica di tipo {legalNotificationType} creata dalla PA {tenant} per il destinatario {string} in stato {string}")
-    public void createLegalNotification(LegalNotificationType type, Tenant sender, String recipient, String targetStatus) {
-        RecipientSpec recipientSpec = recipientSpecFactory.build(Recipient.fromUsername(recipient), type.recipientOverrides());
+    public void createLegalNotification(LegalNotificationType type, User sender, String recipient, String targetStatus) {
+        RecipientSpec recipientSpec = recipientSpecFactory.build(userProvider.resolve(UserAlias.fromKey(recipient)), type.recipientOverrides());
         sendJourney
                 .prepareNotification(Map.of())
                 .withRecipient(recipientSpec)
@@ -36,8 +38,8 @@ public class LegalNotificationJourneySteps {
     }
 
     @Given("la PA {tenant} ha creato ed annullato una notifica di tipo {legalNotificationType} per il destinatario {string}")
-    public void createAndCancelLegalNotification(Tenant sender, LegalNotificationType type, String recipient) {
-        RecipientSpec recipientSpec = recipientSpecFactory.build(Recipient.fromUsername(recipient), type.recipientOverrides());
+    public void createAndCancelLegalNotification(User sender, LegalNotificationType type, String recipient) {
+        RecipientSpec recipientSpec = recipientSpecFactory.build(userProvider.resolve(UserAlias.fromKey(recipient)), type.recipientOverrides());
         sendJourney
                 .prepareNotification(Map.of())
                 .withRecipient(recipientSpec)
@@ -53,8 +55,8 @@ public class LegalNotificationJourneySteps {
      * {@link #sendNotificationViaBff}).
      */
     @Given("una notifica di tipo multidestinatario creata dalla PA {tenant}")
-    public void createMultiRecipientNotification(Tenant sender) {
-        RecipientSpec lucrezia = recipientSpecFactory.build(Recipient.LUCREZIA, Map.of(
+    public void createMultiRecipientNotification(User sender) {
+        RecipientSpec lucrezia = recipientSpecFactory.build(userProvider.resolve(UserAlias.USER_1), Map.of(
                 "physicalAddress_address", "Via Ok 890",
                 "physicalAddress_municipality", "Palermo",
                 "physicalAddress_province", "PA",
@@ -63,7 +65,8 @@ public class LegalNotificationJourneySteps {
                 "F24_number", "0"
         ));
 
-        RecipientSpec petrarca = recipientSpecFactory.build(Recipient.PETRARCA, Map.of(
+        // IMPRESA_1: stesso codice fiscale numerico (12666810299) del destinatario PG usato finora
+        RecipientSpec petrarca = recipientSpecFactory.build(userProvider.resolve(UserAlias.IMPRESA_1), Map.of(
                 "digitalDomicile", "test@pec.it",
                 "pagoPA_number", "1",
                 "F24_number", "0"
@@ -97,18 +100,18 @@ public class LegalNotificationJourneySteps {
      * direttamente: devono per forza restare su step Cucumber separati.
      */
     @Given("la PA {tenant} predispone una nuova notifica con i seguenti dati:")
-    public void prepareNotification(Tenant tenant, Map<String, String> data) {
+    public void prepareNotification(User tenant, Map<String, String> data) {
         currentUserSession.setSender(tenant);
         legalNotificationUseCase.prepareNotification(data);
     }
 
     /**
      * Secondo step, ripetibile una volta per destinatario: aggiunge un destinatario censito
-     * ({@link Recipient}) alla notifica in preparazione, con default sensati (1 pagoPA + 1 F24,
+     * ({@link User}) alla notifica in preparazione, con default sensati (1 pagoPA + 1 F24,
      * indirizzo fisico di default) sovrascrivibili puntualmente da {@link RecipientSpecFactory}.
      */
     @Given("viene aggiunto {recipient} come destinatario con i seguenti dati:")
-    public void addRecipientToNotification(Recipient recipient, Map<String, String> data) {
+    public void addRecipientToNotification(User recipient, Map<String, String> data) {
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, data);
         legalNotificationUseCase.addRecipient(recipientSpec);
     }
@@ -119,7 +122,7 @@ public class LegalNotificationJourneySteps {
      * secondo metodo analogo con testo letterale "tramite interfaccia web".
      */
     @When("la notifica viene sottomessa e si attende che lo stato diventi {string}")
-    public void sendNotificationViaBff(Tenant sender, String targetStatus) {
+    public void sendNotificationViaBff(User sender, String targetStatus) {
         legalNotificationUseCase.sendNotification(sender, NotificationStatus.fromValue(targetStatus));
     }
 }
