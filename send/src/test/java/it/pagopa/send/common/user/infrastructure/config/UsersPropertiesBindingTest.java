@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifica, per ogni ambiente, che {@code application-<ambiente>.yaml} importi il file delle utenze e che ogni
- * {@link UserAlias} vi abbia la sua voce (chiave in kebab-case, es. {@code USER_1} → {@code user-1}).
+ * {@link UserAlias} vi abbia la sua voce (chiave in kebab-case, es. {@code user-1} per {@code USER_1}).
  */
 class UsersPropertiesBindingTest {
 
@@ -24,7 +24,7 @@ class UsersPropertiesBindingTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"dev", "test", "uat"})
+    @ValueSource(strings = {"dev", "test", "uat", "hotfix"})
     void shouldBindEveryUserAliasForProfile(String profile) {
         new ApplicationContextRunner()
                 .withInitializer(new ConfigDataApplicationContextInitializer())
@@ -34,9 +34,9 @@ class UsersPropertiesBindingTest {
                     assertThat(context).hasNotFailed();
                     assertThat(context.getEnvironment().getActiveProfiles()).containsExactly(profile);
 
-                    Map<String, UsersProperties.UserEntry> users = context.getBean(UsersProperties.class).users();
+                    Map<UserAlias, UsersProperties.UserEntry> users = context.getBean(UsersProperties.class).users();
                     for (UserAlias alias : UserAlias.values()) {
-                        assertThat(users).as("utenza %s nel profilo %s", alias, profile).containsKey(alias.key());
+                        assertThat(users).as("utenza %s nel profilo %s", alias, profile).containsKey(alias);
                     }
                 });
     }

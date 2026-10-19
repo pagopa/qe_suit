@@ -9,21 +9,21 @@ qe:
   users:
     user-1:
       username: lucrezia
-      password: password123
+      password: ${pn.external.password.lucrezia:}
       tax-id: BRGLRZ80D58H501Q
       denomination: Lucrezia
       family-name: Borgia
       uid: df2a1268-ecfe-4330-b650-5184a7eb0756
     user-2:
       username: garibaldi
-      password: password123
+      password: ${pn.external.password.garibaldi:}
       tax-id: GRBGPP87L04L741X
       denomination: Giuseppe Maria
       family-name: Garibaldi
       uid: bb4619fa-7fea-4afd-8140-5e2c72cfc4c2
     impresa-1:
       username: DanteAlighieri
-      password: test
+      password: ${pn.external.password.dantealighieri:}
       organization: "Vita Nova Sas"
       tax-id: "12666810299"
       organization-id: 8f409ca6-fc3d-46c3-8da7-69cd9a1e9e62
@@ -36,7 +36,7 @@ qe:
           role: pg-admin
     impresa-2:
       username: FrancescoPetrarca
-      password: test
+      password: ${pn.external.password.francescopetrarca:}
       organization: "Le Epistolae srl"
       # codice fiscale non numerico: l'impresa non può ricevere notifiche nuove
       tax-id: LELPTR04A01C352E
@@ -50,7 +50,7 @@ qe:
           role: pg-admin
     comune-1:
       username: grossini
-      password: test
+      password: ${pn.external.password.grossini:}
       organization: "Comune di Palermo"
       tax-id: "80016350821"
       organization-id: 5b994d4a-0fa8-47ac-9c7b-354f1d44a1ce
@@ -66,7 +66,7 @@ qe:
           role: admin
     comune-2:
       username: albino63
-      password: test
+      password: ${pn.external.password.albino63:}
       organization: "Comune di Mantova"
       tax-id: "00189800204"
       organization-id: 614b68f2-f80f-4ebc-be30-2ad87e88aa10

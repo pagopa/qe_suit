@@ -1,5 +1,6 @@
 package it.pagopa.send.common.user.infrastructure.config;
 
+import it.pagopa.send.common.user.domain.UserAlias;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
@@ -7,14 +8,14 @@ import java.util.Map;
 
 /**
  * Utenze generiche di test dell'ambiente attivo, lette da {@code users/application-users-<ambiente>.yaml} (importato da
- * {@code application-<ambiente>.yaml}). La chiave della mappa è l'alias dell'utenza in kebab-case ({@code USER_1} →
- * {@code user-1}).
+ * {@code application-<ambiente>.yaml}). Nel file la chiave è l'alias in kebab-case ({@code user-1}), che Spring converte
+ * nell'enum {@link UserAlias} ({@code USER_1}).
  * <p>
  * Il prefisso è {@code qe} (Quality Engineering, namespace delle proprietà della suite) e il componente {@code users}
  * corrisponde a {@code qe.users}: le altre chiavi {@code qe.*} non vengono lette da questa classe.
  */
 @ConfigurationProperties(prefix = "qe")
-public record UsersProperties(Map<String, UserEntry> users) {
+public record UsersProperties(Map<UserAlias, UserEntry> users) {
 
     /**
      * Dati di un'utenza: {@code taxId} è il codice fiscale dell'ente o dell'impresa (della persona per una PF),

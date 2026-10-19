@@ -1,7 +1,5 @@
 package it.pagopa.send.common.user.domain;
 
-import java.util.Locale;
-
 /**
  * Utenza generica di test, indipendente dall'ambiente: identifica il "cosa" (una persona fisica, un'impresa, un ente)
  * mentre i dati concreti dell'utenza per l'ambiente attivo sono risolti da {@link UserProvider}.
@@ -27,13 +25,5 @@ public enum UserAlias {
             return UserType.PA;
         }
         throw new IllegalStateException("Prefisso non riconosciuto per l'utenza " + name);
-    }
-
-    /**
-     * Chiave dell'utenza nella configurazione: il nome in minuscolo e in kebab-case ({@code USER_1} → {@code user-1}).
-     */
-    public String key() {
-        // Locale.ROOT: la chiave non deve dipendere dalla lingua della JVM (con il turco IMPRESA_1 → "ımpresa-1")
-        return name().toLowerCase(Locale.ROOT).replace('_', '-');
     }
 }
