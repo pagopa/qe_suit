@@ -60,6 +60,7 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
                         .title(title)
                         .state(PurposeTemplateState.DRAFT)
                         .build())
+                .updateContext()
                 .get();
     }
 
