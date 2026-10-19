@@ -3,20 +3,31 @@ package it.pagopa.send.web.destinatario_pf.infrastructure.page;
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
+import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
+import it.pagopa.send.web.infrastructure.page.component.Footer;
+import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.notification_search.infrastructure.suit.NotificationSearchPage;
+import it.pagopa.send.web.notification_search.infrastructure.suit.RecipientNotificationsPage;
 import org.assertj.core.api.Assertions;
 
 import java.util.Map;
 
 /**
- * Questa pagina rappresenta la pagina iniziale del portale delle notifiche per il cittadino
- * in cui vengono visualizzate tutte le notifiche ricevute.
- * La pagina contiene un elenco di notifiche con informazioni come il mittente, la data di ricezione e lo stato della notifica.
+ * {@code {baseUrl}/notifiche}
+ * Pagina "In arrivo" del cittadino, pagina iniziale del portale dopo il login.
+ * Si apre dalla voce "In arrivo" del menu laterale.
+ * Filtri, tabella delle notifiche e banner per attivare il domicilio digitale, comuni alla pagina dell'impresa, sono
+ * definiti in {@link RecipientNotificationsPage}; qui ci sono i pulsanti per aprire le notifiche e la ricerca usata
+ * dagli step Cucumber.
+ * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo e i campi dei filtri; è usato anche dagli step
+ * Cucumber. Testi, filtri e messaggi sono verificati da {@code WebNotificationPFContractTest}, non la tabella, che
+ * dipende dalle notifiche dell'utente.
  */
 @Url("${url.notifiche.cittadino.notifiche}")
-public interface NotificationPFPage extends NotificationSearchPage {
+public interface NotificationPFPage extends NotificationSearchPage, RecipientNotificationsPage {
 
     @XPath("//*[@id=\"item\"]")
     Readable<String> breadcrumbs();
@@ -24,17 +35,28 @@ public interface NotificationPFPage extends NotificationSearchPage {
     @XPath("//tbody/tr[1]/td[last()]//button")
     Clickable notificationDetailsButton();
 
-    @XPath("//*[@id=\"iunMatch\"]")
-    Writable<String> iunSearchInput();
+    //Primo tasto apri disponibile sulla prima Notifica a valore legale
+    @XPath("(//*[@data-testid=\"notificationsTable.body.row\"][.//span[normalize-space()=\"Notifica a valore legale\"]]//*[@data-testid=\"goToNotificationDetail\"])[1]")
+    Button firstLegalNotificationDetailsButton();
 
-    @XPath("//*[@id=\"startDate\"]")
-    Writable<String> startDateSearchInput();
+    // "Apri" della prima notifica a valore legale già letta (senza il pallino di notifica nuova): aprirla non cambia lo stato di lettura
+    @XPath("(//*[@data-testid=\"notificationsTable.body.row\"][not(.//*[@data-testid=\"new-notification-badge\"])][.//span[normalize-space()=\"Notifica a valore legale\"]]//*[@data-testid=\"goToNotificationDetail\"])[1]")
+    Button firstReadLegalNotificationDetailsButton();
 
-    @XPath("//*[@id=\"endDate\"]")
-    Writable<String> endDateSearchInput();
+    // "Apri" della prima comunicazione già letta (senza il pallino di notifica nuova)
+    @XPath("(//*[@data-testid=\"notificationsTable.body.row\"][not(.//*[@data-testid=\"new-notification-badge\"])][not(.//span[normalize-space()=\"Notifica a valore legale\"])]//*[@data-testid=\"goToNotificationDetail\"])[1]")
+    Button firstReadCommunicationDetailsButton();
 
-    @XPath("//*[@id=\"filter-notifications-button\"]")
-    Clickable filterButton();
+    //link a pagina di dettaglio notifica
+    @XPath("//main")
+    NotificationDetailsPFPage notificationDetails();
+
+    // pagina del wizard di attivazione, aperta da "Attiva domicilio digitale" del banner
+    @XPath("//main")
+    DigitalDomicileActivationPFPage digitalDomicileActivation();
+
+    @XPath("//footer[contains(@class, 'MuiBox-root')]")
+    Footer footer();
 
     @Override
     default void goToNotificationDetails() {
@@ -64,9 +86,13 @@ public interface NotificationPFPage extends NotificationSearchPage {
 
     @Override
     default void assertLoaded() {
-        breadcrumbs().readAndAssert((h) -> {
-            Assertions.assertThat(h).isNotNull();
-            Assertions.assertThat(h).isIn("In arrivo");
-        });
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
+        // il titolo è "In arrivo" o, per chi ha deleghe a suo carico, "In arrivo per te": si controlla la parte comune
+        title().readAndAssert(h -> Assertions.assertThat(h).startsWith("In arrivo"));
+        Assertions.assertThat(communicationTypeSelect().get(FindPolicy.PRESENT)).isPresent();
+        Assertions.assertThat(iunSearchInput().get(FindPolicy.PRESENT)).isPresent();
+        Assertions.assertThat(startDateSearchInput().get(FindPolicy.PRESENT)).isPresent();
+        Assertions.assertThat(endDateSearchInput().get(FindPolicy.PRESENT)).isPresent();
+        Assertions.assertThat(filterButton().get(FindPolicy.PRESENT)).isPresent();
     }
 }

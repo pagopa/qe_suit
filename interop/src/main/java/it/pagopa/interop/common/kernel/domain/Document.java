@@ -9,12 +9,11 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class Document {
+public class Document implements DocumentMetadata {
     UUID id;
     String name;
     String contentType;
     String prettyName;
     String checksum;
 }
-
 

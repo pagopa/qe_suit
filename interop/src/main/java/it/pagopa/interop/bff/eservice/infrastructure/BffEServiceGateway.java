@@ -1,12 +1,12 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.application.context.EntityStore;
-import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
@@ -48,6 +48,13 @@ public class BffEServiceGateway implements EServiceGateway {
                     return savedEService;
                 })
                 .updateContext()
+                .get();
+    }
+
+    @Override
+    public void deleteEService(EService eService) {
+        restClient.deleteEService(eService.getId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
     }
 

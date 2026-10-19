@@ -10,6 +10,8 @@ import org.springframework.plugin.core.Plugin;
 public interface EServiceGateway extends Plugin<Channel> {
     EService createEService(EServiceCreationCommand command);
 
+    void deleteEService(EService eService);
+
     EService getEService(EServiceRef eServiceRef);
 
     void archiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays);

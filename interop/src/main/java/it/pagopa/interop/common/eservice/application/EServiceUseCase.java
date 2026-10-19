@@ -25,6 +25,10 @@ public class EServiceUseCase {
         return eServiceGateway.createEService(creationCommand);
     }
 
+    public void deleteEService(EService eService) {
+        eServiceGateway.deleteEService(eService);
+    }
+
     public EService getEService(EService eService) {
         return eServiceGateway.getEService(eService.getRef());
     }

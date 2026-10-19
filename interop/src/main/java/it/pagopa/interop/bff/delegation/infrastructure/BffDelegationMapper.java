@@ -1,7 +1,7 @@
 package it.pagopa.interop.bff.delegation.infrastructure;
 
-import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
+import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Delegation;
 import org.mapstruct.Mapper;

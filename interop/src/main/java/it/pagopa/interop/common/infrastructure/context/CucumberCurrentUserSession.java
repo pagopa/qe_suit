@@ -1,8 +1,8 @@
 package it.pagopa.interop.common.infrastructure.context;
 
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.User;
 
 public class CucumberCurrentUserSession implements CurrentUserSession {
     private User currentUser;

@@ -1,0 +1,46 @@
+openapi: 3.0.3
+info:
+  title: Servizio pagamenti
+  version: 1.0.0
+  description: "Specifica originaria; i caratteri & e * qui sono testo."
+  contact:
+    name: Contatto originario
+    email: originario@example.test
+servers:
+  - url: https://originale.example/api
+    description: Ambiente originario
+paths:
+  /pagamenti:
+    post:
+      operationId: creaPagamento
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Pagamento"
+      responses:
+        "200":
+          description: Pagamento elaborato
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Esito"
+components:
+  schemas:
+    Pagamento:
+      type: object
+      required:
+        - importo
+      properties:
+        importo:
+          type: number
+          format: double
+        causale:
+          type: string
+    Esito:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid

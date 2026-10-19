@@ -5,11 +5,7 @@ import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.TenantsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedDiscreteTenantAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.DeclaredTenantAttributeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RevokeVerifiedAttributeRequest;
-import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:pagopa:pin10024:soap12"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:s12="http://schemas.xmlsoap.org/wsdl/soap12/"
+             targetNamespace="urn:pagopa:pin10024:soap12">
+  <wsdl:types><xsd:schema targetNamespace="urn:pagopa:pin10024:soap12"><xsd:element name="request" type="xsd:string"/></xsd:schema></wsdl:types>
+  <wsdl:message name="request"><wsdl:part name="body" element="tns:request"/></wsdl:message>
+  <wsdl:portType name="ServizioPagamenti"><wsdl:operation name="paga"><wsdl:input message="tns:request"/></wsdl:operation></wsdl:portType>
+  <wsdl:binding name="bindingUno" type="tns:ServizioPagamenti"><s12:binding style="document" transport="http://www.w3.org/2003/05/soap/bindings/HTTP/"/></wsdl:binding>
+  <wsdl:service name="ServizioPagamenti">
+    <!-- <s12:address location="https://commento.example/non-attivo"/> -->
+    <wsdl:port name="PortaUno" binding="tns:bindingUno"><s12:address location="https://originale.example/pay"/></wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

@@ -2,13 +2,13 @@ package it.pagopa.interop.common.client.infrastructure.cucumber;
 
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.interop.common.client.domain.Client;
-import it.pagopa.interop.common.client.application.command.DebugClientAssertionCommand;
-import it.pagopa.interop.common.client.application.DebugClientAssertionUseCase;
-import it.pagopa.interop.common.client.domain.DebugClientAssertionValidation;
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.kernel.security.DPoPProof;
+import it.pagopa.interop.common.client.application.DebugClientAssertionUseCase;
+import it.pagopa.interop.common.client.application.command.DebugClientAssertionCommand;
+import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
+import it.pagopa.interop.common.client.domain.DebugClientAssertionValidation;
+import it.pagopa.kernel.security.DPoPProof;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 

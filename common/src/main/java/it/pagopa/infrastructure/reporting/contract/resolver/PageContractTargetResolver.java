@@ -1,5 +1,6 @@
 package it.pagopa.infrastructure.reporting.contract.resolver;
 
+import com.github.javaparser.ParserConfiguration;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -32,6 +33,7 @@ public class PageContractTargetResolver implements ContractTargetResolver {
             throw new IllegalStateException("Source file not found for PAGE resolver: " + sourcePath);
         }
         try {
+            StaticJavaParser.getParserConfiguration().setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_17);
             CompilationUnit unit = StaticJavaParser.parse(sourcePath);
             MethodDeclaration method = findFactoryMethod(unit, context.methodName());
             List<MethodCallExpr> onCalls = method.findAll(MethodCallExpr.class, call -> "on".equals(call.getNameAsString()));

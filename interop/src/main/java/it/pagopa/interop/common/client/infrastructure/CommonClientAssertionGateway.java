@@ -2,11 +2,11 @@ package it.pagopa.interop.common.client.infrastructure;
 
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.client.application.ClientAssertionGateway;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.client.domain.ClientAssertionClaimOverride;
-import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;

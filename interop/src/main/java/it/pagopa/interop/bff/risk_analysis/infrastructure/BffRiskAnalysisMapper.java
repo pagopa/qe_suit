@@ -1,8 +1,8 @@
 package it.pagopa.interop.bff.risk_analysis.infrastructure;
 
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
-import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
+import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DataType;
 import it.pagopa.interop.generated.openapi.clients.bff.model.HideOption;

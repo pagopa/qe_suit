@@ -1,11 +1,11 @@
 package it.pagopa.interop.bff.agreement.infrastructure;
 
-import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
-import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.infrastructure.template.RestClient;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
+import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
+import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import org.springframework.stereotype.Component;

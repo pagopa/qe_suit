@@ -7,8 +7,6 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.VerifiedTenantAttri
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.util.Objects;
-
 public class BffAssignVerifiedAttributeCommand implements AssignVerifiedAttributeCommand {
     @Getter
     private final VerifiedTenantAttributeSeed bffPayload = new VerifiedTenantAttributeSeed();

@@ -15,7 +15,10 @@ import it.pagopa.send.web.destinatario_pg.infrastructure.page.OrganizationAuthor
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.OrganizationDelegationsPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.PlatformStatusPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
+import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
@@ -31,7 +34,7 @@ import java.util.stream.Stream;
  * {@code features/pg/navigazione-send-pg.feature}, lato destinatario Persona Giuridica.
  * Si veda {@link WebMittenteNavigationContractTest} per il razionale.
  */
-@ActiveProfiles({"test", "junit"})
+@ActiveProfiles({"hotfix", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
@@ -40,6 +43,7 @@ import java.util.stream.Stream;
 })
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
+@Slf4j
 public class WebRecipientPgNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;

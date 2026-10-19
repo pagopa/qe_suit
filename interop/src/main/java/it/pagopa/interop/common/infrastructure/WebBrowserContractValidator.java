@@ -2,9 +2,9 @@ package it.pagopa.interop.common.infrastructure;
 
 import it.pagopa.infrastructure.contract.browser.WebContractStages;
 import it.pagopa.infrastructure.contract.browser.WebContractValidator;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 
 import java.util.Objects;
 

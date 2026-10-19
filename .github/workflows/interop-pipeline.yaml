@@ -25,7 +25,7 @@ on:
       branchName:
         description: 'Provide the branch name for qe_suit to clone'
         required: false
-        default: main
+        default: develop
         type: string
 
 defaults:

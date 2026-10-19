@@ -2,9 +2,7 @@ package it.pagopa.interop.common.client.application.command;
 
 import it.pagopa.interop.common.client.domain.ClientKind;
 import it.pagopa.interop.common.kernel.domain.UserRef;
-import jakarta.validation.constraints.Null;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.function.Consumer;
 

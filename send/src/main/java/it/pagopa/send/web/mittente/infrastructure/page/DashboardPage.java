@@ -5,7 +5,8 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
-import it.pagopa.send.web.infrastructure.page.component.Sidebar;
+import it.pagopa.send.web.infrastructure.page.component.Footer;
+import it.pagopa.send.web.infrastructure.page.component.Table;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.mittente.infrastructure.page.component.MittentiSidebar;
 import it.pagopa.send.web.notification_search.infrastructure.suit.NotificationSearchPage;
@@ -34,6 +35,8 @@ public interface DashboardPage extends NotificationSearchPage {
 
     MittentiSidebar sidebar();
 
+    Table notifications();
+
     /**
      * Filtro esclusivo del portale mittenti: assente lato PF.
      */
@@ -44,6 +47,9 @@ public interface DashboardPage extends NotificationSearchPage {
     Clickable filterButton();
 
     Optional<OneTrustBanner> oneTrustBanner();
+
+    @XPath("//footer[contains(@class, 'MuiBox-root')]")
+    Footer footer();
 
     @Override
     default void assertLoaded() {

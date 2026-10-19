@@ -5,7 +5,9 @@ import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AttributesApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Attribute;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
