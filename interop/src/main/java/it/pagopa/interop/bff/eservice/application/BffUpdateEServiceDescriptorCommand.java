@@ -9,10 +9,12 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 @Getter
 public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescriptorCommand {
     private final UpdateEServiceDescriptorSeed bffPayload;
+    private Attributes attributes = Attributes.builder().build();
 
     public static BffUpdateEServiceDescriptorCommand from(UpdateEServiceDescriptorSeed payload) {
         return new BffUpdateEServiceDescriptorCommand(payload);
@@ -20,10 +22,6 @@ public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescrip
 
     private BffUpdateEServiceDescriptorCommand(UpdateEServiceDescriptorSeed payload) {
         this.bffPayload = payload;
-    }
-
-    public BffUpdateEServiceDescriptorCommand() {
-        this.bffPayload = new UpdateEServiceDescriptorSeed();
     }
 
     @Override
@@ -58,6 +56,7 @@ public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescrip
 
     @Override
     public UpdateEServiceDescriptorCommand attributes(Attributes attributes) {
+        this.attributes = attributes;
         DescriptorAttributesSeed attributesSeed = new DescriptorAttributesSeed();
         ArrayList<List<DescriptorAttributeSeed>> attributeRequirements;
 
@@ -79,6 +78,11 @@ public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescrip
 
         bffPayload.attributes(attributesSeed);
         return this;
+    }
+
+    @Override
+    public UpdateEServiceDescriptorCommand attributes(UnaryOperator<Attributes> linkAttributes) {
+        return this.attributes(linkAttributes.apply(attributes));
     }
 
     private ArrayList<List<DescriptorAttributeSeed>> copyCommonAttributesIntoAttributeRequirementsAccordingToItsGroup(

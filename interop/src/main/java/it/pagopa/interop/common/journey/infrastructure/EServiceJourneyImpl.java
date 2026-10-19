@@ -1,6 +1,8 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
@@ -15,6 +17,8 @@ import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -67,6 +71,27 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
         commandConfig.accept(command);
         return updateDescriptor(command, state);
+    }
+
+    @Override
+    public EServiceJourneyImpl updateDescriptorWithContextAttributes(
+            UpdateEServiceDescriptorCommand command,
+            int dailyCallsPerConsumer,
+            EServiceDescriptorState state
+    ) {
+        command.attributes(attributes -> prepareContextAttributes(attributes, dailyCallsPerConsumer));
+        return updateDescriptor(command, state);
+    }
+
+    @Override
+    public EServiceJourneyImpl updateDescriptorWithContextAttributes(
+            Consumer<UpdateEServiceDescriptorCommand> commandConfig,
+            int dailyCallsPerConsumer,
+            EServiceDescriptorState state
+    ) {
+        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        commandConfig.accept(command);
+        return updateDescriptorWithContextAttributes(command, dailyCallsPerConsumer, state);
     }
 
     @Override
@@ -126,5 +151,32 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor, command);
         eServiceDescriptorUseCase.publishDescriptor(eService, eServiceDescriptor);
         return this;
+    }
+
+    private Attributes prepareContextAttributes(Attributes attributes, int dailyCallsPerConsumer) {
+        List<Attribute> certified = new ArrayList<>(attributes.getCertified());
+        List<Attribute> declared = new ArrayList<>(attributes.getDeclared());
+        List<Attribute> verified = new ArrayList<>(attributes.getVerified());
+
+        for (Attribute attribute : entityStore.getAll(Attribute.class)) {
+            Attribute updatedAttribute = attribute.toBuilder()
+                    .dailyCallsPerConsumer(dailyCallsPerConsumer)
+                    .build();
+
+            switch (updatedAttribute.getKind()) {
+                case CERTIFIED, CERTIFIED_DISCRETE -> certified.add(updatedAttribute);
+                case DECLARED -> declared.add(updatedAttribute);
+                case VERIFIED -> verified.add(updatedAttribute);
+            }
+        }
+
+        return attributes.toBuilder()
+                .clearCertified()
+                .clearDeclared()
+                .clearVerified()
+                .certified(certified)
+                .declared(declared)
+                .verified(verified)
+                .build();
     }
 }
