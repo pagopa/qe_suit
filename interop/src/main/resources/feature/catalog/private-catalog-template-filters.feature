@@ -17,32 +17,36 @@ Feature: Filtri sui template nel catalogo privato
     Given i seguenti template di e-service predisposti:
       | alias | nome                  | tecnologia | stato     | interfaccia              |
       | TPL-1 | Template Modello Alfa | SOAP       | PUBLISHED | soap11-un-indirizzo.wsdl |
-    And le seguenti istanze di template sono predisposte:
-      | alias | template | stato della versione |
-      | ES-2  | TPL-1    | pubblicata           |
-    And l'e-service "ES-1" predisposto dal Comune di Milano con la seguente configurazione:
-      | nome        | E-service Modello Beta |
-      | descrizione | E-service.             |
-    And la versione 1 dell'e-service "ES-1" nello stato "pubblicata"
-    When PagoPA cerca nel catalogo la parola "Modello" con i seguenti filtri:
+    And le seguenti istanze di template predisposte:
+      | alias | template |
+      | ES-2  | TPL-1    |
+    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-2" pubblicata
+    And l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
+      | nome | E-service Modello Beta |
+    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-1" pubblicata
+    When PagoPA cerca nel catalogo "Modello" con i seguenti filtri:
       | filtro              | valore |
       | istanze di template | sì     |
-    Then tra i risultati compare l'e-service "ES-2"
-    And tra i risultati non compare l'e-service "ES-1"
+    Then l'e-service "ES-2" è presente tra i risultati della ricerca
+    And l'e-service "ES-1" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_TEMPLATE_FILTERS_2] Senza filtro compaiono sia le istanze sia gli altri e-service
     Given i seguenti template di e-service predisposti:
       | alias | nome                | tecnologia | stato     | interfaccia              |
       | TPL-1 | Template Forma Alfa | SOAP       | PUBLISHED | soap11-un-indirizzo.wsdl |
-    And le seguenti istanze di template sono predisposte:
-      | alias | template | stato della versione |
-      | ES-2  | TPL-1    | pubblicata           |
-    And l'e-service "ES-1" predisposto dal Comune di Milano con la seguente configurazione:
-      | nome        | E-service Forma Beta |
-      | descrizione | E-service.           |
-    And la versione 1 dell'e-service "ES-1" nello stato "pubblicata"
-    When PagoPA cerca nel catalogo la parola "Forma"
-    Then tra i risultati compaiono gli e-service predisposti:
+    And le seguenti istanze di template predisposte:
+      | alias | template |
+      | ES-2  | TPL-1    |
+    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-2" pubblicata
+    And l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
+      | nome | E-service Forma Beta |
+    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-1" pubblicata
+    When PagoPA cerca nel catalogo "Forma"
+    Then tra i risultati della ricerca sono presenti i seguenti e-service:
       | alias |
       | ES-1  |
       | ES-2  |
@@ -52,29 +56,37 @@ Feature: Filtri sui template nel catalogo privato
       | alias | nome                 | tecnologia | stato     | interfaccia              |
       | TPL-1 | Template Stampo Alfa | SOAP       | PUBLISHED | soap11-un-indirizzo.wsdl |
       | TPL-2 | Template Stampo Beta | SOAP       | PUBLISHED | soap11-un-indirizzo.wsdl |
-    And le seguenti istanze di template sono predisposte:
-      | alias | template | stato della versione |
-      | ES-1  | TPL-1    | pubblicata           |
-      | ES-2  | TPL-1    | pubblicata           |
-      | ES-3  | TPL-2    | pubblicata           |
-    When PagoPA cerca nel catalogo la parola "Stampo" con i seguenti filtri:
+    And le seguenti istanze di template predisposte:
+      | alias | template |
+      | ES-1  | TPL-1    |
+      | ES-2  | TPL-1    |
+      | ES-3  | TPL-2    |
+    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-1" pubblicata
+    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-2" pubblicata
+    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-3" pubblicata
+    When PagoPA cerca nel catalogo "Stampo" con i seguenti filtri:
       | filtro               | valore |
       | istanza del template | TPL-1  |
-    Then tra i risultati compaiono gli e-service predisposti:
+    Then tra i risultati della ricerca sono presenti i seguenti e-service:
       | alias |
       | ES-1  |
       | ES-2  |
-    And tra i risultati non compare l'e-service "ES-3"
+    And l'e-service "ES-3" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_TEMPLATE_FILTERS_4] Template senza istanze
     Given i seguenti template di e-service predisposti:
       | alias | nome                | tecnologia | stato     | interfaccia              |
       | TPL-1 | Template Vuoto Alfa | SOAP       | PUBLISHED | soap11-un-indirizzo.wsdl |
       | TPL-2 | Template Vuoto Beta | SOAP       | PUBLISHED | soap11-un-indirizzo.wsdl |
-    And le seguenti istanze di template sono predisposte:
-      | alias | template | stato della versione |
-      | ES-1  | TPL-2    | pubblicata           |
-    When PagoPA cerca nel catalogo la parola "Vuoto" con i seguenti filtri:
+    And le seguenti istanze di template predisposte:
+      | alias | template |
+      | ES-1  | TPL-2    |
+    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-1" pubblicata
+    When PagoPA cerca nel catalogo "Vuoto" con i seguenti filtri:
       | filtro               | valore |
       | istanza del template | TPL-1  |
-    Then tra i risultati non compare l'e-service "ES-1"
+    Then l'e-service "ES-1" non è presente tra i risultati della ricerca

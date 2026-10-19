@@ -13,87 +13,87 @@ Feature: Filtro per ruolo di delega nel catalogo privato
   - gli e-service predisposti sono eliminati o archiviati al termine dello scenario da un hook.
 
   Scenario Outline: [PRIVATE_CATALOG_DELEGATIONS_1] Ruolo di delegato: conta solo la delega attiva
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con la seguente configurazione:
-      | nome        | E-service Delegato Alfa |
-      | descrizione | E-service.              |
-    And la versione 1 dell'e-service "ES-1" nello stato "pubblicata"
-    And l'e-service "ES-2" predisposto dal Comune di Milano con la seguente configurazione:
-      | nome        | E-service Delegato Beta |
-      | descrizione | E-service.              |
-    And la versione 1 dell'e-service "ES-2" nello stato "pubblicata"
-    And il Comune di Milano ha delegato l'erogazione dell'e-service "ES-1" al Comune di Pozzallo con delega <stato delega>
-    When Comune di Pozzallo cerca nel catalogo la parola "Delegato" con i seguenti filtri:
+    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
+      | nome | E-service Delegato Alfa |
+    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-1" pubblicata
+    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
+      | nome | E-service Delegato Beta |
+    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-2" pubblicata
+    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega <stato delega>
+    When il Comune di Pozzallo cerca nel catalogo "Delegato" con i seguenti filtri:
       | filtro          | valore   |
       | ruolo di delega | delegato |
-    Then tra i risultati <esito> l'e-service "ES-1"
-    And tra i risultati non compare l'e-service "ES-2"
+    Then l'e-service "ES-1" <esito> tra i risultati della ricerca
+    And l'e-service "ES-2" non è presente tra i risultati della ricerca
 
     Examples:
-      | stato delega              | esito       |
-      | attiva                    | compare     |
-      | in attesa di accettazione | non compare |
-      | rifiutata                 | non compare |
-      | revocata                  | non compare |
+      | stato delega              | esito          |
+      | attiva                    | è presente     |
+      | in attesa di accettazione | non è presente |
+      | rifiutata                 | non è presente |
+      | revocata                  | non è presente |
 
   Scenario Outline: [PRIVATE_CATALOG_DELEGATIONS_2] Ruolo di delegante: conta solo la delega attiva
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con la seguente configurazione:
-      | nome        | E-service Delegante Alfa |
-      | descrizione | E-service.               |
-    And la versione 1 dell'e-service "ES-1" nello stato "pubblicata"
-    And l'e-service "ES-2" predisposto dal Comune di Milano con la seguente configurazione:
-      | nome        | E-service Delegante Beta |
-      | descrizione | E-service.               |
-    And la versione 1 dell'e-service "ES-2" nello stato "pubblicata"
-    And il Comune di Milano ha delegato l'erogazione dell'e-service "ES-1" al Comune di Pozzallo con delega <stato delega>
-    When Comune di Milano cerca nel catalogo la parola "Delegante" con i seguenti filtri:
+    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
+      | nome | E-service Delegante Alfa |
+    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-1" pubblicata
+    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
+      | nome | E-service Delegante Beta |
+    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-2" pubblicata
+    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega <stato delega>
+    When il Comune di Milano cerca nel catalogo "Delegante" con i seguenti filtri:
       | filtro          | valore    |
       | ruolo di delega | delegante |
-    Then tra i risultati <esito> l'e-service "ES-1"
-    And tra i risultati non compare l'e-service "ES-2"
+    Then l'e-service "ES-1" <esito> tra i risultati della ricerca
+    And l'e-service "ES-2" non è presente tra i risultati della ricerca
 
     Examples:
-      | stato delega              | esito       |
-      | attiva                    | compare     |
-      | in attesa di accettazione | non compare |
-      | rifiutata                 | non compare |
-      | revocata                  | non compare |
+      | stato delega              | esito          |
+      | attiva                    | è presente     |
+      | in attesa di accettazione | non è presente |
+      | rifiutata                 | non è presente |
+      | revocata                  | non è presente |
 
   Scenario: [PRIVATE_CATALOG_DELEGATIONS_3] Entrambi i ruoli: unione dei risultati
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con la seguente configurazione:
-      | nome        | E-service Unione Alfa |
-      | descrizione | E-service.            |
-    And la versione 1 dell'e-service "ES-1" nello stato "pubblicata"
-    And l'e-service "ES-2" predisposto dal Comune di Pozzallo con la seguente configurazione:
-      | nome        | E-service Unione Beta |
-      | descrizione | E-service.            |
-    And la versione 1 dell'e-service "ES-2" nello stato "pubblicata"
-    And l'e-service "ES-3" predisposto da Sogecap con la seguente configurazione:
-      | nome        | E-service Unione Gamma |
-      | descrizione | E-service.             |
-    And la versione 1 dell'e-service "ES-3" nello stato "pubblicata"
-    And il Comune di Milano ha delegato l'erogazione dell'e-service "ES-1" al Comune di Pozzallo con delega attiva
-    And il Comune di Pozzallo ha delegato l'erogazione dell'e-service "ES-2" a Sogecap con delega attiva
-    When Comune di Pozzallo cerca nel catalogo la parola "Unione" con i seguenti filtri:
+    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
+      | nome | E-service Unione Alfa |
+    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-1" pubblicata
+    And l'e-service "ES-2" predisposto dal Comune di Pozzallo con i seguenti dati:
+      | nome | E-service Unione Beta |
+    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-2" pubblicata
+    And l'e-service "ES-3" predisposto da Sogecap con i seguenti dati:
+      | nome | E-service Unione Gamma |
+    And la versione 1 dell'e-service "ES-3" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-3" pubblicata
+    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
+    And l'e-service "ES-2" delegato in erogazione dal Comune di Pozzallo a Sogecap con delega attiva
+    When il Comune di Pozzallo cerca nel catalogo "Unione" con i seguenti filtri:
       | filtro          | valore               |
       | ruolo di delega | delegato e delegante |
-    Then tra i risultati compaiono gli e-service predisposti:
+    Then tra i risultati della ricerca sono presenti i seguenti e-service:
       | alias |
       | ES-1  |
       | ES-2  |
-    And tra i risultati non compare l'e-service "ES-3"
+    And l'e-service "ES-3" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_DELEGATIONS_4] Senza filtro per ruolo di delega nessuna restrizione
-    Given l'e-service "ES-1" predisposto dal Comune di Milano con la seguente configurazione:
-      | nome        | E-service Libero Alfa |
-      | descrizione | E-service.            |
-    And la versione 1 dell'e-service "ES-1" nello stato "pubblicata"
-    And l'e-service "ES-2" predisposto dal Comune di Milano con la seguente configurazione:
-      | nome        | E-service Libero Beta |
-      | descrizione | E-service.            |
-    And la versione 1 dell'e-service "ES-2" nello stato "pubblicata"
-    And il Comune di Milano ha delegato l'erogazione dell'e-service "ES-1" al Comune di Pozzallo con delega attiva
-    When Comune di Pozzallo cerca nel catalogo la parola "Libero"
-    Then tra i risultati compaiono gli e-service predisposti:
+    Given l'e-service "ES-1" predisposto dal Comune di Milano con i seguenti dati:
+      | nome | E-service Libero Alfa |
+    And la versione 1 dell'e-service "ES-1" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-1" pubblicata
+    And l'e-service "ES-2" predisposto dal Comune di Milano con i seguenti dati:
+      | nome | E-service Libero Beta |
+    And la versione 1 dell'e-service "ES-2" predisposta per la pubblicazione
+    And la versione 1 dell'e-service "ES-2" pubblicata
+    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
+    When il Comune di Pozzallo cerca nel catalogo "Libero"
+    Then tra i risultati della ricerca sono presenti i seguenti e-service:
       | alias |
       | ES-1  |
       | ES-2  |
