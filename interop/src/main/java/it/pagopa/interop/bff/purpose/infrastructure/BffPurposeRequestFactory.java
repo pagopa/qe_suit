@@ -2,18 +2,15 @@ package it.pagopa.interop.bff.purpose.infrastructure;
 
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.purpose.application.PurposeRequestFactory;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PatchPurposeUpdateFromTemplateContent;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeFromTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeUpdateContent;
-import it.pagopa.interop.generated.openapi.clients.bff.model.ReversePurposeUpdateContent;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
+import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -28,11 +25,16 @@ import static org.instancio.Select.field;
  */
 @Component
 @RequiredArgsConstructor
-public class BffPurposeRequestFactory {
+public class BffPurposeRequestFactory implements PurposeRequestFactory {
 
     private final RiskAnalysisGateway riskAnalysisGateway;
     private final RiskAnalysisDataFactory riskAnalysisDataFactory;
     private final CurrentUserSession currentUserSession;
+
+    @Override
+    public boolean supports(@NonNull Channel delimiter) {
+        return delimiter == Channel.BFF;
+    }
 
     public PurposeSeed creationRequest(EService eService) {
         Tenant consumer = currentUserSession.getTenant();

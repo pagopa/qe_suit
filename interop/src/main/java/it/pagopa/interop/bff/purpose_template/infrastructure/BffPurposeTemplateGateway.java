@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.purpose_template.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -28,6 +29,7 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
 
     private final BffPurposeTemplateRestClient restClient;
     private final CurrentUserSession currentUserSession;
+    private final EntityStore entityStore;
 
     @Override
     public PurposeTemplate createPurposeTemplate(Tenant targetTenant, RiskAnalysisForm riskAnalysisForm) {
@@ -70,7 +72,7 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
-        return purposeTemplate.toBuilder().state(PurposeTemplateState.PUBLISHED).build();
+        return store(purposeTemplate.toBuilder().state(PurposeTemplateState.PUBLISHED).build());
     }
 
     @Override
@@ -83,7 +85,12 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
-        return purposeTemplate.toBuilder().eserviceId(eServiceRef.id()).build();
+        return store(purposeTemplate.toBuilder().eserviceId(eServiceRef.id()).build());
+    }
+
+    private PurposeTemplate store(PurposeTemplate purposeTemplate) {
+        entityStore.upsert(purposeTemplate);
+        return purposeTemplate;
     }
 
     @Override
