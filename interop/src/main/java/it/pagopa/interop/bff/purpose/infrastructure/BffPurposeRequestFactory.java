@@ -1,9 +1,11 @@
 package it.pagopa.interop.bff.purpose.infrastructure;
 
+import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.purpose.application.PurposeCommandFactory;
 import it.pagopa.interop.common.purpose.application.PurposeRequestFactory;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
@@ -30,6 +32,7 @@ public class BffPurposeRequestFactory implements PurposeRequestFactory {
     private final RiskAnalysisGateway riskAnalysisGateway;
     private final RiskAnalysisDataFactory riskAnalysisDataFactory;
     private final CurrentUserSession currentUserSession;
+    private final PurposeCommandFactory purposeCommandFactory;
 
     @Override
     public boolean supports(@NonNull Channel delimiter) {
@@ -37,17 +40,9 @@ public class BffPurposeRequestFactory implements PurposeRequestFactory {
     }
 
     public PurposeSeed creationRequest(EService eService) {
-        Tenant consumer = currentUserSession.getTenant();
-        return Instancio.of(PurposeSeed.class)
-                .set(field(PurposeSeed::getTitle), randomAlphanumericName("purpose"))
-                .set(field(PurposeSeed::getDescription), randomAlphanumericName("description"))
-                .set(field(PurposeSeed::getIsFreeOfCharge), true)
-                .set(field(PurposeSeed::getFreeOfChargeReason), randomAlphanumericName("reason"))
-                .set(field(PurposeSeed::getDailyCalls), 1)
-                .set(field(PurposeSeed::getEserviceId), eService.getId())
-                .set(field(PurposeSeed::getConsumerId), consumer.getOrganizationId())
-                .set(field(PurposeSeed::getRiskAnalysisForm), riskAnalysisFormSeed(consumer))
-                .create();
+        BffPurposeCreateCommand command =
+                (BffPurposeCreateCommand) purposeCommandFactory.validFullPopulatedCreateCommand(eService);
+        return command.getBffCreationPayload();
     }
 
     public PurposeEServiceSeed reverseCreationRequest(EService eService, UUID riskAnalysisId) {
