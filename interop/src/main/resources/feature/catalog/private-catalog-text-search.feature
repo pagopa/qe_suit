@@ -15,7 +15,7 @@ Feature: Ricerca testuale nel catalogo privato degli e-service
       | ES-2  | Comune di Milano | Catalogo pratiche scolastiche  | Informazioni sui servizi di Sogecap.      | pubblicata           |
       | ES-3  | Sogecap          | Catalogo pratiche assicurative | Consultazione dei servizi assicurativi.   | pubblicata           |
       | ES-4  | Comune di Milano | Archivio pratiche comunali     | Consultazione degli atti amministrativi.  | pubblicata           |
-    When cerco nel catalogo la parola "<parola>"
+    When PagoPA cerca nel catalogo la parola "<parola>"
     Then tra i risultati compaiono gli e-service predisposti:
       | alias |
       | ES-1  |
@@ -36,7 +36,7 @@ Feature: Ricerca testuale nel catalogo privato degli e-service
       | ES-1  | Comune di Milano | Servizi di Sanità          | Consultazione dei dati sanitari.   | pubblicata           |
       | ES-2  | Comune di Milano | Pagamento dei Tributi      | Gestione dei pagamenti dovuti.     | pubblicata           |
       | ES-3  | Comune di Milano | Archivio pratiche comunali | Consultazione degli atti comunali. | pubblicata           |
-    When cerco nel catalogo la parola "<parola>"
+    When PagoPA cerca nel catalogo la parola "<parola>"
     Then tra i risultati compare l'e-service predisposto "<incluso>"
     And tra i risultati non compare l'e-service predisposto "ES-3"
 
@@ -59,7 +59,7 @@ Feature: Ricerca testuale nel catalogo privato degli e-service
       | alias | erogatore        | nome                       | descrizione                           | stato della versione |
       | ES-1  | Comune di Milano | Pratiche scolastiche       | Consultazione dei servizi scolastici. | pubblicata           |
       | ES-2  | Comune di Milano | Archivio pratiche comunali | Consultazione degli atti comunali.    | pubblicata           |
-    When cerco nel catalogo senza indicare alcuna parola
+    When PagoPA cerca nel catalogo senza indicare alcuna parola
     Then tra i risultati compaiono gli e-service predisposti:
       | alias |
       | ES-1  |
@@ -71,7 +71,7 @@ Feature: Ricerca testuale nel catalogo privato degli e-service
       | alias | erogatore        | nome                       | descrizione                           | stato della versione |
       | ES-1  | Comune di Milano | Pratiche scolastiche       | Consultazione dei servizi scolastici. | pubblicata           |
       | ES-2  | Comune di Milano | Archivio pratiche comunali | Consultazione degli atti comunali.    | pubblicata           |
-    When cerco nel catalogo una parola composta soltanto da spazi
+    When PagoPA cerca nel catalogo una parola composta soltanto da spazi
     Then tra i risultati compaiono gli e-service predisposti:
       | alias |
       | ES-1  |
@@ -82,7 +82,7 @@ Feature: Ricerca testuale nel catalogo privato degli e-service
     And sono predisposti a catalogo i seguenti e-service:
       | alias | erogatore        | nome                 | descrizione                           | stato della versione |
       | ES-1  | Comune di Milano | Pratiche scolastiche | Consultazione dei servizi scolastici. | pubblicata           |
-    When cerco nel catalogo la parola "<parola>"
+    When PagoPA cerca nel catalogo la parola "<parola>"
     Then tra i risultati non compare l'e-service predisposto "ES-1"
 
     Examples:
@@ -98,6 +98,6 @@ Feature: Ricerca testuale nel catalogo privato degli e-service
       | alias | erogatore        | nome                       | descrizione                        | stato della versione |
       | ES-1  | Comune di Milano | Anagrafe                   | Consultazione dei dati anagrafici. | pubblicata           |
       | ES-2  | Comune di Milano | Archivio pratiche comunali | Consultazione degli atti comunali. | pubblicata           |
-    When cerco nel catalogo la parola "anagrfe"
+    When PagoPA cerca nel catalogo la parola "anagrfe"
     Then tra i risultati compare l'e-service predisposto "ES-1"
     And tra i risultati non compare l'e-service predisposto "ES-2"
