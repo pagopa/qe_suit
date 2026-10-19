@@ -7,8 +7,10 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposeTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResourceRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResources;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,26 @@ public class BffPurposeTemplateRestClient extends RestClient {
     public BffPurposeTemplateRestClient(TestChainFactory chainFactory, ApiClient apiClient) {
         super(chainFactory);
         this.purposeTemplatesApi = apiClient.purposeTemplates();
+    }
+
+    public TestChain<PurposeTemplateWithCompactCreator> getPurposeTemplate(@Nonnull UUID purposeTemplateId) {
+        return execute(
+                () -> purposeTemplatesApi.getPurposeTemplate()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .execute(Function.identity()),
+                PurposeTemplateWithCompactCreator.class
+        );
+    }
+
+    public TestChain<LinkableResources> getLinkableResources(@Nonnull UUID purposeTemplateId, int offset, int limit) {
+        return execute(
+                () -> purposeTemplatesApi.getPurposeTemplateLinkableResources()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .offsetQuery(offset)
+                        .limitQuery(limit)
+                        .execute(Function.identity()),
+                LinkableResources.class
+        );
     }
 
     public TestChain<CreatedResource> createPurposeTemplate(@Nonnull PurposeTemplateSeed payload) {
