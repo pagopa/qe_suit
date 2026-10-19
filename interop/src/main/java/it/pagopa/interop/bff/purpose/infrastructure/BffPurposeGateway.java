@@ -43,6 +43,7 @@ public class BffPurposeGateway implements PurposeGateway {
         return restClient.createPurpose(bffCreationPayload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
+                .updateContext()
                 .get();
     }
 
@@ -51,15 +52,20 @@ public class BffPurposeGateway implements PurposeGateway {
         return restClient.createReversePurpose(requestFactory.reverseCreationRequest(eService, riskAnalysisId))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
+                .updateContext()
                 .get();
     }
+
     @Override
     public Purpose createPurposeFromTemplate(UUID purposeTemplateId, EService eService) {
         return restClient.createPurposeFromTemplate(purposeTemplateId, requestFactory.creationFromTemplateRequest(eService))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
+                .updateContext()
                 .get();
-    }    @Override
+    }
+
+    @Override
     public Purpose activatePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef) {
         it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef delegation = getDelegation(delegationRef);
 

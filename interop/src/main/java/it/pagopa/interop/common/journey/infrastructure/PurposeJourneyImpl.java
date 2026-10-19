@@ -19,25 +19,25 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
     @Override
     public PurposeJourneyImpl linkPurpose(PurposeVersionState state) {
         EService lastEService = entityStore.getLastOrThrow(EService.class);
-        Purpose draftPurpose = purposeUseCase.addDraftPurpose(lastEService);
+        Purpose draftPurpose = purposeUseCase.createPurpose(lastEService);
         return processLifecycle(draftPurpose, state);
     }
 
     @Override
     public PurposeJourneyImpl linkPurpose(EService eService, PurposeVersionState state) {
-        Purpose draftPurpose = purposeUseCase.addDraftPurpose(eService);
+        Purpose draftPurpose = purposeUseCase.createPurpose(eService);
         return processLifecycle(draftPurpose, state);
     }
 
     @Override
     public PurposeJourneyImpl linkReversePurpose(EService eService, java.util.UUID riskAnalysisId, PurposeVersionState state) {
-        Purpose draftPurpose = purposeUseCase.addDraftReversePurpose(eService, riskAnalysisId);
+        Purpose draftPurpose = purposeUseCase.createReversePurpose(eService, riskAnalysisId);
         return processLifecycle(draftPurpose, state);
     }
 
     @Override
     public PurposeJourneyImpl linkPurposeFromTemplate(it.pagopa.interop.common.purpose_template.domain.PurposeTemplate purposeTemplate, EService eService, PurposeVersionState state) {
-        Purpose draftPurpose = purposeUseCase.addDraftPurposeFromTemplate(purposeTemplate.getId(), eService);
+        Purpose draftPurpose = purposeUseCase.createPurposeFromTemplate(purposeTemplate.getId(), eService);
         return processLifecycle(draftPurpose, state);
     }
 

@@ -17,23 +17,23 @@ public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
 
-    public Purpose addDraftPurpose(Consumer<PurposeCreateCommand> commandConfig) {
+    public Purpose createPurpose(Consumer<PurposeCreateCommand> commandConfig) {
         PurposeCreateCommand defaultCommand = purposeCommandFactory.emptyCreateCommand();
         commandConfig.accept(defaultCommand);
 
         return purposeGateway.createPurpose(defaultCommand);
     }
 
-    public Purpose addDraftPurpose(EService eService) {
+    public Purpose createPurpose(EService eService) {
         PurposeCreateCommand command = purposeCommandFactory.validFullPopulatedCreateCommand(eService);
         return purposeGateway.createPurpose(command);
     }
 
-    public Purpose addDraftReversePurpose(EService eService, UUID riskAnalysisId) {
+    public Purpose createReversePurpose(EService eService, UUID riskAnalysisId) {
         return purposeGateway.createReversePurpose(eService, riskAnalysisId);
     }
 
-    public Purpose addDraftPurposeFromTemplate(UUID purposeTemplateId, EService eService) {
+    public Purpose createPurposeFromTemplate(UUID purposeTemplateId, EService eService) {
         return purposeGateway.createPurposeFromTemplate(purposeTemplateId, eService);
     }
 
