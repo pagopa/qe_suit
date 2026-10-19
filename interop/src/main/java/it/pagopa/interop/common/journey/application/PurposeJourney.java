@@ -10,5 +10,5 @@ public interface PurposeJourney<SELF extends PurposeJourney<SELF>> extends Journ
 
     SELF linkReversePurpose(EService eService, java.util.UUID riskAnalysisId, PurposeVersionState state);
 
-    SELF linkPurposeFromTemplate(it.pagopa.interop.common.purpose_template.domain.PurposeTemplate purposeTemplate, EService eService, PurposeVersionState state);
+    SELF createPurposeFromTemplate(it.pagopa.interop.common.purpose_template.domain.PurposeTemplate purposeTemplate, EService eService, PurposeVersionState state);
 }

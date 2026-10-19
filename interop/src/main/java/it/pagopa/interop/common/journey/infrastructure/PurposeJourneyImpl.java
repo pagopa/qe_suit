@@ -36,7 +36,7 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
     }
 
     @Override
-    public PurposeJourneyImpl linkPurposeFromTemplate(it.pagopa.interop.common.purpose_template.domain.PurposeTemplate purposeTemplate, EService eService, PurposeVersionState state) {
+    public PurposeJourneyImpl createPurposeFromTemplate(it.pagopa.interop.common.purpose_template.domain.PurposeTemplate purposeTemplate, EService eService, PurposeVersionState state) {
         Purpose draftPurpose = purposeUseCase.createPurposeFromTemplate(purposeTemplate.getId(), eService);
         return processLifecycle(draftPurpose, state);
     }
