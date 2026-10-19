@@ -118,7 +118,7 @@ class BffPurposeContractSetup {
         EService eService = entityStore.getLastOrThrow(EService.class);
         interopJourney
             .withConsumer(CONSUMER, UserRole.ADMIN)
-            .linkPurposeFromTemplate(purposeTemplate, eService, PurposeVersionState.DRAFT);
+            .createPurposeFromTemplate(purposeTemplate, eService, PurposeVersionState.DRAFT);
     }
 }
 
