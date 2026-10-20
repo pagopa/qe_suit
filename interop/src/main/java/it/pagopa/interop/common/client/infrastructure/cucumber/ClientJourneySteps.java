@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.journey.infrastructure.cucumber;
+package it.pagopa.interop.common.client.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.client.application.command.ClientKeyCreationCommand;

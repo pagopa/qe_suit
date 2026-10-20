@@ -1,6 +1,5 @@
-package it.pagopa.interop.common.eservice;
+package it.pagopa.interop.common.eservice.domain;
 
-import it.pagopa.interop.common.eservice.domain.EServiceDescriptorInterface;
 import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;

@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.journey.infrastructure.cucumber;
+package it.pagopa.interop.common.attribute.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.journey.application.InteropJourney;

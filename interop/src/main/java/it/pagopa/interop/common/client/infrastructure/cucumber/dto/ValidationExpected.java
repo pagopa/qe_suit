@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.client.infrastructure.cucumber;
+package it.pagopa.interop.common.client.infrastructure.cucumber.dto;
 
 import it.pagopa.interop.common.client.domain.DebugClientAssertionValidation;
 

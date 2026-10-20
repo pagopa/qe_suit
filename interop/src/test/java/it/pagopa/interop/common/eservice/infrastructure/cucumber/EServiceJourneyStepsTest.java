@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.journey.infrastructure.cucumber;
+package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServicePreparationConfiguration;
 import it.pagopa.interop.common.infrastructure.cucumber.DataTableMapper;

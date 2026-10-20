@@ -1,9 +1,8 @@
-package it.pagopa.interop.common.journey.infrastructure.cucumber;
+package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
-import it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceJourneySteps;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServicePreparationConfiguration;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServicePreparationConfigurationMapper;
 import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfiguredBoolean;
@@ -77,8 +76,8 @@ class EServicePreparationConfigurationMapperTest {
     }
 
     @Test
-    void selectsProducerBeforeCreatingAndMappingCommand() {
-        var journey = mock(InteropJourney.class);
+    void createsAndMapsCommandBeforePreparingWithSelectedProducer() {
+        var journey = mock(InteropJourney.class, RETURNS_SELF);
         var factory = mock(EServiceRequestFactory.class);
         when(factory.defaultCreationEServiceCommand()).thenReturn(command);
         var steps = new EServiceJourneySteps(journey, factory, mapper);
@@ -89,9 +88,9 @@ class EServicePreparationConfigurationMapperTest {
         steps.prepareEServicesForPublication(List.of(configuration));
 
         var order = inOrder(journey, factory, command);
-        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
         order.verify(factory).defaultCreationEServiceCommand();
         order.verify(command).alias("ES-1");
+        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
         order.verify(journey).prepareEServiceForPublication(command);
         order.verifyNoMoreInteractions();
     }
