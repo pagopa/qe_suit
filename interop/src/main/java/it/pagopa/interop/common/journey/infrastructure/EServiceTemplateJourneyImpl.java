@@ -1,10 +1,15 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.attribute.domain.Attributes;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceUseCase;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateUseCase;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateVersionUseCase;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateCreationCommand;
+import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
@@ -13,6 +18,7 @@ import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 @Component
@@ -21,6 +27,7 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
 
     private final EServiceTemplateUseCase eServiceTemplateUseCase;
     private final EServiceTemplateVersionUseCase eServiceTemplateVersionUseCase;
+    private final EServiceTemplateInstanceUseCase eServiceTemplateInstanceUseCase;
     private final EServiceTemplateRequestFactory requestFactory;
     private final EntityStore entityStore;
 
@@ -28,6 +35,13 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     public EServiceTemplateJourneyImpl createEServiceTemplate(EServiceTemplateCreationCommand command, EServiceTemplateVersionState targetState) {
         EServiceTemplate draftTemplate = eServiceTemplateUseCase.createEServiceTemplate(command);
         return processLifecycle(draftTemplate, draftTemplate.getLastDraftVersion(), targetState, command);
+    }
+
+    @Override
+    public EServiceTemplateJourneyImpl createEServiceTemplate(Consumer<EServiceTemplateCreationCommand> commandConfig, EServiceTemplateVersionState state) {
+        EServiceTemplateCreationCommand command = requestFactory.defaultCreationEServiceTemplateCommand();
+        commandConfig.accept(command);
+        return createEServiceTemplate(command, state);
     }
 
     @Override
@@ -51,6 +65,39 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     }
 
     @Override
+    public EServiceTemplateJourneyImpl updateTemplateVersionWithContextAttributes(
+            Consumer<UpdateEServiceTemplateVersionCommand> commandConfig,
+            EServiceTemplateVersionState state
+    ) {
+        EServiceTemplate eServiceTemplate = entityStore.getLastOrThrow(EServiceTemplate.class);
+        EServiceTemplateVersion eServiceTemplateVersion = eServiceTemplate.getLatestVersion();
+
+        if (eServiceTemplateVersion.getState() != EServiceTemplateVersionState.DRAFT) {
+            throw new IllegalStateException("Cannot update draft version of EServiceTemplateVersion with state " + eServiceTemplateVersion.getState());
+        }
+
+        UpdateEServiceTemplateVersionCommand command = requestFactory.defaultUpdateTemplateVersionCommand();
+        commandConfig.accept(command);
+        command.attributes(this::prepareContextAttributes);
+
+        EServiceTemplateVersion updatedVersion = eServiceTemplateVersionUseCase.updateDraftVersion(eServiceTemplate, eServiceTemplate.getLatestVersion(), command);
+
+        return processLifecycle(eServiceTemplate, updatedVersion, state);
+    }
+
+    @Override
+    public EServiceTemplateJourneyImpl publishVersion(EServiceTemplateVersionState state) {
+        EServiceTemplate eServiceTemplate = entityStore.getLastOrThrow(EServiceTemplate.class);
+        return publishVersion(eServiceTemplate, state);
+    }
+
+    @Override
+    public EServiceTemplateJourneyImpl publishVersion(EServiceTemplate eServiceTemplate, EServiceTemplateVersionState state) {
+        EServiceTemplateVersion eServiceTemplateVersion = eServiceTemplate.getLastDraftVersion();
+        return processLifecycle(eServiceTemplate, eServiceTemplateVersion, state);
+    }
+
+    @Override
     public EServiceTemplateJourneyImpl waitUntilEServiceTemplate(Predicate<EServiceTemplate> predicate) {
         EServiceTemplate eServiceTemplate = entityStore.getLastOrThrow(EServiceTemplate.class);
 
@@ -68,6 +115,13 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
         return this;
     }
 
+    @Override
+    public EServiceTemplateJourneyImpl createEServiceInstanceTemplate() {
+        EServiceTemplate template = entityStore.getLastOrThrow(EServiceTemplate.class);
+        EService eService = eServiceTemplateInstanceUseCase.createEServiceInstance(template);
+        entityStore.upsert(eService);
+        return this;
+    }
 
     private EServiceTemplateJourneyImpl processLifecycle(EServiceTemplate template, EServiceTemplateVersion version, EServiceTemplateVersionState targetState, EServiceTemplateCreationCommand configuration) {
         entityStore.upsert(template);
@@ -92,5 +146,31 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
         var publishedVersion = eServiceTemplateVersionUseCase.publishVersion(eServiceTemplate, enrichedVersion);
         eServiceTemplateVersionUseCase.downloadInterface(eServiceTemplate, publishedVersion);
         return this;
+    }
+
+    private Attributes prepareContextAttributes(Attributes attributes) {
+        java.util.List<Attribute> certified = new java.util.ArrayList<>(attributes.getCertified());
+        java.util.List<Attribute> declared = new java.util.ArrayList<>(attributes.getDeclared());
+        java.util.List<Attribute> verified = new java.util.ArrayList<>(attributes.getVerified());
+
+        for (Attribute attribute : entityStore.getAll(Attribute.class)) {
+            Attribute updatedAttribute = attribute.toBuilder()
+                    .build();
+
+            switch (updatedAttribute.getKind()) {
+                case CERTIFIED, CERTIFIED_DISCRETE -> certified.add(updatedAttribute);
+                case DECLARED -> declared.add(updatedAttribute);
+                case VERIFIED -> verified.add(updatedAttribute);
+            }
+        }
+
+        return attributes.toBuilder()
+                .clearCertified()
+                .clearDeclared()
+                .clearVerified()
+                .certified(certified)
+                .declared(declared)
+                .verified(verified)
+                .build();
     }
 }
