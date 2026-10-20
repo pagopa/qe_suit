@@ -5,20 +5,27 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServicePreparationConfiguration;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServicePreparationConfigurationMapper;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServicePreparationConfigurationMapperImpl;
+import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfiguredBoolean;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.List;
 
 import static org.mockito.Mockito.*;
 
+@SpringJUnitConfig(classes = {
+        EServicePreparationConfigurationMapperImpl.class,
+        SharedMapper.class
+})
 class EServicePreparationConfigurationMapperTest {
-    private final EServicePreparationConfigurationMapper mapper =
-            Mappers.getMapper(EServicePreparationConfigurationMapper.class);
+    @Autowired
+    private EServicePreparationConfigurationMapper mapper;
     private final EServiceCreationCommand command = mock(EServiceCreationCommand.class);
 
     @Test
@@ -41,7 +48,9 @@ class EServicePreparationConfigurationMapperTest {
         mapper.apply(configuration, command);
 
         verify(command).alias("ES-1");
-        verify(command).name("Anagrafe");
+        verify(command).name(argThat(
+                name -> name != null && name.matches("Anagrafe-[A-Za-z0-9]{15}")
+        ));
         verify(command).description("");
         verify(command).mode(EServiceMode.RECEIVE);
         verify(command).isSignalHubEnabled(true);
@@ -80,7 +89,7 @@ class EServicePreparationConfigurationMapperTest {
         var journey = mock(InteropJourney.class, RETURNS_SELF);
         var factory = mock(EServiceRequestFactory.class);
         when(factory.defaultCreationEServiceCommand()).thenReturn(command);
-        var steps = new EServiceJourneySteps(journey, factory, mapper);
+        var steps = new EServiceCreationJourneySteps(journey, factory, mapper);
         var configuration = new EServicePreparationConfiguration();
         configuration.setProducer(Tenant.COMUNE_DI_MILANO);
         configuration.setAlias("ES-1");
@@ -91,7 +100,8 @@ class EServicePreparationConfigurationMapperTest {
         order.verify(factory).defaultCreationEServiceCommand();
         order.verify(command).alias("ES-1");
         order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-        order.verify(journey).prepareEServiceForPublication(command);
+        order.verify(journey).createEService(command);
+        order.verify(journey).prepareEServiceDescriptorForPublication(1);
         order.verifyNoMoreInteractions();
     }
 }

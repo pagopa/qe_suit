@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class EServiceJourneySteps {
+public class EServiceCreationJourneySteps {
 
     private final InteropJourney interopJourney;
     private final EServiceRequestFactory eServiceRequestFactory;
@@ -31,7 +31,8 @@ public class EServiceJourneySteps {
 
             interopJourney
                     .withProducer(configuration.getProducer(), UserRole.ADMIN)
-                    .prepareEServiceForPublication(command);
+                    .createEService(command)
+                    .prepareEServiceDescriptorForPublication(1);
         }
     }
 

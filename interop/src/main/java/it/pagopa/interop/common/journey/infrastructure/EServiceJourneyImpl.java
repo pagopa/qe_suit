@@ -106,9 +106,19 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
-    public EServiceJourneyImpl prepareEServiceForPublication(EServiceCreationCommand command) {
-        EService draftEService = eServiceUseCase.createEService(command);
-        eServiceDescriptorUseCase.prepareDescriptorForPublication(draftEService, draftEService.getLastDraftDescriptor(), descriptorConfig -> {});
+    public EServiceJourneyImpl prepareEServiceDescriptorInState(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState state) {
+        return processLifecycle(eService, eServiceDescriptor, state);
+    }
+
+    @Override
+    public EServiceJourneyImpl prepareEServiceDescriptorForPublication(int version) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        EServiceDescriptor descriptor = eService.getDescriptorOrThrow(version);
+
+        if(descriptor.getState() != EServiceDescriptorState.DRAFT)
+            throw new IllegalStateException("Cannot prepare a descriptor that is not in DRAFT state for publication.");
+
+        eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, descriptor, descriptorConfig -> {});
         return this;
     }
 

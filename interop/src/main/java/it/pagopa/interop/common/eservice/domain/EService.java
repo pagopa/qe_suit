@@ -40,6 +40,12 @@ public class EService implements Identifiable {
                 .orElse(null);
     }
 
+    public Optional<EServiceDescriptor> findDescriptor(int version) {
+        return descriptors.stream()
+                .filter(descriptor -> Integer.parseInt(descriptor.getVersion()) == version)
+                .findFirst();
+    }
+
     public EService replaceDocument(UUID descriptorId, UUID documentId, Document updatedDocument) {
         return this.toBuilder()
                 .descriptors(
@@ -56,6 +62,11 @@ public class EService implements Identifiable {
 
     public EServiceDescriptor getLastDraftDescriptor() {
         return getUniqueDescriptorByState(EServiceDescriptorState.DRAFT);
+    }
+
+    public Optional<EServiceDescriptor> findDraftDescriptor() {
+        return descriptorsByState(EServiceDescriptorState.DRAFT)
+                .max(Comparator.comparingInt(descriptor -> Integer.parseInt(descriptor.getVersion())));
     }
 
     public EServiceDescriptor getLastDeprecatedDescriptor() {
@@ -85,7 +96,7 @@ public class EService implements Identifiable {
                 .orElseThrow(() -> new NoSuchElementException("Nessun descriptor trovato per EService " + id));
     }
 
-    public EServiceDescriptor getDescriptor(int versionNumber) {
+    public EServiceDescriptor getDescriptorOrThrow(int versionNumber) {
         return descriptors.stream()
                 .filter(descriptor -> Integer.parseInt(descriptor.getVersion()) == versionNumber)
                 .findFirst()

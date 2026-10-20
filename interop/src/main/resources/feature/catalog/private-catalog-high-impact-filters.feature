@@ -19,8 +19,8 @@ Feature: Filtri ad alto impatto nel catalogo privato
     Given i seguenti e-service predisposti per la pubblicazione:
       | alias | erogatore        | nome                     |
       | ES-1  | Comune di Milano | E-service attivo Auroria |
-    And la versione 1 dell'e-service "ES-1" <prima versione>
-    And la versione 2 dell'e-service "ES-1" <seconda versione>
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano <prima versione>
+    And la versione 2 dell'e-service "ES-1" del Comune di Milano <seconda versione>
     When PagoPA cerca nel catalogo "Auroria" con i seguenti filtri:
       | filtro                | valore |
       | solo e-service attivi | sì     |
@@ -46,10 +46,10 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | alias | erogatore        | nome                      |
       | ES-1  | Comune di Milano | E-service catena Brumalis |
       | ES-2  | Comune di Milano | E-service solo Brumalis   |
-    And la versione 1 dell'e-service "ES-1" sospesa
-    And la versione 1 dell'e-service "ES-2" sospesa
-    And la versione 2 dell'e-service "ES-1" deprecata
-    And la versione 3 dell'e-service "ES-1" pubblicata
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano sospesa
+    And la versione 1 dell'e-service "ES-2" del Comune di Milano sospesa
+    And la versione 2 dell'e-service "ES-1" del Comune di Milano deprecata
+    And la versione 3 dell'e-service "ES-1" del Comune di Milano pubblicata
     When PagoPA cerca nel catalogo "Brumalis" con i seguenti filtri:
       | filtro                | valore |
       | solo e-service attivi | sì     |
@@ -61,8 +61,8 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | alias | erogatore        | nome                 |
       | ES-1  | Comune di Milano | E-service Cirrus     |
       | ES-2  | Comune di Milano | E-service Cirrus bis |
-    And la versione 1 dell'e-service "ES-1" sospesa
-    And la versione 1 dell'e-service "ES-2" pubblicata
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano sospesa
+    And la versione 1 dell'e-service "ES-2" del Comune di Milano pubblicata
     When PagoPA cerca nel catalogo "Cirrus"
     Then tra i risultati della ricerca sono presenti i seguenti e-service:
       | alias |
@@ -116,10 +116,10 @@ Feature: Filtri ad alto impatto nel catalogo privato
     Given i seguenti e-service predisposti per la pubblicazione:
       | alias | erogatore        | nome           |
       | ES-1  | Comune di Milano | E-service Gelu |
-    And la versione 1 dell'e-service "ES-1" configurata con i seguenti attributi richiesti:
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
       | tipo        | gruppo | attributo   |
       | certificato | 1      | <attributi> |
-    And la versione 1 dell'e-service "ES-1" pubblicata
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     When PagoPA cerca nel catalogo "Gelu" con i seguenti filtri:
       | filtro                    | valore |
       | richiedibili dal fruitore | sì     |
@@ -135,11 +135,11 @@ Feature: Filtri ad alto impatto nel catalogo privato
     Given i seguenti e-service predisposti per la pubblicazione:
       | alias | erogatore        | nome               |
       | ES-1  | Comune di Milano | E-service Gelu bis |
-    And la versione 1 dell'e-service "ES-1" configurata con i seguenti attributi richiesti:
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
       | tipo        | gruppo | attributo            |
       | certificato | 1      | <attributo gruppo 1> |
       | certificato | 2      | <attributo gruppo 2> |
-    And la versione 1 dell'e-service "ES-1" pubblicata
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     When PagoPA cerca nel catalogo "Gelu" con i seguenti filtri:
       | filtro                    | valore |
       | richiedibili dal fruitore | sì     |
@@ -154,11 +154,11 @@ Feature: Filtri ad alto impatto nel catalogo privato
     Given i seguenti e-service predisposti per la pubblicazione:
       | alias | erogatore        | nome            |
       | ES-1  | Comune di Milano | E-service Hiems |
-    And la versione 1 dell'e-service "ES-1" configurata con i seguenti attributi richiesti:
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
       | tipo       | gruppo | attributo                            |
       | dichiarato | 1      | un attributo non posseduto da PagoPA |
       | verificato | 1      | un attributo non posseduto da PagoPA |
-    And la versione 1 dell'e-service "ES-1" pubblicata
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     When PagoPA cerca nel catalogo "Hiems" con i seguenti filtri:
       | filtro                    | valore |
       | richiedibili dal fruitore | sì     |
@@ -169,10 +169,10 @@ Feature: Filtri ad alto impatto nel catalogo privato
     Given i seguenti e-service predisposti per la pubblicazione:
       | alias | erogatore        | nome            |
       | ES-1  | Comune di Milano | E-service Iubar |
-    And la versione 1 dell'e-service "ES-1" configurata con i seguenti attributi richiesti:
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
       | tipo     | gruppo | attributo                            |
       | discreto | 1      | un attributo non posseduto da PagoPA |
-    And la versione 1 dell'e-service "ES-1" pubblicata
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     When PagoPA cerca nel catalogo "Iubar" con i seguenti filtri:
       | filtro                    | valore |
       | richiedibili dal fruitore | sì     |
@@ -200,7 +200,7 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | alias | erogatore        | nome           |
       | ES-1  | Comune di Milano | E-service Mare |
     And l'e-service "ES-1" collegato a un template di finalità pubblicato
-    And la versione 2 dell'e-service "ES-1" pubblicata
+    And la versione 2 dell'e-service "ES-1" del Comune di Milano pubblicata
     When PagoPA cerca nel catalogo "Mare" con i seguenti filtri:
       | filtro                             | valore |
       | con template di finalità collegati | sì     |

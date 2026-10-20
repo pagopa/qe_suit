@@ -22,7 +22,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class EServiceJourneyStepsTest {
+class EServiceCreationJourneyStepsTest {
     private static final ValidatorFactory VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
     private final DataTableMapper mapper = new DataTableMapper(VALIDATOR_FACTORY.getValidator());
 
