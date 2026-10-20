@@ -45,6 +45,7 @@ public class WebComboDetailsContractTest {
     private final SendJourney sendJourney;
     private final InformalRecipientSpecFactory informalRecipientSpecFactory;
     private final WebBrowserContractValidator webContractValidator;
+    private final it.pagopa.send.bff.delivery.infrastructure.BffComboRestClient bffComboRestClient;
 
     @TestFactory
     Stream<DynamicTest> shouldValidateComboDetailsPageLayout() {
@@ -61,6 +62,17 @@ public class WebComboDetailsContractTest {
 
         String campaignId = created.getCampaignId();
         String iun = created.getIun();
+
+        // Polling BE affinché la comunicazione sia completamente arricchita prima di verificare il frontend
+        org.awaitility.Awaitility.await()
+                .atMost(java.time.Duration.ofSeconds(90))
+                .pollInterval(java.time.Duration.ofSeconds(3))
+                .until(() -> {
+                    var detail = bffComboRestClient.getComboDetails(campaignId, iun)
+                            .withoutPolling()
+                            .get();
+                    return detail != null && detail.getChannelsStatus() != null && !detail.getChannelsStatus().isEmpty();
+                });
 
         return webContractValidator.as(Tenant.GROSSINI, List.of(Recipient.LUCREZIA))
                 .on(MittenteComboDetailsPage.class, campaignId, iun)

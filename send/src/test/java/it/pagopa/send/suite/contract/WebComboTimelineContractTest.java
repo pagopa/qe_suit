@@ -45,6 +45,7 @@ public class WebComboTimelineContractTest {
     private final SendJourney sendJourney;
     private final InformalRecipientSpecFactory informalRecipientSpecFactory;
     private final WebBrowserContractValidator webContractValidator;
+    private final it.pagopa.send.bff.delivery.infrastructure.BffComboRestClient bffComboRestClient;
 
     @TestFactory
     Stream<DynamicTest> shouldValidateComboTimelinePageLayout() {
@@ -61,6 +62,20 @@ public class WebComboTimelineContractTest {
 
         String campaignId = created.getCampaignId();
         String iun = created.getIun();
+
+        // Polling BE affinché la timeline sia popolata di eventi prima di verificare il frontend
+        org.awaitility.Awaitility.await()
+                .atMost(java.time.Duration.ofSeconds(90))
+                .pollInterval(java.time.Duration.ofSeconds(3))
+                .until(() -> {
+                    var timeline = bffComboRestClient.getComboTimeline(campaignId, iun)
+                            .withoutPolling()
+                            .get();
+                    return timeline != null
+                            && timeline.getNotificationStatusHistory() != null
+                            && timeline.getNotificationStatusHistory().stream()
+                                    .anyMatch(h -> h.getSteps() != null && !h.getSteps().isEmpty());
+                });
 
         return webContractValidator.as(Tenant.GROSSINI, List.of(Recipient.LUCREZIA))
                 .on(MittenteComboTimelinePage.class, campaignId, iun)
