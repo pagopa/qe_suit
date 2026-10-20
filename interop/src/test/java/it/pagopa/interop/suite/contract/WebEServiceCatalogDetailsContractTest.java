@@ -24,8 +24,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 @SpringBootTest(
@@ -52,96 +50,132 @@ public class WebEServiceCatalogDetailsContractTest {
         EServiceDescriptor descriptor = eService.getActiveDescriptor();
 
         return webContractValidator
-                .as(User.getTenantAdmin(Tenant.COMUNE_DI_POZZALLO), Tenant.COMUNE_DI_POZZALLO)
+                .as(
+                        User.getTenantAdmin(Tenant.COMUNE_DI_POZZALLO),
+                        Tenant.COMUNE_DI_POZZALLO
+                )
                 .on(EServiceDetailPage.class, eService.getId().toString(), descriptor.getId().toString())
-                .tests(scenarios(eService, descriptor));
+                .tests(contractScenarios(eService, descriptor));
     }
 
-    private Stream<WebScenario<EServiceDetailPage>> scenarios(EService eService, EServiceDescriptor descriptor) {
+    private Stream<WebScenario<EServiceDetailPage>> contractScenarios(
+            EService eService,
+            EServiceDescriptor descriptor
+    ) {
         return Stream.of(
-                // ---- Intestazione
-                present("01", "h1 titolo pagina", p -> p.header().pageTitle()),
-                visible("02", "h1 titolo pagina", p -> p.header().pageTitle()),
-                text("03", "h1 titolo pagina", p -> p.header().pageTitle(), eService.getName()),
-                present("04", "Torna al catalogo", p -> p.header().backToCatalogAction()),
-                text("05", "Torna al catalogo", p -> p.header().backToCatalogAction(), "Torna al catalogo"),
-                text("06", "Label versione", p -> p.header().versionHeaderLabel(), "VERSIONE"),
-                text("07", "Pulsante versione", p -> p.header().versionShortcutButton(), descriptor.getVersion()),
-                enabledButton("08", "Pulsante versione", p -> p.header().versionShortcutButton()),
-                text("09", "Chip di stato descrittore", p -> p.header().descriptorStatusChip(), "attiva"),
-                // ---- Azioni primarie
-                present("11", "Richiedi fruizione", p -> p.primaryActions().agreementButton()),
-                visible("12", "Richiedi fruizione", p -> p.primaryActions().agreementButton()),
-                text("13", "Richiedi fruizione", p -> p.primaryActions().agreementButton(), "Richiedi fruizione"),
-                enabledButton("14", "Richiedi fruizione", p -> p.primaryActions().agreementButton()),
-                absentAll("15", "Visualizza richiesta, Completa richiesta, Aggiorna a nuova versione", p -> p.primaryActions().inspectAgreementButton(), p -> p.primaryActions().completeAgreementButton(), p -> p.primaryActions().upgradeToNewVersionButton()),
-                // ---- Alert
-                scenario("16", "Alert di stato descrittore", "Presenza nel DOM", p -> Assertions.assertThat(p.alerts()).as(label("16", "Alert di stato descrittore")).isEmpty()),
-                scenario("17", "Alert portachiavi mancante / chiavi mancanti", "Presenza nel DOM",
-                        p -> Assertions.assertThat(p.alerts().stream().map(a -> a.message().read()).toList())
-                                .as(label("17", "Alert portachiavi mancante / chiavi mancanti"))
-                                .noneMatch(msg -> msg.contains("portachiavi"))),
-                // ---- Tab
-                text("18", "Tab Dettaglio e-service", p -> p.tabs().eserviceDetailTab(), "Dettaglio e-service"),
-                attribute("19", "Tab Dettaglio e-service", p -> p.tabs().eserviceDetailTab(), "aria-selected", "true"),
-                text("20", "Tab Template finalità collegati", p -> p.tabs().purposeTemplatesTab(), "Template finalità collegati"),
-                attribute("21", "Tab Template finalità collegati", p -> p.tabs().purposeTemplatesTab(), "aria-selected", "false"),
-                notVisible("22", "Pannello tab Template finalità collegati", p -> p.tabs().purposeTemplatesTabPanel()),
-                // ---- Informazioni generali
-                text("23", "Titolo sezione Informazioni generali", p -> p.generalInfo().generalInfoTitle(), "Informazioni generali"),
-                text("24", "Label produttore", p -> p.generalInfo().producerLabel(), "Erogatore"),
-                text("25", "Valore produttore", p -> p.generalInfo().producerValue(), Tenant.COMUNE_DI_MILANO.getName()),
-                absent("26", "Riga Template in uso", p -> p.generalInfo().templateInUseLabel()),
-                text("27", "Label versione", p -> p.generalInfo().descriptorVersionLabel(), "Stai vedendo la versione"),
-                text("28", "Valore versione", p -> p.generalInfo().descriptorVersionValue(), descriptor.getVersion()),
-                text("29", "Label dati personali", p -> p.generalInfo().personalDataLabel(), "Eroga dati personali"),
-                text("30", "Valore dati personali", p -> p.generalInfo().personalDataValue(), "No"),
-                text("31", "Label scambio dati", p -> p.generalInfo().exchangeTypeLabel(), "Scambio dati"),
-                text("32", "Valore scambio dati", p -> p.generalInfo().exchangeTypeValue(), "Sincrono"),
-                text("33", "Label descrizione e-service", p -> p.generalInfo().eserviceDescriptionLabel(), "Descrizione dell'e-service"),
-                text("34", "Valore descrizione e-service", p -> p.generalInfo().eserviceDescriptionValue(), eService.getDescription()),
-                text("35", "Label descrizione versione", p -> p.generalInfo().descriptorDescriptionLabel(), "Descrizione della versione"),
-                text("36", "Valore descrizione versione", p -> p.generalInfo().descriptorDescriptionValue(), descriptor.getDescription()),
-                text("37", "Titolo Fruizione tramite delega", p -> p.generalInfo().delegationSectionTitle(), "Fruizione tramite delega"),
-                text("38", "Label autorizzazione", p -> p.generalInfo().consumerDelegableLabel(), "Autorizzazione"),
-                text("39", "Valore autorizzazione", p -> p.generalInfo().consumerDelegableValue(), "Sì"),
-                text("40", "Label autorizzazione client", p -> p.generalInfo().clientAccessDelegableLabel(), "Autorizzazione all’associazione dei client"),
-                text("41", "Valore autorizzazione client", p -> p.generalInfo().clientAccessDelegableValue(), "Sì"),
-                present("42", "Azione Vedi i dettagli tecnici dell’e-service", p -> p.generalInfo().showTechnicalDetailsAction()),
-                text("43", "Azione Vedi i dettagli tecnici dell’e-service", p -> p.generalInfo().showTechnicalDetailsAction(), "Vedi i dettagli tecnici dell’e-service"),
-                enabledElement("44", "Azione Vedi i dettagli tecnici dell’e-service", p -> p.generalInfo().showTechnicalDetailsAction()),
-                absent("45", "Azione Vedi i dettagli sullo scambio asincrono", p -> p.generalInfo().showAsyncExchangeDetailsAction()),
-                present("46", "Azione Visualizza i contatti dell’erogatore", p -> p.generalInfo().showProducerContactsAction()),
-                notVisible("47", "Drawer specifiche tecniche / scambio asincrono / contatti", p -> p.generalInfo().openDrawer()),
-                // ---- Compilazione agevolata
-                text("48", "Titolo sezione Compilazione agevolata", p -> p.purposeTemplateSection().purposeTemplatesTitle(), "Compilazione agevolata della finalità"),
-                text("49", "Descrizione sezione Compilazione agevolata", p -> p.purposeTemplateSection().purposeTemplatesDescription(), PURPOSE_TEMPLATES_DESCRIPTION),
-                present("50", "Pulsante Visualizza i template collegati", p -> p.purposeTemplateSection().viewLinkedPurposeTemplatesButton()),
-                text("51", "Pulsante Visualizza i template collegati", p -> p.purposeTemplateSection().viewLinkedPurposeTemplatesButton(), "Visualizza i template collegati"),
-                enabledButton("52", "Pulsante Visualizza i template collegati", p -> p.purposeTemplateSection().viewLinkedPurposeTemplatesButton()),
-                // ---- Signal Hub
-                text("53", "Titolo sezione Signal Hub", p -> p.signalHub().signalHubTitle(), "Signal Hub"),
-                text("54", "Descrizione sezione Signal Hub", p -> p.signalHub().signalHubDescription(), SIGNAL_HUB_DESCRIPTION),
-                present("55", "Link soluzione integrata", p -> p.signalHub().signalHubLink()),
-                text("56", "Link soluzione integrata", p -> p.signalHub().signalHubLink(), "soluzione integrata"),
-                text("57", "Label disponibilità", p -> p.signalHub().signalHubAvailabilityLabel(), "Disponibilità del servizio"),
-                text("58", "Valore disponibilità", p -> p.signalHub().signalHubAvailabilityValue(), "No, non è disponibile"),
-                // ---- Soglie e attributi
-                text("59", "Titolo sezione Soglie e attributi", p -> p.thresholdsAndAttributes().attributesSectionTitle(), "Soglie e attributi"),
-                text("60", "Descrizione sezione Soglie e attributi", p -> p.thresholdsAndAttributes().attributesSectionDescription(), ATTRIBUTES_DESCRIPTION),
-                text("61", "Titolo Soglie di chiamate API", p -> p.thresholdsAndAttributes().thresholdsTitle(), "Soglie di chiamate API"),
-                text("62", "Label soglia per fruitore", p -> p.thresholdsAndAttributes().dailyCallsPerConsumerLabel(), "Soglia giornaliera per fruitore"),
-                text("63", "Valore soglia per fruitore", p -> p.thresholdsAndAttributes().dailyCallsPerConsumerValue(), "1"),
-                text("64", "Label soglia totale", p -> p.thresholdsAndAttributes().dailyCallsTotalLabel(), "Soglia giornaliera totale"),
-                text("65", "Valore soglia totale", p -> p.thresholdsAndAttributes().dailyCallsTotalValue(), "10"),
-                absent("66", "Sezione Soglie di chiamate API personalizzate", p -> p.thresholdsAndAttributes().customizedThresholdsTitle()),
-                absentAll("67", "Gruppi attributi Certificati / Verificati / Dichiarati", p -> p.thresholdsAndAttributes().certifiedAttributesTitle(), p -> p.thresholdsAndAttributes().verifiedAttributesTitle(), p -> p.thresholdsAndAttributes().declaredAttributesTitle()),
-                text("68", "Titolo sezione interna attributi", p -> p.thresholdsAndAttributes().attributesTitle(), "Attributi"),
-                text("68b", "Messaggio nessun attributo richiesto", p -> p.thresholdsAndAttributes().noAttributesRequiredMessage(), "Questo e-service non richiede attributi"),
-                // ---- Elementi non previsti (lista catalogo)
-                absent("69", "h1 Catalogo degli e-service", EServiceDetailPage::catalogListTitle),
-                absentAll("70", "Campi Cerca per nome e Cerca per erogatore",
-                        EServiceDetailPage::searchByNameField, EServiceDetailPage::searchByProducerField)
+                new WebScenario<>(
+                        "Catalog e-service detail page shows the expected content and sections",
+                        page -> {
+                        },
+                        page -> {
+                            // ---- Intestazione
+                            var header = page.header();
+                            assertPresent("01", "h1 titolo pagina", header.pageTitle());
+                            assertVisible("02", "h1 titolo pagina", header.pageTitle());
+                            assertText("03", "h1 titolo pagina", header.pageTitle(), eService.getName());
+                            assertPresent("04", "Torna al catalogo", header.backToCatalogAction());
+                            assertText("05", "Torna al catalogo", header.backToCatalogAction(), "Torna al catalogo");
+                            assertText("06", "Label versione", header.versionHeaderLabel(), "VERSIONE");
+                            assertText("07", "Pulsante versione", header.versionShortcutButton(), descriptor.getVersion());
+                            assertEnabledButton("08", "Pulsante versione", header.versionShortcutButton());
+                            assertText("09", "Chip di stato descrittore", header.descriptorStatusChip(), "attiva");
+
+                            // ---- Azioni primarie
+                            var primaryActions = page.primaryActions();
+                            assertPresent("11", "Richiedi fruizione", primaryActions.agreementButton());
+                            assertVisible("12", "Richiedi fruizione", primaryActions.agreementButton());
+                            assertText("13", "Richiedi fruizione", primaryActions.agreementButton(), "Richiedi fruizione");
+                            assertEnabledButton("14", "Richiedi fruizione", primaryActions.agreementButton());
+                            assertAbsentAll("15", "Visualizza richiesta, Completa richiesta, Aggiorna a nuova versione",
+                                    primaryActions.inspectAgreementButton(),
+                                    primaryActions.completeAgreementButton(),
+                                    primaryActions.upgradeToNewVersionButton());
+
+                            // ---- Alert
+                            Assertions.assertThat(page.alerts())
+                                    .as(label("16", "Alert di stato descrittore"))
+                                    .isEmpty();
+                            Assertions.assertThat(page.alerts().stream().map(a -> a.message().read()).toList())
+                                    .as(label("17", "Alert portachiavi mancante / chiavi mancanti"))
+                                    .noneMatch(msg -> msg.contains("portachiavi"));
+
+                            // ---- Tab
+                            var tabs = page.tabs();
+                            assertText("18", "Tab Dettaglio e-service", tabs.eserviceDetailTab(), "Dettaglio e-service");
+                            assertAttribute("19", "Tab Dettaglio e-service", tabs.eserviceDetailTab(), "aria-selected", "true");
+                            assertText("20", "Tab Template finalità collegati", tabs.purposeTemplatesTab(), "Template finalità collegati");
+                            assertAttribute("21", "Tab Template finalità collegati", tabs.purposeTemplatesTab(), "aria-selected", "false");
+                            assertNotVisible("22", "Pannello tab Template finalità collegati", tabs.purposeTemplatesTabPanel());
+
+                            // ---- Informazioni generali
+                            var generalInfo = page.generalInfo();
+                            assertText("23", "Titolo sezione Informazioni generali", generalInfo.generalInfoTitle(), "Informazioni generali");
+                            assertText("24", "Label produttore", generalInfo.producerLabel(), "Erogatore");
+                            assertText("25", "Valore produttore", generalInfo.producerValue(), Tenant.COMUNE_DI_MILANO.getName());
+                            assertAbsent("26", "Riga Template in uso", generalInfo.templateInUseLabel());
+                            assertText("27", "Label versione", generalInfo.descriptorVersionLabel(), "Stai vedendo la versione");
+                            assertText("28", "Valore versione", generalInfo.descriptorVersionValue(), descriptor.getVersion());
+                            assertText("29", "Label dati personali", generalInfo.personalDataLabel(), "Eroga dati personali");
+                            assertText("30", "Valore dati personali", generalInfo.personalDataValue(), "No");
+                            assertText("31", "Label scambio dati", generalInfo.exchangeTypeLabel(), "Scambio dati");
+                            assertText("32", "Valore scambio dati", generalInfo.exchangeTypeValue(), "Sincrono");
+                            assertText("33", "Label descrizione e-service", generalInfo.eserviceDescriptionLabel(), "Descrizione dell'e-service");
+                            assertText("34", "Valore descrizione e-service", generalInfo.eserviceDescriptionValue(), eService.getDescription());
+                            assertText("35", "Label descrizione versione", generalInfo.descriptorDescriptionLabel(), "Descrizione della versione");
+                            assertText("36", "Valore descrizione versione", generalInfo.descriptorDescriptionValue(), descriptor.getDescription());
+                            assertText("37", "Titolo Fruizione tramite delega", generalInfo.delegationSectionTitle(), "Fruizione tramite delega");
+                            assertText("38", "Label autorizzazione", generalInfo.consumerDelegableLabel(), "Autorizzazione");
+                            assertText("39", "Valore autorizzazione", generalInfo.consumerDelegableValue(), "Sì");
+                            assertText("40", "Label autorizzazione client", generalInfo.clientAccessDelegableLabel(), "Autorizzazione all’associazione dei client");
+                            assertText("41", "Valore autorizzazione client", generalInfo.clientAccessDelegableValue(), "Sì");
+                            assertPresent("42", "Azione Vedi i dettagli tecnici dell’e-service", generalInfo.showTechnicalDetailsAction());
+                            assertText("43", "Azione Vedi i dettagli tecnici dell’e-service", generalInfo.showTechnicalDetailsAction(), "Vedi i dettagli tecnici dell’e-service");
+                            assertEnabledElement("44", "Azione Vedi i dettagli tecnici dell’e-service", generalInfo.showTechnicalDetailsAction());
+                            assertAbsent("45", "Azione Vedi i dettagli sullo scambio asincrono", generalInfo.showAsyncExchangeDetailsAction());
+                            assertPresent("46", "Azione Visualizza i contatti dell’erogatore", generalInfo.showProducerContactsAction());
+                            assertNotVisible("47", "Drawer specifiche tecniche / scambio asincrono / contatti", generalInfo.openDrawer());
+
+                            // ---- Compilazione agevolata
+                            var purposeTemplateSection = page.purposeTemplateSection();
+                            assertText("48", "Titolo sezione Compilazione agevolata", purposeTemplateSection.purposeTemplatesTitle(), "Compilazione agevolata della finalità");
+                            assertText("49", "Descrizione sezione Compilazione agevolata", purposeTemplateSection.purposeTemplatesDescription(), PURPOSE_TEMPLATES_DESCRIPTION);
+                            assertPresent("50", "Pulsante Visualizza i template collegati", purposeTemplateSection.viewLinkedPurposeTemplatesButton());
+                            assertText("51", "Pulsante Visualizza i template collegati", purposeTemplateSection.viewLinkedPurposeTemplatesButton(), "Visualizza i template collegati");
+                            assertEnabledButton("52", "Pulsante Visualizza i template collegati", purposeTemplateSection.viewLinkedPurposeTemplatesButton());
+
+                            // ---- Signal Hub
+                            var signalHub = page.signalHub();
+                            assertText("53", "Titolo sezione Signal Hub", signalHub.signalHubTitle(), "Signal Hub");
+                            assertText("54", "Descrizione sezione Signal Hub", signalHub.signalHubDescription(), SIGNAL_HUB_DESCRIPTION);
+                            assertPresent("55", "Link soluzione integrata", signalHub.signalHubLink());
+                            assertText("56", "Link soluzione integrata", signalHub.signalHubLink(), "soluzione integrata");
+                            assertText("57", "Label disponibilità", signalHub.signalHubAvailabilityLabel(), "Disponibilità del servizio");
+                            assertText("58", "Valore disponibilità", signalHub.signalHubAvailabilityValue(), "No, non è disponibile");
+
+                            // ---- Soglie e attributi
+                            var thresholdsAndAttributes = page.thresholdsAndAttributes();
+                            assertText("59", "Titolo sezione Soglie e attributi", thresholdsAndAttributes.attributesSectionTitle(), "Soglie e attributi");
+                            assertText("60", "Descrizione sezione Soglie e attributi", thresholdsAndAttributes.attributesSectionDescription(), ATTRIBUTES_DESCRIPTION);
+                            assertText("61", "Titolo Soglie di chiamate API", thresholdsAndAttributes.thresholdsTitle(), "Soglie di chiamate API");
+                            assertText("62", "Label soglia per fruitore", thresholdsAndAttributes.dailyCallsPerConsumerLabel(), "Soglia giornaliera per fruitore");
+                            assertText("63", "Valore soglia per fruitore", thresholdsAndAttributes.dailyCallsPerConsumerValue(), "1");
+                            assertText("64", "Label soglia totale", thresholdsAndAttributes.dailyCallsTotalLabel(), "Soglia giornaliera totale");
+                            assertText("65", "Valore soglia totale", thresholdsAndAttributes.dailyCallsTotalValue(), "10");
+                            assertAbsent("66", "Sezione Soglie di chiamate API personalizzate", thresholdsAndAttributes.customizedThresholdsTitle());
+                            assertAbsentAll("67", "Gruppi attributi Certificati / Verificati / Dichiarati",
+                                    thresholdsAndAttributes.certifiedAttributesTitle(),
+                                    thresholdsAndAttributes.verifiedAttributesTitle(),
+                                    thresholdsAndAttributes.declaredAttributesTitle());
+                            assertText("68", "Titolo sezione interna attributi", thresholdsAndAttributes.attributesTitle(), "Attributi");
+                            assertText("68b", "Messaggio nessun attributo richiesto", thresholdsAndAttributes.noAttributesRequiredMessage(), "Questo e-service non richiede attributi");
+
+                            // ---- Elementi non previsti (lista catalogo)
+                            assertAbsent("69", "h1 Catalogo degli e-service", page.catalogListTitle());
+                            assertAbsentAll("70", "Campi Cerca per nome e Cerca per erogatore",
+                                    page.searchByNameField(),
+                                    page.searchByProducerField());
+                        }
+                )
         );
     }
 
@@ -153,59 +187,62 @@ public class WebEServiceCatalogDetailsContractTest {
         return value == null ? null : value.replaceAll("\\s+", " ").trim();
     }
 
-    private static WebScenario<EServiceDetailPage> scenario(String id, String el, String prop, Consumer<EServiceDetailPage> assertion) {
-        return new WebScenario<>("CATALOG-DETAILS-" + id + " – " + el + " – " + prop, page -> {}, assertion);
+    private static void assertPresent(String id, String el, DomNode node) {
+        Assertions.assertThat(node.get(FindPolicy.PRESENT).isPresent())
+                .as(label(id, el))
+                .isTrue();
     }
 
-    private static <T extends DomNode & Readable<String>> WebScenario<EServiceDetailPage> checkPolicy(
-            String id, String el, String prop, FindPolicy policy, boolean expectedPresent, Function<EServiceDetailPage, T> loc) {
-        return scenario(id, el, prop, page -> Assertions.assertThat(loc.apply(page).get(policy).isPresent())
-                .as(label(id, el)).isEqualTo(expectedPresent));
+    private static void assertAbsent(String id, String el, DomNode node) {
+        Assertions.assertThat(node.get(FindPolicy.PRESENT).isPresent())
+                .as(label(id, el))
+                .isFalse();
     }
 
-    private static <T extends DomNode & Readable<String>> WebScenario<EServiceDetailPage> present(String id, String el, Function<EServiceDetailPage, T> loc) {
-        return checkPolicy(id, el, "Presenza nel DOM", FindPolicy.PRESENT, true, loc);
+    private static void assertVisible(String id, String el, DomNode node) {
+        Assertions.assertThat(node.get(FindPolicy.VISIBLE).isPresent())
+                .as(label(id, el))
+                .isTrue();
     }
 
-    private static <T extends DomNode & Readable<String>> WebScenario<EServiceDetailPage> absent(String id, String el, Function<EServiceDetailPage, T> loc) {
-        return checkPolicy(id, el, "Presenza nel DOM", FindPolicy.PRESENT, false, loc);
+    private static void assertNotVisible(String id, String el, DomNode node) {
+        Assertions.assertThat(node.get(FindPolicy.VISIBLE).isPresent())
+                .as(label(id, el))
+                .isFalse();
     }
 
-    private static <T extends DomNode & Readable<String>> WebScenario<EServiceDetailPage> visible(String id, String el, Function<EServiceDetailPage, T> loc) {
-        return checkPolicy(id, el, "Visibilità", FindPolicy.VISIBLE, true, loc);
+    private static void assertAbsentAll(String id, String el, DomNode... nodes) {
+        Stream.of(nodes).forEach(node ->
+                Assertions.assertThat(node.get(FindPolicy.PRESENT))
+                        .as(label(id, el))
+                        .isEmpty()
+        );
     }
 
-    private static <T extends DomNode & Readable<String>> WebScenario<EServiceDetailPage> notVisible(String id, String el, Function<EServiceDetailPage, T> loc) {
-        return checkPolicy(id, el, "Visibilità", FindPolicy.VISIBLE, false, loc);
+    private static <T extends DomNode & Readable<String>> void assertText(String id, String el, T node, String expected) {
+        Assertions.assertThat(normalize(node.read()))
+                .as(label(id, el) + " (copy)")
+                .isEqualTo(normalize(expected));
     }
 
-    @SafeVarargs
-    private static <T extends DomNode & Readable<String>> WebScenario<EServiceDetailPage> absentAll(String id, String el, Function<EServiceDetailPage, T>... locs) {
-        return scenario(id, el, "Presenza nel DOM", page ->
-                Stream.of(locs).forEach(loc -> Assertions.assertThat(loc.apply(page).get(FindPolicy.PRESENT)).as(label(id, el)).isEmpty()));
+    private static void assertAttribute(String id, String el, DomNode node, String attr, String expected) {
+        Assertions.assertThat(node.get(FindPolicy.PRESENT).map(f -> f.getAttributes().get(attr)).orElse(null))
+                .as(label(id, el) + " (attributo " + attr + ")")
+                .isEqualTo(expected);
     }
 
-    private static <T extends DomNode & Readable<String>> WebScenario<EServiceDetailPage> text(String id, String el, Function<EServiceDetailPage, T> loc, String expected) {
-        return scenario(id, el, "Copy", page -> Assertions.assertThat(normalize(loc.apply(page).read()))
-                .as(label(id, el) + " (copy)").isEqualTo(normalize(expected)));
+    private static void assertEnabledButton(String id, String el, Button button) {
+        Assertions.assertThat(button.isDisabled())
+                .as(label(id, el))
+                .isFalse();
     }
 
-    private static <T extends DomNode & Readable<String>> WebScenario<EServiceDetailPage> attribute(String id, String el, Function<EServiceDetailPage, T> loc, String attr, String expected) {
-        return scenario(id, el, "Stato iniziale", page -> Assertions.assertThat(
-                        loc.apply(page).get(FindPolicy.PRESENT).map(f -> f.getAttributes().get(attr)).orElse(null))
-                .as(label(id, el) + " (attributo " + attr + ")").isEqualTo(expected));
-    }
-
-    private static WebScenario<EServiceDetailPage> enabledButton(String id, String el, Function<EServiceDetailPage, Button> loc) {
-        return scenario(id, el, "Stato iniziale", page -> Assertions.assertThat(loc.apply(page).isDisabled()).as(label(id, el)).isFalse());
-    }
-
-    private static <T extends DomNode & Readable<String>> WebScenario<EServiceDetailPage> enabledElement(String id, String el, Function<EServiceDetailPage, T> loc) {
-        return scenario(id, el, "Stato iniziale", page -> {
-            var found = loc.apply(page).get(FindPolicy.PRESENT);
-            Assertions.assertThat(found).as(label(id, el)).isPresent();
-            Assertions.assertThat(found.get().getAttributes()).as(label(id, el))
-                    .doesNotContainKey("disabled").doesNotContainEntry("aria-disabled", "true");
-        });
+    private static void assertEnabledElement(String id, String el, DomNode node) {
+        var found = node.get(FindPolicy.PRESENT);
+        Assertions.assertThat(found).as(label(id, el)).isPresent();
+        Assertions.assertThat(found.get().getAttributes())
+                .as(label(id, el))
+                .doesNotContainKey("disabled")
+                .doesNotContainEntry("aria-disabled", "true");
     }
 }
