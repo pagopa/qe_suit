@@ -24,7 +24,7 @@ import org.springframework.stereotype.Service;
 public class BffPurposeGateway implements PurposeGateway {
     private final BffPurposeRestClient restClient;
     private final BffPurposeMapper mapper;
-    private final BffPurposeRequestFactory requestFactory;
+    private final BffPurposeCommandFactory commandFactory;
 
     @Override
     public Purpose getPurpose(PurposeRef purposeRef) {
@@ -50,7 +50,7 @@ public class BffPurposeGateway implements PurposeGateway {
 
     @Override
     public Purpose createReversePurpose(EServiceRef eServiceRef, EServiceRiskAnalysisRef riskAnalysisRef) {
-        return restClient.createReversePurpose(requestFactory.reverseCreationRequest(eServiceRef, riskAnalysisRef))
+        return restClient.createReversePurpose(commandFactory.reverseCreationRequest(eServiceRef, riskAnalysisRef))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
                 .updateContext()
@@ -59,7 +59,7 @@ public class BffPurposeGateway implements PurposeGateway {
 
     @Override
     public Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef) {
-        return restClient.createPurposeFromTemplate(purposeTemplateRef.id(), requestFactory.creationFromTemplateRequest(eServiceRef))
+        return restClient.createPurposeFromTemplate(purposeTemplateRef.id(), commandFactory.creationFromTemplateRequest(eServiceRef))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
                 .updateContext()

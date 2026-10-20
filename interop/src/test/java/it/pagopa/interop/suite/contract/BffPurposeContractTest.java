@@ -3,7 +3,7 @@ package it.pagopa.interop.suite.contract;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
-import it.pagopa.interop.bff.purpose.infrastructure.BffPurposeRequestFactory;
+import it.pagopa.interop.bff.purpose.infrastructure.BffPurposeCommandFactory;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
@@ -41,7 +41,7 @@ public class BffPurposeContractTest {
     private final ApiClient apiClient;
     private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
-    private final BffPurposeRequestFactory requestFactory;
+    private final BffPurposeCommandFactory commandFactory;
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EntityStore entityStore;
 
@@ -51,13 +51,13 @@ public class BffPurposeContractTest {
     public BffPurposeContractTest(ApiClient apiClient,
         @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
         InteropJourney interopJourney,
-        BffPurposeRequestFactory requestFactory,
+        BffPurposeCommandFactory commandFactory,
         EServiceDescriptorUseCase eServiceDescriptorUseCase,
         EntityStore entityStore) {
         this.apiClient = apiClient;
         this.httpContractValidator = httpContractValidator;
         this.interopJourney = interopJourney;
-        this.requestFactory = requestFactory;
+        this.commandFactory = commandFactory;
         this.eServiceDescriptorUseCase = eServiceDescriptorUseCase;
         this.entityStore = entityStore;
     }
@@ -67,7 +67,7 @@ public class BffPurposeContractTest {
         return httpContractValidator
             .as(CONSUMER, UserRole.ADMIN)
             .apiCall(() -> apiClient.purposes().createPurpose())
-            .payload(() -> requestFactory.creationRequest(createPublishedEServiceWithActiveAgreement().getRef()))
+            .payload(() -> commandFactory.creationRequest(createPublishedEServiceWithActiveAgreement().getRef()))
             .tests();
     }
 
@@ -77,7 +77,7 @@ public class BffPurposeContractTest {
             .as(CONSUMER, UserRole.ADMIN)
             .apiCall(() -> apiClient.purposes().updatePurpose())
             .pathParams(() -> Map.of("purposeId", createDraftPurposeId()))
-            .payload(asConsumer(requestFactory::updateRequest))
+            .payload(asConsumer(commandFactory::updateRequest))
             .tests();
     }
 
@@ -88,7 +88,7 @@ public class BffPurposeContractTest {
             .apiCall(() -> apiClient.purposes().createPurposeForReceiveEservice())
             .payload(() -> {
                 var receive = createPublishedReceiveEServiceWithActiveAgreement();
-                return requestFactory.reverseCreationRequest(receive.eService().getRef(), receive.riskAnalysis().getRef());
+                return commandFactory.reverseCreationRequest(receive.eService().getRef(), receive.riskAnalysis().getRef());
             })
             .tests();
     }
@@ -99,7 +99,7 @@ public class BffPurposeContractTest {
             .as(CONSUMER, UserRole.ADMIN)
             .apiCall(() -> apiClient.purposes().updateReversePurpose())
             .pathParams(() -> Map.of("purposeId", createDraftReversePurposeId()))
-            .payload(asConsumer(requestFactory::reverseUpdateRequest))
+            .payload(asConsumer(commandFactory::reverseUpdateRequest))
             .tests();
     }
 
