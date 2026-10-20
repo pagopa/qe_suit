@@ -65,7 +65,7 @@ public class WebConsumerAgreementDetailsPageContractTest {
                                     softly.assertThat(page.backToRequestsButton().read())
                                             .as("Back to request button")
                                             .isEqualTo("Torna alle richieste");
-                                    softly.assertThat(page.statusChip().read())
+                                    softly.assertThat(page.statusChip().text().read())
                                             .as("Status chip")
                                             .isEqualTo("attivo");
                                     softly.assertThat(page.archiveButton().read())
@@ -74,8 +74,8 @@ public class WebConsumerAgreementDetailsPageContractTest {
                                     softly.assertThat(page.suspendButton().read())
                                             .as("Suspend button")
                                             .isEqualTo("Sospendi");
-                                    softly.assertThat(page.alerts()).as("La sezione degli alert non dev'essere vuota").isNotEmpty();
-                                    softly.assertThat(page.alerts().get(0).read()).isEqualTo("Per accedere ai dati crea la tua prima finalità.");
+                            softly.assertThat(page.alerts()).as("La sezione degli alert non dev'essere vuota").isNotEmpty();
+                            softly.assertThat(page.alerts().get(0).message().read()).isEqualTo("Per accedere ai dati crea la tua prima finalità.");
 
                                     softly.assertThat(page.generalInfoSection()).as("La sezione general info non dev'essere null").isNotNull();
                                     softly.assertThat(page.generalInfoSection().sectionTitle().read())
@@ -84,33 +84,33 @@ public class WebConsumerAgreementDetailsPageContractTest {
                                     softly.assertThat(page.generalInfoSection().eServiceLabel().read())
                                             .as("General Info e-service label")
                                             .isEqualTo("Richiesta per l’e-service");
-                                    softly.assertThat(page.generalInfoSection().eServiceLink().read())
+                            softly.assertThat(page.generalInfoSection().eServiceLink().getHref())
                                             .as("E-service link should not be blank")
                                             .isNotBlank();
                                     softly.assertThat(page.generalInfoSection().providerLabel().read())
                                             .as("General Info provider label")
                                             .isEqualTo("Erogatore");
-                                    softly.assertThat(page.generalInfoSection().providerValue().read())
-                                            .as("General Info provider value")
-                                            .isEqualTo("PagoPA S.p.A.");
-                                    softly.assertThat(page.generalInfoSection().consumerLabel().read())
-                                            .as("General Info consumer label")
-                                            .isEqualTo("Fruitore");
-                                    softly.assertThat(page.generalInfoSection().consumerValue().read())
-                                            .as("General Info consumer value")
-                                            .isEqualTo("Comune di Milano");
-                                    softly.assertThat(page.generalInfoSection().downloadAgreementButtonLabel().read())
-                                            .as("Download agreement button label")
-                                            .isEqualTo("Scarica richiesta di fruizione");
-                                    softly.assertThat(page.generalInfoSection().certifiedAttributesButton().read())
-                                            .as("View certified attributes button")
-                                            .isEqualTo("Visualizza attributi certificati");
-                                    softly.assertThat(page.generalInfoSection().providerContactsButton().read())
-                                            .as("View provider contacts button")
-                                            .isEqualTo("Visualizza contatti erogatore");
+                            softly.assertThat(page.generalInfoSection().providerValue().read())
+                                    .as("General Info provider value")
+                                    .isEqualTo("PagoPA S.p.A.");
+                            softly.assertThat(page.generalInfoSection().consumerLabel().read())
+                                    .as("General Info consumer label")
+                                    .isEqualTo("Fruitore");
+                            softly.assertThat(page.generalInfoSection().consumerValue().read())
+                                    .as("General Info consumer value")
+                                    .isEqualTo("Comune di Milano");
+                            softly.assertThat(page.generalInfoSection().downloadAgreementButton().read())
+                                    .as("Download agreement button")
+                                    .isEqualTo("Scarica richiesta di fruizione");
+                            softly.assertThat(page.generalInfoSection().certifiedAttributesButton().read())
+                                    .as("View certified attributes button")
+                                    .isEqualTo("Visualizza attributi certificati");
+                            softly.assertThat(page.generalInfoSection().providerContactsButton().read())
+                                    .as("View provider contacts button")
+                                    .isEqualTo("Visualizza contatti erogatore");
 
-                                    softly.assertThat(page.certifiedAttributesSection())
-                                            .as("La sezione attributi certificati non dev'essere null")
+                            softly.assertThat(page.certifiedAttributesSection())
+                                    .as("La sezione attributi certificati non dev'essere null")
                                             .isNotNull();
                                     softly.assertThat(page.certifiedAttributesSection().title().read())
                                             .as("Attributi certificati title")
