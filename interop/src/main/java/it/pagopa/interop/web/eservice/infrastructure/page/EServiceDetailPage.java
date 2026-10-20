@@ -248,7 +248,8 @@ public interface EServiceDetailPage extends Page {
     // ------------------------------------------------------------------ Load
 
     /**
-     * and the four sections of the first tab panel. Does not assert matrix expectations.
+     * Waits for the page header (breadcrumbs, non-blank e-service title, and primary agreement action)
+     * to be rendered. Does not assert contract matrix expectations.
      */
     @Override
     default void assertLoaded() {
