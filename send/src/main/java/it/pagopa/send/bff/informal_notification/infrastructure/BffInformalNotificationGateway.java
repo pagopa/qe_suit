@@ -1,6 +1,5 @@
 package it.pagopa.send.bff.informal_notification.infrastructure;
 
-import io.restassured.response.Response;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.send.common.informal_notification.application.InformalNotificationGateway;
@@ -16,7 +15,6 @@ import it.pagopa.send.generated.openapi.clients.informal.model.InformalNotificat
 import it.pagopa.send.generated.openapi.clients.informal.model.NewNotificationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -30,14 +28,10 @@ import java.util.Map;
 public class BffInformalNotificationGateway implements InformalNotificationGateway {
 
     private final InformalNotificationRestClient informalNotificationRestClient;
-    private final InformalDeliveryRestClient informalDeliveryRestClient;
     private final InformalNotificationRequestFactory requestFactory;
     private final InformalNotificationCreationRequest request;
     private final BffInformalNotificationMapper mapper;
     private final EntityStore entityStore;
-    private final Map<String, String> paDeliveryApiKeys;
-    @Value("${pa.delivery-api-key.PALERMO}")
-    private String defaultApiKey;
 
     @Override
     public boolean supports(Channel channel) {
@@ -61,8 +55,6 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
 
         InformalNotificationRequestV1 payload = mapper.toRequestV1(request);
         log.info("Payload invio informal request: {}", payload);
-        String apiKey = paDeliveryApiKeys.getOrDefault(sender.name(), defaultApiKey);
-
 
         NewNotificationResponse response = informalNotificationRestClient
                 .createInformalRequest(payload)
@@ -71,28 +63,6 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
 
         assert response != null;
         String iun = new String(java.util.Base64.getDecoder().decode(response.getNotificationRequestId()));
-
-//        if (!iun.isBlank()) {
-//            final String finalIun = iun;
-//            log.info("Attesa disponibilita comunicazione bonaria su BE per IUN {}...", finalIun);
-//            try {
-//                org.awaitility.Awaitility.await()
-//                        .atMost(java.time.Duration.ofSeconds(90))
-//                        .pollInterval(java.time.Duration.ofSeconds(1))
-//                        .ignoreExceptions()
-//                        .until(() -> {
-//                            try {
-//                                Response checkResp = informalDeliveryRestClient.getSentInformalNotification(apiKey, finalIun);
-//                                return checkResp.getStatusCode() == 200;
-//                            } catch (Exception e) {
-//                                return false;
-//                            }
-//                        });
-//                log.info("Comunicazione bonaria IUN {} confermata disponibile su backend (200 OK)!", finalIun);
-//            } catch (Exception e) {
-//                log.warn("Timeout o errore durante il polling BE per IUN {}: {}", finalIun, e.getMessage());
-//            }
-//        }
 
         List<String> messageIds = request.recipients().stream()
                 .map(ResolvedInformalRecipient::messageId)
@@ -119,8 +89,6 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
 
         InformalNotificationRequestV1 payload = mapper.toRequestV1(request);
         log.info("Payload invio informal request: {}", payload);
-        String apiKey = paDeliveryApiKeys.getOrDefault(sender.name(), defaultApiKey);
-
 
         NewNotificationResponse response = informalNotificationRestClient
                 .createInformalRequest(payload)
