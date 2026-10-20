@@ -31,6 +31,8 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
 
     SELF waitUntilEService(Predicate<EService> predicate);
 
+    SELF prepareEServiceForPublication(EServiceCreationCommand command);
+
     default SELF createEService() {
         return createEService(EServiceDescriptorState.DRAFT);
     }

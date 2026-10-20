@@ -5,17 +5,15 @@ import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import lombok.Getter;
+import org.jspecify.annotations.Nullable;
 
+@Getter
 public class BffEServiceCreationCommand implements EServiceCreationCommand {
-    @Getter
     private final EServiceSeed bffCreationPayload;
+    private String alias;
 
     private BffEServiceCreationCommand(EServiceSeed bffCreationPayload) {
         this.bffCreationPayload = bffCreationPayload;
-    }
-
-    public BffEServiceCreationCommand() {
-        this.bffCreationPayload = new EServiceSeed();
     }
 
     public static BffEServiceCreationCommand from(EServiceSeed creationSeed) {
@@ -73,6 +71,12 @@ public class BffEServiceCreationCommand implements EServiceCreationCommand {
     @Override
     public EServiceCreationCommand isClientAccessDelegable(Boolean isClientAccessDelegable) {
         bffCreationPayload.isClientAccessDelegable(isClientAccessDelegable);
+        return this;
+    }
+
+    @Override
+    public EServiceCreationCommand alias(@Nullable String alias) {
+        this.alias = alias;
         return this;
     }
 }

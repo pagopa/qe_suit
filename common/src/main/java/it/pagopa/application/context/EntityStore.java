@@ -3,6 +3,7 @@ package it.pagopa.application.context;
 import it.pagopa.domain.Identifiable;
 
 import java.util.Optional;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 
@@ -10,6 +11,8 @@ public interface EntityStore {
     <Model extends Identifiable> void upsert(Model model);
 
     <Model extends Identifiable> Optional<Model> getById(UUID id, Class<Model> modelClass);
+
+    <Model extends Identifiable> List<Model> getAll(Class<Model> modelClass);
 
     <Model extends Identifiable> Optional<Model> getFirst(Class<Model> modelClass);
 

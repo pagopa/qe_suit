@@ -110,6 +110,11 @@ public class CucumberEntityStore implements EntityStore {
         return Optional.ofNullable(aliasStorage.get(alias));
     }
 
+    @Override
+    public <Model extends Identifiable> List<Model> getAll(Class<Model> modelClass) {
+        return entries(modelClass).stream().map(ContextEntry::getItem).toList();
+    }
+
     public <Model extends Identifiable> Optional<Model> getFirst(Class<Model> modelClass) {
         List<ContextEntry<Model>> entryList = entries(modelClass);
         return entryList.isEmpty() ? Optional.empty() : Optional.of(entryList.get(0).getItem());

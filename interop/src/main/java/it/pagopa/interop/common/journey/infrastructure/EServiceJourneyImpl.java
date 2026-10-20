@@ -15,6 +15,7 @@ import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Predicate;
@@ -101,6 +102,13 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
                 predicate
         );
 
+        return this;
+    }
+
+    @Override
+    public EServiceJourneyImpl prepareEServiceForPublication(EServiceCreationCommand command) {
+        EService draftEService = eServiceUseCase.createEService(command);
+        eServiceDescriptorUseCase.prepareDescriptorForPublication(draftEService, draftEService.getLastDraftDescriptor(), descriptorConfig -> {});
         return this;
     }
 

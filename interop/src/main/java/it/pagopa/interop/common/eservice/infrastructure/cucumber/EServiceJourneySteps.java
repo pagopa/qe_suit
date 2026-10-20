@@ -1,31 +1,39 @@
-package it.pagopa.interop.common.journey.infrastructure.cucumber;
+package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
-import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
-import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
-import it.pagopa.interop.common.attribute.domain.Attribute;
-import it.pagopa.interop.common.attribute.domain.Attributes;
-import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServicePreparationConfiguration;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServicePreparationConfigurationMapper;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 public class EServiceJourneySteps {
 
     private final InteropJourney interopJourney;
-    private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
-    private final EntityStore entityStore;
+    private final EServiceRequestFactory eServiceRequestFactory;
+    private final EServicePreparationConfigurationMapper eServicePreparationConfigurationMapper;
+
+    @Given("i seguenti e-service predisposti per la pubblicazione:")
+    public void prepareEServicesForPublication(List<EServicePreparationConfiguration> configurations) {
+        for (EServicePreparationConfiguration configuration : configurations) {
+            EServiceCreationCommand command = eServiceRequestFactory.defaultCreationEServiceCommand();
+            eServicePreparationConfigurationMapper.apply(configuration, command);
+
+            interopJourney
+                    .withProducer(configuration.getProducer(), UserRole.ADMIN)
+                    .prepareEServiceForPublication(command);
+        }
+    }
 
     @Given("un EService/eservice creato da/dal {tenant} con una richiesta di fruizione e una finalità associate da/dal {tenant}")
     public void createEServiceAndLinkAgreementAndPurpose(Tenant producer, Tenant consumer) {
@@ -70,7 +78,7 @@ public class EServiceJourneySteps {
     }
 
     @Given("un EService creato dal {tenant} con una versione divenuta deprecata dopo la fruizione di {tenant} ed EService in archiviazione")
-    public void createDeprecatedAndArchivedEserviceDescriptor(Tenant producer, Tenant consumer){
+    public void createDeprecatedAndArchivedEserviceDescriptor(Tenant producer, Tenant consumer) {
         interopJourney
                 .withProducer(producer, UserRole.ADMIN)
                 .createEService(EServiceDescriptorState.PUBLISHED)
@@ -80,26 +88,5 @@ public class EServiceJourneySteps {
                 .addDescriptor(EServiceDescriptorState.PUBLISHED)
                 .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED)
                 .archiveEService(GracePeriodDays.NUMBER_60);
-    }
-
-    @Given("crea un EService {asyncExchange} con un attributo certificato e soglia personalizzata per fruitore a {int}")
-    public void createEServiceWithCertifiedAttributeAndCustomThreshold(boolean asyncExchange, int customThreshold, DataTable defaultThresholds) {
-        Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
-        interopJourney.createCertifiedAttribute();
-
-        EServiceCreationCommand eServiceCommand = eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(asyncExchange);
-        UpdateEServiceDescriptorCommand updateCommand = eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(
-                thresholdsMap.getOrDefault("consumerThreshold", 10),
-                thresholdsMap.getOrDefault("totalThreshold", 20)
-        );
-
-        Attribute attribute = entityStore.getLastOrThrow(Attribute.class);
-        attribute = attribute.toBuilder().dailyCallsPerConsumer(customThreshold).build();
-        Attributes attributes = Attributes.builder().certified(List.of(attribute)).build();
-        updateCommand.attributes(attributes);
-
-        interopJourney
-                .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
-                .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
     }
 }

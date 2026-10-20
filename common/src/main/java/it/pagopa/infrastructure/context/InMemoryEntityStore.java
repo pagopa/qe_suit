@@ -39,6 +39,11 @@ public class InMemoryEntityStore implements EntityStore {
     }
 
     @Override
+    public <Model extends Identifiable> List<Model> getAll(Class<Model> modelClass) {
+        return List.copyOf(entries(modelClass));
+    }
+
+    @Override
     public <Model extends Identifiable> Optional<Model> getFirst(Class<Model> modelClass) {
         List<Model> entries = entries(modelClass);
         return entries.isEmpty() ? Optional.empty() : Optional.of(entries.get(0));
