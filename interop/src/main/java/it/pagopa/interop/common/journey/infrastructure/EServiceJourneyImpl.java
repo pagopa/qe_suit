@@ -48,13 +48,15 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     public EServiceJourneyImpl addDescriptor(EServiceDescriptorState state) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceDescriptor eServiceDescriptor = eServiceDescriptorUseCase.addDescriptor(eService);
-        return processLifecycle(eService, eServiceDescriptor, state);
+        EService updatedEService = entityStore.getLastOrThrow(EService.class);
+        return processLifecycle(updatedEService, eServiceDescriptor, state);
     }
 
     @Override
     public EServiceJourneyImpl addDescriptor(EService eService, EServiceDescriptorState state) {
         EServiceDescriptor eServiceDescriptor = eServiceDescriptorUseCase.addDescriptor(eService);
-        return processLifecycle(eService, eServiceDescriptor, state);
+        EService updatedEService = entityStore.getLastOrThrow(EService.class);
+        return processLifecycle(updatedEService, eServiceDescriptor, state);
     }
 
     @Override
@@ -147,8 +149,30 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         };
     }
 
-    private EServiceJourneyImpl publishPipeline(EService eService, EServiceDescriptor eServiceDescriptor, UpdateEServiceDescriptorCommand command) {
+    private EServiceJourneyImpl publishPipeline_OLD(EService eService, EServiceDescriptor eServiceDescriptor, UpdateEServiceDescriptorCommand command) {
         eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor, command);
+        eServiceDescriptorUseCase.publishDescriptor(eService, eServiceDescriptor);
+        return this;
+    }
+
+    private EServiceJourneyImpl publishPipeline(EService eService, EServiceDescriptor eServiceDescriptor, UpdateEServiceDescriptorCommand command) {
+        EServiceDescriptor updatedDescriptor;
+        if (command != null) {
+            updatedDescriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor, command);
+        } else {
+            updatedDescriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(
+                    eService,
+                    eServiceDescriptor,
+                    cmd -> cmd.dailyCallsTotal(eServiceDescriptor.getDailyCallsTotal())
+                            .dailyCallsPerConsumer(eServiceDescriptor.getDailyCallsPerConsumer())
+                            .attributes(Attributes.builder()
+                                    .certified(eServiceDescriptor.getAttributes().getCertified())
+                                    .declared(eServiceDescriptor.getAttributes().getDeclared())
+                                    .verified(eServiceDescriptor.getAttributes().getVerified())
+                                    .build())
+            );
+        }
+        eServiceDescriptorUseCase.linkOpenApiInterface(eService, updatedDescriptor, "assets/origin-interface.yaml");
         eServiceDescriptorUseCase.publishDescriptor(eService, eServiceDescriptor);
         return this;
     }
@@ -157,26 +181,16 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         List<Attribute> certified = new ArrayList<>(attributes.getCertified());
         List<Attribute> declared = new ArrayList<>(attributes.getDeclared());
         List<Attribute> verified = new ArrayList<>(attributes.getVerified());
-
         for (Attribute attribute : entityStore.getAll(Attribute.class)) {
-            Attribute updatedAttribute = attribute.toBuilder()
-                    .dailyCallsPerConsumer(dailyCallsPerConsumer)
-                    .build();
-
+            Attribute updatedAttribute = attribute.toBuilder().dailyCallsPerConsumer(dailyCallsPerConsumer).build();
             switch (updatedAttribute.getKind()) {
                 case CERTIFIED, CERTIFIED_DISCRETE -> certified.add(updatedAttribute);
                 case DECLARED -> declared.add(updatedAttribute);
                 case VERIFIED -> verified.add(updatedAttribute);
             }
         }
-
-        return attributes.toBuilder()
-                .clearCertified()
-                .clearDeclared()
-                .clearVerified()
-                .certified(certified)
-                .declared(declared)
-                .verified(verified)
+        return attributes.toBuilder().clearCertified().clearDeclared().clearVerified()
+                .certified(certified).declared(declared).verified(verified)
                 .build();
     }
 }
