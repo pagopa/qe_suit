@@ -16,7 +16,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
@@ -33,13 +32,12 @@ import java.util.stream.Stream;
  * Il testo è un documento legale caricato da OneTrust: se cambiano i titoli delle sezioni il test fallisce e va
  * aggiornato insieme al documento.
  */
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebTermsOfServicePFContractTest {

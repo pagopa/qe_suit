@@ -13,7 +13,7 @@ spring:
     activate:
       on-profile: dev
     import:
-      - optional:classpath:secrets/bearer-token-test.properties
+      - optional:classpath:secrets/bearer-token-dev.properties
       - classpath:users/application-users-dev.yaml
 
 # ============================================================================

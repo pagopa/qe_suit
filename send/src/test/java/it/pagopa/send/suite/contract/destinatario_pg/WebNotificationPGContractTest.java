@@ -16,7 +16,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
@@ -28,13 +27,12 @@ import java.util.stream.Stream;
  * paginazione compaiono solo se l'impresa ha ricevuto almeno una notifica, il banner per attivare il domicilio digitale
  * solo agli amministratori senza gruppo e senza domicilio: non vengono verificati.
  */
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebNotificationPGContractTest {

@@ -15,7 +15,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
@@ -32,13 +31,12 @@ import java.util.stream.Stream;
  * loro valori. Dello storico dei disservizi si verifica solo il titolo: il contenuto dipende dai disservizi registrati
  * dalla piattaforma (tabella e paginazione oppure messaggio di storico vuoto) e non viene verificato.
  */
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebAppStatusPFContractTest {

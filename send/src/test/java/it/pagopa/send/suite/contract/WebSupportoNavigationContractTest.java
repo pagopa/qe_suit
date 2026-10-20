@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 /**
@@ -31,12 +30,11 @@ import org.springframework.test.context.TestConstructor;
  * sequenziale sullo stesso {@link WebPresentationGateway}, come previsto per i flussi non
  * esprimibili come singolo {@code WebScenario}.
  */
-@ActiveProfiles({"test", "junit"})
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class WebSupportoNavigationContractTest {
 

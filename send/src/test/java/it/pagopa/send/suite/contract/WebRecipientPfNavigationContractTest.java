@@ -31,7 +31,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
@@ -46,13 +45,12 @@ import java.util.stream.Stream;
  * Le pagine che esistono solo se l'utente ha dei dati (dettaglio e timeline di una notifica, riepilogo del wizard di
  * attivazione, gestione del domicilio digitale, passi 2-4 di "Il meglio di SEND") non sono verificate.
  */
-@ActiveProfiles({"hotfix", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 @Slf4j

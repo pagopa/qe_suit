@@ -15,7 +15,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
@@ -34,13 +33,12 @@ import java.util.stream.Stream;
  * aggiungerli) e non viene verificato, come l'avviso sulla PEC del primo passo. Il riepilogo si raggiunge solo se
  * l'utente ha un'email di cortesia, quindi non viene verificato.
  */
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebDigitalDomicileActivationPFContractTest {

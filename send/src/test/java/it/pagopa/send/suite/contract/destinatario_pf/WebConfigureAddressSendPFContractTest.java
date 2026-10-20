@@ -16,7 +16,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
@@ -33,13 +32,12 @@ import java.util.stream.Stream;
  * La terza card, "Preferisco attivare solo SEND sull'app IO", è mostrata solo agli utenti senza recapiti di cortesia e
  * non viene verificata. Nessuno scenario preme "Salta e vai alle tue notifiche", che segna la configurazione come fatta, né conferma i wizard.
  */
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebConfigureAddressSendPFContractTest {
