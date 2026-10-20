@@ -31,9 +31,13 @@ public interface EServiceDetailPage extends Page {
     EServiceDetailPagePrimaryActions primaryActions();
     List<Alert> alerts();
     EServiceDetailPageTabs tabs();
+    @XPath(".//section[./div[1]//h2[normalize-space()='Informazioni generali']]")
     EServiceDetailPageGeneralInfo generalInfo();
+    @XPath(".//section[./div[1]//h2[normalize-space()='Compilazione agevolata della finalità']]")
     EServiceDetailPagePurposeTemplateSection purposeTemplateSection();
+    @XPath(".//section[./div[1]//h2[normalize-space()='Signal Hub']]")
     EServiceDetailPageSignalHub signalHub();
+    @XPath(".//section[./div[1]//h2[normalize-space()='Soglie e attributi']]")
     EServiceDetailPageThresholdsAndAttributes thresholdsAndAttributes();
 
     // ------------------------------- Elements of the catalog list (not expected)
