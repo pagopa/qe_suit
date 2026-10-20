@@ -12,7 +12,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.send.web.notification_creation.application.NotificationData;
 import org.assertj.core.api.Assertions;
 
-@Url("${url.notifiche.mittente.new-notification}#selfCareToken=${token.mittente}")
+@Url("${url.notifiche.mittente.new-notification}")
 public interface CreateNotificationPage extends Page {
 
     @XPath("//*[@id=\"title-of-page\"]")

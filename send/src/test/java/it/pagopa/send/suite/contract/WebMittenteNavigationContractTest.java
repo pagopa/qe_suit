@@ -49,7 +49,6 @@ import java.util.stream.Stream;
 public class WebMittenteNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
-    private final String token = "";
     private final UserProvider userProvider;
 
     @TestFactory
@@ -112,7 +111,7 @@ public class WebMittenteNavigationContractTest {
 
     private Stream<DynamicTest> checkColumnGroupsScenarios() {
         return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1), List.of())
-                .on(DashboardPage.class,token)
+                .on(DashboardPage.class)
                 .tests(Stream.of(new WebScenario<>(
                         "Check presenza colonna 'Gruppi' su Dashboard Notifiche",
                         page -> {},

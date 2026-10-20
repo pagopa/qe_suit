@@ -57,9 +57,8 @@ public class WebFooterContractTest {
 
     private Stream<DynamicTest> captionOnlySpaPAFooterScenarios()
     {
-        String token = "";
         return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1), List.of())
-                .on(DashboardPage.class,token)
+                .on(DashboardPage.class)
                 .tests(Stream.of(new WebScenario<>(
                         "Check assenza dicitura 'Socio Unico'",
                         page -> {
@@ -126,9 +125,8 @@ public class WebFooterContractTest {
     }
 
     private Stream<DynamicTest> captionOnlySpaPGScenarios() {
-        String token = "";
         return webContractValidator.asRecipient(userProvider.resolve(UserAlias.IMPRESA_2))
-                .on(NotificationPage.class,token)
+                .on(NotificationPage.class)
                 .tests(Stream.of(new WebScenario<>(
                         "Check assenza dicitura 'Socio Unico'",
                         page -> {

@@ -42,7 +42,12 @@ public class WebBrowserContractValidator {
         Objects.requireNonNull(recipient);
 
         return delegate.withContext(
-                () -> currentUserSession.setRecipients(List.of(recipient))
+                () -> {
+                    // la sessione è condivisa tra i test dello stesso thread: senza azzerare il mittente di un test
+                    // precedente, getCurrentActor() restituirebbe ancora lui al posto del destinatario
+                    currentUserSession.setSender(null);
+                    currentUserSession.setRecipients(List.of(recipient));
+                }
         );
     }
 }
