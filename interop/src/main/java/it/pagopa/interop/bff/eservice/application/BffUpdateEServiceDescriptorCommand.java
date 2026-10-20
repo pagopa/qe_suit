@@ -90,7 +90,7 @@ public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescrip
     ) {
         ArrayList<List<DescriptorAttributeSeed>> attributeRequirements = createListsAsManyGroupsInCommonAttributes(attributes);
         for (Attribute commonAttribute : attributes) {
-            attributeRequirements.get(commonAttribute.getGroup() - 1).add(
+            attributeRequirements.get(commonAttribute.getGroup()).add(
                     createAttributeSeedFromCommonAttribute(commonAttribute)
             );
         }
@@ -103,9 +103,9 @@ public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescrip
         int groupCount = 0;
         for (Attribute attribute : attributes) {
             int currentGroup = attribute.getGroup();
-            if (currentGroup > groupCount) groupCount = currentGroup;
+            if (currentGroup >= groupCount) groupCount = currentGroup;
         }
-        for (int i = 0; i < groupCount; i++) attributeRequirements.add(new ArrayList<>());
+        for (int i = 0; i <= groupCount; i++) attributeRequirements.add(new ArrayList<>());
         return attributeRequirements;
     }
 
