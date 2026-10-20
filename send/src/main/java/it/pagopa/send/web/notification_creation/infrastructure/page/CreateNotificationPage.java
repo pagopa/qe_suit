@@ -9,8 +9,11 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.notification_creation.application.NotificationData;
 import org.assertj.core.api.Assertions;
+
+import java.util.Optional;
 
 @Url("${url.notifiche.mittente.new-notification}")
 public interface CreateNotificationPage extends Page {
@@ -21,6 +24,9 @@ public interface CreateNotificationPage extends Page {
 
     @XPath("//*[@data-testid='step-submit']")
     Clickable continueButton();
+
+    // il banner dei cookie copre i campi del form: va accettato prima di compilarlo
+    Optional<OneTrustBanner> oneTrustBanner();
 
     interface InformazioniPreliminariStep extends Component{
         @XPath(".//*[@id=\"subject\"]")
@@ -45,7 +51,6 @@ public interface CreateNotificationPage extends Page {
             protocolNumber().write(data.getProtocolNumber());
             taxonomyCode().write(data.getTaxonomyCode());
             //selectModel890().click();
-            openGroupDropdown().click();
         }
 
         default XPathSelector groupOptionSelector(String groupName) {
@@ -155,6 +160,7 @@ public interface CreateNotificationPage extends Page {
 
     @Override
     default void assertLoaded() {
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         breadcrumbs().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
             Assertions.assertThat(h).isIn("Nuova notifica", "New notification");
