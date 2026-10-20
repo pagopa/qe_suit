@@ -8,6 +8,7 @@ import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerAgreementsListPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerAgreementsNoResultPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
@@ -43,6 +44,17 @@ public class WebConsumerAgreementsListPageContractTest {
                 )
                 .on(ConsumerAgreementsListPage.class)
                 .tests(contractScenarios());
+    }
+
+    @TestFactory
+    Stream<DynamicTest> noResultOnConsumerAgreementPageContract() {
+        return webContractValidator
+                .as(
+                        User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
+                        Tenant.COMUNE_DI_MILANO
+                )
+                .on(ConsumerAgreementsNoResultPage.class)
+                .tests(noResultContractScenarios());
     }
 
     private Stream<WebScenario<ConsumerAgreementsListPage>> contractScenarios() {
@@ -108,7 +120,23 @@ public class WebConsumerAgreementsListPageContractTest {
                                         .isEqualTo("Visualizza");
                                 rowCounter.getAndIncrement();
                             });
+                            Assertions.assertThat(page.rowsPerPageSelector().get().isPresent()).isTrue();
                             Assertions.assertThat(page.pagination().get().isPresent()).isTrue();
+                        }
+                )
+        );
+    }
+
+    private Stream<WebScenario<ConsumerAgreementsNoResultPage>> noResultContractScenarios() {
+        return Stream.of(
+                new WebScenario<>(
+                        "Consumer agreements list page hides the rows per page selector",
+                        page -> {
+                        },
+                        page -> {
+                            Assertions.assertThat(page.noResultMessage().get().isPresent()).isTrue();
+                            Assertions.assertThat(page.rowsPerPageSelector().get().isPresent()).isFalse();
+                            Assertions.assertThat(page.pagination().get().isPresent()).isFalse();
                         }
                 )
         );
