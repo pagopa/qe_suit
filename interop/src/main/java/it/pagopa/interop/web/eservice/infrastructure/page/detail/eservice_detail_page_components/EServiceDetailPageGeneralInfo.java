@@ -5,73 +5,71 @@ import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Label;
 
 public interface EServiceDetailPageGeneralInfo extends Component {
-    String GENERAL_SECTION = ".//section[./div[1]//h2[normalize-space()='Informazioni generali']]";
-
-    @XPath(GENERAL_SECTION + "/div[1]//h2")
+    @XPath("./div[1]//h2")
     Label generalInfoTitle();
 
-    @XPath(GENERAL_SECTION + "//*[normalize-space()='Erogatore' and not(*)]")
+    @XPath(".//*[normalize-space()='Erogatore' and not(*)]")
     Label producerLabel();
 
-    @XPath(GENERAL_SECTION + "//p[normalize-space()='Erogatore']/parent::div/following-sibling::div[1]//span")
+    @XPath(".//p[normalize-space()='Erogatore']/parent::div/following-sibling::div[1]//span")
     Label producerValue();
 
-    @XPath(GENERAL_SECTION + "//*[normalize-space()='Template in uso' and not(*)]")
+    @XPath(".//*[normalize-space()='Template in uso' and not(*)]")
     Label templateInUseLabel();
 
-    @XPath(GENERAL_SECTION + "//*[normalize-space()='Stai vedendo la versione' and not(*)]")
+    @XPath(".//*[normalize-space()='Stai vedendo la versione' and not(*)]")
     Label descriptorVersionLabel();
 
-    @XPath(GENERAL_SECTION + "//div[./div/p[normalize-space()='Stai vedendo la versione']]/div[2]//span")
+    @XPath(".//div[./div/p[normalize-space()='Stai vedendo la versione']]/div[2]//span")
     Label descriptorVersionValue();
 
-    @XPath(GENERAL_SECTION + "//*[normalize-space()='Eroga dati personali' and not(*)]")
+    @XPath(".//*[normalize-space()='Eroga dati personali' and not(*)]")
     Label personalDataLabel();
 
-    @XPath(GENERAL_SECTION + "//div[./div/p[normalize-space()='Eroga dati personali']]/div[2]//span")
+    @XPath(".//div[./div/p[normalize-space()='Eroga dati personali']]/div[2]//span")
     Label personalDataValue();
 
-    @XPath(GENERAL_SECTION + "//*[normalize-space()='Scambio dati' and not(*)]")
+    @XPath(".//*[normalize-space()='Scambio dati' and not(*)]")
     Label exchangeTypeLabel();
 
-    @XPath(GENERAL_SECTION + "//div[./div/p[normalize-space()='Scambio dati']]/div[2]//span")
+    @XPath(".//div[./div/p[normalize-space()='Scambio dati']]/div[2]//span")
     Label exchangeTypeValue();
 
-    @XPath(GENERAL_SECTION + "//*[normalize-space()=\"Descrizione dell'e-service\" and not(*)]")
+    @XPath(".//*[normalize-space()=\"Descrizione dell'e-service\" and not(*)]")
     Label eserviceDescriptionLabel();
 
-    @XPath(GENERAL_SECTION + "//div[./div/p[normalize-space()=\"Descrizione dell'e-service\"]]/div[2]//span")
+    @XPath(".//div[./div/p[normalize-space()=\"Descrizione dell'e-service\"]]/div[2]//span")
     Label eserviceDescriptionValue();
 
-    @XPath(GENERAL_SECTION + "//*[normalize-space()='Descrizione della versione' and not(*)]")
+    @XPath(".//*[normalize-space()='Descrizione della versione' and not(*)]")
     Label descriptorDescriptionLabel();
 
-    @XPath(GENERAL_SECTION + "//div[./div/p[normalize-space()='Descrizione della versione']]/div[2]//span")
+    @XPath(".//div[./div/p[normalize-space()='Descrizione della versione']]/div[2]//span")
     Label descriptorDescriptionValue();
 
-    @XPath(GENERAL_SECTION + "//h3[normalize-space()='Fruizione tramite delega']")
+    @XPath(".//h3[normalize-space()='Fruizione tramite delega']")
     Label delegationSectionTitle();
 
-    @XPath(GENERAL_SECTION + "//*[normalize-space()='Autorizzazione' and not(*)]")
+    @XPath(".//*[normalize-space()='Autorizzazione' and not(*)]")
     Label consumerDelegableLabel();
 
-    @XPath(GENERAL_SECTION + "//div[./div/p[normalize-space()='Autorizzazione']]/div[2]//span")
+    @XPath(".//div[./div/p[normalize-space()='Autorizzazione']]/div[2]//span")
     Label consumerDelegableValue();
 
-    @XPath(GENERAL_SECTION + "//*[normalize-space()='Autorizzazione all’associazione dei client' and not(*)]")
+    @XPath(".//*[normalize-space()='Autorizzazione all’associazione dei client' and not(*)]")
     Label clientAccessDelegableLabel();
 
-    @XPath(GENERAL_SECTION + "//div[./div/p[normalize-space()=\"Autorizzazione all’associazione dei client\"]]/div[2]//span")
+    @XPath(".//div[./div/p[normalize-space()=\"Autorizzazione all’associazione dei client\"]]/div[2]//span")
     Label clientAccessDelegableValue();
 
     // Bottom actions are IconLink (MUI Link, rendered as <button> when component='button')
-    @XPath(GENERAL_SECTION + "//*[(self::a or self::button)][normalize-space()='Vedi i dettagli tecnici dell’e-service']")
+    @XPath(".//*[(self::a or self::button)][normalize-space()='Vedi i dettagli tecnici dell’e-service']")
     Label showTechnicalDetailsAction();
 
-    @XPath(GENERAL_SECTION + "//*[(self::a or self::button)][normalize-space()='Vedi i dettagli sullo scambio asincrono']")
+    @XPath(".//*[(self::a or self::button)][normalize-space()='Vedi i dettagli sullo scambio asincrono']")
     Label showAsyncExchangeDetailsAction();
 
-    @XPath(GENERAL_SECTION + "//*[(self::a or self::button)][normalize-space()='Visualizza i contatti dell’erogatore']")
+    @XPath(".//*[(self::a or self::button)][normalize-space()='Visualizza i contatti dell’erogatore']")
     Label showProducerContactsAction();
 
     // Closed MUI drawers are not mounted: any mounted drawer is an open one
