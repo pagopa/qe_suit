@@ -15,7 +15,8 @@ import org.assertj.core.api.Assertions;
 @Url("${url.notifiche.mittente.new-notification}")
 public interface CreateNotificationPage extends Page {
 
-    @XPath("//*[@id=\"title-of-page\"]")
+    // ultima voce delle breadcrumb ("Notifiche > Nuova notifica"): l'id "title-of-page" non esiste più nel portale
+    @XPath("(//nav[@aria-label=\"breadcrumbs\"]//li[contains(@class, \"MuiBreadcrumbs-li\")])[last()]")
     Readable<String> breadcrumbs();
 
     @XPath("//*[@data-testid='step-submit']")
