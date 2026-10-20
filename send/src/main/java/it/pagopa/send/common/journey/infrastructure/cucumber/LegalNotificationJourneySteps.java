@@ -123,7 +123,11 @@ public class LegalNotificationJourneySteps {
      * secondo metodo analogo con testo letterale "tramite interfaccia web".
      */
     @When("la notifica viene sottomessa e si attende che lo stato diventi {string}")
-    public void sendNotificationViaBff(User sender, String targetStatus) {
-        legalNotificationUseCase.sendNotification(sender, NotificationStatus.fromValue(targetStatus));
+    public void sendNotificationViaBff(String targetStatus) {
+        // il mittente è quello impostato dallo step "la PA ... predispone una nuova notifica"
+        legalNotificationUseCase.sendNotification(currentUserSession.getSender(), NotificationStatus.ACCEPTED);
+        // sendNotification attende lo stato della richiesta (che arriva al massimo ad ACCEPTED): lo stato
+        // della notifica indicato nella feature si attende a parte
+        legalNotificationUseCase.waitForNotificationStatus(NotificationStatus.fromValue(targetStatus));
     }
 }
