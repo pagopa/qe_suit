@@ -9,7 +9,9 @@ import it.pagopa.interop.common.purpose_template.application.PurposeTemplateGate
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
+import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResourceRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResources;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerSeed;
@@ -102,21 +104,42 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
                 .get();
 
         return PollingUtils.pollUntil(
-                () -> restClient.getLinkableResources(
-                                purposeTemplate.getId(),
-                                DEFAULT_LINKABLE_RESOURCES_OFFSET,
-                                DEFAULT_LINKABLE_RESOURCES_LIMIT
-                        )
-                        .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                        .map(resources -> {
-                            PurposeTemplate current = entityStore.getById(purposeTemplate.getId(), PurposeTemplate.class)
-                                    .orElse(purposeTemplate);
-                            return mapper.toPurposeTemplateWithLinkedResources(current, resources);
-                        })
-                        .updateContext()
-                        .get(),
+                () -> fetchAllLinkedResources(purposeTemplate),
                 pt -> pt.getLinkedEServiceIds().contains(eServiceRef.id())
         );
+    }
+
+    private PurposeTemplate fetchAllLinkedResources(PurposeTemplate fallbackTemplate) {
+        UUID purposeTemplateId = fallbackTemplate.getId();
+        PurposeTemplate current = entityStore.getById(purposeTemplateId, PurposeTemplate.class)
+                .orElse(fallbackTemplate);
+
+        int offset = DEFAULT_LINKABLE_RESOURCES_OFFSET;
+        while (true) {
+            LinkableResources page = restClient.getLinkableResources(
+                            purposeTemplateId,
+                            offset,
+                            DEFAULT_LINKABLE_RESOURCES_LIMIT
+                    )
+                    .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                    .get();
+
+            if (page == null) {
+                entityStore.upsert(current);
+                return current;
+            }
+
+            current = mapper.toPurposeTemplateWithLinkedResources(current, page);
+
+            List<LinkableResource> results = page.getResults();
+            int totalCount = page.getPagination().getTotalCount();
+            offset = Math.addExact(offset, results.size());
+
+            if (results.isEmpty() || offset >= totalCount) {
+                entityStore.upsert(current);
+                return current;
+            }
+        }
     }
 
     @Override
