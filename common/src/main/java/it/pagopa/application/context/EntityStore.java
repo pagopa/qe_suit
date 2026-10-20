@@ -1,6 +1,7 @@
 package it.pagopa.application.context;
 
 import it.pagopa.domain.Identifiable;
+import jakarta.annotation.Nullable;
 
 import java.util.Optional;
 import java.util.List;
@@ -8,7 +9,17 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 public interface EntityStore {
-    <Model extends Identifiable> void upsert(Model model);
+    default <Model extends Identifiable> void upsert(Model model) {
+        upsert(null, model);
+    }
+
+    <Model extends Identifiable> void upsert(@Nullable String alias, Model model);
+
+    <Model extends Identifiable> Optional<Model> getByAlias(String alias, Class<Model> modelClass);
+
+    default <Model extends Identifiable> Model getByAliasOrThrow(String alias, Class<Model> modelClass) {
+        return getByAlias(alias, modelClass).orElseThrow(() -> new IllegalArgumentException("No entity found for alias: " + alias));
+    }
 
     <Model extends Identifiable> Optional<Model> getById(UUID id, Class<Model> modelClass);
 

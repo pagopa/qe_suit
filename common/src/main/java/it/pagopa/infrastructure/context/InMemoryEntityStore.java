@@ -2,12 +2,14 @@ package it.pagopa.infrastructure.context;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.domain.Identifiable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -15,20 +17,48 @@ import java.util.function.Predicate;
 public class InMemoryEntityStore implements EntityStore {
     private final ThreadLocal<Map<Class<? extends Identifiable>, List<Identifiable>>> storage =
             ThreadLocal.withInitial(ConcurrentHashMap::new);
+    private final ThreadLocal<Map<Class<? extends Identifiable>, Map<String, UUID>>> aliases =
+            ThreadLocal.withInitial(ConcurrentHashMap::new);
 
     @Override
     @SuppressWarnings("unchecked")
-    public <Model extends Identifiable> void upsert(Model model) {
+    public <Model extends Identifiable> void upsert(@Nullable String alias, Model model) {
+        Objects.requireNonNull(model, "model non può essere null");
+        UUID id = Objects.requireNonNull(model.getId(), "model.id non può essere null");
         Class<Model> modelClass = (Class<Model>) model.getClass();
+        if (alias != null) {
+            if (alias.isBlank()) {
+                throw new IllegalArgumentException("L'alias non può essere vuoto");
+            }
+            UUID registeredId = aliases.get()
+                    .getOrDefault(modelClass, Map.of()).get(alias);
+            if (registeredId != null && !registeredId.equals(id)) {
+                throw new IllegalArgumentException(
+                        "Alias già associato a un'altra entità di tipo "
+                                + modelClass.getSimpleName() + ": " + alias
+                );
+            }
+        }
+
         List<Model> entries = entries(modelClass);
-        int existingIndex = indexOfById(entries, model.getId());
+        int existingIndex = indexOfById(entries, id);
 
         if (existingIndex >= 0) {
             entries.set(existingIndex, model);
-            return;
+        } else {
+            entries.add(model);
         }
 
-        entries.add(model);
+        if (alias != null) {
+            aliases.get().computeIfAbsent(modelClass, ignored -> new ConcurrentHashMap<>())
+                    .put(alias, id);
+        }
+    }
+
+    @Override
+    public <Model extends Identifiable> Optional<Model> getByAlias(String alias, Class<Model> modelClass) {
+        UUID id = aliases.get().getOrDefault(modelClass, Map.of()).get(alias);
+        return id == null ? Optional.empty() : getById(id, modelClass);
     }
 
     @Override

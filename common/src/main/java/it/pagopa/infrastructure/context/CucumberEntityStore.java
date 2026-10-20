@@ -2,6 +2,7 @@ package it.pagopa.infrastructure.context;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.domain.Identifiable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,9 +61,10 @@ public class CucumberEntityStore implements EntityStore {
         }
     }
 
+
     @Override
-    public <Model extends Identifiable> void upsert(Model model) {
-        ContextEntry<Model> entry = new ContextEntry<>(model, null);
+    public <Model extends Identifiable> void upsert(@Nullable String alias, Model model) {
+        ContextEntry<Model> entry = new ContextEntry<>(model, alias);
         upsert(entry);
     }
 
