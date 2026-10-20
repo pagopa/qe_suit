@@ -36,8 +36,7 @@ public interface ConsumerAgreementsListPage extends Page {
     @XPath("//table")
     Table agreementsTable();
 
-    @XPath("//*[@data-testid='rows-per-page-select']")
-    Button rowsPerPageSelector();
+    PageSize rowsPerPageSelector();
 
     @XPath("//nav[contains(@aria-label,'pagination')]")
     Pagination pagination();
