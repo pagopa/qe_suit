@@ -68,7 +68,7 @@ public class WebProducerPurposeContractTest {
                 .linkAgreement(AgreementState.ACTIVE);
 
         Agreement agreement = setup.get(Agreement.class);
-        Purpose purpose = setup.linkPurpose(PurposeVersionState.ACTIVE).get(Purpose.class);
+        Purpose purpose = setup.createPurpose(PurposeVersionState.ACTIVE).get(Purpose.class);
 
         Assertions.assertThat(purpose.getEserviceId()).isEqualTo(agreement.getEserviceId());
         Assertions.assertThat(purpose.getConsumerId()).isEqualTo(agreement.getConsumerId());
