@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.eservice.application.command;
 
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.tenant.domain.TenantCategory;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,6 +18,8 @@ public interface SearchEServiceCatalogCommand {
     SearchEServiceCatalogCommand onlySignalHubEnabled(Boolean onlySignalHubEnabled);
 
     SearchEServiceCatalogCommand producersIds(List<UUID> producersIds);
+
+    SearchEServiceCatalogCommand producerCategories(List<TenantCategory> categories);
 
     SearchEServiceCatalogCommand offset(Integer offset);
 

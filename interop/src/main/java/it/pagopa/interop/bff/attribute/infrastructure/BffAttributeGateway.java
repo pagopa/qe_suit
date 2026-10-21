@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.attribute.infrastructure;
 
 import it.pagopa.infrastructure.template.action.TestChain;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.attribute.application.AttributeGateway;
 import it.pagopa.interop.common.attribute.domain.Attribute;
@@ -9,9 +10,12 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AttributeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BffAttributeGateway implements AttributeGateway {
@@ -26,6 +30,18 @@ public class BffAttributeGateway implements AttributeGateway {
                 .map(mapper::toAttribute)
                 .updateContext()
                 .get();
+    }
+
+    @Override
+    public Optional<Attribute> findAttributeByOriginAndCode(String origin, String code) {
+        var result = restClient.getAttributeByOriginAndCode(origin, code)
+                .withPolling(response -> response.isSuccess()
+                        || response instanceof ApiResponse apiResponse && apiResponse.getStatusCode() == 404);
+        if (result.getRaw() instanceof ApiResponse response && response.getStatusCode() == 404) {
+            log.info("Attribute {}/{} is not present in the registry", origin, code);
+            return Optional.empty();
+        }
+        return Optional.of(result.map(mapper::toAttribute).get());
     }
 
     @Override

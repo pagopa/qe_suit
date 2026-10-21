@@ -37,4 +37,12 @@ public class BffAttributeRestClient extends RestClient {
                 Attribute.class
         );
     }
+
+    public TestChain<Attribute> getAttributeByOriginAndCode(@Nonnull String origin, @Nonnull String code) {
+        return execute(
+                () -> attributesApi.getAttributeByOriginAndCode()
+                        .originPath(origin).codePath(code).execute(Function.identity()),
+                Attribute.class
+        );
+    }
 }

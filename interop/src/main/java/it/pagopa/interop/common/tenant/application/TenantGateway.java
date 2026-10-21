@@ -6,7 +6,12 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import org.springframework.plugin.core.Plugin;
 
+import java.util.Set;
+import java.util.UUID;
+
 public interface TenantGateway extends Plugin<Channel> {
+
+    Set<UUID> getActiveCertifiedAttributeIds(TenantRef tenantRef);
 
     void assignCertifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef);
 

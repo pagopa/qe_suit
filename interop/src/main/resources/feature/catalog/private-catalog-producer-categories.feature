@@ -12,15 +12,12 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
   - se le relazioni attese tra gli enti non sono rispettate (stessa categoria o categorie diverse), lo scenario fallisce come precondizione non soddisfatta;
   - gli e-service predisposti sono eliminati o archiviati al termine dello scenario da un hook.
 
-  # TODO: da coprire quando saranno noti i tenant QA adatti: categoria L4 sovrapposta,
-  # categorie revocate e enti non IPA.
-
   Scenario: [PRIVATE_CATALOG_PRODUCER_CATEGORIES_1] Una sola categoria
-    Given le categorie degli enti rilevate dagli attributi certificati con i seguenti dati:
-      | ente               | categoria |
-      | Comune di Milano   | CAT-1     |
-      | Comune di Pozzallo | CAT-1     |
-      | Sogecap            | CAT-2     |
+    Given gli enti appartengono alle categorie indicate secondo i seguenti dati:
+      | ente               | categoria | appartenenza |
+      | Comune di Milano   | COMUNI    | sì           |
+      | Comune di Pozzallo | COMUNI    | sì           |
+      | Sogecap            | COMUNI    | no           |
     And i seguenti e-service pubblicati:
       | alias | erogatore          | nome                      |
       | ES-1  | Comune di Milano   | E-service Categoria Alfa  |
@@ -28,7 +25,7 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
       | ES-3  | Sogecap            | E-service Categoria Gamma |
     When PagoPA cerca nel catalogo "Categoria" con i seguenti filtri:
       | filtro                   | valore |
-      | categoria dell'erogatore | CAT-1  |
+      | categoria dell'erogatore | COMUNI |
     Then tra i risultati della ricerca sono presenti i seguenti e-service:
       | alias |
       | ES-1  |

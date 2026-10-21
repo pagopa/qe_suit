@@ -78,12 +78,14 @@ class BffEServiceCatalogTest {
         var gateway = new BffEServiceCatalogGateway(client, mapper);
         var command = (BffSearchEServiceCatalogCommand) new BffEServiceRequestFactory().defaultSearchEServiceCatalogCommand();
         command.keyword("Nebula").onlyActiveEservices(true);
+        command.producerCategories(List.of(it.pagopa.interop.common.tenant.domain.TenantCategory.COMUNI));
 
         var result = new EServiceCatalogUseCase(gateway).search(command);
 
         assertThat(result.getResults()).isEmpty();
         assertThat(result.getLimit()).isEqualTo(20);
         verify(operation).body(same(command.getBffPayload()));
+        assertThat(command.getBffPayload().getProducerCategories()).containsExactly(EServiceProducerCategory.COMUNI);
         verify(operation, times(1)).execute(any());
         assertThat(EservicesApi.QueryEServicesCatalogOper.REQ_METHOD.name()).isEqualTo("POST");
         assertThat(EservicesApi.QueryEServicesCatalogOper.REQ_URI).isEqualTo("/catalog");

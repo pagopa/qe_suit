@@ -2,6 +2,8 @@ package it.pagopa.interop.bff.eservice.application;
 
 import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatalogCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.tenant.domain.TenantCategory;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceProducerCategory;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogFilterPayload;
 import lombok.Getter;
 
@@ -46,6 +48,14 @@ public class BffSearchEServiceCatalogCommand implements SearchEServiceCatalogCom
     @Override
     public SearchEServiceCatalogCommand producersIds(List<UUID> producersIds) {
         bffPayload.setProducersIds(List.copyOf(producersIds));
+        return this;
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand producerCategories(List<TenantCategory> categories) {
+        bffPayload.setProducerCategories(categories.stream()
+                .map(category -> EServiceProducerCategory.valueOf(category.name()))
+                .toList());
         return this;
     }
 

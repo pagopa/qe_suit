@@ -12,12 +12,27 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class BffTenantGateway implements TenantGateway {
 
     private final BffTenantRestClient restClient;
     private final BffTenantRequestFactory requestFactory;
+
+    @Override
+    public Set<UUID> getActiveCertifiedAttributeIds(@NonNull TenantRef tenantRef) {
+        return restClient.getTenant(tenantRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(tenant -> tenant.getAttributes().getCertified().stream()
+                        .filter(attribute -> attribute.getRevocationTimestamp() == null)
+                        .map(it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttribute::getId)
+                        .collect(Collectors.toUnmodifiableSet()))
+                .get();
+    }
 
     @Override
     public void assignCertifiedAttribute(@NonNull TenantRef tenantRef, @NonNull AttributeRef attributeRef) {

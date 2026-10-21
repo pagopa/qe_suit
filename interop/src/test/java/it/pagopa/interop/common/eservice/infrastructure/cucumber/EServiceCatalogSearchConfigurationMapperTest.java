@@ -207,6 +207,53 @@ class EServiceCatalogSearchConfigurationMapperTest {
     }
 
     @Test
+    void mapsSingleCategoryFromFeatureRowToBffPayload() {
+        mapper.apply(List.of(transform(Map.of(
+                "filtro", "categoria dell'erogatore", "valore", "COMUNI"))), command);
+
+        assertThat(command.getBffPayload().getProducerCategories()).containsExactly(
+                it.pagopa.interop.generated.openapi.clients.bff.model.EServiceProducerCategory.COMUNI);
+    }
+
+    @Test
+    void mapsAlternativeCategoriesAndExplicitEmptyList() {
+        mapper.apply(List.of(transform(Map.of("filtro", "categoria dell'erogatore",
+                "valore", "COMUNI e SCUOLE"))), command);
+
+        assertThat(command.getBffPayload().getProducerCategories()).containsExactly(
+                it.pagopa.interop.generated.openapi.clients.bff.model.EServiceProducerCategory.COMUNI,
+                it.pagopa.interop.generated.openapi.clients.bff.model.EServiceProducerCategory.SCUOLE);
+
+        mapper.apply(List.of(transform(Map.of(
+                "filtro", "categoria dell'erogatore", "valore", "elenco vuoto"))), command);
+        assertThat(command.getBffPayload().getProducerCategories()).isEmpty();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"CAT-1", "COMUNI e ", " e COMUNI", "COMUNI e UNKNOWN"})
+    void rejectsInvalidCategoriesWithoutApplyingAPartialList(String value) {
+        var original = command.getBffPayload().getProducerCategories();
+        var dto = transform(Map.of("filtro", "categoria dell'erogatore", "valore", value));
+
+        assertThatThrownBy(() -> mapper.apply(List.of(dto), command))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThat(command.getBffPayload().getProducerCategories()).isSameAs(original);
+    }
+
+    @Test
+    void omittedCategoriesPreserveDefaultsAndAllDomainCategoriesMapToBff() {
+        var original = command.getBffPayload().getProducerCategories();
+        mapper.apply(List.of(), command);
+        assertThat(command.getBffPayload().getProducerCategories()).isSameAs(original);
+
+        var categories = List.of(it.pagopa.interop.common.tenant.domain.TenantCategory.values());
+        command.producerCategories(categories);
+        assertThat(command.getBffPayload().getProducerCategories())
+                .extracting(Enum::name)
+                .containsExactlyElementsOf(categories.stream().map(Enum::name).toList());
+    }
+
+    @Test
     void checksDuplicatesBeforeChangingCommand() {
         var dto = transform(Map.of("filtro", "solo e-service attivi", "valore", "sì"));
 

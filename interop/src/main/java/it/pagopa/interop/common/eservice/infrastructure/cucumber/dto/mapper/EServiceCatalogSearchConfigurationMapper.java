@@ -5,6 +5,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogSearchConfiguration;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.tenant.domain.TenantCategory;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
@@ -47,8 +48,19 @@ public interface EServiceCatalogSearchConfigurationMapper {
             case "scambio asincrono" -> target.asyncExchange(parseBoolean(source.getValue()));
             case "Signal Hub" -> target.onlySignalHubEnabled(parseSignalHub(source.getValue()));
             case "erogatore" -> target.producersIds(parseProducers(source.getValue()));
+            case "categoria dell'erogatore" -> target.producerCategories(parseCategories(source.getValue()));
             default -> throw new IllegalArgumentException("Unsupported catalog filter: " + source.getFilter());
         }
+    }
+
+    private static List<TenantCategory> parseCategories(String value) {
+        if ("elenco vuoto".equals(value)) {
+            return List.of();
+        }
+        return Arrays.stream(value.split(" e ", -1))
+                .map(String::trim)
+                .map(TenantCategory::valueOf)
+                .toList();
     }
 
     private static List<UUID> parseProducers(String value) {
