@@ -13,6 +13,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
@@ -79,6 +80,65 @@ class EServiceCatalogSearchConfigurationMapperTest {
     @ValueSource(strings = {"0", "-1", "201", "invalid"})
     void rejectsInvalidLimits(String value) {
         var dto = transform(Map.of("filtro", "risultati per pagina", "valore", value));
+
+        assertThatThrownBy(() -> mapper.apply(List.of(dto), command))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void mapsCombinedPropertyFiltersToTheBffPayload() {
+        mapper.apply(List.of(
+                transform(Map.of("filtro", "modalità", "valore", "erogazione")),
+                transform(Map.of("filtro", "scambio asincrono", "valore", "sì")),
+                transform(Map.of("filtro", "Signal Hub", "valore", "non attivo"))), command);
+
+        var payload = command.getBffPayload();
+        assertThat(payload.getMode())
+                .isEqualTo(it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.DELIVER);
+        assertThat(payload.getAsyncExchange()).isTrue();
+        assertThat(payload.getOnlySignalHubEnabled()).isFalse();
+        assertThat(payload.getOnlyActiveEservices()).isNull();
+        assertThat(payload.getOffset()).isZero();
+        assertThat(payload.getLimit()).isEqualTo(20);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"erogazione,DELIVER", "ricezione,RECEIVE"})
+    void mapsBothModes(String value, String expected) {
+        mapper.apply(List.of(transform(Map.of("filtro", "modalità", "valore", value))), command);
+
+        assertThat(command.getBffPayload().getMode().name()).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"sì,true", "si,true", "no,false"})
+    void mapsAsyncExchange(String value, boolean expected) {
+        mapper.apply(List.of(transform(Map.of("filtro", "scambio asincrono", "valore", value))), command);
+
+        assertThat(command.getBffPayload().getAsyncExchange()).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @CsvSource({"attivo,true", "non attivo,false"})
+    void mapsSignalHub(String value, boolean expected) {
+        mapper.apply(List.of(transform(Map.of("filtro", "Signal Hub", "valore", value))), command);
+
+        assertThat(command.getBffPayload().getOnlySignalHubEnabled()).isEqualTo(expected);
+    }
+
+    @Test
+    void omittedPropertyFiltersRemainUnset() {
+        mapper.apply(List.of(), command);
+
+        assertThat(command.getBffPayload().getMode()).isNull();
+        assertThat(command.getBffPayload().getAsyncExchange()).isNull();
+        assertThat(command.getBffPayload().getOnlySignalHubEnabled()).isNull();
+    }
+
+    @ParameterizedTest
+    @CsvSource({"modalità,invalid", "scambio asincrono,forse", "Signal Hub,non impostato", "Signal Hub,no"})
+    void rejectsInvalidPropertyFilterValues(String filter, String value) {
+        var dto = transform(Map.of("filtro", filter, "valore", value));
 
         assertThatThrownBy(() -> mapper.apply(List.of(dto), command))
                 .isInstanceOf(IllegalArgumentException.class);

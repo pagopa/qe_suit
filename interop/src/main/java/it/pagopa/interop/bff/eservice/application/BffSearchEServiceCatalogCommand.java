@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.eservice.application;
 
 import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatalogCommand;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogFilterPayload;
 import lombok.Getter;
 
@@ -17,6 +18,25 @@ public class BffSearchEServiceCatalogCommand implements SearchEServiceCatalogCom
     @Override
     public SearchEServiceCatalogCommand onlyActiveEservices(Boolean onlyActiveEservices) {
         bffPayload.setOnlyActiveEservices(onlyActiveEservices);
+        return this;
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand mode(EServiceMode mode) {
+        bffPayload.setMode(mode == null ? null
+                : it.pagopa.interop.generated.openapi.clients.bff.model.EServiceMode.valueOf(mode.name()));
+        return this;
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand asyncExchange(Boolean asyncExchange) {
+        bffPayload.setAsyncExchange(asyncExchange);
+        return this;
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand onlySignalHubEnabled(Boolean onlySignalHubEnabled) {
+        bffPayload.setOnlySignalHubEnabled(onlySignalHubEnabled);
         return this;
     }
 
