@@ -31,8 +31,8 @@ import java.util.stream.Stream;
  * Contract test della pagina di dettaglio di una notifica a valore legale della persona giuridica
  * ({@code {baseUrl}/notifiche/<IUN>/dettaglio}).
  * <p>
- * Prima degli scenari viene inviata una notifica a valore legale all'impresa (mittente Grossini); ogni scenario ne apre
- * il dettaglio direttamente dall'URL, con il suo IUN.
+ * Prima degli scenari il mittente {@code COMUNE_1} invia via BFF una notifica a valore legale all'impresa
+ * {@code IMPRESA_1}; ogni scenario ne apre il dettaglio direttamente dall'URL, con il suo IUN.
  * Si verifica quello che c'è in ogni notifica: breadcrumb, riepilogo e titoli delle sezioni. Banner, pagamenti, avvisi e
  * disservizi dipendono dalla notifica e dall'utente: non vengono verificati.
  */
