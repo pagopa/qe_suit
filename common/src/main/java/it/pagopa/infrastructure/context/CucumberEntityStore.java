@@ -46,9 +46,16 @@ public class CucumberEntityStore implements EntityStore {
 
         if (index != -1) {
             ContextEntry<Model> oldEntry = entryList.get(index);
-            if (oldEntry.getAlias() != null && !oldEntry.getAlias().equals(alias)) {
-                aliasStorage.remove(oldEntry.getAlias());
+            String effectiveAlias = alias == null ? oldEntry.getAlias() : alias;
+            if (oldEntry.getAlias() != null && !oldEntry.getAlias().equals(effectiveAlias)) {
+                Identifiable oldAliasValue = aliasStorage.get(oldEntry.getAlias());
+                if (oldAliasValue != null
+                        && oldAliasValue.getClass() == modelClass
+                        && oldAliasValue.getId().equals(id)) {
+                    aliasStorage.remove(oldEntry.getAlias(), oldAliasValue);
+                }
             }
+            entry = new ContextEntry<>(item, effectiveAlias);
             entryList.set(index, entry);
             log.debug("Updated entry for type {} with ID {}", modelClass.getSimpleName(), id);
         } else {
@@ -56,8 +63,8 @@ public class CucumberEntityStore implements EntityStore {
             log.debug("Inserted new entry for type {} with ID {}", modelClass.getSimpleName(), id);
         }
 
-        if (alias != null) {
-            aliasStorage.put(alias, item);
+        if (entry.getAlias() != null) {
+            aliasStorage.put(entry.getAlias(), item);
         }
     }
 

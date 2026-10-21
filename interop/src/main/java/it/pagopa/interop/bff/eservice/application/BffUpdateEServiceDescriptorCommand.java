@@ -13,6 +13,13 @@ import java.util.List;
 @Getter
 public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescriptorCommand {
     private final UpdateEServiceDescriptorSeed bffPayload;
+    private String interfaceDocumentPath;
+
+    @Override
+    public UpdateEServiceDescriptorCommand interfaceDocumentPath(String path) {
+        this.interfaceDocumentPath = path;
+        return this;
+    }
 
     public static BffUpdateEServiceDescriptorCommand from(UpdateEServiceDescriptorSeed payload) {
         return new BffUpdateEServiceDescriptorCommand(payload);

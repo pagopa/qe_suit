@@ -1,9 +1,7 @@
 package it.pagopa.interop.common.journey.application;
 
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 
@@ -18,23 +16,11 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
 
     SELF createEService(EServiceDescriptorState state);
 
-    SELF addDescriptor(EServiceDescriptorState state);
-
-    SELF addDescriptor(EService eService, EServiceDescriptorState state);
-
-    SELF updateDescriptor(UpdateEServiceDescriptorCommand command, EServiceDescriptorState state);
-
     SELF addRiskAnalysis();
 
     SELF archiveEService(GracePeriodDays gracePeriodDays);
 
-    SELF archiveFirstEServiceDescriptor(GracePeriodDays gracePeriodDays);
-
     SELF waitUntilEService(Predicate<EService> predicate);
-
-    SELF prepareEServiceDescriptorInState(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState state);
-
-    SELF prepareEServiceDescriptorForPublication(int version);
 
     default SELF createEService() {
         return createEService(EServiceDescriptorState.DRAFT);

@@ -2,20 +2,19 @@ package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
-import it.pagopa.interop.common.eservice.application.EServiceUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorLifecycleUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
+import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Predicate;
@@ -26,49 +25,31 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     private final EServiceUseCase eServiceUseCase;
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
+    private final EServiceDescriptorLifecycleUseCase lifecycle;
     private final EntityStore entityStore;
     private final EServiceRiskAnalysisUseCase eServiceRiskAnalysisUseCase;
     private final CurrentUserSession currentUserSession;
 
     @Override
     public EServiceJourneyImpl createEService(EServiceCreationCommand command, EServiceDescriptorState targetState) {
-        EService draftEService = eServiceUseCase.createEService(command);
-        return processLifecycle(draftEService, draftEService.getLastDraftDescriptor(), targetState);
+        lifecycle.validateCanReachState(EServiceDescriptorState.DRAFT, targetState);
+        EService eService = eServiceUseCase.createEService(command);
+        return bringDescriptorToState(eService, targetState);
     }
 
     @Override
     public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {
-        EService draftEService = eServiceUseCase.createEService(cmd -> {
+        lifecycle.validateCanReachState(EServiceDescriptorState.DRAFT, targetState);
+        EService eService = eServiceUseCase.createEService(command -> {
         });
-        return processLifecycle(draftEService, draftEService.getLastDraftDescriptor(), targetState);
-    }
-
-    @Override
-    public EServiceJourneyImpl addDescriptor(EServiceDescriptorState state) {
-        EService eService = entityStore.getLastOrThrow(EService.class);
-        EServiceDescriptor eServiceDescriptor = eServiceDescriptorUseCase.addDescriptor(eService);
-        return processLifecycle(eService, eServiceDescriptor, state);
-    }
-
-    @Override
-    public EServiceJourneyImpl addDescriptor(EService eService, EServiceDescriptorState state) {
-        EServiceDescriptor eServiceDescriptor = eServiceDescriptorUseCase.addDescriptor(eService);
-        return processLifecycle(eService, eServiceDescriptor, state);
-    }
-
-    @Override
-    public EServiceJourneyImpl updateDescriptor(UpdateEServiceDescriptorCommand command, EServiceDescriptorState state) {
-        EService eService = entityStore.getLastOrThrow(EService.class);
-        EServiceDescriptor eServiceDescriptor = eService.getLastDraftDescriptor();
-        EServiceDescriptor updatedDescriptor = eServiceDescriptorUseCase.updateDescriptor(eService, eServiceDescriptor, command);
-        eService.addDescriptor(updatedDescriptor);
-        return processLifecycle(eService, updatedDescriptor, state, command);
+        return bringDescriptorToState(eService, targetState);
     }
 
     @Override
     public EServiceJourneyImpl addRiskAnalysis() {
         EService eService = entityStore.getLastOrThrow(EService.class);
-        EServiceRiskAnalysis riskAnalysis = eServiceRiskAnalysisUseCase.addLatestRiskAnalysis(currentUserSession.getTenant(), eService, true);
+        EServiceRiskAnalysis riskAnalysis =
+                eServiceRiskAnalysisUseCase.addLatestRiskAnalysis(currentUserSession.getTenant(), eService, true);
         entityStore.upsert(riskAnalysis);
         return this;
     }
@@ -77,14 +58,6 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     public EServiceJourneyImpl archiveEService(GracePeriodDays gracePeriodDays) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         eServiceUseCase.archiveEService(eService, gracePeriodDays);
-        return this;
-    }
-
-    @Override
-    public EServiceJourneyImpl archiveFirstEServiceDescriptor(GracePeriodDays gracePeriodDays) {
-        EService eService = entityStore.getLastOrThrow(EService.class);
-        EServiceDescriptor descriptor = eService.getLastDeprecatedDescriptor();
-        eServiceDescriptorUseCase.archiveDescriptor(eService, descriptor, gracePeriodDays);
         return this;
     }
 
@@ -105,47 +78,12 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         return this;
     }
 
-    @Override
-    public EServiceJourneyImpl prepareEServiceDescriptorInState(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState state) {
-        return processLifecycle(eService, eServiceDescriptor, state);
-    }
-
-    @Override
-    public EServiceJourneyImpl prepareEServiceDescriptorForPublication(int version) {
-        EService eService = entityStore.getLastOrThrow(EService.class);
-        EServiceDescriptor descriptor = eService.getDescriptorOrThrow(version);
-
-        if(descriptor.getState() != EServiceDescriptorState.DRAFT)
-            throw new IllegalStateException("Cannot prepare a descriptor that is not in DRAFT state for publication.");
-
-        eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, descriptor, descriptorConfig -> {});
-        return this;
-    }
-
-    private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState targetState) {
-        return processLifecycle(eService, eServiceDescriptor, targetState, null);
-    }
-
-    private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState targetState, UpdateEServiceDescriptorCommand command) {
+    private EServiceJourneyImpl bringDescriptorToState(EService eService, EServiceDescriptorState targetState) {
+        EServiceDescriptor updated = lifecycle.bringToState(
+                eService, eService.getLastDraftDescriptor(), targetState
+        );
+        eService.addDescriptor(updated);
         entityStore.upsert(eService);
-
-        return switch (targetState) {
-            case DRAFT -> this;
-
-            case PUBLISHED -> publishPipeline(eService, eServiceDescriptor, command);
-
-            // Facilmente estensibile in futuro senza toccare i metodi pubblici:
-            // case SUSPENDED -> publishPipeline(eService).suspendPipeline(eService);
-
-            default -> throw new UnsupportedOperationException(
-                    String.format("La transizione allo stato %s non è ancora supportata nel Journey.", targetState)
-            );
-        };
-    }
-
-    private EServiceJourneyImpl publishPipeline(EService eService, EServiceDescriptor eServiceDescriptor, UpdateEServiceDescriptorCommand command) {
-        eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor, command);
-        eServiceDescriptorUseCase.publishDescriptor(eService, eServiceDescriptor);
         return this;
     }
 }

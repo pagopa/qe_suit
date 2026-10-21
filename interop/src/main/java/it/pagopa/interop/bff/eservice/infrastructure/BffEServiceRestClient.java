@@ -96,6 +96,17 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
+    public TestChain<Void> suspendDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+        return execute(
+                () -> eservicesApi.suspendDescriptor()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<Void> deleteEService(@Nonnull UUID eserviceId) {
         return execute(
                 () -> eservicesApi.deleteEService()

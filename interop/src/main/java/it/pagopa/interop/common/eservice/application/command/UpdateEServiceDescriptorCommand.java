@@ -6,6 +6,9 @@ import it.pagopa.interop.common.attribute.domain.Attributes;
 import java.util.List;
 
 public interface UpdateEServiceDescriptorCommand {
+    UpdateEServiceDescriptorCommand interfaceDocumentPath(String path);
+    String getInterfaceDocumentPath();
+
     UpdateEServiceDescriptorCommand voucherLifespan(Integer voucherLifespan);
     UpdateEServiceDescriptorCommand dailyCallsPerConsumer(Integer dailyCallsPerConsumer);
     UpdateEServiceDescriptorCommand dailyCallsTotal(Integer dailyCallsTotal);

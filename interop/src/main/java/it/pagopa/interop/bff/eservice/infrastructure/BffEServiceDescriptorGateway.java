@@ -62,6 +62,22 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
+    public EServiceDescriptor suspendDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        EServiceDescriptorState expectedState = EServiceDescriptorTransitions.suspensionTarget(
+                getEServiceDescriptor(eServiceRef, descriptorRef).getState()
+        );
+        restClient.suspendDescriptor(eServiceRef.id(), descriptorRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getEServiceDescriptor(eServiceRef, descriptorRef))
+                .get();
+
+        return PollingUtils.pollUntil(
+                () -> getEServiceDescriptor(eServiceRef, descriptorRef),
+                descriptor -> descriptor.getState() == expectedState
+        );
+    }
+
+    @Override
     public EServiceDescriptor updateDescriptor(
             EServiceRef serviceRef,
             EServiceDescriptorRef descriptorRef,
@@ -75,13 +91,17 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(ignored -> getEServiceDescriptor(serviceRef, descriptorRef))
                 .get();
-        return PollingUtils.pollUntil(
+        EServiceDescriptor updated = PollingUtils.pollUntil(
                 () -> getEServiceDescriptor(serviceRef, descriptorRef),
                 descriptor -> descriptor.getDailyCallsPerConsumer().intValue()
                         == bffCommand.getBffPayload().getDailyCallsPerConsumer().intValue()
                         && descriptor.getDailyCallsTotal().intValue()
                         == bffCommand.getBffPayload().getDailyCallsTotal().intValue()
         );
+        if (command.getInterfaceDocumentPath() != null) {
+            return linkOpenApiInterface(serviceRef, descriptorRef, command.getInterfaceDocumentPath());
+        }
+        return updated;
     }
 
     private void setDefaultAsyncPropertiesIfNeeded(

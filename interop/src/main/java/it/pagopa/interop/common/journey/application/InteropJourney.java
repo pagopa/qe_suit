@@ -6,6 +6,7 @@ public interface InteropJourney extends
         UserJourney<InteropJourney>,
         DelegationJourney<InteropJourney>,
         EServiceJourney<InteropJourney>,
+        EServiceDescriptorJourney<InteropJourney>,
         EServiceTemplateJourney<InteropJourney>,
         ClientJourney<InteropJourney>,
         ProducerKeychainJourney<InteropJourney>,

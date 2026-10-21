@@ -5,6 +5,8 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -23,8 +25,8 @@ public class EServiceHooks {
     private final CurrentChannel<Channel> currentChannel;
 
     /**
-     * Deletes the scenario's stored e-services through BFF as their respective producers.
-     * All deletions are attempted; failures are propagated together without an archive fallback.
+     * Deletes draft e-services and archives the others through BFF as their respective producers.
+     * All cleanups are attempted; failures are propagated together.
      */
     @After(value = "@private-catalog", order = 100)
     public void cleanUpEServices() {
@@ -44,8 +46,15 @@ public class EServiceHooks {
                 try {
                     Tenant producer = Tenant.fromOrganizationId(UUID.fromString(eservice.getProducerId()));
                     currentUserSession.set(User.getTenantAdmin(producer), producer);
-                    eServiceUseCase.deleteEService(eservice);
-                    log.info("E-service eliminato: {}", eservice.getId());
+                    boolean draftOnly = eservice.getDescriptors().stream()
+                            .allMatch(descriptor -> descriptor.getState() == EServiceDescriptorState.DRAFT);
+                    if (draftOnly) {
+                        eServiceUseCase.deleteEService(eservice);
+                        log.info("E-service eliminato: {}", eservice.getId());
+                    } else {
+                        eServiceUseCase.archiveEService(eservice, GracePeriodDays.NUMBER_60);
+                        log.info("Archiviazione e-service avviata: {}", eservice.getId());
+                    }
                 } catch (RuntimeException | AssertionError exception) {
                     log.error("Errore durante il cleanup dell'e-service {}", eservice.getId(), exception);
                     cleanupFailure.addSuppressed(exception);

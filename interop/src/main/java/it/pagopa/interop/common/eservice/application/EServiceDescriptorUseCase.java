@@ -24,17 +24,41 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.addDescriptor(eService.getRef());
     }
 
+    public EServiceDescriptor getOrCreateDescriptor(EService eService, int version) {
+        return eService.findDescriptor(version).orElseGet(() -> {
+            int latestVersion = eService.getDescriptors().stream()
+                    .mapToInt(descriptor -> Integer.parseInt(descriptor.getVersion()))
+                    .max().orElse(0);
+            if (version != latestVersion + 1) {
+                throw new IllegalArgumentException("You are trying to create version " + version
+                        + " but the latest available version is " + latestVersion);
+            }
+            if (eService.findDraftDescriptor().isPresent()) {
+                throw new IllegalArgumentException(
+                        "The latest available version is in draft status; it is not possible to create another one."
+                );
+            }
+            EServiceDescriptor created = addDescriptor(eService);
+            eService.addDescriptor(created);
+            return created;
+        });
+    }
+
     public EServiceDescriptor publishDescriptor(EService eService, EServiceDescriptor descriptor) {
         if (descriptor.getState() == EServiceDescriptorState.PUBLISHED) return descriptor;
 
-        if (descriptor.getState() != EServiceDescriptorState.DRAFT)
-            throw new IllegalStateException("Cannot publish a descriptor that is in state " + descriptor.getState());
+        EServiceDescriptorTransitions.requireDirectTransition(descriptor.getState(), EServiceDescriptorState.PUBLISHED);
 
         return eServiceDescriptorGateway.publishDescriptor(eService.getRef(), descriptor.getRef());
     }
 
     public EServiceDescriptor updateDescriptor(EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand command) {
         return eServiceDescriptorGateway.updateDescriptor(eService.getRef(), descriptor.getRef(), command);
+    }
+
+    public EServiceDescriptor suspendDescriptor(EService eService, EServiceDescriptor descriptor){
+        EServiceDescriptorTransitions.suspensionTarget(descriptor.getState());
+        return eServiceDescriptorGateway.suspendDescriptor(eService.getRef(), descriptor.getRef());
     }
 
     public EServiceDescriptor linkOpenApiInterface(EService eService, EServiceDescriptor descriptor, String openApiInterfacePath) {
@@ -47,16 +71,30 @@ public class EServiceDescriptorUseCase {
     }
 
     public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor,  Consumer<UpdateEServiceDescriptorCommand> config) {
-        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        UpdateEServiceDescriptorCommand command = publicationCommand(descriptor);
         config.accept(command);
-        return updateDescriptor(eService, descriptor, command);
+        return prepareDescriptorForPublication(eService, descriptor, command);
     }
 
     public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand command){
-        if (command == null) command = requestFactory.defaultUpdateDescriptorCommand();
-        EServiceDescriptor updatedDescriptor = updateDescriptor(eService, descriptor, command);
+        if (descriptor.getState() != EServiceDescriptorState.DRAFT) {
+            throw new IllegalStateException("Cannot prepare a descriptor in state " + descriptor.getState());
+        }
+        if (command == null) command = publicationCommand(descriptor);
+        else if (command.getInterfaceDocumentPath() == null && descriptor.getInterfaceDocument() == null) {
+            command.interfaceDocumentPath(requestFactory.prepareDescriptorForPublicationCommand().getInterfaceDocumentPath());
+        }
+        return eServiceDescriptorGateway.updateDescriptor(
+                eService.getRef(), descriptor.getRef(), command
+        );
+    }
 
-        return linkOpenApiInterface(eService, updatedDescriptor, "assets/origin-interface.yaml");
+    private UpdateEServiceDescriptorCommand publicationCommand(EServiceDescriptor descriptor) {
+        UpdateEServiceDescriptorCommand command = requestFactory.prepareDescriptorForPublicationCommand();
+        if (descriptor.getInterfaceDocument() != null) {
+            command.interfaceDocumentPath(null);
+        }
+        return command;
     }
 
     public EServiceCreationCommand getDefaultEServiceCreationCommand(boolean async) {

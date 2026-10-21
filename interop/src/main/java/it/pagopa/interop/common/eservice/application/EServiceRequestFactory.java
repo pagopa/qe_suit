@@ -9,4 +9,8 @@ public interface EServiceRequestFactory extends Plugin<Channel> {
     EServiceCreationCommand defaultCreationEServiceCommand();
 
     UpdateEServiceDescriptorCommand defaultUpdateDescriptorCommand();
+
+    default UpdateEServiceDescriptorCommand prepareDescriptorForPublicationCommand() {
+        return defaultUpdateDescriptorCommand();
+    }
 }

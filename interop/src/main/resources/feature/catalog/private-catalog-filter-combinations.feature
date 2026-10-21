@@ -19,9 +19,9 @@ Feature: Combinazioni di filtri nel catalogo privato
       | ES-1  | Comune di Milano | E-service Attivo Nebula   |
       | ES-2  | Comune di Milano | E-service Sospeso Nebula  |
       | ES-3  | Comune di Milano | E-service Estraneo Cumulo |
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And la versione 1 dell'e-service "ES-2" sospesa
-    And la versione 1 dell'e-service "ES-3" pubblicata
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    And la versione 1 dell'e-service "ES-2" del Comune di Milano sospesa
+    And la versione 1 dell'e-service "ES-3" del Comune di Milano pubblicata
     When PagoPA cerca nel catalogo "Nebula" con i seguenti filtri:
       | filtro                | valore |
       | solo e-service attivi | sì     |

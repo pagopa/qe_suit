@@ -47,7 +47,7 @@ public class BffEServiceGateway implements EServiceGateway {
 
                     return savedEService;
                 })
-                .updateContext()
+                .updateContext(command.getAlias())
                 .get();
     }
 

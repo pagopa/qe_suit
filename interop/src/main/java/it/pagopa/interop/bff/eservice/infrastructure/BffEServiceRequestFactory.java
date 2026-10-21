@@ -77,6 +77,11 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
     }
 
     @Override
+    public UpdateEServiceDescriptorCommand prepareDescriptorForPublicationCommand() {
+        return defaultUpdateDescriptorCommand().interfaceDocumentPath("assets/origin-interface.yaml");
+    }
+
+    @Override
     public boolean supports(@NonNull Channel delimiter) {
         return delimiter == Channel.BFF;
     }
