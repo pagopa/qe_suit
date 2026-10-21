@@ -73,6 +73,6 @@ public interface EServiceDetailPageGeneralInfo extends Component {
     Label showProducerContactsAction();
 
     // Closed MUI drawers are not mounted: any mounted drawer is an open one
-    @XPath(".//*[contains(@class, 'MuiDrawer-root')]")
+    @XPath("//*[contains(@class, 'MuiDrawer-root')]")
     Label openDrawer();
 }
