@@ -3,6 +3,7 @@ package it.pagopa.interop.web.eservice.infrastructure.page.detail.eservice_detai
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Label;
+import it.pagopa.infrastructure.suit.component.Link;
 
 public interface EServiceDetailPageSignalHub extends Component {
     @XPath("./div[1]//h2")
@@ -13,7 +14,7 @@ public interface EServiceDetailPageSignalHub extends Component {
     Label signalHubDescription();
 
     @XPath(".//a[normalize-space()='soluzione integrata']")
-    Label signalHubLink();
+    Link signalHubLink();
 
     @XPath(".//*[normalize-space()='Disponibilità del servizio' and not(*)]")
     Label signalHubAvailabilityLabel();

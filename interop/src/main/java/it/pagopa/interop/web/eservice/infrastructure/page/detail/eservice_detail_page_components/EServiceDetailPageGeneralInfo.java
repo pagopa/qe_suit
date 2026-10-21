@@ -3,6 +3,7 @@ package it.pagopa.interop.web.eservice.infrastructure.page.detail.eservice_detai
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Label;
+import it.pagopa.infrastructure.suit.component.Link;
 
 public interface EServiceDetailPageGeneralInfo extends Component {
     @XPath("./div[1]//h2")
@@ -64,13 +65,13 @@ public interface EServiceDetailPageGeneralInfo extends Component {
 
     // Bottom actions are IconLink (MUI Link, rendered as <button> when component='button')
     @XPath(".//*[(self::a or self::button)][normalize-space()='Vedi i dettagli tecnici dell’e-service']")
-    Label showTechnicalDetailsAction();
+    Link showTechnicalDetailsAction();
 
     @XPath(".//*[(self::a or self::button)][normalize-space()='Vedi i dettagli sullo scambio asincrono']")
-    Label showAsyncExchangeDetailsAction();
+    Link showAsyncExchangeDetailsAction();
 
     @XPath(".//*[(self::a or self::button)][normalize-space()='Visualizza i contatti dell’erogatore']")
-    Label showProducerContactsAction();
+    Link showProducerContactsAction();
 
     // Closed MUI drawers are not mounted: any mounted drawer is an open one
     @XPath("//*[contains(@class, 'MuiDrawer-root')]")
