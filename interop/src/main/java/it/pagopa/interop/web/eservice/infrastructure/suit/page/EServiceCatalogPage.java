@@ -6,43 +6,65 @@ import it.frontend.e2e.framework.web.capability.core.Gettable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.Label;
+import it.pagopa.infrastructure.suit.component.Pagination;
+import it.pagopa.infrastructure.suit.component.TextField;
 
 @Url("${interop.web.catalog}")
 public interface EServiceCatalogPage extends Page {
 
     String URL = "/catalogo-e-service";
+    String PAGE_TITLE = "Catalogo degli e-service";
+    String SEARCH_BY_KEY_PLACEHOLDER = "Cerca per parola chiave";
+    String SEARCH_BY_PROVIDER_PLACEHOLDER = "Cerca per erogatore";
 
     //*[@id="interop-sidenav-main"]/div[3]/main/div/div[2]/div/div/h1
     @XPath(".//h1")
-    Readable<String> pageTitle();
+    Label pageTitle();
 
     // Cerca il primo paragrafo (o elemento di testo) che si trova subito dopo l'h1
     @XPath("//h1/following-sibling::*[contains(@class, 'MuiTypography-root')] | //h1/parent::*//p")
-    Readable<String> pageDescription();
+    Label pageDescription();
 
     // Campi di ricerca
-    @XPath("//input[@placeholder='Cerca per nome']")
-    Readable<String> searchByName();
+    @XPath("//input[@placeholder='" + SEARCH_BY_KEY_PLACEHOLDER + "']")
+    TextField searchByName();
 
-    @XPath("//*[contains(@placeholder, 'Cerca per erogatore') or contains(text(), 'Cerca per erogatore')]")
+    @XPath("//*[contains(@placeholder, '" + SEARCH_BY_PROVIDER_PLACEHOLDER + "') or contains(text(), '" + SEARCH_BY_PROVIDER_PLACEHOLDER + "')]")
     Readable<String> searchByProvider();
+
+    //Bottone di ricerca
+    @XPath("//button[contains(@class, 'MuiButtonBase-root') and not(contains(@class, 'MuiPaginationItem-root'))]")
+    Button searchButton();
+
+    //Bottone filtri (apre un padding laterale con i filtri)
+    @XPath("//button[contains(@class, 'MuiButtonBase-root') and not(contains(@class, 'MuiPaginationItem-root')) and contains(text(), 'Filtri')]")
+    Button filtersButton();
+
+    //Label che mostra il numero di risultati della ricerca (es. "4061 risultati")
+    @XPath("//*[contains(text(), 'risultati')]")
+    Label resultsCounterLabel();
+
+    // Bottone di ordinamento (es. "Dal più recente")
+    @XPath("//*[@role='button' and contains(., 'Dal più recente')]")
+    Button sortButton();
 
     //----------GRIGLIA---------
 
     // Nome Erogatore (<span> con classe MuiTypography-caption)
     @XPath("(//div[contains(@class, 'MuiGrid-item')])[1]//span[contains(@class, 'MuiTypography-caption')]")
-    Readable<String> cardProviderName();
+    Label cardProviderName();
 
     // Nome dell'E-Service (<h6> con classe MuiTypography-h6)
     @XPath("(//div[contains(@class, 'MuiGrid-item')])[1]//h6[contains(@class, 'MuiTypography-h6')]")
-    Readable<String> cardEServiceName();
+    Label cardEServiceName();
 
     // Descrizione E-Service (semplice tag <p>)
     @XPath("(//div[contains(@class, 'MuiGrid-item')])[1]//p")
-    Readable<String> cardDescription();
+    Label cardDescription();
 
-    // Bottone "Visualizza" (Classe MuiButtonBase)
-    @XPath("(//div[contains(@class, 'MuiGrid-item')])[1]//button[contains(@class, 'MuiButtonBase') and contains(., 'Visualizza')]")
+    // Bottone "Vai all'e-service" (Classe MuiButtonBase)
+    @XPath("(//div[contains(@class, 'MuiGrid-item')])[1]//button[contains(@class, 'MuiButtonBase')]")
     Button cardActionButton();
 
     // Contenitore della griglia
@@ -51,10 +73,10 @@ public interface EServiceCatalogPage extends Page {
 
     // Paginazione e Stato vuoto
     @XPath("//nav[contains(@class, 'MuiPagination-root')]")
-    Gettable<?> pagination();
+    Pagination pagination();
 
     @XPath("//*[contains(@class, 'MuiAlert-root') or contains(text(), 'Nessun risultato')]")
-    Gettable<?> emptyStateMessage();
+    Label emptyStateMessage();
 
 
     /**
@@ -63,9 +85,9 @@ public interface EServiceCatalogPage extends Page {
      */
     @Override
     default void assertLoaded() {
-        searchByName().readAndAssert("Cerca per nome");
-        searchByProvider().readAndAssert("Cerca per erogatore");
-        pageTitle().readAndAssert("Catalogo degli e-service");
+        searchByName().readAndAssert(SEARCH_BY_KEY_PLACEHOLDER);
+        searchByProvider().readAndAssert(SEARCH_BY_PROVIDER_PLACEHOLDER);
+        pageTitle().readAndAssert(PAGE_TITLE);
     }
 
 
