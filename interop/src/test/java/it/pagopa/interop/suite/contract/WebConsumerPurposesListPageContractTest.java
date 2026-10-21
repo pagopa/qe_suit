@@ -57,7 +57,7 @@ public class WebConsumerPurposesListPageContractTest {
                                             .as("Page description")
                                             .isEqualTo("Quando le tue richieste di fruizione vengono accettate, dovrai compilare una finalità per descrivere come tratterai i dati che ricevi. Le tue finalità vengono raccolte in questa area.");
                                     softly.assertThat(page.createPurposeButton().read())
-                                            .as("Crete Purpose button")
+                                            .as("Create Purpose button")
                                             .isEqualTo("Crea nuovo");
 
                                     softly.assertThat(page.purposeNameFilterLabel().read())
