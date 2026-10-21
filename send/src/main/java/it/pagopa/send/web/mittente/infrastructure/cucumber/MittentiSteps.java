@@ -5,12 +5,10 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
-import it.pagopa.send.common.kernel.security.FakeAuthenticator;
-import it.pagopa.send.common.kernel.security.IAuthenticator;
 import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -21,12 +19,11 @@ public class MittentiSteps {
 //    private final DashboardPage dashboardPage;
     private Page currentPage;
 
-    @Given("l'utente è un {string} di {string}")
-    public void login(String role, String pa) {
-        //Inizializzare un bean Auth
-        //Auth auth = Auth.of(role,pa,fake);
-        IAuthenticator auth = new FakeAuthenticator(role, pa);
-        Assertions.assertTrue(auth.isAuthenticated());
+    // l'ente diventa l'utente del browser: le pagine si aprono con la sua sessione nel sessionStorage
+    @Given("l'utente è un {string} di {tenant}")
+    public void login(String role, User tenant) {
+        webBrowserContext.setTenant(tenant);
+        webBrowserContext.setCurrentUser(tenant);
     }
 
     @When("naviga alla pagina {page}")

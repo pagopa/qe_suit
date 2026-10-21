@@ -1,0 +1,86 @@
+# ============================================================================
+# Utenze generiche di test - ambiente hotfix
+# ============================================================================
+# Una voce per ogni UserAlias (chiave in kebab-case). tax-id: codice fiscale dell'ente o dell'impresa (della persona
+# per una PF); personal-tax-id: codice fiscale della persona che accede.
+# I destinatari PG delle notifiche devono avere un tax-id numerico: SEND rifiuta gli altri codici.
+# ============================================================================
+qe:
+  users:
+    user-1:
+      username: lucrezia
+      password: ${pn.external.password.lucrezia:}
+      tax-id: BRGLRZ80D58H501Q
+      denomination: Lucrezia
+      family-name: Borgia
+      uid: df2a1268-ecfe-4330-b650-5184a7eb0756
+    user-2:
+      username: garibaldi
+      password: ${pn.external.password.garibaldi:}
+      tax-id: GRBGPP87L04L741X
+      denomination: Giuseppe Maria
+      family-name: Garibaldi
+      uid: bb4619fa-7fea-4afd-8140-5e2c72cfc4c2
+    impresa-1:
+      username: DanteAlighieri
+      password: ${pn.external.password.dantealighieri:}
+      organization: "Vita Nova Sas"
+      tax-id: "12666810299"
+      organization-id: 8f409ca6-fc3d-46c3-8da7-69cd9a1e9e62
+      uid: e490f02e-9429-4b38-bb11-ddb8a561fb62
+      denomination: Dante Alighieri
+      family-name: Alighieri
+      personal-tax-id: LGHDNT00P14D612D
+      roles:
+        - party-role: MANAGER
+          role: pg-admin
+    impresa-2:
+      username: FrancescoPetrarca
+      password: ${pn.external.password.francescopetrarca:}
+      organization: "Le Epistolae srl"
+      # codice fiscale non numerico: l'impresa non può ricevere notifiche nuove
+      tax-id: LELPTR04A01C352E
+      organization-id: e2486126-4394-4300-a25d-b6d879fa1717
+      uid: d5a8a380-910d-49dc-9fb8-84700c64410f
+      denomination: Francesco Petrarca
+      family-name: Petrarca
+      personal-tax-id: PTRFNC04A01C352E
+      email: FrancescoPetrarca@secretum.it
+      roles:
+        - party-role: MANAGER
+          role: pg-admin
+    comune-1:
+      username: grossini
+      password: ${pn.external.password.grossini:}
+      organization: "Provincia di Como"
+      tax-id: "80004650133"
+      organization-id: 3531633e-3218-4b2f-9431-8e790112ef0a
+      uid: e9e4a9c7-9586-4b92-a7dd-ee1a0e77d398
+      denomination: giuseppe
+      family-name: rossini
+      personal-tax-id: RSSGPP80B02G273H
+      email: email@libero.it
+      ipa-code: p_CO
+      has-groups: true
+      # api-key delle chiamate B2B (header x-api-key): gruppi della PA e notifiche
+      groups-api-key: ${pn.external.groups-api-key.grossini:}
+      delivery-api-key: ${pn.external.delivery-api-key.grossini:}
+      roles:
+        - party-role: DELEGATE
+          role: admin
+    comune-2:
+      username: albino63
+      password: ${pn.external.password.albino63:}
+      organization: "Comune di Marcellina"
+      tax-id: "86002050580"
+      organization-id: 3aa0ea3b-89d0-4477-9ad8-2d7dbb5c7b22
+      uid: 2134d92b-5d1b-49b5-9a6e-4283f4879bbf
+      denomination: Bacchisio
+      family-name: Barone
+      personal-tax-id: BRNBCH91L49H822E
+      email: b.barone@test.email.it
+      ipa-code: c_e924
+      has-groups: false
+      roles:
+        - party-role: MANAGER
+          role: admin

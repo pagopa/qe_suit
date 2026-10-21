@@ -23,6 +23,8 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
 
     SELF updateDescriptor(UpdateEServiceDescriptorCommand command, EServiceDescriptorState state);
 
+    SELF addRiskAnalysis();
+
     SELF archiveEService(GracePeriodDays gracePeriodDays);
 
     SELF archiveFirstEServiceDescriptor(GracePeriodDays gracePeriodDays);
