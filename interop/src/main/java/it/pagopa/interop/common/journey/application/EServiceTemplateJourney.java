@@ -1,5 +1,7 @@
 package it.pagopa.interop.common.journey.application;
 
+import it.pagopa.interop.common.eservice.application.command.EServiceTemplateInstanceUpdateDescriptorCommand;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateCreationCommand;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
@@ -35,6 +37,12 @@ public interface EServiceTemplateJourney<SELF extends EServiceTemplateJourney<SE
     SELF waitUntilEServiceTemplate(Predicate<EServiceTemplate> predicate);
 
     SELF createEServiceInstanceTemplate();
+
+    SELF updateEServiceInstanceDescriptorWithContextAttributes(
+            Consumer<EServiceTemplateInstanceUpdateDescriptorCommand> commandConfig,
+            int customThreshold,
+            EServiceDescriptorState state
+    );
 
     default SELF createEServiceTemplate() {
         return createEServiceTemplate(EServiceTemplateVersionState.DRAFT);

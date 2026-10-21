@@ -38,19 +38,14 @@ public class EServiceTemplateInstanceSteps {
                 )
                 .waitUntilEServiceTemplate(template -> template.getLastPublishedVersion().getState() == EServiceTemplateVersionState.PUBLISHED)
                 .createEServiceInstanceTemplate()
-                // TODO Set customThreshold in the template version
-                /*.updateDescriptorWithContextAttributes(
+                .updateEServiceInstanceDescriptorWithContextAttributes(
                         config -> config
+                                .audience(List.of("QA"))
                                 .dailyCallsPerConsumer(customThreshold - 10)
                                 .dailyCallsTotal(customThreshold + 100),
                         customThreshold,
-                        EServiceDescriptorState.PUBLISHED
-                )*/
-
-                // TODO
-                // updateEServiceInstanceDescriptorWithContextAttributes(
-
-        ;
+                        EServiceDescriptorState.DRAFT
+                );
     }
 
     @When("l'erogatore crea/istanzia un nuovo e-service dal {eServiceTemplate}")
@@ -94,5 +89,4 @@ public class EServiceTemplateInstanceSteps {
                 eService, descriptor, configuration
         );
     }
-
 }

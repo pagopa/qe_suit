@@ -127,17 +127,10 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     @Override
     public EServiceJourneyImpl waitUntilEService(Predicate<EService> predicate) {
         EService eService = entityStore.getLastOrThrow(EService.class);
-
-        PollingUtils.pollUntil(
-                () -> {
-                    eService.getDescriptors().forEach(
-                            descriptor -> eServiceDescriptorUseCase.getDescriptor(eService, descriptor)
-                    );
+        PollingUtils.pollUntil(() -> {
+                    eService.getDescriptors().forEach(descriptor -> eServiceDescriptorUseCase.getDescriptor(eService, descriptor));
                     return eServiceUseCase.getEService(eService);
-                },
-                predicate
-        );
-
+                }, predicate);
         return this;
     }
 
@@ -150,12 +143,9 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
         return switch (targetState) {
             case DRAFT -> this;
-
             case PUBLISHED -> publishPipeline(eService, eServiceDescriptor, command);
-
             // Facilmente estensibile in futuro senza toccare i metodi pubblici:
             // case SUSPENDED -> publishPipeline(eService).suspendPipeline(eService);
-
             default -> throw new UnsupportedOperationException(
                     String.format("La transizione allo stato %s non è ancora supportata nel Journey.", targetState)
             );
