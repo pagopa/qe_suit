@@ -82,7 +82,34 @@ public class BffUpdateEServiceTemplateVersionCommand implements UpdateEServiceTe
         return this.attributes(attributes.apply(this.attributes));
     }
 
+
     private List<List<EServiceTemplateVersionAttributeSeed>> toAttributeRequirements(List<Attribute> attributes) {
+        if (attributes == null || attributes.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        int maxGroup = attributes.stream()
+                .mapToInt(Attribute::getGroup)
+                .max()
+                .orElse(-1);
+
+        List<List<EServiceTemplateVersionAttributeSeed>> attributeRequirements = new ArrayList<>(maxGroup + 1);
+        for (int i = 0; i <= maxGroup; i++) {
+            attributeRequirements.add(new ArrayList<>());
+        }
+
+        for (Attribute attribute : attributes) {
+            int group = attribute.getGroup();
+            if (group >= 0 && group < attributeRequirements.size()) {
+                attributeRequirements.get(group).add(toAttributeSeed(attribute));
+            }
+        }
+
+        attributeRequirements.removeIf(List::isEmpty);
+        return attributeRequirements;
+    }
+
+    private List<List<EServiceTemplateVersionAttributeSeed>> toAttributeRequirements_OLD(List<Attribute> attributes) {
         int groupCount = attributes.isEmpty() ? 0 : attributes.stream().mapToInt(Attribute::getGroup).max().getAsInt() + 1;
         List<List<EServiceTemplateVersionAttributeSeed>> attributeRequirements = new ArrayList<>(groupCount);
         for (int i = 0; i < groupCount; i++) {
