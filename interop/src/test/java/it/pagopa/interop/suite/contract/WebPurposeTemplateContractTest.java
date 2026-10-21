@@ -1,6 +1,6 @@
 package it.pagopa.interop.suite.contract;
 
-import it.frontend.e2e.framework.core.capability.core.Gettable;
+import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.binder.WebBinder;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
@@ -33,12 +33,14 @@ import java.util.stream.Stream;
         properties = {
                 "spring.profiles.include=junit",
                 "channel.web.browser=chrome",
+                "channel.web.headless=false"
         }
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebPurposeTemplateContractTest {
 
+    private final PurposeTemplateCreationPage purposeTemplateCreationPage;
     private final WebBrowserContractValidator webContractValidator;
 
     @TestFactory
@@ -86,12 +88,21 @@ public class WebPurposeTemplateContractTest {
                     .as("Free-of-charge switch is present")
                     .isPresent();
             softly.assertThat(purposeTemplateCreationPage.freeOfChargeSwitch().isChecked())
-                    .as("Free-of-charge switch is unchecked by default")
+                    .as("Free-of-charge switch is checked by default")
+                    .isTrue();
+            softly.assertThat(purposeTemplateCreationPage.freeOfChargeExplanationField()
+                    .flatMap(field -> field.get(FindPolicy.PRESENT)))
+                    .as("Free-of-charge explanation field is present when switch is on")
+                    .isPresent();
+            // cambia lo stato dello switch
+            purposeTemplateCreationPage.freeOfChargeSwitch().click();
+            softly.assertThat(purposeTemplateCreationPage.freeOfChargeSwitch().isChecked())
+                    .as("Free-of-charge switch is unchecked after click on it")
                     .isFalse();
             softly.assertThat(purposeTemplateCreationPage.freeOfChargeExplanationField()
-                    .flatMap(Gettable::get))
-                    .as("Free-of-charge explanation field is absent when switch is off")
-                    .isEmpty();
+                            .flatMap(field -> field.get(FindPolicy.PRESENT)))
+                    .as("Free-of-charge explanation field is not present when switch is disabled")
+                    .isNotPresent();
         });
     }
 }

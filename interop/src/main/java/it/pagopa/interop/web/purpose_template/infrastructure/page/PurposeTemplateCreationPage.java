@@ -27,10 +27,10 @@ public interface PurposeTemplateCreationPage extends Page {
     @XPath("//*[@id='purposeDescription']")
     TextField descriptionField();
 
-    @XPath(".//label[.//span[contains(normalize-space(.), \"Ho diritto all'utilizzo dell'e-service a titolo gratuito\")]]//span[contains(@class, 'MuiSwitch-switchBase')]")
+    @XPath("//span[span/input[@name='purposeIsFreeOfCharge']]")
     Switch freeOfChargeSwitch();
 
-    @XPath(".//div[contains(@class, 'MuiTextField-root')][.//label[contains(normalize-space(.), \"Spiega perché puoi usare l'eservice a titolo gratuito\")]]")
+    @XPath("//*[@id='purposeFreeOfChargeReason']")
     Optional<TextField> freeOfChargeExplanationField();
 
     @Override
