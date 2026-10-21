@@ -36,7 +36,7 @@ public class WebConsumerPurposesListPageContractTest {
      * title, description, filter labels and table of elements for the tenant administrator.
      */
     @TestFactory
-    Stream<DynamicTest> consumerAgreementsListPageContract() {
+    Stream<DynamicTest> consumerPurposesListPageContract() {
         return webContractValidator
                 .as(
                         User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
