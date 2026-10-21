@@ -6,14 +6,14 @@ import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.journey.application.SendJourney;
-import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.RecipientSpecFactory;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationDetailPGPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
@@ -21,10 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.Map;
@@ -39,23 +36,17 @@ import java.util.stream.Stream;
  * Si verifica quello che c'è in ogni notifica: breadcrumb, riepilogo e titoli delle sezioni. Banner, pagamenti, avvisi e
  * disservizi dipendono dalla notifica e dall'utente: non vengono verificati.
  */
-@ActiveProfiles({"test", "junit"})
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebNotificationDetailPGContractTest {
 
-    // l'impresa deve avere un codice fiscale numerico: SEND non accetta altri codici per i destinatari PG
-    private static final Recipient RECIPIENT = Recipient.DANTE;
-
     // testi attesi
 
-    private static final String NOTIFICATIONS_BREADCRUMB = NotificationPage.TITLE_PREFIX + RECIPIENT.getOrganization();
     private static final String LEGAL_VALUE = "Notifica a valore legale";
     // "Notifica depositata il giorno " seguito dalla data
     private static final String DEPOSIT_DATE_PATTERN = "Notifica depositata il giorno \\d{2}/\\d{2}/\\d{4}";
@@ -71,8 +62,8 @@ public class WebNotificationDetailPGContractTest {
     private final WebBrowserContractValidator webContractValidator;
     private final SendJourney sendJourney;
     private final RecipientSpecFactory recipientSpecFactory;
-    private final CurrentUserSession currentUserSession;
     private final LegalNotificationCreationRequest creationRequest;
+    private final UserProvider userProvider;
 
     /**
      * Testi del dettaglio della notifica inviata all'impresa:
@@ -86,16 +77,19 @@ public class WebNotificationDetailPGContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowNotificationDetailTexts() {
-        LegalNotificationDomain createdNotification = sendLegalNotification();
+        // l'impresa deve avere un codice fiscale numerico: SEND non accetta altri codici per i destinatari PG
+        User impresa = userProvider.resolve(UserAlias.IMPRESA_1);
+        String notificationsBreadcrumb = NotificationPage.TITLE_PREFIX + impresa.getOrganization();
+        LegalNotificationDomain createdNotification = sendLegalNotification(impresa);
 
-        return webContractValidator.asRecipient(RECIPIENT)
+        return webContractValidator.asRecipient(impresa)
                 .on(NotificationDetailPGPage.class, createdNotification.getIun())
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "breadcrumb con il nome dell'impresa e l'oggetto della notifica",
                                 detail -> {},
                                 detail -> {
-                                    detail.notificationsBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(NOTIFICATIONS_BREADCRUMB));
+                                    detail.notificationsBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(notificationsBreadcrumb));
                                     String title = detail.title().read();
                                     detail.currentBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(title));
                                 }
@@ -132,10 +126,11 @@ public class WebNotificationDetailPGContractTest {
                 ));
     }
 
-    private LegalNotificationDomain sendLegalNotification() {
+    private LegalNotificationDomain sendLegalNotification(User impresa) {
+        User sender = userProvider.resolve(UserAlias.COMUNE_1);
         // destinatario: l'impresa, con la sua denominazione invece del nome della persona che accede
-        RecipientSpec recipient = recipientSpecFactory.build(RECIPIENT, Map.of(
-                "denomination", RECIPIENT.getOrganization(),
+        RecipientSpec recipient = recipientSpecFactory.build(impresa, Map.of(
+                "denomination", impresa.getOrganization(),
                 "physicalAddress_address", "Via@ok_890",
                 "physicalAddress_municipality", "COLLELUNGO",
                 "physicalAddress_province", "TR",
@@ -148,22 +143,19 @@ public class WebNotificationDetailPGContractTest {
         creationRequest.getRecipients().clear();
         try {
             return sendJourney
-                    .withSender(Tenant.GROSSINI)
+                    .withSender(sender)
                     .prepareNotification(Map.of(
                             "subject", "Notifica di test per il dettaglio PG",
                             "physicalCommunication", "REGISTERED_LETTER_890",
                             "feePolicy", "FLAT_RATE"
                     ))
                     .withRecipient(recipient)
-                    .sendNotification(Tenant.GROSSINI, NotificationStatus.ACCEPTED)
+                    .sendNotification(sender, NotificationStatus.ACCEPTED)
                     .get(LegalNotificationDomain.class);
         }
         finally {
             // anche dopo un invio fallito: i destinatari non restano per gli invii successivi
             creationRequest.getRecipients().clear();
-            // l'invio imposta il mittente sul thread: senza azzerarlo, gli scenari sullo stesso thread aprirebbero il
-            // portale come Grossini invece che come l'impresa
-            currentUserSession.setSender(null);
         }
     }
 }
