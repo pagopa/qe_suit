@@ -29,5 +29,6 @@ public class WebPurposeTemplateConfig {
     public ConsumerPurposeTemplateCatalogPage consumerPurposeTemplateCatalogPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(ConsumerPurposeTemplateCatalogPage.class);
     }
+
 }
 
