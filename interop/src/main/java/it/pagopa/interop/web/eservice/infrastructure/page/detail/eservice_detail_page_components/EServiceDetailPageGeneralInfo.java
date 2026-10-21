@@ -72,8 +72,4 @@ public interface EServiceDetailPageGeneralInfo extends Component {
 
     @XPath(".//*[(self::a or self::button)][normalize-space()='Visualizza i contatti dell’erogatore']")
     Link showProducerContactsAction();
-
-    // Closed MUI drawers are not mounted: any mounted drawer is an open one
-    @XPath("//*[contains(@class, 'MuiDrawer-root')]")
-    Label openDrawer();
 }
