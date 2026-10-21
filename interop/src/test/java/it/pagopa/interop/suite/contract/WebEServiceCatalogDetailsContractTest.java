@@ -3,8 +3,11 @@ package it.pagopa.interop.suite.contract;
 import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.DomNode;
+import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.Chip;
+import it.pagopa.infrastructure.suit.component.Link;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
@@ -218,8 +221,21 @@ public class WebEServiceCatalogDetailsContractTest {
         );
     }
 
-    private static <T extends DomNode & Readable<String>> void assertText(String id, String el, T node, String expected) {
+    private static void assertText(String id, String el, Readable<String> node, String expected) {
         Assertions.assertThat(normalize(node.read()))
+                .as(label(id, el) + " (copy)")
+                .isEqualTo(normalize(expected));
+    }
+
+    private static void assertText(String id, String el, Chip chip, String expected) {
+        assertText(id, el, chip.text(), expected);
+    }
+
+    private static void assertText(String id, String el, Link link, String expected) {
+        String actual = link.get(FindPolicy.PRESENT)
+                .map(WebPresentationElement::getText)
+                .orElse(null);
+        Assertions.assertThat(normalize(actual))
                 .as(label(id, el) + " (copy)")
                 .isEqualTo(normalize(expected));
     }
