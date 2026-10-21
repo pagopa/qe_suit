@@ -18,7 +18,7 @@ Feature: Visibilità degli e-service nel catalogo privato
     Given i seguenti e-service predisposti per la pubblicazione:
       | alias | erogatore        | nome                   |
       | ES-1  | Comune di Milano | E-service di <esempio> |
-    And la versione 1 dell'e-service "ES-1" <stato>
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano <stato>
     When PagoPA cerca nel catalogo "<esempio>"
     Then l'e-service "ES-1" <esito> tra i risultati della ricerca
 
@@ -51,8 +51,8 @@ Feature: Visibilità degli e-service nel catalogo privato
     Given i seguenti e-service predisposti per la pubblicazione:
       | alias | erogatore        | nome             |
       | ES-1  | Comune di Milano | E-service Doppio |
-    And la versione 1 dell'e-service "ES-1" pubblicata
-    And la versione 2 dell'e-service "ES-1" in bozza
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    And la versione 2 dell'e-service "ES-1" del Comune di Milano in bozza
     When PagoPA cerca nel catalogo "E-service Doppio"
     Then l'e-service "ES-1" è presente tra i risultati della ricerca
     And per l'e-service "ES-1" il risultato riporta:
@@ -63,8 +63,8 @@ Feature: Visibilità degli e-service nel catalogo privato
     Given i seguenti e-service predisposti per la pubblicazione:
       | alias | erogatore        | nome               |
       | ES-1  | Comune di Milano | E-service Versioni |
-    And la versione 1 dell'e-service "ES-1" <prima versione>
-    And la versione 2 dell'e-service "ES-1" <seconda versione>
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano <prima versione>
+    And la versione 2 dell'e-service "ES-1" del Comune di Milano <seconda versione>
     When PagoPA cerca nel catalogo "E-service Versioni"
     Then l'e-service "ES-1" è presente tra i risultati della ricerca
     And per l'e-service "ES-1" il risultato riporta:
@@ -82,7 +82,7 @@ Feature: Visibilità degli e-service nel catalogo privato
     Given i seguenti e-service predisposti per la pubblicazione:
       | alias | erogatore        | nome            |
       | ES-1  | Comune di Milano | E-service Ruoli |
-    And la versione 1 dell'e-service "ES-1" pubblicata
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
     When <tenant> cerca nel catalogo "E-service Ruoli"
     Then l'e-service "ES-1" è presente tra i risultati della ricerca

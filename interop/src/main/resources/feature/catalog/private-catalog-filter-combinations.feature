@@ -117,10 +117,10 @@ Feature: Combinazioni di filtri nel catalogo privato
       | ES-4  |
 
   Scenario: [PRIVATE_CATALOG_FILTER_COMBINATIONS_6] Parola chiave, categoria dell'erogatore e istanze di template
-    Given le categorie degli enti rilevate dagli attributi certificati con i seguenti dati:
-      | ente             | categoria |
-      | Comune di Milano | CAT-1     |
-      | Sogecap          | CAT-2     |
+    Given gli enti appartengono alle categorie indicate secondo i seguenti dati:
+      | ente             | categoria | appartenenza |
+      | Comune di Milano | COMUNI    | sì           |
+      | Sogecap          | COMUNI    | no           |
     And i seguenti template di e-service pubblicati:
       | alias | nome                  | tecnologia |
       | TPL-1 | Template Sintesi Alfa | SOAP       |
@@ -134,7 +134,7 @@ Feature: Combinazioni di filtri nel catalogo privato
       | ES-4  | Comune di Milano | E-service Estraneo Quarzo |
     When PagoPA cerca nel catalogo "Sintesi" con i seguenti filtri:
       | filtro                   | valore |
-      | categoria dell'erogatore | CAT-1  |
+      | categoria dell'erogatore | COMUNI |
       | istanze di template      | sì     |
     Then l'e-service "ES-1" è presente tra i risultati della ricerca
     And tra i risultati della ricerca non sono presenti i seguenti e-service:
