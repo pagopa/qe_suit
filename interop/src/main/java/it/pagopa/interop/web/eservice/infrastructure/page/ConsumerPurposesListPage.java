@@ -8,8 +8,7 @@ import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Pagination;
 import it.pagopa.infrastructure.suit.component.Table;
-import it.pagopa.interop.web.eservice.infrastructure.page.component.ConsumerPurposesFilters;
-import it.pagopa.utils.async.PollingUtils;
+import it.pagopa.infrastructure.suit.component.TextField;
 
 @Url("${interop.web.base-url}/fruizione/finalita")
 public interface ConsumerPurposesListPage extends Page {
@@ -23,8 +22,29 @@ public interface ConsumerPurposesListPage extends Page {
     @XPath(".//button[normalize-space()='Crea nuovo']")
     Button createPurposeButton();
 
-    @XPath(".//div[contains(@class,'MuiGrid-container')]")
-    ConsumerPurposesFilters filters();
+    @XPath(".//label[normalize-space()='Cerca per nome finalità']")
+    Label purposeNameFilterLabel();
+
+    @XPath(".//input[@name='q']")
+    TextField purposeNameFilterInput();
+
+    @XPath(".//label[normalize-space()='Cerca per e-service']")
+    Label eServiceFilterLabel();
+
+    @XPath(".//label[normalize-space()='Cerca per e-service']/following::input[@role='combobox'][1]")
+    TextField eServiceFilterInput();
+
+    @XPath(".//label[normalize-space()='Cerca per erogatore']")
+    Label providerFilterLabel();
+
+    @XPath(".//label[normalize-space()='Cerca per erogatore']/following::input[@role='combobox'][1]")
+    TextField providerFilterInput();
+
+    @XPath(".//label[normalize-space()='Stato della finalità']")
+    Label statusFilterLabel();
+
+    @XPath(".//label[normalize-space()='Stato della finalità']/following::input[@role='combobox'][1]")
+    TextField statusFilterInput();
 
     @XPath(".//table")
     Table purposesTable();
@@ -34,11 +54,6 @@ public interface ConsumerPurposesListPage extends Page {
 
     @Override
     default void assertLoaded() {
-        PollingUtils.pollUntil(
-                this::pageTitle,
-                title -> pageTitle()
-                        .read()
-                        .equals("Le mie finalità inoltrate")
-        );
+        pageTitle().readAndAssert("Le mie finalità inoltrate");
     }
 }
