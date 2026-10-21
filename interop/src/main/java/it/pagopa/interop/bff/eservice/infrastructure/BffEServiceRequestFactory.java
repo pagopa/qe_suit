@@ -2,6 +2,8 @@ package it.pagopa.interop.bff.eservice.infrastructure;
 
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
+import it.pagopa.interop.bff.eservice.application.BffSearchEServiceCatalogCommand;
+import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatalogCommand;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
@@ -74,6 +76,11 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 .create();
 
         return BffUpdateEServiceDescriptorCommand.from(payload);
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand defaultSearchEServiceCatalogCommand() {
+        return new BffSearchEServiceCatalogCommand().offset(0).limit(20);
     }
 
     @Override

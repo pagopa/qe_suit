@@ -3,6 +3,7 @@ package it.pagopa.interop.common.eservice.infrastructure.config;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
+import it.pagopa.interop.common.eservice.application.EServiceCatalogGateway;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisGateway;
 import it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor;
@@ -18,10 +19,20 @@ import org.springframework.plugin.core.config.EnablePluginRegistries;
 
 @Configuration
 @RequiredArgsConstructor
-@EnablePluginRegistries({EServiceGateway.class, EServiceDescriptorGateway.class, EServiceRequestFactory.class, EServiceRiskAnalysisGateway.class})
+@EnablePluginRegistries({EServiceGateway.class, EServiceDescriptorGateway.class, EServiceRequestFactory.class, EServiceRiskAnalysisGateway.class, EServiceCatalogGateway.class})
 public class EServiceRoutingConfig {
 
     private final ObjectProvider<CurrentChannel<Channel>> currentChannelProvider;
+
+    @Bean
+    @Primary
+    public EServiceCatalogGateway transparentEServiceCatalogGateway(
+            PluginRegistry<EServiceCatalogGateway, Channel> registry) {
+        ProxyFactory proxyFactory = new ProxyFactory();
+        proxyFactory.setInterfaces(EServiceCatalogGateway.class);
+        proxyFactory.addAdvice(new ChannelRoutingInterceptor<>(registry, currentChannelProvider));
+        return (EServiceCatalogGateway) proxyFactory.getProxy();
+    }
 
     @Bean
     @Primary
