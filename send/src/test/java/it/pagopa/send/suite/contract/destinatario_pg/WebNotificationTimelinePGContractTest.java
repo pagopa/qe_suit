@@ -30,8 +30,8 @@ import java.util.stream.Stream;
  * Contract test della pagina "Stato della notifica" della persona giuridica
  * ({@code {baseUrl}/notifiche/<IUN>/dettaglio/timeline}).
  * <p>
- * Prima degli scenari viene inviata una notifica a valore legale all'impresa (mittente Grossini); ogni scenario ne apre
- * la pagina "Stato della notifica" direttamente dall'URL, con il suo IUN.
+ * Prima degli scenari il mittente {@code COMUNE_1} invia via BFF una notifica a valore legale all'impresa
+ * {@code IMPRESA_1}; ogni scenario ne apre la pagina "Stato della notifica" direttamente dall'URL, con il suo IUN.
  * Si verifica quello che c'è in ogni notifica: breadcrumb e presenza degli eventi con il loro stato. Stati, descrizioni,
  * date e attestazioni dipendono dall'avanzamento della notifica: non vengono verificati.
  */
