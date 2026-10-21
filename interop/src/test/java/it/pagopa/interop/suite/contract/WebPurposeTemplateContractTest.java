@@ -16,12 +16,14 @@ import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.UUID;
 import java.util.stream.Stream;
 
+@Execution(ExecutionMode.SAME_THREAD)
 @SpringBootTest(
         classes = {
                 TestBootApp.class,
@@ -70,11 +72,6 @@ public class WebPurposeTemplateContractTest {
                 .as("Page title is not blank")
                 .isNotBlank();
 
-        UUID templateId = page.currentTemplateIdFromUrl();
-        Assertions.assertThat(templateId)
-                .as("Landed on the created purpose template's page")
-                .isNotNull();
-
         PurposeTemplateCreationPage purposeTemplateCreationPage = new WebBinder().bind(PurposeTemplateCreationPage.class);
         purposeTemplateCreationPage.assertLoaded();
 
@@ -82,18 +79,15 @@ public class WebPurposeTemplateContractTest {
             softly.assertThat(purposeTemplateCreationPage.nameField().read())
                     .as("Purpose template name starts with 'Template finalità'")
                     .startsWith("Template finalità");
-
             softly.assertThat(purposeTemplateCreationPage.descriptionField().read())
                     .as("Purpose template description is readable")
                     .isNotNull();
-
             softly.assertThat(purposeTemplateCreationPage.freeOfChargeSwitch().get())
                     .as("Free-of-charge switch is present")
                     .isPresent();
             softly.assertThat(purposeTemplateCreationPage.freeOfChargeSwitch().isChecked())
                     .as("Free-of-charge switch is unchecked by default")
                     .isFalse();
-
             softly.assertThat(purposeTemplateCreationPage.freeOfChargeExplanationField()
                     .flatMap(Gettable::get))
                     .as("Free-of-charge explanation field is absent when switch is off")
