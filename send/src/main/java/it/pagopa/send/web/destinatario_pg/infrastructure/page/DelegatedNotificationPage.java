@@ -6,7 +6,6 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
-import it.pagopa.send.web.notification_search.infrastructure.suit.component.AddDomicileBanner;
 import org.assertj.core.api.Assertions;
 
 import java.util.Optional;
@@ -30,12 +29,13 @@ public interface DelegatedNotificationPage extends Page {
     @XPath("//*[@data-testid=\"titleBox\"]")
     Readable<String> title();
 
-    // filtro "Tipologia" e banner per attivare il domicilio digitale: ci sono in "In arrivo per <impresa>", mai qui
-    @XPath("//*[@id=\"communicationType\"]")
-    Button communicationTypeSelect();
+    // presenti solo se mancano il filtro "Tipologia" e il banner per attivare il domicilio digitale, che sono in
+    // "In arrivo per <impresa>" e mai qui: verificarne l'assenza direttamente costerebbe l'attesa del framework (60 s)
+    @XPath("//main[not(//*[@id=\"communicationType\"])]")
+    Button noCommunicationTypeSelect();
 
-    @XPath("//*[@data-testid=\"addDomicileBanner\"]")
-    AddDomicileBanner addDomicileBanner();
+    @XPath("//main[not(//*[@data-testid=\"addDomicileBanner\"])]")
+    Button noAddDomicileBanner();
 
     @Override
     default void assertLoaded() {

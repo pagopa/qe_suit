@@ -4,8 +4,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.web.infrastructure.page.ConfigureAddressSendPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationPFPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationPage;
@@ -26,17 +25,17 @@ public class LoginSteps {
     private final NotificationPFPage notificationPFPage;
 
     @Given("la PA {tenant} effettua l'accesso a SelfCare con autenticazione SPID")
-    public void spidAuthPa(Tenant tenant) {
+    public void spidAuthPa(User tenant) {
         loginService.loginAsTenant(tenant);
     }
 
     @Given("{recipientType} {recipient} effettua l'accesso a SelfCare con autenticazione SPID")
-    public void spidAuthRecipient(String userType, Recipient recipient) {
+    public void spidAuthRecipient(String userType, User recipient) {
         loginService.loginAsRecipient(userType, recipient);
     }
 
     @Given("la PA {tenant} è loggata a SEND")
-    public void forceTenantSession(Tenant tenant) {
+    public void forceTenantSession(User tenant) {
         webBrowserContext.setTenant(tenant);
         webBrowserContext.setCurrentUser(tenant);
 
@@ -45,7 +44,7 @@ public class LoginSteps {
     }
 
     @Given("{recipientType} {recipient} forza l'accesso a SelfCare tramite sessionStorage")
-    public void forceRecipientSession(String userType, Recipient recipient) {
+    public void forceRecipientSession(String userType, User recipient) {
         webBrowserContext.setRecipient(recipient);
         webBrowserContext.setCurrentUser(recipient);
 

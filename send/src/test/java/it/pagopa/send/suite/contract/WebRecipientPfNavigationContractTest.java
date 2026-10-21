@@ -5,7 +5,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AddressPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AppStatusPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DelegationsPFPage;
@@ -20,17 +21,19 @@ import it.pagopa.send.web.destinatario_pf.infrastructure.page.SercqTermsOfServic
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.SupportPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.TermsOfServicePFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.send.web.infrastructure.page.ConfigureAddressSendPage;
+import static org.assertj.core.api.Assertions.assertThat;
 import lombok.RequiredArgsConstructor;
-import org.assertj.core.api.Assertions;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
+import it.pagopa.send.web.infrastructure.page.ConfigureAddressSendPage;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -42,18 +45,19 @@ import java.util.stream.Stream;
  * Le pagine che esistono solo se l'utente ha dei dati (dettaglio e timeline di una notifica, riepilogo del wizard di
  * attivazione, gestione del domicilio digitale, passi 2-4 di "Il meglio di SEND") non sono verificate.
  */
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
+@Slf4j
 public class WebRecipientPfNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     // notifiche
 
@@ -130,7 +134,7 @@ public class WebRecipientPfNavigationContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldReachOnboardingAlertsPF() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(OnboardingAlertsPFPage.class)
                 .tests(Stream.of(new WebScenario<>(
                         "controllo passi wizard Attivazione avvisi",
@@ -138,7 +142,7 @@ public class WebRecipientPfNavigationContractTest {
                         page -> {
                             // ogni passo si raggiunge con "Indietro" e "Avanti", senza fare scelte
                             for (String section : page.progressItems().readAll()) {
-                                Assertions.assertThat(page.goToSection(section)).as("passo %s raggiunto", section).isTrue();
+                                assertThat(page.goToSection(section)).as("passo %s raggiunto", section).isTrue();
                                 page.currentSection().assertLoaded();
                             }
                         }
@@ -200,7 +204,7 @@ public class WebRecipientPfNavigationContractTest {
     }
 
     private <P extends Page> Stream<DynamicTest> reachabilityTest(Class<P> pageType) {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(pageType)
                 .tests(Stream.of(new WebScenario<>(
                         "controllo caricamento pagina " + pageType.getSimpleName(),

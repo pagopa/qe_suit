@@ -11,12 +11,12 @@ import org.assertj.core.api.Assertions;
 /**
  * {@code {baseUrl}/notifiche/<IUN>/dettaglio}
  * Pagina di dettaglio di una notifica a valore legale della persona giuridica.
- * Si apre dal pulsante "Apri" di una riga della pagina "In arrivo per &lt;impresa&gt;" ({@link NotificationPage}), da
- * cui si legge anche lo IUN: per questo l'URL non è risolta.
+ * Si apre dal pulsante "Apri" di una riga della pagina "In arrivo per &lt;impresa&gt;" ({@link NotificationPage}) oppure
+ * direttamente dall'URL, con lo IUN della notifica come parametro.
  * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo (l'oggetto della notifica), il breadcrumb e lo IUN.
  * Testi e sezioni presenti in ogni notifica sono verificati da {@code WebNotificationDetailPGContractTest}.
  */
-@Url("about:blank")
+@Url("${url.notifiche.persona-giuridica.notifiche-dettaglio}")
 public interface NotificationDetailPGPage extends Page {
 
     // breadcrumb: "In arrivo per <impresa>" > oggetto della notifica

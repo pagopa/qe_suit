@@ -5,7 +5,15 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.journey.application.SendJourney;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
+import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
+import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
+import it.pagopa.send.common.legal_notification.infrastructure.factory.RecipientSpecFactory;
+import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationDetailPGPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
@@ -13,38 +21,32 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.Map;
 import java.util.stream.Stream;
 
 /**
  * Contract test della pagina di dettaglio di una notifica a valore legale della persona giuridica
  * ({@code {baseUrl}/notifiche/<IUN>/dettaglio}).
  * <p>
- * Ogni scenario apre "In arrivo per &lt;impresa&gt;" e il dettaglio dell'ultima notifica a valore legale della lista.
+ * Prima degli scenari viene inviata una notifica a valore legale all'impresa (mittente Grossini); ogni scenario ne apre
+ * il dettaglio direttamente dall'URL, con il suo IUN.
  * Si verifica quello che c'è in ogni notifica: breadcrumb, riepilogo e titoli delle sezioni. Banner, pagamenti, avvisi e
  * disservizi dipendono dalla notifica e dall'utente: non vengono verificati.
  */
-@ActiveProfiles({"test", "junit"})
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebNotificationDetailPGContractTest {
 
-    private static final Recipient RECIPIENT = Recipient.PETRARCA;
-
     // testi attesi
 
-    private static final String NOTIFICATIONS_BREADCRUMB = NotificationPage.TITLE_PREFIX + RECIPIENT.getOrganization();
     private static final String LEGAL_VALUE = "Notifica a valore legale";
     // "Notifica depositata il giorno " seguito dalla data
     private static final String DEPOSIT_DATE_PATTERN = "Notifica depositata il giorno \\d{2}/\\d{2}/\\d{4}";
@@ -58,9 +60,13 @@ public class WebNotificationDetailPGContractTest {
     private static final String NOTIFICATION_DETAILS_TITLE = "Dettaglio della notifica";
 
     private final WebBrowserContractValidator webContractValidator;
+    private final SendJourney sendJourney;
+    private final RecipientSpecFactory recipientSpecFactory;
+    private final LegalNotificationCreationRequest creationRequest;
+    private final UserProvider userProvider;
 
     /**
-     * Testi del dettaglio dell'ultima notifica a valore legale della lista:
+     * Testi del dettaglio della notifica inviata all'impresa:
      * <ul>
      *     <li>breadcrumb: "In arrivo per &lt;impresa&gt;" e, come voce corrente, il titolo della notifica;</li>
      *     <li>riepilogo: etichetta "Notifica a valore legale", logo del mittente, mittente non vuoto, "Notifica
@@ -71,15 +77,19 @@ public class WebNotificationDetailPGContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowNotificationDetailTexts() {
-        return webContractValidator.asRecipient(RECIPIENT)
-                .on(NotificationPage.class)
+        // l'impresa deve avere un codice fiscale numerico: SEND non accetta altri codici per i destinatari PG
+        User impresa = userProvider.resolve(UserAlias.IMPRESA_1);
+        String notificationsBreadcrumb = NotificationPage.TITLE_PREFIX + impresa.getOrganization();
+        LegalNotificationDomain createdNotification = sendLegalNotification(impresa);
+
+        return webContractValidator.asRecipient(impresa)
+                .on(NotificationDetailPGPage.class, createdNotification.getIun())
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "breadcrumb con il nome dell'impresa e l'oggetto della notifica",
-                                WebNotificationDetailPGContractTest::openDetail,
-                                page -> {
-                                    NotificationDetailPGPage detail = loadedDetail(page);
-                                    detail.notificationsBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(NOTIFICATIONS_BREADCRUMB));
+                                detail -> {},
+                                detail -> {
+                                    detail.notificationsBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(notificationsBreadcrumb));
                                     String title = detail.title().read();
                                     detail.currentBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(title));
                                 }
@@ -87,9 +97,8 @@ public class WebNotificationDetailPGContractTest {
 
                         new WebScenario<>(
                                 "riepilogo: valore legale, mittente, data di deposito, codice IUN e informativa",
-                                WebNotificationDetailPGContractTest::openDetail,
-                                page -> {
-                                    NotificationDetailPGPage detail = loadedDetail(page);
+                                detail -> {},
+                                detail -> {
                                     // l'etichetta è resa in maiuscolo dal CSS
                                     detail.legalValueChip().readAndAssert(h -> Assertions.assertThat(h).isEqualToIgnoringCase(LEGAL_VALUE));
                                     Assertions.assertThat(detail.senderLogo().get(FindPolicy.PRESENT)).as("logo del mittente").isPresent();
@@ -103,9 +112,8 @@ public class WebNotificationDetailPGContractTest {
 
                         new WebScenario<>(
                                 "sezioni documenti, stato della notifica con stato corrente e vai al dettaglio, dettaglio della notifica",
-                                WebNotificationDetailPGContractTest::openDetail,
-                                page -> {
-                                    NotificationDetailPGPage detail = loadedDetail(page);
+                                detail -> {},
+                                detail -> {
                                     detail.documentsTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(DOCUMENTS_TITLE));
                                     detail.statusTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(STATUS_TITLE));
                                     detail.currentStatus().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
@@ -118,14 +126,36 @@ public class WebNotificationDetailPGContractTest {
                 ));
     }
 
-    // apre il dettaglio dell'ultima notifica a valore legale della lista
-    private static void openDetail(NotificationPage page) {
-        page.lastLegalNotificationOpenButton().click();
-    }
-
-    private static NotificationDetailPGPage loadedDetail(NotificationPage page) {
-        NotificationDetailPGPage detail = page.notificationDetail();
-        detail.assertLoaded();
-        return detail;
+    private LegalNotificationDomain sendLegalNotification(User impresa) {
+        User sender = userProvider.resolve(UserAlias.COMUNE_1);
+        // destinatario: l'impresa, con la sua denominazione invece del nome della persona che accede
+        RecipientSpec recipient = recipientSpecFactory.build(impresa, Map.of(
+                "denomination", impresa.getOrganization(),
+                "physicalAddress_address", "Via@ok_890",
+                "physicalAddress_municipality", "COLLELUNGO",
+                "physicalAddress_province", "TR",
+                "physicalAddress_zip", "05010",
+                "pagoPA_number", "0",
+                "F24_number", "0"
+        ));
+        // la richiesta di creazione è condivisa (singleton) e non viene svuotata tra un invio e l'altro: senza
+        // svuotarla, la notifica includerebbe anche i destinatari rimasti da invii precedenti
+        creationRequest.getRecipients().clear();
+        try {
+            return sendJourney
+                    .withSender(sender)
+                    .prepareNotification(Map.of(
+                            "subject", "Notifica di test per il dettaglio PG",
+                            "physicalCommunication", "REGISTERED_LETTER_890",
+                            "feePolicy", "FLAT_RATE"
+                    ))
+                    .withRecipient(recipient)
+                    .sendNotification(sender, NotificationStatus.ACCEPTED)
+                    .get(LegalNotificationDomain.class);
+        }
+        finally {
+            // anche dopo un invio fallito: i destinatari non restano per gli invii successivi
+            creationRequest.getRecipients().clear();
+        }
     }
 }

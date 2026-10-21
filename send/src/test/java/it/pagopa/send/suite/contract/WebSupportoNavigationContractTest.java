@@ -3,6 +3,8 @@ package it.pagopa.send.suite.contract;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.send.web.infrastructure.page.component.Header;
 import it.pagopa.send.web.infrastructure.page.component.Sidebar;
@@ -16,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 /**
@@ -29,21 +30,23 @@ import org.springframework.test.context.TestConstructor;
  * sequenziale sullo stesso {@link WebPresentationGateway}, come previsto per i flussi non
  * esprimibili come singolo {@code WebScenario}.
  */
-@ActiveProfiles({"test", "junit"})
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class WebSupportoNavigationContractTest {
 
     private final ObjectProvider<WebPresentationGateway> webPresentationGatewayProvider;
+    private final UserProvider userProvider;
 
     public WebSupportoNavigationContractTest(
-            @Qualifier("junitWebPresentationGateway") ObjectProvider<WebPresentationGateway> webPresentationGatewayProvider
+            @Qualifier("junitWebPresentationGateway") ObjectProvider<WebPresentationGateway> webPresentationGatewayProvider,
+            UserProvider userProvider
     ) {
         this.webPresentationGatewayProvider = webPresentationGatewayProvider;
+        this.userProvider = userProvider;
     }
 
     @Test
@@ -52,7 +55,7 @@ public class WebSupportoNavigationContractTest {
         try {
             BackstageProfilePage backstageProfilePage = gateway.bind(BackstageProfilePage.class);
             backstageProfilePage.navigateTo();
-            backstageProfilePage.selectComune("Comune di Palermo");
+            backstageProfilePage.selectComune(userProvider.resolve(UserAlias.COMUNE_1).getOrganization());
 
             gateway.bind(DashboardPage.class).assertLoaded();
 

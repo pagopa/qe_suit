@@ -1,19 +1,29 @@
 package it.pagopa.send.common.infrastructure.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.convert.ApplicationConversionService;
 
+/**
+ * Utenze generiche nelle feature: la chiave dell'alias ({@code user-1}, {@code impresa-1}, {@code comune-1}, ...) è
+ * risolta nell'utenza dell'ambiente attivo tramite {@link UserProvider}.
+ */
+@RequiredArgsConstructor
 public class UserParameterTypes {
 
-    @ParameterType("FrancescoPetrarca|Lucrezia")
-    public Recipient recipient(String username) {
-       return Recipient.fromUsername(username);
+    private final UserProvider userProvider;
+
+    @ParameterType("user-1|user-2|impresa-1|impresa-2")
+    public User recipient(String userKey) {
+        return userProvider.resolve(ApplicationConversionService.getSharedInstance().convert(userKey, UserAlias.class));
     }
 
-    @ParameterType("Grossini")
-    public Tenant tenant(String username) {
-        return Tenant.fromUsername(username);
+    @ParameterType("comune-1|comune-2")
+    public User tenant(String userKey) {
+        return userProvider.resolve(ApplicationConversionService.getSharedInstance().convert(userKey, UserAlias.class));
     }
 
     @ParameterType("la PG|l'utente")

@@ -27,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
@@ -35,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-// TODO: 15/10 questa classe attende il deploy in DEV/QA per il tuning
 @SpringBootTest(
         classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
         properties = {"spring.profiles.include=junit", "channel.web.browser=chrome"}

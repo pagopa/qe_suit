@@ -2,7 +2,9 @@ package it.pagopa.send.web.destinatario_pg.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.pagopa.infrastructure.suit.component.Button;
+import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.send.web.infrastructure.page.component.Footer;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.notification_search.infrastructure.suit.RecipientNotificationsPage;
 import org.assertj.core.api.Assertions;
@@ -23,14 +25,8 @@ public interface NotificationPage extends RecipientNotificationsPage {
     // il titolo contiene il nome dell'impresa, per esempio "In arrivo per Le Epistolae srl"
     String TITLE_PREFIX = "In arrivo per ";
 
-    // "Apri" dell'ultima notifica a valore legale della lista: le comunicazioni aprono un'altra pagina
-    @XPath("(//*[@data-testid=\"notificationsTable.body.row\"][.//span[normalize-space()=\"Notifica a valore legale\"]]"
-            + "//*[@data-testid=\"goToNotificationDetail\"])[last()]")
-    Button lastLegalNotificationOpenButton();
-
-    // dettaglio aperto con "Apri"
-    @XPath("//main")
-    NotificationDetailPGPage notificationDetail();
+    @XPath("//footer[contains(@class, 'MuiBox-root')]")
+    Footer footer();
 
     @Override
     default void assertLoaded() {
