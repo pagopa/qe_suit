@@ -36,14 +36,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-// TODO: 15/10 questa classe attende il deploy in DEV/QA per il tuning
 @SpringBootTest(
         classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
         properties = {"spring.profiles.include=junit", "channel.web.browser=chrome"}
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
-@Tag("wait_for_qa")
 public class WebCatalogEServiceContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
