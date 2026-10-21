@@ -33,7 +33,6 @@ import java.util.stream.Stream;
         properties = {
                 "spring.profiles.include=junit",
                 "channel.web.browser=chrome",
-                "channel.web.headless=false"
         }
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
