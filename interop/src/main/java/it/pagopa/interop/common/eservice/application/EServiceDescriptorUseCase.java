@@ -39,7 +39,7 @@ public class EServiceDescriptorUseCase {
                 );
             }
             EServiceDescriptor created = addDescriptor(eService);
-            eService.addDescriptor(created);
+            eService.upsertDescriptor(created);
             return created;
         });
     }

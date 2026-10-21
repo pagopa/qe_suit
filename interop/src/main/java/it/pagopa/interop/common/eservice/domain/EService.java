@@ -105,7 +105,7 @@ public class EService implements Identifiable {
                 ));
     }
 
-    public void addDescriptor(@NonNull EServiceDescriptor descriptor) {
+    public void upsertDescriptor(@NonNull EServiceDescriptor descriptor) {
         Objects.requireNonNull(descriptor.getId(), "descriptor.id non può essere null");
 
         for (int i = 0; i < descriptors.size(); i++) {

@@ -36,6 +36,20 @@ public class EServiceCreationJourneySteps {
         }
     }
 
+    @Given("i seguenti e-service pubblicati:")
+    public void publishEServices(List<EServicePreparationConfiguration> configurations) {
+        for (EServicePreparationConfiguration configuration : configurations) {
+            EServiceCreationCommand command = eServiceRequestFactory.defaultCreationEServiceCommand();
+            eServicePreparationConfigurationMapper.apply(configuration, command);
+
+            interopJourney
+                    .withProducer(configuration.getProducer(), UserRole.ADMIN)
+                    .createEService(command)
+                    .prepareEServiceDescriptorForPublication(1)
+                    .publishDescriptor(1);
+        }
+    }
+
     @Given("un EService/eservice creato da/dal {tenant} con una richiesta di fruizione e una finalità associate da/dal {tenant}")
     public void createEServiceAndLinkAgreementAndPurpose(Tenant producer, Tenant consumer) {
         interopJourney

@@ -63,9 +63,16 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
     public EServiceDescriptorJourneyImpl prepareEServiceDescriptorForPublication(int version) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceDescriptor descriptor = eService.getDescriptorOrThrow(version);
-        EServiceDescriptor updatedDescriptor = lifecycle.prepareForPublication(eService, descriptor);
-        eService.addDescriptor(updatedDescriptor);
-        entityStore.upsert(eService);
+        lifecycle.prepareForPublication(eService, descriptor);
+
+        return this;
+    }
+
+    @Override
+    public EServiceDescriptorJourneyImpl publishDescriptor(int version) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        EServiceDescriptor descriptor = eService.getDescriptorOrThrow(version);
+        eServiceDescriptorUseCase.publishDescriptor(eService, descriptor);
         return this;
     }
 
@@ -95,7 +102,7 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
             UpdateEServiceDescriptorCommand command
     ) {
         EServiceDescriptor updated = lifecycle.bringToState(eService, descriptor, targetState, command);
-        eService.addDescriptor(updated);
+        eService.upsertDescriptor(updated);
         entityStore.upsert(eService);
         return this;
     }

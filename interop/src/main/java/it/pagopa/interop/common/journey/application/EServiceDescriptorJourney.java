@@ -23,5 +23,7 @@ public interface EServiceDescriptorJourney<SELF extends EServiceDescriptorJourne
 
     SELF prepareEServiceDescriptorForPublication(int version);
 
+    SELF publishDescriptor(int version);
+
     SELF bringEServiceDescriptorToState(EService eService, int version, EServiceDescriptorState state);
 }

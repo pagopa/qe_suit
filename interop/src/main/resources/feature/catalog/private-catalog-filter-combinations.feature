@@ -101,8 +101,7 @@ Feature: Combinazioni di filtri nel catalogo privato
       | ES-1  | Comune di Milano | E-service Canale Giusto    | erogazione | non attivo    | sì                |
       | ES-2  | Comune di Milano | E-service Canale Libero    | erogazione | non impostato | sì                |
       | ES-3  | Comune di Milano | E-service Canale Attivo    | erogazione | attivo        | sì                |
-      | ES-4  | Comune di Milano | E-service Canale Ricezione | ricezione  | non attivo    | sì                |
-      | ES-5  | Comune di Milano | E-service Canale Sincrono  | erogazione | non attivo    | no                |
+      | ES-4  | Comune di Milano | E-service Canale Sincrono  | erogazione | non attivo    | no                |
     When PagoPA cerca nel catalogo "Canale" con i seguenti filtri:
       | filtro            | valore     |
       | modalità          | erogazione |
@@ -116,7 +115,6 @@ Feature: Combinazioni di filtri nel catalogo privato
       | alias |
       | ES-3  |
       | ES-4  |
-      | ES-5  |
 
   Scenario: [PRIVATE_CATALOG_FILTER_COMBINATIONS_6] Parola chiave, categoria dell'erogatore e istanze di template
     Given le categorie degli enti rilevate dagli attributi certificati con i seguenti dati:

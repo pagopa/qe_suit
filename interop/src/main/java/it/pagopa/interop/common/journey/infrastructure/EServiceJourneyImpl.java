@@ -82,7 +82,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         EServiceDescriptor updated = lifecycle.bringToState(
                 eService, eService.getLastDraftDescriptor(), targetState
         );
-        eService.addDescriptor(updated);
+        eService.upsertDescriptor(updated);
         entityStore.upsert(eService);
         return this;
     }

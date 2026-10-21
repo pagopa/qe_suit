@@ -48,7 +48,7 @@ class EServiceDescriptorVersionTest {
 
     @Test
     void rejectsCreationWhileAnotherDraftExists() {
-        eService.addDescriptor(published.toBuilder().state(DRAFT).build());
+        eService.upsertDescriptor(published.toBuilder().state(DRAFT).build());
         assertThatThrownBy(() -> useCase.getOrCreateDescriptor(eService, 4))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("draft status");
         verifyNoInteractions(gateway);

@@ -43,7 +43,7 @@ public class EServicePreparationConfiguration {
     @JsonSetter(nulls = Nulls.FAIL)
     private ConfiguredBoolean signalHub = ConfiguredBoolean.DEFAULT;
 
-    @JsonAlias("scambio asincrono")
+    @JsonAlias({"scambio asincrono", "scambioAsincrono"})
     @JsonDeserialize(using = EServiceAsyncExchangeDeserializer.class)
     @JsonSetter(nulls = Nulls.FAIL)
     private ConfiguredBoolean asyncExchange = ConfiguredBoolean.DEFAULT;

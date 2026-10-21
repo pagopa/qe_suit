@@ -79,7 +79,7 @@ public class BffEServiceDescriptorInterfaceGateway {
                         download(serviceRef, descriptorRef, metadata.getInterfaceDocument().getId())
                 ))
                 .build();
-        aggregate.addDescriptor(enriched);
+        aggregate.upsertDescriptor(enriched);
         entityStore.upsert(aggregate);
         return enriched;
     }

@@ -43,7 +43,7 @@ public class BffEServiceGateway implements EServiceGateway {
 
                     final EServiceDescriptor createdDescriptor = descriptorGateway.getEServiceDescriptor(eServiceRef, descriptorRef);
                     final EService savedEService = getEService(eServiceRef);
-                    savedEService.addDescriptor(createdDescriptor);
+                    savedEService.upsertDescriptor(createdDescriptor);
 
                     return savedEService;
                 })
