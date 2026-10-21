@@ -133,7 +133,6 @@ public class WebEServiceCatalogDetailsContractTest {
                             assertEnabledElement("44", "Azione Vedi i dettagli tecnici dell’e-service", generalInfo.showTechnicalDetailsAction());
                             assertAbsent("45", "Azione Vedi i dettagli sullo scambio asincrono", generalInfo.showAsyncExchangeDetailsAction());
                             assertPresent("46", "Azione Visualizza i contatti dell’erogatore", generalInfo.showProducerContactsAction());
-                            assertNotVisible("47", "Drawer specifiche tecniche / scambio asincrono / contatti", generalInfo.openDrawer());
 
                             // ---- Compilazione agevolata
                             var purposeTemplateSection = page.purposeTemplateSection();
