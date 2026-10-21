@@ -5,11 +5,16 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceCatalog;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogExpectation;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogPropertyExpectation;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceCatalogExpectationMapper;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor
 public class EServiceCatalogAssertionSteps {
@@ -69,6 +74,37 @@ public class EServiceCatalogAssertionSteps {
     public void shouldNotContainEServices(List<EServiceCatalogExpectation> expectations) {
         catalog.shouldNotContain(searchSteps.getSearchResult(),
                 expectationMapper.toEServices(expectations, entityStore));
+    }
+
+    @Then("per l'e-service {string} il risultato riporta:")
+    public void shouldReportProperties(String alias, List<EServiceCatalogPropertyExpectation> properties) {
+        assertThat(properties).as("Proprietà attese per l'e-service %s", alias).isNotEmpty();
+        UUID id = entityStore.getByAliasOrThrow(alias, EService.class).getId();
+        EServiceCatalog.Entry entry = searchSteps.getSearchResult().getResults().stream()
+                .filter(result -> result.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("E-service " + alias + " non presente nei risultati"));
+        for (EServiceCatalogPropertyExpectation property : properties) {
+            assertProperty(entry, property);
+        }
+    }
+
+    private static void assertProperty(EServiceCatalog.Entry entry, EServiceCatalogPropertyExpectation property) {
+        switch (property.getProperty()) {
+            case "versione presentata" -> assertThat(entry.getVersion()).isEqualTo(property.getValue());
+            case "è mio" -> assertThat(entry.getIsMine()).isEqualTo(parseBoolean(property.getValue()));
+            case "notifiche non lette" ->
+                    assertThat(entry.getHasUnreadNotifications()).isEqualTo(parseBoolean(property.getValue()));
+            default -> throw new IllegalArgumentException("Proprietà catalogo non supportata: " + property.getProperty());
+        }
+    }
+
+    private static boolean parseBoolean(String value) {
+        return switch (value) {
+            case "sì", "si" -> true;
+            case "no" -> false;
+            default -> throw new IllegalArgumentException("Valore booleano non valido: " + value);
+        };
     }
 
     private EServiceCatalogExpectation expectation(String alias) {

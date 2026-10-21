@@ -103,6 +103,52 @@ class EServiceCatalogSearchConfigurationMapperTest {
         assertThat(payload.getLimit()).isEqualTo(20);
     }
 
+    @Test
+    void mapsRequesterAvailabilitySubscriptionAndPurposeTemplateFilters() {
+        mapper.apply(List.of(
+                transform(Map.of("filtro", "richiedibili dal fruitore", "valore", "sì")),
+                transform(Map.of("filtro", "sottoscritti dal fruitore", "valore", "no")),
+                transform(Map.of("filtro", "con template di finalità collegati", "valore", "si"))), command);
+
+        assertThat(command.getBffPayload().getAvailableForRequester()).isTrue();
+        assertThat(command.getBffPayload().getSubscribedByRequester()).isFalse();
+        assertThat(command.getBffPayload().getHasLinkedPurposeTemplates()).isTrue();
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "delegato,DELEGATE",
+            "delegante,DELEGATOR"
+    })
+    void mapsEachRequesterDelegationRole(String value, String expected) {
+        mapper.apply(List.of(transform(Map.of("filtro", "ruolo di delega", "valore", value))), command);
+
+        assertThat(command.getBffPayload().getRequesterDelegationRoles())
+                .extracting(Enum::name)
+                .containsExactly(expected);
+    }
+
+    @Test
+    void mapsBothRequesterDelegationRolesAsAnOrFilter() {
+        mapper.apply(List.of(transform(Map.of(
+                "filtro", "ruolo di delega", "valore", "delegato e delegante"))), command);
+
+        assertThat(command.getBffPayload().getRequesterDelegationRoles())
+                .extracting(Enum::name)
+                .containsExactly("DELEGATE", "DELEGATOR");
+    }
+
+    @Test
+    void keepsRequesterFiltersUnsetWhenTheyAreNotRequested() {
+        var originalRoles = command.getBffPayload().getRequesterDelegationRoles();
+        mapper.apply(List.of(), command);
+
+        assertThat(command.getBffPayload().getAvailableForRequester()).isNull();
+        assertThat(command.getBffPayload().getSubscribedByRequester()).isNull();
+        assertThat(command.getBffPayload().getRequesterDelegationRoles()).isSameAs(originalRoles);
+        assertThat(command.getBffPayload().getHasLinkedPurposeTemplates()).isNull();
+    }
+
     @ParameterizedTest
     @CsvSource({"erogazione,DELIVER", "ricezione,RECEIVE"})
     void mapsBothModes(String value, String expected) {
@@ -161,7 +207,16 @@ class EServiceCatalogSearchConfigurationMapperTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"modalità,invalid", "scambio asincrono,forse", "Signal Hub,non impostato", "Signal Hub,no"})
+    @CsvSource({
+            "modalità,invalid",
+            "scambio asincrono,forse",
+            "Signal Hub,non impostato",
+            "Signal Hub,no",
+            "richiedibili dal fruitore,forse",
+            "sottoscritti dal fruitore,forse",
+            "con template di finalità collegati,forse",
+            "ruolo di delega,delegante e delegato"
+    })
     void rejectsInvalidPropertyFilterValues(String filter, String value) {
         var dto = transform(Map.of("filtro", filter, "valore", value));
 

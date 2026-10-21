@@ -2,6 +2,7 @@ package it.pagopa.interop.bff.eservice.application;
 
 import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatalogCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceCatalogSortBy;
+import it.pagopa.interop.common.eservice.domain.EServiceCatalogRequesterDelegationRole;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.tenant.domain.TenantCategory;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceProducerCategory;
@@ -36,6 +37,35 @@ public class BffSearchEServiceCatalogCommand implements SearchEServiceCatalogCom
     @Override
     public SearchEServiceCatalogCommand onlyActiveEservices(Boolean onlyActiveEservices) {
         bffPayload.setOnlyActiveEservices(onlyActiveEservices);
+        return this;
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand availableForRequester(Boolean value) {
+        bffPayload.setAvailableForRequester(value);
+        return this;
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand subscribedByRequester(Boolean value) {
+        bffPayload.setSubscribedByRequester(value);
+        return this;
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand requesterDelegationRoles(
+            List<EServiceCatalogRequesterDelegationRole> roles
+    ) {
+        bffPayload.setRequesterDelegationRoles(roles.stream()
+                .map(role -> it.pagopa.interop.generated.openapi.clients.bff.model.RequesterDelegationRole
+                        .valueOf(role.name()))
+                .toList());
+        return this;
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand hasLinkedPurposeTemplates(Boolean value) {
+        bffPayload.setHasLinkedPurposeTemplates(value);
         return this;
     }
 

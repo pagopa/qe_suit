@@ -21,15 +21,30 @@ class EServiceDescriptorLifecyclePlannerTest {
 
     private record Route(EServiceDescriptorState source, EServiceDescriptorState target) {}
 
-    private static final Map<Route, List<EServiceDescriptorLifecycleStep>> EXPECTED = Map.of(
-            new Route(DRAFT, PUBLISHED), List.of(new EServiceDescriptorLifecycleStep(PUBLISH, PUBLISHED)),
-            new Route(DRAFT, SUSPENDED), List.of(
+    private static final Map<Route, List<EServiceDescriptorLifecycleStep>> EXPECTED = Map.ofEntries(
+            Map.entry(new Route(DRAFT, PUBLISHED), List.of(new EServiceDescriptorLifecycleStep(PUBLISH, PUBLISHED))),
+            Map.entry(new Route(DRAFT, SUSPENDED), List.of(
                     new EServiceDescriptorLifecycleStep(PUBLISH, PUBLISHED),
-                    new EServiceDescriptorLifecycleStep(SUSPEND, SUSPENDED)),
-            new Route(PUBLISHED, SUSPENDED), List.of(new EServiceDescriptorLifecycleStep(SUSPEND, SUSPENDED)),
-            new Route(DEPRECATED, SUSPENDED), List.of(new EServiceDescriptorLifecycleStep(SUSPEND, SUSPENDED)),
-            new Route(ARCHIVING, ARCHIVING_SUSPENDED),
-                    List.of(new EServiceDescriptorLifecycleStep(SUSPEND, ARCHIVING_SUSPENDED))
+                    new EServiceDescriptorLifecycleStep(SUSPEND, SUSPENDED))),
+            Map.entry(new Route(DRAFT, ARCHIVING), List.of(
+                    new EServiceDescriptorLifecycleStep(PUBLISH, PUBLISHED),
+                    new EServiceDescriptorLifecycleStep(ARCHIVE, ARCHIVING))),
+            Map.entry(new Route(DRAFT, ARCHIVING_SUSPENDED), List.of(
+                    new EServiceDescriptorLifecycleStep(PUBLISH, PUBLISHED),
+                    new EServiceDescriptorLifecycleStep(ARCHIVE, ARCHIVING),
+                    new EServiceDescriptorLifecycleStep(SUSPEND, ARCHIVING_SUSPENDED))),
+            Map.entry(new Route(PUBLISHED, SUSPENDED), List.of(new EServiceDescriptorLifecycleStep(SUSPEND, SUSPENDED))),
+            Map.entry(new Route(PUBLISHED, ARCHIVING), List.of(new EServiceDescriptorLifecycleStep(ARCHIVE, ARCHIVING))),
+            Map.entry(new Route(DEPRECATED, SUSPENDED), List.of(new EServiceDescriptorLifecycleStep(SUSPEND, SUSPENDED))),
+            Map.entry(new Route(DEPRECATED, ARCHIVING), List.of(new EServiceDescriptorLifecycleStep(ARCHIVE, ARCHIVING))),
+            Map.entry(new Route(ARCHIVING, ARCHIVING_SUSPENDED),
+                    List.of(new EServiceDescriptorLifecycleStep(SUSPEND, ARCHIVING_SUSPENDED))),
+            Map.entry(new Route(PUBLISHED, ARCHIVING_SUSPENDED), List.of(
+                    new EServiceDescriptorLifecycleStep(ARCHIVE, ARCHIVING),
+                    new EServiceDescriptorLifecycleStep(SUSPEND, ARCHIVING_SUSPENDED))),
+            Map.entry(new Route(DEPRECATED, ARCHIVING_SUSPENDED), List.of(
+                    new EServiceDescriptorLifecycleStep(ARCHIVE, ARCHIVING),
+                    new EServiceDescriptorLifecycleStep(SUSPEND, ARCHIVING_SUSPENDED)))
     );
 
     @ParameterizedTest

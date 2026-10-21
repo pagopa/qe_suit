@@ -171,6 +171,24 @@ class EServiceCatalogAssertionStepsTest {
     }
 
     @Test
+    void verifiesVersionOwnershipAndUnreadNotificationPropertiesByAlias() {
+        when(store.getByAlias("ES-1", EService.class)).thenReturn(Optional.of(included));
+        when(searches.getSearchResult()).thenReturn(new EServiceCatalog(List.of(
+                EServiceCatalog.Entry.builder().id(included.getId()).version("3")
+                        .isMine(false).hasUnreadNotifications(true).build()), 0, 20, 1));
+
+        steps.shouldReportProperties("ES-1", List.of(
+                property("versione presentata", "3"),
+                property("è mio", "no"),
+                property("notifiche non lette", "sì")));
+
+        assertThatThrownBy(() -> steps.shouldReportProperties("ES-1", List.of(property("versione presentata", "2"))))
+                .isInstanceOf(AssertionError.class);
+        assertThatThrownBy(() -> steps.shouldReportProperties("ES-1", List.of(property("proprietà ignota", "no"))))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     void defaultTransformerValidatesAliasDto() {
         try (var validators = Validation.buildDefaultValidatorFactory()) {
             var transformer = new DataTableMapper(validators.getValidator());
@@ -190,6 +208,15 @@ class EServiceCatalogAssertionStepsTest {
         var dto = new EServiceCatalogExpectation();
         dto.setAlias(alias);
         return dto;
+    }
+
+    private it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogPropertyExpectation
+    property(String property, String value) {
+        var expectation =
+                new it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogPropertyExpectation();
+        expectation.setProperty(property);
+        expectation.setValue(value);
+        return expectation;
     }
 
     private EServiceCatalog result(EService... services) {

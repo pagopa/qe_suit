@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice.application.command;
 
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceCatalogSortBy;
+import it.pagopa.interop.common.eservice.domain.EServiceCatalogRequesterDelegationRole;
 import it.pagopa.interop.common.tenant.domain.TenantCategory;
 
 import java.util.List;
@@ -11,6 +12,16 @@ public interface SearchEServiceCatalogCommand {
     SearchEServiceCatalogCommand keyword(String keyword);
 
     SearchEServiceCatalogCommand onlyActiveEservices(Boolean onlyActiveEservices);
+
+    SearchEServiceCatalogCommand availableForRequester(Boolean availableForRequester);
+
+    SearchEServiceCatalogCommand subscribedByRequester(Boolean subscribedByRequester);
+
+    SearchEServiceCatalogCommand requesterDelegationRoles(
+            List<EServiceCatalogRequesterDelegationRole> roles
+    );
+
+    SearchEServiceCatalogCommand hasLinkedPurposeTemplates(Boolean hasLinkedPurposeTemplates);
 
     SearchEServiceCatalogCommand onlyTemplateInstances(Boolean onlyTemplateInstances);
 

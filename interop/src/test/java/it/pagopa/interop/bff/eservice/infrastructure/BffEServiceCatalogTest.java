@@ -83,6 +83,11 @@ class BffEServiceCatalogTest {
         var command = (BffSearchEServiceCatalogCommand) new BffEServiceRequestFactory().defaultSearchEServiceCatalogCommand();
         command.keyword("Nebula").onlyActiveEservices(true);
         command.producerCategories(List.of(it.pagopa.interop.common.tenant.domain.TenantCategory.COMUNI));
+        command.availableForRequester(true).subscribedByRequester(false)
+                .requesterDelegationRoles(List.of(
+                        it.pagopa.interop.common.eservice.domain.EServiceCatalogRequesterDelegationRole.DELEGATE,
+                        it.pagopa.interop.common.eservice.domain.EServiceCatalogRequesterDelegationRole.DELEGATOR))
+                .hasLinkedPurposeTemplates(true);
 
         var result = new EServiceCatalogUseCase(gateway).search(command);
 
@@ -90,6 +95,11 @@ class BffEServiceCatalogTest {
         assertThat(result.getLimit()).isEqualTo(20);
         verify(operation).body(same(command.getBffPayload()));
         assertThat(command.getBffPayload().getProducerCategories()).containsExactly(EServiceProducerCategory.COMUNI);
+        assertThat(command.getBffPayload().getAvailableForRequester()).isTrue();
+        assertThat(command.getBffPayload().getSubscribedByRequester()).isFalse();
+        assertThat(command.getBffPayload().getRequesterDelegationRoles()).extracting(Enum::name)
+                .containsExactly("DELEGATE", "DELEGATOR");
+        assertThat(command.getBffPayload().getHasLinkedPurposeTemplates()).isTrue();
         verify(operation, times(1)).execute(any());
         assertThat(EservicesApi.QueryEServicesCatalogOper.REQ_METHOD.name()).isEqualTo("POST");
         assertThat(EservicesApi.QueryEServicesCatalogOper.REQ_URI).isEqualTo("/catalog");
@@ -204,6 +214,24 @@ class BffEServiceCatalogTest {
                 new BffEServiceRequestFactory().defaultSearchEServiceCatalogCommand();
 
         assertThat(command.getBffPayload()).isEqualTo(new CatalogFilterPayload().offset(0).limit(20));
+    }
+
+    @Test
+    void mapsRequesterCatalogFiltersToBffPayload() {
+        var command = new BffSearchEServiceCatalogCommand();
+        command.availableForRequester(true)
+                .subscribedByRequester(false)
+                .requesterDelegationRoles(List.of(
+                        it.pagopa.interop.common.eservice.domain.EServiceCatalogRequesterDelegationRole.DELEGATE,
+                        it.pagopa.interop.common.eservice.domain.EServiceCatalogRequesterDelegationRole.DELEGATOR))
+                .hasLinkedPurposeTemplates(true);
+
+        var payload = command.getBffPayload();
+        assertThat(payload.getAvailableForRequester()).isTrue();
+        assertThat(payload.getSubscribedByRequester()).isFalse();
+        assertThat(payload.getRequesterDelegationRoles()).extracting(Enum::name)
+                .containsExactly("DELEGATE", "DELEGATOR");
+        assertThat(payload.getHasLinkedPurposeTemplates()).isTrue();
     }
 
     @Test

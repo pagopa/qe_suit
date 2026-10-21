@@ -3,6 +3,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper;
 import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatalogCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceCatalogSortBy;
+import it.pagopa.interop.common.eservice.domain.EServiceCatalogRequesterDelegationRole;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogSearchConfiguration;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -56,6 +57,11 @@ public interface EServiceCatalogSearchConfigurationMapper {
     ) {
         switch (source.getFilter()) {
             case "solo e-service attivi" -> target.onlyActiveEservices(parseBoolean(source.getValue()));
+            case "richiedibili dal fruitore" -> target.availableForRequester(parseBoolean(source.getValue()));
+            case "sottoscritti dal fruitore" -> target.subscribedByRequester(parseBoolean(source.getValue()));
+            case "ruolo di delega" -> target.requesterDelegationRoles(parseDelegationRoles(source.getValue()));
+            case "con template di finalità collegati" ->
+                    target.hasLinkedPurposeTemplates(parseBoolean(source.getValue()));
             case "istanze di template" -> target.onlyTemplateInstances(parseBoolean(source.getValue()));
             case "istanza del template" -> {
                 if (entities == null) throw new IllegalArgumentException("Template alias resolution requires EntityStore");
@@ -125,6 +131,18 @@ public interface EServiceCatalogSearchConfigurationMapper {
             case "sì", "si" -> true;
             case "no" -> false;
             default -> throw new IllegalArgumentException("Invalid catalog boolean: " + value);
+        };
+    }
+
+    private static List<EServiceCatalogRequesterDelegationRole> parseDelegationRoles(String value) {
+        return switch (value) {
+            case "delegato" -> List.of(EServiceCatalogRequesterDelegationRole.DELEGATE);
+            case "delegante" -> List.of(EServiceCatalogRequesterDelegationRole.DELEGATOR);
+            case "delegato e delegante" -> List.of(
+                    EServiceCatalogRequesterDelegationRole.DELEGATE,
+                    EServiceCatalogRequesterDelegationRole.DELEGATOR
+            );
+            default -> throw new IllegalArgumentException("Ruolo di delega non supportato: " + value);
         };
     }
 }

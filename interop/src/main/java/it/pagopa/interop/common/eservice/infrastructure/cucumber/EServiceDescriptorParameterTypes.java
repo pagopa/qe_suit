@@ -12,14 +12,17 @@ public class EServiceDescriptorParameterTypes {
 
     private final EntityStore entityStore;
 
-    @ParameterType("sospesa|bozza|deprecata|pubblicata|in archiviazione sospesa")
+    @ParameterType("sospesa|bozza|in bozza|deprecata|pubblicata|in archiviazione|in archiviazione sospesa|archiviata|in attesa di approvazione")
     public EServiceDescriptorState eServiceDescriptorState(String state) {
         return switch (state) {
             case "sospesa" -> EServiceDescriptorState.SUSPENDED;
-            case "bozza" -> EServiceDescriptorState.DRAFT;
+            case "bozza", "in bozza" -> EServiceDescriptorState.DRAFT;
             case "deprecata" -> EServiceDescriptorState.DEPRECATED;
             case "pubblicata" -> EServiceDescriptorState.PUBLISHED;
+            case "in archiviazione" -> EServiceDescriptorState.ARCHIVING;
             case "in archiviazione sospesa" -> EServiceDescriptorState.ARCHIVING_SUSPENDED;
+            case "archiviata" -> EServiceDescriptorState.ARCHIVED;
+            case "in attesa di approvazione" -> EServiceDescriptorState.WAITING_FOR_APPROVAL;
             default -> throw new IllegalArgumentException("Invalid EServiceDescriptorState: " + state);
         };
     }

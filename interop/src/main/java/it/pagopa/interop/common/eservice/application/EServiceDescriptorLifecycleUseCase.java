@@ -4,6 +4,7 @@ import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescr
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +46,10 @@ public class EServiceDescriptorLifecycleUseCase {
             current = switch (step.action()) {
                 case PUBLISH -> publishDraft(eService, current, command);
                 case SUSPEND -> descriptors.suspendDescriptor(eService, current);
+                case ARCHIVE -> {
+                    descriptors.archiveDescriptor(eService, current, GracePeriodDays.NUMBER_60);
+                    yield descriptors.getDescriptor(eService, current);
+                }
             };
             requireState(current, step.expectedState());
         }

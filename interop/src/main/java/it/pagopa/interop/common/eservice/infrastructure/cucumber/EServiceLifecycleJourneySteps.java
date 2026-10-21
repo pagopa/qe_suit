@@ -13,7 +13,7 @@ public class EServiceLifecycleJourneySteps {
 
     private final InteropJourney interopJourney;
 
-    @Given("{eServiceDescriptorByVersionAndAlias} del/di {tenant} (in ){eServiceDescriptorState}")
+    @Given("{eServiceDescriptorByVersionAndAlias} del/di {tenant} {eServiceDescriptorState}")
     public void bringEServiceDescriptorToState(SelectedEServiceDescriptor selectedEServiceDescriptor, Tenant producer, EServiceDescriptorState targetState) {
         interopJourney
                 .withProducer(producer, UserRole.ADMIN)

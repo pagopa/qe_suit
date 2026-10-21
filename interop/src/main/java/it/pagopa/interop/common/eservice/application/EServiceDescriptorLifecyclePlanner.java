@@ -19,15 +19,28 @@ public class EServiceDescriptorLifecyclePlanner {
             new EServiceDescriptorLifecycleStep(SUSPEND, SUSPENDED);
     private static final EServiceDescriptorLifecycleStep SUSPEND_ARCHIVING_STEP =
             new EServiceDescriptorLifecycleStep(SUSPEND, ARCHIVING_SUSPENDED);
+    private static final EServiceDescriptorLifecycleStep ARCHIVE_STEP =
+            new EServiceDescriptorLifecycleStep(ARCHIVE, ARCHIVING);
 
     private static final Map<EServiceDescriptorState, Map<EServiceDescriptorState, List<EServiceDescriptorLifecycleStep>>> PLANS =
             Map.of(
                     DRAFT, Map.of(
                             PUBLISHED, List.of(PUBLISH_STEP),
-                            SUSPENDED, List.of(PUBLISH_STEP, SUSPEND_STEP)
+                            SUSPENDED, List.of(PUBLISH_STEP, SUSPEND_STEP),
+                            ARCHIVING, List.of(PUBLISH_STEP, ARCHIVE_STEP),
+                            ARCHIVING_SUSPENDED, List.of(
+                                    PUBLISH_STEP, ARCHIVE_STEP, SUSPEND_ARCHIVING_STEP)
                     ),
-                    PUBLISHED, Map.of(SUSPENDED, List.of(SUSPEND_STEP)),
-                    DEPRECATED, Map.of(SUSPENDED, List.of(SUSPEND_STEP)),
+                    PUBLISHED, Map.of(
+                            SUSPENDED, List.of(SUSPEND_STEP),
+                            ARCHIVING, List.of(ARCHIVE_STEP),
+                            ARCHIVING_SUSPENDED, List.of(ARCHIVE_STEP, SUSPEND_ARCHIVING_STEP)
+                    ),
+                    DEPRECATED, Map.of(
+                            SUSPENDED, List.of(SUSPEND_STEP),
+                            ARCHIVING, List.of(ARCHIVE_STEP),
+                            ARCHIVING_SUSPENDED, List.of(ARCHIVE_STEP, SUSPEND_ARCHIVING_STEP)
+                    ),
                     ARCHIVING, Map.of(ARCHIVING_SUSPENDED, List.of(SUSPEND_ARCHIVING_STEP))
             );
 

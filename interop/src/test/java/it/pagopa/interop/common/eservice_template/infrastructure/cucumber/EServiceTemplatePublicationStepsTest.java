@@ -18,9 +18,12 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
+import io.cucumber.cucumberexpressions.ExpressionFactory;
+import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
@@ -88,9 +91,15 @@ class EServiceTemplatePublicationStepsTest {
 
     @Test
     void tableSynonymsShareTheSameBindingImplementations() throws NoSuchMethodException {
-        assertThat(Arrays.stream(EServiceTemplatePublicationSteps.class.getMethod("publishTemplates", List.class)
-                .getAnnotationsByType(Given.class)).map(Given::value))
-                .containsExactly("i seguenti template e-service pubblicati:", "i seguenti template di e-service pubblicati:");
+        var expressionFactory = new ExpressionFactory(new ParameterTypeRegistry(Locale.ITALIAN));
+        var templateExpression = Arrays.stream(EServiceTemplatePublicationSteps.class
+                        .getMethod("publishTemplates", List.class).getAnnotationsByType(Given.class))
+                .map(Given::value)
+                .findFirst()
+                .orElseThrow();
+        var expression = expressionFactory.createExpression(templateExpression);
+        assertThat(expression.match("i seguenti template e-service pubblicati:")).isNotNull();
+        assertThat(expression.match("i seguenti template di e-service pubblicati:")).isNotNull();
         assertThat(Arrays.stream(EServiceTemplatePublicationSteps.class.getMethod("publishInstances", List.class)
                 .getAnnotationsByType(Given.class)).map(Given::value))
                 .containsExactly("le seguenti istanze di template pubblicate:", "le seguenti istanze di template e-service pubblicate:");

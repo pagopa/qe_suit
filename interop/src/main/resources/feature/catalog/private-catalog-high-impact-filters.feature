@@ -75,7 +75,7 @@ Feature: Filtri ad alto impatto nel catalogo privato
     Given i seguenti e-service pubblicati:
       | alias | erogatore        | nome             |
       | ES-1  | Comune di Milano | E-service Dorsum |
-    And l'e-service "ES-1" sottoscritto da PagoPA con richiesta di fruizione <stato richiesta>
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con richiesta di fruizione <stato richiesta>
     When PagoPA cerca nel catalogo "Dorsum" con i seguenti filtri:
       | filtro                    | valore |
       | sottoscritti dal fruitore | sì     |
@@ -93,8 +93,8 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | alias | erogatore        | nome                |
       | ES-1  | Comune di Milano | E-service Ebrio     |
       | ES-2  | Comune di Milano | E-service Ebrio bis |
-    And l'e-service "ES-1" sottoscritto da PagoPA con richiesta di fruizione attiva
-    And l'e-service "ES-2" sottoscritto dal Comune di Pozzallo con richiesta di fruizione attiva
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    And l'e-service "ES-2" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
     When PagoPA cerca nel catalogo "Ebrio" con i seguenti filtri:
       | filtro                    | valore |
       | sottoscritti dal fruitore | sì     |

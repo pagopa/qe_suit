@@ -5,6 +5,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorTransitions;
+import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -85,6 +86,25 @@ class EServiceDescriptorLifecycleUseCaseTest {
                 .isInstanceOf(UnsupportedOperationException.class);
         verify(operations).getDescriptor(eService, draft);
         verifyNoMoreInteractions(operations);
+    }
+
+    @Test
+    void schedulesArchivingAndRefreshesStateBeforeSuspending() {
+        EServiceDescriptor published = draft.toBuilder().state(PUBLISHED).build();
+        EServiceDescriptor archiving = draft.toBuilder().state(ARCHIVING).build();
+        EServiceDescriptor suspended = draft.toBuilder().state(ARCHIVING_SUSPENDED).build();
+        when(operations.getDescriptor(eService, draft)).thenReturn(published);
+        when(operations.getDescriptor(eService, published)).thenReturn(archiving);
+        when(operations.suspendDescriptor(eService, archiving)).thenReturn(suspended);
+
+        assertThat(lifecycle.bringToState(eService, draft, ARCHIVING_SUSPENDED)).isSameAs(suspended);
+
+        var order = inOrder(operations);
+        order.verify(operations).getDescriptor(eService, draft);
+        order.verify(operations).archiveDescriptor(eService, published, GracePeriodDays.NUMBER_60);
+        order.verify(operations).getDescriptor(eService, published);
+        order.verify(operations).suspendDescriptor(eService, archiving);
+        order.verifyNoMoreInteractions();
     }
 
     @Test
