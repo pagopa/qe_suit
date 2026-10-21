@@ -6,6 +6,9 @@ import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -29,6 +32,8 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     private final EServiceUseCase eServiceUseCase;
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EntityStore entityStore;
+    private final EServiceRiskAnalysisUseCase eServiceRiskAnalysisUseCase;
+    private final CurrentUserSession currentUserSession;
     private final EServiceRequestFactory requestFactory;
 
     @Override
@@ -66,6 +71,14 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         EServiceDescriptor updatedDescriptor = eServiceDescriptorUseCase.updateDescriptor(eService, eServiceDescriptor, command);
         eService.addDescriptor(updatedDescriptor);
         return processLifecycle(eService, updatedDescriptor, state, command);
+    }
+
+    @Override
+    public EServiceJourneyImpl addRiskAnalysis() {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        EServiceRiskAnalysis riskAnalysis = eServiceRiskAnalysisUseCase.addLatestRiskAnalysis(currentUserSession.getTenant(), eService, true);
+        entityStore.upsert(riskAnalysis);
+        return this;
     }
 
     @Override

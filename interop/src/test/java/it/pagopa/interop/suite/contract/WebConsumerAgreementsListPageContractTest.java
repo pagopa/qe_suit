@@ -10,7 +10,6 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerAgreementsListPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +18,8 @@ import org.springframework.test.context.TestConstructor;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SpringBootTest(
         classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
@@ -51,66 +52,64 @@ public class WebConsumerAgreementsListPageContractTest {
                         "Consumer agreements list page shows the expected content and filters",
                         page -> {
                         },
-                        page -> {
-                            Assertions.assertThat(page.pageTitle().read()).isNotBlank();
-                            Assertions.assertThat(page.pageDescription().read()).isNotBlank();
-                            Assertions.assertThat(page.eServiceFilterLabel().read())
-                                    .as("E-Service filter label")
-                                    .isEqualTo("Cerca per e-service");
-                            Assertions.assertThat(page.eServiceFilterInput().read())
-                                    .as("E-Service filter initial value")
-                                    .isEmpty();
-                            Assertions.assertThat(page.producerFilterLabel().read())
-                                    .as("Producer filter label")
-                                    .isEqualTo("Cerca per erogatore");
-                            Assertions.assertThat(page.producerFilterInput().read())
-                                    .as("Producer filter initial value")
-                                    .isEmpty();
-                            Assertions.assertThat(page.statusFilterLabel().read())
-                                    .as("Status filter label")
-                                    .isEqualTo("Stato della richiesta");
-                            Assertions.assertThat(page.statusFilterInput().read())
-                                    .as("Status filter initial value")
-                                    .isEmpty();
+                        page -> assertSoftly(softly -> {
+                                    softly.assertThat(page.pageDescription().read()).isNotBlank();
+                                    softly.assertThat(page.eServiceFilterLabel().read())
+                                            .as("E-Service filter label")
+                                            .isEqualTo("Cerca per e-service");
+                                    softly.assertThat(page.eServiceFilterInput().read())
+                                            .as("E-Service filter initial value")
+                                            .isEmpty();
+                                    softly.assertThat(page.producerFilterLabel().read())
+                                            .as("Producer filter label")
+                                            .isEqualTo("Cerca per erogatore");
+                                    softly.assertThat(page.producerFilterInput().read())
+                                            .as("Producer filter initial value")
+                                            .isEmpty();
+                                    softly.assertThat(page.statusFilterLabel().read())
+                                            .as("Status filter label")
+                                            .isEqualTo("Stato della richiesta");
+                                    softly.assertThat(page.statusFilterInput().read())
+                                            .as("Status filter initial value")
+                                            .isEmpty();
 
-                            Assertions.assertThat(page.agreementsTable().get().isPresent()).isTrue();
-                            TableRow header = page.agreementsTable().tHead().rows().get(0);
+                                    softly.assertThat(page.agreementsTable().get().isPresent()).isTrue();
+                                    TableRow header = page.agreementsTable().tHead().rows().get(0);
 
-                            Assertions.assertThat(header.cells().get(0).read())
-                                    .as("E-Service column")
-                                    .isEqualTo("E-service");
+                                    softly.assertThat(header.cells().get(0).read())
+                                            .as("E-Service column")
+                                            .isEqualTo("E-service");
 
-                            Assertions.assertThat(header.cells().get(1).read())
-                                    .as("Erogatore column")
-                                    .isEqualTo("Erogatore");
+                                    softly.assertThat(header.cells().get(1).read())
+                                            .as("Erogatore column")
+                                            .isEqualTo("Erogatore");
 
-                            Assertions.assertThat(header.cells().get(2).read())
-                                    .as("Status column")
-                                    .isEqualTo("Stato richiesta");
+                                    softly.assertThat(header.cells().get(2).read())
+                                            .as("Status column")
+                                            .isEqualTo("Stato richiesta");
 
-                            List<TableRow> rows = page.agreementsTable().tBody().rows();
-                            AtomicInteger rowCounter = new AtomicInteger(1);
-                            rows.forEach(row -> {
-                                Assertions.assertThat(row.cells().get(0).read())
-                                        .as("E-Service cell value at row %s", rowCounter)
+                                    List<TableRow> rows = page.agreementsTable().tBody().rows();
+                                    AtomicInteger rowCounter = new AtomicInteger(1);
+                                    rows.forEach(row -> {
+                                        softly.assertThat(row.cells().get(0).read())
+                                                .as("E-Service cell value at row %s", rowCounter)
                                         .isNotBlank();
 
-                                Assertions.assertThat(row.cells().get(1).read())
+                                        softly.assertThat(row.cells().get(1).read())
                                         .as("Provider cell value at row %s", rowCounter)
                                         .isNotBlank();
 
-                                Assertions.assertThat(row.cells().get(2).read())
-                                        .as("Status cell value at row %s", rowCounter)
-                                        .isNotBlank();
+                                        softly.assertThat(row.cells().get(2).read())
+                                                .as("Status cell value at row %s", rowCounter)
+                                                .isNotBlank();
 
-                                Assertions.assertThat(row.cells().get(3).read())
-                                        .as("Cell with detail button at row %s", rowCounter)
-                                        .isEqualTo("Visualizza");
-                                rowCounter.getAndIncrement();
-                            });
-                            Assertions.assertThat(page.pagination().get().isPresent()).isTrue();
-                        }
-                )
-        );
+                                        softly.assertThat(row.cells().get(3).read())
+                                                .as("Cell with detail button at row %s", rowCounter)
+                                                .isEqualTo("Visualizza");
+                                        rowCounter.getAndIncrement();
+                                    });
+                                    softly.assertThat(page.pagination().get().isPresent()).isTrue();
+                                }
+                        )));
     }
 }
