@@ -9,12 +9,12 @@ import org.assertj.core.api.Assertions;
 /**
  * {@code {baseUrl}/notifiche/<IUN>/dettaglio/timeline}
  * Pagina "Stato della notifica" della persona giuridica: la cronologia degli stati di una notifica.
- * Si apre da "Vai al dettaglio" della sezione "Stato della notifica" del dettaglio ({@link NotificationDetailPGPage}),
- * da cui si legge anche lo IUN: per questo l'URL non è risolta.
+ * Si apre da "Vai al dettaglio" della sezione "Stato della notifica" del dettaglio ({@link NotificationDetailPGPage})
+ * oppure direttamente dall'URL, con lo IUN della notifica come parametro.
  * L'assertLoaded verifica che la pagina sia caricata, cioè il titolo. Breadcrumb ed eventi sono verificati da
  * {@code WebNotificationTimelinePGContractTest}.
  */
-@Url("about:blank")
+@Url("${url.notifiche.persona-giuridica.notifiche-dettaglio-timeline}")
 public interface NotificationTimelinePGPage extends Page {
 
     String TITLE = "Stato della notifica";
