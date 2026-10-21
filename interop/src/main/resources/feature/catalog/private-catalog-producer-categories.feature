@@ -9,7 +9,7 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
 
   Assunzioni:
   - le categorie degli enti sono lette dagli attributi certificati già presenti sui tenant QA e non vengono mai modificate;
-  - se le relazioni attese tra gli enti non sono rispettate (stessa categoria o categorie diverse), lo scenario fallisce come precondizione non soddisfatta;
+  - l'appartenenza o non appartenenza alle categorie indicate è verificata come precondizione sui dati reali;
   - gli e-service predisposti sono eliminati o archiviati al termine dello scenario da un hook.
 
   Scenario: [PRIVATE_CATALOG_PRODUCER_CATEGORIES_1] Una sola categoria
@@ -33,19 +33,22 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
     And l'e-service "ES-3" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_PRODUCER_CATEGORIES_2] Più categorie in alternativa
-    Given le categorie degli enti rilevate dagli attributi certificati con i seguenti dati:
-      | ente             | categoria |
-      | Comune di Milano | CAT-1     |
-      | Sogecap          | CAT-2     |
-      | AgID             | CAT-3     |
+    Given gli enti appartengono alle categorie indicate secondo i seguenti dati:
+      | ente             | categoria                                    | appartenenza |
+      | Comune di Milano | COMUNI                                       | sì           |
+      | Comune di Milano | STAZIONI_APPALTANTI_GESTORI_PUBBLICI_SERVIZI | no           |
+      | Kyma             | STAZIONI_APPALTANTI_GESTORI_PUBBLICI_SERVIZI | sì           |
+      | Kyma             | COMUNI                                       | no           |
+      | Sogecap          | COMUNI                                       | no           |
+      | Sogecap          | STAZIONI_APPALTANTI_GESTORI_PUBBLICI_SERVIZI | no           |
     And i seguenti e-service pubblicati:
       | alias | erogatore        | nome                |
       | ES-1  | Comune di Milano | E-service Duo Alfa  |
-      | ES-2  | Sogecap          | E-service Duo Beta  |
-      | ES-3  | AgID             | E-service Duo Gamma |
+      | ES-2  | Kyma             | E-service Duo Beta  |
+      | ES-3  | Sogecap          | E-service Duo Gamma |
     When PagoPA cerca nel catalogo "Duo" con i seguenti filtri:
-      | filtro                   | valore        |
-      | categoria dell'erogatore | CAT-1 e CAT-2 |
+      | filtro                   | valore                                                |
+      | categoria dell'erogatore | COMUNI e STAZIONI_APPALTANTI_GESTORI_PUBBLICI_SERVIZI |
     Then tra i risultati della ricerca sono presenti i seguenti e-service:
       | alias |
       | ES-1  |
@@ -53,23 +56,23 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
     And l'e-service "ES-3" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_PRODUCER_CATEGORIES_3] Categoria senza e-service corrispondenti
-    Given le categorie degli enti rilevate dagli attributi certificati con i seguenti dati:
-      | ente             | categoria |
-      | Comune di Milano | CAT-1     |
-      | Sogecap          | CAT-2     |
+    Given gli enti appartengono alle categorie indicate secondo i seguenti dati:
+      | ente             | categoria | appartenenza |
+      | Comune di Milano | COMUNI    | sì           |
+      | Sogecap          | COMUNI    | no           |
     And i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                   |
-      | ES-1  | Comune di Milano | E-service Assente Alfa |
+      | alias | erogatore | nome                   |
+      | ES-1  | Sogecap   | E-service Assente Alfa |
     When PagoPA cerca nel catalogo "Assente" con i seguenti filtri:
       | filtro                   | valore |
-      | categoria dell'erogatore | CAT-2  |
+      | categoria dell'erogatore | COMUNI |
     Then l'e-service "ES-1" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_PRODUCER_CATEGORIES_4] Elenco di categorie vuoto: nessuna restrizione
-    Given le categorie degli enti rilevate dagli attributi certificati con i seguenti dati:
-      | ente             | categoria |
-      | Comune di Milano | CAT-1     |
-      | Sogecap          | CAT-2     |
+    Given gli enti appartengono alle categorie indicate secondo i seguenti dati:
+      | ente             | categoria | appartenenza |
+      | Comune di Milano | COMUNI    | sì           |
+      | Sogecap          | COMUNI    | no           |
     And i seguenti e-service pubblicati:
       | alias | erogatore        | nome                  |
       | ES-1  | Comune di Milano | E-service Ambito Alfa |
