@@ -80,7 +80,7 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
 
     @Override
     public SearchEServiceCatalogCommand defaultSearchEServiceCatalogCommand() {
-        return new BffSearchEServiceCatalogCommand().offset(0).limit(200);
+        return new BffSearchEServiceCatalogCommand().offset(0).limit(20);
     }
 
     @Override

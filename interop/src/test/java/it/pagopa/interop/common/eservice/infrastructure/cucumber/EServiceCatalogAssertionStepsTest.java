@@ -3,6 +3,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.bff.eservice.application.BffSearchEServiceCatalogCommand;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRequestFactory;
+import it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogGateway;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -25,12 +26,14 @@ import static org.mockito.Mockito.*;
 
 class EServiceCatalogAssertionStepsTest {
     private final EServiceCatalogGateway gateway = mock(EServiceCatalogGateway.class);
-    private final EServiceCatalogUseCase catalog = new EServiceCatalogUseCase(
-            gateway, new BffEServiceRequestFactory());
+    private final BffEServiceRequestFactory factory = new BffEServiceRequestFactory();
+    private final EServiceCatalogUseCase catalog = new EServiceCatalogUseCase(gateway);
+    private final EServiceCatalogPaginationUseCase pagination =
+            new EServiceCatalogPaginationUseCase(catalog, gateway, factory);
     private final EntityStore store = mock(EntityStore.class, CALLS_REAL_METHODS);
     private final EServiceCatalogSearchSteps searches = mock(EServiceCatalogSearchSteps.class);
     private final EServiceCatalogAssertionSteps steps = new EServiceCatalogAssertionSteps(
-            searches, catalog, store, Mappers.getMapper(EServiceCatalogExpectationMapper.class));
+            searches, catalog, pagination, store, Mappers.getMapper(EServiceCatalogExpectationMapper.class));
     private final EService included = EService.builder().id(UUID.randomUUID()).name("same-name").build();
     private final EService excluded = EService.builder().id(UUID.randomUUID()).name("same-name").build();
 

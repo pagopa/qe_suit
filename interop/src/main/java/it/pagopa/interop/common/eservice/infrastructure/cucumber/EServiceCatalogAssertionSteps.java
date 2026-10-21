@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import io.cucumber.java.en.Then;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogExpectation;
@@ -14,6 +15,7 @@ import java.util.List;
 public class EServiceCatalogAssertionSteps {
     private final EServiceCatalogSearchSteps searchSteps;
     private final EServiceCatalogUseCase catalog;
+    private final EServiceCatalogPaginationUseCase pagination;
     private final EntityStore entityStore;
     private final EServiceCatalogExpectationMapper expectationMapper;
 
@@ -53,7 +55,7 @@ public class EServiceCatalogAssertionSteps {
 
     @Then("tra i risultati della ricerca, considerando tutte le pagine, i seguenti e-service compaiono in quest'ordine relativo:")
     public void shouldContainEServicesInRelativeOrder(List<EServiceCatalogExpectation> expectations) {
-        catalog.shouldContainInRelativeOrder(searchSteps.getSearchCommand(), searchSteps.getSearchResult(),
+        pagination.shouldContainInRelativeOrder(searchSteps.getSearchCommand(), searchSteps.getSearchResult(),
                 expectationMapper.toEServices(expectations, entityStore));
     }
 

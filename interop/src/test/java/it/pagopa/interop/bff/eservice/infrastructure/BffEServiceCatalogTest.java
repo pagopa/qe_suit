@@ -5,6 +5,7 @@ import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.bff.eservice.application.BffSearchEServiceCatalogCommand;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationUseCase;
 import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatalogCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceCatalog;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
@@ -83,7 +84,7 @@ class BffEServiceCatalogTest {
         command.keyword("Nebula").onlyActiveEservices(true);
         command.producerCategories(List.of(it.pagopa.interop.common.tenant.domain.TenantCategory.COMUNI));
 
-        var result = new EServiceCatalogUseCase(gateway, new BffEServiceRequestFactory()).search(command);
+        var result = new EServiceCatalogUseCase(gateway).search(command);
 
         assertThat(result.getResults()).isEmpty();
         assertThat(result.getLimit()).isEqualTo(20);
@@ -135,7 +136,9 @@ class BffEServiceCatalogTest {
                 .sortBy(it.pagopa.interop.common.eservice.domain.EServiceCatalogSortBy.NAME_ASC)
                 .onlyActiveEservices(true).producersIds(List.of(UUID.randomUUID()));
 
-        var pages = new EServiceCatalogUseCase(gateway, new BffEServiceRequestFactory()).searchPages(command);
+        var catalog = new EServiceCatalogUseCase(gateway);
+        var pages = new EServiceCatalogPaginationUseCase(
+                catalog, gateway, new BffEServiceRequestFactory()).searchPages(command);
 
         assertThat(pages).extracting(EServiceCatalog::getOffset).containsExactly(0, 2, 4);
         assertThat(pages).extracting(page -> page.getResults().size()).containsExactly(2, 2, 1);

@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import it.pagopa.interop.bff.eservice.application.BffSearchEServiceCatalogCommand;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRequestFactory;
+import it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.domain.EServiceCatalog;
@@ -23,10 +24,11 @@ import static org.mockito.Mockito.*;
 
 class EServiceCatalogSearchStepsTest {
     private final EServiceCatalogUseCase catalog = mock(EServiceCatalogUseCase.class);
+    private final EServiceCatalogPaginationUseCase pagination = mock(EServiceCatalogPaginationUseCase.class);
     private final CurrentUserSession session = mock(CurrentUserSession.class);
     private final EServiceRequestFactory factory = spy(new BffEServiceRequestFactory());
     private final EServiceCatalogSearchSteps steps = new EServiceCatalogSearchSteps(
-            catalog, factory, session, Mappers.getMapper(EServiceCatalogSearchConfigurationMapper.class));
+            catalog, pagination, factory, session, Mappers.getMapper(EServiceCatalogSearchConfigurationMapper.class));
 
     @BeforeEach
     void stubDefaultSearchResult() {
@@ -150,13 +152,13 @@ class EServiceCatalogSearchStepsTest {
         var command = steps.getSearchCommand();
         var firstPage = steps.getSearchResult();
         var pages = List.of(firstPage);
-        when(catalog.searchPages(command, firstPage, 1)).thenReturn(pages);
+        when(pagination.searchPages(command, firstPage, 1)).thenReturn(pages);
 
         assertThat(steps.getSearchPages(1)).isSameAs(pages);
         assertThat(steps.getSearchPages()).isSameAs(pages);
         assertThat(steps.getSearchPages(1)).isSameAs(pages);
-        verify(catalog).searchPages(command, firstPage, 1);
-        verify(catalog, never()).searchPages(any(), any());
+        verify(pagination).searchPages(command, firstPage, 1);
+        verify(pagination, never()).searchPages(any(), any());
     }
 
     @Test
@@ -165,7 +167,7 @@ class EServiceCatalogSearchStepsTest {
         var firstCommand = steps.getSearchCommand();
         var firstPage = steps.getSearchResult();
         var firstPages = List.of(firstPage);
-        when(catalog.searchPages(firstCommand, firstPage)).thenReturn(firstPages);
+        when(pagination.searchPages(firstCommand, firstPage)).thenReturn(firstPages);
         assertThat(steps.getSearchPages()).isSameAs(firstPages);
         assertThat(steps.getSearchPages()).isSameAs(firstPages);
 
@@ -174,17 +176,17 @@ class EServiceCatalogSearchStepsTest {
         steps.search(Tenant.PAGO_PA, "second");
         var nextCommand = steps.getSearchCommand();
         var nextPages = List.of(nextPage);
-        when(catalog.searchPages(nextCommand, nextPage)).thenReturn(nextPages);
+        when(pagination.searchPages(nextCommand, nextPage)).thenReturn(nextPages);
 
         assertThat(steps.getSearchPages()).isSameAs(nextPages);
-        verify(catalog).searchPages(firstCommand, firstPage);
-        verify(catalog).searchPages(nextCommand, nextPage);
+        verify(pagination).searchPages(firstCommand, firstPage);
+        verify(pagination).searchPages(nextCommand, nextPage);
     }
 
     @Test
     void invalidNewSearchClearsSuccessfulSearchStateAndCachedPages() {
         steps.search(Tenant.PAGO_PA, "first");
-        when(catalog.searchPages(any(), any())).thenReturn(List.of(steps.getSearchResult()));
+        when(pagination.searchPages(any(), any())).thenReturn(List.of(steps.getSearchResult()));
         steps.getSearchPages();
 
         assertThatThrownBy(() -> steps.searchWithFilters(Tenant.PAGO_PA, "second",
@@ -198,10 +200,10 @@ class EServiceCatalogSearchStepsTest {
     @Test
     void failedPageLoadingDoesNotCachePartialResults() {
         steps.search(Tenant.PAGO_PA, "first");
-        when(catalog.searchPages(any(), any())).thenThrow(new IllegalStateException("page failed"));
+        when(pagination.searchPages(any(), any())).thenThrow(new IllegalStateException("page failed"));
         assertThatThrownBy(steps::getSearchPages).hasMessage("page failed");
         assertThatThrownBy(steps::getSearchPages).hasMessage("page failed");
-        verify(catalog, times(2)).searchPages(steps.getSearchCommand(), steps.getSearchResult());
+        verify(pagination, times(2)).searchPages(steps.getSearchCommand(), steps.getSearchResult());
     }
 
     private EServiceCatalogSearchConfiguration filter(String filter, String value) {

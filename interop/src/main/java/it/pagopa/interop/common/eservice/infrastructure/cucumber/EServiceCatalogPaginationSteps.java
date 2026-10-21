@@ -23,8 +23,8 @@ public class EServiceCatalogPaginationSteps {
     public void pagesContainExpectedResultsWithTotal(
             List<EServiceCatalogPageExpectation> expectations
     ) {
-        var mapped = paginationExpectationMapper.toExpectations(expectations);
-        catalog.shouldHavePagination(searchSteps.getSearchPages(mapped.size()), mapped);
+        var resultCounts = paginationExpectationMapper.toResultCounts(expectations);
+        catalog.shouldHavePagination(searchSteps.getSearchPages(resultCounts.size()), resultCounts);
     }
 
     @Then("nessun e-service compare in più di una pagina")

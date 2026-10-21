@@ -3,6 +3,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogGateway;
+import it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceCatalog;
@@ -27,15 +28,17 @@ import static org.mockito.Mockito.*;
 class EServiceCatalogPaginationStepsTest {
     private final EServiceCatalogGateway gateway = mock(EServiceCatalogGateway.class);
     private final BffEServiceRequestFactory factory = new BffEServiceRequestFactory();
-    private final EServiceCatalogUseCase catalog = new EServiceCatalogUseCase(gateway, factory);
+    private final EServiceCatalogUseCase catalog = new EServiceCatalogUseCase(gateway);
+    private final EServiceCatalogPaginationUseCase paginationUseCase =
+            new EServiceCatalogPaginationUseCase(catalog, gateway, factory);
     private final EntityStore store = mock(EntityStore.class, CALLS_REAL_METHODS);
     private final EServiceCatalogExpectationMapper expectations = Mappers.getMapper(EServiceCatalogExpectationMapper.class);
-    private final EServiceCatalogSearchSteps searches = new EServiceCatalogSearchSteps(catalog, factory,
+    private final EServiceCatalogSearchSteps searches = new EServiceCatalogSearchSteps(catalog, paginationUseCase, factory,
             mock(CurrentUserSession.class), Mappers.getMapper(EServiceCatalogSearchConfigurationMapper.class));
-    private final EServiceCatalogPaginationSteps pagination = new EServiceCatalogPaginationSteps(
+    private final EServiceCatalogPaginationSteps paginationSteps = new EServiceCatalogPaginationSteps(
             searches, catalog, store, expectations, Mappers.getMapper(EServiceCatalogPaginationExpectationMapper.class));
     private final EServiceCatalogAssertionSteps assertions = new EServiceCatalogAssertionSteps(
-            searches, catalog, store, expectations);
+            searches, catalog, paginationUseCase, store, expectations);
     private final UUID first = UUID.randomUUID();
     private final UUID second = UUID.randomUUID();
     private final UUID third = UUID.randomUUID();
@@ -49,9 +52,9 @@ class EServiceCatalogPaginationStepsTest {
         search();
         verify(gateway, times(1)).search(any());
 
-        pagination.pagesContainExpectedResultsWithTotal(List.of(pageExpectation(1, 2), pageExpectation(2, 1)));
-        pagination.pagesContainNoDuplicateEServices();
-        pagination.pagesContainExactlyEServices(List.of(expectation("third"), expectation("first"), expectation("second")));
+        paginationSteps.pagesContainExpectedResultsWithTotal(List.of(pageExpectation(1, 2), pageExpectation(2, 1)));
+        paginationSteps.pagesContainNoDuplicateEServices();
+        paginationSteps.pagesContainExactlyEServices(List.of(expectation("third"), expectation("first"), expectation("second")));
         assertions.shouldAppearExactlyOnce("third");
 
         verify(gateway).search(argThat(command -> command.getOffset() == 0));
@@ -76,7 +79,7 @@ class EServiceCatalogPaginationStepsTest {
         stubPages(third, 4);
         search();
 
-        assertThatThrownBy(() -> pagination.pagesContainExpectedResultsWithTotal(
+        assertThatThrownBy(() -> paginationSteps.pagesContainExpectedResultsWithTotal(
                 List.of(pageExpectation(1, 2), pageExpectation(2, 1))))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("total count changed");
 
@@ -88,7 +91,7 @@ class EServiceCatalogPaginationStepsTest {
         stubPages(third, 3);
         search();
 
-        assertThatThrownBy(() -> pagination.pagesContainExpectedResultsWithTotal(
+        assertThatThrownBy(() -> paginationSteps.pagesContainExpectedResultsWithTotal(
                 List.of(pageExpectation(1, 2), pageExpectation(2, 0))))
                 .isInstanceOf(AssertionError.class).hasMessageContaining("Declared catalog total count");
     }
@@ -97,9 +100,9 @@ class EServiceCatalogPaginationStepsTest {
     void explicitPaginationStillDetectsDuplicateIdsAcrossPages() {
         stubPages(first, 3);
         search();
-        pagination.pagesContainExpectedResultsWithTotal(List.of(pageExpectation(1, 2), pageExpectation(2, 1)));
+        paginationSteps.pagesContainExpectedResultsWithTotal(List.of(pageExpectation(1, 2), pageExpectation(2, 1)));
 
-        assertThatThrownBy(pagination::pagesContainNoDuplicateEServices)
+        assertThatThrownBy(paginationSteps::pagesContainNoDuplicateEServices)
                 .isInstanceOf(AssertionError.class).hasMessageContaining("E-service IDs across catalog pages");
         verify(gateway, times(2)).search(any());
     }

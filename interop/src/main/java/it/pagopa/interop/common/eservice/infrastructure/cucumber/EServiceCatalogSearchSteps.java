@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import io.cucumber.java.en.When;
+import it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatalogCommand;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EServiceCatalogSearchSteps {
     private final EServiceCatalogUseCase catalog;
+    private final EServiceCatalogPaginationUseCase pagination;
     private final EServiceRequestFactory requestFactory;
     private final CurrentUserSession session;
     private final EServiceCatalogSearchConfigurationMapper configurationMapper;
@@ -64,7 +66,7 @@ public class EServiceCatalogSearchSteps {
     public List<EServiceCatalog> getSearchPages() {
         getSearchResult();
         if (searchPages == null) {
-            searchPages = catalog.searchPages(searchCommand, searchResult);
+            searchPages = pagination.searchPages(searchCommand, searchResult);
         }
         return searchPages;
     }
@@ -72,7 +74,7 @@ public class EServiceCatalogSearchSteps {
     public List<EServiceCatalog> getSearchPages(int pageCount) {
         getSearchResult();
         if (searchPages == null) {
-            searchPages = catalog.searchPages(searchCommand, searchResult, pageCount);
+            searchPages = pagination.searchPages(searchCommand, searchResult, pageCount);
         }
         return searchPages;
     }

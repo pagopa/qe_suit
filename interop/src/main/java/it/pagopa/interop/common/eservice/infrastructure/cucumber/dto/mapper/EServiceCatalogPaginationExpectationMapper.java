@@ -1,10 +1,8 @@
 package it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper;
 
-import it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationExpectation;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogPageExpectation;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.HashSet;
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.Set;
 
 @Mapper(config = TestMapperConfig.class)
 public interface EServiceCatalogPaginationExpectationMapper {
-    default List<EServiceCatalogPaginationExpectation> toExpectations(
+    default List<Integer> toResultCounts(
             List<EServiceCatalogPageExpectation> source
     ) {
         if (source.isEmpty()) {
@@ -28,10 +26,6 @@ public interface EServiceCatalogPaginationExpectationMapper {
                 throw new IllegalArgumentException("Catalog page expectations must be consecutive starting at 1");
             }
         }
-        return source.stream().map(this::toExpectation).toList();
+        return source.stream().map(EServiceCatalogPageExpectation::getResults).toList();
     }
-
-    @Mapping(target = "pageNumber", source = "page")
-    @Mapping(target = "resultCount", source = "results")
-    EServiceCatalogPaginationExpectation toExpectation(EServiceCatalogPageExpectation source);
 }

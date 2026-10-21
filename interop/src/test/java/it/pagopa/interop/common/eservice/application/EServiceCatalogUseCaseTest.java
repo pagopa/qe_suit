@@ -19,7 +19,9 @@ import static org.mockito.Mockito.*;
 
 class EServiceCatalogUseCaseTest {
     private final EServiceCatalogGateway gateway = mock(EServiceCatalogGateway.class);
-    private final EServiceCatalogUseCase catalog = new EServiceCatalogUseCase(gateway, new BffEServiceRequestFactory());
+    private final EServiceCatalogUseCase catalog = new EServiceCatalogUseCase(gateway);
+    private final EServiceCatalogPaginationUseCase pagination = new EServiceCatalogPaginationUseCase(
+            catalog, gateway, new BffEServiceRequestFactory());
 
     @Test
     void ordinarySearchRequestsOnlyTheRequestedPageEvenForALargeCatalog() {
@@ -39,7 +41,7 @@ class EServiceCatalogUseCaseTest {
         var first = service(UUID.randomUUID());
         var second = service(UUID.randomUUID());
 
-        catalog.shouldContainInRelativeOrder(command,
+        pagination.shouldContainInRelativeOrder(command,
                 page(List.of(entry(first.getId()), entry(second.getId())), 0, 2, 4000),
                 List.of(first, second));
 
@@ -54,7 +56,7 @@ class EServiceCatalogUseCaseTest {
         when(gateway.search(any())).thenReturn(
                 page(List.of(entry(UUID.randomUUID()), entry(second.getId())), 2, 2, 4001));
 
-        catalog.shouldContainInRelativeOrder(command,
+        pagination.shouldContainInRelativeOrder(command,
                 page(List.of(entry(UUID.randomUUID()), entry(first.getId())), 0, 2, 4000),
                 List.of(first, second));
 
@@ -82,7 +84,7 @@ class EServiceCatalogUseCaseTest {
         });
         EServiceCatalog firstPage = catalog.search(command);
 
-        catalog.shouldContainInRelativeOrder(command, firstPage, List.of(first, second));
+        pagination.shouldContainInRelativeOrder(command, firstPage, List.of(first, second));
 
         verify(gateway, times(201)).search(any());
         assertThat(command.getOffset()).isZero();
@@ -97,7 +99,7 @@ class EServiceCatalogUseCaseTest {
         when(gateway.search(any())).thenReturn(
                 page(List.of(entry(first.getId()), entry(UUID.randomUUID())), 2, 2, 4000));
 
-        assertThatThrownBy(() -> catalog.shouldContainInRelativeOrder(command,
+        assertThatThrownBy(() -> pagination.shouldContainInRelativeOrder(command,
                 page(List.of(entry(second.getId()), entry(UUID.randomUUID())), 0, 2, 4000),
                 List.of(first, second)))
                 .isInstanceOf(AssertionError.class).hasMessageContaining("Relative e-service order");
@@ -117,7 +119,7 @@ class EServiceCatalogUseCaseTest {
                     : page(List.of(entry(first.getId()), entry(UUID.randomUUID())), 2, 2, 5);
         });
 
-        assertThatThrownBy(() -> catalog.shouldContainInRelativeOrder(command,
+        assertThatThrownBy(() -> pagination.shouldContainInRelativeOrder(command,
                 page(List.of(entry(second.getId()), entry(UUID.randomUUID())), 0, 2, 4),
                 List.of(first, second)))
                 .isInstanceOf(IllegalStateException.class)
@@ -137,7 +139,7 @@ class EServiceCatalogUseCaseTest {
                 page(List.of(entry(first.getId()), entry(UUID.randomUUID())), 0, 2, 4),
                 page(List.of(entry(UUID.randomUUID()), entry(second.getId())), 2, 2, 4));
 
-        catalog.shouldContainInRelativeOrder(command,
+        pagination.shouldContainInRelativeOrder(command,
                 page(List.of(entry(first.getId()), entry(unrelated)), 0, 2, 4),
                 List.of(first, second));
 
@@ -156,7 +158,7 @@ class EServiceCatalogUseCaseTest {
         var duplicatePage = page(List.of(entry(first.getId()), entry(first.getId())), 0, 2, 2);
         when(gateway.search(command)).thenReturn(duplicatePage);
 
-        assertThatThrownBy(() -> catalog.shouldContainInRelativeOrder(command, duplicatePage, List.of(first, second)))
+        assertThatThrownBy(() -> pagination.shouldContainInRelativeOrder(command, duplicatePage, List.of(first, second)))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("Inconclusive")
                 .hasMessageContaining("2 attempts").hasMessageContaining("Repeated e-service");
 
@@ -171,7 +173,7 @@ class EServiceCatalogUseCaseTest {
         var firstPage = page(List.of(entry(UUID.randomUUID())), 0, 2, 1);
         when(gateway.search(command)).thenReturn(firstPage);
 
-        assertThatThrownBy(() -> catalog.shouldContainInRelativeOrder(command, firstPage, List.of(expected)))
+        assertThatThrownBy(() -> pagination.shouldContainInRelativeOrder(command, firstPage, List.of(expected)))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("Inconclusive")
                 .hasMessageContaining(expected.getId().toString()).hasMessageContaining("after offset 0");
 
@@ -186,7 +188,7 @@ class EServiceCatalogUseCaseTest {
         var firstPage = page(List.of(entry(UUID.randomUUID())), 0, 2, 1);
         when(gateway.search(command)).thenReturn(page(List.of(entry(expected.getId())), 0, 2, 1));
 
-        catalog.shouldContainInRelativeOrder(command, firstPage, List.of(expected));
+        pagination.shouldContainInRelativeOrder(command, firstPage, List.of(expected));
 
         verify(gateway).search(command);
         verifyNoMoreInteractions(gateway);
@@ -202,7 +204,7 @@ class EServiceCatalogUseCaseTest {
                     request.getOffset(), 2, request.getOffset() + 4);
         });
 
-        assertThatThrownBy(() -> catalog.shouldContainInRelativeOrder(command,
+        assertThatThrownBy(() -> pagination.shouldContainInRelativeOrder(command,
                 page(List.of(entry(UUID.randomUUID()), entry(UUID.randomUUID())), 0, 2, 4),
                 List.of(expected)))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("Inconclusive")
@@ -223,7 +225,7 @@ class EServiceCatalogUseCaseTest {
                     request.getOffset(), 2, 8);
         });
 
-        catalog.shouldContainInRelativeOrder(command,
+        pagination.shouldContainInRelativeOrder(command,
                 page(List.of(entry(UUID.randomUUID()), entry(UUID.randomUUID())), 0, 2, 4),
                 List.of(expected));
 
@@ -242,7 +244,7 @@ class EServiceCatalogUseCaseTest {
                 page(List.of(), 2, 2, 2),
                 page(List.of(entry(expected.getId())), 0, 2, 1));
 
-        catalog.shouldContainInRelativeOrder(command,
+        pagination.shouldContainInRelativeOrder(command,
                 page(List.of(entry(UUID.randomUUID()), entry(UUID.randomUUID())), 0, 2, 100),
                 List.of(expected));
 
@@ -258,13 +260,13 @@ class EServiceCatalogUseCaseTest {
         when(gateway.search(any())).thenReturn(
                 page(List.of(), 2, 2, 4),
                 page(List.of(entry(expected.getId())), 0, 2, 1));
-        catalog.shouldContainInRelativeOrder(command, firstPage, List.of(expected));
+        pagination.shouldContainInRelativeOrder(command, firstPage, List.of(expected));
         verify(gateway, times(2)).search(any());
 
         reset(gateway);
         var apiFailure = new IllegalStateException("HTTP 500");
         when(gateway.search(any())).thenThrow(apiFailure);
-        assertThatThrownBy(() -> catalog.shouldContainInRelativeOrder(command, firstPage, List.of(expected)))
+        assertThatThrownBy(() -> pagination.shouldContainInRelativeOrder(command, firstPage, List.of(expected)))
                 .isSameAs(apiFailure);
         verify(gateway, times(1)).search(any());
     }
@@ -276,7 +278,7 @@ class EServiceCatalogUseCaseTest {
         var apiFailure = new IllegalStateException("HTTP 403");
         when(gateway.search(command)).thenThrow(apiFailure);
 
-        assertThatThrownBy(() -> catalog.shouldContainInRelativeOrder(command,
+        assertThatThrownBy(() -> pagination.shouldContainInRelativeOrder(command,
                 page(List.of(entry(UUID.randomUUID())), 0, 2, 1), List.of(expected)))
                 .isSameAs(apiFailure);
 
@@ -291,10 +293,10 @@ class EServiceCatalogUseCaseTest {
         when(gateway.search(any())).thenReturn(
                 page(List.of(entry(UUID.randomUUID()), entry(UUID.randomUUID())), 2, 2, 4));
 
-        var pages = catalog.searchPages(command, firstPage, 2);
+        var pages = pagination.searchPages(command, firstPage, 2);
 
         assertThat(pages).hasSize(2).first().isSameAs(firstPage);
-        catalog.shouldHavePagination(pages, List.of(expectation(1, 2), expectation(2, 2)));
+        catalog.shouldHavePagination(pages, List.of(2, 2));
         verify(gateway).search(argThat(request -> request.getOffset() == 2));
         verifyNoMoreInteractions(gateway);
     }
@@ -304,7 +306,7 @@ class EServiceCatalogUseCaseTest {
         var command = fullCommand();
         var firstPage = page(List.of(entry(UUID.randomUUID()), entry(UUID.randomUUID())), 0, 2, 4000);
 
-        assertThatThrownBy(() -> catalog.searchPages(command, firstPage, 2))
+        assertThatThrownBy(() -> pagination.searchPages(command, firstPage, 2))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("Expected 2 catalog pages").hasMessageContaining("total 4000");
 
@@ -332,7 +334,7 @@ class EServiceCatalogUseCaseTest {
             return page(entries, offset, 2, 5);
         });
 
-        List<EServiceCatalog> pages = catalog.searchPages(command);
+        List<EServiceCatalog> pages = pagination.searchPages(command);
 
         assertThat(pages).extracting(EServiceCatalog::getOffset).containsExactly(0, 2, 4);
         assertThat(pages).extracting(page -> page.getResults().size()).containsExactly(2, 2, 1);
@@ -348,7 +350,7 @@ class EServiceCatalogUseCaseTest {
                 .offset(10).limit(2);
         when(gateway.search(command)).thenReturn(page(List.of(), 10, 2, 2));
 
-        assertThat(catalog.searchPages(command))
+        assertThat(pagination.searchPages(command))
                 .singleElement()
                 .satisfies(result -> {
                     assertThat(result.getResults()).isEmpty();
@@ -364,19 +366,19 @@ class EServiceCatalogUseCaseTest {
                 .offset(0).limit(2);
 
         when(gateway.search(command)).thenReturn(null);
-        assertThatThrownBy(() -> catalog.searchPages(command))
+        assertThatThrownBy(() -> pagination.searchPages(command))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("no search result");
 
         when(gateway.search(command)).thenReturn(page(List.of(), 1, 2, 0));
-        assertThatThrownBy(() -> catalog.searchPages(command))
+        assertThatThrownBy(() -> pagination.searchPages(command))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("offset");
 
         when(gateway.search(command)).thenReturn(page(List.of(), 0, 1, 0));
-        assertThatThrownBy(() -> catalog.searchPages(command))
+        assertThatThrownBy(() -> pagination.searchPages(command))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("limit");
 
         when(gateway.search(command)).thenReturn(page(List.of(entry(UUID.randomUUID())), 0, 2, 2));
-        assertThatThrownBy(() -> catalog.searchPages(command))
+        assertThatThrownBy(() -> pagination.searchPages(command))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("expected 2");
     }
 
@@ -391,7 +393,7 @@ class EServiceCatalogUseCaseTest {
                     : page(List.of(entry(UUID.randomUUID()), entry(UUID.randomUUID())), 2, 2, 4);
         });
 
-        assertThatThrownBy(() -> catalog.searchPages(command))
+        assertThatThrownBy(() -> pagination.searchPages(command))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("total count changed");
 
         org.mockito.Mockito.doAnswer(invocation -> {
@@ -400,7 +402,7 @@ class EServiceCatalogUseCaseTest {
                     ? page(List.of(entry(UUID.randomUUID()), entry(UUID.randomUUID())), 0, 2, 3)
                     : page(List.of(), 2, 2, 3);
         }).when(gateway).search(any());
-        assertThatThrownBy(() -> catalog.searchPages(command))
+        assertThatThrownBy(() -> pagination.searchPages(command))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("expected 1");
     }
 
@@ -418,10 +420,9 @@ class EServiceCatalogUseCaseTest {
         assertThatThrownBy(() -> catalog.shouldContainInOrder(
                 page(List.of(entry(secondId), entry(firstId)), 0, 2, 2), List.of(first, second)))
                 .isInstanceOf(AssertionError.class);
-        catalog.shouldHavePagination(List.of(firstPage, lastPage),
-                List.of(expectation(1, 2), expectation(2, 1)));
+        catalog.shouldHavePagination(List.of(firstPage, lastPage), List.of(2, 1));
         assertThatThrownBy(() -> catalog.shouldHavePagination(
-                List.of(firstPage, lastPage), List.of(expectation(1, 1), expectation(2, 1))))
+                List.of(firstPage, lastPage), List.of(1, 1)))
                 .isInstanceOf(AssertionError.class)
                 .hasMessageContaining("Declared catalog total count");
         assertThatThrownBy(() -> catalog.shouldContainExactly(List.of(firstPage, lastPage), List.of(first, second)))
@@ -459,16 +460,16 @@ class EServiceCatalogUseCaseTest {
         List<EServiceCatalog> pages = List.of(
                 page(List.of(entry(UUID.randomUUID()), entry(UUID.randomUUID())), 0, 2, 3),
                 page(List.of(entry(UUID.randomUUID())), 2, 2, 3));
-        catalog.shouldHavePagination(pages, List.of(expectation(1, 2), expectation(2, 1)));
+        catalog.shouldHavePagination(pages, List.of(2, 1));
 
-        assertThatThrownBy(() -> catalog.shouldHavePagination(pages, List.of(expectation(1, 1), expectation(2, 1))))
+        assertThatThrownBy(() -> catalog.shouldHavePagination(pages, List.of(1, 1)))
                 .isInstanceOf(AssertionError.class);
         assertThatThrownBy(() -> catalog.shouldHavePagination(List.of(
                 pages.get(0), page(List.of(entry(UUID.randomUUID())), 2, 2, 4)),
-                List.of(expectation(1, 2), expectation(2, 1))))
+                List.of(2, 1)))
                 .isInstanceOf(AssertionError.class);
         assertThatThrownBy(() -> catalog.shouldHavePagination(
-                List.of(pages.get(0)), List.of(expectation(1, 2), expectation(2, 1))))
+                List.of(pages.get(0)), List.of(2, 1)))
                 .isInstanceOf(AssertionError.class);
     }
 
@@ -523,7 +524,4 @@ class EServiceCatalogUseCaseTest {
         return EService.builder().id(id).build();
     }
 
-    private EServiceCatalogPaginationExpectation expectation(int page, int count) {
-        return EServiceCatalogPaginationExpectation.builder().pageNumber(page).resultCount(count).build();
-    }
 }

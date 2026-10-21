@@ -1,6 +1,5 @@
 package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
-import it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationExpectation;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogPageExpectation;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceCatalogPaginationExpectationMapper;
 import it.pagopa.interop.common.infrastructure.cucumber.DataTableMapper;
@@ -34,15 +33,12 @@ class EServiceCatalogPaginationExpectationMapperTest {
     }
 
     @Test
-    void convertsFeatureTableRowsThroughValidatedDtoToApplicationExpectation() {
+    void convertsValidatedPageRowsToResultCounts() {
         List<EServiceCatalogPageExpectation> dtos = List.of(
                 transform(Map.of("pagina", "1", "risultati", "2")),
                 transform(Map.of("pagina", "2", "risultati", "1")));
 
-        assertThat(mapper.toExpectations(dtos))
-                .containsExactly(
-                        EServiceCatalogPaginationExpectation.builder().pageNumber(1).resultCount(2).build(),
-                        EServiceCatalogPaginationExpectation.builder().pageNumber(2).resultCount(1).build());
+        assertThat(mapper.toResultCounts(dtos)).containsExactly(2, 1);
     }
 
     @Test
@@ -61,9 +57,9 @@ class EServiceCatalogPaginationExpectationMapperTest {
         var duplicate = transform(Map.of("pagina", "1", "risultati", "1"));
         var skipped = transform(Map.of("pagina", "3", "risultati", "1"));
 
-        assertThatThrownBy(() -> mapper.toExpectations(List.of(first, duplicate)))
+        assertThatThrownBy(() -> mapper.toResultCounts(List.of(first, duplicate)))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("Duplicate");
-        assertThatThrownBy(() -> mapper.toExpectations(List.of(first, skipped)))
+        assertThatThrownBy(() -> mapper.toResultCounts(List.of(first, skipped)))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("consecutive");
     }
 
