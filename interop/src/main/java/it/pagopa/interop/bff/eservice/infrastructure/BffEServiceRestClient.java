@@ -31,10 +31,7 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedEServiceDescriptor> createEServiceInstanceFromTemplate(
-            @Nonnull UUID templateId,
-            @Nonnull InstanceEServiceSeed payload
-    ) {
+    public TestChain<CreatedEServiceDescriptor> createEServiceInstanceFromTemplate(@Nonnull UUID templateId, @Nonnull InstanceEServiceSeed payload) {
         return execute(
                 () -> eservicesApi.createEServiceInstanceFromTemplate()
                         .templateIdPath(templateId)
@@ -127,11 +124,7 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceSoap(
-            @Nonnull UUID eserviceId,
-            @Nonnull UUID descriptorId,
-            @Nonnull Map<String, Object> payload
-    ) {
+    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceSoap(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull Map<String, Object> payload) {
         return execute(
                 () -> eservicesApi.addEServiceTemplateInstanceInterfaceSoap()
                         .eServiceIdPath(eserviceId)
@@ -145,11 +138,7 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceRest(
-            @Nonnull UUID eserviceId,
-            @Nonnull UUID descriptorId,
-            @Nonnull Map<String, Object> payload
-    ) {
+    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceRest(@Nonnull UUID eserviceId,@Nonnull UUID descriptorId, @Nonnull Map<String, Object> payload) {
         return execute(
                 () -> eservicesApi.addEServiceTemplateInstanceInterfaceRest()
                         .eServiceIdPath(eserviceId)
@@ -163,11 +152,7 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
-    public TestChain<byte[]> getEServiceDocumentById(
-            @Nonnull UUID eserviceId,
-            @Nonnull UUID descriptorId,
-            @Nonnull UUID documentId
-    ) {
+    public TestChain<byte[]> getEServiceDocumentById(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UUID documentId) {
         return execute(
                 () -> eservicesApi.getEServiceDocumentById()
                         .eServiceIdPath(eserviceId)

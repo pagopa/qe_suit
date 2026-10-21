@@ -39,7 +39,7 @@ public class ArchitectureRulesTest {
     private static final List<String> ALLOWED_VERTICAL_PACKAGES = List.of("application", "domain", "infrastructure");
     private static final List<String> ALLOWED_GLOBAL_PACKAGES = List.of("infrastructure", "kernel");
 
-    private static final Set<String> COMMON_ALLOWED_PATTERNS = Set.of("Gateway", "UseCase", "Config", "Steps", "Validator", "Command", "Factory", "Exception", "Journey", "JourneyModule", "JourneyImpl", "InvocationHandler", "LifecyclePlanner");
+    private static final Set<String> COMMON_ALLOWED_PATTERNS = Set.of("Gateway", "UseCase", "Config", "Steps", "Validator", "Command", "Factory", "Exception", "Journey", "JourneyModule", "JourneyImpl", "InvocationHandler", "LifecyclePlanner", "LifecycleStep");
     private static final Set<String> COMMON_EXCLUDED_SEGMENTS = Set.of("domain", "kernel", "infrastructure");
 
     @ArchTest
