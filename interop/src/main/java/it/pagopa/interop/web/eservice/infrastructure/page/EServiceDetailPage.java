@@ -60,7 +60,7 @@ public interface EServiceDetailPage extends Page {
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(header().breadcrumbs().getLastItemText()).as("Breadcrumbs last item text").isEqualTo("Visualizza e-service");
             softly.assertThat(header().pageTitle().readAndAssert(eServiceName -> Assertions.assertThat(eServiceName).as("Page title is not blank").isNotBlank()));
-            softly.assertThat(primaryActions().agreementButton().get(FindPolicy.PRESENT));
+            softly.assertThat(primaryActions().agreementButton().get(FindPolicy.PRESENT)).as("Primary agreement action").isPresent();
         });
     }
 }
