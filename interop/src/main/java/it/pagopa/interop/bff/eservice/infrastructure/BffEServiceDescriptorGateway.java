@@ -151,17 +151,12 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
-    public void archiveDescriptor(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef,
-                                  GracePeriodDays gracePeriodDays) {
+    public void archiveDescriptor(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays) {
         archiveGateway.archive(serviceRef, descriptorRef, gracePeriodDays);
     }
 
     @Override
-    public EServiceDescriptor configureTemplateInstanceSOAPInterface(
-            EServiceRef serviceRef,
-            EServiceDescriptorRef descriptorRef,
-            List<SoapAddressConfiguration> addresses
-    ) {
+    public EServiceDescriptor configureTemplateInstanceSOAPInterface(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, List<SoapAddressConfiguration> addresses) {
         return interfaceGateway.configureSOAP(serviceRef, descriptorRef, addresses);
     }
 
@@ -184,18 +179,12 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
-    public Optional<EServiceDescriptorInterface> readInterfaceSnapshot(
-            EServiceRef serviceRef,
-            EServiceDescriptorRef descriptorRef
-    ) {
+    public Optional<EServiceDescriptorInterface> readInterfaceSnapshot(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
         return interfaceGateway.readSnapshot(serviceRef, descriptorRef);
     }
 
     @Override
-    public Optional<EServiceDescriptorInterface> readInterfaceSnapshotAfterDelay(
-            EServiceRef serviceRef,
-            EServiceDescriptorRef descriptorRef
-    ) {
+    public Optional<EServiceDescriptorInterface> readInterfaceSnapshotAfterDelay(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
         return interfaceGateway.readSnapshotAfterDelay(serviceRef, descriptorRef);
     }
 
