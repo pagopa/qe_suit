@@ -21,11 +21,8 @@ import java.util.stream.Stream;
 @DisplayName("Web Contract Test - Catalogo E-Service (/catalogo-e-service)")
 public class WebEServiceCatalogContractTest {
 
-    private static final String EXPECTED_PAGE_TITLE = "Catalogo degli e-service";
     private static final String EXPECTED_PAGE_DESCRIPTION = "Il catalogo degli e-service contiene tutte le basi dati che altri enti hanno reso disponibili. Puoi aderire a quelli di tuo interesse.";
-    private static final String EXPECTED_SEARCH_NAME_PLACEHOLDER = "Cerca per nome";
-    private static final String EXPECTED_SEARCH_PROVIDER_PLACEHOLDER = "Cerca per erogatore";
-    private static final String EXPECTED_CARD_BUTTON_LABEL = "Visualizza";
+    private static final String EXPECTED_CARD_BUTTON_LABEL = "Vai all'e-service";
 
     private final WebBrowserContractValidator webContractValidator;
 
@@ -36,76 +33,72 @@ public class WebEServiceCatalogContractTest {
                 .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
                 .on(EServiceCatalogPage.class)
                 .tests(Stream.of(
-                        // CATALOG-01, 02, 03: Titolo h1 e Descrizione
-                        new WebScenario<>(
-                                "CATALOG-01..03: Verifica presenza, visibilità e copy h1 e descrizione",
-                                page -> {},
+                        new WebScenario<>("Verifica contratto ConsumerEServiceCatalogPage",
                                 page -> {
-                                    page.pageTitle().readAndAssert(EXPECTED_PAGE_TITLE); //Verifica del titolo
+                                },
+                                page -> {
+                                    // CATALOG-01, 02, 03: Titolo h1 e Descrizione
+                                    page.pageTitle().readAndAssert(EServiceCatalogPage.PAGE_TITLE); //Verifica del titolo
                                     page.pageDescription().readAndAssert(EXPECTED_PAGE_DESCRIPTION); //Verifica della descrizione
-                                }
-                        ),
 
-                        // CATALOG-04..07: Filtro Cerca per Nome
-                        new WebScenario<>(
-                                "CATALOG-04..07: Verifica campo 'Cerca per nome' e stato iniziale",
-                                page -> {},
-                                page -> {
-                                    page.searchByName().readAndAssert(EXPECTED_SEARCH_NAME_PLACEHOLDER);
+                                    // CATALOG-04..07: Filtro Cerca per parola chiave
+                                    page.searchByName().readAndAssert(EServiceCatalogPage.SEARCH_BY_KEY_PLACEHOLDER);
                                     assertSearchInputInitialState(page.searchByName().read());
-                                }
-                        ),
 
-                        // CATALOG-08..11: Filtro Cerca per Erogatore
-                        new WebScenario<>(
-                                "CATALOG-08..11: Verifica filtro 'Cerca per erogatore' e stato iniziale",
-                                page -> {},
-                                page -> {
-                                    page.searchByProvider().readAndAssert(EXPECTED_SEARCH_PROVIDER_PLACEHOLDER);
+                                    // CATALOG-08..11: Filtro Cerca per Erogatore
+                                    page.searchByProvider().readAndAssert(EServiceCatalogPage.SEARCH_BY_PROVIDER_PLACEHOLDER);
                                     assertSearchInputInitialState(page.searchByProvider().read());
-                                }
-                        ),
 
-                        // CATALOG-12: Griglia risultati presente nel DOM
-                        new WebScenario<>(
-                                "CATALOG-12: Verifica presenza griglia card nel DOM",
-                                page -> {},
-                                page -> Assertions.assertThat(page.grid().get().isPresent())
-                                        .as("Griglia E-Service presente nel DOM")
-                                        .isTrue()
-                        ),
+                                    // CATALOG-04: Verifica bottone "Cerca"
+                                    Assertions.assertThat(page.searchButton().get().isPresent())
+                                            .as("Il bottone Cerca deve essere presente").isTrue();
+                                    Assertions.assertThat(page.searchButton().isDisabled())
+                                            .as("Il bottone Cerca deve essere abilitato").isFalse();
 
-                        // CATALOG-13..16: Contenuti descrittivi della prima Card a catalogo
-                        new WebScenario<>(
-                                "CATALOG-13..16: Verifica visibilità dei dettagli della prima card",
-                                page -> {},
-                                this::assertFirstCardDetailsAreVisible
-                        ),
+                                    // CATALOG-05: Verifica bottone "Filtri"
+                                    Assertions.assertThat(page.filtersButton().get().isPresent())
+                                            .as("Il bottone Filtri deve essere presente").isTrue();
+                                    Assertions.assertThat(page.filtersButton().isDisabled())
+                                            .as("Il bottone Filtri deve essere abilitato").isFalse();
 
-                        // CATALOG-17..19: Bottone azione sulla Card
-                        new WebScenario<>(
-                                "CATALOG-17..19: Verifica bottone 'Visualizza' nella card",
-                                page -> {},
-                                page -> page.cardActionButton().readAndAssert(EXPECTED_CARD_BUTTON_LABEL)
-                        ),
+                                    // CATALOG-06: Verifica label contatore risultati
+                                    Assertions.assertThat(page.resultsCounterLabel().get().isPresent())
+                                            .as("La label dei risultati deve essere presente").isTrue();
+                                    Assertions.assertThat(page.resultsCounterLabel().read())
+                                            .as("La label deve contenere la dicitura 'risultati'")
+                                            .contains("risultati");
 
-                        // CATALOG-20: Paginazione presente nel DOM
-                        new WebScenario<>(
-                                "CATALOG-20: Verifica presenza elemento paginazione nel DOM",
-                                page -> {},
-                                page -> Assertions.assertThat(page.pagination().get().isPresent())
-                                        .as("Paginazione presente nel DOM")
-                                        .isTrue()
-                        ),
+                                    // CATALOG-07: Verifica bottone ordinamento
+                                    Assertions.assertThat(page.sortButton().get().isPresent())
+                                            .as("Il bottone di ordinamento deve essere presente").isTrue();
+                                    Assertions.assertThat(page.sortButton().isDisabled())
+                                            .as("Il bottone di ordinamento deve essere abilitato").isFalse();
+                                    Assertions.assertThat(page.sortButton().read())
+                                            .as("L'ordinamento di default deve essere 'Dal più recente'")
+                                            .contains("Dal più recente");
 
-                        // CATALOG-21: Messaggio 'Nessun risultato' ASSENTE nel DOM
-                        new WebScenario<>(
-                                "CATALOG-21: Verifica assenza messaggio lista vuota",
-                                page -> {},
-                                page -> Assertions.assertThat(page.emptyStateMessage().get().isPresent())
-                                        .as("Messaggio 'nessun risultato' assente nel DOM")
-                                        .isFalse()
-                        )
+                                    // CATALOG-12: Griglia risultati presente nel DOM
+                                    Assertions.assertThat(page.grid().get().isPresent())
+                                            .as("Griglia E-Service presente nel DOM")
+                                            .isTrue();
+
+                                    // CATALOG-13..16: Contenuti descrittivi della prima Card a catalogo
+                                    this.assertFirstCardDetailsAreVisible(page);
+
+                                    // CATALOG-17..19: Bottone azione sulla Card
+                                    page.cardActionButton().readAndAssert(EXPECTED_CARD_BUTTON_LABEL);
+
+                                    // CATALOG-20: Paginazione presente nel DOM
+                                    Assertions.assertThat(page.pagination().get().isPresent())
+                                            .as("Paginazione presente nel DOM")
+                                            .isTrue();
+
+                                    // CATALOG-21: Messaggio 'Nessun risultato' ASSENTE nel DOM
+                                    Assertions.assertThat(page.emptyStateMessage().get().isPresent())
+                                            .as("Messaggio 'nessun risultato' assente nel DOM")
+                                            .isFalse();
+                                })
+
                 ));
     }
 
