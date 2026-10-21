@@ -70,8 +70,6 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
 
 
     private EServiceTemplateJourneyImpl processLifecycle(EServiceTemplate template, EServiceTemplateVersion version, EServiceTemplateVersionState targetState, EServiceTemplateCreationCommand configuration) {
-        entityStore.upsert(template);
-
         return switch (targetState) {
             case DRAFT -> this;
 
@@ -88,7 +86,7 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     }
 
     private EServiceTemplateJourneyImpl publishPipeline(EServiceTemplate eServiceTemplate, EServiceTemplateVersion eServiceTemplateVersion, EServiceTemplateCreationCommand configuration) {
-        var enrichedVersion = eServiceTemplateVersionUseCase.prepareVersionForPublishing(eServiceTemplate, eServiceTemplateVersion);
+        var enrichedVersion = eServiceTemplateVersionUseCase.prepareVersionForPublishing(eServiceTemplate, eServiceTemplateVersion, configuration.getInterfaceDocumentPath());
         var publishedVersion = eServiceTemplateVersionUseCase.publishVersion(eServiceTemplate, enrichedVersion);
         eServiceTemplateVersionUseCase.downloadInterface(eServiceTemplate, publishedVersion);
         return this;

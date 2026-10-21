@@ -16,6 +16,18 @@ public class BffSearchEServiceCatalogCommand implements SearchEServiceCatalogCom
     private final CatalogFilterPayload bffPayload = new CatalogFilterPayload();
 
     @Override
+    public SearchEServiceCatalogCommand onlyTemplateInstances(Boolean value) {
+        bffPayload.setOnlyTemplateInstances(value);
+        return this;
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand templateId(UUID templateId) {
+        bffPayload.setTemplateId(templateId);
+        return this;
+    }
+
+    @Override
     public SearchEServiceCatalogCommand keyword(String keyword) {
         bffPayload.setKeyword(keyword);
         return this;

@@ -20,9 +20,14 @@ import static org.mockito.Mockito.*;
 class BffEServiceDescriptorLifecycleTest {
     private final BffEServiceRestClient restClient = mock(BffEServiceRestClient.class, RETURNS_DEEP_STUBS);
     private final EntityStore store = mock(EntityStore.class);
+    private final BffEServiceTemplateInstanceDescriptorRestClient instanceClient =
+            mock(BffEServiceTemplateInstanceDescriptorRestClient.class, RETURNS_DEEP_STUBS);
+    private final BffEServiceDescriptorInterfaceGateway interfaceGateway =
+            mock(BffEServiceDescriptorInterfaceGateway.class);
     private final BffEServiceDescriptorGateway gateway = spy(new BffEServiceDescriptorGateway(
             restClient, store, mock(BffEServiceDescriptorMapper.class),
-            mock(BffEServiceDescriptorInterfaceGateway.class), mock(BffEServiceDescriptorArchiveGateway.class)
+            interfaceGateway, mock(BffEServiceDescriptorArchiveGateway.class),
+            new BffEServiceDescriptorUpdateGateway(restClient, instanceClient, interfaceGateway, store)
     ));
     private final EServiceRef serviceRef = EServiceRef.of(UUID.randomUUID());
     private final EServiceDescriptorRef descriptorRef = EServiceDescriptorRef.of(UUID.randomUUID());
@@ -70,7 +75,8 @@ class BffEServiceDescriptorLifecycleTest {
 
     private BffUpdateEServiceDescriptorCommand updateCommand() {
         when(store.getById(serviceRef.id(), EService.class)).thenReturn(java.util.Optional.of(
-                EService.builder().id(serviceRef.id()).asyncExchange(false).build()
+                EService.builder().id(serviceRef.id()).asyncExchange(false)
+                        .descriptors(java.util.List.of(EServiceDescriptor.builder().id(descriptorRef.id()).build())).build()
         ));
         BffUpdateEServiceDescriptorCommand command = new BffUpdateEServiceDescriptorCommand();
         command.dailyCallsPerConsumer(1).dailyCallsTotal(10);

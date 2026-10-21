@@ -10,7 +10,8 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
+import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateInstanceCreationCommand;
+import it.pagopa.interop.bff.eservice_template.application.BffEServiceTemplateInstanceCreationCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +23,12 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
     private final BffEServiceDescriptorGateway descriptorGateway;
 
     @Override
-    public EService createEServiceInstance(EServiceTemplate template) {
+    public EService createEServiceInstance(EServiceTemplate template, EServiceTemplateInstanceCreationCommand command) {
+        if (!(command instanceof BffEServiceTemplateInstanceCreationCommand bffCommand)) {
+            throw new IllegalArgumentException("Expected BffEServiceTemplateInstanceCreationCommand");
+        }
         var created = restClient.createEServiceInstanceFromTemplate(
-                        template.getId(), new InstanceEServiceSeed()
+                        template.getId(), bffCommand.getBffPayload()
                 )
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();

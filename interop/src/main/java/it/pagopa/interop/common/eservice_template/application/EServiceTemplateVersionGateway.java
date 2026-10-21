@@ -11,6 +11,10 @@ import org.springframework.plugin.core.Plugin;
 import java.util.Optional;
 
 public interface EServiceTemplateVersionGateway extends Plugin<Channel> {
+    void deleteDraftVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef);
+
+    void suspendVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef);
+
     EServiceTemplateVersion getEServiceTemplateVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef);
 
     EServiceTemplateVersion addVersion(EServiceTemplateRef templateRef);
@@ -29,4 +33,3 @@ public interface EServiceTemplateVersionGateway extends Plugin<Channel> {
 
     Optional<EServiceTemplateInterface> readCurrentInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef);
 }
-

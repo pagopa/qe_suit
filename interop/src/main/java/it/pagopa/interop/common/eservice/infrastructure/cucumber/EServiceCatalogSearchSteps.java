@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import io.cucumber.java.en.When;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogPaginationUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
@@ -22,6 +23,7 @@ public class EServiceCatalogSearchSteps {
     private final EServiceRequestFactory requestFactory;
     private final CurrentUserSession session;
     private final EServiceCatalogSearchConfigurationMapper configurationMapper;
+    private final EntityStore entityStore;
     private SearchEServiceCatalogCommand searchCommand;
     private EServiceCatalog searchResult;
     private List<EServiceCatalog> searchPages;
@@ -97,7 +99,7 @@ public class EServiceCatalogSearchSteps {
         searchSucceeded = false;
         SearchEServiceCatalogCommand command = requestFactory.defaultSearchEServiceCatalogCommand();
         command.keyword(keyword);
-        configurationMapper.apply(filters, command);
+        configurationMapper.apply(filters, command, entityStore);
         session.set(User.getTenantAdmin(requester), requester);
         EServiceCatalog result = catalog.search(command);
         if (result == null) {

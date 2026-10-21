@@ -12,6 +12,10 @@ public interface SearchEServiceCatalogCommand {
 
     SearchEServiceCatalogCommand onlyActiveEservices(Boolean onlyActiveEservices);
 
+    SearchEServiceCatalogCommand onlyTemplateInstances(Boolean onlyTemplateInstances);
+
+    SearchEServiceCatalogCommand templateId(UUID templateId);
+
     SearchEServiceCatalogCommand mode(EServiceMode mode);
 
     SearchEServiceCatalogCommand asyncExchange(Boolean asyncExchange);

@@ -34,7 +34,7 @@ class EServiceCatalogPaginationStepsTest {
     private final EntityStore store = mock(EntityStore.class, CALLS_REAL_METHODS);
     private final EServiceCatalogExpectationMapper expectations = Mappers.getMapper(EServiceCatalogExpectationMapper.class);
     private final EServiceCatalogSearchSteps searches = new EServiceCatalogSearchSteps(catalog, paginationUseCase, factory,
-            mock(CurrentUserSession.class), Mappers.getMapper(EServiceCatalogSearchConfigurationMapper.class));
+            mock(CurrentUserSession.class), Mappers.getMapper(EServiceCatalogSearchConfigurationMapper.class), store);
     private final EServiceCatalogPaginationSteps paginationSteps = new EServiceCatalogPaginationSteps(
             searches, catalog, store, expectations, Mappers.getMapper(EServiceCatalogPaginationExpectationMapper.class));
     private final EServiceCatalogAssertionSteps assertions = new EServiceCatalogAssertionSteps(

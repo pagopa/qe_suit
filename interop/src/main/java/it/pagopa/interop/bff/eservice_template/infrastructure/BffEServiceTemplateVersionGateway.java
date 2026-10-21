@@ -32,6 +32,19 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
     private final BffEServiceTemplateRestClient restClient;
     private final EntityStore entityStore;
     private final BffEServiceTemplateVersionMapper mapper;
+    private final BffEServiceTemplateLifecycleRestClient lifecycleClient;
+
+    @Override
+    public void deleteDraftVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
+        lifecycleClient.deleteDraftVersion(templateRef.id(), versionRef.versionId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+    }
+
+    @Override
+    public void suspendVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
+        lifecycleClient.suspendVersion(templateRef.id(), versionRef.versionId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+    }
 
     @Override
     public EServiceTemplateVersion getEServiceTemplateVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
@@ -150,7 +163,7 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
                         : version)
                 .toList();
 
-        return template.toBuilder().versions(versions).build();
+        return template.toBuilder().clearVersions().versions(versions).build();
     }
 
     @Override
@@ -158,4 +171,3 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
         return delimiter == Channel.BFF;
     }
 }
-

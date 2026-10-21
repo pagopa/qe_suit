@@ -28,7 +28,8 @@ class EServiceCatalogSearchStepsTest {
     private final CurrentUserSession session = mock(CurrentUserSession.class);
     private final EServiceRequestFactory factory = spy(new BffEServiceRequestFactory());
     private final EServiceCatalogSearchSteps steps = new EServiceCatalogSearchSteps(
-            catalog, pagination, factory, session, Mappers.getMapper(EServiceCatalogSearchConfigurationMapper.class));
+            catalog, pagination, factory, session, Mappers.getMapper(EServiceCatalogSearchConfigurationMapper.class),
+            new it.pagopa.infrastructure.context.InMemoryEntityStore());
 
     @BeforeEach
     void stubDefaultSearchResult() {

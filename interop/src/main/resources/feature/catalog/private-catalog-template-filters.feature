@@ -11,7 +11,8 @@ Feature: Filtri sui template nel catalogo privato
   - un e-service creato da un template è detto "istanza di template";
   - template, e-service e istanze sono creati dallo scenario stesso dall'erogatore Comune di Milano;
   - l'istanza prende il nome del template: la parola chiave cercata è nel nome del template;
-  - gli e-service e i template predisposti sono eliminati o archiviati al termine dello scenario da un hook.
+  - gli e-service predisposti sono eliminati o archiviati al termine dello scenario da un hook;
+  - le versioni dei template predisposti sono eliminate se in bozza, altrimenti sospese tramite BFF.
 
   Scenario: [PRIVATE_CATALOG_TEMPLATE_FILTERS_1] Solo istanze di template
     Given i seguenti template e-service pubblicati:
@@ -46,7 +47,7 @@ Feature: Filtri sui template nel catalogo privato
       | ES-2  |
 
   Scenario: [PRIVATE_CATALOG_TEMPLATE_FILTERS_3] Solo istanze di un template specifico
-    Given i seguenti template di e-service pubblicati:
+    Given i seguenti template e-service pubblicati:
       | alias | nome                 | tecnologia |
       | TPL-1 | Template Stampo Alfa | SOAP       |
       | TPL-2 | Template Stampo Beta | SOAP       |

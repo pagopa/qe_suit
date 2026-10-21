@@ -6,6 +6,7 @@ import it.pagopa.interop.common.kernel.domain.DelegationTenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.ValueMapping;
 
@@ -21,6 +22,7 @@ public interface BffCommonMapper {
     @ValueMapping(source = MappingConstants.ANY_REMAINING, target = MappingConstants.NULL)
     it.pagopa.interop.common.kernel.domain.TenantKind toDomainTenantKind(TenantKind source);
 
+    @Mapping(target = "id", source = "templateId")
     it.pagopa.interop.common.kernel.domain.EServiceTemplateRef toTemplateRef(EServiceTemplateRef source);
 
     default User toUser(CompactUser source) {

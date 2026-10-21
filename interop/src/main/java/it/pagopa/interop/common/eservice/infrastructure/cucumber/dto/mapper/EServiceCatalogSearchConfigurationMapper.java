@@ -11,6 +11,9 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.Context;
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 
 import java.util.HashSet;
 import java.util.Arrays;
@@ -24,25 +27,40 @@ public interface EServiceCatalogSearchConfigurationMapper {
             List<EServiceCatalogSearchConfiguration> configurations,
             @MappingTarget SearchEServiceCatalogCommand command
     ) {
+        apply(configurations, command, null);
+    }
+
+    default void apply(
+            List<EServiceCatalogSearchConfiguration> configurations,
+            @MappingTarget SearchEServiceCatalogCommand command,
+            @Context EntityStore entities
+    ) {
         Set<String> configured = new HashSet<>();
         for (EServiceCatalogSearchConfiguration configuration : configurations) {
             if (!configured.add(configuration.getFilter())) {
                 throw new IllegalArgumentException("Duplicate catalog filter: " + configuration.getFilter());
             }
         }
-        configurations.forEach(configuration -> apply(configuration, command));
+        configurations.forEach(configuration -> apply(configuration, command, entities));
     }
 
     @BeanMapping(ignoreByDefault = true)
-    void apply(EServiceCatalogSearchConfiguration source, @MappingTarget SearchEServiceCatalogCommand target);
+    void apply(EServiceCatalogSearchConfiguration source, @MappingTarget SearchEServiceCatalogCommand target,
+               @Context EntityStore entities);
 
     @AfterMapping
     default void applyFilter(
             EServiceCatalogSearchConfiguration source,
-            @MappingTarget SearchEServiceCatalogCommand target
+            @MappingTarget SearchEServiceCatalogCommand target,
+            @Context EntityStore entities
     ) {
         switch (source.getFilter()) {
             case "solo e-service attivi" -> target.onlyActiveEservices(parseBoolean(source.getValue()));
+            case "istanze di template" -> target.onlyTemplateInstances(parseBoolean(source.getValue()));
+            case "istanza del template" -> {
+                if (entities == null) throw new IllegalArgumentException("Template alias resolution requires EntityStore");
+                target.templateId(entities.getByAliasOrThrow(source.getValue(), EServiceTemplate.class).getId());
+            }
             case "a partire dal risultato" -> target.offset(Integer.valueOf(source.getValue()));
             case "risultati per pagina" -> target.limit(Integer.valueOf(source.getValue()));
             case "modalità" -> target.mode(parseMode(source.getValue()));

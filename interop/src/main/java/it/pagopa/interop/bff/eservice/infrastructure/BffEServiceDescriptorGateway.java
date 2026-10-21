@@ -27,6 +27,7 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     private final BffEServiceDescriptorMapper mapper;
     private final BffEServiceDescriptorInterfaceGateway interfaceGateway;
     private final BffEServiceDescriptorArchiveGateway archiveGateway;
+    private final BffEServiceDescriptorUpdateGateway updateGateway;
 
     @Override
     public EServiceDescriptor getEServiceDescriptor(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
@@ -86,11 +87,7 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
         if (!(command instanceof BffUpdateEServiceDescriptorCommand bffCommand)) {
             throw new IllegalArgumentException("Command must be an instance of BffUpdateEServiceDescriptorCommand");
         }
-        setDefaultAsyncPropertiesIfNeeded(serviceRef, descriptorRef, bffCommand);
-        restClient.updateDescriptor(serviceRef.id(), descriptorRef.id(), bffCommand.getBffPayload())
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(ignored -> getEServiceDescriptor(serviceRef, descriptorRef))
-                .get();
+        updateGateway.update(serviceRef, descriptorRef, bffCommand);
         EServiceDescriptor updated = PollingUtils.pollUntil(
                 () -> getEServiceDescriptor(serviceRef, descriptorRef),
                 descriptor -> descriptor.getDailyCallsPerConsumer().intValue()
@@ -102,25 +99,6 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
             return linkOpenApiInterface(serviceRef, descriptorRef, command.getInterfaceDocumentPath());
         }
         return updated;
-    }
-
-    private void setDefaultAsyncPropertiesIfNeeded(
-            EServiceRef serviceRef,
-            EServiceDescriptorRef descriptorRef,
-            BffUpdateEServiceDescriptorCommand command
-    ) {
-        if (command.getBffPayload().getAsyncExchangeProperties() != null) return;
-        EService service = entityStore.getById(serviceRef.id(), EService.class).orElseThrow();
-        if (!service.getAsyncExchange()) return;
-        linkOpenApiCallbackInterface(serviceRef, descriptorRef, "assets/origin-interface.yaml");
-        it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties properties =
-                new it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties()
-                        .responseTime(60)
-                        .resourceAvailableTime(60)
-                        .maxResultSet(1)
-                        .confirmation(false)
-                        .bulk(true);
-        command.getBffPayload().setAsyncExchangeProperties(properties);
     }
 
     @Override
