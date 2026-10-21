@@ -13,6 +13,7 @@ import it.pagopa.send.common.legal_notification.infrastructure.factory.Recipient
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
+import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationDetailPGPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationTimelinePGPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
@@ -31,7 +32,8 @@ import java.util.stream.Stream;
  * ({@code {baseUrl}/notifiche/<IUN>/dettaglio/timeline}).
  * <p>
  * Prima degli scenari il mittente {@code COMUNE_1} invia via BFF una notifica a valore legale all'impresa
- * {@code IMPRESA_1}; ogni scenario ne apre la pagina "Stato della notifica" direttamente dall'URL, con il suo IUN.
+ * {@code IMPRESA_1}; gli scenari ne aprono la pagina "Stato della notifica" direttamente dall'URL, con il suo IUN, e dal
+ * dettaglio della notifica con "Vai al dettaglio".
  * Si verifica quello che c'è in ogni notifica: breadcrumb e presenza degli eventi con il loro stato. Stati, descrizioni,
  * date e attestazioni dipendono dall'avanzamento della notifica: non vengono verificati.
  */
@@ -59,7 +61,8 @@ public class WebNotificationTimelinePGContractTest {
      * <ul>
      *     <li>breadcrumb: "In arrivo per &lt;impresa&gt;", l'oggetto della notifica e, come voce corrente,
      *     "Stato della notifica";</li>
-     *     <li>almeno un evento, ognuno con il suo stato non vuoto.</li>
+     *     <li>almeno un evento, ognuno con il suo stato non vuoto;</li>
+     *     <li>la stessa pagina si apre anche dal dettaglio della notifica con "Vai al dettaglio".</li>
      * </ul>
      */
     @TestFactory
@@ -69,8 +72,15 @@ public class WebNotificationTimelinePGContractTest {
         String notificationsBreadcrumb = NotificationPage.TITLE_PREFIX + impresa.getOrganization();
         LegalNotificationDomain createdNotification = sendLegalNotification(impresa);
 
+        return Stream.concat(
+                directAccessScenarios(impresa, createdNotification.getIun(), notificationsBreadcrumb),
+                detailAccessScenarios(impresa, createdNotification.getIun()));
+    }
+
+    // pagina aperta direttamente dall'URL con lo IUN
+    private Stream<DynamicTest> directAccessScenarios(User impresa, String iun, String notificationsBreadcrumb) {
         return webContractValidator.asRecipient(impresa)
-                .on(NotificationTimelinePGPage.class, createdNotification.getIun())
+                .on(NotificationTimelinePGPage.class, iun)
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "breadcrumb con il nome dell'impresa, l'oggetto della notifica e stato della notifica",
@@ -87,6 +97,23 @@ public class WebNotificationTimelinePGContractTest {
                                 timeline -> {},
                                 timeline -> timeline.eventStatuses().readAllAndAssert(h ->
                                         Assertions.assertThat(h).isNotEmpty().allSatisfy(v -> Assertions.assertThat(v).isNotBlank()))
+                        )
+                ));
+    }
+
+    // pagina aperta dal dettaglio della notifica con "Vai al dettaglio"
+    private Stream<DynamicTest> detailAccessScenarios(User impresa, String iun) {
+        return webContractValidator.asRecipient(impresa)
+                .on(NotificationDetailPGPage.class, iun)
+                .tests(Stream.of(
+                        new WebScenario<>(
+                                "stato della notifica aperto dal dettaglio con vai al dettaglio",
+                                detail -> detail.timelineDetailsButton().click(),
+                                detail -> {
+                                    NotificationTimelinePGPage timeline = detail.notificationTimeline();
+                                    timeline.assertLoaded();
+                                    timeline.currentBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(NotificationTimelinePGPage.TITLE));
+                                }
                         )
                 ));
     }
