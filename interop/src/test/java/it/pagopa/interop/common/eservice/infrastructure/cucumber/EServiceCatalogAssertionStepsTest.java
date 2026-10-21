@@ -1,6 +1,8 @@
 package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.bff.eservice.application.BffSearchEServiceCatalogCommand;
+import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogGateway;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -23,7 +25,8 @@ import static org.mockito.Mockito.*;
 
 class EServiceCatalogAssertionStepsTest {
     private final EServiceCatalogGateway gateway = mock(EServiceCatalogGateway.class);
-    private final EServiceCatalogUseCase catalog = new EServiceCatalogUseCase(gateway);
+    private final EServiceCatalogUseCase catalog = new EServiceCatalogUseCase(
+            gateway, new BffEServiceRequestFactory());
     private final EntityStore store = mock(EntityStore.class, CALLS_REAL_METHODS);
     private final EServiceCatalogSearchSteps searches = mock(EServiceCatalogSearchSteps.class);
     private final EServiceCatalogAssertionSteps steps = new EServiceCatalogAssertionSteps(
@@ -59,6 +62,75 @@ class EServiceCatalogAssertionStepsTest {
     }
 
     @Test
+    void verifiesExactUuidOrderAndSingleOccurrenceAcrossFetchedPages() {
+        when(store.getByAlias("ES-1", EService.class)).thenReturn(Optional.of(included));
+        when(store.getByAlias("ES-2", EService.class)).thenReturn(Optional.of(excluded));
+        when(searches.getSearchResult()).thenReturn(result(included, excluded));
+        when(searches.getSearchPages()).thenReturn(List.of(
+                result(included),
+                result(excluded)));
+
+        steps.shouldContainEServicesInOrder(List.of(expectation("ES-1"), expectation("ES-2")));
+        steps.shouldAppearExactlyOnce("ES-1");
+
+        assertThatThrownBy(() -> steps.shouldContainEServicesInOrder(
+                List.of(expectation("ES-2"), expectation("ES-1"))))
+                .isInstanceOf(AssertionError.class);
+        verifyNoInteractions(gateway);
+    }
+
+    @Test
+    void relativeOrderUsesOriginalCommandAndFirstPageAndOnlyFetchesNeededPages() {
+        EService other = EService.builder().id(UUID.randomUUID()).build();
+        var command = new BffSearchEServiceCatalogCommand().offset(0).limit(2);
+        when(store.getByAlias("ES-1", EService.class)).thenReturn(Optional.of(included));
+        when(store.getByAlias("ES-2", EService.class)).thenReturn(Optional.of(excluded));
+        when(searches.getSearchCommand()).thenReturn(command);
+        when(searches.getSearchResult()).thenReturn(new EServiceCatalog(
+                result(other, included).getResults(), 0, 2, 100));
+        when(gateway.search(any())).thenReturn(new EServiceCatalog(result(excluded,
+                EService.builder().id(UUID.randomUUID()).build()).getResults(), 2, 2, 100));
+
+        steps.shouldContainEServicesInRelativeOrder(List.of(expectation("ES-1"), expectation("ES-2")));
+        assertThatThrownBy(() -> steps.shouldContainEServicesInRelativeOrder(
+                List.of(expectation("ES-2"), expectation("ES-1"))))
+                .isInstanceOf(AssertionError.class);
+        verify(gateway, times(2)).search(any());
+        verify(searches, never()).getSearchPages();
+    }
+
+    @Test
+    void relativeOrderRejectsMissingDuplicateAndEmptyExpectations() {
+        var command = new BffSearchEServiceCatalogCommand().offset(0).limit(20);
+        when(store.getByAlias("ES-1", EService.class)).thenReturn(Optional.of(included));
+        when(store.getByAlias("ES-2", EService.class)).thenReturn(Optional.of(excluded));
+        when(searches.getSearchCommand()).thenReturn(command);
+        when(searches.getSearchResult()).thenReturn(result(included));
+        when(gateway.search(command)).thenReturn(result(included));
+        assertThatThrownBy(() -> steps.shouldContainEServicesInRelativeOrder(
+                List.of(expectation("ES-1"), expectation("ES-2"))))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("Inconclusive");
+        assertThatThrownBy(() -> steps.shouldContainEServicesInRelativeOrder(List.of()))
+                .isInstanceOf(AssertionError.class);
+        assertThatThrownBy(() -> steps.shouldContainEServicesInRelativeOrder(
+                List.of(expectation("ES-1"), expectation("ES-1")))).isInstanceOf(AssertionError.class);
+        when(searches.getSearchResult()).thenReturn(result(included, included));
+        when(gateway.search(command)).thenReturn(result(included, included));
+        assertThatThrownBy(() -> steps.shouldContainEServicesInRelativeOrder(List.of(expectation("ES-1"))))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("Repeated e-service");
+    }
+
+    @Test
+    void failsWhenAnEserviceAppearsMoreThanOnceAcrossLoadedPages() {
+        when(store.getByAlias("ES-1", EService.class)).thenReturn(Optional.of(included));
+        when(searches.getSearchPages()).thenReturn(List.of(result(included), result(included)));
+
+        assertThatThrownBy(() -> steps.shouldAppearExactlyOnce("ES-1"))
+                .isInstanceOf(AssertionError.class);
+        verifyNoInteractions(gateway);
+    }
+
+    @Test
     void failsWhenRequestedIdIsMissingEvenIfNamesMatch() {
         when(store.getByAlias("ES-2", EService.class)).thenReturn(Optional.of(excluded));
         when(searches.getSearchResult()).thenReturn(result(included));
@@ -82,6 +154,17 @@ class EServiceCatalogAssertionStepsTest {
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("No catalog search");
         assertThatThrownBy(() -> catalog.shouldContain(result(), List.of())).isInstanceOf(AssertionError.class);
         assertThatThrownBy(() -> catalog.shouldNotContain(result(), List.of())).isInstanceOf(AssertionError.class);
+    }
+
+    @Test
+    void verifiesSearchSuccessAndEmptyPageWithDeclaredTotal() {
+        when(searches.getSearchResult()).thenReturn(result());
+
+        steps.searchTerminatesWithoutErrors();
+        steps.shouldHaveEmptyPageWithTotalCount(0);
+
+        assertThatThrownBy(() -> steps.shouldHaveEmptyPageWithTotalCount(1))
+                .isInstanceOf(AssertionError.class);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.eservice.application.command;
 
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.eservice.domain.EServiceCatalogSortBy;
 import it.pagopa.interop.common.tenant.domain.TenantCategory;
 
 import java.util.List;
@@ -17,6 +18,8 @@ public interface SearchEServiceCatalogCommand {
 
     SearchEServiceCatalogCommand onlySignalHubEnabled(Boolean onlySignalHubEnabled);
 
+    SearchEServiceCatalogCommand sortBy(EServiceCatalogSortBy sortBy);
+
     SearchEServiceCatalogCommand producersIds(List<UUID> producersIds);
 
     SearchEServiceCatalogCommand producerCategories(List<TenantCategory> categories);
@@ -24,4 +27,9 @@ public interface SearchEServiceCatalogCommand {
     SearchEServiceCatalogCommand offset(Integer offset);
 
     SearchEServiceCatalogCommand limit(Integer limit);
+
+    Integer getOffset();
+
+    Integer getLimit();
+
 }

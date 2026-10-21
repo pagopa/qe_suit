@@ -13,6 +13,9 @@ public interface EServiceRequestFactory extends Plugin<Channel> {
 
     SearchEServiceCatalogCommand defaultSearchEServiceCatalogCommand();
 
+    SearchEServiceCatalogCommand searchEServiceCatalogCommandForOffset(
+            SearchEServiceCatalogCommand original, Integer offset);
+
     default UpdateEServiceDescriptorCommand prepareDescriptorForPublicationCommand() {
         return defaultUpdateDescriptorCommand();
     }

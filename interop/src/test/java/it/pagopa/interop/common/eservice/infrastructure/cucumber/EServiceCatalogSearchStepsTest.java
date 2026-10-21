@@ -11,6 +11,7 @@ import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -27,6 +28,11 @@ class EServiceCatalogSearchStepsTest {
     private final EServiceCatalogSearchSteps steps = new EServiceCatalogSearchSteps(
             catalog, factory, session, Mappers.getMapper(EServiceCatalogSearchConfigurationMapper.class));
 
+    @BeforeEach
+    void stubDefaultSearchResult() {
+        when(catalog.search(any())).thenReturn(new EServiceCatalog(List.of(), 0, 20, 0));
+    }
+
     @Test
     void searchesNebulaWithOnlyActiveFilterAsRequesterAdmin() {
         var command = new BffSearchEServiceCatalogCommand();
@@ -42,9 +48,11 @@ class EServiceCatalogSearchStepsTest {
         assertThat(command.getBffPayload().getOffset()).isZero();
         assertThat(command.getBffPayload().getLimit()).isEqualTo(20);
         assertThat(steps.getSearchResult()).isSameAs(page);
+        assertThat(steps.getSearchCommand()).isSameAs(command);
         var order = inOrder(session, catalog);
         order.verify(session).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
         order.verify(catalog).search(command);
+        verifyNoMoreInteractions(catalog);
     }
 
     @ParameterizedTest
@@ -101,6 +109,30 @@ class EServiceCatalogSearchStepsTest {
     }
 
     @Test
+    void searchesWithoutKeywordWithProducerAndExplicitSort() {
+        steps.searchWithoutKeywordWithFilters(Tenant.PAGO_PA, List.of(
+                filter("erogatore", "Comune di Milano"),
+                filter("ordinamento", "nome crescente")));
+
+        var payload = ((BffSearchEServiceCatalogCommand) steps.getSearchCommand()).getBffPayload();
+        assertThat(payload.getKeyword()).isNull();
+        assertThat(payload.getProducersIds()).containsExactly(Tenant.COMUNE_DI_MILANO.getOrganizationId());
+        assertThat(payload.getSortBy().name()).isEqualTo("NAME_ASC");
+        assertThat(payload.getOffset()).isZero();
+        assertThat(payload.getLimit()).isEqualTo(20);
+    }
+
+    @Test
+    void searchesWithoutKeywordAndLeavesDefaultSortToBackend() {
+        steps.searchWithoutKeywordWithFilters(Tenant.PAGO_PA,
+                List.of(filter("erogatore", "Comune di Milano")));
+
+        var payload = ((BffSearchEServiceCatalogCommand) steps.getSearchCommand()).getBffPayload();
+        assertThat(payload.getKeyword()).isNull();
+        assertThat(payload.getSortBy()).isNull();
+    }
+
+    @Test
     void failedSearchDoesNotExposePreviousResult() {
         when(catalog.search(any())).thenReturn(new EServiceCatalog(List.of(), 0, 20, 0));
         steps.search(Tenant.PAGO_PA, "first");
@@ -108,6 +140,68 @@ class EServiceCatalogSearchStepsTest {
 
         assertThatThrownBy(() -> steps.search(Tenant.PAGO_PA, "second")).hasMessage("backend failed");
         assertThatThrownBy(steps::getSearchResult).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(steps::getSearchPages).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(steps::getSearchCommand).isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void loadsStrictPagesOnDemandReusingFirstPageAndCachesAcrossAssertions() {
+        steps.search(Tenant.PAGO_PA, "first");
+        var command = steps.getSearchCommand();
+        var firstPage = steps.getSearchResult();
+        var pages = List.of(firstPage);
+        when(catalog.searchPages(command, firstPage, 1)).thenReturn(pages);
+
+        assertThat(steps.getSearchPages(1)).isSameAs(pages);
+        assertThat(steps.getSearchPages()).isSameAs(pages);
+        assertThat(steps.getSearchPages(1)).isSameAs(pages);
+        verify(catalog).searchPages(command, firstPage, 1);
+        verify(catalog, never()).searchPages(any(), any());
+    }
+
+    @Test
+    void fullResultAssertionsLoadAllPagesAndANewSearchClearsTheCache() {
+        steps.search(Tenant.PAGO_PA, "first");
+        var firstCommand = steps.getSearchCommand();
+        var firstPage = steps.getSearchResult();
+        var firstPages = List.of(firstPage);
+        when(catalog.searchPages(firstCommand, firstPage)).thenReturn(firstPages);
+        assertThat(steps.getSearchPages()).isSameAs(firstPages);
+        assertThat(steps.getSearchPages()).isSameAs(firstPages);
+
+        var nextPage = new EServiceCatalog(List.of(), 0, 20, 0);
+        when(catalog.search(any())).thenReturn(nextPage);
+        steps.search(Tenant.PAGO_PA, "second");
+        var nextCommand = steps.getSearchCommand();
+        var nextPages = List.of(nextPage);
+        when(catalog.searchPages(nextCommand, nextPage)).thenReturn(nextPages);
+
+        assertThat(steps.getSearchPages()).isSameAs(nextPages);
+        verify(catalog).searchPages(firstCommand, firstPage);
+        verify(catalog).searchPages(nextCommand, nextPage);
+    }
+
+    @Test
+    void invalidNewSearchClearsSuccessfulSearchStateAndCachedPages() {
+        steps.search(Tenant.PAGO_PA, "first");
+        when(catalog.searchPages(any(), any())).thenReturn(List.of(steps.getSearchResult()));
+        steps.getSearchPages();
+
+        assertThatThrownBy(() -> steps.searchWithFilters(Tenant.PAGO_PA, "second",
+                List.of(filter("sconosciuto", "sì")))).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(steps::getSearchResult).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(steps::getSearchPages).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> steps.getSearchPages(1)).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(steps::getSearchCommand).isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void failedPageLoadingDoesNotCachePartialResults() {
+        steps.search(Tenant.PAGO_PA, "first");
+        when(catalog.searchPages(any(), any())).thenThrow(new IllegalStateException("page failed"));
+        assertThatThrownBy(steps::getSearchPages).hasMessage("page failed");
+        assertThatThrownBy(steps::getSearchPages).hasMessage("page failed");
+        verify(catalog, times(2)).searchPages(steps.getSearchCommand(), steps.getSearchResult());
     }
 
     private EServiceCatalogSearchConfiguration filter(String filter, String value) {

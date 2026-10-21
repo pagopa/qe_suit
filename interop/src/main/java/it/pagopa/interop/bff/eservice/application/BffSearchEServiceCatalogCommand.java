@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.eservice.application;
 
 import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatalogCommand;
+import it.pagopa.interop.common.eservice.domain.EServiceCatalogSortBy;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.tenant.domain.TenantCategory;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceProducerCategory;
@@ -46,6 +47,13 @@ public class BffSearchEServiceCatalogCommand implements SearchEServiceCatalogCom
     }
 
     @Override
+    public SearchEServiceCatalogCommand sortBy(EServiceCatalogSortBy sortBy) {
+        bffPayload.setSortBy(sortBy == null ? null
+                : it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSortBy.valueOf(sortBy.name()));
+        return this;
+    }
+
+    @Override
     public SearchEServiceCatalogCommand producersIds(List<UUID> producersIds) {
         bffPayload.setProducersIds(List.copyOf(producersIds));
         return this;
@@ -76,4 +84,15 @@ public class BffSearchEServiceCatalogCommand implements SearchEServiceCatalogCom
         bffPayload.setLimit(limit);
         return this;
     }
+
+    @Override
+    public Integer getOffset() {
+        return bffPayload.getOffset();
+    }
+
+    @Override
+    public Integer getLimit() {
+        return bffPayload.getLimit();
+    }
+
 }

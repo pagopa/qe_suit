@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper;
 
 import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatalogCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.eservice.domain.EServiceCatalogSortBy;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogSearchConfiguration;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -47,6 +48,7 @@ public interface EServiceCatalogSearchConfigurationMapper {
             case "modalità" -> target.mode(parseMode(source.getValue()));
             case "scambio asincrono" -> target.asyncExchange(parseBoolean(source.getValue()));
             case "Signal Hub" -> target.onlySignalHubEnabled(parseSignalHub(source.getValue()));
+            case "ordinamento" -> target.sortBy(parseSortBy(source.getValue()));
             case "erogatore" -> target.producersIds(parseProducers(source.getValue()));
             case "categoria dell'erogatore" -> target.producerCategories(parseCategories(source.getValue()));
             default -> throw new IllegalArgumentException("Unsupported catalog filter: " + source.getFilter());
@@ -79,6 +81,16 @@ public interface EServiceCatalogSearchConfigurationMapper {
             case "erogazione" -> EServiceMode.DELIVER;
             case "ricezione" -> EServiceMode.RECEIVE;
             default -> throw new IllegalArgumentException("Modalità e-service non supportata: " + value);
+        };
+    }
+
+    private static EServiceCatalogSortBy parseSortBy(String value) {
+        return switch (value) {
+            case "nome crescente" -> EServiceCatalogSortBy.NAME_ASC;
+            case "nome decrescente" -> EServiceCatalogSortBy.NAME_DESC;
+            case "data di creazione crescente" -> EServiceCatalogSortBy.CREATED_AT_ASC;
+            case "data di creazione decrescente" -> EServiceCatalogSortBy.CREATED_AT_DESC;
+            default -> throw new IllegalArgumentException("Ordinamento catalogo non supportato: " + value);
         };
     }
 

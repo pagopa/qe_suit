@@ -134,6 +134,30 @@ class EServiceCatalogSearchConfigurationMapperTest {
         assertThat(command.getBffPayload().getMode()).isNull();
         assertThat(command.getBffPayload().getAsyncExchange()).isNull();
         assertThat(command.getBffPayload().getOnlySignalHubEnabled()).isNull();
+        assertThat(command.getBffPayload().getSortBy()).isNull();
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "nome crescente,NAME_ASC",
+            "nome decrescente,NAME_DESC",
+            "data di creazione crescente,CREATED_AT_ASC",
+            "data di creazione decrescente,CREATED_AT_DESC"
+    })
+    void mapsEverySupportedSortMode(String value, String expected) {
+        mapper.apply(List.of(transform(Map.of("filtro", "ordinamento", "valore", value))), command);
+
+        assertThat(command.getBffPayload().getSortBy().name()).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"nome", "Nome crescente", "data crescente"})
+    void rejectsUnsupportedSortValues(String value) {
+        var dto = transform(Map.of("filtro", "ordinamento", "valore", value));
+
+        assertThatThrownBy(() -> mapper.apply(List.of(dto), command))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Ordinamento catalogo non supportato");
     }
 
     @ParameterizedTest

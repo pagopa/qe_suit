@@ -9,8 +9,8 @@ Feature: Ordinamento e paginazione nel catalogo privato
 
   Assunzioni:
   - gli e-service della tabella sono creati nell'ordine delle righe: ES-1 è il più vecchio;
-  - ogni scenario usa una parola chiave improbabile, così il perimetro dei risultati è controllato
-  e il totale e l'ordine si possono verificare in modo esatto;
+  - gli scenari di ordinamento puro non usano parole chiave e verificano l'ordine relativo degli e-service predisposti su tutte le pagine;
+  - gli altri scenari usano una parola chiave improbabile per delimitare il perimetro dei risultati;
   - gli e-service predisposti sono eliminati o archiviati al termine dello scenario da un hook.
 
   Scenario: [PRIVATE_CATALOG_ORDERING_PAGINATION_1] Ordinamento predefinito: dal più recente
@@ -19,8 +19,10 @@ Feature: Ordinamento e paginazione nel catalogo privato
       | ES-1  | Comune di Milano | E-service Ordine Alfa  |
       | ES-2  | Comune di Milano | E-service Ordine Beta  |
       | ES-3  | Comune di Milano | E-service Ordine Gamma |
-    When PagoPA cerca nel catalogo "Ordine"
-    Then tra i risultati della ricerca sono presenti, in quest'ordine, i seguenti e-service:
+    When PagoPA cerca nel catalogo senza indicare alcuna parola con i seguenti filtri:
+      | filtro    | valore           |
+      | erogatore | Comune di Milano |
+    Then tra i risultati della ricerca, considerando tutte le pagine, i seguenti e-service compaiono in quest'ordine relativo:
       | alias |
       | ES-3  |
       | ES-2  |
@@ -32,10 +34,11 @@ Feature: Ordinamento e paginazione nel catalogo privato
       | ES-1  | Comune di Milano | E-service Sorte Beta  |
       | ES-2  | Comune di Milano | E-service Sorte Gamma |
       | ES-3  | Comune di Milano | E-service Sorte Alfa  |
-    When PagoPA cerca nel catalogo "Sorte" con i seguenti filtri:
-      | filtro      | valore        |
-      | ordinamento | <ordinamento> |
-    Then tra i risultati della ricerca sono presenti, in quest'ordine, i seguenti e-service:
+    When PagoPA cerca nel catalogo senza indicare alcuna parola con i seguenti filtri:
+      | filtro      | valore           |
+      | erogatore   | Comune di Milano |
+      | ordinamento | <ordinamento>    |
+    Then tra i risultati della ricerca, considerando tutte le pagine, i seguenti e-service compaiono in quest'ordine relativo:
       | alias     |
       | <primo>   |
       | <secondo> |
@@ -50,9 +53,9 @@ Feature: Ordinamento e paginazione nel catalogo privato
 
   Scenario: [PRIVATE_CATALOG_ORDERING_PAGINATION_3] Con una parola chiave la rilevanza precede l'ordinamento richiesto
     Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome          |
-      | ES-1  | Comune di Milano | Zeta Quarzo   |
-      | ES-2  | Comune di Milano | Alfa Pratiche |
+      | alias | erogatore        | nome          | descrizione                          |
+      | ES-1  | Comune di Milano | Zeta Quarzo   | Consultazione dei dati del servizio. |
+      | ES-2  | Comune di Milano | Alfa Pratiche | Gestione delle pratiche Quarzo.      |
     When PagoPA cerca nel catalogo "Quarzo" con i seguenti filtri:
       | filtro      | valore         |
       | ordinamento | nome crescente |
@@ -125,8 +128,8 @@ Feature: Ordinamento e paginazione nel catalogo privato
     Given i seguenti e-service pubblicati:
       | alias | erogatore        | nome                 |
       | ES-1  | Comune di Milano | E-service Molti Nodi |
-    And la versione 2 dell'e-service "ES-1" pubblicata
-    And la versione 3 dell'e-service "ES-1" pubblicata
+    And la versione 2 dell'e-service "ES-1" del Comune di Milano pubblicata
+    And la versione 3 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" collegato a un template di finalità pubblicato
     And l'e-service "ES-1" collegato a un template di finalità pubblicato
     And l'e-service "ES-1" sottoscritto da PagoPA con richiesta di fruizione attiva

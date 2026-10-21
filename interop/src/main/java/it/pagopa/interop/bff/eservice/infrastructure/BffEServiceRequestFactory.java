@@ -80,7 +80,39 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
 
     @Override
     public SearchEServiceCatalogCommand defaultSearchEServiceCatalogCommand() {
-        return new BffSearchEServiceCatalogCommand().offset(0).limit(20);
+        return new BffSearchEServiceCatalogCommand().offset(0).limit(200);
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand searchEServiceCatalogCommandForOffset(
+            SearchEServiceCatalogCommand original, Integer offset) {
+        if (!(original instanceof BffSearchEServiceCatalogCommand bffCommand)) {
+            throw new IllegalArgumentException("Command must be an instance of BffSearchEServiceCatalogCommand");
+        }
+        BffSearchEServiceCatalogCommand copy = new BffSearchEServiceCatalogCommand();
+        copy.offset(offset);
+        CatalogFilterPayload source = bffCommand.getBffPayload();
+        CatalogFilterPayload target = copy.getBffPayload();
+        target.setLimit(source.getLimit());
+        target.setKeyword(source.getKeyword());
+        target.setSortBy(source.getSortBy());
+        target.setOnlyActiveEservices(source.getOnlyActiveEservices());
+        target.setAvailableForRequester(source.getAvailableForRequester());
+        target.setSubscribedByRequester(source.getSubscribedByRequester());
+        target.setOnlyTemplateInstances(source.getOnlyTemplateInstances());
+        target.setHasLinkedPurposeTemplates(source.getHasLinkedPurposeTemplates());
+        target.setProducerCategories(copyList(source.getProducerCategories()));
+        target.setAsyncExchange(source.getAsyncExchange());
+        target.setMode(source.getMode());
+        target.setOnlySignalHubEnabled(source.getOnlySignalHubEnabled());
+        target.setRequesterDelegationRoles(copyList(source.getRequesterDelegationRoles()));
+        target.setTemplateId(source.getTemplateId());
+        target.setProducersIds(copyList(source.getProducersIds()));
+        return copy;
+    }
+
+    private static <T> List<T> copyList(List<T> values) {
+        return values == null ? null : List.copyOf(values);
     }
 
     @Override
