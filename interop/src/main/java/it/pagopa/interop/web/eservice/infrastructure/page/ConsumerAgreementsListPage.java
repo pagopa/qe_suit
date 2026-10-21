@@ -8,9 +8,13 @@ import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Pagination;
 import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.infrastructure.suit.component.TextField;
+import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
+import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.base-url}/fruizione/richieste")
 public interface ConsumerAgreementsListPage extends Page {
+
+    Breadcrumbs breadcrumbs();
 
     @XPath(".//h1")
     Readable<String> pageTitle();
@@ -44,6 +48,9 @@ public interface ConsumerAgreementsListPage extends Page {
 
     @Override
     default void assertLoaded() {
+        Assertions.assertThat(breadcrumbs().items().stream().map(Readable::read).toList())
+                .as("Breadcrumbs")
+                .containsExactly("Fruizione", "Richieste inoltrate");
         pageTitle().readAndAssert("Richieste di fruizione inoltrate");
     }
 }
