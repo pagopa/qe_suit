@@ -2,6 +2,7 @@ package it.pagopa.interop.suite;
 
 import it.pagopa.infrastructure.reporting.contract.lifecycle.GenerateContractReport;
 import it.pagopa.interop.suite.contract.BffDelegationContractTest;
+import it.pagopa.interop.suite.contract.BffPurposeContractTest;
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.ConfigurationParameters;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -13,6 +14,7 @@ import org.junit.platform.suite.api.Suite;
 @IncludeEngines("junit-jupiter")
 @SelectClasses({
     BffDelegationContractTest.class,
+    BffPurposeContractTest.class,
 })
 @ConfigurationParameters({
     @ConfigurationParameter(
