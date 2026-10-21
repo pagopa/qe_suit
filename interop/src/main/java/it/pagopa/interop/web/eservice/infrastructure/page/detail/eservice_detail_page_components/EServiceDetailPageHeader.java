@@ -3,6 +3,7 @@ package it.pagopa.interop.web.eservice.infrastructure.page.detail.eservice_detai
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.Chip;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 
@@ -25,7 +26,7 @@ public interface EServiceDetailPageHeader extends Component {
 
     // Only one chip is rendered in the page header (statusChip of the version info section)
     @XPath("(.//*[contains(@class, 'MuiChip-root')])[1]")
-    Label descriptorStatusChip();
+    Chip descriptorStatusChip();
 
     @XPath(".//button[normalize-space()='Vedi ultima versione']")
     Button viewLatestVersionButton();
