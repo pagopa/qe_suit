@@ -5,6 +5,9 @@ import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogFilterPayload;
 import lombok.Getter;
 
+import java.util.List;
+import java.util.UUID;
+
 @Getter
 public class BffSearchEServiceCatalogCommand implements SearchEServiceCatalogCommand {
     private final CatalogFilterPayload bffPayload = new CatalogFilterPayload();
@@ -37,6 +40,12 @@ public class BffSearchEServiceCatalogCommand implements SearchEServiceCatalogCom
     @Override
     public SearchEServiceCatalogCommand onlySignalHubEnabled(Boolean onlySignalHubEnabled) {
         bffPayload.setOnlySignalHubEnabled(onlySignalHubEnabled);
+        return this;
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand producersIds(List<UUID> producersIds) {
+        bffPayload.setProducersIds(List.copyOf(producersIds));
         return this;
     }
 

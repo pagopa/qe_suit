@@ -5,6 +5,7 @@ import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRequestFactory;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogSearchConfiguration;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceCatalogSearchConfigurationMapper;
 import it.pagopa.interop.common.infrastructure.cucumber.DataTableMapper;
+import it.pagopa.interop.common.kernel.domain.Tenant;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
 import jakarta.validation.ValidatorFactory;
@@ -142,6 +143,67 @@ class EServiceCatalogSearchConfigurationMapperTest {
 
         assertThatThrownBy(() -> mapper.apply(List.of(dto), command))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void mapsSingleProducerToItsOrganizationId() {
+        mapper.apply(List.of(transform(Map.of("filtro", "erogatore", "valore", "Comune di Milano"))), command);
+
+        assertThat(command.getBffPayload().getProducersIds())
+                .containsExactly(Tenant.COMUNE_DI_MILANO.getOrganizationId());
+        assertThat(command.getBffPayload().getOffset()).isZero();
+        assertThat(command.getBffPayload().getLimit()).isEqualTo(20);
+    }
+
+    @Test
+    void mapsMultipleProducersAsAnAlternativeList() {
+        mapper.apply(List.of(transform(Map.of("filtro", "erogatore",
+                "valore", "Comune di Milano e Comune di Pozzallo"))), command);
+
+        assertThat(command.getBffPayload().getProducersIds()).containsExactly(
+                Tenant.COMUNE_DI_MILANO.getOrganizationId(),
+                Tenant.COMUNE_DI_POZZALLO.getOrganizationId());
+    }
+
+    @Test
+    void mapsExplicitEmptyProducerList() {
+        command.producersIds(List.of(Tenant.COMUNE_DI_MILANO.getOrganizationId()));
+
+        mapper.apply(List.of(transform(Map.of("filtro", "erogatore", "valore", "elenco vuoto"))), command);
+
+        assertThat(command.getBffPayload().getProducersIds()).isEmpty();
+    }
+
+    @Test
+    void omittedProducerFilterPreservesFactoryDefaults() {
+        var original = command.getBffPayload().getProducersIds();
+
+        mapper.apply(List.of(), command);
+
+        assertThat(command.getBffPayload().getProducersIds()).isSameAs(original);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Comune sconosciuto", "Comune di Milano e sconosciuto",
+            "Comune di Milano e ", " e Comune di Milano"})
+    void rejectsUnknownOrEmptyProducersWithoutSettingAPartialList(String value) {
+        var original = command.getBffPayload().getProducersIds();
+        var dto = transform(Map.of("filtro", "erogatore", "valore", value));
+
+        assertThatThrownBy(() -> mapper.apply(List.of(dto), command))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThat(command.getBffPayload().getProducersIds()).isSameAs(original);
+    }
+
+    @Test
+    void combinesProducerAndActiveFilters() {
+        mapper.apply(List.of(
+                transform(Map.of("filtro", "erogatore", "valore", "Comune di Pozzallo")),
+                transform(Map.of("filtro", "solo e-service attivi", "valore", "sì"))), command);
+
+        assertThat(command.getBffPayload().getProducersIds())
+                .containsExactly(Tenant.COMUNE_DI_POZZALLO.getOrganizationId());
+        assertThat(command.getBffPayload().getOnlyActiveEservices()).isTrue();
     }
 
     @Test

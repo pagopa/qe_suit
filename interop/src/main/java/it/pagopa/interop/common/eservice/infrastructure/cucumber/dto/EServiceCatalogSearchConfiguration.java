@@ -15,7 +15,7 @@ public class EServiceCatalogSearchConfiguration {
     @JsonSetter(nulls = Nulls.FAIL)
     @NotBlank
     @Pattern(
-            regexp = "solo e-service attivi|a partire dal risultato|risultati per pagina|modalità|scambio asincrono|Signal Hub",
+            regexp = "solo e-service attivi|a partire dal risultato|risultati per pagina|modalità|scambio asincrono|Signal Hub|erogatore",
             message = "Filtro catalogo non supportato"
     )
     private String filter;

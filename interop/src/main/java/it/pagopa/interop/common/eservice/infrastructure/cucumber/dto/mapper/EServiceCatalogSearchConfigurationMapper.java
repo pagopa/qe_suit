@@ -4,14 +4,17 @@ import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatal
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogSearchConfiguration;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
+import it.pagopa.interop.common.kernel.domain.Tenant;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
 import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Mapper(config = TestMapperConfig.class)
 public interface EServiceCatalogSearchConfigurationMapper {
@@ -43,8 +46,20 @@ public interface EServiceCatalogSearchConfigurationMapper {
             case "modalità" -> target.mode(parseMode(source.getValue()));
             case "scambio asincrono" -> target.asyncExchange(parseBoolean(source.getValue()));
             case "Signal Hub" -> target.onlySignalHubEnabled(parseSignalHub(source.getValue()));
+            case "erogatore" -> target.producersIds(parseProducers(source.getValue()));
             default -> throw new IllegalArgumentException("Unsupported catalog filter: " + source.getFilter());
         }
+    }
+
+    private static List<UUID> parseProducers(String value) {
+        if ("elenco vuoto".equals(value)) {
+            return List.of();
+        }
+        return Arrays.stream(value.split(" e ", -1))
+                .map(String::trim)
+                .map(Tenant::fromAlias)
+                .map(Tenant::getOrganizationId)
+                .toList();
     }
 
     private static EServiceMode parseMode(String value) {
