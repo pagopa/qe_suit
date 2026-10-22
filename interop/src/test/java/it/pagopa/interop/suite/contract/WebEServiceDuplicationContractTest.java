@@ -3,6 +3,8 @@ package it.pagopa.interop.suite.contract;
 import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand;
+import it.pagopa.interop.common.delegation.domain.DelegationState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
@@ -47,7 +49,12 @@ public class WebEServiceDuplicationContractTest {
 
         return Stream.of(UserRole.ADMIN, UserRole.API, UserRole.API_SECURITY).flatMap(role -> {
             EService eService = createPublishedEService(delegator);
-            interopJourney.createActiveProducerDelegation(delegator, delegate, eService.getRef());
+            interopJourney.createProducerDelegation(ProducerDelegationCreationCommand.builder()
+                    .delegator(delegator)
+                    .delegate(delegate)
+                    .eServiceRef(eService.getRef())
+                    .targetState(DelegationState.ACTIVE)
+                    .build());
 
             return duplicationContract(delegator, role, eService, "ACTIVE");
         });
@@ -61,7 +68,12 @@ public class WebEServiceDuplicationContractTest {
 
         return Stream.of(UserRole.ADMIN, UserRole.API, UserRole.API_SECURITY).flatMap(role -> {
             EService eService = createPublishedEService(delegator);
-            interopJourney.createWaitingForApprovalProducerDelegation(delegator, delegate, eService.getRef());
+            interopJourney.createProducerDelegation(ProducerDelegationCreationCommand.builder()
+                    .delegator(delegator)
+                    .delegate(delegate)
+                    .eServiceRef(eService.getRef())
+                    .targetState(DelegationState.WAITING_FOR_APPROVAL)
+                    .build());
 
             return duplicationContract(delegator, role, eService, "WAITING_FOR_APPROVAL");
         });
@@ -75,7 +87,12 @@ public class WebEServiceDuplicationContractTest {
 
         return Stream.of(UserRole.ADMIN, UserRole.API, UserRole.API_SECURITY).flatMap(role -> {
             EService eService = createPublishedEService(delegator);
-            interopJourney.createActiveProducerDelegation(delegator, delegate, eService.getRef());
+            interopJourney.createProducerDelegation(ProducerDelegationCreationCommand.builder()
+                    .delegator(delegator)
+                    .delegate(delegate)
+                    .eServiceRef(eService.getRef())
+                    .targetState(DelegationState.ACTIVE)
+                    .build());
 
             return unavailableDuplicationContract(delegate, role, eService, "ACTIVE");
         });
@@ -89,7 +106,12 @@ public class WebEServiceDuplicationContractTest {
 
         return Stream.of(UserRole.ADMIN, UserRole.API, UserRole.API_SECURITY).flatMap(role -> {
             EService eService = createPublishedEService(delegator);
-            interopJourney.createWaitingForApprovalProducerDelegation(delegator, delegate, eService.getRef());
+            interopJourney.createProducerDelegation(ProducerDelegationCreationCommand.builder()
+                    .delegator(delegator)
+                    .delegate(delegate)
+                    .eServiceRef(eService.getRef())
+                    .targetState(DelegationState.WAITING_FOR_APPROVAL)
+                    .build());
 
             return unavailableDuplicationContract(delegate, role, eService, "WAITING_FOR_APPROVAL");
         });
