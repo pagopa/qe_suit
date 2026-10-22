@@ -30,7 +30,7 @@ Feature: Coerenza dell'archiviazione di un e-service e delle sue versioni
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     And un admin appartenente all'erogatore Comune di Milano
     And la versione 1 dell'e-service è in fase di archiviazione con un periodo di preavviso di 120 giorni
-    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega attiva
+    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When il delegato tenta di richiedere al delegante l'archiviazione dell'intero e-service con un periodo di preavviso di 60 giorni e una motivazione valida
     Then viene mostrata la snackbar con un messaggio di errore "Non puoi archiviare l’e-service prima di una versione già in fase di archiviazione. Seleziona una durata più lunga."
