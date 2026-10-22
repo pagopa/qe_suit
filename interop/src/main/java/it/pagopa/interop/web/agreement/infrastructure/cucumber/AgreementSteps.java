@@ -1,6 +1,5 @@
 package it.pagopa.interop.web.agreement.infrastructure.cucumber;
 
-import io.cucumber.java.PendingException;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.common.agreement.application.AgreementUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
