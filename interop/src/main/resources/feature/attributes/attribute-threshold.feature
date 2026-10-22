@@ -1,4 +1,4 @@
-@eservice
+@eservice-attribute-threshold
 @channel:Given=BFF,When=WEB,Then=WEB
 Feature: Soglie differenziate
 
