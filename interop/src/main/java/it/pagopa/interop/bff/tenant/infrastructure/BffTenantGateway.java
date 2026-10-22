@@ -8,11 +8,14 @@ import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.tenant.application.TenantGateway;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.time.Duration;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -22,6 +25,37 @@ public class BffTenantGateway implements TenantGateway {
 
     private final BffTenantRestClient restClient;
     private final BffTenantRequestFactory requestFactory;
+
+    @Override
+    public void ensureProducerDelegationEnabled(@NonNull TenantRef tenantRef) {
+        Tenant tenant = restClient.getTenant(tenantRef.id()).withoutPolling().assertStatusCode(200).get();
+        if (producerDelegationEnabled(tenant, tenantRef)) {
+            return;
+        }
+        // Both flags are required by the API: preserve the actual consumer configuration.
+        boolean consumerEnabled = tenant.getFeatures().stream()
+                .anyMatch(feature -> feature.getDelegatedConsumer() != null);
+        var response = restClient.updateTenantDelegatedFeatures(new TenantDelegatedFeaturesFlagsUpdateSeed()
+                        .isDelegatedConsumerFeatureEnabled(consumerEnabled)
+                        .isDelegatedProducerFeatureEnabled(true))
+                .withoutPolling();
+        if (!response.getRaw().isSuccess()) {
+            throw new IllegalStateException("Impossibile abilitare le deleghe di erogazione per " + tenantRef.id());
+        }
+        restClient.getTenant(tenantRef.id()).withPolling(raw -> {
+            if (!raw.isSuccess()) {
+                throw new IllegalStateException("Impossibile verificare le deleghe di erogazione per " + tenantRef.id());
+            }
+            return producerDelegationEnabled(raw.as(Tenant.class), tenantRef);
+        }, Duration.ofSeconds(45), Duration.ofSeconds(1)).get();
+    }
+
+    private boolean producerDelegationEnabled(Tenant tenant, TenantRef tenantRef) {
+        if (tenant == null || !tenantRef.id().equals(tenant.getId()) || tenant.getFeatures() == null) {
+            throw new IllegalStateException("Configurazione ente non valida per " + tenantRef.id());
+        }
+        return tenant.getFeatures().stream().anyMatch(feature -> feature.getDelegatedProducer() != null);
+    }
 
     @Override
     public Set<UUID> getActiveCertifiedAttributeIds(@NonNull TenantRef tenantRef) {

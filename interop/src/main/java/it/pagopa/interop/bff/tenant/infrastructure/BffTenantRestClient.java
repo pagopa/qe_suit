@@ -42,6 +42,13 @@ public class BffTenantRestClient extends RestClient {
         );
     }
 
+    public TestChain<Void> updateTenantDelegatedFeatures(@Nonnull TenantDelegatedFeaturesFlagsUpdateSeed seed) {
+        return execute(
+                () -> tenantsApi.updateTenantDelegatedFeatures().body(seed).execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<Void> addCertifiedDiscreteAttribute(
             @Nonnull UUID tenantId,
             @Nonnull CertifiedDiscreteTenantAttributeSeed seed

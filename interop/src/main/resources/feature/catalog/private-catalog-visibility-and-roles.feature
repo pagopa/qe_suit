@@ -78,8 +78,12 @@ Feature: Visibilità degli e-service nel catalogo privato
       | pubblicata     | in attesa di approvazione | 1                   |
       | pubblicata     | archiviata                | 1                   |
 
+  @producer-delegation-settings
   Scenario Outline: [PRIVATE_CATALOG_VISIBILITY_5] Stessa lista per produttore, fruitore e delegato
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti enti abilitati a ricevere deleghe di erogazione:
+      | ente               |
+      | Comune di Pozzallo |
+    And i seguenti e-service predisposti per la pubblicazione:
       | alias | erogatore        | nome            |
       | ES-1  | Comune di Milano | E-service Ruoli |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
@@ -95,8 +99,12 @@ Feature: Visibilità degli e-service nel catalogo privato
 
   # TODO: test di business valido solo per il canale BFF (l'indicazione "è mio"
   # non è replicabile sul frontend): non estenderlo agli altri canali.
+  @producer-delegation-settings
   Scenario Outline: [PRIVATE_CATALOG_VISIBILITY_6] Indicazione "è mio" solo per il produttore
-    Given i seguenti e-service pubblicati:
+    Given i seguenti enti abilitati a ricevere deleghe di erogazione:
+      | ente               |
+      | Comune di Pozzallo |
+    And i seguenti e-service pubblicati:
       | alias | erogatore        | nome          |
       | ES-1  | Comune di Milano | E-service Mio |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva

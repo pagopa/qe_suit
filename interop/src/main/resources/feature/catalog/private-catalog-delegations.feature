@@ -1,5 +1,6 @@
 @private-catalog
 @private-catalog-delegations
+@producer-delegation-settings
 @channel:Given=BFF,When=BFF,Then=BFF
 Feature: Filtro per ruolo di delega nel catalogo privato
 
@@ -11,6 +12,14 @@ Feature: Filtro per ruolo di delega nel catalogo privato
   - contano solo le deleghe di erogazione (non quelle di fruizione) e solo nello stato attivo;
   - se si indicano più ruoli di delega, i risultati sono l'unione (OR) dei due insiemi;
   - gli e-service predisposti sono eliminati o archiviati al termine dello scenario da un hook.
+  - gli enti destinatari sono predisposti esplicitamente; l'abilitazione resta nell'ambiente condiviso.
+  - i destinatari delle deleghe usano fixture con origine IPA; Sogecap, con origine IVASS, non è ammessa dal backend.
+
+  Background:
+    Given i seguenti enti abilitati a ricevere deleghe di erogazione:
+      | ente                  |
+      | Comune di Pozzallo    |
+      | Comune di Comun Nuovo |
 
   Scenario Outline: [PRIVATE_CATALOG_DELEGATIONS_1] Ruolo di delegato: conta solo la delega attiva
     Given i seguenti e-service pubblicati:
@@ -57,7 +66,7 @@ Feature: Filtro per ruolo di delega nel catalogo privato
       | ES-2  | Comune di Pozzallo | E-service Unione Beta  |
       | ES-3  | Sogecap            | E-service Unione Gamma |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
-    And l'e-service "ES-2" delegato in erogazione dal Comune di Pozzallo a Sogecap con delega attiva
+    And l'e-service "ES-2" delegato in erogazione dal Comune di Pozzallo al Comune di Comun Nuovo con delega attiva
     When il Comune di Pozzallo cerca nel catalogo "Unione" con i seguenti filtri:
       | filtro          | valore               |
       | ruolo di delega | delegato e delegante |

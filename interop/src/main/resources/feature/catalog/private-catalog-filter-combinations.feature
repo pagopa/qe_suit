@@ -77,8 +77,12 @@ Feature: Combinazioni di filtri nel catalogo privato
       | ES-2  |
       | ES-3  |
 
+  @producer-delegation-settings
   Scenario: [PRIVATE_CATALOG_FILTER_COMBINATIONS_4] Ruolo di delegato ed erogatore
-    Given i seguenti e-service pubblicati:
+    Given i seguenti enti abilitati a ricevere deleghe di erogazione:
+      | ente               |
+      | Comune di Pozzallo |
+    And i seguenti e-service pubblicati:
       | alias | erogatore        | nome                       |
       | ES-1  | Comune di Milano | E-service Mandato Delegato |
       | ES-2  | Comune di Milano | E-service Mandato Libero   |

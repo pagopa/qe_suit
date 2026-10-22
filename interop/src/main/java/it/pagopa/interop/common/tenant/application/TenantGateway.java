@@ -11,6 +11,8 @@ import java.util.UUID;
 
 public interface TenantGateway extends Plugin<Channel> {
 
+    void ensureProducerDelegationEnabled(TenantRef tenantRef);
+
     Set<UUID> getActiveCertifiedAttributeIds(TenantRef tenantRef);
 
     void assignCertifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef);
