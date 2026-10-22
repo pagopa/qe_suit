@@ -27,21 +27,5 @@ public interface AgreementDetailErogatorePage extends Page {
             );
         }
     }
-
-    default void assertNotLoaded() {
-        boolean loaded;
-        try {
-            assertLoaded();
-            loaded = true;
-        } catch (NoSuchElementException e) {
-            loaded = false;
-        }
-
-        if (loaded) {
-            throw new AssertionError(
-                    "Expected page NOT to be loaded, but assertLoaded() succeeded for " + this.getClass().getName()
-            );
-        }
-    }
 }
 
