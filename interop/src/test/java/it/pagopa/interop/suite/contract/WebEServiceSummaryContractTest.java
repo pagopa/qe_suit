@@ -1,28 +1,26 @@
 package it.pagopa.interop.suite.contract;
 
-import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
-import it.pagopa.interop.web.eservice.application.WebEServiceGeneralData;
-import it.pagopa.interop.web.eservice.application.WebEServiceTechnicalData;
-import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceSummaryPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.net.URI;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import static it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceSummaryPage.*;
@@ -38,15 +36,12 @@ import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 @DisplayName("Web E-Service Summary Contract Test")
 public class WebEServiceSummaryContractTest {
 
-    private static final Pattern SUMMARY_PATH =
-            Pattern.compile("/erogazione/e-service/([^/]+)/([^/]+)/modifica/riepilogo/?$");
-
     private final WebBrowserContractValidator webContractValidator;
-    private final ObjectProvider<WebPresentationGateway> junitWebPresentationGateway;
-    private final CurrentUserSession currentUserSession;
+    private final InteropJourney interopJourney;
+    private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
 
     /**
-     * Creates one complete, unpublished draft through the wizard, then checks its
+     * Creates one complete, unpublished draft through InteropJourney, then checks its
      * summary in a fresh authenticated browser for each read-only scenario.
      */
     @TestFactory
@@ -67,52 +62,21 @@ public class WebEServiceSummaryContractTest {
     }
 
     private String[] prepareDraft() {
-        currentUserSession.set(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO);
-        WebPresentationGateway gateway = junitWebPresentationGateway.getObject();
-        try {
-            EServiceCreatePage page = gateway.bind(EServiceCreatePage.class);
-            page.navigateTo();
-            page.assertLoaded();
+        EService eService = interopJourney
+                .switchChannel(Channel.BFF)
+                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.DRAFT)
+                .get(EService.class);
 
-            var data = WebEServiceGeneralData.buildDefault().eservice();
-            page.generalDataForm()
-                    .setEServiceName(data.getName())
-                    .setEServiceDescription(data.getDescription())
-                    .setMode(data.getMode())
-                    .setTechnology(data.getTechnology())
-                    .setAsyncExchange(data.getAsyncExchange())
-                    .setUsePersonalData(Boolean.TRUE.equals(data.getPersonalData()))
-                    .saveDraft();
+        var descriptor = eService.getLastDraftDescriptor();
+        var command = eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(1, 2)
+                .description("Versione per il test contrattuale del riepilogo");
+        var preparedDescriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(
+                eService, descriptor, command);
 
-            var thresholds = page.thresholdAndAttributeForm();
-            thresholds.assertLoaded();
-            thresholds.apiCallThresholdSection().dailyCallsPerConsumerInput().fill("1");
-            thresholds.apiCallThresholdSection().dailyCallsTotalInput().fill("2");
-            thresholds.saveDraftButton().click();
-
-            var technicalData = WebEServiceTechnicalData.buildDefault();
-            var technicalSpecs = page.technicalSpecsForm();
-            technicalSpecs.assertLoaded();
-            technicalSpecs.uploadInterface(technicalData.interfaceAttachmentPath());
-            technicalSpecs.audienceInput().fill(technicalData.aud());
-            technicalSpecs.voucherLifespanInput().fill(technicalData.voucherLifespan());
-            technicalSpecs.saveDraftButton().click();
-
-            var additionalInfo = page.additionalInfoForm();
-            additionalInfo.assertLoaded();
-            additionalInfo.descriptionInput().fill("Versione per il test contrattuale del riepilogo");
-            additionalInfo.goToSummaryButton().click();
-
-            gateway.bind(EServiceSummaryPage.class).assertLoaded();
-            var matcher = SUMMARY_PATH.matcher(URI.create(gateway.getLocation().getUrl()).getPath());
-            if (!matcher.find()) {
-                throw new IllegalStateException("Il wizard non ha raggiunto la pagina di riepilogo");
-            }
-            return new String[]{matcher.group(1), matcher.group(2)};
-        } finally {
-            gateway.close();
-        }
+        return new String[]{eService.getId().toString(), preparedDescriptor.getId().toString()};
     }
+
 
     private void assertHeaderAndBreadcrumbs(EServiceSummaryPage page) {
         // ES-SUMM-01 - Verifica che il pulsante "Torna agli e-service" sia abilitato
