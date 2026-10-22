@@ -19,6 +19,7 @@ import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +27,13 @@ import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
+/**
+ * Test di contratto relativi alla feature
+ * <a href="https://pagopa.atlassian.net/browse/PIN-10841">PIN-10841</a>,
+ * inizialmente prevista per la release 2.24.0 e posticipata alla 2.25.0.
+ * In attesa del rilascio della feature, i test non sono funzionanti e sono esclusi
+ * dagli NRT tramite {@code @Tag("ignore")}.
+ */
 @SpringBootTest(
         classes = {
                 TestBootApp.class,
@@ -36,6 +44,7 @@ import java.util.stream.Stream;
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
+@Tag("ignore")
 public class WebEServiceDuplicationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
