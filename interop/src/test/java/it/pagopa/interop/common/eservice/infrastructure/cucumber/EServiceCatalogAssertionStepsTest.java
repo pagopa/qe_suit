@@ -134,12 +134,14 @@ class EServiceCatalogAssertionStepsTest {
     }
 
     @Test
-    void failsWhenRequestedIdIsMissingEvenIfNamesMatch() {
+    void positivePresenceDelegatesToTheSearchSnapshotOwner() {
         when(store.getByAlias("ES-2", EService.class)).thenReturn(Optional.of(excluded));
         when(searches.getSearchResult()).thenReturn(result(included));
 
-        assertThatThrownBy(() -> steps.shouldContainEService("ES-2"))
-                .isInstanceOf(AssertionError.class).hasMessageContaining(excluded.getId().toString());
+        steps.shouldContainEService("ES-2");
+
+        verify(searches).awaitPresence(List.of(excluded));
+        verify(searches, never()).awaitPresence(List.of(included));
     }
 
     @Test

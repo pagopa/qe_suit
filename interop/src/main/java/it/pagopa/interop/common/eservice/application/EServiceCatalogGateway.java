@@ -7,4 +7,9 @@ import org.springframework.plugin.core.Plugin;
 
 public interface EServiceCatalogGateway extends Plugin<Channel> {
     EServiceCatalog search(SearchEServiceCatalogCommand command);
+
+    EServiceCatalog awaitPresence(
+            SearchEServiceCatalogCommand command,
+            EServiceCatalogPresenceCommand expected
+    );
 }

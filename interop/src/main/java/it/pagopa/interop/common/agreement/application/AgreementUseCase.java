@@ -2,12 +2,15 @@ package it.pagopa.interop.common.agreement.application;
 
 import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
+import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.Delegation;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -44,5 +47,17 @@ public class AgreementUseCase {
 
     public Agreement submitAgreement(Agreement agreement) {
         return agreementGateway.submitAgreement(agreement);
+    }
+
+    public Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation) {
+        return agreementGateway.suspendAgreement(agreement, delegation);
+    }
+
+    public Agreement archiveAgreement(Agreement agreement) {
+        return agreementGateway.archiveAgreement(agreement);
+    }
+
+    public Agreement awaitState(Agreement agreement, Set<AgreementState> expectedStates) {
+        return agreementGateway.awaitState(agreement, expectedStates);
     }
 }

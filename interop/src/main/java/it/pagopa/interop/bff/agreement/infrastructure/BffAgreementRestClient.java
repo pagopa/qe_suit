@@ -52,4 +52,20 @@ public class BffAgreementRestClient extends RestClient {
                 Agreement.class
         );
     }
+
+    public TestChain<Agreement> suspend(@Nonnull UUID agreementId, @Nullable UUID delegationId) {
+        var payload = new DelegationRef().delegationId(delegationId);
+        return execute(
+                () -> agreementsApi.suspendAgreement().agreementIdPath(agreementId)
+                        .body(payload).execute(Function.identity()),
+                Agreement.class
+        );
+    }
+
+    public TestChain<Void> archive(@Nonnull UUID agreementId) {
+        return execute(
+                () -> agreementsApi.archiveAgreement().agreementIdPath(agreementId).reqSpec(reqSpec -> reqSpec.setContentType("application/json")).execute(Function.identity()),
+                Void.class
+        );
+    }
 }

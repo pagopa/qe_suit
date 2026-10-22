@@ -8,6 +8,9 @@ import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.domain.EServiceCatalog;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogSearchConfiguration;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceCatalogSearchConfigurationMapper;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogPropertyExpectation;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceCatalogExpectationMapper;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceCatalogAssertionSteps;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -27,9 +30,11 @@ class EServiceCatalogSearchStepsTest {
     private final EServiceCatalogPaginationUseCase pagination = mock(EServiceCatalogPaginationUseCase.class);
     private final CurrentUserSession session = mock(CurrentUserSession.class);
     private final EServiceRequestFactory factory = spy(new BffEServiceRequestFactory());
+    private final it.pagopa.infrastructure.context.InMemoryEntityStore entityStore =
+            new it.pagopa.infrastructure.context.InMemoryEntityStore();
     private final EServiceCatalogSearchSteps steps = new EServiceCatalogSearchSteps(
             catalog, pagination, factory, session, Mappers.getMapper(EServiceCatalogSearchConfigurationMapper.class),
-            new it.pagopa.infrastructure.context.InMemoryEntityStore());
+            entityStore);
 
     @BeforeEach
     void stubDefaultSearchResult() {
@@ -205,6 +210,64 @@ class EServiceCatalogSearchStepsTest {
         assertThatThrownBy(steps::getSearchPages).hasMessage("page failed");
         assertThatThrownBy(steps::getSearchPages).hasMessage("page failed");
         verify(pagination, times(2)).searchPages(steps.getSearchCommand(), steps.getSearchResult());
+    }
+
+    @Test
+    void successfulPresenceRefreshReplacesTheSnapshotAndInvalidatesCachedPages() {
+        var expected = it.pagopa.interop.common.eservice.domain.EService.builder()
+                .id(java.util.UUID.randomUUID()).build();
+        var initial = new EServiceCatalog(List.of(), 0, 20, 0);
+        var refreshed = new EServiceCatalog(List.of(
+                EServiceCatalog.Entry.builder().id(expected.getId()).build()), 0, 20, 1);
+        when(catalog.search(any())).thenReturn(initial);
+        steps.search(Tenant.PAGO_PA, "first");
+        var command = steps.getSearchCommand();
+        var oldPages = List.of(initial);
+        var freshPages = List.of(refreshed);
+        when(pagination.searchPages(command, initial)).thenReturn(oldPages);
+        when(catalog.awaitPresence(command, initial, List.of(expected))).thenReturn(refreshed);
+
+        assertThat(steps.getSearchPages()).isSameAs(oldPages);
+        steps.awaitPresence(List.of(expected));
+
+        assertThat(steps.getSearchResult()).isSameAs(refreshed);
+        assertThat(steps.getSearchResult().getResults())
+                .extracting(EServiceCatalog.Entry::getId)
+                .containsExactly(expected.getId());
+        when(pagination.searchPages(command, refreshed)).thenReturn(freshPages);
+        assertThat(steps.getSearchPages()).isSameAs(freshPages);
+        verify(catalog).awaitPresence(command, initial, List.of(expected));
+        verify(pagination).searchPages(command, refreshed);
+    }
+
+    @Test
+    void downstreamPresenceAndPropertyAssertionsReadTheRefreshedPage() {
+        var expected = it.pagopa.interop.common.eservice.domain.EService.builder()
+                .id(java.util.UUID.randomUUID()).build();
+        entityStore.upsert("ES-1", expected);
+        var initial = new EServiceCatalog(List.of(), 0, 20, 0);
+        var refreshed = new EServiceCatalog(List.of(
+                EServiceCatalog.Entry.builder().id(expected.getId()).version("3").build()), 0, 20, 1);
+        when(catalog.search(any())).thenReturn(initial);
+        steps.search(Tenant.PAGO_PA, "first");
+        var command = steps.getSearchCommand();
+        when(catalog.awaitPresence(command, initial, List.of(expected))).thenReturn(refreshed);
+        var assertions = new EServiceCatalogAssertionSteps(
+                steps, catalog, pagination, entityStore, Mappers.getMapper(EServiceCatalogExpectationMapper.class));
+
+        assertions.shouldContainEService("ES-1");
+        assertions.shouldReportProperties("ES-1", List.of(property("versione presentata", "3")));
+
+        assertThat(steps.getSearchResult()).isSameAs(refreshed);
+        verify(catalog).awaitPresence(command, initial, List.of(expected));
+        verify(session).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
+    }
+
+    private EServiceCatalogPropertyExpectation property(String name, String value) {
+        var expectation = new EServiceCatalogPropertyExpectation();
+        expectation.setProperty(name);
+        expectation.setValue(value);
+        return expectation;
     }
 
     private EServiceCatalogSearchConfiguration filter(String filter, String value) {

@@ -473,6 +473,52 @@ class EServiceCatalogUseCaseTest {
                 .isInstanceOf(AssertionError.class);
     }
 
+    @Test
+    void presenceFastPathValidatesThePageAndDoesNotCallTheGatewayAgain() {
+        var command = fullCommand();
+        UUID expectedId = UUID.randomUUID();
+        EService expected = service(expectedId);
+        var initial = page(List.of(entry(expectedId)), 0, 2, 1);
+
+        assertThat(catalog.awaitPresence(command, initial, List.of(expected))).isSameAs(initial);
+
+        verifyNoInteractions(gateway);
+    }
+
+    @Test
+    void presenceRefreshUsesExpectedIdsAndValidatesTheReturnedPage() {
+        var command = fullCommand();
+        UUID firstId = UUID.randomUUID();
+        UUID secondId = UUID.randomUUID();
+        EService first = service(firstId);
+        EService second = service(secondId);
+        var initial = page(List.of(entry(UUID.randomUUID()), entry(UUID.randomUUID())), 0, 2, 2);
+        var refreshed = page(List.of(entry(firstId), entry(secondId)), 0, 2, 2);
+        var expected = new EServiceCatalogPresenceCommand(List.of(firstId, secondId));
+        when(gateway.awaitPresence(command, expected)).thenReturn(refreshed);
+
+        assertThat(catalog.awaitPresence(command, initial, List.of(first, second))).isSameAs(refreshed);
+
+        verify(gateway).awaitPresence(command, expected);
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
+    void presenceRejectsMalformedInitialOrRefreshedPages() {
+        var command = fullCommand();
+        EService expected = service(UUID.randomUUID());
+        var malformedInitial = page(List.of(), 0, 2, 1);
+
+        assertThatThrownBy(() -> catalog.awaitPresence(command, malformedInitial, List.of(expected)))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("expected 1");
+        verifyNoInteractions(gateway);
+
+        var validInitial = page(List.of(entry(UUID.randomUUID()), entry(UUID.randomUUID())), 0, 2, 2);
+        when(gateway.awaitPresence(any(), any())).thenReturn(page(List.of(entry(expected.getId())), 0, 2, 2));
+        assertThatThrownBy(() -> catalog.awaitPresence(command, validInitial, List.of(expected)))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("expected 2");
+    }
+
     private BffSearchEServiceCatalogCommand fullCommand() {
         var command = new BffSearchEServiceCatalogCommand();
         command.offset(0).limit(2).keyword("catalog-keyword")

@@ -10,6 +10,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
+import it.pagopa.utils.async.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
 import jakarta.annotation.Nullable;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -80,6 +82,48 @@ public class BffAgreementGateway implements AgreementGateway {
                 .get();
     }
 
+    @Override
+    public Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation) {
+        return restClient.suspend(
+                        agreement.getId(), Optional.ofNullable(delegation).map(Delegation::getId).orElse(null)
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(mapper::toAgreement)
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public Agreement archiveAgreement(Agreement agreement) {
+        restClient.archive(agreement.getId())
+                .withoutPolling()
+                .assertStatusCode(204);
+        return awaitState(agreement, Set.of(AgreementState.ARCHIVED));
+    }
+
+    @Override
+    public Agreement awaitState(Agreement agreement, Set<AgreementState> expectedStates) {
+        if (expectedStates.isEmpty()) {
+            throw new IllegalArgumentException("At least one expected agreement state is required");
+        }
+        return PollingUtils.pollUntil(
+                () -> getAgreement(agreement.getRef()),
+                current -> {
+                    AgreementState state = current.getState();
+                    if (expectedStates.contains(state)) {
+                        return true;
+                    }
+                    if (state == null || state == AgreementState.REJECTED
+                            || state == AgreementState.MISSING_CERTIFIED_ATTRIBUTES
+                            || state == AgreementState.ARCHIVED) {
+                        throw new IllegalStateException(
+                                "Agreement reached state " + state + " while awaiting " + expectedStates
+                        );
+                    }
+                    return false;
+                }
+        );
+    }
 
     @Override
     public boolean supports(Channel delimiter) {

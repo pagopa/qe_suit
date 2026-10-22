@@ -26,8 +26,8 @@ public class EServiceCatalogAssertionSteps {
 
     @Then("l'e-service {string} è presente tra i risultati della ricerca")
     public void shouldContainEService(String alias) {
-        catalog.shouldContain(searchSteps.getSearchResult(),
-                List.of(entityStore.getByAliasOrThrow(alias, EService.class)));
+        searchSteps.getSearchResult();
+        searchSteps.awaitPresence(List.of(entityStore.getByAliasOrThrow(alias, EService.class)));
     }
 
     @Then("l'e-service {string} non è presente tra i risultati della ricerca")
@@ -66,8 +66,8 @@ public class EServiceCatalogAssertionSteps {
 
     @Then("tra i risultati della ricerca sono presenti i seguenti e-service:")
     public void shouldContainEServices(List<EServiceCatalogExpectation> expectations) {
-        catalog.shouldContain(searchSteps.getSearchResult(),
-                expectationMapper.toEServices(expectations, entityStore));
+        searchSteps.getSearchResult();
+        searchSteps.awaitPresence(expectationMapper.toEServices(expectations, entityStore));
     }
 
     @Then("tra i risultati della ricerca non sono presenti i seguenti e-service:")

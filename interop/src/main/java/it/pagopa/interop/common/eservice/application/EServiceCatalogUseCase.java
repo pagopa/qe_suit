@@ -21,6 +21,29 @@ public class EServiceCatalogUseCase {
         return requirePage(gateway.search(command), command.getOffset(), command.getLimit());
     }
 
+    public EServiceCatalog awaitPresence(
+            SearchEServiceCatalogCommand command,
+            EServiceCatalog initialResult,
+            List<EService> expected
+    ) {
+        validatePagination(command);
+        requirePage(initialResult, command.getOffset(), command.getLimit());
+        assertThat(expected).as("E-services expected in catalog results").isNotEmpty();
+        EServiceCatalogPresenceCommand presence = new EServiceCatalogPresenceCommand(
+                expected.stream().map(EService::getId).toList()
+        );
+        if (presence.isSatisfiedBy(initialResult)) {
+            shouldContain(initialResult, expected);
+            return initialResult;
+        }
+
+        EServiceCatalog refreshed = requirePage(
+                gateway.awaitPresence(command, presence), command.getOffset(), command.getLimit()
+        );
+        shouldContain(refreshed, expected);
+        return refreshed;
+    }
+
     public void shouldContainInOrder(EServiceCatalog result, List<EService> expected) {
         assertThat(expected).as("E-services expected in catalog result order").isNotEmpty();
         assertThat(result.getResults())
@@ -97,13 +120,7 @@ public class EServiceCatalogUseCase {
     }
 
     EServiceCatalog requirePage(EServiceCatalog page, int expectedOffset, int expectedLimit) {
-        requirePageMetadata(page, expectedOffset, expectedLimit);
-        int expectedResults = expectedResultCount(page, expectedOffset, expectedLimit);
-        if (page.getResults().size() != expectedResults) {
-            throw new IllegalStateException("Catalog returned " + page.getResults().size()
-                    + " results at offset " + expectedOffset + "; expected " + expectedResults);
-        }
-        return page;
+        return EServiceCatalogPageValidator.requirePage(page, expectedOffset, expectedLimit);
     }
 
     void validatePagination(SearchEServiceCatalogCommand command) {
@@ -123,20 +140,6 @@ public class EServiceCatalogUseCase {
     }
 
     EServiceCatalog requirePageMetadata(EServiceCatalog page, int expectedOffset, int expectedLimit) {
-        if (page == null) {
-            throw new IllegalStateException("Catalog gateway returned no search result");
-        }
-        if (page.getOffset() != expectedOffset) {
-            throw new IllegalStateException("Catalog returned offset " + page.getOffset()
-                    + " instead of " + expectedOffset);
-        }
-        if (page.getLimit() != expectedLimit) {
-            throw new IllegalStateException("Catalog returned limit " + page.getLimit()
-                    + " instead of " + expectedLimit);
-        }
-        if (page.getTotalCount() < 0) {
-            throw new IllegalStateException("Catalog returned a negative total count");
-        }
-        return page;
+        return EServiceCatalogPageValidator.requirePageMetadata(page, expectedOffset, expectedLimit);
     }
 }

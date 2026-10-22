@@ -34,4 +34,9 @@ public class EServiceDescriptorParameterTypes {
 
         return new SelectedEServiceDescriptor(selectedEService, versionNumber);
     }
+
+    @ParameterType("l'e-service \"([^\"]+)\"")
+    public EService eServiceByAlias(String alias) {
+        return entityStore.getByAliasOrThrow(alias, EService.class);
+    }
 }

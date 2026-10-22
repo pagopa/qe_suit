@@ -7,6 +7,7 @@ import it.pagopa.interop.common.eservice.application.EServiceCatalogUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatalogCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceCatalog;
+import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogSearchConfiguration;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceCatalogSearchConfigurationMapper;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
@@ -90,6 +91,13 @@ public class EServiceCatalogSearchSteps {
 
     public void assertSearchSucceeded() {
         getSearchResult();
+    }
+
+    public void awaitPresence(List<EService> expected) {
+        EServiceCatalog currentResult = getSearchResult();
+        EServiceCatalog refreshed = catalog.awaitPresence(getSearchCommand(), currentResult, expected);
+        searchResult = refreshed;
+        searchPages = null;
     }
 
     private void search(Tenant requester, String keyword, List<EServiceCatalogSearchConfiguration> filters) {
