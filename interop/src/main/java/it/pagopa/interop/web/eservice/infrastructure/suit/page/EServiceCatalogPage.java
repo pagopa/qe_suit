@@ -41,6 +41,9 @@ public interface EServiceCatalogPage extends Page {
     @XPath("//button[contains(@class, 'MuiButtonBase-root') and not(contains(@class, 'MuiPaginationItem-root')) and contains(text(), 'Filtri')]")
     Button filtersButton();
 
+    @XPath("//div[contains(@class, 'MuiStack-root'))]")
+    EServiceCatalogFiltersDrawer filtersDrawer();
+
     //Label che mostra il numero di risultati della ricerca (es. "4061 risultati")
     @XPath("//*[contains(text(), 'risultati')]")
     Label resultsCounterLabel();
