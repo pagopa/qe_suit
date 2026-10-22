@@ -4,6 +4,7 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCatalogFiltersDrawer;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCatalogPage;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
@@ -97,9 +98,74 @@ public class WebEServiceCatalogContractTest {
                                     Assertions.assertThat(page.emptyStateMessage().get().isPresent())
                                             .as("Messaggio 'nessun risultato' assente nel DOM")
                                             .isFalse();
+                                }),
+                        new WebScenario<>("Verifica contratto drawer \"Filtri\" catalogo E-Service",
+                                page -> {
+                                    page.filtersButton().click();
+                                },
+                                page -> {
+                                    //DRAWER-01: Drawer filtri presente nel DOM
+                                    Assertions.assertThat(page.filtersDrawer().get().isPresent())
+                                            .as("Drawer filtri presente nel DOM").isTrue();
+
+                                    var drawer = page.filtersDrawer();
+                                    //DRAWER-02: Titolo drawer
+                                    drawer.title().readAndAssert(EServiceCatalogFiltersDrawer.TITLE);
+                                    //DRAWER-03..05: Pulsanti drawer
+                                    Assertions.assertThat(drawer.closeButton().isDisabled())
+                                            .as("Pulsante chiusura abilitato").isFalse();
+                                    Assertions.assertThat(drawer.removeFiltersButton().isDisabled())
+                                            .as("Pulsante Rimuovi filtri abilitato").isFalse();
+                                    Assertions.assertThat(drawer.applyFiltersButton().isDisabled())
+                                            .as("Pulsante Applica abilitato").isFalse();
+
+                                    assertQuickSelectionSection(drawer);
+                                    assertTemplateSection(drawer);
+                                    assertTechnicalSpecsSection(drawer);
+                                    assertDelegationsSection(drawer);
                                 })
 
                 ));
+    }
+
+    private void assertQuickSelectionSection(EServiceCatalogFiltersDrawer drawer) {
+        //DRAWER-06..10: Sezione Selezione rapida
+        drawer.quickSelectionTitle().readAndAssert(EServiceCatalogFiltersDrawer.SECTION_QUICK_SELECTION);
+        Assertions.assertThat(drawer.activeEservicesSwitch().isDisabled())
+                .as("Switch E-service attivi abilitato").isFalse();
+        Assertions.assertThat(drawer.usableByTenantSwitch().isDisabled())
+                .as("Switch Fruibili dal tuo ente abilitato").isFalse();
+        Assertions.assertThat(drawer.alreadyInUseSwitch().isDisabled())
+                .as("Switch Già in fruizione abilitato").isFalse();
+        Assertions.assertThat(drawer.providerCategoryInput().get().isPresent())
+                .as("Input Categoria erogatore presente nel DOM").isTrue();
+    }
+
+    private void assertTemplateSection(EServiceCatalogFiltersDrawer drawer) {
+        //DRAWER-11..13: Sezione Template
+        drawer.templateTitle().readAndAssert(EServiceCatalogFiltersDrawer.SECTION_TEMPLATE);
+        Assertions.assertThat(drawer.createdFromTemplateSwitch().isDisabled())
+                .as("Switch Creati da template abilitato").isFalse();
+        Assertions.assertThat(drawer.linkedPurposeTemplateSwitch().isDisabled())
+                .as("Switch Con template finalità collegati abilitato").isFalse();
+    }
+
+    private void assertTechnicalSpecsSection(EServiceCatalogFiltersDrawer drawer) {
+        //DRAWER-14..16: Sezione Specifiche tecniche
+        drawer.technicalSpecsTitle().readAndAssert(EServiceCatalogFiltersDrawer.SECTION_TECHNICAL_SPECS);
+        Assertions.assertThat(drawer.dataExchangeInput().get().isPresent())
+                .as("Input Scambio dati presente nel DOM").isTrue();
+        Assertions.assertThat(drawer.providesOrReceivesDataInput().get().isPresent())
+                .as("Input Eroga o riceve dati presente nel DOM").isTrue();
+    }
+
+    private void assertDelegationsSection(EServiceCatalogFiltersDrawer drawer) {
+        //DRAWER-17..19: Sezione Deleghe e notifiche modifica dati
+        drawer.delegationsAndNotificationsTitle().readAndAssert(EServiceCatalogFiltersDrawer.SECTION_DELEGATIONS);
+        Assertions.assertThat(drawer.delegationsInput().get().isPresent())
+                .as("Input Deleghe presente nel DOM").isTrue();
+        Assertions.assertThat(drawer.signalHubSwitch().isDisabled())
+                .as("Switch Signal Hub abilitato").isFalse();
     }
 
     /**
