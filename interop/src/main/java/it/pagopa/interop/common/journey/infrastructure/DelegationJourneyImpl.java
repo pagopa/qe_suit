@@ -73,11 +73,11 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
     }
 
     private Delegation prepareProducerDelegation(Tenant delegator, Tenant delegate, EServiceRef eServiceRef) {
+        TenantRef delegateRef = TenantRef.of(delegate.getOrganizationId());
         userJourney.withProducer(delegate, UserRole.ADMIN);
-        tenantUseCase.enableProducerDelegationAvailability();
+        tenantUseCase.enableProducerDelegationAvailability(delegateRef);
 
         userJourney.withProducer(delegator, UserRole.ADMIN);
-        return delegationUseCase.createProducerDelegation(
-                TenantRef.of(delegate.getOrganizationId()), eServiceRef);
+        return delegationUseCase.createProducerDelegation(delegateRef, eServiceRef);
     }
 }

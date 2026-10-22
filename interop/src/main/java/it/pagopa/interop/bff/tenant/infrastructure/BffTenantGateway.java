@@ -3,7 +3,6 @@ package it.pagopa.interop.bff.tenant.infrastructure;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.tenant.application.*;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -15,8 +14,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
@@ -25,12 +22,10 @@ public class BffTenantGateway implements TenantGateway {
 
     private final BffTenantRestClient restClient;
     private final BffTenantRequestFactory requestFactory;
-    private final CurrentUserSession currentUserSession;
 
     @Override
-    public void enableProducerDelegationAvailability() {
-        UUID tenantId = currentUserSession.getTenant().getOrganizationId();
-        Tenant tenant = restClient.getTenant(tenantId)
+    public void enableProducerDelegationAvailability(@NonNull TenantRef tenantRef) {
+        Tenant tenant = restClient.getTenant(tenantRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
@@ -44,7 +39,7 @@ public class BffTenantGateway implements TenantGateway {
                 .isDelegatedConsumerFeatureEnabled(consumerEnabled);
         executeWithPolling(restClient.updateDelegatedFeatures(payload));
 
-        Tenant updatedTenant = restClient.getTenant(tenantId)
+        Tenant updatedTenant = restClient.getTenant(tenantRef.id())
                 .withPolling(response -> response.isSuccess()
                         && isProducerDelegationEnabled(response.as(Tenant.class)))
                 .get();
