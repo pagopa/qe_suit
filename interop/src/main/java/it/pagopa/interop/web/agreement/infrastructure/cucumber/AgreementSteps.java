@@ -1,5 +1,6 @@
 package it.pagopa.interop.web.agreement.infrastructure.cucumber;
 
+import io.cucumber.java.PendingException;
 import io.cucumber.java.en.Then;
 import it.pagopa.interop.common.agreement.application.AgreementUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -13,8 +14,8 @@ public class AgreementSteps {
     private final AgreementUseCase agreementUseCase;
     private final CurrentUserSession currentUserSession;
 
-    @Then("il sistema impedisce l'accesso a {tenant} per la pagina indicata del {tenant} per la fruizione del {currentEService}")
-    public void blockUnauthorizedAccessToErogazioneSection(Tenant consumer, Tenant producer, EService eService) {
+    @Then("il sistema nega al fruitore {tenant} di accedere alla pagina di dettaglio nella sezione Erogazione per l'{currentEService} erogato da/dal {tenant}")
+    public void ilSistemaNegaAlFruitorePagoPADiAccedereAllaPaginaDiDettaglioNellaSezioneErogazionePerLEServiceErogatoDalComuneDiMilano(Tenant consumer, EService eService, Tenant producer) {
         if(consumer.getName().equals(producer.getName())){
             throw new IllegalArgumentException("Consumer and Producer are the same; for this test they must be different");
         }
