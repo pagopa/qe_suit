@@ -58,6 +58,7 @@ public class SelfCareSessionPayloadFactory {
             Map<String, Object> organization = new LinkedHashMap<>();
             organization.put("id", recipient.getOrganizationId());
             organization.put("name", recipient.getOrganization());
+            organization.put("roles", recipient.getRoles().stream().map(this::toRoleMap).toList());
             organization.put("fiscal_code", recipient.getTaxId());
             payload.put("organization", organization);
         }
