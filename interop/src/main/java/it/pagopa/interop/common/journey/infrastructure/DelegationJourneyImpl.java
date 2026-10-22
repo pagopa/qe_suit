@@ -2,6 +2,7 @@ package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.delegation.application.DelegationUseCase;
+import it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.DelegationJourney;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
@@ -26,26 +27,18 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
     private final EntityStore entityStore;
 
     @Override
-    public DelegationJourneyImpl createWaitingForApprovalProducerDelegation(
-            @NonNull Tenant delegator,
-            @NonNull Tenant delegate,
-            @NonNull EServiceRef eServiceRef
-    ) {
-        prepareProducerDelegation(delegator, delegate, eServiceRef);
-        return this;
-    }
+    public DelegationJourneyImpl createProducerDelegation(@NonNull ProducerDelegationCreationCommand command) {
+        Delegation delegation = prepareProducerDelegation(
+                command.getDelegator(), command.getDelegate(), command.getEServiceRef());
 
-    @Override
-    public DelegationJourneyImpl createActiveProducerDelegation(
-            @NonNull Tenant delegator,
-            @NonNull Tenant delegate,
-            @NonNull EServiceRef eServiceRef
-    ) {
-        Delegation delegation = prepareProducerDelegation(delegator, delegate, eServiceRef);
-
-        userJourney.withProducer(delegate, UserRole.ADMIN);
-        delegationUseCase.approveProducerDelegation(delegation.getRef());
-        return this;
+        return switch (command.getTargetState()) {
+            case WAITING_FOR_APPROVAL -> this;
+            case ACTIVE -> {
+                userJourney.withProducer(command.getDelegate(), UserRole.ADMIN);
+                delegationUseCase.approveProducerDelegation(delegation.getRef());
+                yield this;
+            }
+        };
     }
 
     @Override
