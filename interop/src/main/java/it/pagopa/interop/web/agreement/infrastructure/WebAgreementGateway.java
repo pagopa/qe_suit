@@ -11,7 +11,7 @@ import it.pagopa.interop.common.kernel.domain.Delegation;
 import it.pagopa.interop.web.agreement.infrastructure.page.AgreementCatalogErogatorePage;
 import it.pagopa.interop.web.agreement.infrastructure.page.AgreementDetailErogatorePage;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceDetailPage;
-import it.pagopa.interop.web.infrastructure.suit.component.UnauthorizedComponent;
+import it.pagopa.interop.web.infrastructure.suit.component.ServerErrorComponent;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ public class WebAgreementGateway implements AgreementGateway {
     private final EServiceDetailPage eServiceDetailPage;
     private final AgreementCatalogErogatorePage agreementCatalogErogatorePage;
     private final AgreementDetailErogatorePage agreementDetailErogatorePage;
-    private final UnauthorizedComponent unauthorizedComponent;
+    private final ServerErrorComponent notFoundComponent;
 
     @Override
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
@@ -58,7 +58,7 @@ public class WebAgreementGateway implements AgreementGateway {
     @Override
     public void blockUnauthorizedAccessToErogazioneSection(String agreementRequestId) {
         agreementDetailErogatorePage.navigateTo(agreementRequestId);
-        unauthorizedComponent.assertLoaded();
+        notFoundComponent.assertLoaded();
     }
 
     @Override

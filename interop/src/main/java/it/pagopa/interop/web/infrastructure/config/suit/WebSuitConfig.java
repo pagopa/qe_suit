@@ -6,6 +6,7 @@ import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.config.WebSuiteBuilder;
 import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.infrastructure.suit.capability.AuthenticatedLocatableCapabilityHandler;
+import it.pagopa.interop.web.infrastructure.suit.component.ServerErrorComponent;
 import it.pagopa.interop.web.infrastructure.suit.component.UnauthorizedComponent;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,5 +47,11 @@ public class WebSuitConfig {
     @ScenarioScope
     public UnauthorizedComponent unauthorizedComponent(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(UnauthorizedComponent.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public ServerErrorComponent notFoundComponent(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(ServerErrorComponent.class);
     }
 }
