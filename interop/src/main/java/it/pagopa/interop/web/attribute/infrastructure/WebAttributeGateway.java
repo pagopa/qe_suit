@@ -39,14 +39,10 @@ public class WebAttributeGateway implements AttributeGateway {
         eServiceEditPage.assertLoaded();
         eServiceEditPage.saveDraftAndProceed();
 
-        if (!eServiceEditPage.thresholdAndAttributeWizard().attributesTabs().certifiedAttributesTab().isActive()) {
-            eServiceEditPage.thresholdAndAttributeWizard().attributesTabs().certifiedAttributesTab().activate();
-        }
-
-        var attribute = eServiceEditPage.thresholdAndAttributeWizard().attributesTabs()
-                .certifiedAttributesTab()
-                .certifiedAttributeGroups().get(groupIndex-1)
+        var attribute = eServiceEditPage.thresholdAndAttributeForm().requiredAttributeSection()
+                .certifiedAttributeTabPanel().certifiedAttributeGroups().get(groupIndex-1)
                 .certifiedAttributes().get(attributeIndex-1);
+
         attribute.removeThresholdValue();
         assertThat(attribute.isThresholdNotSet())
                 .as(

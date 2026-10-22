@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.suit.component;
+package it.pagopa.interop.web.attribute.infrastructure.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
@@ -28,8 +28,6 @@ public interface CertifiedAttribute extends Component, Clickable {
     @XPath(".//p/following-sibling::*[contains(@class, 'MuiStack-root')]")
     Readable<String> thresholdInfo();
 
-    // Button customizeThesholdButton();
-
     Dialog confirmThresholdValueDeletionDialog();
 
     default boolean isThresholdNotSet() {
@@ -37,7 +35,7 @@ public interface CertifiedAttribute extends Component, Clickable {
     }
 
     default void details() {
-        // menu().find("Dettagli attributo").ifPresent(Clickable::click);
+        menu().find("Dettagli attributo").ifPresent(Clickable::click);
     }
 
     default void remove() {
@@ -53,4 +51,5 @@ public interface CertifiedAttribute extends Component, Clickable {
     default CertifiedAttribute confirmThesholdValueDeletion() {
         confirmThresholdValueDeletionDialog().confirmBtn().click();
         return this;
-    }}
+    }
+}
