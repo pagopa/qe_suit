@@ -47,7 +47,7 @@ import java.util.stream.Stream;
 }, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
-public class WebDelegatedNotificationDetailPGContractTest {
+public class WebNotificationDetailDelegatoContractTest {
 
     // testi attesi
 

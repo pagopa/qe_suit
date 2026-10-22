@@ -11,7 +11,7 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
  * oppure direttamente dall'URL, con l'id della delega e lo IUN della notifica come parametri.
  * Ha gli stessi elementi del dettaglio di una notifica dell'impresa ({@link NotificationDetailPGPage}) e in più
  * "Persona destinataria" con il delegante.
- * Testi e sezioni sono verificati da {@code WebDelegatedNotificationDetailPGContractTest}.
+ * Testi e sezioni sono verificati da {@code WebNotificationDetailDelegatoContractTest}.
  */
 @Url("${url.notifiche.persona-giuridica.notifiche-delegato-dettaglio}")
 public interface DelegatedNotificationDetailPGPage extends NotificationDetailPGPage {
