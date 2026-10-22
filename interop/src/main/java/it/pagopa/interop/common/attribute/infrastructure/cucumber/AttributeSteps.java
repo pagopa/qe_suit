@@ -11,7 +11,7 @@ public class AttributeSteps {
     private final AttributeUseCase attributeUseCase;
 
     @When("l'utente rimuove la soglia personalizzata dall'attributo certificato {int} del gruppo {int} dall'{currentEService}")
-    public void removeCertifiedAttributeThreshold(int groupIndex, int attributeIndex, EService eService) {
+    public void removeCertifiedAttributeThreshold(int attributeIndex, int groupIndex, EService eService) {
         attributeUseCase.removeCertifiedAttributeThreshold(eService, groupIndex, attributeIndex);
     }
 
