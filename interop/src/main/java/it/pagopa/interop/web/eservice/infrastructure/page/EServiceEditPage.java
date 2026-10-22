@@ -5,7 +5,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
-import it.pagopa.interop.web.eservice.infrastructure.page.component.creation_wizard.ThresholdAndAttributeWizard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.threshold_attribute_form.ThresholdAndAttributeForm;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
@@ -21,7 +21,7 @@ public interface EServiceEditPage extends Page {
     @XPath(".//button[normalize-space()='Salva bozza e prosegui']")
     Button saveDraftButton();
 
-    ThresholdAndAttributeWizard thresholdAndAttributeWizard();
+    ThresholdAndAttributeForm thresholdAndAttributeForm();
 
     default void saveDraftAndProceed() {
         saveDraftButton().click();

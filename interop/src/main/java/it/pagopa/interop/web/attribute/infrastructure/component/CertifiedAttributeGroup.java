@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.suit.component;
+package it.pagopa.interop.web.attribute.infrastructure.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
@@ -8,8 +8,8 @@ import it.pagopa.infrastructure.suit.component.Button;
 
 import java.util.List;
 
-@XPath("//*[id='TODO']")
-public interface VerifiedAttributeGroup extends Component, Clickable {
+@XPath("./*[contains(@class, 'MuiStack-root')]")
+public interface CertifiedAttributeGroup extends Component, Clickable {
 
     @XPath(".//*[contains(@class, 'MuiCardHeader-title')]")
     Readable<String> title();
@@ -23,5 +23,5 @@ public interface VerifiedAttributeGroup extends Component, Clickable {
     @XPath(".//button[contains(@class, 'MuiIconButton-root') and contains(@aria-label, 'Rimuovi gruppo di attributi')]")
     Button deleteAttributeButton();
 
-    List<VerifiedAttribute> verifiedAttributes();
+    List<CertifiedAttribute> certifiedAttributes();
 }
