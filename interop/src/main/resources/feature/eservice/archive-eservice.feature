@@ -6,7 +6,7 @@ Feature: Coerenza dell'archiviazione di un e-service e delle sue versioni
   Voglio che l'archiviazione dell'intero e-service rispetti quella già pianificata per le sue versioni
   Affinché l'e-service non venga archiviato prima di una sua versione.
 
-  Scenario: [ESERVICE_ARCHIVING_GRACE_PERIOD_1] - Impossibilità di archiviare un e-service prima di una sua versione
+  Scenario: [ESERVICE_ARCHIVING_GRACE_PERIOD_1.1] - Impossibilità di archiviare un e-service prima di una sua versione
   Dato un e-service con due versioni: la prima, meno recente, in stato ARCHIVING e con una richiesta di fruizione attiva
   e la seconda, più recente, in stato PUBLISHED
   Quando l'erogatore proprietario tenta di archiviare l'intero e-service
@@ -19,7 +19,7 @@ Feature: Coerenza dell'archiviazione di un e-service e delle sue versioni
     When l'erogatore tenta di archiviare l'e-service con un periodo di preavviso di 60 giorni e una motivazione valida
     Then viene mostrata la snackbar con un messaggio di errore "Non puoi archiviare l’e-service prima di una versione già in fase di archiviazione. Seleziona una durata più lunga."
 
-  Scenario: [ESERVICE_ARCHIVING_GRACE_PERIOD_2] - Impossibilità per il delegato di richiedere l'archiviazione di un e-service prima di una sua versione
+  Scenario: [ESERVICE_ARCHIVING_GRACE_PERIOD_1.2] - Impossibilità per il delegato di richiedere l'archiviazione di un e-service prima di una sua versione
   Dato un e-service con una delega in erogazione attiva e due versioni:
   la prima, meno recente, in stato ARCHIVING e con una richiesta di fruizione attiva,
   e la seconda, più recente, in stato PUBLISHED.
@@ -35,7 +35,7 @@ Feature: Coerenza dell'archiviazione di un e-service e delle sue versioni
     When il delegato tenta di richiedere al delegante l'archiviazione dell'intero e-service con un periodo di preavviso di 60 giorni e una motivazione valida
     Then viene mostrata la snackbar con un messaggio di errore "Non puoi archiviare l’e-service prima di una versione già in fase di archiviazione. Seleziona una durata più lunga."
 
-  Scenario Outline: [ESERVICE_ARCHIVING_GRACE_PERIOD_3] - Archiviazione di un e-service con un preavviso compatibile con quello di una sua versione
+  Scenario Outline: [ESERVICE_ARCHIVING_GRACE_PERIOD_1.3] - Archiviazione di un e-service con un preavviso compatibile con quello di una sua versione
   Dato un e-service con due versioni:
   la prima, meno recente, in stato ARCHIVING e con una richiesta di fruizione attiva,
   e la seconda, più recente, in stato PUBLISHED.
