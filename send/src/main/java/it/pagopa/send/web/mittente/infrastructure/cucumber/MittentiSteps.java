@@ -20,7 +20,7 @@ public class MittentiSteps {
     private Page currentPage;
 
     // l'ente diventa l'utente del browser: le pagine si aprono con la sua sessione nel sessionStorage
-    @Given("l'utente è un {string} di {tenant}")
+    @Given("l'utente è un {string} di {user}")
     public void login(String role, User tenant) {
         webBrowserContext.setTenant(tenant);
         webBrowserContext.setCurrentUser(tenant);

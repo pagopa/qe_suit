@@ -5,7 +5,7 @@ Feature: Abilitazione Domicilio Digitale (SERCQ) per persone giuridiche
 
   @sercqDomicilioDigitale @removeCourtesyAddress
   Scenario: [SERCQ_PG_DOMICILIO_DIGITALE_1] Abilitazione Domicilio Digitale per SERCQ
-    Given la PG impresa-2 effettua l'accesso a SelfCare con autenticazione SPID
+    Given la PG Impresa_2 effettua l'accesso a SelfCare con autenticazione SPID
     And se presente, viene saltata la configurazione del prodotto SEND
     Then la pagina Notifications è caricata con successo
     When naviga alla pagina Address
