@@ -23,6 +23,7 @@ import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceInstance
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceInstanceLabelUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateEServiceDescriptorTemplateInstanceSeed;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateEServiceTemplateInstanceDescriptorQuotasSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateEServiceTemplateInstanceSeed;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import it.pagopa.interop.m2m.v3.infrastructure.config.M2Mv3ApiContractConfig;
@@ -211,6 +212,23 @@ public class M2Mv3EServiceTemplateContractTest {
                 .tests();
     }
 
+    /**
+     * POST /eserviceTemplates/eservices/{eserviceId}/descriptors/{descriptorId}/quotas:
+     * modifica le soglie giornaliere complessive e per fruitore di un descrittore PUBLISHED.
+     * Precondizioni BFF: template con versione PUBLISHED e relativa istanza con il primo descrittore PUBLISHED.
+     */
+    @TestFactory
+    Stream<DynamicTest> updateTemplateInstanceDescriptorQuotas() {
+        return httpContractValidator
+                .as(Tenant.COMUNE_DI_MILANO, M2MRole.M2M_ADMIN)
+                .apiCall(() -> apiClient.eserviceTemplates().updateTemplateInstanceDescriptorQuotas())
+                .pathParams(this::createPublishedEServiceInstanceDescriptorPathParams)
+                .payload(() -> new UpdateEServiceTemplateInstanceDescriptorQuotasSeed()
+                        .dailyCallsPerConsumer(2)
+                        .dailyCallsTotal(20))
+                .tests();
+    }
+
     private UUID createPublishedEServiceTemplateId() {
         interopJourney.switchChannel(Channel.BFF);
         try {
@@ -243,6 +261,10 @@ public class M2Mv3EServiceTemplateContractTest {
     }
 
     private UUID createPublishedEServiceInstanceId() {
+        return createPublishedEServiceInstanceDescriptorPathParams().get("eserviceId");
+    }
+
+    private Map<String, UUID> createPublishedEServiceInstanceDescriptorPathParams() {
         interopJourney.switchChannel(Channel.BFF);
         try {
             EService instance = createDraftEServiceInstance();
@@ -266,7 +288,10 @@ public class M2Mv3EServiceTemplateContractTest {
                     publishedDescriptor.getState(),
                     "The template instance must be published before the contract request"
             );
-            return instance.getId();
+            return Map.of(
+                    "eserviceId", instance.getId(),
+                    "descriptorId", publishedDescriptor.getId()
+            );
         } finally {
             interopJourney.resetChannel(Channel.M2M_V3);
         }
