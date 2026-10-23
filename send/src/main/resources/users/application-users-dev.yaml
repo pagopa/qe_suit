@@ -1,0 +1,82 @@
+# ============================================================================
+# Utenze generiche di test - ambiente dev
+# ============================================================================
+# Una voce per ogni UserAlias (chiave in kebab-case). tax-id: codice fiscale dell'ente o dell'impresa (della persona
+# per una PF); personal-tax-id: codice fiscale della persona che accede.
+# I destinatari PG delle notifiche devono avere un tax-id numerico: SEND rifiuta gli altri codici.
+# ============================================================================
+users:
+  user-1:
+    username: lucrezia
+    password: ${pn.external.password.lucrezia:}
+    tax-id: BRGLRZ80D58H501Q
+    denomination: Lucrezia
+    family-name: Borgia
+    uid: 2cbd393f-26b6-4186-9887-cc03ea531ec7
+  user-2:
+    username: garibaldi
+    password: ${pn.external.password.garibaldi:}
+    tax-id: GRBGPP87L04L741X
+    denomination: Giuseppe Maria
+    family-name: Garibaldi
+    uid: 876f675b-5dce-4939-804b-97d0be9d9a11
+  impresa-1:
+    username: DanteAlighieri
+    password: ${pn.external.password.dantealighieri:}
+    organization: "Vita Nova Sas"
+    tax-id: "12666810299"
+    organization-id: 8f409ca6-fc3d-46c3-8da7-69cd9a1e9e62
+    uid: e490f02e-9429-4b38-bb11-ddb8a561fb62
+    denomination: Dante Alighieri
+    family-name: Alighieri
+    personal-tax-id: LGHDNT00P14D612D
+    roles:
+      - party-role: MANAGER
+        role: pg-admin
+  impresa-2:
+    username: FrancescoPetrarca
+    password: ${pn.external.password.francescopetrarca:}
+    organization: "Le Epistolae srl"
+    # codice fiscale non numerico: l'impresa non può ricevere notifiche nuove
+    tax-id: LELPTR04A01C352E
+    organization-id: e2486126-4394-4300-a25d-b6d879fa1717
+    uid: d5a8a380-910d-49dc-9fb8-84700c64410f
+    denomination: Francesco Petrarca
+    family-name: Petrarca
+    personal-tax-id: PTRFNC04A01C352E
+    email: FrancescoPetrarca@secretum.it
+    roles:
+      - party-role: MANAGER
+        role: pg-admin
+  comune-1:
+    username: grossini
+    password: ${pn.external.password.grossini:}
+    organization: "Comune di Palermo"
+    tax-id: "80016350821"
+    organization-id: 5b994d4a-0fa8-47ac-9c7b-354f1d44a1ce
+    uid: e9e4a9c7-9586-4b92-a7dd-ee1a0e77d398
+    denomination: giuseppe
+    family-name: rossini
+    personal-tax-id: RSSGPP80B02G273H
+    email: grossini@test.cert.it
+    ipa-code: c_g273
+    has-groups: false
+    roles:
+      - party-role: SUB_DELEGATE
+        role: admin
+  comune-2:
+    username: albino63
+    password: ${pn.external.password.albino63:}
+    organization: "Comune di Mantova"
+    tax-id: "00189800204"
+    organization-id: 614b68f2-f80f-4ebc-be30-2ad87e88aa10
+    uid: 2134d92b-5d1b-49b5-9a6e-4283f4879bbf
+    denomination: Bacchisio
+    family-name: Barone
+    personal-tax-id: BRNBCH91L49H822E
+    email: b.barone@test.email.it
+    ipa-code: c_e897
+    has-groups: true
+    roles:
+      - party-role: DELEGATE
+        role: admin
