@@ -4,9 +4,9 @@ import it.pagopa.interop.common.kernel.domain.*;
 import org.springframework.plugin.core.Plugin;
 
 public interface NotificationGateway extends Plugin<Channel> {
-    void ensureAllEnabled(Tenant tenant);
+    void enableNotification(Tenant tenant);
 
-    void ensureAllEnabled(Tenant tenant, User user);
+    void enableAllInAppNotification(Tenant tenant, User user);
 
     void awaitUnreadNotification(Tenant tenant,  User user, EServiceRef eService);
 }

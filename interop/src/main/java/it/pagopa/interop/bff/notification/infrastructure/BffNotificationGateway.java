@@ -3,10 +3,11 @@ package it.pagopa.interop.bff.notification.infrastructure;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.*;
-import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.notification.application.NotificationGateway;
-import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Notifications;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantNotificationConfigUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UserNotificationConfigUpdateSeed;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.awaitility.core.ConditionTimeoutException;
@@ -23,17 +24,16 @@ public class BffNotificationGateway implements NotificationGateway {
     private static final Duration TIMEOUT = Duration.ofSeconds(45);
     private static final Duration INTERVAL = Duration.ofSeconds(1);
     private final BffNotificationRestClient rest;
-    private final CurrentUserSession session;
     private final BffNotificationRequestFactory requestFactory;
 
     @Override
-    public void ensureAllEnabled(Tenant tenant) {
+    public void enableNotification(Tenant tenant) {
         if (!hasTeantInAppNotificationAllEnabled(tenant))
             enableAllTenantInAppNotification(tenant);
     }
 
     @Override
-    public void ensureAllEnabled(Tenant tenant, User user) {
+    public void enableAllInAppNotification(Tenant tenant, User user) {
         if (!hasUserInAppNotificationAllEnabled(tenant, user))
             enableAllUserInAppNotification(tenant, user);
     }
@@ -74,101 +74,74 @@ public class BffNotificationGateway implements NotificationGateway {
     }
 
     private Notifications getUnreadNotifications(Tenant tenant, User user) {
-        var prevTenant = session.getTenant();
-        var prevUser = session.getUser();
-        try {
-            session.set(user, tenant);
-            return rest.getNotifications(true, 0, 50).withPolling(PollingStrategy.UNTIL_SUCCESS).get();
-        } finally {
-            session.set(prevUser, prevTenant);
-        }
+        return rest.getNotifications(true, 0, 50).withPolling(PollingStrategy.UNTIL_SUCCESS).get();
     }
 
     private void enableAllUserInAppNotification(Tenant tenant, User user) {
-        var prevTenant = session.getTenant();
-        var prevUser = session.getUser();
 
-        try {
-            session.set(user, tenant);
-            var config = rest.getUserNotificationConfig()
-                    .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                    .get();
+        var config = rest.getUserNotificationConfig()
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
 
-            if (config == null) {
-                throw new IllegalStateException(
-                        "Configurazione notifiche utente mancante: " + user);
-            }
-
-            var enabled = requestFactory.allEnabledInAppConfig();
-            if (Boolean.TRUE.equals(config.getInAppNotificationPreference()) && enabled.equals(config.getInAppConfig()))
-                return;
-
-
-            var seed = new UserNotificationConfigUpdateSeed()
-                    .inAppNotificationPreference(true)
-                    .inAppConfig(enabled)
-                    .emailNotificationPreference(config.getEmailNotificationPreference())
-                    .emailDigestPreference(config.getEmailDigestPreference())
-                    .emailConfig(config.getEmailConfig());
-
-            rest.updateUserNotificationConfig(seed)
-                    .withPolling(PollingStrategy.UNTIL_SUCCESS);
-
-            PollingUtils.pollUntil(() -> hasUserInAppNotificationAllEnabled(tenant, user),
-                    Boolean.TRUE::equals, TIMEOUT, INTERVAL);
-        } finally {
-            session.set(prevUser, prevTenant);
+        if (config == null) {
+            throw new IllegalStateException(
+                    "Configurazione notifiche utente mancante: " + user);
         }
+
+        var enabled = requestFactory.allEnabledInAppConfig();
+
+        //TODO questo deve passare allo use case
+        if(user.getRole() != UserRole.REVIEWER){
+            enabled.purposeRiskAnalysisAssignmentStatusToReviewer(false);
+            enabled.purposePublishedWithRiskAnalysisToReviewer(false);
+        }
+
+        if (Boolean.TRUE.equals(config.getInAppNotificationPreference()) && enabled.equals(config.getInAppConfig()))
+            return;
+
+
+        var seed = new UserNotificationConfigUpdateSeed()
+                .inAppNotificationPreference(true)
+                .inAppConfig(enabled)
+                .emailNotificationPreference(config.getEmailNotificationPreference())
+                .emailDigestPreference(config.getEmailDigestPreference())
+                .emailConfig(config.getEmailConfig());
+
+        rest.updateUserNotificationConfig(seed)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        PollingUtils.pollUntil(() -> hasUserInAppNotificationAllEnabled(tenant, user),
+                Boolean.TRUE::equals, TIMEOUT, INTERVAL);
+
     }
 
     private void enableAllTenantInAppNotification(Tenant tenant) {
-        var prevTenant = session.getTenant();
-        var prevUser = session.getUser();
+        rest.updateTenantNotificationConfig(new TenantNotificationConfigUpdateSeed().enabled(true))
+                .withPolling(PollingStrategy.UNTIL_SUCCESS).get();
 
-        try {
-            session.set(User.getTenantAdmin(tenant), tenant);
-            rest.updateTenantNotificationConfig(new TenantNotificationConfigUpdateSeed().enabled(true))
-                    .withPolling(PollingStrategy.UNTIL_SUCCESS).get();
-            PollingUtils.pollUntil(() -> hasTeantInAppNotificationAllEnabled(tenant),
-                    Boolean.TRUE::equals, TIMEOUT, INTERVAL);
-        } finally {
-            session.set(prevUser, prevTenant);
-        }
+        PollingUtils.pollUntil(() -> hasTeantInAppNotificationAllEnabled(tenant),
+                Boolean.TRUE::equals, TIMEOUT, INTERVAL);
     }
 
     private boolean hasUserInAppNotificationAllEnabled(Tenant tenant, User user) {
-        var prevTenant = session.getTenant();
-        var prevUser = session.getUser();
+        var config = rest.getUserNotificationConfig()
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
 
-        try {
-            session.set(user, tenant);
-            var config = rest.getUserNotificationConfig()
-                    .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                    .get();
+        if (config == null)
+            throw new IllegalStateException(
+                    "Configurazione notifiche utente mancante: " + user + " per tenant " + tenant.getAlias());
 
-            if (config == null)
-                throw new IllegalStateException(
-                        "Configurazione notifiche utente mancante: " + user);
-
-            return Boolean.TRUE.equals(config.getInAppNotificationPreference())
-                    && requestFactory.allEnabledInAppConfig().equals(config.getInAppConfig());
-        } finally {
-            session.set(prevUser, prevTenant);
-        }
+        return Boolean.TRUE.equals(config.getInAppNotificationPreference())
+                && requestFactory.allEnabledInAppConfig().equals(config.getInAppConfig());
     }
 
     private boolean hasTeantInAppNotificationAllEnabled(Tenant tenant) {
-        var prevTenant = session.getTenant();
-        var prevUser = session.getUser();
-        try {
-            session.set(User.getTenantAdmin(tenant), tenant);
-            var config = rest.getTenantNotificationConfig().withPolling(PollingStrategy.UNTIL_SUCCESS).get();
-            if (config == null)
-                throw new IllegalStateException("Configurazione notifiche tenant mancante o non valida: " + tenant.getAlias());
-            return Boolean.TRUE.equals(config.getEnabled());
-        } finally {
-            session.set(prevUser, prevTenant);
-        }
+        var config = rest.getTenantNotificationConfig().withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+        if (config == null)
+            throw new IllegalStateException("Configurazione notifiche tenant mancante o non valida: " + tenant.getAlias());
+
+        return Boolean.TRUE.equals(config.getEnabled());
     }
 
     @Override

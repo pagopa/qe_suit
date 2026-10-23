@@ -3,7 +3,6 @@ package it.pagopa.interop.common.journey.infrastructure;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.NotificationJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.notification.application.NotificationGateway;
 import lombok.RequiredArgsConstructor;
@@ -15,19 +14,19 @@ public class NotificationJourneyImpl implements NotificationJourney<Notification
     private final NotificationGateway gateway;
 
     @Override
-    public NotificationJourneyImpl enableAppNotificationsFor(Tenant tenant) {
-        gateway.ensureAllEnabled(tenant);
+    public NotificationJourneyImpl enableNotificationsFor(Tenant tenant) {
+        gateway.enableNotification(tenant);
         return this;
     }
 
     @Override
-    public NotificationJourneyImpl enableAppNotificationsFor(Tenant tenant, User user) {
-        gateway.ensureAllEnabled(tenant, user);
+    public NotificationJourneyImpl enableInAppNotificationsFor(Tenant tenant, User user) {
+        gateway.enableAllInAppNotification(tenant, user);
         return this;
     }
 
     @Override
-    public NotificationJourneyImpl verifyUnreadNotificationsFor(Tenant tenant, User user, EService eService) {
+    public NotificationJourneyImpl verifyUnreadInAppNotificationsFor(Tenant tenant, User user, EService eService) {
         gateway.awaitUnreadNotification(tenant, user, eService.getRef());
         return this;
     }
