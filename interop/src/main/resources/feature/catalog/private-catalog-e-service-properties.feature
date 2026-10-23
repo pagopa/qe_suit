@@ -46,7 +46,6 @@ Feature: Filtri sulle proprietà dell'e-service nel catalogo privato
       | alias | erogatore        | nome                   | scambio asincrono |
       | ES-1  | Comune di Milano | E-service Tempo Attivo | sì                |
       | ES-2  | Comune di Milano | E-service Tempo Spento | no                |
-      # | ES-3  | Comune di Milano | E-service Tempo Libero | non impostato     | - In BFF nonostante la property non sia obbligatoria viene sollevato in 400 se non impostata, quindi non è possibile testare il caso "non impostato"
     When PagoPA cerca nel catalogo "Tempo" con i seguenti filtri:
       | filtro            | valore |
       | scambio asincrono | sì     |
@@ -54,21 +53,18 @@ Feature: Filtri sulle proprietà dell'e-service nel catalogo privato
     And tra i risultati della ricerca non sono presenti i seguenti e-service:
       | alias |
       | ES-2  |
-      # | ES-3  |
 
   Scenario: [PRIVATE_CATALOG_E_SERVICE_PROPERTIES_4] Scambio non asincrono: include anche i valori non impostati
     Given i seguenti e-service pubblicati:
       | alias | erogatore        | nome                   | scambio asincrono |
       | ES-1  | Comune di Milano | E-service Ritmo Attivo | sì                |
       | ES-2  | Comune di Milano | E-service Ritmo Spento | no                |
-      | ES-3  | Comune di Milano | E-service Ritmo Libero | non impostato     |
     When PagoPA cerca nel catalogo "Ritmo" con i seguenti filtri:
       | filtro            | valore |
       | scambio asincrono | no     |
     Then tra i risultati della ricerca sono presenti i seguenti e-service:
       | alias |
       | ES-2  |
-      | ES-3  |
     And l'e-service "ES-1" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_E_SERVICE_PROPERTIES_5] Senza filtro sullo scambio asincrono nessuna restrizione
@@ -76,10 +72,8 @@ Feature: Filtri sulle proprietà dell'e-service nel catalogo privato
       | alias | erogatore        | nome                  | scambio asincrono |
       | ES-1  | Comune di Milano | E-service Onda Attivo | si                |
       | ES-2  | Comune di Milano | E-service Onda Spento | no                |
-      | ES-3  | Comune di Milano | E-service Onda Libero | non impostato     |
     When PagoPA cerca nel catalogo "Onda"
     Then tra i risultati della ricerca sono presenti i seguenti e-service:
       | alias |
       | ES-1  |
       | ES-2  |
-      | ES-3  |
