@@ -150,7 +150,10 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
                         : version)
                 .toList();
 
-        return template.toBuilder().versions(versions).build();
+        return template.toBuilder()
+                .clearVersions()
+                .versions(versions)
+                .build();
     }
 
     @Override
