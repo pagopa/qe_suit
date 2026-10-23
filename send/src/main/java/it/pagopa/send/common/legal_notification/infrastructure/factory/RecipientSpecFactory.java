@@ -1,6 +1,6 @@
 package it.pagopa.send.common.legal_notification.infrastructure.factory;
 
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.RequestOverrideApplier;
 import it.pagopa.send.common.legal_notification.domain.NotificationDefaults;
 import it.pagopa.send.common.legal_notification.domain.PaymentSpec;
@@ -15,9 +15,9 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Costruisce un {@link RecipientSpec} a partire da un destinatario censito ({@link Recipient}) e
+ * Costruisce un {@link RecipientSpec} a partire da un destinatario censito ({@link User}) e
  * da una DataTable Cucumber di override puntuali: default statici sensati per i campi non
- * specificati (indirizzo fisico del template, taxId/denominazione del {@link Recipient} stesso),
+ * specificati (indirizzo fisico del template, taxId/denominazione del {@link User} stesso),
  * sovrascrivibili singolarmente.
  * <p>
  * Di default ogni destinatario riceve 1 pagoPA + 1 F24 (sovrascrivibili anche a 0 tramite
@@ -40,7 +40,7 @@ public class RecipientSpecFactory {
 
     private final NotificationDefaultsLoader defaultsLoader;
 
-    public RecipientSpec build(Recipient recipient, Map<String, String> data) {
+    public RecipientSpec build(User recipient, Map<String, String> data) {
         Map<String, String> remaining = new HashMap<>(data);
 
         String taxIdOverride = remaining.remove(TAX_ID_KEY);

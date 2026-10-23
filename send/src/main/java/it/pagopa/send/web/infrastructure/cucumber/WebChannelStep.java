@@ -2,7 +2,7 @@ package it.pagopa.send.web.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.infrastructure.channel.CurrentChannel;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.kernel.domain.Channel;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +15,8 @@ public class WebChannelStep {
     private final CurrentUserSession currentUserSession;
     private final WebBrowserContext webBrowserContext;
 
-    @Given("la PA {tenant} è loggata al portale SEND tramite Browser")
-    public void setWebChannel(Tenant tenant) {
+    @Given("la PA {user} è loggata al portale SEND tramite Browser")
+    public void setWebChannel(User tenant) {
         log.debug("Inizializzazione canale Web");
         webBrowserContext.setCurrentUser(tenant);
         currentUserSession.setSender(tenant);
