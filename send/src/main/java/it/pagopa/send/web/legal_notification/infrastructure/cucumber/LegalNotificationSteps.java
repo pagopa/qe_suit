@@ -5,8 +5,6 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.send.common.user.domain.User;
-import it.pagopa.send.common.user.domain.UserAlias;
-import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.journey.infrastructure.LegalNotificationJourneyImpl;
@@ -17,7 +15,6 @@ import it.pagopa.send.common.legal_notification.infrastructure.factory.Recipient
 import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.convert.ApplicationConversionService;
 import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -33,30 +30,27 @@ public class LegalNotificationSteps {
     private final RecipientSpecFactory recipientSpecFactory;
     private final WebBrowserContext webBrowserContext;
     private final EntityStore entityStore;
-    private final UserProvider userProvider;
 
-    @When("l'ente {string} crea una notifica di tipo {legalNotificationType} per il destinatario {string}")
-    public void enteCreaNotifica(String enteName, LegalNotificationType type, String destinatarioName) {
-        createNotification(resolve(enteName), type, destinatarioName, Map.of());
+    @When("l'ente {user} crea una notifica di tipo {legalNotificationType} per il destinatario {user}")
+    public void enteCreaNotifica(User sender, LegalNotificationType type, User recipient) {
+        createNotification(sender, type, recipient, Map.of());
     }
 
-    @When("l'ente crea una notifica di tipo {legalNotificationType} per il destinatario {string}")
-    public void enteContestoCreaNotifica(LegalNotificationType type, String destinatarioName) {
+    @When("l'ente crea una notifica di tipo {legalNotificationType} per il destinatario {user}")
+    public void enteContestoCreaNotifica(LegalNotificationType type, User recipient) {
         User tenant = webBrowserContext.getTenant();
         if (tenant == null) {
             throw new IllegalStateException("Nessun ente autenticato nel contesto: specifica l'ente esplicitamente oppure effettua prima il login");
         }
-        createNotification(tenant, type, destinatarioName, Map.of());
+        createNotification(tenant, type, recipient, Map.of());
     }
 
-    @When("l'ente {string} crea una notifica di tipo {legalNotificationType} per il destinatario {string} con i seguenti valori:")
-    public void createNotificationWithOverride(String enteName, LegalNotificationType type, String destinatarioName, DataTable overrides) {
-        createNotification(resolve(enteName), type, destinatarioName, overrides.asMap(String.class, String.class));
+    @When("l'ente {user} crea una notifica di tipo {legalNotificationType} per il destinatario {user} con i seguenti valori:")
+    public void createNotificationWithOverride(User sender, LegalNotificationType type, User recipient, DataTable overrides) {
+        createNotification(sender, type, recipient, overrides.asMap(String.class, String.class));
     }
 
-    private void createNotification(User sender, LegalNotificationType type, String destinatarioName, Map<String, String> recipientOverrides) {
-        User recipient = resolve(destinatarioName);
-
+    private void createNotification(User sender, LegalNotificationType type, User recipient, Map<String, String> recipientOverrides) {
         Map<String, String> overrides = new HashMap<>(type.recipientOverrides());
         overrides.putAll(recipientOverrides);
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, overrides);
@@ -66,11 +60,6 @@ public class LegalNotificationSteps {
                 .sendNotification(sender, NotificationStatus.ACCEPTED);
 
         log.info("Notifica legale generata: {}", entityStore.getLastOrThrow(LegalNotificationDomain.class));
-    }
-
-    // utenza generica a partire dalla chiave scritta nella feature, es. "comune-1" o "user-1"
-    private User resolve(String userKey) {
-        return userProvider.resolve(ApplicationConversionService.getSharedInstance().convert(userKey, UserAlias.class));
     }
 
     @Then("la notifica legale creata è in stato {string}")
