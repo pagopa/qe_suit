@@ -23,7 +23,7 @@ public class EServiceCreationJourneySteps {
     private final EServiceRequestFactory eServiceRequestFactory;
     private final EServicePreparationConfigurationMapper eServicePreparationConfigurationMapper;
 
-    @Given("i seguenti e-service predisposti per la pubblicazione:")
+    @Given("i seguenti e-service in bozza:")
     public void prepareEServicesForPublication(List<EServicePreparationConfiguration> configurations) {
         for (EServicePreparationConfiguration configuration : configurations) {
             EServiceCreationCommand command = eServiceRequestFactory.defaultCreationEServiceCommand();
@@ -31,8 +31,7 @@ public class EServiceCreationJourneySteps {
 
             interopJourney
                     .withProducer(configuration.getProducer(), UserRole.ADMIN)
-                    .createEService(command)
-                    .prepareEServiceDescriptorForPublication(1);
+                    .createEService(command);
         }
     }
 

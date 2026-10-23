@@ -16,7 +16,7 @@ Feature: Filtri ad alto impatto nel catalogo privato
   # --- onlyActiveEservices ---
 
   Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_1] Solo e-service attivi
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | nome                     |
       | ES-1  | Comune di Milano | E-service attivo Auroria |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano <prima versione>
@@ -29,20 +29,20 @@ Feature: Filtri ad alto impatto nel catalogo privato
     Examples: Versione sospesa non superata
       | prima versione | seconda versione | esito          |
       | sospesa        | in bozza         | non è presente |
-      | sospesa        | archiviata       | non è presente |
+      # | sospesa        | archiviata       | non è presente | - Non è possibile archiviare una versione visto il grace period
 
     Examples: Versione sospesa superata da una versione successiva
-      | prima versione | seconda versione | esito      |
-      | sospesa        | pubblicata       | è presente |
-      | sospesa        | sospesa          | è presente |
-      | sospesa        | deprecata        | è presente |
+      | prima versione | seconda versione | esito          |
+      | sospesa        | pubblicata       | è presente     |
+      | sospesa        | sospesa          | non è presente |
+      | sospesa        | deprecata        | non è presente |
 
     Examples: Versione pubblicata
       | prima versione | seconda versione | esito      |
       | pubblicata     | in bozza         | è presente |
 
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_2] Solo e-service attivi con una catena di tre versioni
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | nome                      |
       | ES-1  | Comune di Milano | E-service catena Brumalis |
       | ES-2  | Comune di Milano | E-service solo Brumalis   |
@@ -57,7 +57,7 @@ Feature: Filtri ad alto impatto nel catalogo privato
     And l'e-service "ES-2" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_3] Senza il filtro compaiono anche gli e-service non attivi
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | nome                 |
       | ES-1  | Comune di Milano | E-service Cirrus     |
       | ES-2  | Comune di Milano | E-service Cirrus bis |
@@ -113,7 +113,7 @@ Feature: Filtri ad alto impatto nel catalogo privato
     Then l'e-service "ES-1" è presente tra i risultati della ricerca
 
   Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_7] Fruibilità con un solo gruppo di attributi certificati
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | nome           |
       | ES-1  | Comune di Milano | E-service Gelu |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
@@ -132,7 +132,7 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | un attributo non posseduto e uno posseduto da PagoPA | è presente     |
 
   Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_8] Fruibilità con più gruppi di attributi certificati: tutti devono essere soddisfatti
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | nome               |
       | ES-1  | Comune di Milano | E-service Gelu bis |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
@@ -151,7 +151,7 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | un attributo posseduto da PagoPA | un attributo non posseduto da PagoPA | non è presente |
 
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_9] Attributi dichiarati e verificati non limitano la fruibilità
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | nome            |
       | ES-1  | Comune di Milano | E-service Hiems |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
@@ -166,7 +166,7 @@ Feature: Filtri ad alto impatto nel catalogo privato
 
   @flag-discrete-attribute-on
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_10] Gli attributi discreti limitano la fruibilità
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | nome            |
       | ES-1  | Comune di Milano | E-service Iubar |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:

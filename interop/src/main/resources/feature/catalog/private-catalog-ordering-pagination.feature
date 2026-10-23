@@ -132,6 +132,6 @@ Feature: Ordinamento e paginazione nel catalogo privato
     And la versione 3 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" collegato a un template di finalità pubblicato
     And l'e-service "ES-1" collegato a un template di finalità pubblicato
-    And l'e-service "ES-1" sottoscritto da PagoPA con richiesta di fruizione attiva
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con richiesta di fruizione attiva
     When PagoPA cerca nel catalogo "Nodi"
     Then l'e-service "ES-1" è presente una sola volta tra i risultati della ricerca

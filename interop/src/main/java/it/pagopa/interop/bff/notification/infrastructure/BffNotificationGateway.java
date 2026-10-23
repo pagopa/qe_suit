@@ -132,8 +132,16 @@ public class BffNotificationGateway implements NotificationGateway {
             throw new IllegalStateException(
                     "Configurazione notifiche utente mancante: " + user + " per tenant " + tenant.getAlias());
 
+        var allEnabledInAppConfig = requestFactory.allEnabledInAppConfig();
+
+        //TODO : da portare in use case
+        if(user.getRole() != UserRole.REVIEWER){
+            allEnabledInAppConfig.purposeRiskAnalysisAssignmentStatusToReviewer(false);
+            allEnabledInAppConfig.purposePublishedWithRiskAnalysisToReviewer(false);
+        }
+
         return Boolean.TRUE.equals(config.getInAppNotificationPreference())
-                && requestFactory.allEnabledInAppConfig().equals(config.getInAppConfig());
+                && allEnabledInAppConfig.equals(config.getInAppConfig());
     }
 
     private boolean hasTeantInAppNotificationAllEnabled(Tenant tenant) {

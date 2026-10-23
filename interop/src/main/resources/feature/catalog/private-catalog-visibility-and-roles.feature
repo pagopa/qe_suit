@@ -15,7 +15,7 @@ Feature: Visibilità degli e-service nel catalogo privato
   Se la configurazione cambia, gli scenari sulle notifiche vanno rivisti.
 
   Scenario Outline: [PRIVATE_CATALOG_VISIBILITY_1] Visibilità in base allo stato delle versioni
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | nome                   |
       | ES-1  | Comune di Milano | E-service di <esempio> |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano <stato>
@@ -43,7 +43,7 @@ Feature: Visibilità degli e-service nel catalogo privato
     Given i seguenti enti abilitati a ricevere deleghe di erogazione:
       | ente               |
       | Comune di Pozzallo |
-    And i seguenti e-service predisposti per la pubblicazione:
+    And i seguenti e-service in bozza:
       | alias | erogatore        | nome               |
       | ES-1  | Comune di Milano | E-service di Theta |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
@@ -52,7 +52,7 @@ Feature: Visibilità degli e-service nel catalogo privato
     Then l'e-service "ES-1" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_VISIBILITY_2] Un e-service con sola bozza non compare nemmeno per il produttore
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | nome            |
       | ES-1  | Comune di Milano | E-service Bozza |
     When il Comune di Milano cerca nel catalogo "E-service Bozza"
@@ -60,7 +60,7 @@ Feature: Visibilità degli e-service nel catalogo privato
     And l'e-service "ES-1" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_VISIBILITY_3] Versione pubblicata e nuova bozza: compare solo la versione pubblicata
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | nome             |
       | ES-1  | Comune di Milano | E-service Doppio |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
@@ -72,7 +72,7 @@ Feature: Visibilità degli e-service nel catalogo privato
       | versione presentata | 1      |
 
   Scenario Outline: [PRIVATE_CATALOG_VISIBILITY_4] Versione presentata nel risultato
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | nome               |
       | ES-1  | Comune di Milano | E-service Versioni |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano <prima versione>

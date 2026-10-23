@@ -83,9 +83,7 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
     }
 
     @Override
-    public EServiceDescriptorJourneyImpl bringEServiceDescriptorToState(
-            EService eService, int version, EServiceDescriptorState state
-    ) {
+    public EServiceDescriptorJourneyImpl bringEServiceDescriptorToState(EService eService, int version, EServiceDescriptorState state) {
         requireDelegatedApprovalActor(eService, state);
         if (eService.findDescriptor(version).isEmpty()) {
             lifecycle.validateCanReachState(EServiceDescriptorState.DRAFT, state);

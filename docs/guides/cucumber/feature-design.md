@@ -171,7 +171,7 @@ Keep variable entity properties in DataTables where appropriate, rather than exp
 Example:
 
 ```gherkin
-Given i seguenti e-service predisposti per la pubblicazione:
+Given i seguenti e-service in bozza:
   | alias | erogatore        | nome                  | descrizione                       |
   | ES-1  | Comune di Milano | Anagrafe              | Consultazione dei dati anagrafici. |
   | ES-2  | Sogecap          | Servizi assicurativi  | Consultazione delle coperture.     |
@@ -248,7 +248,7 @@ For multi-valued relationships, do not encode lists in cells, embed JSON, or int
 An e-service can have multiple required attributes. Keep entity preparation and attribute configuration in separate, reusable steps.
 
 ```gherkin
-Given i seguenti e-service predisposti per la pubblicazione:
+Given i seguenti e-service in bozza:
   | alias | erogatore        | nome            |
   | ES-1  | Comune di Milano | E-service Hiems |
 And la versione 1 dell'e-service "ES-1" configurata con i seguenti attributi richiesti:

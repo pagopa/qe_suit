@@ -14,7 +14,7 @@ Feature: Combinazioni di filtri nel catalogo privato
   - ogni scenario usa una parola chiave improbabile per delimitare il perimetro dei risultati.
 
   Scenario: [PRIVATE_CATALOG_FILTER_COMBINATIONS_1] Parola chiave e solo e-service attivi
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | nome                      |
       | ES-1  | Comune di Milano | E-service Attivo Nebula   |
       | ES-2  | Comune di Milano | E-service Sospeso Nebula  |
@@ -32,7 +32,7 @@ Feature: Combinazioni di filtri nel catalogo privato
       | ES-3  |
 
   Scenario: [PRIVATE_CATALOG_FILTER_COMBINATIONS_2] E-service richiedibili e non ancora sottoscritti
-    Given i seguenti e-service predisposti per la pubblicazione:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        | nome                        |
       | ES-1  | Comune di Milano | E-service Fruibile Libero   |
       | ES-2  | Comune di Milano | E-service Fruibile Iscritto |
