@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Verifica, per ogni ambiente, che {@code application-<ambiente>.yaml} importi il file delle utenze e che ogni
- * {@link UserAlias} vi abbia la sua voce (chiave in kebab-case, es. {@code user-1} per {@code USER_1}).
+ * {@link UserAlias} vi abbia la sua voce (chiave come nelle feature, es. {@code User_1} per {@code USER_1}).
  */
 class UsersPropertiesBindingTest {
 

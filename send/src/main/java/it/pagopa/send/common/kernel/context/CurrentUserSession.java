@@ -1,19 +1,17 @@
 package it.pagopa.send.common.kernel.context;
 
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.user.domain.User;
 
 import java.util.List;
 
 public interface CurrentUserSession {
-    void setSender(Tenant sender);
+    void setSender(User sender);
 
-    Tenant getSender();
+    User getSender();
 
-    void setRecipients(List<Recipient> recipients);
+    void setRecipients(List<User> recipients);
 
-    List<Recipient> getRecipients();
+    List<User> getRecipients();
 
     /**
      * Attore da usare per l'autenticazione UI nei test di contratto: il sender se impostato,

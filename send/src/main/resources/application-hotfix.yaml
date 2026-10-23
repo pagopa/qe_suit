@@ -67,9 +67,12 @@ token:
   mittente: ${pn.external.bearer-token.tokenhotfixMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
   session:
-    grossini: ${pn.external.session-token.grossini:GROSSINI}
-    francescopetrarca: REPLACE_ME
-    lucrezia: ${pn.external.session-token.lucrezia:LUCREZIA}
+    lucrezia: ${pn.external.session-token.lucrezia:REPLACE_ME}
+    garibaldi: ${pn.external.session-token.garibaldi:REPLACE_ME}
+    dantealighieri: ${pn.external.session-token.dantealighieri:REPLACE_ME}
+    francescopetrarca: ${pn.external.session-token.francescopetrarca:REPLACE_ME}
+    grossini: ${pn.external.session-token.grossini:REPLACE_ME}
+    albino63: ${pn.external.session-token.albino63:REPLACE_ME}
 
 # ============================================================================
 # BFF API Configuration (notifiche legali via API)
@@ -101,14 +104,3 @@ external-registries:
 delivery:
   api:
     base-url: https://api.hotfix.notifichedigitali.it
-
-# api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
-# ogni costante di Tenant, univoca per PA e per ambiente (qui: hotfix)
-pa:
-  groups-api-key:
-    GROSSINI: ${pn.external.groups-api-key.grossini}
-
-# api-key per le API B2B delivery (header x-api-key), una entry per ogni costante di Tenant,
-# univoca per PA e per ambiente (qui: hotfix)
-  delivery-api-key:
-    GROSSINI: ${pn.external.delivery-api-key.grossini}

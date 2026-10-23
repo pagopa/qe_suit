@@ -10,6 +10,13 @@ public enum UserAlias {
     COMUNE_1, COMUNE_2;     // PA
 
     /**
+     * Alias a partire dalla chiave scritta nelle feature ({@code User_1} → {@link #USER_1}).
+     */
+    public static UserAlias fromKey(String key) {
+        return valueOf(key.trim().toUpperCase());
+    }
+
+    /**
      * Tipologia dell'utenza, ricavata dal prefisso del nome: {@code USER_} persona fisica, {@code IMPRESA_} persona
      * giuridica, {@code COMUNE_} pubblica amministrazione.
      */
