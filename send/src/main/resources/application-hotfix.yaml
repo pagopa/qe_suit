@@ -14,6 +14,7 @@ spring:
       on-profile: hotfix
     import:
       - optional:classpath:secrets/bearer-token-hotfix.properties
+      - classpath:users/application-users-hotfix.yaml
 
 # ============================================================================
 # URLs Configuration
