@@ -32,6 +32,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     @Override
     public EServiceJourneyImpl createEService(EServiceCreationCommand command, EServiceDescriptorState targetState) {
+        rejectUnattendedApprovalSetup(targetState);
         lifecycle.validateCanReachState(EServiceDescriptorState.DRAFT, targetState);
         EService eService = eServiceUseCase.createEService(command);
         return bringDescriptorToState(eService, targetState);
@@ -39,6 +40,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     @Override
     public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {
+        rejectUnattendedApprovalSetup(targetState);
         lifecycle.validateCanReachState(EServiceDescriptorState.DRAFT, targetState);
         EService eService = eServiceUseCase.createEService(command -> {
         });
@@ -85,5 +87,13 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         eService.upsertDescriptor(updated);
         entityStore.upsert(eService);
         return this;
+    }
+
+    private static void rejectUnattendedApprovalSetup(EServiceDescriptorState targetState) {
+        if (targetState == EServiceDescriptorState.WAITING_FOR_APPROVAL) {
+            throw new UnsupportedOperationException(
+                    "WAITING_FOR_APPROVAL requires an active producer delegation and the delegate actor"
+            );
+        }
     }
 }

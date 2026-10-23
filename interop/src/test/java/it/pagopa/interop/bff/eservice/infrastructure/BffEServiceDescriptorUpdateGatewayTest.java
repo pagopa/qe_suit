@@ -9,6 +9,7 @@ import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
+import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
@@ -56,6 +57,7 @@ class BffEServiceDescriptorUpdateGatewayTest {
                 new BffEServiceDescriptorUpdateGateway(restClient, instanceClient, interfaces, store));
         var descriptor = EServiceDescriptor.builder().id(UUID.randomUUID())
                 .templateRef(templateInstance ? EServiceTemplateRef.of(UUID.randomUUID()) : null)
+                .attributes(Attributes.builder().build())
                 .dailyCallsPerConsumer(1).dailyCallsTotal(10).build();
         var service = EService.builder().id(UUID.randomUUID()).asyncExchange(false)
                 .descriptors(List.of(descriptor)).build();

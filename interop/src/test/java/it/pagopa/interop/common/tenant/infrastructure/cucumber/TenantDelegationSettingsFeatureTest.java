@@ -48,6 +48,8 @@ class TenantDelegationSettingsFeatureTest {
             for (var pickle : pickles) {
                 boolean delegates = pickle.getSteps().stream()
                         .anyMatch(step -> step.getText().contains("delegato in erogazione"));
+                boolean notificationSettings = pickle.getTags().stream()
+                        .anyMatch(tag -> tag.getName().equals("@catalog-notification-settings"));
                 var prerequisites = pickle.getSteps().stream()
                         .filter(step -> step.getText().equals(PREREQUISITE)).toList();
                 assertThat(pickle.getTags().stream().anyMatch(tag -> tag.getName().equals("@" + TAG)))
@@ -63,9 +65,17 @@ class TenantDelegationSettingsFeatureTest {
                 } else {
                     assertThat(prerequisites).isEmpty();
                 }
+                var notificationSetup = pickle.getSteps().stream()
+                        .filter(step -> step.getText().equals("il fruitore PagoPA è abilitato alle notifiche in-app"))
+                        .toList();
+                assertThat(notificationSetup).hasSize(notificationSettings ? 1 : 0);
+                if (notificationSettings) {
+                    assertThat(pickle.getSteps().get(0).getText())
+                            .isEqualTo("il fruitore PagoPA è abilitato alle notifiche in-app");
+                }
             }
         }
-        assertThat(relevant).isEqualTo(17);
+        assertThat(relevant).isEqualTo(19);
     }
 
     @Test
@@ -80,19 +90,22 @@ class TenantDelegationSettingsFeatureTest {
             builder.selectors(selectFile(feature(feature).toFile()));
         }
         TestDescriptor root = new CucumberTestEngine().discover(builder.build(), UniqueId.forEngine("cucumber"));
-        Set<ExclusiveResource> expected = Set.of(new ExclusiveResource(
-                "tenant-delegation-settings", ExclusiveResource.LockMode.READ_WRITE));
+        ExclusiveResource delegationSettings = new ExclusiveResource(
+                "tenant-delegation-settings", ExclusiveResource.LockMode.READ_WRITE);
         var tests = root.getDescendants().stream().filter(TestDescriptor::isTest).collect(Collectors.toList());
         assertThat(tests).isNotEmpty();
         int locked = 0;
         for (var test : tests) {
             boolean tagged = test.getTags().stream().anyMatch(tag -> tag.getName().equals(TAG));
-            assertThat(((Node<?>) test).getExclusiveResources()).isEqualTo(tagged ? expected : Set.of());
+            Set<ExclusiveResource> resources = ((Node<?>) test).getExclusiveResources();
             if (tagged) {
+                assertThat(resources).contains(delegationSettings);
                 locked++;
+            } else {
+                assertThat(resources).doesNotContain(delegationSettings);
             }
         }
-        assertThat(locked).isEqualTo(17);
+        assertThat(locked).isEqualTo(19);
         assertThat(tests.size()).isGreaterThan(locked);
     }
 

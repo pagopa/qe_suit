@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice.application;
 
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.domain.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,10 @@ public class EServiceDescriptorUseCase {
 
     public EServiceDescriptor getDescriptor(EService eService, EServiceDescriptor descriptor) {
         return eServiceDescriptorGateway.getEServiceDescriptor(eService.getRef(), descriptor.getRef());
+    }
+
+    public EServiceDescriptor awaitState(EService eService, EServiceDescriptor descriptor, EServiceDescriptorState expectedState) {
+        return eServiceDescriptorGateway.awaitDescriptorState(eService.getRef(), descriptor.getRef(), expectedState);
     }
 
     public EServiceDescriptor addDescriptor(EService eService){
@@ -52,8 +57,22 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.publishDescriptor(eService.getRef(), descriptor.getRef());
     }
 
+    public EServiceDescriptor publishDescriptorAwaitingApproval(EService eService, EServiceDescriptor descriptor) {
+        EServiceDescriptorTransitions.requireDirectTransition(descriptor.getState(), EServiceDescriptorState.WAITING_FOR_APPROVAL);
+        return eServiceDescriptorGateway.publishDescriptorAwaitingApproval(eService.getRef(), descriptor.getRef());
+    }
+
     public EServiceDescriptor updateDescriptor(EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand command) {
         return eServiceDescriptorGateway.updateDescriptor(eService.getRef(), descriptor.getRef(), command);
+    }
+
+    public EServiceDescriptor updateRequiredAttributes(EService eService, EServiceDescriptor descriptor, Attributes attributes) {
+        if (descriptor.getState() != EServiceDescriptorState.DRAFT) {
+            throw new IllegalStateException("Required attributes can only be configured on a draft descriptor");
+        }
+        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        command.attributes(attributes);
+        return updateDescriptor(eService, descriptor, command);
     }
 
     public EServiceDescriptor suspendDescriptor(EService eService, EServiceDescriptor descriptor){
@@ -84,13 +103,12 @@ public class EServiceDescriptorUseCase {
         else if (command.getInterfaceDocumentPath() == null && descriptor.getInterfaceDocument() == null) {
             command.interfaceDocumentPath(requestFactory.prepareDescriptorForPublicationCommand().getInterfaceDocumentPath());
         }
-        return eServiceDescriptorGateway.updateDescriptor(
-                eService.getRef(), descriptor.getRef(), command
-        );
+        return eServiceDescriptorGateway.updateDescriptor(eService.getRef(), descriptor.getRef(), command);
     }
 
     private UpdateEServiceDescriptorCommand publicationCommand(EServiceDescriptor descriptor) {
         UpdateEServiceDescriptorCommand command = requestFactory.prepareDescriptorForPublicationCommand();
+        if (descriptor.getAttributes() != null) command.attributes(descriptor.getAttributes());
         if (descriptor.getInterfaceDocument() != null) {
             command.interfaceDocumentPath(null);
         }
@@ -103,10 +121,7 @@ public class EServiceDescriptorUseCase {
         return command;
     }
 
-    public UpdateEServiceDescriptorCommand getUpdateEServiceDescriptorCommand(
-            int consumerThreshold,
-            int totalThreshold
-    ) {
+    public UpdateEServiceDescriptorCommand getUpdateEServiceDescriptorCommand(int consumerThreshold, int totalThreshold) {
         UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
         command.dailyCallsPerConsumer(consumerThreshold);
         command.dailyCallsTotal(totalThreshold);
@@ -147,9 +162,7 @@ public class EServiceDescriptorUseCase {
             EServiceDescriptor descriptor,
             RestInterfaceConfiguration configuration
     ) {
-        return eServiceDescriptorGateway.configureTemplateInstanceRESTInterface(
-                eService.getRef(), descriptor.getRef(), configuration
-        );
+        return eServiceDescriptorGateway.configureTemplateInstanceRESTInterface(eService.getRef(), descriptor.getRef(), configuration);
     }
 
     public EServiceDescriptor downloadInterface(EService eService, EServiceDescriptor descriptor) {

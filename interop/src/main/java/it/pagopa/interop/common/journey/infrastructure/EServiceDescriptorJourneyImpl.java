@@ -9,6 +9,8 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.journey.application.EServiceDescriptorJourney;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.domain.Tenant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,7 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EServiceDescriptorLifecycleUseCase lifecycle;
     private final EntityStore entityStore;
+    private final CurrentUserSession currentUserSession;
 
     @Override
     public EServiceDescriptorJourneyImpl addDescriptor(EServiceDescriptorState state) {
@@ -28,6 +31,7 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
 
     @Override
     public EServiceDescriptorJourneyImpl addDescriptor(EService eService, EServiceDescriptorState state) {
+        requireDelegatedApprovalActor(eService, state);
         lifecycle.validateCanReachState(EServiceDescriptorState.DRAFT, state);
         EServiceDescriptor descriptor = eServiceDescriptorUseCase.addDescriptor(eService);
         return processLifecycle(eService, descriptor, state);
@@ -39,6 +43,7 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
             EServiceDescriptorState state
     ) {
         EService eService = entityStore.getLastOrThrow(EService.class);
+        requireDelegatedApprovalActor(eService, state);
         return processLifecycle(eService, eService.getLastDraftDescriptor(), state, command);
     }
 
@@ -56,6 +61,7 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
             EServiceDescriptor descriptor,
             EServiceDescriptorState state
     ) {
+        requireDelegatedApprovalActor(eService, state);
         return processLifecycle(eService, descriptor, state);
     }
 
@@ -80,6 +86,7 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
     public EServiceDescriptorJourneyImpl bringEServiceDescriptorToState(
             EService eService, int version, EServiceDescriptorState state
     ) {
+        requireDelegatedApprovalActor(eService, state);
         if (eService.findDescriptor(version).isEmpty()) {
             lifecycle.validateCanReachState(EServiceDescriptorState.DRAFT, state);
         }
@@ -105,5 +112,18 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
         eService.upsertDescriptor(updated);
         entityStore.upsert(eService);
         return this;
+    }
+
+    private void requireDelegatedApprovalActor(EService eService, EServiceDescriptorState state) {
+        if (state != EServiceDescriptorState.WAITING_FOR_APPROVAL) {
+            return;
+        }
+        Tenant actor = currentUserSession.getTenant();
+        if (actor == null || eService.getProducerId() == null
+                || actor.getOrganizationId().toString().equals(eService.getProducerId())) {
+            throw new IllegalStateException(
+                    "WAITING_FOR_APPROVAL setup requires an active producer delegation and its delegate actor"
+            );
+        }
     }
 }

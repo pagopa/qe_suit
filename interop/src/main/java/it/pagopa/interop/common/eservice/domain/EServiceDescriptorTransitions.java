@@ -6,7 +6,8 @@ public final class EServiceDescriptorTransitions {
 
     public static boolean canTransitionDirectlyTo(EServiceDescriptorState source, EServiceDescriptorState target) {
         return switch (source) {
-            case DRAFT -> target == EServiceDescriptorState.PUBLISHED;
+            case DRAFT -> target == EServiceDescriptorState.PUBLISHED
+                    || target == EServiceDescriptorState.WAITING_FOR_APPROVAL;
             case PUBLISHED -> target == EServiceDescriptorState.DEPRECATED
                     || target == EServiceDescriptorState.SUSPENDED
                     || target == EServiceDescriptorState.ARCHIVING;

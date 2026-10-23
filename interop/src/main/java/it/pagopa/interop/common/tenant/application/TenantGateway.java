@@ -4,6 +4,7 @@ import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
+import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import org.springframework.plugin.core.Plugin;
 
 import java.util.Set;
@@ -14,6 +15,8 @@ public interface TenantGateway extends Plugin<Channel> {
     void ensureProducerDelegationEnabled(TenantRef tenantRef);
 
     Set<UUID> getActiveCertifiedAttributeIds(TenantRef tenantRef);
+
+    Set<UUID> getActiveAttributeIds(TenantRef tenantRef, AttributeKind kind);
 
     void assignCertifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef);
 

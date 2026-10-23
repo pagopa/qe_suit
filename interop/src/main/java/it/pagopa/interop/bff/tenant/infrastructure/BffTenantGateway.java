@@ -3,6 +3,7 @@ package it.pagopa.interop.bff.tenant.infrastructure;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.tenant.application.*;
+import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -14,8 +15,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
 import java.time.Duration;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -66,6 +67,14 @@ public class BffTenantGateway implements TenantGateway {
                         .map(it.pagopa.interop.generated.openapi.clients.bff.model.CertifiedTenantAttribute::getId)
                         .collect(Collectors.toUnmodifiableSet()))
                 .get();
+    }
+
+    @Override
+    public Set<UUID> getActiveAttributeIds(@NonNull TenantRef tenantRef, @NonNull AttributeKind kind) {
+        Tenant tenant = restClient.getTenant(tenantRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+        return BffTenantAttributeMapper.activeIds(tenant.getAttributes(), kind);
     }
 
     @Override

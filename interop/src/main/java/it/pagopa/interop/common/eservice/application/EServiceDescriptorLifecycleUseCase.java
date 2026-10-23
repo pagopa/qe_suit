@@ -45,6 +45,14 @@ public class EServiceDescriptorLifecycleUseCase {
         for (EServiceDescriptorLifecycleStep step : plan) {
             current = switch (step.action()) {
                 case PUBLISH -> publishDraft(eService, current, command);
+                case PUBLISH_FOR_APPROVAL -> {
+                    EServiceDescriptor prepared = descriptors.prepareDescriptorForPublication(eService, current, command);
+                    yield descriptors.publishDescriptorAwaitingApproval(eService, prepared);
+                }
+                case PUBLISH_NEXT_VERSION -> {
+                    publishNextVersion(eService);
+                    yield descriptors.awaitState(eService, current, step.expectedState());
+                }
                 case SUSPEND -> descriptors.suspendDescriptor(eService, current);
                 case ARCHIVE -> {
                     descriptors.archiveDescriptor(eService, current, GracePeriodDays.NUMBER_60);
@@ -68,6 +76,17 @@ public class EServiceDescriptorLifecycleUseCase {
     ) {
         EServiceDescriptor prepared = descriptors.prepareDescriptorForPublication(eService, descriptor, command);
         return descriptors.publishDescriptor(eService, prepared);
+    }
+
+    private void publishNextVersion(EService eService) {
+        EServiceDescriptor next = eService.findDraftDescriptor()
+                .map(draft -> descriptors.getDescriptor(eService, draft))
+                .filter(draft -> draft.getState() == EServiceDescriptorState.DRAFT)
+                .orElseGet(() -> descriptors.addDescriptor(eService));
+        EServiceDescriptor prepared = descriptors.prepareDescriptorForPublication(
+                eService, next, (UpdateEServiceDescriptorCommand) null
+        );
+        descriptors.publishDescriptor(eService, prepared);
     }
 
     private static EServiceDescriptor requireState(

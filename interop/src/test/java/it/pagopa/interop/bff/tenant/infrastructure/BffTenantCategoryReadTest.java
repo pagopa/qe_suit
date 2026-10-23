@@ -10,6 +10,7 @@ import it.pagopa.interop.bff.attribute.infrastructure.BffAttributeGateway;
 import it.pagopa.interop.bff.attribute.infrastructure.BffAttributeMapper;
 import it.pagopa.interop.bff.attribute.infrastructure.BffAttributeRestClient;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
+import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AttributesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.api.TenantsApi;
@@ -54,6 +55,62 @@ class BffTenantCategoryReadTest {
         assertThat(gateway.getActiveCertifiedAttributeIds(TenantRef.of(tenantId))).containsExactly(active);
         verify(operation).tenantIdPath(tenantId);
         verify(operation).execute(any());
+    }
+
+    @Test
+    void readsActiveAssignmentsForEachSupportedAttributeKindWithoutWritingTenantState() {
+        var api = mock(TenantsApi.class);
+        var operation = mock(TenantsApi.GetTenantOper.class);
+        UUID tenantId = UUID.randomUUID();
+        UUID certified = UUID.randomUUID();
+        UUID discrete = UUID.randomUUID();
+        UUID revokedCertified = UUID.randomUUID();
+        UUID declared = UUID.randomUUID();
+        UUID revokedDeclared = UUID.randomUUID();
+        UUID verified = UUID.randomUUID();
+        UUID revokedVerified = UUID.randomUUID();
+        UUID expiredVerified = UUID.randomUUID();
+        UUID activeAgreement = UUID.randomUUID();
+        UUID revokedAgreement = UUID.randomUUID();
+        String verificationDate = java.time.Instant.now().minusSeconds(3600).toString();
+        String expirationDate = java.time.Instant.now().plusSeconds(3600).toString();
+        when(apiClient.tenants()).thenReturn(api);
+        when(api.getTenant()).thenReturn(operation);
+        when(operation.tenantIdPath(tenantId)).thenReturn(operation);
+        when(operation.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response("""
+                    {"attributes":{
+                      "certified":[
+                        {"id":"%s","kind":"CERTIFIED"},
+                        {"id":"%s","kind":"CERTIFIED_DISCRETE"},
+                        {"id":"%s","kind":"CERTIFIED","revocationTimestamp":"2026-10-20T10:00:00Z"}
+                      ],
+                      "declared":[
+                        {"id":"%s","kind":"DECLARED"},
+                        {"id":"%s","kind":"DECLARED","revocationTimestamp":"2026-10-20T10:00:00Z"}
+                      ],
+                      "verified":[
+                        {"id":"%s","kind":"VERIFIED","verifiedBy":[{"id":"%s","verificationDate":"%s","expirationDate":"%s"}],"revokedBy":[]},
+                        {"id":"%s","kind":"VERIFIED","verifiedBy":[{"id":"%s","verificationDate":"%s","expirationDate":"%s"}],"revokedBy":[{"id":"%s","revocationDate":"%s"}]},
+                        {"id":"%s","kind":"VERIFIED","verifiedBy":[{"id":"%s","verificationDate":"2020-01-01T00:00:00Z","expirationDate":"2021-01-01T00:00:00Z"}],"revokedBy":[]}
+                      ]
+                    }}
+                    """.formatted(certified, discrete, revokedCertified, declared, revokedDeclared,
+                    verified, activeAgreement, verificationDate, expirationDate,
+                    revokedVerified, revokedAgreement, verificationDate, expirationDate,
+                    revokedAgreement, java.time.Instant.now().toString(),
+                    expiredVerified, UUID.randomUUID())));
+        });
+        var gateway = new BffTenantGateway(
+                new BffTenantRestClient(chains, apiClient), mock(BffTenantRequestFactory.class));
+
+        TenantRef ref = TenantRef.of(tenantId);
+        assertThat(gateway.getActiveAttributeIds(ref, AttributeKind.CERTIFIED)).containsExactly(certified);
+        assertThat(gateway.getActiveAttributeIds(ref, AttributeKind.CERTIFIED_DISCRETE)).containsExactly(discrete);
+        assertThat(gateway.getActiveAttributeIds(ref, AttributeKind.DECLARED)).containsExactly(declared);
+        assertThat(gateway.getActiveAttributeIds(ref, AttributeKind.VERIFIED)).containsExactly(verified);
+        verify(operation, times(4)).execute(any());
     }
 
     @Test

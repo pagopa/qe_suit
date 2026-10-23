@@ -46,6 +46,34 @@ class BffEServiceDescriptorLifecycleTest {
     }
 
     @Test
+    void pollsTheDescriptorUntilTheExpectedLifecycleStateIsVisible() {
+        EServiceDescriptor published = EServiceDescriptor.builder()
+                .id(descriptorRef.id()).state(EServiceDescriptorState.PUBLISHED).build();
+        EServiceDescriptor deprecated = published.toBuilder()
+                .state(EServiceDescriptorState.DEPRECATED).build();
+        doReturn(published, deprecated).when(gateway).getEServiceDescriptor(serviceRef, descriptorRef);
+
+        assertThat(gateway.awaitDescriptorState(serviceRef, descriptorRef, EServiceDescriptorState.DEPRECATED))
+                .isSameAs(deprecated);
+
+        verify(gateway, times(2)).getEServiceDescriptor(serviceRef, descriptorRef);
+    }
+
+    @Test
+    void delegatedPublicationPollsForWaitingForApprovalInsteadOfPublished() {
+        EServiceDescriptor draft = EServiceDescriptor.builder()
+                .id(descriptorRef.id()).state(EServiceDescriptorState.DRAFT).build();
+        EServiceDescriptor waiting = draft.toBuilder()
+                .state(EServiceDescriptorState.WAITING_FOR_APPROVAL).build();
+        doReturn(draft, waiting).when(gateway).getEServiceDescriptor(serviceRef, descriptorRef);
+
+        assertThat(gateway.publishDescriptorAwaitingApproval(serviceRef, descriptorRef)).isSameAs(waiting);
+
+        verify(restClient).publishDescriptor(serviceRef.id(), descriptorRef.id());
+        verify(gateway, times(2)).getEServiceDescriptor(serviceRef, descriptorRef);
+    }
+
+    @Test
     void updateWithoutInterfacePathDoesNotUploadAnInterface() {
         BffUpdateEServiceDescriptorCommand command = updateCommand();
         EServiceDescriptor updated = EServiceDescriptor.builder()

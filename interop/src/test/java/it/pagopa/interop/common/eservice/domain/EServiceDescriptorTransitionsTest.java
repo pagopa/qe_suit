@@ -17,6 +17,7 @@ class EServiceDescriptorTransitionsTest {
 
     private static final Set<Transition> ALLOWED = Set.of(
             new Transition(DRAFT, PUBLISHED),
+            new Transition(DRAFT, WAITING_FOR_APPROVAL),
             new Transition(PUBLISHED, DEPRECATED),
             new Transition(PUBLISHED, SUSPENDED),
             new Transition(PUBLISHED, ARCHIVING),

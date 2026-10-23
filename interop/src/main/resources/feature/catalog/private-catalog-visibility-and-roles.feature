@@ -11,7 +11,7 @@ Feature: Visibilità degli e-service nel catalogo privato
   - gli e-service predisposti sono eliminati o archiviati al termine dello scenario da un hook;
   - ogni scenario usa una parola chiave improbabile per delimitare il perimetro dei risultati;
   - il Comune di Pozzallo NON è abilitato a ricevere notifiche;
-  - PagoPA e il Comune di Milano sono abilitati a ricevere notifiche.
+  - la Background degli scenari sulle notifiche abilita PagoPA.
   Se la configurazione cambia, gli scenari sulle notifiche vanno rivisti.
 
   Scenario Outline: [PRIVATE_CATALOG_VISIBILITY_1] Visibilità in base allo stato delle versioni
@@ -37,7 +37,19 @@ Feature: Visibilità degli e-service nel catalogo privato
     Examples: Versioni non ancora pubblicate
       | esempio | stato                     | esito          |
       | Eta     | in bozza                  | non è presente |
-      | Theta   | in attesa di approvazione | non è presente |
+
+  @producer-delegation-settings
+  Scenario: [PRIVATE_CATALOG_VISIBILITY_1_APPROVAL] Una versione delegata in attesa di approvazione non compare
+    Given i seguenti enti abilitati a ricevere deleghe di erogazione:
+      | ente               |
+      | Comune di Pozzallo |
+    And i seguenti e-service predisposti per la pubblicazione:
+      | alias | erogatore        | nome               |
+      | ES-1  | Comune di Milano | E-service di Theta |
+    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
+    And la versione 1 dell'e-service "ES-1" predisposta dal delegato Comune di Pozzallo in attesa di approvazione
+    When PagoPA cerca nel catalogo "Theta"
+    Then l'e-service "ES-1" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_VISIBILITY_2] Un e-service con sola bozza non compare nemmeno per il produttore
     Given i seguenti e-service predisposti per la pubblicazione:
@@ -75,8 +87,23 @@ Feature: Visibilità degli e-service nel catalogo privato
       | prima versione | seconda versione          | versione presentata |
       | deprecata      | pubblicata                | 2                   |
       | pubblicata     | in bozza                  | 1                   |
-      | pubblicata     | in attesa di approvazione | 1                   |
       | pubblicata     | archiviata                | 1                   |
+
+  @producer-delegation-settings
+  Scenario: [PRIVATE_CATALOG_VISIBILITY_4_APPROVAL] La nuova versione delegata in attesa di approvazione non sostituisce quella pubblicata
+    Given i seguenti enti abilitati a ricevere deleghe di erogazione:
+      | ente               |
+      | Comune di Pozzallo |
+    And i seguenti e-service pubblicati:
+      | alias | erogatore        | nome               |
+      | ES-1  | Comune di Milano | E-service Versioni |
+    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
+    And la versione 2 dell'e-service "ES-1" predisposta dal delegato Comune di Pozzallo in attesa di approvazione
+    When PagoPA cerca nel catalogo "E-service Versioni"
+    Then l'e-service "ES-1" è presente tra i risultati della ricerca
+    And per l'e-service "ES-1" il risultato riporta:
+      | proprietà           | valore |
+      | versione presentata | 1      |
 
   @producer-delegation-settings
   Scenario Outline: [PRIVATE_CATALOG_VISIBILITY_5] Stessa lista per produttore, fruitore e delegato
@@ -119,26 +146,35 @@ Feature: Visibilità degli e-service nel catalogo privato
       | PagoPA             | no     |
       | Comune di Pozzallo | no     |
 
-  Scenario: [PRIVATE_CATALOG_VISIBILITY_7] Notifica non letta presente per un ente abilitato alle notifiche
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                 |
-      | ES-1  | Comune di Milano | E-service Notificato |
-    And una notifica non letta generata per il fruitore sull'e-service "ES-1"
-    When PagoPA cerca nel catalogo "E-service Notificato"
-    Then per l'e-service "ES-1" il risultato riporta:
-      | proprietà           | valore |
-      | notifiche non lette | sì     |
+  @catalog-notification-settings
+  Rule: Notifiche del catalogo per un fruitore esplicito
 
-  # Assunzione: il Comune di Pozzallo non è abilitato a ricevere notifiche.
-  # Un esito "nessuna notifica" non distingue l'assenza di notifiche da un errore
-  # del servizio notifiche: lo scenario verifica solo che la lista risponda.
-  Scenario: [PRIVATE_CATALOG_VISIBILITY_8] Nessuna notifica per un ente non abilitato alle notifiche
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                     |
-      | ES-1  | Comune di Milano | E-service Non Notificato |
-    And una notifica non letta generata per il fruitore sull'e-service "ES-1"
-    When il Comune di Pozzallo cerca nel catalogo "E-service Non Notificato"
-    Then la ricerca termina senza errori
-    And per l'e-service "ES-1" il risultato riporta:
-      | proprietà           | valore |
-      | notifiche non lette | no     |
+    Scenario: [PRIVATE_CATALOG_VISIBILITY_7] Notifica non letta presente per un ente abilitato alle notifiche
+      Given il fruitore PagoPA è abilitato alle notifiche in-app
+      And i seguenti e-service predisposti per la pubblicazione:
+        | alias | erogatore        | nome                 |
+        | ES-1  | Comune di Milano | E-service Notificato |
+      And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+      And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+      And la versione 2 dell'e-service "ES-1" del Comune di Milano pubblicata
+      And una notifica non letta generata per il fruitore PagoPA sull'e-service "ES-1"
+      When PagoPA cerca nel catalogo "E-service Notificato"
+      Then per l'e-service "ES-1" il risultato riporta:
+        | proprietà           | valore |
+        | notifiche non lette | sì     |
+
+    # La notifica appartiene a PagoPA; la ricerca come Pozzallo conserva il controllo
+    # negativo per un tenant che non è abilitato a ricevere notifiche.
+    Scenario: [PRIVATE_CATALOG_VISIBILITY_8] Nessuna notifica visibile per un ente non abilitato
+      Given i seguenti e-service predisposti per la pubblicazione:
+        | alias | erogatore        | nome                     |
+        | ES-1  | Comune di Milano | E-service Non Notificato |
+      And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+      And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+      And la versione 2 dell'e-service "ES-1" del Comune di Milano pubblicata
+      And una notifica non letta generata per il fruitore PagoPA sull'e-service "ES-1"
+      When il Comune di Pozzallo cerca nel catalogo "E-service Non Notificato"
+      Then la ricerca termina senza errori
+      And per l'e-service "ES-1" il risultato riporta:
+        | proprietà           | valore |
+        | notifiche non lette | no     |

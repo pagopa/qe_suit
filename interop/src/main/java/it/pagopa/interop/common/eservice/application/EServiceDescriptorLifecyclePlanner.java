@@ -26,12 +26,19 @@ public class EServiceDescriptorLifecyclePlanner {
             Map.of(
                     DRAFT, Map.of(
                             PUBLISHED, List.of(PUBLISH_STEP),
+                            WAITING_FOR_APPROVAL, List.of(
+                                    new EServiceDescriptorLifecycleStep(PUBLISH_FOR_APPROVAL, WAITING_FOR_APPROVAL)),
+                            DEPRECATED, List.of(
+                                    PUBLISH_STEP,
+                                    new EServiceDescriptorLifecycleStep(PUBLISH_NEXT_VERSION, DEPRECATED)),
                             SUSPENDED, List.of(PUBLISH_STEP, SUSPEND_STEP),
                             ARCHIVING, List.of(PUBLISH_STEP, ARCHIVE_STEP),
                             ARCHIVING_SUSPENDED, List.of(
                                     PUBLISH_STEP, ARCHIVE_STEP, SUSPEND_ARCHIVING_STEP)
                     ),
                     PUBLISHED, Map.of(
+                            DEPRECATED, List.of(
+                                    new EServiceDescriptorLifecycleStep(PUBLISH_NEXT_VERSION, DEPRECATED)),
                             SUSPENDED, List.of(SUSPEND_STEP),
                             ARCHIVING, List.of(ARCHIVE_STEP),
                             ARCHIVING_SUSPENDED, List.of(ARCHIVE_STEP, SUSPEND_ARCHIVING_STEP)

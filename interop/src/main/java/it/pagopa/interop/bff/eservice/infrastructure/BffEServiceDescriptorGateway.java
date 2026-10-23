@@ -43,6 +43,18 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
+    public EServiceDescriptor awaitDescriptorState(
+            EServiceRef serviceRef,
+            EServiceDescriptorRef descriptorRef,
+            EServiceDescriptorState expectedState
+    ) {
+        return PollingUtils.pollUntil(
+                () -> getEServiceDescriptor(serviceRef, descriptorRef),
+                descriptor -> descriptor.getState() == expectedState
+        );
+    }
+
+    @Override
     public EServiceDescriptor addDescriptor(EServiceRef serviceRef) {
         return restClient.addDescriptor(serviceRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
@@ -60,6 +72,17 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
                 () -> getEServiceDescriptor(serviceRef, descriptorRef),
                 descriptor -> descriptor.getState() == PUBLISHED
         );
+    }
+
+    @Override
+    public EServiceDescriptor publishDescriptorAwaitingApproval(
+            EServiceRef serviceRef, EServiceDescriptorRef descriptorRef
+    ) {
+        restClient.publishDescriptor(serviceRef.id(), descriptorRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getEServiceDescriptor(serviceRef, descriptorRef))
+                .get();
+        return awaitDescriptorState(serviceRef, descriptorRef, EServiceDescriptorState.WAITING_FOR_APPROVAL);
     }
 
     @Override
@@ -94,6 +117,8 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
                         == bffCommand.getBffPayload().getDailyCallsPerConsumer().intValue()
                         && descriptor.getDailyCallsTotal().intValue()
                         == bffCommand.getBffPayload().getDailyCallsTotal().intValue()
+                        && BffEServiceDescriptorAttributeValidator.matches(
+                                bffCommand.getBffPayload().getAttributes(), descriptor.getAttributes())
         );
         if (command.getInterfaceDocumentPath() != null) {
             return linkOpenApiInterface(serviceRef, descriptorRef, command.getInterfaceDocumentPath());

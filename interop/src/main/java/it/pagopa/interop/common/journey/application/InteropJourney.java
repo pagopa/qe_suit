@@ -2,6 +2,7 @@ package it.pagopa.interop.common.journey.application;
 
 public interface InteropJourney extends
         AttributeJourney<InteropJourney>,
+        RequiredAttributeJourney<InteropJourney>,
         AgreementJourney<InteropJourney>,
         UserJourney<InteropJourney>,
         DelegationJourney<InteropJourney>,

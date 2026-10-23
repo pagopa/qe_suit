@@ -6,6 +6,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.domain.Tenant;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ class EServiceJourneyLifecycleTest {
     private final EServiceDescriptorUseCase descriptors = mock(EServiceDescriptorUseCase.class);
     private final EServiceDescriptorLifecycleUseCase lifecycle = mock(EServiceDescriptorLifecycleUseCase.class);
     private final EntityStore store = mock(EntityStore.class);
+    private final CurrentUserSession session = mock(CurrentUserSession.class);
     private final EServiceDescriptor draft = EServiceDescriptor.builder()
             .id(UUID.randomUUID()).version("1").state(DRAFT).build();
     private final EService eService = EService.builder().id(UUID.randomUUID())
@@ -47,7 +49,7 @@ class EServiceJourneyLifecycleTest {
 
     @Test
     void descriptorJourneySeparatesVersionResolutionFromLifecycle() {
-        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store);
+        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store, session);
         when(descriptors.getOrCreateDescriptor(eService, 1)).thenReturn(draft);
         var suspended = draft.toBuilder().state(SUSPENDED).build();
         when(lifecycle.bringToState(eService, draft, SUSPENDED, null)).thenReturn(suspended);
@@ -62,13 +64,57 @@ class EServiceJourneyLifecycleTest {
     }
 
     @Test
-    void rejectsUnsupportedPathBeforeResolvingOrCreatingMissingVersion() {
-        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store);
-        doThrow(new UnsupportedOperationException("unsupported")).when(lifecycle).validateCanReachState(DRAFT, DEPRECATED);
+    void rejectsUnsupportedArchivePathBeforeResolvingOrCreatingMissingVersion() {
+        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store, session);
+        doThrow(new UnsupportedOperationException("unsupported"))
+                .when(lifecycle).validateCanReachState(DRAFT, ARCHIVED);
 
-        assertThatThrownBy(() -> journey.bringEServiceDescriptorToState(eService, 2, DEPRECATED))
+        assertThatThrownBy(() -> journey.bringEServiceDescriptorToState(eService, 2, ARCHIVED))
                 .isInstanceOf(UnsupportedOperationException.class);
 
         verifyNoInteractions(descriptors, store);
+    }
+
+    @Test
+    void requiresADelegateActorBeforeCreatingPendingDescriptor() {
+        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store, session);
+        EService owned = eService.toBuilder()
+                .producerId(Tenant.COMUNE_DI_MILANO.getOrganizationId().toString()).build();
+        when(session.getTenant()).thenReturn(Tenant.COMUNE_DI_MILANO);
+
+        assertThatThrownBy(() -> journey.addDescriptor(owned, WAITING_FOR_APPROVAL))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("active producer delegation");
+
+        verifyNoInteractions(descriptors, store, lifecycle);
+    }
+
+    @Test
+    void allowsPendingDescriptorSetupUnderADelegateActor() {
+        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store, session);
+        EService owned = eService.toBuilder()
+                .producerId(Tenant.COMUNE_DI_MILANO.getOrganizationId().toString()).build();
+        when(session.getTenant()).thenReturn(Tenant.COMUNE_DI_POZZALLO);
+        when(descriptors.addDescriptor(owned)).thenReturn(draft);
+        when(lifecycle.bringToState(owned, draft, WAITING_FOR_APPROVAL, null))
+                .thenReturn(draft.toBuilder().state(WAITING_FOR_APPROVAL).build());
+
+        journey.addDescriptor(owned, WAITING_FOR_APPROVAL);
+
+        verify(lifecycle).validateCanReachState(DRAFT, WAITING_FOR_APPROVAL);
+        verify(lifecycle).bringToState(owned, draft, WAITING_FOR_APPROVAL, null);
+        verify(store).upsert(owned);
+    }
+
+    @Test
+    void rejectsDirectServiceCreationIntoApprovalBeforeCreatingTheService() {
+        var journey = new EServiceJourneyImpl(services, descriptors, lifecycle, store,
+                mock(EServiceRiskAnalysisUseCase.class), session);
+
+        assertThatThrownBy(() -> journey.createEService(WAITING_FOR_APPROVAL))
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessageContaining("active producer delegation");
+
+        verifyNoInteractions(services, lifecycle);
     }
 }

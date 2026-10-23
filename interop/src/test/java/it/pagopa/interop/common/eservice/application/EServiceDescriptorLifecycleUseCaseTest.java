@@ -50,6 +50,80 @@ class EServiceDescriptorLifecycleUseCaseTest {
         order.verifyNoMoreInteractions();
     }
 
+    @Test
+    void publishesDelegatedDraftAndPollsUntilItWaitsForProducerApproval() {
+        EServiceDescriptor prepared = draft.toBuilder().description("prepared").build();
+        EServiceDescriptor waiting = draft.toBuilder().state(WAITING_FOR_APPROVAL).build();
+        when(operations.getDescriptor(eService, draft)).thenReturn(draft);
+        when(operations.prepareDescriptorForPublication(
+                eService, draft, (UpdateEServiceDescriptorCommand) null
+        )).thenReturn(prepared);
+        when(operations.publishDescriptorAwaitingApproval(eService, prepared)).thenReturn(waiting);
+
+        assertThat(lifecycle.bringToState(eService, draft, WAITING_FOR_APPROVAL)).isSameAs(waiting);
+
+        var order = inOrder(operations);
+        order.verify(operations).getDescriptor(eService, draft);
+        order.verify(operations).prepareDescriptorForPublication(
+                eService, draft, (UpdateEServiceDescriptorCommand) null
+        );
+        order.verify(operations).publishDescriptorAwaitingApproval(eService, prepared);
+        order.verifyNoMoreInteractions();
+    }
+
+    @Test
+    void deprecatesPublishedDescriptorByPublishingANextVersionAndPollingTheOriginal() {
+        EServiceDescriptor published = draft.toBuilder().state(PUBLISHED).build();
+        EService service = eService.toBuilder().descriptors(new ArrayList<>(List.of(published))).build();
+        EServiceDescriptor nextDraft = descriptor(DRAFT);
+        EServiceDescriptor prepared = nextDraft.toBuilder().description("prepared").build();
+        EServiceDescriptor nextPublished = nextDraft.toBuilder().state(PUBLISHED).build();
+        EServiceDescriptor deprecated = published.toBuilder().state(DEPRECATED).build();
+        when(operations.getDescriptor(service, published)).thenReturn(published);
+        when(operations.addDescriptor(service)).thenReturn(nextDraft);
+        when(operations.prepareDescriptorForPublication(
+                service, nextDraft, (UpdateEServiceDescriptorCommand) null
+        )).thenReturn(prepared);
+        when(operations.publishDescriptor(service, prepared)).thenReturn(nextPublished);
+        when(operations.awaitState(service, published, DEPRECATED)).thenReturn(deprecated);
+
+        assertThat(lifecycle.bringToState(service, published, DEPRECATED)).isSameAs(deprecated);
+
+        var order = inOrder(operations);
+        order.verify(operations).getDescriptor(service, published);
+        order.verify(operations).addDescriptor(service);
+        order.verify(operations).prepareDescriptorForPublication(
+                service, nextDraft, (UpdateEServiceDescriptorCommand) null
+        );
+        order.verify(operations).publishDescriptor(service, prepared);
+        order.verify(operations).awaitState(service, published, DEPRECATED);
+        order.verifyNoMoreInteractions();
+    }
+
+    @Test
+    void deprecatesDraftOnlyAfterPublishingItAndTheFollowingVersion() {
+        EServiceDescriptor nextDraft = descriptor(DRAFT);
+        EServiceDescriptor firstPublished = nextDraft.toBuilder().state(PUBLISHED).build();
+        EServiceDescriptor followingDraft = descriptor(DRAFT);
+        EServiceDescriptor followingPrepared = followingDraft.toBuilder().description("prepared").build();
+        EServiceDescriptor followingPublished = followingDraft.toBuilder().state(PUBLISHED).build();
+        EServiceDescriptor deprecated = firstPublished.toBuilder().state(DEPRECATED).build();
+        when(operations.getDescriptor(eService, draft)).thenReturn(draft, firstPublished);
+        when(operations.prepareDescriptorForPublication(
+                eService, draft, (UpdateEServiceDescriptorCommand) null
+        )).thenReturn(draft);
+        when(operations.publishDescriptor(eService, draft)).thenReturn(firstPublished);
+        when(operations.addDescriptor(eService)).thenReturn(followingDraft);
+        when(operations.prepareDescriptorForPublication(
+                eService, followingDraft, (UpdateEServiceDescriptorCommand) null
+        )).thenReturn(followingPrepared);
+        when(operations.publishDescriptor(eService, followingPrepared)).thenReturn(followingPublished);
+        when(operations.awaitState(eService, firstPublished, DEPRECATED)).thenReturn(deprecated);
+
+        assertThat(lifecycle.bringToState(eService, draft, DEPRECATED)).isSameAs(deprecated);
+        verify(operations).awaitState(eService, firstPublished, DEPRECATED);
+    }
+
     @ParameterizedTest
     @EnumSource(EServiceDescriptorState.class)
     void doesNotMutateWhenRefreshedDescriptorAlreadyHasRequestedState(EServiceDescriptorState state) {
@@ -138,9 +212,17 @@ class EServiceDescriptorLifecycleUseCaseTest {
     }
 
     @Test
-    void rejectsUnsupportedSetupBeforeCreatingAVersion() {
-        assertThatThrownBy(() -> lifecycle.validateCanReachState(DRAFT, DEPRECATED))
-                .isInstanceOf(UnsupportedOperationException.class);
+    void plansApprovalStateWithoutSilentlyPerformingTheDelegation() {
+        assertThatCode(() -> lifecycle.validateCanReachState(DRAFT, WAITING_FOR_APPROVAL))
+                .doesNotThrowAnyException();
+        verifyNoInteractions(operations);
+    }
+
+    @Test
+    void rejectsTerminalArchiveSetupWhenOnlyTheScheduledTransitionIsAvailable() {
+        assertThatThrownBy(() -> lifecycle.validateCanReachState(ARCHIVING, ARCHIVED))
+                .isInstanceOf(UnsupportedOperationException.class)
+                .hasMessage("Unsupported setup path: ARCHIVING -> ARCHIVED");
         verifyNoInteractions(operations);
     }
 
