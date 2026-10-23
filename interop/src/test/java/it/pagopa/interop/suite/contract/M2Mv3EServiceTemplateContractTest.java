@@ -18,6 +18,8 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.AgreementApprovalPolicy;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceInstanceDescriptorSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceInstanceLabelUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateEServiceTemplateInstanceSeed;
@@ -85,6 +87,34 @@ public class M2Mv3EServiceTemplateContractTest {
                         FuzzScenario.REPLACED_WITH_BLANK_STRING,
                         response -> response.then().statusCode(200),
                         List.of(InstanceEServiceSeed::getInstanceLabel)
+                )
+                .tests();
+    }
+
+    @TestFactory
+    Stream<DynamicTest> createTemplateInstanceDescriptor() {
+        return httpContractValidator
+                .as(Tenant.COMUNE_DI_MILANO, M2MRole.M2M_ADMIN)
+                .apiCall(() -> apiClient.eserviceTemplates().createTemplateInstanceDescriptor())
+                .pathParams(() -> Map.of("eserviceId", createPublishedEServiceInstanceId()))
+                .payload(() -> new EServiceInstanceDescriptorSeed()
+                        .audience(List.of("QA"))
+                        .dailyCallsPerConsumer(1)
+                        .dailyCallsTotal(10)
+                        .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC))
+                .scenario(FuzzScenario.REPLACED_WITH_NULL, response -> response.then().statusCode(400))
+                .targets(
+                        FuzzScenario.REMOVED,
+                        response -> response.then().statusCode(200),
+                        List.of(
+                                seed -> seed.getAudience().get(0),
+                                EServiceInstanceDescriptorSeed::getAgreementApprovalPolicy
+                        )
+                )
+                .targets(
+                        List.of(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzScenario.REPLACED_WITH_BLANK_STRING),
+                        response -> response.then().statusCode(200),
+                        List.of(seed -> seed.getAudience().get(0))
                 )
                 .tests();
     }
@@ -159,8 +189,8 @@ public class M2Mv3EServiceTemplateContractTest {
         interopJourney.switchChannel(Channel.BFF);
         try {
             EService instance = createDraftEServiceInstance();
-            EServiceDescriptor descriptor = descriptorUseCase.prepareDescriptorForPublication(
-                    instance, instance.getLastDraftDescriptor(), command -> {}
+            EServiceDescriptor descriptor = instanceUseCase.prepareDescriptorForPublication(
+                    instance, instance.getLastDraftDescriptor()
             );
             descriptor = descriptorUseCase.configureTemplateInstanceRESTInterface(
                     instance,
@@ -177,7 +207,7 @@ public class M2Mv3EServiceTemplateContractTest {
             assertEquals(
                     EServiceDescriptorState.PUBLISHED,
                     publishedDescriptor.getState(),
-                    "The template instance must be published before updating its label"
+                    "The template instance must be published before the contract request"
             );
             return instance.getId();
         } finally {
