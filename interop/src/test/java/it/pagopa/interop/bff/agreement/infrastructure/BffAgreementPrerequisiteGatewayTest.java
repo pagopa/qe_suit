@@ -126,14 +126,15 @@ class BffAgreementPrerequisiteGatewayTest {
                 new ResponseBuilder().setStatusCode(403).setContentType(ContentType.JSON).setBody("{}").build());
 
         assertThatThrownBy(() -> gateway.ensureActiveAgreement(service, descriptor, agreements))
-                .isInstanceOf(AssertionError.class).hasMessageContaining("403");
+                .isInstanceOf(IllegalStateException.class)
+                .hasCauseInstanceOf(org.awaitility.core.ConditionTimeoutException.class);
 
         verifyNoInteractions(agreements);
         verify(session).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
     }
 
     @Test
-    void preservesActivationFailureWhenRestoringSessionAlsoFails() {
+    void preservesSetupFailureWhenRestoringSessionAlsoFails() {
         var gateway = fixture();
         page("", 0);
         var failure = new IllegalStateException("requirements not satisfied");
@@ -143,6 +144,20 @@ class BffAgreementPrerequisiteGatewayTest {
 
         assertThatThrownBy(() -> gateway.ensureActiveAgreement(service, descriptor, agreements))
                 .isSameAs(failure).satisfies(error -> assertThat(error.getSuppressed()).containsExactly(restorationFailure));
+    }
+
+    @Test
+    void propagatesRestorationFailureAfterSuccessfulPrerequisiteCheck() {
+        var gateway = fixture();
+        page(entry(id, descriptor.getId()), 1);
+        when(agreements.getAgreement(new AgreementRef(id))).thenReturn(agreement(AgreementState.ACTIVE));
+        var failure = new IllegalStateException("restoration failed");
+        doThrow(failure).when(session).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
+
+        assertThatThrownBy(() -> gateway.ensureActiveAgreement(service, descriptor, agreements)).isSameAs(failure);
+
+        verify(agreements).getAgreement(new AgreementRef(id));
+        verifyNoMoreInteractions(agreements);
     }
 
     private BffAgreementPrerequisiteGateway fixture() {

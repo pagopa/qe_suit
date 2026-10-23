@@ -2,6 +2,7 @@ package it.pagopa.interop.bff.infrastructure.security.bearer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.net.httpserver.HttpServer;
 import it.pagopa.interop.common.infrastructure.config.CacheConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -16,6 +17,8 @@ import software.amazon.awssdk.services.kms.KmsClient;
 import software.amazon.awssdk.services.kms.model.SignRequest;
 import software.amazon.awssdk.services.kms.model.SignResponse;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
@@ -32,7 +35,20 @@ class BearerAuthProviderCachingTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    void getToken_withSameUserAndTenant_usesCacheAndSignsOnce() {
+    void getToken_withSameUserAndTenant_usesCacheAndSignsOnce() throws IOException {
+        var server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+        server.createContext("/jwks.json", exchange -> {
+            byte[] response = "{\"keys\":[{\"kid\":\"test-key\",\"alg\":\"RS256\"}]}"
+                    .getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, response.length);
+            try (var body = exchange.getResponseBody()) {
+                body.write(response);
+            } finally {
+                exchange.close();
+            }
+        });
+        server.start();
         try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext()) {
             KmsClient kmsClient = mock(KmsClient.class);
 
@@ -40,7 +56,7 @@ class BearerAuthProviderCachingTest {
             context.registerBean(KmsClient.class, () -> kmsClient);
             context.registerBean(ObjectMapper.class, () -> new ObjectMapper());
             context.registerBean(BearerTokenProperties.class, () -> new BearerTokenProperties(
-                    "https://dev.interop.pagopa.it/.well-known/jwks.json",
+                    "http://127.0.0.1:" + server.getAddress().getPort() + "/jwks.json",
                     "dev.interop.pagopa.it",
                     "dev.interop.pagopa.it/ui",
                     14400
@@ -61,8 +77,11 @@ class BearerAuthProviderCachingTest {
             String firstToken = bearerAuthProvider.getToken(User.S_MATTIA, Tenant.COMUNE_DI_MILANO);
             String secondToken = bearerAuthProvider.getToken(User.S_MATTIA, Tenant.COMUNE_DI_MILANO);
 
+            assertEquals(firstToken, secondToken);
             assertEquals(removeVolatileClaims(extractPayload(firstToken)), removeVolatileClaims(extractPayload(secondToken)));
             verify(kmsClient, times(1)).sign(any(SignRequest.class));
+        } finally {
+            server.stop(0);
         }
     }
 

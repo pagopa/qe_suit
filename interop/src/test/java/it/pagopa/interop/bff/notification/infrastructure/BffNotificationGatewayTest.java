@@ -6,12 +6,11 @@ import io.restassured.response.Response;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UserNotificationConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UserNotificationConfigUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.NotificationConfig;
@@ -22,7 +21,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.api.NotificationConfigsAp
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantNotificationConfigUpdateSeed;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -73,16 +72,18 @@ class BffNotificationGatewayTest {
         when(fixture.getNotifications.offsetQuery(0)).thenReturn(fixture.getNotifications);
         when(fixture.getNotifications.limitQuery(50)).thenReturn(fixture.getNotifications);
         when(fixture.getNotifications.execute(any())).thenAnswer(call -> response(200,
-                "{\"results\":[{\"tenantId\":\"" + TENANT_ID + "\",\"deepLink\":null},"
+                "{\"results\":[{\"tenantId\":\"" + TENANT_ID + "\",\"userId\":\""
+                        + User.getTenantAdmin(Tenant.PAGO_PA).getUserId() + "\",\"deepLink\":null},"
                         + "{\"id\":\"4cba6e66-ff8e-416f-914f-a1b5896c749e\","
-                        + "\"userId\":\"4cba6e66-ff8e-416f-914f-a1b5896c749e\","
+                        + "\"userId\":\"" + User.getTenantAdmin(Tenant.PAGO_PA).getUserId() + "\","
                         + "\"tenantId\":\"" + TENANT_ID + "\",\"body\":\"descriptor updated\","
                         + "\"deepLink\":\"/catalogo-e-service/" + ESERVICE_ID
                         + "\",\"category\":\"catalogo-e-service\",\"readAt\":null,"
                         + "\"createdAt\":\"2026-10-22T10:00:00Z\"}],"
                         + "\"pagination\":{\"offset\":0,\"limit\":50,\"totalCount\":1}}"));
 
-        fixture.gateway.awaitUnreadNotification(TenantRef.of(TENANT_ID), EServiceRef.of(ESERVICE_ID));
+        fixture.gateway.awaitUnreadNotification(Tenant.PAGO_PA,
+                User.getTenantAdmin(Tenant.PAGO_PA), EServiceRef.of(ESERVICE_ID));
 
         verify(fixture.getNotifications).unreadQuery(true);
         verify(fixture.getNotifications).offsetQuery(0);
@@ -101,8 +102,9 @@ class BffNotificationGatewayTest {
     }
 
     @ParameterizedTest
-    @ValueSource(booleans = {false, true})
-    void userSettingsEnableAllCategoriesPreserveEmailPreferencesAndRestoreSession(boolean preference) throws Exception {
+    @CsvSource({"ADMIN, false", "ADMIN, true", "REVIEWER, false", "REVIEWER, true"})
+    void userSettingsEnableRoleAllowedCategoriesAndPreserveEmailPreferences(UserRole role, boolean preference)
+            throws Exception {
         var fixture = fixture();
         var getUser = mock(NotificationConfigsApi.GetUserNotificationConfigOper.class);
         var updateUser = mock(NotificationConfigsApi.UpdateUserNotificationConfigOper.class);
@@ -114,7 +116,8 @@ class BffNotificationGatewayTest {
         var before = new UserNotificationConfig()
                 .inAppNotificationPreference(preference).inAppConfig(new NotificationConfig())
                 .emailNotificationPreference(true).emailDigestPreference(false).emailConfig(email);
-        var enabled = new BffNotificationRequestFactory().allEnabledInAppConfig();
+        var enabled = role == UserRole.REVIEWER
+                ? new BffNotificationRequestFactory().allEnabledInAppConfig() : adminConfig();
         var after = new UserNotificationConfig()
                 .inAppNotificationPreference(true).inAppConfig(enabled)
                 .emailNotificationPreference(true).emailDigestPreference(false).emailConfig(email);
@@ -124,8 +127,8 @@ class BffNotificationGatewayTest {
                 response(200, json.writeValueAsString(before)),
                 response(200, json.writeValueAsString(after)),
                 response(200, json.writeValueAsString(after)));
-        var targetTenant = Tenant.COMUNE_DI_MILANO;
-        var targetUser = User.getTenantAdmin(targetTenant);
+        var targetTenant = Tenant.PAGO_PA;
+        var targetUser = User.getTenantUser(targetTenant, role);
 
         fixture.gateway.enableAllInAppNotification(targetTenant, targetUser);
         fixture.gateway.enableAllInAppNotification(targetTenant, targetUser);
@@ -139,13 +142,11 @@ class BffNotificationGatewayTest {
         assertThat(payload.getValue().getEmailDigestPreference()).isFalse();
         verify(getUser, times(4)).execute(any());
         verify(updateUser).execute(any());
-        verify(fixture.session, atLeastOnce()).set(targetUser, targetTenant);
-        verify(fixture.session, atLeastOnce()).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
         verify(fixture.configs, never()).updateTenantNotificationConfig();
     }
 
     @Test
-    void userReadFailureRestoresSessionWithoutWriting() {
+    void userReadFailurePropagatesWithoutWriting() {
         var fixture = fixture();
         var getUser = mock(NotificationConfigsApi.GetUserNotificationConfigOper.class);
         when(fixture.configs.getUserNotificationConfig()).thenReturn(getUser);
@@ -155,12 +156,11 @@ class BffNotificationGatewayTest {
         assertThatThrownBy(() -> fixture.gateway.enableAllInAppNotification(
                 Tenant.COMUNE_DI_MILANO, User.getTenantAdmin(Tenant.COMUNE_DI_MILANO))).isSameAs(failure);
 
-        verify(fixture.session).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
         verify(fixture.configs, never()).updateUserNotificationConfig();
     }
 
     @Test
-    void userUpdateFailureRestoresSessionAndPropagatesTheFailure() throws Exception {
+    void userUpdateFailurePropagates() throws Exception {
         var fixture = fixture();
         var getUser = mock(NotificationConfigsApi.GetUserNotificationConfigOper.class);
         var updateUser = mock(NotificationConfigsApi.UpdateUserNotificationConfigOper.class);
@@ -175,7 +175,7 @@ class BffNotificationGatewayTest {
         assertThatThrownBy(() -> fixture.gateway.enableAllInAppNotification(
                 Tenant.COMUNE_DI_MILANO, User.getTenantAdmin(Tenant.COMUNE_DI_MILANO))).isSameAs(failure);
 
-        verify(fixture.session, atLeastOnce()).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
+        verify(updateUser).execute(any());
     }
 
     @Test
@@ -188,10 +188,10 @@ class BffNotificationGatewayTest {
         when(updateUser.body(any())).thenReturn(updateUser);
         when(updateUser.execute(any())).thenReturn(response(204, ""));
         var config = new UserNotificationConfig().inAppNotificationPreference(true)
-                .inAppConfig(new BffNotificationRequestFactory().allEnabledInAppConfig()
+                .inAppConfig(adminConfig()
                         .eserviceStateChangedToConsumer(false));
         var enabled = new UserNotificationConfig().inAppNotificationPreference(true)
-                .inAppConfig(new BffNotificationRequestFactory().allEnabledInAppConfig());
+                .inAppConfig(adminConfig());
         var json = new ObjectMapper();
         when(getUser.execute(any())).thenReturn(
                 response(200, json.writeValueAsString(config)),
@@ -202,37 +202,23 @@ class BffNotificationGatewayTest {
         fixture.gateway.enableAllInAppNotification(
                 Tenant.COMUNE_DI_MILANO, User.getTenantAdmin(Tenant.COMUNE_DI_MILANO));
 
-        verify(fixture.session, atLeastOnce()).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
         verify(updateUser).execute(any());
         verify(getUser, times(4)).execute(any());
     }
 
     @Test
-    void tenantReadUsesTheRequestedTenantAndRestoresTheOriginalSession() {
+    void alreadyEnabledTenantRequiresOnlyOneReadOnTheAuthenticatedClient() {
         var fixture = fixture();
-        var currentTenant = new java.util.concurrent.atomic.AtomicReference<>(Tenant.PAGO_PA);
-        var currentUser = new java.util.concurrent.atomic.AtomicReference<>(User.getTenantAdmin(Tenant.PAGO_PA));
-        when(fixture.session.getTenant()).thenAnswer(call -> currentTenant.get());
-        when(fixture.session.getUser()).thenAnswer(call -> currentUser.get());
-        doAnswer(call -> {
-            currentUser.set(call.getArgument(0));
-            currentTenant.set(call.getArgument(1));
-            return null;
-        }).when(fixture.session).set(any(), any());
-        when(fixture.getConfig.execute(any())).thenAnswer(call -> {
-            assertThat(currentTenant.get()).isEqualTo(Tenant.COMUNE_DI_MILANO);
-            return response(200, "{\"enabled\":true}");
-        });
+        when(fixture.getConfig.execute(any())).thenReturn(response(200, "{\"enabled\":true}"));
 
         fixture.gateway.enableNotification(Tenant.COMUNE_DI_MILANO);
 
-        assertThat(currentTenant.get()).isEqualTo(Tenant.PAGO_PA);
-        assertThat(currentUser.get()).isEqualTo(User.getTenantAdmin(Tenant.PAGO_PA));
+        verify(fixture.getConfig).execute(any());
         verify(fixture.configs, never()).updateTenantNotificationConfig();
     }
 
     @Test
-    void tenantUpdateFailureRestoresTheOriginalSession() {
+    void tenantUpdateFailurePropagatesWithoutReadingAgain() {
         var fixture = fixture();
         when(fixture.getConfig.execute(any())).thenReturn(response(200, "{\"enabled\":false}"));
         when(fixture.updateConfig.body(any())).thenReturn(fixture.updateConfig);
@@ -242,7 +228,8 @@ class BffNotificationGatewayTest {
         assertThatThrownBy(() -> fixture.gateway.enableNotification(Tenant.COMUNE_DI_MILANO))
                 .isSameAs(failure);
 
-        verify(fixture.session, times(2)).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
+        verify(fixture.getConfig).execute(any());
+        verify(fixture.updateConfig).execute(any());
     }
 
     @Test
@@ -283,12 +270,14 @@ class BffNotificationGatewayTest {
         when(notifications.getNotifications()).thenReturn(getNotifications);
         var rest = new BffNotificationRestClient(
                 new TestChainFactory(mock(LastApiResponseStore.class), mock(EntityStore.class)), api);
-        var session = mock(CurrentUserSession.class);
-        when(session.getTenant()).thenReturn(Tenant.PAGO_PA);
-        var user = User.getTenantAdmin(Tenant.PAGO_PA);
-        when(session.getUser()).thenReturn(user);
-        return new Fixture(configs, getConfig, updateConfig, getNotifications, session,
-                new BffNotificationGateway(rest, session, new BffNotificationRequestFactory()));
+        return new Fixture(configs, getConfig, updateConfig, getNotifications,
+                new BffNotificationGateway(rest, new BffNotificationRequestFactory()));
+    }
+
+    private NotificationConfig adminConfig() {
+        return new BffNotificationRequestFactory().allEnabledInAppConfig()
+                .purposeRiskAnalysisAssignmentStatusToReviewer(false)
+                .purposePublishedWithRiskAnalysisToReviewer(false);
     }
 
     private Response response(int status, String body) {
@@ -303,14 +292,12 @@ class BffNotificationGatewayTest {
         private final NotificationConfigsApi.UpdateTenantNotificationConfigOper updateConfig;
         private final InAppNotificationsApi.GetNotificationsOper getNotifications;
         private final BffNotificationGateway gateway;
-        private final CurrentUserSession session;
 
         private Fixture(
                 NotificationConfigsApi configs,
                 NotificationConfigsApi.GetTenantNotificationConfigOper getConfig,
                 NotificationConfigsApi.UpdateTenantNotificationConfigOper updateConfig,
                 InAppNotificationsApi.GetNotificationsOper getNotifications,
-                CurrentUserSession session,
                 BffNotificationGateway gateway
         ) {
             this.configs = configs;
@@ -318,7 +305,6 @@ class BffNotificationGatewayTest {
             this.updateConfig = updateConfig;
             this.getNotifications = getNotifications;
             this.gateway = gateway;
-            this.session = session;
         }
     }
 }

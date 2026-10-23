@@ -40,7 +40,8 @@ class CatalogNotificationFeatureTest {
         for (var pickle : notifications) {
             var steps = pickle.getSteps().stream().map(step -> step.getText()).toList();
             assertThat(steps).contains("il fruitore PagoPA è abilitato alle notifiche in-app",
-                    "una notifica non letta generata per il fruitore PagoPA sull'e-service \"ES-1\"",
+                    "l'utente admin del fruitore PagoPA è abilitato alle notifiche in-app",
+                    "una notifica non letta generata per l'utente admin del fruitore PagoPA sull'e-service \"ES-1\"",
                     "la versione 2 dell'e-service \"ES-1\" del Comune di Milano pubblicata");
         }
     }

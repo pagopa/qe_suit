@@ -5,7 +5,6 @@ import it.pagopa.interop.common.journey.infrastructure.NotificationJourneyImpl;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.notification.application.NotificationGateway;
-import it.pagopa.interop.common.kernel.domain.TenantRef;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -22,9 +21,9 @@ class NotificationJourneyTest {
 
         var journey = new NotificationJourneyImpl(gateway);
         if (fail) {
-            assertThatThrownBy(() -> journey.enableAppNotificationsFor(Tenant.PAGO_PA)).isSameAs(failure);
+            assertThatThrownBy(() -> journey.enableNotificationsFor(Tenant.PAGO_PA)).isSameAs(failure);
         } else {
-            journey.enableAppNotificationsFor(Tenant.PAGO_PA);
+            assertThat(journey.enableNotificationsFor(Tenant.PAGO_PA)).isSameAs(journey);
         }
         verify(gateway).enableNotification(Tenant.PAGO_PA);
         verifyNoMoreInteractions(gateway);
@@ -40,9 +39,9 @@ class NotificationJourneyTest {
         var journey = new NotificationJourneyImpl(gateway);
 
         if (fail) {
-            assertThatThrownBy(() -> journey.enableAppNotificationsFor(Tenant.PAGO_PA, user)).isSameAs(failure);
+            assertThatThrownBy(() -> journey.enableInAppNotificationsFor(Tenant.PAGO_PA, user)).isSameAs(failure);
         } else {
-            assertThat(journey.enableAppNotificationsFor(Tenant.PAGO_PA, user)).isSameAs(journey);
+            assertThat(journey.enableInAppNotificationsFor(Tenant.PAGO_PA, user)).isSameAs(journey);
         }
         verify(gateway).enableAllInAppNotification(Tenant.PAGO_PA, user);
         verifyNoMoreInteractions(gateway);
@@ -53,17 +52,20 @@ class NotificationJourneyTest {
     void unreadNotificationVerificationUsesExplicitConsumerAndPropagatesFailure(boolean fail) {
         var gateway = mock(NotificationGateway.class);
         var eService = EService.builder().id(java.util.UUID.randomUUID()).build();
+        var user = User.getTenantAdmin(Tenant.PAGO_PA);
         var failure = new IllegalStateException("notification missing");
         if (fail) doThrow(failure).when(gateway).awaitUnreadNotification(
-                TenantRef.of(Tenant.PAGO_PA.getOrganizationId()), eService.getRef());
+                Tenant.PAGO_PA, user, eService.getRef());
 
         var journey = new NotificationJourneyImpl(gateway);
         if (fail) {
-            assertThatThrownBy(() -> journey.verifyUnreadInAppNotificationsFor(Tenant.PAGO_PA, eService)).isSameAs(failure);
+            assertThatThrownBy(() -> journey.verifyUnreadInAppNotificationsFor(Tenant.PAGO_PA, user, eService))
+                    .isSameAs(failure);
         } else {
-            journey.verifyUnreadInAppNotificationsFor(Tenant.PAGO_PA, eService);
+            assertThat(journey.verifyUnreadInAppNotificationsFor(Tenant.PAGO_PA, user, eService))
+                    .isSameAs(journey);
         }
-        verify(gateway).awaitUnreadNotification(TenantRef.of(Tenant.PAGO_PA.getOrganizationId()), eService.getRef());
+        verify(gateway).awaitUnreadNotification(Tenant.PAGO_PA, user, eService.getRef());
         verifyNoMoreInteractions(gateway);
     }
 }

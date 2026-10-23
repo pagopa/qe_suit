@@ -75,6 +75,7 @@ class BffDelegationRestClientTest {
         when(producerApi.rejectProducerDelegation()).thenReturn(reject);
         when(producerApi.revokeProducerDelegation()).thenReturn(revoke);
         when(approve.delegationIdPath(delegationId)).thenReturn(approve);
+        when(approve.reqSpec(any())).thenReturn(approve);
         when(reject.delegationIdPath(delegationId)).thenReturn(reject);
         when(reject.body(any())).thenReturn(reject);
         when(revoke.delegationIdPath(delegationId)).thenReturn(revoke);
@@ -89,6 +90,12 @@ class BffDelegationRestClientTest {
         client.revokeProducerDelegation(delegationId).withoutPolling().get();
 
         verify(approve).delegationIdPath(delegationId);
+        var spec = mock(io.restassured.builder.RequestSpecBuilder.class);
+        var specCustomizer = org.mockito.ArgumentCaptor
+                .<java.util.function.Consumer<io.restassured.builder.RequestSpecBuilder>>captor();
+        verify(approve).reqSpec(specCustomizer.capture());
+        specCustomizer.getValue().accept(spec);
+        verify(spec).setContentType("application/json");
         verify(reject).delegationIdPath(delegationId);
         var payload = org.mockito.ArgumentCaptor.forClass(RejectDelegationPayload.class);
         verify(reject).body(payload.capture());

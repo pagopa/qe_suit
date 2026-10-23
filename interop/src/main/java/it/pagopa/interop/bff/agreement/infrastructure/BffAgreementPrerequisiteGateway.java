@@ -25,6 +25,7 @@ public class BffAgreementPrerequisiteGateway {
     public void ensureActiveAgreement(EService service, EServiceDescriptor descriptor, AgreementGateway agreements) {
         var originalUser = session.getUser();
         var originalTenant = session.getTenant();
+        Throwable primaryFailure = null;
 
         try {
             Tenant producer = Tenant.fromOrganizationId(java.util.UUID.fromString(service.getProducerId()));
@@ -44,8 +45,16 @@ public class BffAgreementPrerequisiteGateway {
             if (!matches(resolved, service, descriptor) || !producer.getOrganizationId().equals(resolved.getConsumerId()))
                 throw new IllegalStateException("Self-consumer agreement is not ACTIVE for descriptor " + descriptor.getId());
 
+        } catch (RuntimeException | Error failure) {
+            primaryFailure = failure;
+            throw failure;
         } finally {
-            session.set(originalUser, originalTenant);
+            try {
+                session.set(originalUser, originalTenant);
+            } catch (RuntimeException | Error restorationFailure) {
+                if (primaryFailure == null) throw restorationFailure;
+                if (primaryFailure != restorationFailure) primaryFailure.addSuppressed(restorationFailure);
+            }
         }
     }
 

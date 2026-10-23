@@ -85,7 +85,7 @@ class EServicePreparationConfigurationMapperTest {
     }
 
     @Test
-    void createsAndMapsCommandBeforePreparingWithSelectedProducer() {
+    void createsAndMapsDraftCommandWithSelectedProducer() {
         var journey = mock(InteropJourney.class, RETURNS_SELF);
         var factory = mock(EServiceRequestFactory.class);
         when(factory.defaultCreationEServiceCommand()).thenReturn(command);
@@ -101,7 +101,6 @@ class EServicePreparationConfigurationMapperTest {
         order.verify(command).alias("ES-1");
         order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
         order.verify(journey).createEService(command);
-        order.verify(journey).prepareEServiceDescriptorForPublication(1);
         order.verifyNoMoreInteractions();
     }
 }
