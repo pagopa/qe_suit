@@ -5,59 +5,18 @@ import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.application.command.EServiceTemplateInstanceUpdateDescriptorCommand;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
-import lombok.Data;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.UnaryOperator;
 
 public class BffEServiceTemplateInstanceUpdateDescriptorCommand implements EServiceTemplateInstanceUpdateDescriptorCommand {
 
-    @Data
-    private static class UpdateEServiceInstancePayload {
-        private List<String> audience;
-        private AgreementApprovalPolicy agreementApprovalPolicy;
-        private Integer dailyCallsPerConsumer;
-        private Integer dailyCallsTotal;
-        private DescriptorAttributesSeed attributes;
-
-        public UpdateEServiceInstancePayload(UpdateEServiceTemplateInstanceDescriptorQuotas payload) {
-            this.dailyCallsPerConsumer = payload.getDailyCallsPerConsumer();
-            this.dailyCallsTotal = payload.getDailyCallsTotal();
-            this.attributes = payload.getAttributes();
-        }
-
-        public UpdateEServiceInstancePayload(UpdateEServiceDescriptorTemplateInstanceSeed payload) {
-            this.setAudience(payload.getAudience());
-            this.setAgreementApprovalPolicy(AgreementApprovalPolicy.valueOf(payload.getAgreementApprovalPolicy().toString()));
-            this.dailyCallsPerConsumer = payload.getDailyCallsPerConsumer();
-            this.dailyCallsTotal = payload.getDailyCallsTotal();
-            this.attributes = payload.getAttributes();
-        }
-
-        public UpdateEServiceTemplateInstanceDescriptorQuotas toUpdateEServiceTemplateInstanceDescriptorQuotas() {
-            UpdateEServiceTemplateInstanceDescriptorQuotas payload = new UpdateEServiceTemplateInstanceDescriptorQuotas();
-            payload.setDailyCallsPerConsumer(dailyCallsPerConsumer);
-            payload.setDailyCallsTotal(dailyCallsTotal);
-            payload.setAttributes(attributes);
-            return payload;
-        }
-
-        public UpdateEServiceDescriptorTemplateInstanceSeed toUpdateEServiceDescriptorTemplateInstanceSeed() {
-            UpdateEServiceDescriptorTemplateInstanceSeed payload = new UpdateEServiceDescriptorTemplateInstanceSeed();
-            payload.setDailyCallsPerConsumer(dailyCallsPerConsumer);
-            payload.setDailyCallsTotal(dailyCallsTotal);
-            payload.setAudience(audience);
-            payload.setAgreementApprovalPolicy(
-                    it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy.fromValue(agreementApprovalPolicy.toString())
-            );
-            payload.setAttributes(attributes);
-            return payload;
-        }
-    }
-
-    private UpdateEServiceInstancePayload payload = null;
-    private Attributes attributes = Attributes.builder().build();
+    private List<String> audience;
+    private AgreementApprovalPolicy agreementApprovalPolicy;
+    private Integer dailyCallsPerConsumer;
+    private Integer dailyCallsTotal;
+    private DescriptorAttributesSeed attributes;
+    private Attributes commonAttributes = Attributes.builder().build();
 
     public static BffEServiceTemplateInstanceUpdateDescriptorCommand from(UpdateEServiceTemplateInstanceDescriptorQuotas payload) {
         return new BffEServiceTemplateInstanceUpdateDescriptorCommand(payload);
@@ -68,36 +27,54 @@ public class BffEServiceTemplateInstanceUpdateDescriptorCommand implements EServ
     }
 
     private BffEServiceTemplateInstanceUpdateDescriptorCommand(UpdateEServiceTemplateInstanceDescriptorQuotas payload) {
-        this.payload = new UpdateEServiceInstancePayload(payload);
+        this.dailyCallsPerConsumer = payload.getDailyCallsPerConsumer();
+        this.dailyCallsTotal = payload.getDailyCallsTotal();
+        this.attributes = payload.getAttributes();
     }
 
     private BffEServiceTemplateInstanceUpdateDescriptorCommand(UpdateEServiceDescriptorTemplateInstanceSeed payload) {
-        this.payload = new UpdateEServiceInstancePayload(payload);
+        this.audience = payload.getAudience();
+        this.agreementApprovalPolicy = AgreementApprovalPolicy.valueOf(payload.getAgreementApprovalPolicy().toString());
+        this.dailyCallsPerConsumer = payload.getDailyCallsPerConsumer();
+        this.dailyCallsTotal = payload.getDailyCallsTotal();
+        this.attributes = payload.getAttributes();
     }
 
     public UpdateEServiceTemplateInstanceDescriptorQuotas getBffUpdatePublishedEServiceInstancePayload() {
-        return payload.toUpdateEServiceTemplateInstanceDescriptorQuotas();
+        UpdateEServiceTemplateInstanceDescriptorQuotas payload = new UpdateEServiceTemplateInstanceDescriptorQuotas();
+        payload.setDailyCallsPerConsumer(dailyCallsPerConsumer);
+        payload.setDailyCallsTotal(dailyCallsTotal);
+        payload.setAttributes(attributes);
+        return payload;
     }
 
     public UpdateEServiceDescriptorTemplateInstanceSeed getBffUpdateDraftServiceInstancePayload() {
-        return payload.toUpdateEServiceDescriptorTemplateInstanceSeed();
+        UpdateEServiceDescriptorTemplateInstanceSeed payload = new UpdateEServiceDescriptorTemplateInstanceSeed();
+        payload.setDailyCallsPerConsumer(dailyCallsPerConsumer);
+        payload.setDailyCallsTotal(dailyCallsTotal);
+        payload.setAudience(audience);
+        payload.setAgreementApprovalPolicy(
+                it.pagopa.interop.generated.openapi.clients.bff.model.AgreementApprovalPolicy.fromValue(agreementApprovalPolicy.toString())
+        );
+        payload.setAttributes(attributes);
+        return payload;
     }
 
     @Override
     public EServiceTemplateInstanceUpdateDescriptorCommand audience(List<String> audience) {
-        payload.setAudience(audience);
+        this.audience = audience;
         return this;
     }
 
     @Override
     public EServiceTemplateInstanceUpdateDescriptorCommand dailyCallsPerConsumer(Integer dailyCallsPerConsumer) {
-        payload.setDailyCallsPerConsumer(dailyCallsPerConsumer);
+        this.dailyCallsPerConsumer = dailyCallsPerConsumer;
         return this;
     }
 
     @Override
     public EServiceTemplateInstanceUpdateDescriptorCommand dailyCallsTotal(Integer dailyCallsTotal) {
-        payload.setDailyCallsTotal(dailyCallsTotal);
+        this.dailyCallsTotal = dailyCallsTotal;
         return this;
     }
 
@@ -113,15 +90,15 @@ public class BffEServiceTemplateInstanceUpdateDescriptorCommand implements EServ
         attributeRequirements = copyCommonAttributesIntoAttributeRequirementsAccordingToItsGroup(attributes.getVerified());
         attributesSeed.setVerified(attributeRequirements);
 
-        this.attributes = attributes;
-        this.payload.setAttributes(attributesSeed);
+        this.commonAttributes = attributes;
+        this.attributes = attributesSeed;
 
         return this;
     }
 
     @Override
     public EServiceTemplateInstanceUpdateDescriptorCommand attributes(UnaryOperator<Attributes> attributes) {
-        return this.attributes(attributes.apply(this.attributes));
+        return this.attributes(attributes.apply(this.commonAttributes));
     }
 
     private ArrayList<List<DescriptorAttributeSeed>> copyCommonAttributesIntoAttributeRequirementsAccordingToItsGroup(
