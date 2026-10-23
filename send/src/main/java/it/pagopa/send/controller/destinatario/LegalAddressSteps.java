@@ -2,7 +2,8 @@ package it.pagopa.send.controller.destinatario;
 
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.send.domain.context.UserContext;
+import it.pagopa.send.common.user.domain.UserType;
+import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import it.pagopa.send.web.infrastructure.page.AddressPage;
 import it.pagopa.send.web.infrastructure.page.DigitalDomicileOnboardPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AddressPFPage;
@@ -14,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class LegalAddressSteps {
-    private final UserContext userContext;
+    private final WebBrowserContext webBrowserContext;
     private final WebPresentationGateway browser;
     private final VerificationCodeProvider verificationCodeProvider;
 
@@ -32,9 +33,10 @@ public class LegalAddressSteps {
     @When("se presente viene disabilitato il domicilio digitale SERCQ")
     @When("viene disabilitato il domicilio digitale SERCQ")
     public void disableSercqDigitalDomicile() {
-        String type = userContext.getUser().getType();
+        // l'utente è quello del login: LoginService lo imposta in WebBrowserContext
+        UserType type = webBrowserContext.getCurrentUser().getType();
         AddressPage addressPage;
-        if (type.equals("PG")) {
+        if (type == UserType.PG) {
             addressPage = browser.bind(AddressPGPage.class);
             addressPage.navigateTo();
             ((AddressPGPage) addressPage).assertLoaded();
