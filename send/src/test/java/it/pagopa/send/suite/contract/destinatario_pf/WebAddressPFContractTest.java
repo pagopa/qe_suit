@@ -4,7 +4,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.AddressPFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
@@ -26,13 +26,12 @@ import java.util.stream.Stream;
  * domicilio digitale e di SEND sull'app IO. Il contenuto delle card dipende dai recapiti dell'utente (attivi o da
  * attivare) e non viene verificato.
  */
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebAddressPFContractTest {
@@ -46,6 +45,7 @@ public class WebAddressPFContractTest {
     private static final String EMAIL_TITLE = "Il tuo indirizzo email";
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Intestazione (titolo e sottotitolo), titoli delle card "Il tuo domicilio digitale", "SEND sull’app IO" e "Il tuo
@@ -54,7 +54,7 @@ public class WebAddressPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowAddressTexts() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(AddressPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(

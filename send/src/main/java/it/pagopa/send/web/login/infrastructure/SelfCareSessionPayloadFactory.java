@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.send.common.user.domain.OrganizationRole;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -13,6 +11,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,8 +24,24 @@ public class SelfCareSessionPayloadFactory {
 
     private final ObjectMapper objectMapper;
 
-    public String buildForTenant(Tenant tenant, String sessionToken) {
-        Map<String, Object> payload = basePayload(tenant, sessionToken);
+    /**
+     * Sessione dell'utente: la parte comune ({@link #basePayload}) più i campi del suo tipo di utenza, ente (PA)
+     * oppure persona fisica o giuridica (PF/PG).
+     */
+    public String build(User user, String sessionToken) {
+        Map<String, Object> payload = basePayload(user, sessionToken);
+        switch (user.getType()) {
+            case PA -> addTenantFields(payload, user);
+            case PF, PG -> addRecipientFields(payload, user);
+        }
+        return serialize(payload, user.getUsername());
+    }
+
+    private void addTenantFields(Map<String, Object> payload, User tenant) {
+        // il portale mittente usa desired_exp come scadenza della sessione (è l'exp del sessionToken) e non vuole i
+        // claim del JWT alla radice, a differenza del portale cittadino
+        payload.put("desired_exp", payload.get("exp"));
+        List.of("iat", "exp", "iss", "aud", "jti").forEach(payload::remove);
         payload.put("email", tenant.getEmail());
         payload.put("family_name", tenant.getFamilyName());
 
@@ -38,8 +53,6 @@ public class SelfCareSessionPayloadFactory {
         organization.put("ipaCode", tenant.getIpaCode());
         organization.put("hasGroups", tenant.isHasGroups());
         payload.put("organization", organization);
-
-        return serialize(payload, tenant.getUsername());
     }
 
     /**
@@ -48,8 +61,7 @@ public class SelfCareSessionPayloadFactory {
      * a parte): {@link #basePayload} li spalma tutti, qui si aggiungono solo i campi anagrafici
      * SPID (cognome, livello, {@code from_aa}) che il JWT non porta con sé.
      */
-    public String buildForRecipient(Recipient recipient, String sessionToken) {
-        Map<String, Object> payload = basePayload(recipient, sessionToken);
+    private void addRecipientFields(Map<String, Object> payload, User recipient) {
         payload.put("family_name", recipient.getFamilyName());
         payload.put("level", "L2");
         payload.put("from_aa", false);
@@ -62,8 +74,6 @@ public class SelfCareSessionPayloadFactory {
             organization.put("fiscal_code", recipient.getTaxId());
             payload.put("organization", organization);
         }
-
-        return serialize(payload, recipient.getUsername());
     }
 
     /**
