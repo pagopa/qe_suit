@@ -9,7 +9,7 @@ import java.util.Optional;
 
 /**
  * Utenze generiche di test dell'ambiente attivo, lette da {@code users/application-users-<ambiente>.yaml} (importato da
- * {@code application-<ambiente>.yaml}). Nel file la chiave è l'alias in kebab-case ({@code user-1}), che Spring converte
+ * {@code application-<ambiente>.yaml}). Nel file la chiave è l'alias come nelle feature ({@code User_1}), che Spring converte
  * nell'enum {@link UserAlias} ({@code USER_1}).
  */
 @ConfigurationProperties
