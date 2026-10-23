@@ -22,6 +22,7 @@ import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.AgreementApprova
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceInstanceDescriptorSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceInstanceLabelUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.InstanceEServiceSeed;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateEServiceTemplateInstanceSeed;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import it.pagopa.interop.m2m.v3.infrastructure.config.M2Mv3ApiContractConfig;
@@ -64,6 +65,10 @@ public class M2Mv3EServiceTemplateContractTest {
         currentChannel.setCurrentChannel(Channel.M2M_V3);
     }
 
+    /**
+     * Crea un e-service da template con il primo descrittore in stato DRAFT.
+     * Precondizioni BFF: template con una versione PUBLISHED; nessuna istanza preesistente necessaria.
+     */
     @TestFactory
     Stream<DynamicTest> createEServiceInstanceFromTemplate() {
         return httpContractValidator
@@ -91,6 +96,11 @@ public class M2Mv3EServiceTemplateContractTest {
                 .tests();
     }
 
+    /**
+     * Crea un nuovo descrittore DRAFT per un e-service derivato da template.
+     * Precondizioni BFF: template con versione PUBLISHED e relativa istanza con il primo descrittore PUBLISHED,
+     * senza descrittori DRAFT o WAITING_FOR_APPROVAL. Non serve una nuova versione del template.
+     */
     @TestFactory
     Stream<DynamicTest> createTemplateInstanceDescriptor() {
         return httpContractValidator
@@ -119,6 +129,11 @@ public class M2Mv3EServiceTemplateContractTest {
                 .tests();
     }
 
+    /**
+     * Modifica l'etichetta di un e-service derivato da template dopo la pubblicazione.
+     * Precondizioni BFF: template con versione PUBLISHED e relativa istanza con il primo descrittore PUBLISHED,
+     * dopo la configurazione dei dati del descrittore e dell'interfaccia REST.
+     */
     @TestFactory
     Stream<DynamicTest> updateEServiceTemplateInstanceLabel() {
         return httpContractValidator
@@ -141,6 +156,11 @@ public class M2Mv3EServiceTemplateContractTest {
                 .tests();
     }
 
+    /**
+     * Modifica Signal Hub, flag di delegabilita ed etichetta di un e-service derivato da template in bozza.
+     * Precondizioni BFF: template con versione PUBLISHED e relativa istanza con il primo descrittore DRAFT,
+     * non ancora pubblicato.
+     */
     @TestFactory
     Stream<DynamicTest> updateEServiceTemplateInstance() {
         return httpContractValidator
@@ -167,6 +187,30 @@ public class M2Mv3EServiceTemplateContractTest {
                 .tests();
     }
 
+    /**
+     * POST /eserviceTemplates/eservices/{eserviceId}/descriptors/{descriptorId}:
+     * modifica audience, soglie giornaliere e politica di approvazione di un descrittore DRAFT.
+     * Precondizioni BFF: template con versione PUBLISHED e relativa istanza con il primo descrittore DRAFT.
+     */
+    @TestFactory
+    Stream<DynamicTest> updateDraftDescriptorTemplateInstance() {
+        return httpContractValidator
+                .as(Tenant.COMUNE_DI_MILANO, M2MRole.M2M_ADMIN)
+                .apiCall(() -> apiClient.eserviceTemplates().updateDraftDescriptorTemplateInstance())
+                .pathParams(this::createDraftEServiceInstanceDescriptorPathParams)
+                .payload(() -> new UpdateEServiceDescriptorTemplateInstanceSeed()
+                        .audience(List.of("QA"))
+                        .dailyCallsPerConsumer(1)
+                        .dailyCallsTotal(10)
+                        .agreementApprovalPolicy(AgreementApprovalPolicy.AUTOMATIC))
+                .targets(
+                        List.of(FuzzScenario.REMOVED, FuzzScenario.REPLACED_WITH_BLANK_STRING),
+                        response -> response.then().statusCode(200),
+                        List.of(seed -> seed.getAudience().get(0))
+                )
+                .tests();
+    }
+
     private UUID createPublishedEServiceTemplateId() {
         interopJourney.switchChannel(Channel.BFF);
         try {
@@ -180,6 +224,19 @@ public class M2Mv3EServiceTemplateContractTest {
         interopJourney.switchChannel(Channel.BFF);
         try {
             return createDraftEServiceInstance().getId();
+        } finally {
+            interopJourney.resetChannel(Channel.M2M_V3);
+        }
+    }
+
+    private Map<String, UUID> createDraftEServiceInstanceDescriptorPathParams() {
+        interopJourney.switchChannel(Channel.BFF);
+        try {
+            EService instance = createDraftEServiceInstance();
+            return Map.of(
+                    "eserviceId", instance.getId(),
+                    "descriptorId", instance.getLastDraftDescriptor().getId()
+            );
         } finally {
             interopJourney.resetChannel(Channel.M2M_V3);
         }
