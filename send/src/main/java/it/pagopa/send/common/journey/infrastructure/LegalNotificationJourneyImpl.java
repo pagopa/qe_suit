@@ -1,7 +1,7 @@
 package it.pagopa.send.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.journey.application.LegalNotificationJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
@@ -37,7 +37,7 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
     private final EntityStore entityStore;
 
     @Override
-    public LegalNotificationJourneyImpl withSender(Tenant tenant) {
+    public LegalNotificationJourneyImpl withSender(User tenant) {
         currentUserSession.setSender(tenant);
         return this;
     }
@@ -56,7 +56,7 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
     }
 
     @Override
-    public LegalNotificationJourneyImpl sendNotification(Tenant sender, NotificationStatus targetStatus) {
+    public LegalNotificationJourneyImpl sendNotification(User sender, NotificationStatus targetStatus) {
         currentUserSession.setSender(sender);
         legalNotificationUseCase.sendNotification(sender, targetStatus);
         log.info("Notifica legale inviata, stato raggiunto: {}", targetStatus);
