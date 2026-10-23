@@ -172,5 +172,19 @@ class SeleniumApiAdapterTest {
         assertEquals("Uno", elements.get().get(0).getText());
         assertEquals("2", elements.get().get(1).getAttributes().get("data-id"));
     }
+
+    @Test
+    @DisplayName("refresh delega a driver.navigate().refresh()")
+    void shouldDelegateRefreshToDriverNavigation() {
+        WebDriver driver = mock(WebDriver.class);
+        WebDriver.Navigation navigation = mock(WebDriver.Navigation.class);
+        when(driver.navigate()).thenReturn(navigation);
+
+        SeleniumApiAdapter adapter = new SeleniumApiAdapter(driver);
+        adapter.refresh();
+
+        verify(driver).navigate();
+        verify(navigation).refresh();
+    }
 }
 

@@ -8,6 +8,7 @@ import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.pagopa.send.web.infrastructure.page.component.Footer;
 import it.pagopa.send.web.infrastructure.page.component.Table;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
+import it.pagopa.send.web.mittente.infrastructure.page.component.MittentiSidebar;
 import it.pagopa.send.web.notification_search.infrastructure.suit.NotificationSearchPage;
 import org.assertj.core.api.Assertions;
 
@@ -31,6 +32,8 @@ public interface DashboardPage extends NotificationSearchPage {
 
     @XPath("//*[@id=\"endDate\"]")
     Writable<String> endDateSearchInput();
+
+    MittentiSidebar sidebar();
 
     Table notifications();
 
