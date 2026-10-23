@@ -7,7 +7,7 @@ import it.pagopa.send.common.user.domain.UserProvider;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Utenze generiche nelle feature: la chiave dell'alias ({@code user-1}, {@code impresa-1}, {@code comune-1}, ...) è
+ * Utenze generiche nelle feature: la chiave dell'alias ({@code User_1}, {@code Impresa_1}, {@code Comune_1}, ...) è
  * risolta nell'utenza dell'ambiente attivo tramite {@link UserProvider}.
  */
 @RequiredArgsConstructor
@@ -15,7 +15,7 @@ public class UserParameterTypes {
 
     private final UserProvider userProvider;
 
-    @ParameterType("user-1|user-2|impresa-1|impresa-2|comune-1|comune-2")
+    @ParameterType("User_1|User_2|Impresa_1|Impresa_2|Comune_1|Comune_2")
     public User user(String userKey) {
         return userProvider.resolve(UserAlias.fromKey(userKey));
     }
