@@ -24,17 +24,17 @@ public class LoginSteps {
     private final NotificationPage notificationPage;
     private final NotificationPFPage notificationPFPage;
 
-    @Given("la PA {tenant} effettua l'accesso a SelfCare con autenticazione SPID")
+    @Given("la PA {user} effettua l'accesso a SelfCare con autenticazione SPID")
     public void spidAuthPa(User tenant) {
         loginService.loginAsTenant(tenant);
     }
 
-    @Given("{recipientType} {recipient} effettua l'accesso a SelfCare con autenticazione SPID")
+    @Given("{recipientType} {user} effettua l'accesso a SelfCare con autenticazione SPID")
     public void spidAuthRecipient(String userType, User recipient) {
         loginService.loginAsRecipient(userType, recipient);
     }
 
-    @Given("la PA {tenant} è loggata a SEND")
+    @Given("la PA {user} è loggata a SEND")
     public void forceTenantSession(User tenant) {
         webBrowserContext.setTenant(tenant);
         webBrowserContext.setCurrentUser(tenant);
@@ -43,7 +43,7 @@ public class LoginSteps {
         dashboardPage.assertLoaded();
     }
 
-    @Given("{recipientType} {recipient} forza l'accesso a SelfCare tramite sessionStorage")
+    @Given("{recipientType} {user} forza l'accesso a SelfCare tramite sessionStorage")
     public void forceRecipientSession(String userType, User recipient) {
         webBrowserContext.setRecipient(recipient);
         webBrowserContext.setCurrentUser(recipient);

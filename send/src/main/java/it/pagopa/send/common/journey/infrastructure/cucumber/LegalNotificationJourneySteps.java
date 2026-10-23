@@ -16,7 +16,6 @@ import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.RecipientSpecFactory;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.boot.convert.ApplicationConversionService;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -29,18 +28,18 @@ public class LegalNotificationJourneySteps {
     private final CurrentUserSession currentUserSession;
     private final UserProvider userProvider;
 
-    @Given("una notifica di tipo {legalNotificationType} creata dalla PA {tenant} per il destinatario {string} in stato {string}")
-    public void createLegalNotification(LegalNotificationType type, User sender, String recipient, String targetStatus) {
-        RecipientSpec recipientSpec = recipientSpecFactory.build(userProvider.resolve(ApplicationConversionService.getSharedInstance().convert(recipient, UserAlias.class)), type.recipientOverrides());
+    @Given("una notifica di tipo {legalNotificationType} creata dalla PA {user} per il destinatario {user} in stato {string}")
+    public void createLegalNotification(LegalNotificationType type, User sender, User recipient, String targetStatus) {
+        RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, type.recipientOverrides());
         sendJourney
                 .prepareNotification(Map.of())
                 .withRecipient(recipientSpec)
                 .sendNotification(sender, NotificationStatus.fromValue(targetStatus));
     }
 
-    @Given("la PA {tenant} ha creato ed annullato una notifica di tipo {legalNotificationType} per il destinatario {string}")
-    public void createAndCancelLegalNotification(User sender, LegalNotificationType type, String recipient) {
-        RecipientSpec recipientSpec = recipientSpecFactory.build(userProvider.resolve(ApplicationConversionService.getSharedInstance().convert(recipient, UserAlias.class)), type.recipientOverrides());
+    @Given("la PA {user} ha creato ed annullato una notifica di tipo {legalNotificationType} per il destinatario {user}")
+    public void createAndCancelLegalNotification(User sender, LegalNotificationType type, User recipient) {
+        RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, type.recipientOverrides());
         sendJourney
                 .prepareNotification(Map.of())
                 .withRecipient(recipientSpec)
@@ -55,7 +54,7 @@ public class LegalNotificationJourneySteps {
      * step separati ({@link #prepareNotification}, {@link #addRecipientToNotification},
      * {@link #sendNotificationViaBff}).
      */
-    @Given("una notifica di tipo multidestinatario creata dalla PA {tenant}")
+    @Given("una notifica di tipo multidestinatario creata dalla PA {user}")
     public void createMultiRecipientNotification(User sender) {
         RecipientSpec lucrezia = recipientSpecFactory.build(userProvider.resolve(UserAlias.USER_1), Map.of(
                 "physicalAddress_address", "Via Ok 890",
@@ -100,7 +99,7 @@ public class LegalNotificationJourneySteps {
      * step tramite {@link SendJourney}, questi tre step chiamano {@link LegalNotificationUseCase}
      * direttamente: devono per forza restare su step Cucumber separati.
      */
-    @Given("la PA {tenant} predispone una nuova notifica con i seguenti dati:")
+    @Given("la PA {user} predispone una nuova notifica con i seguenti dati:")
     public void prepareNotification(User tenant, Map<String, String> data) {
         currentUserSession.setSender(tenant);
         legalNotificationUseCase.prepareNotification(data);
@@ -111,7 +110,7 @@ public class LegalNotificationJourneySteps {
      * ({@link User}) alla notifica in preparazione, con default sensati (1 pagoPA + 1 F24,
      * indirizzo fisico di default) sovrascrivibili puntualmente da {@link RecipientSpecFactory}.
      */
-    @Given("viene aggiunto {recipient} come destinatario con i seguenti dati:")
+    @Given("viene aggiunto {user} come destinatario con i seguenti dati:")
     public void addRecipientToNotification(User recipient, Map<String, String> data) {
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, data);
         legalNotificationUseCase.addRecipient(recipientSpec);
