@@ -58,10 +58,11 @@ Feature: Combinazioni di filtri nel catalogo privato
     Given i seguenti template e-service pubblicati:
       | alias | nome                 | tecnologia |
       | TPL-1 | Template Giunto Alfa | SOAP       |
+      | TPL-2 | Template Giunto Beta | SOAP       |
     And le seguenti istanze di template e-service pubblicate:
       | alias | template | suffisso   |
       | ES-1  | TPL-1    | eservice-1 |
-      | ES-2  | TPL-1    | eservice-2 |
+      | ES-2  | TPL-2    | eservice-2 |
     And i seguenti e-service pubblicati:
       | alias | erogatore        | nome                  |
       | ES-3  | Comune di Milano | E-service Giunto Beta |
