@@ -16,5 +16,6 @@ public interface InteropJourney extends
         PurposeTemplateJourney<InteropJourney>,
         TenantJourney<InteropJourney>,
         ChannelJourney<InteropJourney>,
+        NotificationJourney<InteropJourney>,
         FinalizerJourney {
 }
