@@ -8,4 +8,4 @@ Feature: Creazione nuova notifica
     Then la notifica è stata inviata con successo
     Examples:
       | role  | mittente |
-      | admin | comune-1 |    
+      | admin | Comune_1 |    
