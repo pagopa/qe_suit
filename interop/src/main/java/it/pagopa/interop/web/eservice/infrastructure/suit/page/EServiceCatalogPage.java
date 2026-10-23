@@ -9,11 +9,13 @@ import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Pagination;
 import it.pagopa.infrastructure.suit.component.TextField;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.catalog.EServiceCatalogCard;
+
+import java.util.List;
 
 @Url("${interop.web.catalog}")
 public interface EServiceCatalogPage extends Page {
 
-    String URL = "/catalogo-e-service";
     String PAGE_TITLE = "Catalogo degli e-service";
     String SEARCH_BY_KEY_PLACEHOLDER = "Cerca per parola chiave";
     String SEARCH_BY_PROVIDER_PLACEHOLDER = "Cerca per erogatore";
@@ -27,60 +29,46 @@ public interface EServiceCatalogPage extends Page {
     Label pageDescription();
 
     // Campi di ricerca
-    @XPath("//input[@placeholder='" + SEARCH_BY_KEY_PLACEHOLDER + "']")
+    @XPath(".//label[@for='keyword']")
     TextField searchByName();
 
-    @XPath("//*[contains(@placeholder, '" + SEARCH_BY_PROVIDER_PLACEHOLDER + "') or contains(text(), '" + SEARCH_BY_PROVIDER_PLACEHOLDER + "')]")
-    Readable<String> searchByProvider();
+    @XPath(".//label[normalize-space()='Cerca per erogatore']")
+    TextField searchByProvider();
 
     //Bottone di ricerca
-    @XPath("//button[contains(@class, 'MuiButtonBase-root') and not(contains(@class, 'MuiPaginationItem-root'))]")
+    @XPath(".//button[contains(@class, 'MuiButtonBase-root') and not(contains(@class, 'MuiPaginationItem-root'))]")
     Button searchButton();
 
     //Bottone filtri (apre un padding laterale con i filtri)
-    @XPath("//button[contains(@class, 'MuiButtonBase-root') and not(contains(@class, 'MuiPaginationItem-root')) and contains(text(), 'Filtri')]")
+    @XPath(".//button[contains(@class, 'MuiButtonBase-root') and not(contains(@class, 'MuiPaginationItem-root')) and contains(text(), 'Filtri')]")
     Button filtersButton();
 
-    @XPath("//div[contains(@class, 'MuiStack-root'))]")
+    @XPath(".//div[contains(@class, 'MuiStack-root')]")
     EServiceCatalogFiltersDrawer filtersDrawer();
 
     //Label che mostra il numero di risultati della ricerca (es. "4061 risultati")
-    @XPath("//*[contains(text(), 'risultati')]")
+    @XPath(".//*[contains(text(), 'risultati')]")
     Label resultsCounterLabel();
 
     // Bottone di ordinamento (es. "Dal più recente")
-    @XPath("//*[@role='button' and contains(., 'Dal più recente')]")
+    @XPath(".//button[contains(@class, 'MuiButtonBase-root') and contains(text(), 'Dal più recente') or contains(text(), 'Dal meno recente') or contains(text(), 'Nome e-service A-Z') or contains(text(), 'Nome e-service Z-A')]")
     Button sortButton();
 
     //----------GRIGLIA---------
-
-    // Nome Erogatore (<span> con classe MuiTypography-caption)
-    @XPath("(//div[contains(@class, 'MuiGrid-item')])[1]//span[contains(@class, 'MuiTypography-caption')]")
-    Label cardProviderName();
-
-    // Nome dell'E-Service (<h6> con classe MuiTypography-h6)
-    @XPath("(//div[contains(@class, 'MuiGrid-item')])[1]//h6[contains(@class, 'MuiTypography-h6')]")
-    Label cardEServiceName();
-
-    // Descrizione E-Service (semplice tag <p>)
-    @XPath("(//div[contains(@class, 'MuiGrid-item')])[1]//p")
-    Label cardDescription();
-
-    // Bottone "Vai all'e-service" (Classe MuiButtonBase)
-    @XPath("(//div[contains(@class, 'MuiGrid-item')])[1]//button[contains(@class, 'MuiButtonBase')]")
-    Button cardActionButton();
-
-    // Contenitore della griglia
-    @XPath("//div[contains(@class, 'MuiGrid-container')]")
-    Gettable<?> grid();
+    List<EServiceCatalogCard> eServiceCards();
 
     // Paginazione e Stato vuoto
     @XPath("//nav[contains(@class, 'MuiPagination-root')]")
     Pagination pagination();
 
-    @XPath("//*[contains(@class, 'MuiAlert-root') or contains(text(), 'Nessun risultato')]")
+    @XPath(".//*[@role='status']//p[contains(text(), 'Non ci sono risultati')]")
     Label emptyStateMessage();
 
+
+    default void search(String name) {
+        searchByName().cleanAndWriteAndAssert(name);
+        searchButton().click();
+    }
 
     /**
      * Criterio di pagina caricata:
@@ -92,6 +80,4 @@ public interface EServiceCatalogPage extends Page {
         searchByProvider().readAndAssert(SEARCH_BY_PROVIDER_PLACEHOLDER);
         pageTitle().readAndAssert(PAGE_TITLE);
     }
-
-
 }

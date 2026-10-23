@@ -1,11 +1,14 @@
 package it.pagopa.interop.suite.contract;
 
+import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCatalogFiltersDrawer;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCatalogPage;
+import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +19,9 @@ import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
-@SpringBootTest
+@SpringBootTest(  classes = {
+        TestBootApp.class,JunitContextConfig.class, WebJUnitSuitConfig.class},
+        properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 @DisplayName("Web Contract Test - Catalogo E-Service (/catalogo-e-service)")
@@ -79,7 +84,7 @@ public class WebEServiceCatalogContractTest {
                                             .contains("Dal più recente");
 
                                     // CATALOG-12: Griglia risultati presente nel DOM
-                                    Assertions.assertThat(page.grid().get().isPresent())
+                                    Assertions.assertThat(page.eServiceCards().size() > 0)
                                             .as("Griglia E-Service presente nel DOM")
                                             .isTrue();
 
@@ -87,19 +92,19 @@ public class WebEServiceCatalogContractTest {
                                     this.assertFirstCardDetailsAreVisible(page);
 
                                     // CATALOG-17..19: Bottone azione sulla Card
-                                    page.cardActionButton().readAndAssert(EXPECTED_CARD_BUTTON_LABEL);
+                                    page.eServiceCards().get(0).goToEServiceButton().readAndAssert(EXPECTED_CARD_BUTTON_LABEL);
 
                                     // CATALOG-20: Paginazione presente nel DOM
                                     Assertions.assertThat(page.pagination().get().isPresent())
                                             .as("Paginazione presente nel DOM")
                                             .isTrue();
 
-                                    // CATALOG-21: Messaggio 'Nessun risultato' ASSENTE nel DOM
+                                    // CATALOG-21: Messaggio 'Non ci sono risultati' ASSENTE nel DOM
                                     Assertions.assertThat(page.emptyStateMessage().get().isPresent())
-                                            .as("Messaggio 'nessun risultato' assente nel DOM")
+                                            .as("Messaggio 'Non ci sono risultati' assente nel DOM")
                                             .isFalse();
                                 }),
-                        new WebScenario<>("Verifica contratto drawer \"Filtri\" catalogo E-Service",
+                         new WebScenario<>("Verifica contratto drawer \"Filtri\" catalogo E-Service",
                                 page -> {
                                     page.filtersButton().click();
                                 },
@@ -181,15 +186,15 @@ public class WebEServiceCatalogContractTest {
      * Verifica la presenza dei campi informativi minimi nella prima card del catalogo.
      */
     private void assertFirstCardDetailsAreVisible(EServiceCatalogPage page) {
-        Assertions.assertThat(page.cardProviderName().read())
+        Assertions.assertThat(page.eServiceCards().get(0).header().title().read())
                 .as("Nome erogatore nella prima card")
                 .isNotBlank();
 
-        Assertions.assertThat(page.cardEServiceName().read())
+        Assertions.assertThat(page.eServiceCards().get(0).eServiceName().read())
                 .as("Nome E-Service nella prima card")
                 .isNotBlank();
 
-        Assertions.assertThat(page.cardDescription().read())
+        Assertions.assertThat(page.eServiceCards().get(0).eServiceDescription().read())
                 .as("Descrizione E-Service nella prima card")
                 .isNotNull();
     }
