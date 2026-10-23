@@ -28,6 +28,7 @@ public class EServiceCatalogSearchSteps {
     private SearchEServiceCatalogCommand searchCommand;
     private EServiceCatalog searchResult;
     private List<EServiceCatalog> searchPages;
+    private List<EServiceCatalog> presencePages;
     private boolean searchSucceeded;
 
     @When("(il ){tenant} cerca nel catalogo {string} con i seguenti filtri:")
@@ -80,6 +81,12 @@ public class EServiceCatalogSearchSteps {
         return searchPages;
     }
 
+    /** Real pages of the latest observation: the presence traversal if any, otherwise the first page. */
+    public List<EServiceCatalog> getObservedPages() {
+        EServiceCatalog firstPage = getSearchResult();
+        return presencePages != null ? presencePages : List.of(firstPage);
+    }
+
     public SearchEServiceCatalogCommand getSearchCommand() {
         if (!searchSucceeded || searchCommand == null) {
             throw new IllegalStateException("No successful catalog search has been performed in this scenario");
@@ -93,8 +100,10 @@ public class EServiceCatalogSearchSteps {
 
     public void awaitPresence(List<EService> expected) {
         EServiceCatalog currentResult = getSearchResult();
-        EServiceCatalog refreshed = catalog.awaitPresence(getSearchCommand(), currentResult, expected);
-        searchResult = refreshed;
+        List<EServiceCatalog> pages = catalog.awaitPresence(getSearchCommand(), currentResult, expected);
+        searchResult = pages.get(0);
+        presencePages = pages;
+        // The presence traversal may stop early, so it is never reused as the complete page set.
         searchPages = null;
     }
 
@@ -102,6 +111,7 @@ public class EServiceCatalogSearchSteps {
         searchCommand = null;
         searchResult = null;
         searchPages = null;
+        presencePages = null;
         searchSucceeded = false;
         SearchEServiceCatalogCommand command = requestFactory.defaultSearchEServiceCatalogCommand();
         command.keyword(keyword);

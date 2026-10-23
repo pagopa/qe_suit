@@ -64,7 +64,7 @@ class BffEServiceTemplateCatalogFilterTest {
         }
         var gateway = new BffEServiceCatalogGateway(new BffEServiceCatalogRestClient(
                 new TestChainFactory(mock(LastApiResponseStore.class), entities), client),
-                Mappers.getMapper(BffEServiceCatalogMapper.class));
+                Mappers.getMapper(BffEServiceCatalogMapper.class), new BffEServiceRequestFactory());
 
         var results = new EServiceCatalogUseCase(gateway).search(command);
 

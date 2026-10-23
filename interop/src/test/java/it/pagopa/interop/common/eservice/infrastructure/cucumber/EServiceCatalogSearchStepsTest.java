@@ -39,6 +39,7 @@ class EServiceCatalogSearchStepsTest {
     @BeforeEach
     void stubDefaultSearchResult() {
         when(catalog.search(any())).thenReturn(new EServiceCatalog(List.of(), 0, 20, 0));
+        when(catalog.findEntry(any(), any())).thenCallRealMethod();
     }
 
     @Test
@@ -225,7 +226,7 @@ class EServiceCatalogSearchStepsTest {
         var oldPages = List.of(initial);
         var freshPages = List.of(refreshed);
         when(pagination.searchPages(command, initial)).thenReturn(oldPages);
-        when(catalog.awaitPresence(command, initial, List.of(expected))).thenReturn(refreshed);
+        when(catalog.awaitPresence(command, initial, List.of(expected))).thenReturn(List.of(refreshed));
 
         assertThat(steps.getSearchPages()).isSameAs(oldPages);
         steps.awaitPresence(List.of(expected));
@@ -251,7 +252,7 @@ class EServiceCatalogSearchStepsTest {
         when(catalog.search(any())).thenReturn(initial);
         steps.search(Tenant.PAGO_PA, "first");
         var command = steps.getSearchCommand();
-        when(catalog.awaitPresence(command, initial, List.of(expected))).thenReturn(refreshed);
+        when(catalog.awaitPresence(command, initial, List.of(expected))).thenReturn(List.of(refreshed));
         var assertions = new EServiceCatalogAssertionSteps(
                 steps, catalog, pagination, entityStore, Mappers.getMapper(EServiceCatalogExpectationMapper.class));
 
@@ -261,6 +262,37 @@ class EServiceCatalogSearchStepsTest {
         assertThat(steps.getSearchResult()).isSameAs(refreshed);
         verify(catalog).awaitPresence(command, initial, List.of(expected));
         verify(session).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
+    }
+
+    @Test
+    void presenceTraversalPagesFeedPropertyAssertionsWithoutReplacingTheCompletePageCache() {
+        var expected = it.pagopa.interop.common.eservice.domain.EService.builder()
+                .id(java.util.UUID.randomUUID()).build();
+        entityStore.upsert("ES-1", expected);
+        var initial = new EServiceCatalog(List.of(), 0, 20, 0);
+        var first = new EServiceCatalog(List.of(EServiceCatalog.Entry.builder()
+                .id(java.util.UUID.randomUUID()).build()), 0, 1, 3);
+        var later = new EServiceCatalog(List.of(EServiceCatalog.Entry.builder()
+                .id(expected.getId()).version("7").build()), 1, 1, 3);
+        when(catalog.search(any())).thenReturn(initial);
+        steps.search(Tenant.PAGO_PA, "first");
+        var command = steps.getSearchCommand();
+        when(catalog.awaitPresence(command, initial, List.of(expected))).thenReturn(List.of(first, later));
+        var assertions = new EServiceCatalogAssertionSteps(
+                steps, catalog, pagination, entityStore, Mappers.getMapper(EServiceCatalogExpectationMapper.class));
+
+        assertions.shouldContainEService("ES-1");
+        assertions.shouldReportProperties("ES-1", List.of(property("versione presentata", "7")));
+
+        assertThat(steps.getSearchResult()).isSameAs(first);
+        assertThat(steps.getObservedPages()).containsExactly(first, later);
+        verify(pagination, never()).searchPages(any(), any());
+        var completePages = List.of(first, later, new EServiceCatalog(List.of(
+                EServiceCatalog.Entry.builder().id(java.util.UUID.randomUUID()).build()), 2, 1, 3));
+        when(pagination.searchPages(command, first)).thenReturn(completePages);
+        assertThat(steps.getSearchPages()).isSameAs(completePages);
+        steps.search(Tenant.PAGO_PA, "second");
+        assertThat(steps.getObservedPages()).containsExactly(initial);
     }
 
     private EServiceCatalogPropertyExpectation property(String name, String value) {

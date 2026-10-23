@@ -480,7 +480,7 @@ class EServiceCatalogUseCaseTest {
         EService expected = service(expectedId);
         var initial = page(List.of(entry(expectedId)), 0, 2, 1);
 
-        assertThat(catalog.awaitPresence(command, initial, List.of(expected))).isSameAs(initial);
+        assertThat(catalog.awaitPresence(command, initial, List.of(expected))).containsExactly(initial);
 
         verifyNoInteractions(gateway);
     }
@@ -495,9 +495,9 @@ class EServiceCatalogUseCaseTest {
         var initial = page(List.of(entry(UUID.randomUUID()), entry(UUID.randomUUID())), 0, 2, 2);
         var refreshed = page(List.of(entry(firstId), entry(secondId)), 0, 2, 2);
         var expected = new EServiceCatalogPresenceCommand(List.of(firstId, secondId));
-        when(gateway.awaitPresence(command, expected)).thenReturn(refreshed);
+        when(gateway.awaitPresence(command, expected)).thenReturn(List.of(refreshed));
 
-        assertThat(catalog.awaitPresence(command, initial, List.of(first, second))).isSameAs(refreshed);
+        assertThat(catalog.awaitPresence(command, initial, List.of(first, second))).containsExactly(refreshed);
 
         verify(gateway).awaitPresence(command, expected);
         verifyNoMoreInteractions(gateway);
@@ -514,9 +514,39 @@ class EServiceCatalogUseCaseTest {
         verifyNoInteractions(gateway);
 
         var validInitial = page(List.of(entry(UUID.randomUUID()), entry(UUID.randomUUID())), 0, 2, 2);
-        when(gateway.awaitPresence(any(), any())).thenReturn(page(List.of(entry(expected.getId())), 0, 2, 2));
+        when(gateway.awaitPresence(any(), any())).thenReturn(List.of(page(List.of(entry(expected.getId())), 0, 2, 2)));
         assertThatThrownBy(() -> catalog.awaitPresence(command, validInitial, List.of(expected)))
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("expected 2");
+        when(gateway.awaitPresence(any(), any())).thenReturn(List.of(validInitial,
+                page(List.of(entry(expected.getId()), entry(UUID.randomUUID())), 4, 2, 6)));
+        assertThatThrownBy(() -> catalog.awaitPresence(command, validInitial, List.of(expected)))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("offset 4 instead of 2");
+        when(gateway.awaitPresence(any(), any())).thenReturn(List.of());
+        assertThatThrownBy(() -> catalog.awaitPresence(command, validInitial, List.of(expected)))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("no pages");
+    }
+
+    @Test
+    void presenceAcceptsExpectedIdsSplitAcrossConsecutiveRealPages() {
+        var command = fullCommand();
+        UUID firstId = UUID.randomUUID();
+        UUID secondId = UUID.randomUUID();
+        UUID thirdId = UUID.randomUUID();
+        var initial = page(List.of(entry(firstId), entry(UUID.randomUUID())), 0, 2, 6);
+        var pages = List.of(initial,
+                page(List.of(entry(UUID.randomUUID()), entry(secondId)), 2, 2, 6),
+                page(List.of(entry(thirdId), entry(UUID.randomUUID())), 4, 2, 6));
+        when(gateway.awaitPresence(any(), any())).thenReturn(pages);
+
+        assertThat(catalog.awaitPresence(command, initial,
+                List.of(service(thirdId), service(firstId), service(secondId)))).isEqualTo(pages);
+        assertThat(command.getOffset()).isZero();
+        assertSameFilters(command);
+
+        when(gateway.awaitPresence(any(), any())).thenReturn(pages.subList(0, 2));
+        assertThatThrownBy(() -> catalog.awaitPresence(command, initial,
+                List.of(service(thirdId), service(firstId)))).isInstanceOf(AssertionError.class)
+                .hasMessageContaining(thirdId.toString());
     }
 
     private BffSearchEServiceCatalogCommand fullCommand() {

@@ -79,7 +79,7 @@ class BffEServiceCatalogTest {
         });
         var client = new BffEServiceCatalogRestClient(
                 new TestChainFactory(mock(LastApiResponseStore.class), mock(EntityStore.class)), apiClient);
-        var gateway = new BffEServiceCatalogGateway(client, mapper);
+        var gateway = new BffEServiceCatalogGateway(client, mapper, new BffEServiceRequestFactory());
         var command = (BffSearchEServiceCatalogCommand) new BffEServiceRequestFactory().defaultSearchEServiceCatalogCommand();
         command.keyword("Nebula").onlyActiveEservices(true);
         command.producerCategories(List.of(it.pagopa.interop.common.tenant.domain.TenantCategory.COMUNI));
@@ -139,7 +139,7 @@ class BffEServiceCatalogTest {
         });
         var client = new BffEServiceCatalogRestClient(
                 new TestChainFactory(mock(LastApiResponseStore.class), mock(EntityStore.class)), apiClient);
-        var gateway = new BffEServiceCatalogGateway(client, mapper);
+        var gateway = new BffEServiceCatalogGateway(client, mapper, new BffEServiceRequestFactory());
         var command = (BffSearchEServiceCatalogCommand)
                 new BffEServiceRequestFactory().defaultSearchEServiceCatalogCommand();
         command.keyword("ordered").limit(2)
@@ -169,7 +169,7 @@ class BffEServiceCatalogTest {
     @Test
     void rejectsCommandsForOtherChannelsAndMissingPagination() {
         var client = mock(BffEServiceCatalogRestClient.class);
-        var gateway = new BffEServiceCatalogGateway(client, mapper);
+        var gateway = new BffEServiceCatalogGateway(client, mapper, new BffEServiceRequestFactory());
 
         assertThatThrownBy(() -> gateway.search(mock(SearchEServiceCatalogCommand.class)))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("BffSearchEServiceCatalogCommand");
@@ -199,7 +199,7 @@ class BffEServiceCatalogTest {
         });
         var client = new BffEServiceCatalogRestClient(
                 new TestChainFactory(mock(LastApiResponseStore.class), mock(EntityStore.class)), apiClient);
-        var gateway = new BffEServiceCatalogGateway(client, mapper);
+        var gateway = new BffEServiceCatalogGateway(client, mapper, new BffEServiceRequestFactory());
 
         var result = gateway.search(new BffEServiceRequestFactory().defaultSearchEServiceCatalogCommand());
 

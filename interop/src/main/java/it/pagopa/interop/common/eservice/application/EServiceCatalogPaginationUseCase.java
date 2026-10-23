@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.UUID;
 
@@ -90,6 +91,39 @@ public class EServiceCatalogPaginationUseCase {
             throw new IllegalStateException("Inconclusive catalog relative-order scan after 2 attempts; "
                     + "offset pagination cannot guarantee a snapshot. First attempt: " + firstAnomaly
                     + ". Fresh attempt: " + anomaly.getMessage(), anomaly);
+        }
+    }
+
+    public void shouldNotContainAcrossPages(
+            SearchEServiceCatalogCommand command, EServiceCatalog firstPage, List<EService> excluded
+    ) {
+        assertThat(excluded).as("E-services excluded from catalog results").isNotEmpty();
+        catalog.validatePagination(command);
+        EServiceCatalogTraversal first = scanForAbsence(command, firstPage, excluded);
+        if (!first.isAnomalous()) {
+            return;
+        }
+        // Offset pagination has no snapshot: an anomalous traversal could skip results, so retry once fresh.
+        EServiceCatalogTraversal fresh = scanForAbsence(command, catalog.search(command), excluded);
+        if (fresh.isAnomalous()) {
+            throw new IllegalStateException("Inconclusive catalog absence scan after 2 attempts; "
+                    + "offset pagination cannot guarantee a snapshot. First attempt: " + first.anomalies()
+                    + ". Fresh attempt: " + fresh.anomalies());
+        }
+    }
+
+    private EServiceCatalogTraversal scanForAbsence(
+            SearchEServiceCatalogCommand command, EServiceCatalog firstPage, List<EService> excluded
+    ) {
+        EServiceCatalogTraversal traversal = new EServiceCatalogTraversal(command.getOffset(), command.getLimit());
+        EServiceCatalog page = catalog.requirePage(firstPage, command.getOffset(), command.getLimit());
+        while (true) {
+            catalog.shouldNotContain(page, excluded);
+            OptionalInt next = traversal.accept(page);
+            if (next.isEmpty()) {
+                return traversal;
+            }
+            page = catalog.search(requestFactory.searchEServiceCatalogCommandForOffset(command, next.getAsInt()));
         }
     }
 

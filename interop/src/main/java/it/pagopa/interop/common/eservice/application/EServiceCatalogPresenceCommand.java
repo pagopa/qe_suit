@@ -22,7 +22,12 @@ public final class EServiceCatalogPresenceCommand {
     }
 
     public List<UUID> missingIds(EServiceCatalog page) {
-        List<UUID> actualIds = page.getResults().stream()
+        return missingIds(List.of(page));
+    }
+
+    public List<UUID> missingIds(List<EServiceCatalog> pages) {
+        List<UUID> actualIds = pages.stream()
+                .flatMap(page -> page.getResults().stream())
                 .map(EServiceCatalog.Entry::getId)
                 .toList();
         return expectedIds.stream()
@@ -33,5 +38,9 @@ public final class EServiceCatalogPresenceCommand {
 
     public boolean isSatisfiedBy(EServiceCatalog page) {
         return missingIds(page).isEmpty();
+    }
+
+    public boolean isSatisfiedBy(List<EServiceCatalog> pages) {
+        return missingIds(pages).isEmpty();
     }
 }

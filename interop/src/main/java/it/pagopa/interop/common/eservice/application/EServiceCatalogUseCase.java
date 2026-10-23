@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,7 +22,7 @@ public class EServiceCatalogUseCase {
         return requirePage(gateway.search(command), command.getOffset(), command.getLimit());
     }
 
-    public EServiceCatalog awaitPresence(
+    public List<EServiceCatalog> awaitPresence(
             SearchEServiceCatalogCommand command,
             EServiceCatalog initialResult,
             List<EService> expected
@@ -33,15 +34,28 @@ public class EServiceCatalogUseCase {
                 expected.stream().map(EService::getId).toList()
         );
         if (presence.isSatisfiedBy(initialResult)) {
-            shouldContain(initialResult, expected);
-            return initialResult;
+            return List.of(initialResult);
         }
+        List<EServiceCatalog> pages = gateway.awaitPresence(command, presence);
+        if (pages == null || pages.isEmpty()) {
+            throw new IllegalStateException("Catalog presence wait returned no pages");
+        }
+        for (int index = 0; index < pages.size(); index++) {
+            long offset = (long) command.getOffset() + (long) index * command.getLimit();
+            if (offset > Integer.MAX_VALUE) {
+                throw new IllegalStateException("Catalog pagination offset exceeds the supported range");
+            }
+            requirePage(pages.get(index), (int) offset, command.getLimit());
+        }
+        shouldContainAcrossPages(pages, expected);
+        return List.copyOf(pages);
+    }
 
-        EServiceCatalog refreshed = requirePage(
-                gateway.awaitPresence(command, presence), command.getOffset(), command.getLimit()
-        );
-        shouldContain(refreshed, expected);
-        return refreshed;
+    public Optional<EServiceCatalog.Entry> findEntry(List<EServiceCatalog> pages, UUID id) {
+        return pages.stream()
+                .flatMap(page -> page.getResults().stream())
+                .filter(entry -> id.equals(entry.getId()))
+                .findFirst();
     }
 
     public void shouldContainInOrder(EServiceCatalog result, List<EService> expected) {
@@ -107,6 +121,14 @@ public class EServiceCatalogUseCase {
         assertThat(expected).as("E-services expected in catalog results").isNotEmpty();
         assertThat(result.getResults())
                 .as("Catalog results at offset %s", result.getOffset())
+                .extracting(EServiceCatalog.Entry::getId)
+                .containsAll(expected.stream().map(EService::getId).toList());
+    }
+
+    public void shouldContainAcrossPages(List<EServiceCatalog> pages, List<EService> expected) {
+        assertThat(expected).as("E-services expected in catalog results").isNotEmpty();
+        assertThat(pages.stream().flatMap(page -> page.getResults().stream()))
+                .as("Catalog results across pages at offsets %s", pages.stream().map(EServiceCatalog::getOffset).toList())
                 .extracting(EServiceCatalog.Entry::getId)
                 .containsAll(expected.stream().map(EService::getId).toList());
     }

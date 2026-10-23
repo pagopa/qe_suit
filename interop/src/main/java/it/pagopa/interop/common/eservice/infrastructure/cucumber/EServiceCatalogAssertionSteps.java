@@ -32,7 +32,7 @@ public class EServiceCatalogAssertionSteps {
 
     @Then("l'e-service {string} non è presente tra i risultati della ricerca")
     public void shouldNotContainEService(String alias) {
-        catalog.shouldNotContain(searchSteps.getSearchResult(),
+        pagination.shouldNotContainAcrossPages(searchSteps.getSearchCommand(), searchSteps.getSearchResult(),
                 List.of(entityStore.getByAliasOrThrow(alias, EService.class)));
     }
 
@@ -72,17 +72,17 @@ public class EServiceCatalogAssertionSteps {
 
     @Then("tra i risultati della ricerca non sono presenti i seguenti e-service:")
     public void shouldNotContainEServices(List<EServiceCatalogExpectation> expectations) {
-        catalog.shouldNotContain(searchSteps.getSearchResult(),
-                expectationMapper.toEServices(expectations, entityStore));
+        List<EService> excluded = expectationMapper.toEServices(expectations, entityStore);
+        pagination.shouldNotContainAcrossPages(searchSteps.getSearchCommand(), searchSteps.getSearchResult(),
+                excluded);
     }
 
     @Then("per l'e-service {string} il risultato riporta:")
     public void shouldReportProperties(String alias, List<EServiceCatalogPropertyExpectation> properties) {
         assertThat(properties).as("Proprietà attese per l'e-service %s", alias).isNotEmpty();
         UUID id = entityStore.getByAliasOrThrow(alias, EService.class).getId();
-        EServiceCatalog.Entry entry = searchSteps.getSearchResult().getResults().stream()
-                .filter(result -> result.getId().equals(id))
-                .findFirst()
+        EServiceCatalog.Entry entry = catalog.findEntry(searchSteps.getObservedPages(), id)
+                .or(() -> catalog.findEntry(searchSteps.getSearchPages(), id))
                 .orElseThrow(() -> new AssertionError("E-service " + alias + " non presente nei risultati"));
         for (EServiceCatalogPropertyExpectation property : properties) {
             assertProperty(entry, property);
