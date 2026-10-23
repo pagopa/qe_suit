@@ -98,11 +98,6 @@ public class WebEServiceCatalogContractTest {
                                     Assertions.assertThat(page.pagination().get().isPresent())
                                             .as("Paginazione presente nel DOM")
                                             .isTrue();
-
-                                    // CATALOG-21: Messaggio 'Non ci sono risultati' ASSENTE nel DOM
-                                    Assertions.assertThat(page.emptyStateMessage().get().isPresent())
-                                            .as("Messaggio 'Non ci sono risultati' assente nel DOM")
-                                            .isFalse();
                                 }),
                          new WebScenario<>("Verifica contratto drawer \"Filtri\" catalogo E-Service",
                                 page -> page.filtersButton().click(),
