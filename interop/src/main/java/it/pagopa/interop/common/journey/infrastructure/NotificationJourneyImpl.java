@@ -27,8 +27,8 @@ public class NotificationJourneyImpl implements NotificationJourney<Notification
     }
 
     @Override
-    public NotificationJourneyImpl verifyUnreadNotificationsFor(Tenant consumer, EService eService) {
-        gateway.awaitUnreadNotification(TenantRef.of(consumer.getOrganizationId()), eService.getRef());
+    public NotificationJourneyImpl verifyUnreadNotificationsFor(Tenant tenant, User user, EService eService) {
+        gateway.awaitUnreadNotification(tenant, user, eService.getRef());
         return this;
     }
 }

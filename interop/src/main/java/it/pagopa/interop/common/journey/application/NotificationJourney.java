@@ -9,5 +9,5 @@ public interface NotificationJourney<SELF extends NotificationJourney<SELF>> ext
 
     SELF enableAppNotificationsFor(Tenant consumer, User user);
 
-    SELF verifyUnreadNotificationsFor(Tenant consumer, EService eService);
+    SELF verifyUnreadNotificationsFor(Tenant consumer, User user, EService eService);
 }

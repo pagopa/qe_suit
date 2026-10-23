@@ -39,19 +39,21 @@ public class BffNotificationGateway implements NotificationGateway {
     }
 
     @Override
-    public void awaitUnreadNotification(TenantRef tenant, EServiceRef eService) {
+    public void awaitUnreadNotification(Tenant tenant, User user, EServiceRef eService) {
         AtomicReference<String> lastObserved = new AtomicReference<>("no notification response observed");
         try {
             PollingUtils.pollUntil(
-                    this::getUnreadNotifications,
+                    () -> getUnreadNotifications(tenant, user),
                     page -> {
-                        if (page == null) throw new IllegalStateException("Risposta notifiche priva della lista dei risultati");
+                        if (page == null || page.getResults() == null)
+                            throw new IllegalStateException("Risposta notifiche priva della lista dei risultati");
 
                         List<Notification> unread = page.getResults().stream()
-                                .filter(notification -> tenant.id().equals(notification.getTenantId()) && notification.getReadAt() == null)
+                                .filter(notification -> tenant.getOrganizationId().equals(notification.getTenantId()) && user.getUserId().equals(notification.getUserId()) && notification.getReadAt() == null)
                                 .toList();
-                        List<String> links = unread.stream().map(Notification::getDeepLink).filter(link -> !link.isBlank()).toList();
-                        lastObserved.set("first page (offset 0, limit 100): " + unread.size()
+                        List<String> links = unread.stream().map(Notification::getDeepLink)
+                                .filter(link -> link != null && !link.isBlank()).toList();
+                        lastObserved.set("first page (offset 0, limit 50): " + unread.size()
                                 + " unread notifications for tenant, " + (unread.size() - links.size())
                                 + " without a deepLink, " + links.size()
                                 + " deepLinks not yet correlated by standalone e-service UUID token");
@@ -61,7 +63,7 @@ public class BffNotificationGateway implements NotificationGateway {
         } catch (IllegalStateException failure) {
             if (!(failure.getCause() instanceof ConditionTimeoutException)) throw failure;
             throw new IllegalStateException("Unable to correlate an unread notification with e-service "
-                    + eService.id() + " for tenant " + tenant.id() + "; " + lastObserved.get(), failure);
+                    + eService.id() + " for tenant " + tenant.getAlias() + " and user " + user.getUsername() + "; " + lastObserved.get(), failure);
         }
     }
 
@@ -71,8 +73,15 @@ public class BffNotificationGateway implements NotificationGateway {
                 .matcher(deepLink).find();
     }
 
-    private Notifications getUnreadNotifications() {
-        return rest.getNotifications(true, 0, 50).withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+    private Notifications getUnreadNotifications(Tenant tenant, User user) {
+        var prevTenant = session.getTenant();
+        var prevUser = session.getUser();
+        try {
+            session.set(user, tenant);
+            return rest.getNotifications(true, 0, 50).withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+        } finally {
+            session.set(prevUser, prevTenant);
+        }
     }
 
     private void enableAllUserInAppNotification(Tenant tenant, User user) {
@@ -91,7 +100,7 @@ public class BffNotificationGateway implements NotificationGateway {
             }
 
             var enabled = requestFactory.allEnabledInAppConfig();
-            if (config.getInAppNotificationPreference() && enabled.equals(config.getInAppConfig()))
+            if (Boolean.TRUE.equals(config.getInAppNotificationPreference()) && enabled.equals(config.getInAppConfig()))
                 return;
 
 
@@ -105,9 +114,8 @@ public class BffNotificationGateway implements NotificationGateway {
             rest.updateUserNotificationConfig(seed)
                     .withPolling(PollingStrategy.UNTIL_SUCCESS);
 
-            if(!hasUserInAppNotificationAllEnabled(tenant, user)) {
-                throw new IllegalStateException("Abilitazione notifiche in-app per utente fallita: " + user);
-            }
+            PollingUtils.pollUntil(() -> hasUserInAppNotificationAllEnabled(tenant, user),
+                    Boolean.TRUE::equals, TIMEOUT, INTERVAL);
         } finally {
             session.set(prevUser, prevTenant);
         }
@@ -117,12 +125,15 @@ public class BffNotificationGateway implements NotificationGateway {
         var prevTenant = session.getTenant();
         var prevUser = session.getUser();
 
-        session.set(User.getTenantAdmin(tenant), tenant);
-        rest.updateTenantNotificationConfig(new TenantNotificationConfigUpdateSeed().enabled(true)).withPolling(PollingStrategy.UNTIL_SUCCESS).get();
-        if(!hasTeantInAppNotificationAllEnabled(tenant)) {
-            throw new IllegalStateException("Abilitazione notifiche in-app per tenant fallita: " + tenant.getAlias());
+        try {
+            session.set(User.getTenantAdmin(tenant), tenant);
+            rest.updateTenantNotificationConfig(new TenantNotificationConfigUpdateSeed().enabled(true))
+                    .withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+            PollingUtils.pollUntil(() -> hasTeantInAppNotificationAllEnabled(tenant),
+                    Boolean.TRUE::equals, TIMEOUT, INTERVAL);
+        } finally {
+            session.set(prevUser, prevTenant);
         }
-        session.set(prevUser, prevTenant);
     }
 
     private boolean hasUserInAppNotificationAllEnabled(Tenant tenant, User user) {
@@ -139,7 +150,7 @@ public class BffNotificationGateway implements NotificationGateway {
                 throw new IllegalStateException(
                         "Configurazione notifiche utente mancante: " + user);
 
-            return config.getInAppNotificationPreference()
+            return Boolean.TRUE.equals(config.getInAppNotificationPreference())
                     && requestFactory.allEnabledInAppConfig().equals(config.getInAppConfig());
         } finally {
             session.set(prevUser, prevTenant);
@@ -147,11 +158,17 @@ public class BffNotificationGateway implements NotificationGateway {
     }
 
     private boolean hasTeantInAppNotificationAllEnabled(Tenant tenant) {
-        var config = rest.getTenantNotificationConfig().withPolling(PollingStrategy.UNTIL_SUCCESS).get();
-        if (config == null)
-            throw new IllegalStateException("Configurazione notifiche tenant mancante o non valida: " + tenant.getAlias());
-
-        return config.getEnabled();
+        var prevTenant = session.getTenant();
+        var prevUser = session.getUser();
+        try {
+            session.set(User.getTenantAdmin(tenant), tenant);
+            var config = rest.getTenantNotificationConfig().withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+            if (config == null)
+                throw new IllegalStateException("Configurazione notifiche tenant mancante o non valida: " + tenant.getAlias());
+            return Boolean.TRUE.equals(config.getEnabled());
+        } finally {
+            session.set(prevUser, prevTenant);
+        }
     }
 
     @Override

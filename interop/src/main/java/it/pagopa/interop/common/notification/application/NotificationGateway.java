@@ -8,5 +8,5 @@ public interface NotificationGateway extends Plugin<Channel> {
 
     void ensureAllEnabled(Tenant tenant, User user);
 
-    void awaitUnreadNotification(TenantRef tenant, EServiceRef eService);
+    void awaitUnreadNotification(Tenant tenant,  User user, EServiceRef eService);
 }
