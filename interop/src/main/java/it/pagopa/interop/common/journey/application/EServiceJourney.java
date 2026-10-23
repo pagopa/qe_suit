@@ -17,6 +17,9 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
 
     SELF createEService(EServiceDescriptorState state);
 
+    /** Crea un e-service associando al descrittore l'ultimo attributo certificato presente nel contesto. */
+    SELF createEServiceWithCertifiedAttribute(EServiceDescriptorState state);
+
     SELF addDescriptor(EServiceDescriptorState state);
 
     SELF addDescriptor(EService eService, EServiceDescriptorState state);

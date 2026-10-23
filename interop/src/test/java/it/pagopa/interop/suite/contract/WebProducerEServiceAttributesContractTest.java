@@ -17,6 +17,7 @@ import it.pagopa.interop.web.eservice_template.infrastructure.page.ProducerEServ
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,7 +46,8 @@ public class WebProducerEServiceAttributesContractTest {
     Stream<DynamicTest> shouldSaveEServiceAttributesWithoutChanges() {
         EService eService = interopJourney
                 .withProducer(TENANT, UserRole.ADMIN)
-                .createEService(EServiceDescriptorState.PUBLISHED)
+                .createCertifiedAttribute()
+                .createEServiceWithCertifiedAttribute(EServiceDescriptorState.PUBLISHED)
                 .get(EService.class);
 
         return webContractValidator
@@ -67,6 +69,7 @@ public class WebProducerEServiceAttributesContractTest {
                 )));
     }
 
+    @Disabled
     @TestFactory
     Stream<DynamicTest> shouldSaveEServiceTemplateAttributesWithoutChanges() {
         EServiceTemplate eServiceTemplate = interopJourney

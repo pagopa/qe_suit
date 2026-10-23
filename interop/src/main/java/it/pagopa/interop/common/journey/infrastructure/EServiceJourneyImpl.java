@@ -1,7 +1,10 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
@@ -28,6 +31,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     private final EntityStore entityStore;
     private final EServiceRiskAnalysisUseCase eServiceRiskAnalysisUseCase;
     private final CurrentUserSession currentUserSession;
+    private final EServiceRequestFactory requestFactory;
 
     @Override
     public EServiceJourneyImpl createEService(EServiceCreationCommand command, EServiceDescriptorState targetState) {
@@ -40,6 +44,16 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         EService draftEService = eServiceUseCase.createEService(cmd -> {
         });
         return processLifecycle(draftEService, draftEService.getLastDraftDescriptor(), targetState);
+    }
+
+    @Override
+    public EServiceJourneyImpl createEServiceWithCertifiedAttribute(EServiceDescriptorState state) {
+        Attribute attribute = entityStore.getLastOrThrow(Attribute.class);
+        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        command.attributes(Attributes.builder().certified(attribute).build());
+
+        createEService(EServiceDescriptorState.DRAFT);
+        return updateDescriptor(command, state);
     }
 
     @Override
