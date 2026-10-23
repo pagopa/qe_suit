@@ -50,6 +50,15 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 .create();
     }
 
+    public UpdateEServiceDescriptorTemplateInstanceSeed updateTemplateInstanceDescriptorRequest() {
+        UpdateEServiceDescriptorSeed source = defaultUpdateDescriptorSeed();
+        return new UpdateEServiceDescriptorTemplateInstanceSeed()
+                .audience(source.getAudience())
+                .dailyCallsPerConsumer(source.getDailyCallsPerConsumer())
+                .dailyCallsTotal(source.getDailyCallsTotal())
+                .agreementApprovalPolicy(source.getAgreementApprovalPolicy());
+    }
+
     @Override
     public EServiceCreationCommand defaultCreationEServiceCommand() {
         return BffEServiceCreationCommand.from(defaultEServiceSeed());
@@ -57,7 +66,16 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
 
     @Override
     public UpdateEServiceDescriptorCommand defaultUpdateDescriptorCommand() {
-        var payload = Instancio.of(UpdateEServiceDescriptorSeed.class)
+        return BffUpdateEServiceDescriptorCommand.from(defaultUpdateDescriptorSeed());
+    }
+
+    @Override
+    public boolean supports(@NonNull Channel delimiter) {
+        return delimiter == Channel.BFF;
+    }
+
+    private UpdateEServiceDescriptorSeed defaultUpdateDescriptorSeed() {
+        return Instancio.of(UpdateEServiceDescriptorSeed.class)
                 .set(field(UpdateEServiceDescriptorSeed::getVoucherLifespan), 60)
                 .set(field(UpdateEServiceDescriptorSeed::getDailyCallsTotal), 10)
                 .set(field(UpdateEServiceDescriptorSeed::getDailyCallsPerConsumer), 1)
@@ -73,12 +91,6 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 .ignore(field(UpdateEServiceDescriptorSeed::getAsyncExchangeProperties))
                 .create();
 
-        return BffUpdateEServiceDescriptorCommand.from(payload);
-    }
-
-    @Override
-    public boolean supports(@NonNull Channel delimiter) {
-        return delimiter == Channel.BFF;
     }
 
     private EServiceSeed defaultEServiceSeed() {
