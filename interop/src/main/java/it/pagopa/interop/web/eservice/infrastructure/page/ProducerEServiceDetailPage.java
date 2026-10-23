@@ -4,6 +4,8 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.Snackbar;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 
@@ -14,6 +16,14 @@ public interface ProducerEServiceDetailPage extends Page {
     Readable<String> pageTitle();
 
     Breadcrumbs breadcrumbs();
+
+    @XPath("(.//button[normalize-space()='Aggiungi attributi'])[1]")
+    Button addAttributesButton();
+
+    @XPath("//div[contains(@class, 'MuiDrawer-root')]//button[normalize-space()='Salva modifiche']")
+    Button attributesDrawerSaveButton();
+
+    Snackbar snackbar();
 
     @Override
     default void assertLoaded() {
