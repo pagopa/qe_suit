@@ -13,7 +13,7 @@ spring:
     activate:
       on-profile: dev
     import:
-      - optional:classpath:secrets/bearer-token-test.properties
+      - optional:classpath:secrets/bearer-token-dev.properties
       - classpath:users/application-users-dev.yaml
 
 # ============================================================================
@@ -52,6 +52,7 @@ url:
       deleghe-a-carico: ${url.notifiche.persona-giuridica.base}/deleghe/a-carico
       delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati
       add-delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati/nuova
+      termini-di-servizio: ${url.notifiche.persona-giuridica.base}/termini-di-servizio
     mittente:
       base: https://selfcare.dev.notifichedigitali.it
       dashboard: ${url.notifiche.mittente.base}/dashboard
@@ -77,12 +78,14 @@ selettore:
 # Bearer token for users
 # ============================================================================
 token:
-  mittente: ${pn.external.bearer-token.tokentestMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
   session:
-    grossini: REPLACE_ME
-    francescopetrarca: REPLACE_ME
-    lucrezia: REPLACE_ME
+    lucrezia: ${pn.external.session-token.lucrezia:REPLACE_ME}
+    garibaldi: ${pn.external.session-token.garibaldi:REPLACE_ME}
+    dantealighieri: ${pn.external.session-token.dantealighieri:REPLACE_ME}
+    francescopetrarca: ${pn.external.session-token.francescopetrarca:REPLACE_ME}
+    grossini: ${pn.external.session-token.grossini:REPLACE_ME}
+    albino63: ${pn.external.session-token.albino63:REPLACE_ME}
 
 # ============================================================================
 # BFF API Configuration (notifiche legali via API)
@@ -114,14 +117,3 @@ external-registries:
 delivery:
   api:
     base-url: https://api.dev.notifichedigitali.it # TODO verificare host corretto per l'ambiente dev
-
-# api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
-# ogni costante di Tenant, univoca per PA e per ambiente (qui: dev)
-pa:
-  groups-api-key:
-    GROSSINI: ab1ea42c-baea-4fd2-9b2f-32e7f34c36b6
-
-# api-key per le API B2B delivery (header x-api-key), una entry per ogni costante di Tenant,
-# univoca per PA e per ambiente (qui: dev)
-  delivery-api-key:
-    GROSSINI: REPLACE_ME
