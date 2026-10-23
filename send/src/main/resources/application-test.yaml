@@ -14,6 +14,7 @@ spring:
       on-profile: test
     import:
       - optional:classpath:secrets/bearer-token-test.properties
+      - classpath:users/application-users-test.yaml
 
 # ============================================================================
 # URLs Configuration
