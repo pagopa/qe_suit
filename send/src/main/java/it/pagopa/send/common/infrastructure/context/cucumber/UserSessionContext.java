@@ -1,7 +1,5 @@
 package it.pagopa.send.common.infrastructure.context.cucumber;
 
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import lombok.Getter;
@@ -12,8 +10,8 @@ import java.util.List;
 @Getter
 @Setter
 public class UserSessionContext implements CurrentUserSession {
-    private Tenant sender;
-    private List<Recipient> recipients;
+    private User sender;
+    private List<User> recipients;
 
     @Override
     public User getCurrentActor() {

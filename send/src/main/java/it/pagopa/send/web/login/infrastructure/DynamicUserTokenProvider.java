@@ -64,6 +64,20 @@ public class DynamicUserTokenProvider {
         return null;
     }
 
+    /**
+     * Come {@link #getToken(String)}, ma fallisce subito con un messaggio chiaro se per l'utenza non c'è un token
+     * valido (assente, segnaposto {@code REPLACE_ME} o scaduto), invece di lasciar proseguire con {@code null}.
+     */
+    public String requireToken(String username) {
+        String token = getToken(username);
+        if (token == null) {
+            throw new IllegalStateException("Nessun session token valido per l'utenza " + username
+                    + ": aggiungere pn.external.session-token." + (username == null ? "" : username.toLowerCase())
+                    + " nei segreti dell'ambiente (o rinnovarlo se è scaduto)");
+        }
+        return token;
+    }
+
     private boolean isValid(String token) {
         if (token == null || token.isBlank() || token.contains("REPLACE_ME")) {
             return false;
