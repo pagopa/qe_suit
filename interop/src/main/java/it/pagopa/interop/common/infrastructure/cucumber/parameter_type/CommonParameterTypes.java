@@ -3,6 +3,7 @@ package it.pagopa.interop.common.infrastructure.cucumber.parameter_type;
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.client.domain.ClientKind;
 import it.pagopa.interop.common.delegation.domain.DelegationState;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
@@ -57,5 +58,17 @@ public class CommonParameterTypes {
     @ParameterType("sincrono|asincrono")
     public Boolean asyncExchange(String name) {
         return "asincrono".equals(name);
+    }
+
+    @ParameterType("bozza|pubblicato")
+    public EServiceDescriptorState eServiceDescriptorState(String state) {
+        switch (state.toLowerCase()) {
+            case "bozza":
+                return EServiceDescriptorState.DRAFT;
+            case "pubblicato":
+                return EServiceDescriptorState.PUBLISHED;
+            default:
+                throw new IllegalArgumentException("Invalid EServiceDescriptorState: " + state);
+        }
     }
 }
