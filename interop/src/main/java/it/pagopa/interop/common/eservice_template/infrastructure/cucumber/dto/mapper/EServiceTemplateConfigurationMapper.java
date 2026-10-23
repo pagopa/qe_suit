@@ -22,7 +22,7 @@ public interface EServiceTemplateConfigurationMapper {
     void apply(EServiceTemplatePublicationConfiguration source, @MappingTarget EServiceTemplateCreationCommand target);
 
     @BeanMapping(ignoreByDefault = true, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    @Mapping(target = "instanceLabel", source = "instanceLabel", qualifiedByName = "randomized")
+    @Mapping(target = "instanceLabel", source = "instanceLabel")
     void apply(EServiceTemplateInstanceConfiguration source, @MappingTarget EServiceTemplateInstanceCreationCommand target);
 
     @Named("randomized")

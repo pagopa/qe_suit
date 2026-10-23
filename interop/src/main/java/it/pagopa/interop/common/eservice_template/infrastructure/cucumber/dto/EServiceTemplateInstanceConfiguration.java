@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,5 +21,6 @@ public class EServiceTemplateInstanceConfiguration {
     @JsonAlias("suffisso")
     @JsonSetter(nulls = Nulls.FAIL)
     @Pattern(regexp = "(?s).*\\S.*")
+    @Size(max = 12)
     private String instanceLabel;
 }
