@@ -96,13 +96,13 @@ public class EServiceDescriptorUseCase {
     }
 
     public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand command){
-        if (descriptor.getState() != EServiceDescriptorState.DRAFT) {
+        if (descriptor.getState() != EServiceDescriptorState.DRAFT)
             throw new IllegalStateException("Cannot prepare a descriptor in state " + descriptor.getState());
-        }
+
         if (command == null) command = publicationCommand(descriptor);
-        else if (command.getInterfaceDocumentPath() == null && descriptor.getInterfaceDocument() == null) {
+        else if (command.getInterfaceDocumentPath() == null && descriptor.getInterfaceDocument() == null)
             command.interfaceDocumentPath(requestFactory.prepareDescriptorForPublicationCommand().getInterfaceDocumentPath());
-        }
+
         return eServiceDescriptorGateway.updateDescriptor(eService.getRef(), descriptor.getRef(), command);
     }
 

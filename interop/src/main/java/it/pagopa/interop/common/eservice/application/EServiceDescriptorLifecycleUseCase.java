@@ -17,6 +17,7 @@ public class EServiceDescriptorLifecycleUseCase {
     private final EServiceDescriptorUseCase descriptors;
     private final EServiceDescriptorLifecyclePlanner planner;
     private final AgreementUseCase agreements;
+    private final EServiceRiskAnalysisUseCase riskAnalyses;
 
     public void validateCanReachState(
             EServiceDescriptorState source, EServiceDescriptorState target
@@ -49,7 +50,7 @@ public class EServiceDescriptorLifecycleUseCase {
             current = switch (step.action()) {
                 case PUBLISH -> publishDraft(eService, current, command);
                 case PUBLISH_FOR_APPROVAL -> {
-                    EServiceDescriptor prepared = descriptors.prepareDescriptorForPublication(eService, current, command);
+                    EServiceDescriptor prepared = prepareDraft(eService, current, command);
                     yield descriptors.publishDescriptorAwaitingApproval(eService, prepared);
                 }
                 case PUBLISH_NEXT_VERSION -> {
@@ -70,7 +71,7 @@ public class EServiceDescriptorLifecycleUseCase {
 
     public EServiceDescriptor prepareForPublication(EService eService, EServiceDescriptor descriptor) {
         EServiceDescriptor current = descriptors.getDescriptor(eService, descriptor);
-        return descriptors.prepareDescriptorForPublication(
+        return prepareDraft(
                 eService, current, (UpdateEServiceDescriptorCommand) null
         );
     }
@@ -78,7 +79,7 @@ public class EServiceDescriptorLifecycleUseCase {
     private EServiceDescriptor publishDraft(
             EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand command
     ) {
-        EServiceDescriptor prepared = descriptors.prepareDescriptorForPublication(eService, descriptor, command);
+        EServiceDescriptor prepared = prepareDraft(eService, descriptor, command);
         return descriptors.publishDescriptor(eService, prepared);
     }
 
@@ -87,10 +88,18 @@ public class EServiceDescriptorLifecycleUseCase {
                 .map(draft -> descriptors.getDescriptor(eService, draft))
                 .filter(draft -> draft.getState() == EServiceDescriptorState.DRAFT)
                 .orElseGet(() -> descriptors.addDescriptor(eService));
-        EServiceDescriptor prepared = descriptors.prepareDescriptorForPublication(
+        EServiceDescriptor prepared = prepareDraft(
                 eService, next, (UpdateEServiceDescriptorCommand) null
         );
         descriptors.publishDescriptor(eService, prepared);
+    }
+
+    private EServiceDescriptor prepareDraft(
+            EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand command
+    ) {
+        EServiceDescriptor prepared = descriptors.prepareDescriptorForPublication(eService, descriptor, command);
+        riskAnalyses.ensureForPublication(eService);
+        return prepared;
     }
 
     private static EServiceDescriptor requireState(

@@ -22,8 +22,9 @@ class EServiceDescriptorLifecycleUseCaseTest {
     private final EServiceDescriptorUseCase operations = mock(EServiceDescriptorUseCase.class);
     private final it.pagopa.interop.common.agreement.application.AgreementUseCase agreements =
             mock(it.pagopa.interop.common.agreement.application.AgreementUseCase.class);
+    private final EServiceRiskAnalysisUseCase riskAnalyses = mock(EServiceRiskAnalysisUseCase.class);
     private final EServiceDescriptorLifecycleUseCase lifecycle = new EServiceDescriptorLifecycleUseCase(
-            operations, new EServiceDescriptorLifecyclePlanner(), agreements);
+            operations, new EServiceDescriptorLifecyclePlanner(), agreements, riskAnalyses);
     private final EServiceDescriptor draft = descriptor(DRAFT);
     private final EService eService = EService.builder()
             .id(UUID.randomUUID()).descriptors(new ArrayList<>(List.of(draft))).build();
@@ -42,14 +43,40 @@ class EServiceDescriptorLifecycleUseCaseTest {
 
         assertThat(lifecycle.bringToState(eService, draft, SUSPENDED)).isSameAs(suspended);
 
-        var order = inOrder(operations);
+        var order = inOrder(operations, riskAnalyses);
         order.verify(operations).getDescriptor(eService, draft);
         order.verify(operations).prepareDescriptorForPublication(
                 eService, draft, (UpdateEServiceDescriptorCommand) null
         );
+        order.verify(riskAnalyses).ensureForPublication(eService);
         order.verify(operations).publishDescriptor(eService, prepared);
         order.verify(operations).suspendDescriptor(eService, published);
         order.verifyNoMoreInteractions();
+    }
+
+    @Test
+    void explicitPreparationAlsoEnsuresRiskAnalysis() {
+        when(operations.getDescriptor(eService, draft)).thenReturn(draft);
+        when(operations.prepareDescriptorForPublication(eService, draft, (UpdateEServiceDescriptorCommand) null))
+                .thenReturn(draft);
+
+        assertThat(lifecycle.prepareForPublication(eService, draft)).isSameAs(draft);
+
+        verify(riskAnalyses).ensureForPublication(eService);
+        verify(operations, never()).publishDescriptor(any(), any());
+    }
+
+    @Test
+    void doesNotPublishWhenRiskAnalysisCannotBeEstablished() {
+        when(operations.getDescriptor(eService, draft)).thenReturn(draft);
+        when(operations.prepareDescriptorForPublication(eService, draft, (UpdateEServiceDescriptorCommand) null))
+                .thenReturn(draft);
+        var failure = new IllegalStateException("risk analysis prerequisite failed");
+        doThrow(failure).when(riskAnalyses).ensureForPublication(eService);
+
+        assertThatThrownBy(() -> lifecycle.bringToState(eService, draft, PUBLISHED)).isSameAs(failure);
+
+        verify(operations, never()).publishDescriptor(any(), any());
     }
 
     @Test
@@ -64,11 +91,12 @@ class EServiceDescriptorLifecycleUseCaseTest {
 
         assertThat(lifecycle.bringToState(eService, draft, WAITING_FOR_APPROVAL)).isSameAs(waiting);
 
-        var order = inOrder(operations);
+        var order = inOrder(operations, riskAnalyses);
         order.verify(operations).getDescriptor(eService, draft);
         order.verify(operations).prepareDescriptorForPublication(
                 eService, draft, (UpdateEServiceDescriptorCommand) null
         );
+        order.verify(riskAnalyses).ensureForPublication(eService);
         order.verify(operations).publishDescriptorAwaitingApproval(eService, prepared);
         order.verifyNoMoreInteractions();
     }
@@ -91,13 +119,14 @@ class EServiceDescriptorLifecycleUseCaseTest {
 
         assertThat(lifecycle.bringToState(service, published, DEPRECATED)).isSameAs(deprecated);
 
-        var order = inOrder(operations, agreements);
+        var order = inOrder(operations, agreements, riskAnalyses);
         order.verify(operations).getDescriptor(service, published);
         order.verify(agreements).ensureActiveAgreement(service, published);
         order.verify(operations).addDescriptor(service);
         order.verify(operations).prepareDescriptorForPublication(
                 service, nextDraft, (UpdateEServiceDescriptorCommand) null
         );
+        order.verify(riskAnalyses).ensureForPublication(service);
         order.verify(operations).publishDescriptor(service, prepared);
         order.verify(operations).awaitState(service, published, DEPRECATED);
         order.verifyNoMoreInteractions();
