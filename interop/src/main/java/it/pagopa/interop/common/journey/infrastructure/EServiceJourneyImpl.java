@@ -152,12 +152,6 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         };
     }
 
-    private EServiceJourneyImpl publishPipeline_OLD(EService eService, EServiceDescriptor eServiceDescriptor, UpdateEServiceDescriptorCommand command) {
-        eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor, command);
-        eServiceDescriptorUseCase.publishDescriptor(eService, eServiceDescriptor);
-        return this;
-    }
-
     private EServiceJourneyImpl publishPipeline(EService eService, EServiceDescriptor eServiceDescriptor, UpdateEServiceDescriptorCommand command) {
         EServiceDescriptor updatedDescriptor;
         if (command != null) {
