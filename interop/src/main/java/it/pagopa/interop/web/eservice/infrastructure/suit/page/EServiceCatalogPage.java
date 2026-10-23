@@ -59,9 +59,6 @@ public interface EServiceCatalogPage extends Page {
     @XPath("//nav[contains(@class, 'MuiPagination-root')]")
     Pagination pagination();
 
-    @XPath(".//*[@role='status']//p[contains(text(), 'Non ci sono risultati')]")
-    Label emptyStateMessage();
-
 
     default void search(String name) {
         searchByName().cleanAndWriteAndAssert(name);
