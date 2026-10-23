@@ -59,7 +59,7 @@ public class BffEServiceDescriptorUpdateGateway {
     private void setDefaultAsyncPropertiesIfNeeded(EService service, EServiceDescriptorRef descriptorRef,
                                                   BffUpdateEServiceDescriptorCommand command) {
         if (command.getBffPayload().getAsyncExchangeProperties() != null) return;
-        if (!service.getAsyncExchange()) return;
+        if (Boolean.FALSE.equals(service.getAsyncExchange())) return;
         interfaceGateway.linkDocument(service.getRef(), descriptorRef, "assets/origin-interface.yaml",
                 DocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE);
         command.getBffPayload().setAsyncExchangeProperties(new AsyncExchangeProperties()
