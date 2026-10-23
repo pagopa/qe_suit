@@ -80,6 +80,16 @@ public class BffAgreementGateway implements AgreementGateway {
                 .get();
     }
 
+    @Override
+    public void blockUnauthorizedAccessToErogazioneSection(String agreementRequestId) {
+        throw new UnsupportedOperationException("blockUnauthorizedAccessToErogazioneSection Not supported yet.");
+    }
+
+    @Override
+    public String accessToErogazioneSection(EService eService) {
+        throw new UnsupportedOperationException("AccessToErogazioneSection Not supported yet.");
+    }
+
 
     @Override
     public boolean supports(Channel delimiter) {
