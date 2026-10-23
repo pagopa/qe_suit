@@ -3,8 +3,11 @@ package it.pagopa.interop.suite.contract;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceUseCase;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
@@ -15,6 +18,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceInstanceLabelUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateEServiceTemplateInstanceSeed;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
@@ -40,18 +44,21 @@ public class M2Mv3EServiceTemplateContractTest {
     private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final EServiceTemplateInstanceUseCase instanceUseCase;
+    private final EServiceDescriptorUseCase descriptorUseCase;
 
     public M2Mv3EServiceTemplateContractTest(
             ApiClient apiClient,
             @Qualifier("m2mV3InteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
             InteropJourney interopJourney,
             EServiceTemplateInstanceUseCase instanceUseCase,
+            EServiceDescriptorUseCase descriptorUseCase,
             CurrentChannel<Channel> currentChannel
     ) {
         this.apiClient = apiClient;
         this.httpContractValidator = httpContractValidator;
         this.interopJourney = interopJourney;
         this.instanceUseCase = instanceUseCase;
+        this.descriptorUseCase = descriptorUseCase;
         currentChannel.setCurrentChannel(Channel.M2M_V3);
     }
 
@@ -78,6 +85,28 @@ public class M2Mv3EServiceTemplateContractTest {
                         FuzzScenario.REPLACED_WITH_BLANK_STRING,
                         response -> response.then().statusCode(200),
                         List.of(InstanceEServiceSeed::getInstanceLabel)
+                )
+                .tests();
+    }
+
+    @TestFactory
+    Stream<DynamicTest> updateEServiceTemplateInstanceLabel() {
+        return httpContractValidator
+                .as(Tenant.COMUNE_DI_MILANO, M2MRole.M2M_ADMIN)
+                .apiCall(() -> apiClient.eserviceTemplates().updateEServiceTemplateInstanceLabel())
+                .pathParams(() -> Map.of("eserviceId", createPublishedEServiceInstanceId()))
+                .payload(() -> new EServiceInstanceLabelUpdateSeed().instanceLabel("nuova-label"))
+                .scenario(FuzzScenario.REPLACED_WITH_NULL, response -> response.then().statusCode(400))
+                .scenario(FuzzScenario.REMOVED, response -> response.then().statusCode(200))
+                .targets(
+                        FuzzScenario.REMOVED,
+                        response -> response.then().statusCode(400),
+                        List.of(seed -> seed)
+                )
+                .targets(
+                        FuzzScenario.REPLACED_WITH_BLANK_STRING,
+                        response -> response.then().statusCode(200),
+                        List.of(EServiceInstanceLabelUpdateSeed::getInstanceLabel)
                 )
                 .tests();
     }
@@ -120,16 +149,50 @@ public class M2Mv3EServiceTemplateContractTest {
     private UUID createDraftEServiceInstanceId() {
         interopJourney.switchChannel(Channel.BFF);
         try {
-            EService instance = instanceUseCase.createEServiceInstance(createPublishedEServiceTemplate());
+            return createDraftEServiceInstance().getId();
+        } finally {
+            interopJourney.resetChannel(Channel.M2M_V3);
+        }
+    }
+
+    private UUID createPublishedEServiceInstanceId() {
+        interopJourney.switchChannel(Channel.BFF);
+        try {
+            EService instance = createDraftEServiceInstance();
+            EServiceDescriptor descriptor = descriptorUseCase.prepareDescriptorForPublication(
+                    instance, instance.getLastDraftDescriptor(), command -> {}
+            );
+            descriptor = descriptorUseCase.configureTemplateInstanceRESTInterface(
+                    instance,
+                    descriptor,
+                    new RestInterfaceConfiguration(
+                            List.of("https://erogatore.example/api"),
+                            "Referente Erogatore",
+                            "referente@erogatore.example",
+                            "https://erogatore.example/contatti",
+                            "https://erogatore.example/condizioni"
+                    )
+            );
+            EServiceDescriptor publishedDescriptor = descriptorUseCase.publishDescriptor(instance, descriptor);
             assertEquals(
-                    EServiceDescriptorState.DRAFT,
-                    instance.getLatestDescriptor().getState(),
-                    "The template instance must be in draft before the contract request"
+                    EServiceDescriptorState.PUBLISHED,
+                    publishedDescriptor.getState(),
+                    "The template instance must be published before updating its label"
             );
             return instance.getId();
         } finally {
             interopJourney.resetChannel(Channel.M2M_V3);
         }
+    }
+
+    private EService createDraftEServiceInstance() {
+        EService instance = instanceUseCase.createEServiceInstance(createPublishedEServiceTemplate());
+        assertEquals(
+                EServiceDescriptorState.DRAFT,
+                instance.getLatestDescriptor().getState(),
+                "The template instance must be in draft before the contract request"
+        );
+        return instance;
     }
 
     private EServiceTemplate createPublishedEServiceTemplate() {
