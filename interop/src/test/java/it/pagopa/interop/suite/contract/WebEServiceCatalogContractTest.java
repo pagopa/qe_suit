@@ -84,7 +84,7 @@ public class WebEServiceCatalogContractTest {
                                             .contains("Dal più recente");
 
                                     // CATALOG-12: Griglia risultati presente nel DOM
-                                    Assertions.assertThat(page.eServiceCards().size() > 0)
+                                    Assertions.assertThat(!page.eServiceCards().isEmpty())
                                             .as("Griglia E-Service presente nel DOM")
                                             .isTrue();
 
@@ -105,9 +105,7 @@ public class WebEServiceCatalogContractTest {
                                             .isFalse();
                                 }),
                          new WebScenario<>("Verifica contratto drawer \"Filtri\" catalogo E-Service",
-                                page -> {
-                                    page.filtersButton().click();
-                                },
+                                page -> page.filtersButton().click(),
                                 page -> {
                                     //DRAWER-01: Drawer filtri presente nel DOM
                                     Assertions.assertThat(page.filtersDrawer().get().isPresent())
