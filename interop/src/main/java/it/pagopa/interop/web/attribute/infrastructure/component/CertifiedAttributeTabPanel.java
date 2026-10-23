@@ -4,6 +4,8 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.pagopa.infrastructure.suit.component.Link;
 
+import java.util.List;
+
 @XPath(".//*[contains(@class, 'MuiTabPanel')]")
 public interface CertifiedAttributeTabPanel extends AttributeTabPanel {
     @XPath(".//p")
@@ -11,4 +13,6 @@ public interface CertifiedAttributeTabPanel extends AttributeTabPanel {
 
     @XPath(".//a[contains(normalize-space(.), 'Scopri di più su quali attributi usare')]")
     Link findOutMoreAboutAttributesToUseLink();
+
+    List<CertifiedAttributeGroup> certifiedAttributeGroups();
 }
