@@ -83,12 +83,12 @@ Feature: Combinazioni di filtri nel catalogo privato
       | ente               |
       | Comune di Pozzallo |
     And i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                       |
-      | ES-1  | Comune di Milano | E-service Mandato Delegato |
-      | ES-2  | Comune di Milano | E-service Mandato Libero   |
-      | ES-3  | Sogecap          | E-service Mandato Estraneo |
+      | alias | erogatore             | nome                       |
+      | ES-1  | Comune di Milano      | E-service Mandato Delegato |
+      | ES-2  | Comune di Milano      | E-service Mandato Libero   |
+      | ES-3  | Comune di Comun Nuovo | E-service Mandato Estraneo |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
-    And l'e-service "ES-3" delegato in erogazione da Sogecap al Comune di Pozzallo con delega attiva
+    And l'e-service "ES-3" delegato in erogazione da Comune di Comun Nuovo al Comune di Pozzallo con delega attiva
     When il Comune di Pozzallo cerca nel catalogo "Mandato" con i seguenti filtri:
       | filtro          | valore           |
       | ruolo di delega | delegato         |
@@ -101,11 +101,11 @@ Feature: Combinazioni di filtri nel catalogo privato
 
   Scenario: [PRIVATE_CATALOG_FILTER_COMBINATIONS_5] Modalità, scambio asincrono e Signal Hub non attivo
     Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                       | modalità   | Signal Hub    | scambio asincrono |
-      | ES-1  | Comune di Milano | E-service Canale Giusto    | erogazione | non attivo    | sì                |
-      | ES-2  | Comune di Milano | E-service Canale Libero    | erogazione | non impostato | sì                |
-      | ES-3  | Comune di Milano | E-service Canale Attivo    | erogazione | attivo        | sì                |
-      | ES-4  | Comune di Milano | E-service Canale Sincrono  | erogazione | non attivo    | no                |
+      | alias | erogatore        | nome                      | modalità   | Signal Hub    | scambio asincrono |
+      | ES-1  | Comune di Milano | E-service Canale Giusto   | erogazione | non attivo    | sì                |
+      | ES-2  | Comune di Milano | E-service Canale Libero   | erogazione | non impostato | sì                |
+      | ES-3  | Comune di Milano | E-service Canale Attivo   | erogazione | attivo        | sì                |
+      | ES-4  | Comune di Milano | E-service Canale Sincrono | erogazione | non attivo    | no                |
     When PagoPA cerca nel catalogo "Canale" con i seguenti filtri:
       | filtro            | valore     |
       | modalità          | erogazione |
