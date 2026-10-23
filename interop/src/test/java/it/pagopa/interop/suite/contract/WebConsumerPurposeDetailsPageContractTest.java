@@ -110,37 +110,75 @@ public class WebConsumerPurposeDetailsPageContractTest {
 
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection()).isNotNull();
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().sectionTitle().read())
-                                            .as("General Info section title")
+                                            .as("General Info title")
                                             .isEqualTo("Informazioni generali");
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().eServiceLabel().read())
-                                            .as("E-service label")
+                                            .as("General Info E-service label")
                                             .isEqualTo("E-service associato");
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().eServiceLink().getHref())
-                                            .as("E-service link should not be blank")
+                                            .as("General Info E-service link should not be blank")
                                             .isNotBlank();
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().providerLabel().read())
-                                            .as("Provider label")
+                                            .as("General Info Provider label")
                                             .isEqualTo("Erogatore");
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().providerValue().read())
-                                            .as("Provider value")
+                                            .as("General Info Provider value")
                                             .isEqualTo("PagoPA S.p.A.");
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().purposeDescriptionLabel().read())
-                                            .as("Purpose description label")
+                                            .as("General Info Purpose description label")
                                             .isEqualTo("Descrizione della finalità");
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().purposeDescriptionValue().read())
-                                            .as("Purpose description value")
+                                            .as("General Info Purpose description value")
                                             .isNotBlank();
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().downloadRiskAnalysisButton().read())
-                                            .as("Risk Analysis download button")
+                                            .as("General Info Risk Analysis download button")
                                             .isEqualTo("Scarica analisi del rischio");
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().goToAgreementLink().read())
-                                            .as("Agreement link text")
+                                            .as("General Info Agreement link text")
                                             .isEqualTo("Vai a richiesta di fruizione");
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().goToAgreementLink().getHref())
-                                            .as("Agreement link href")
+                                            .as("General Info Agreement link href")
                                             .isNotBlank();
 
                                     softly.assertThat(page.detailsTabPanel().apiCallsSection()).isNotNull();
+                                    softly.assertThat(page.detailsTabPanel().apiCallsSection().sectionTitle().read())
+                                            .as("Api Calls title")
+                                            .isEqualTo("Stima di chiamate API");
+                                    softly.assertThat(page.detailsTabPanel().apiCallsSection().sectionDescription().read())
+                                            .as("Api Calls description")
+                                            .isEqualTo("Il numero di chiamate previste ogni giorno verso l'e-service");
+                                    softly.assertThat(page.detailsTabPanel().apiCallsSection().currentEstimateLabel().read())
+                                            .as("Api Calls estimate label")
+                                            .isEqualTo("Stima attuale");
+                                    softly.assertThat(page.detailsTabPanel().apiCallsSection().currentEstimateUnitLabel().read())
+                                            .as("Api Calls estimate unit")
+                                            .isEqualTo("Chiamate API/giorno");
+                                    softly.assertThat(page.detailsTabPanel().apiCallsSection().currentEstimateValue().read())
+                                            .as("Api Calls estimate value")
+                                            .isNotBlank();
+                                    softly.assertThat(page.detailsTabPanel().apiCallsSection().requestEstimateChangeButton().read())
+                                            .as("Api Calls estimate change button")
+                                            .isEqualTo("Richiedi cambio stima");
+                                    softly.assertThat(page.detailsTabPanel().apiCallsSection().providerThresholdsLabel().read())
+                                            .as("Api Calls provider threshold label")
+                                            .isEqualTo("Soglie definite dall’erogatore");
+                                    softly.assertThat(page.detailsTabPanel().apiCallsSection().providerThresholdsUnitLabel().read())
+                                            .as("Api Calls provider threshold unit")
+                                            .isEqualTo("Chiamate API/giorno");
+                                    softly.assertThat(page.detailsTabPanel().apiCallsSection().consumerThresholdLabel().read())
+                                            .as("Api Calls provider threshold for consumer label")
+                                            .isEqualTo("per fruitore");
+                                    softly.assertThat(page.detailsTabPanel().apiCallsSection().consumerThresholdValue().read())
+                                            .as("Api Calls provider threshold for consumer value")
+                                            .isNotBlank();
+                                    softly.assertThat(page.detailsTabPanel().apiCallsSection().totalThresholdLabel().read())
+                                            .as("Api Calls provider total threshold label")
+                                            .isEqualTo("totali");
+                                    softly.assertThat(page.detailsTabPanel().apiCallsSection().totalThresholdValue().read())
+                                            .as("Api Calls provider total threshold value")
+                                            .isNotBlank();
+
+                                    softly.assertThat(page.clientsTabPanel().get()).isNotNull();
                                 }
                         )));
     }

@@ -8,11 +8,8 @@ import it.pagopa.infrastructure.suit.component.Alert;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Chip;
 import it.pagopa.infrastructure.suit.component.Label;
-import it.pagopa.infrastructure.suit.component.TabPanel;
-import it.pagopa.interop.web.eservice.infrastructure.page.component.PurposeDetailsApiCallsSection;
-import it.pagopa.interop.web.eservice.infrastructure.page.component.PurposeDetailsGeneralInfoSection;
+import it.pagopa.interop.web.eservice.infrastructure.page.component.PurposeDetailsPageClientsTab;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.PurposeDetailsPageDetailsTab;
-import it.pagopa.interop.web.eservice.infrastructure.page.component.PurposeDetailsRiskAnalysisSection;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 
@@ -57,16 +54,7 @@ public interface ConsumerPurposeDetailsPage extends Page {
     PurposeDetailsPageDetailsTab detailsTabPanel();
 
     @XPath(".//div[@role='tabpanel' and contains(@id,'P-clients')]")
-    TabPanel clientsTabPanel();
-
-    @XPath(".//section[.//h2[normalize-space()='Assegnazione analisi del rischio']]")
-    PurposeDetailsRiskAnalysisSection riskAnalysisSection();
-
-    @XPath(".//section[.//h2[normalize-space()='Informazioni generali']]")
-    PurposeDetailsGeneralInfoSection generalInfoSection();
-
-    @XPath(".//section[.//h2[normalize-space()='Stima di chiamate API']]")
-    PurposeDetailsApiCallsSection apiCallsSection();
+    PurposeDetailsPageClientsTab clientsTabPanel();
 
     @Override
     default void assertLoaded() {
