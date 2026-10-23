@@ -11,11 +11,8 @@ import java.util.Optional;
  * Utenze generiche di test dell'ambiente attivo, lette da {@code users/application-users-<ambiente>.yaml} (importato da
  * {@code application-<ambiente>.yaml}). Nel file la chiave è l'alias in kebab-case ({@code user-1}), che Spring converte
  * nell'enum {@link UserAlias} ({@code USER_1}).
- * <p>
- * Il prefisso è {@code qe} (Quality Engineering, namespace delle proprietà della suite) e il componente {@code users}
- * corrisponde a {@code qe.users}: le altre chiavi {@code qe.*} non vengono lette da questa classe.
  */
-@ConfigurationProperties(prefix = "qe")
+@ConfigurationProperties
 public record UsersProperties(Map<UserAlias, UserEntry> users) {
 
     /**
