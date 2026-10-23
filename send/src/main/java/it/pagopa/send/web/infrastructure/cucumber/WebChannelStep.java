@@ -15,7 +15,7 @@ public class WebChannelStep {
     private final CurrentUserSession currentUserSession;
     private final WebBrowserContext webBrowserContext;
 
-    @Given("la PA {tenant} è loggata al portale SEND tramite Browser")
+    @Given("la PA {user} è loggata al portale SEND tramite Browser")
     public void setWebChannel(User tenant) {
         log.debug("Inizializzazione canale Web");
         webBrowserContext.setCurrentUser(tenant);
