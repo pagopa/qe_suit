@@ -5,7 +5,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.send.web.infrastructure.page.component.TableCell;
 import it.pagopa.send.web.mittente.infrastructure.page.APIKeyPage;
@@ -22,7 +23,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
@@ -37,20 +37,19 @@ import java.util.stream.Stream;
  * {@code WebContractRuntimeCaseExecutor}), quindi ogni scenario qui sotto è un no-op: il test
  * fallisce se e solo se la pagina non è raggiungibile o non si carica correttamente.
  */
-@ActiveProfiles({"hotfix", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 @Slf4j
 public class WebMittenteNavigationContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
-    private final String token = "";
+    private final UserProvider userProvider;
 
     @TestFactory
     Stream<DynamicTest> shouldReachDashboard() {
@@ -83,7 +82,7 @@ public class WebMittenteNavigationContractTest {
     }
 
     private <P extends Page> Stream<DynamicTest> reachabilityTest(Class<P> pageType) {
-        return webContractValidator.as(Tenant.GROSSINI, List.of())
+        return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1), List.of())
                 .on(pageType)
                 .tests(Stream.of(new WebScenario<>(
                         "controllo caricamento pagina " + pageType.getSimpleName(),
@@ -111,8 +110,8 @@ public class WebMittenteNavigationContractTest {
     }
 
     private Stream<DynamicTest> checkColumnGroupsScenarios() {
-        return webContractValidator.as(Tenant.GROSSINI, List.of())
-                .on(DashboardPage.class,token)
+        return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1), List.of())
+                .on(DashboardPage.class)
                 .tests(Stream.of(new WebScenario<>(
                         "Check presenza colonna 'Gruppi' su Dashboard Notifiche",
                         page -> {},
