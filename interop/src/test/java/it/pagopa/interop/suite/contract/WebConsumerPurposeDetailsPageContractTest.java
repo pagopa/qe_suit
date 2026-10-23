@@ -89,13 +89,12 @@ public class WebConsumerPurposeDetailsPageContractTest {
                                     softly.assertThat(page.alerts()).as("La sezione degli alert non dev'essere vuota").isNotEmpty();
                                     softly.assertThat(page.alerts().get(0).message().read()).isEqualTo("Questa finalità è attiva ma non ha client associati. Associa il tuo primo client per accedere ai dati dell’e-service.");
 
-                                    softly.assertThat(page.purposeDetailsTab().isSelected()).as("Purpose Details tab should be selected").isTrue();
-                                    softly.assertThat(page.purposeDetailsTab().read()).as("Purpose Details tab title").isEqualTo("Dettagli finalità");
+                                    softly.assertThat(page.detailsTabButton().isSelected()).as("Purpose Details tab should be selected").isTrue();
+                                    softly.assertThat(page.clientsTabButton().isSelected()).as("Associated Clients tab should not be selected").isFalse();
+                                    softly.assertThat(page.clientsTabPanel().get().isPresent()).as("Clients Tab Panel should not be visible now").isFalse();
 
-                                    softly.assertThat(page.associatedClientsTab().isSelected()).as("Associated Clients tab should not be selected").isFalse();
-                                    softly.assertThat(page.associatedClientsTab().read()).as("Associated Clients tab title").isEqualTo("Client associati");
-
-                                    softly.assertThat(page.detailsTabPanel()).isNotNull();
+                                    softly.assertThat(page.detailsTabButton().read()).as("Purpose Details tab title").isEqualTo("Dettagli finalità");
+                                    softly.assertThat(page.clientsTabButton().read()).as("Associated Clients tab title").isEqualTo("Client associati");
 
                                     softly.assertThat(page.detailsTabPanel().riskAnalysisSection()).isNotNull();
                                     softly.assertThat(page.detailsTabPanel().riskAnalysisSection().sectionTitle().read())
@@ -178,7 +177,21 @@ public class WebConsumerPurposeDetailsPageContractTest {
                                             .as("Api Calls provider total threshold value")
                                             .isNotBlank();
 
-                                    softly.assertThat(page.clientsTabPanel().get()).isNotNull();
+                                    page.clientsTabButton().click();
+
+                                    softly.assertThat(page.detailsTabButton().isSelected()).as("Purpose Details tab should not be selected").isFalse();
+                                    softly.assertThat(page.clientsTabButton().isSelected()).as("Associated Clients tab should be selected").isTrue();
+                                    softly.assertThat(page.detailsTabPanel().get().isPresent()).as("Details Tab Panel should not be visible now").isFalse();
+
+                                    softly.assertThat(page.clientsTabPanel().addButton().read())
+                                            .as("Add button")
+                                            .isEqualTo("Aggiungi");
+                                    softly.assertThat(page.clientsTabPanel().clientsTable().tHead().rows().get(0).cells().get(0).read())
+                                            .as("Client Table header")
+                                            .isEqualTo("Client");
+                                    softly.assertThat(page.clientsTabPanel().clientsTable().tBody().rows().get(0).cells().get(0).read())
+                                            .as("Client Table empty row")
+                                            .isEqualTo("Non ci sono client associati a questa finalità");
                                 }
                         )));
     }

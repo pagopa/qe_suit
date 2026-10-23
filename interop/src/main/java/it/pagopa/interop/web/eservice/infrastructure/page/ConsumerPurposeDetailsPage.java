@@ -45,10 +45,10 @@ public interface ConsumerPurposeDetailsPage extends Page {
     List<Alert> alerts();
 
     @XPath(".//button[@role='tab' and contains(.,'Dettagli finalità')]")
-    Button purposeDetailsTab();
+    Button detailsTabButton();
 
     @XPath(".//button[@role='tab' and contains(.,'Client associati')]")
-    Button associatedClientsTab();
+    Button clientsTabButton();
 
     @XPath(".//div[@role='tabpanel' and contains(@id,'P-details')]")
     PurposeDetailsPageDetailsTab detailsTabPanel();
