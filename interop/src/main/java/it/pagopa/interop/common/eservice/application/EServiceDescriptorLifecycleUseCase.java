@@ -5,6 +5,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.agreement.application.AgreementUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.List;
 public class EServiceDescriptorLifecycleUseCase {
     private final EServiceDescriptorUseCase descriptors;
     private final EServiceDescriptorLifecyclePlanner planner;
+    private final AgreementUseCase agreements;
 
     public void validateCanReachState(
             EServiceDescriptorState source, EServiceDescriptorState target
@@ -36,12 +38,13 @@ public class EServiceDescriptorLifecycleUseCase {
     ) {
         EServiceDescriptor current = descriptors.getDescriptor(eService, descriptor);
         List<EServiceDescriptorLifecycleStep> plan = planner.planToReachState(current.getState(), targetState);
-        if (command != null && current.getState() != EServiceDescriptorState.DRAFT) {
+
+        if (command != null && current.getState() != EServiceDescriptorState.DRAFT)
             throw new IllegalArgumentException("Cannot apply draft configuration in state " + current.getState());
-        }
-        if (plan.isEmpty() && command != null) {
+
+        if (plan.isEmpty() && command != null)
             current = descriptors.updateDescriptor(eService, current, command);
-        }
+
         for (EServiceDescriptorLifecycleStep step : plan) {
             current = switch (step.action()) {
                 case PUBLISH -> publishDraft(eService, current, command);
@@ -50,6 +53,7 @@ public class EServiceDescriptorLifecycleUseCase {
                     yield descriptors.publishDescriptorAwaitingApproval(eService, prepared);
                 }
                 case PUBLISH_NEXT_VERSION -> {
+                    agreements.ensureActiveAgreement(eService, current);
                     publishNextVersion(eService);
                     yield descriptors.awaitState(eService, current, step.expectedState());
                 }

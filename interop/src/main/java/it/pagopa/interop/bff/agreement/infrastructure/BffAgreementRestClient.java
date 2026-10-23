@@ -37,6 +37,13 @@ public class BffAgreementRestClient extends RestClient {
         );
     }
 
+    public TestChain<Agreements> activeProducerAgreements(UUID eServiceId, int offset, int limit) {
+        return execute(() -> agreementsApi.getProducerAgreements()
+                        .eservicesIdsQuery(eServiceId).statesQuery(AgreementState.ACTIVE.getValue())
+                        .offsetQuery(offset).limitQuery(limit).execute(Function.identity()),
+                Agreements.class);
+    }
+
     public TestChain<Agreement> submit(@Nonnull UUID agreementId, @Nonnull AgreementSubmissionPayload payload) {
         return execute(
                 () -> agreementsApi.submitAgreement().agreementIdPath(agreementId).body(payload).execute(Function.identity()),

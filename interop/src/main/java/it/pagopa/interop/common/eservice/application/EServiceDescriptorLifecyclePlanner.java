@@ -51,23 +51,22 @@ public class EServiceDescriptorLifecyclePlanner {
                     ARCHIVING, Map.of(ARCHIVING_SUSPENDED, List.of(SUSPEND_ARCHIVING_STEP))
             );
 
-    public List<EServiceDescriptorLifecycleStep> planToReachState(
-            EServiceDescriptorState source, EServiceDescriptorState target
-    ) {
+    public List<EServiceDescriptorLifecycleStep> planToReachState(EServiceDescriptorState source, EServiceDescriptorState target) {
         Objects.requireNonNull(source, "Source state is required");
         Objects.requireNonNull(target, "Target state is required");
-        if (source == target) {
+        if (source == target)
             return List.of();
-        }
+
         List<EServiceDescriptorLifecycleStep> plan = PLANS.getOrDefault(source, Map.of()).get(target);
-        if (plan == null) {
+        if (plan == null)
             throw new UnsupportedOperationException("Unsupported setup path: " + source + " -> " + target);
-        }
+
         EServiceDescriptorState current = source;
         for (EServiceDescriptorLifecycleStep step : plan) {
             EServiceDescriptorTransitions.requireDirectTransition(current, step.expectedState());
             current = step.expectedState();
         }
+
         return plan;
     }
 }

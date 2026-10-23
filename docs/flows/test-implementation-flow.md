@@ -79,6 +79,10 @@ in the Journey after the Gateway has replaced its snapshot.
 
 Use genuine supported transitions and verify postconditions. A target enum value does not establish a
 setup path. For example, scheduling retirement is not proof that terminal archiving has completed.
+Before publishing a subsequent version to deprecate a descriptor, verify an ACTIVE agreement against
+that exact descriptor. If none exists, establish an ACTIVE self-consumer agreement as the producer,
+then restore the original session. Do not substitute an agreement on a different version or create
+a subscription for the catalog-search consumer just to satisfy this lifecycle prerequisite.
 
 Declare prerequisite data, feature flags and permissions. Fail clearly when an essential precondition
 cannot be established. Do not create remote data from a DTO mapper or silently select unrelated fixtures.

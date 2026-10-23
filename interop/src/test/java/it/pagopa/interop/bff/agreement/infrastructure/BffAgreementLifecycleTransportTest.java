@@ -103,7 +103,8 @@ class BffAgreementLifecycleTransportTest {
         var gateway = new BffAgreementGateway(
                 new BffAgreementRestClient(
                         new TestChainFactory(mock(LastApiResponseStore.class), entities), apiClient),
-                Mappers.getMapper(BffAgreementMapper.class), new BffAgreementRequestFactory());
+                Mappers.getMapper(BffAgreementMapper.class), new BffAgreementRequestFactory(),
+                mock(BffAgreementPrerequisiteGateway.class));
 
         Agreement result = gateway.archiveAgreement(
                 Agreement.builder().id(id).state(AgreementState.ACTIVE).build());
@@ -127,7 +128,8 @@ class BffAgreementLifecycleTransportTest {
         when(archive.execute(any())).thenAnswer(invocation ->
                 response(invocation.getArgument(0), 403, ""));
         var gateway = new BffAgreementGateway(restClient(apiClient),
-                Mappers.getMapper(BffAgreementMapper.class), new BffAgreementRequestFactory());
+                Mappers.getMapper(BffAgreementMapper.class), new BffAgreementRequestFactory(),
+                mock(BffAgreementPrerequisiteGateway.class));
 
         assertThatThrownBy(() -> gateway.archiveAgreement(
                 Agreement.builder().id(id).state(AgreementState.ACTIVE).build()))
@@ -168,7 +170,8 @@ class BffAgreementLifecycleTransportTest {
         var gateway = new BffAgreementGateway(
                 client,
                 Mappers.getMapper(BffAgreementMapper.class),
-                new BffAgreementRequestFactory()
+                new BffAgreementRequestFactory(),
+                mock(BffAgreementPrerequisiteGateway.class)
         );
         Agreement submitted = Agreement.builder().id(agreementId).state(AgreementState.PENDING).build();
 
@@ -204,7 +207,8 @@ class BffAgreementLifecycleTransportTest {
         var gateway = new BffAgreementGateway(
                 client,
                 Mappers.getMapper(BffAgreementMapper.class),
-                new BffAgreementRequestFactory()
+                new BffAgreementRequestFactory(),
+                mock(BffAgreementPrerequisiteGateway.class)
         );
 
         assertThatThrownBy(() -> gateway.awaitState(

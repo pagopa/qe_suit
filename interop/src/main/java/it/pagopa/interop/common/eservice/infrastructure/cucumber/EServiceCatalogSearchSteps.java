@@ -31,9 +31,7 @@ public class EServiceCatalogSearchSteps {
     private boolean searchSucceeded;
 
     @When("(il ){tenant} cerca nel catalogo {string} con i seguenti filtri:")
-    public void searchWithFilters(
-            Tenant requester, String keyword, List<EServiceCatalogSearchConfiguration> filters
-    ) {
+    public void searchWithFilters(Tenant requester, String keyword, List<EServiceCatalogSearchConfiguration> filters) {
         search(requester, keyword, filters);
     }
 

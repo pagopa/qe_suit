@@ -23,6 +23,11 @@ public class WebAgreementGateway implements AgreementGateway {
     private final EServiceDetailPage eServiceDetailPage;
 
     @Override
+    public void ensureActiveAgreement(EService eService, EServiceDescriptor descriptor) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support ensureActiveAgreement operation");
+    }
+
+    @Override
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support createAgreement operation");
     }

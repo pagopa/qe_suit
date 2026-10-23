@@ -20,8 +20,10 @@ import static org.mockito.Mockito.*;
 
 class EServiceDescriptorLifecycleUseCaseTest {
     private final EServiceDescriptorUseCase operations = mock(EServiceDescriptorUseCase.class);
+    private final it.pagopa.interop.common.agreement.application.AgreementUseCase agreements =
+            mock(it.pagopa.interop.common.agreement.application.AgreementUseCase.class);
     private final EServiceDescriptorLifecycleUseCase lifecycle = new EServiceDescriptorLifecycleUseCase(
-            operations, new EServiceDescriptorLifecyclePlanner());
+            operations, new EServiceDescriptorLifecyclePlanner(), agreements);
     private final EServiceDescriptor draft = descriptor(DRAFT);
     private final EService eService = EService.builder()
             .id(UUID.randomUUID()).descriptors(new ArrayList<>(List.of(draft))).build();
@@ -89,8 +91,9 @@ class EServiceDescriptorLifecycleUseCaseTest {
 
         assertThat(lifecycle.bringToState(service, published, DEPRECATED)).isSameAs(deprecated);
 
-        var order = inOrder(operations);
+        var order = inOrder(operations, agreements);
         order.verify(operations).getDescriptor(service, published);
+        order.verify(agreements).ensureActiveAgreement(service, published);
         order.verify(operations).addDescriptor(service);
         order.verify(operations).prepareDescriptorForPublication(
                 service, nextDraft, (UpdateEServiceDescriptorCommand) null
@@ -121,7 +124,24 @@ class EServiceDescriptorLifecycleUseCaseTest {
         when(operations.awaitState(eService, firstPublished, DEPRECATED)).thenReturn(deprecated);
 
         assertThat(lifecycle.bringToState(eService, draft, DEPRECATED)).isSameAs(deprecated);
+        var order = inOrder(operations, agreements);
+        order.verify(operations).publishDescriptor(eService, draft);
+        order.verify(agreements).ensureActiveAgreement(eService, firstPublished);
+        order.verify(operations).addDescriptor(eService);
         verify(operations).awaitState(eService, firstPublished, DEPRECATED);
+    }
+
+    @Test
+    void doesNotPublishNextVersionWhenActiveAgreementCannotBeEstablished() {
+        var published = draft.toBuilder().state(PUBLISHED).build();
+        when(operations.getDescriptor(eService, draft)).thenReturn(published);
+        var failure = new IllegalStateException("agreement prerequisite failed");
+        doThrow(failure).when(agreements).ensureActiveAgreement(eService, published);
+
+        assertThatThrownBy(() -> lifecycle.bringToState(eService, draft, DEPRECATED)).isSameAs(failure);
+
+        verify(operations).getDescriptor(eService, draft);
+        verifyNoMoreInteractions(operations);
     }
 
     @ParameterizedTest

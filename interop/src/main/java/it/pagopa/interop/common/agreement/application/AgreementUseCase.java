@@ -17,6 +17,10 @@ import java.util.Set;
 public class AgreementUseCase {
     private final AgreementGateway agreementGateway;
 
+    public void ensureActiveAgreement(EService eService, EServiceDescriptor descriptor) {
+        agreementGateway.ensureActiveAgreement(eService, descriptor);
+    }
+
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         return agreementGateway.createAgreement(eService, descriptor, delegation);
     }

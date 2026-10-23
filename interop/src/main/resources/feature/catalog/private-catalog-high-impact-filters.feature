@@ -35,7 +35,8 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | prima versione | seconda versione | esito          |
       | sospesa        | pubblicata       | è presente     |
       | sospesa        | sospesa          | non è presente |
-      | sospesa        | deprecata        | non è presente |
+      # Per deprecare una versione è necessario che sia presente una versione successiva pubblicata, quindi l'e-service sarà presente in catalogo
+      | sospesa        | deprecata        | è presente     |
 
     Examples: Versione pubblicata
       | prima versione | seconda versione | esito      |

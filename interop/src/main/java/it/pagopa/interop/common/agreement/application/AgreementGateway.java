@@ -15,6 +15,8 @@ import java.util.Set;
 
 public interface AgreementGateway extends Plugin<Channel> {
 
+    void ensureActiveAgreement(EService eService, EServiceDescriptor descriptor);
+
     Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation);
 
     default Agreement createAgreement(EService eService, EServiceDescriptor descriptor) {

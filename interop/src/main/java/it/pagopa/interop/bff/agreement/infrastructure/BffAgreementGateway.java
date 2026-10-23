@@ -27,6 +27,12 @@ public class BffAgreementGateway implements AgreementGateway {
     private final BffAgreementRestClient restClient;
     private final BffAgreementMapper mapper;
     private final BffAgreementRequestFactory agreementRequestFactory;
+    private final BffAgreementPrerequisiteGateway prerequisiteGateway;
+
+    @Override
+    public void ensureActiveAgreement(EService eService, EServiceDescriptor descriptor) {
+        prerequisiteGateway.ensureActiveAgreement(eService, descriptor, this);
+    }
 
     @Override
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
