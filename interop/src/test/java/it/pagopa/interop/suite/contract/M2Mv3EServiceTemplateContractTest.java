@@ -4,6 +4,7 @@ import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
@@ -49,6 +50,7 @@ public class M2Mv3EServiceTemplateContractTest {
     private final InteropJourney interopJourney;
     private final EServiceTemplateInstanceUseCase instanceUseCase;
     private final EServiceDescriptorUseCase descriptorUseCase;
+    private final EServiceRequestFactory requestFactory;
 
     public M2Mv3EServiceTemplateContractTest(
             ApiClient apiClient,
@@ -56,6 +58,7 @@ public class M2Mv3EServiceTemplateContractTest {
             InteropJourney interopJourney,
             EServiceTemplateInstanceUseCase instanceUseCase,
             EServiceDescriptorUseCase descriptorUseCase,
+            EServiceRequestFactory requestFactory,
             CurrentChannel<Channel> currentChannel
     ) {
         this.apiClient = apiClient;
@@ -63,6 +66,7 @@ public class M2Mv3EServiceTemplateContractTest {
         this.interopJourney = interopJourney;
         this.instanceUseCase = instanceUseCase;
         this.descriptorUseCase = descriptorUseCase;
+        this.requestFactory = requestFactory;
         currentChannel.setCurrentChannel(Channel.M2M_V3);
     }
 
@@ -268,9 +272,12 @@ public class M2Mv3EServiceTemplateContractTest {
         interopJourney.switchChannel(Channel.BFF);
         try {
             EService instance = createDraftEServiceInstance();
-            EServiceDescriptor descriptor = instanceUseCase.prepareDescriptorForPublication(
-                    instance, instance.getLastDraftDescriptor()
+            EServiceDescriptor descriptor = instance.getLastDraftDescriptor();
+            instance = instanceUseCase.updateEServiceInstanceDescriptor(
+                    instance.getRef(), descriptor.getRef(), descriptor.getState(),
+                    requestFactory.defaultUpdateDescriptorInstanceCommand(descriptor.getState())
             );
+            descriptor = instance.findDescriptor(descriptor.getId());
             descriptor = descriptorUseCase.configureTemplateInstanceRESTInterface(
                     instance,
                     descriptor,
