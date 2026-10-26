@@ -9,7 +9,7 @@ import it.pagopa.interop.common.kernel.domain.User;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class AgreementSteps {
+public class WebAgreementSteps {
     private final AgreementUseCase agreementUseCase;
     private final CurrentUserSession currentUserSession;
 
