@@ -23,7 +23,6 @@ import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
-@Execution(ExecutionMode.SAME_THREAD)
 @SpringBootTest(
         classes = {
                 TestBootApp.class,
