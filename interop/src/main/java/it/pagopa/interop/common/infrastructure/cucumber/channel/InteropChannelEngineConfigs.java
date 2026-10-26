@@ -16,11 +16,14 @@ public final class InteropChannelEngineConfigs {
                         Map.of(
                                 "BFF", Channel.BFF,
                                 "WEB", Channel.WEB_BROWSER,
-                                "WEB_BROWSER", Channel.WEB_BROWSER
+                                "WEB_BROWSER", Channel.WEB_BROWSER,
+                                "M2M", Channel.M2M_V3,
+                                "M2M_V3", Channel.M2M_V3
                         ),
                         Map.of(
                                 Channel.BFF, "BFF",
-                                Channel.WEB_BROWSER, "WEB"
+                                Channel.WEB_BROWSER, "WEB",
+                                Channel.M2M_V3, "M2M"
                         )
                 ),
                 new ChannelConfig<>(
