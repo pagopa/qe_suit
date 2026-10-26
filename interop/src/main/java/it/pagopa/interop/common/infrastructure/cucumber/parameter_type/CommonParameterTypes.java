@@ -6,6 +6,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
+import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,6 +23,11 @@ public class CommonParameterTypes {
     @ParameterType("admin|ADMIN|api|API|security|SECURITY|support|SUPPORT|API,SECURITY|api,security|reviewer|REVIEWER|viewer|VIEWER")
     public UserRole userRole(String name) {
         return UserRole.fromName(name);
+    }
+
+    @ParameterType("M2M_ADMIN|M2M")
+    public M2MRole userM2MRole(String name) {
+        return M2MRole.valueOf(name);
     }
 
     @ParameterType("AgID|Comune di Milano|Comune di Pozzallo|Comune di Comun Nuovo|PagoPA|Kyma|Sogecap|Sogessur")
