@@ -5,6 +5,7 @@ import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.generated.openapi.clients.informal.JacksonObjectMapper;
 import it.pagopa.send.generated.openapi.clients.informal.api.NewInformalNotificationApi;
 import it.pagopa.send.generated.openapi.clients.informal.api.SenderReadInformalNotificationB2BApi;
@@ -67,8 +68,8 @@ public class InformalNotificationRestClientConfig {
     ) {
         CurrentUserSession session = sessionProvider.getIfAvailable();
         if (session != null && session.getSender() != null && paDeliveryApiKeys != null) {
-            Tenant sender = session.getSender();
-            String apiKey = paDeliveryApiKeys.get(sender.name());
+            User sender = session.getSender();
+            String apiKey = paDeliveryApiKeys.get(sender.getName());
             if (apiKey != null && !apiKey.isBlank()) {
                 return apiKey;
             }

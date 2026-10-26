@@ -6,6 +6,7 @@ import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.journey.application.InformalNotificationJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.generated.openapi.clients.informal.model.FullSentInformalNotificationV1;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,7 @@ public class InformalNotificationJourneyImpl implements InformalNotificationJour
 
     @Override
     public InformalNotificationJourneyImpl withInformalRecipient(InformalRecipientSpec recipient) {
-        Tenant sender = currentUserSession.getSender();
+        User sender = currentUserSession.getSender();
         informalNotificationUseCase.addRecipient(sender, recipient);
         currentUserSession.setRecipients(List.of(recipient.recipient()));
         return this;

@@ -9,6 +9,7 @@ import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.user.domain.Recipient;
 import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -42,7 +43,7 @@ public class InformalNotificationJourneySteps {
 
     @Given("viene aggiunto {recipient} come destinatario della comunicazione bonaria con i seguenti dati:")
     public void addRecipientToInformalNotification(Recipient recipient, Map<String, String> data) {
-        Tenant sender = currentUserSession.getSender();
+        User sender = currentUserSession.getSender();
         if (sender == null) {
             throw new IllegalStateException("Nessun mittente impostato nella sessione prima di aggiungere il destinatario.");
         }
