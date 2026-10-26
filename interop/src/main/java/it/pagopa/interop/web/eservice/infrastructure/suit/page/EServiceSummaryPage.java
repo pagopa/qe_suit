@@ -6,6 +6,13 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Link;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.EServiceSummaryCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.GeneralInfoCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.ThresholdsAttributesCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.TechnicalSpecsCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.AdditionalInfoCard;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,7 +24,7 @@ public interface EServiceSummaryPage extends Page {
     String BREADCRUMB_MY_ESERVICES = "I miei e-service";
     String BREADCRUMB_EDIT_ESERVICE = "Modifica e-service";
     String BREADCRUMB_SUMMARY = "Riepilogo";
-    String STATUS_DRAFT = "In bozza";
+    String STATUS_DRAFT = "in bozza";
     String CARD_GENERAL_INFO = "Informazioni generali";
     String CARD_THRESHOLDS_ATTRIBUTES = "Soglie e attributi";
     String CARD_TECH_SPECS = "Specifiche tecniche";
@@ -26,7 +33,7 @@ public interface EServiceSummaryPage extends Page {
     String BTN_EDIT_DRAFT = "Modifica bozza";
     String BTN_PUBLISH = "Pubblica";
 
-    @XPath("//button[contains(., '" + BTN_BACK_ESERVICE + "')]")
+    @XPath("//a[contains(., '" + BTN_BACK_ESERVICE + "')]")
     Button backToEServicesButton();
 
     @XPath("//nav[contains(@class,'MuiBreadcrumbs-root')]//a[contains(., '" + BREADCRUMB_EROGAZIONE + "')]")
@@ -47,17 +54,28 @@ public interface EServiceSummaryPage extends Page {
     @XPath("//div[contains(@class,'MuiChip-root')]//span[contains(translate(., '" + STATUS_DRAFT + "', 'in bozza'),'in bozza')]")
     Label statusChip();
 
-    @XPath("//div[contains(@class,'MuiAccordionSummary-root') or contains(@class,'MuiPaper-root')]//h6[contains(., '" + CARD_GENERAL_INFO + "')]")
-    Label generalInfoCardHeader();
+    @XPath(".//*[contains(@class,'MuiAccordion-root')]")
+    List<EServiceSummaryCard> summaryCards();
 
-    @XPath("//div[contains(@class,'MuiAccordionSummary-root') or contains(@class,'MuiPaper-root')]//h6[contains(., '" + CARD_THRESHOLDS_ATTRIBUTES + "')]")
-    Label thresholdsAttributesCardHeader();
+    @XPath(".//*[contains(@class,'MuiAccordion-root')]"
+            + "[.//*[contains(@class,'MuiAccordionSummary-root')]"
+            + "//h6[normalize-space(.)='" + CARD_GENERAL_INFO + "']]")
+    GeneralInfoCard generalInfoCard();
 
-    @XPath("//div[contains(@class,'MuiAccordionSummary-root') or contains(@class,'MuiPaper-root')]//h6[contains(., '" + CARD_TECH_SPECS + "')]")
-    Label techSpecsCardHeader();
+    @XPath(".//*[contains(@class,'MuiAccordion-root')]"
+            + "[.//*[contains(@class,'MuiAccordionSummary-root')]"
+            + "//h6[normalize-space(.)='" + CARD_THRESHOLDS_ATTRIBUTES + "']]")
+    ThresholdsAttributesCard thresholdsAttributesCard();
 
-    @XPath("//div[contains(@class,'MuiAccordionSummary-root') or contains(@class,'MuiPaper-root')]//h6[contains(., '" + CARD_ADDITIONAL_INFO + "')]")
-    Label additionalInfoCardHeader();
+    @XPath(".//*[contains(@class,'MuiAccordion-root')]"
+            + "[.//*[contains(@class,'MuiAccordionSummary-root')]"
+            + "//h6[normalize-space(.)='" + CARD_TECH_SPECS + "']]")
+    TechnicalSpecsCard technicalSpecsCard();
+
+    @XPath(".//*[contains(@class,'MuiAccordion-root')]"
+            + "[.//*[contains(@class,'MuiAccordionSummary-root')]"
+            + "//h6[normalize-space(.)='" + CARD_ADDITIONAL_INFO + "']]")
+    AdditionalInfoCard additionalInfoCard();
 
     @XPath("//button[contains(., '" + BTN_DELETE_DRAFT + "')]")
     Button deleteDraftButton();
