@@ -6,18 +6,18 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Link;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.EServiceSummaryCard;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.GeneralInfoCard;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.ThresholdsAttributesCard;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.TechnicalSpecsCard;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.AdditionalInfoCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.EServiceSummaryCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.GeneralInfoCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.ThresholdsAttributesCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.TechnicalSpecsCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.AdditionalInfoCard;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Url("${interop.web.base-url}/erogazione/e-service/${eserviceId}/${descriptorId}/modifica/riepilogo")
-public interface EServiceSummaryPage extends Page {
+public interface ProviderEServiceSummaryPage extends Page {
 
     String BTN_BACK_ESERVICE = "Torna agli e-service";
     String BREADCRUMB_EROGAZIONE = "Erogazione";

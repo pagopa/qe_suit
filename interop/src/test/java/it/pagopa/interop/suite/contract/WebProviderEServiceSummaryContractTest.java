@@ -14,13 +14,13 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceSummaryPage;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.EServiceSummaryCard.Field;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.GeneralInfoCard;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.TechnicalSpecsCard;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.AdditionalInfoCard;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.ThresholdsAttributesCard;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary.ThresholdsAttributesCard.AttributeSection;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.ProviderEServiceSummaryPage;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.EServiceSummaryCard.Field;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.GeneralInfoCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.TechnicalSpecsCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.AdditionalInfoCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.ThresholdsAttributesCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.ThresholdsAttributesCard.AttributeSection;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +32,7 @@ import org.springframework.test.context.TestConstructor;
 import java.util.stream.Stream;
 import java.util.List;
 
-import static it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceSummaryPage.*;
+import static it.pagopa.interop.web.eservice.infrastructure.suit.page.ProviderEServiceSummaryPage.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 
@@ -43,7 +43,7 @@ import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 @TestConstructor(autowireMode = ALL)
 @RequiredArgsConstructor
 @DisplayName("Web E-Service Summary Contract Test")
-public class WebEServiceSummaryContractTest {
+public class WebProviderEServiceSummaryContractTest {
 
     private static final String ESERVICE_DESCRIPTION = "Descrizione e-service per il riepilogo";
     private static final String VERSION_DESCRIPTION = "Versione per il test contrattuale del riepilogo";
@@ -68,7 +68,7 @@ public class WebEServiceSummaryContractTest {
         String[] pathParams = {eService.getId().toString(), eService.getLastDraftDescriptor().getId().toString()};
         return webContractValidator
                 .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
-                .on(EServiceSummaryPage.class, pathParams)
+                .on(ProviderEServiceSummaryPage.class, pathParams)
                 .tests(Stream.of(
                         new WebScenario<>("Verifica riepilogo e dettagli delle quattro card",
                                 page -> {},
@@ -114,7 +114,7 @@ public class WebEServiceSummaryContractTest {
     }
 
 
-    private void assertHeaderAndBreadcrumbs(EServiceSummaryPage page) {
+    private void assertHeaderAndBreadcrumbs(ProviderEServiceSummaryPage page) {
         // ES-SUMM-01 - Verify that the button "Torna agli e-service" is enabled
         assertThat(page.backToEServicesButton().isDisabled())
                 .as("Torna agli e-service abilitato").isFalse();
@@ -153,7 +153,7 @@ public class WebEServiceSummaryContractTest {
         page.statusChip().readAndAssert(STATUS_DRAFT);
     }
 
-    private void assertSummaryCards(EServiceSummaryPage page) {
+    private void assertSummaryCards(ProviderEServiceSummaryPage page) {
         // ES-SUMM-08...ES-SUMM-11 - Verify that the cards are present, in the correct order and have the correct title and subtitle
         assertThat(page.summaryCards())
                 .extracting(card -> card.header().title().read())
@@ -177,7 +177,7 @@ public class WebEServiceSummaryContractTest {
                 .containsExactly("true", "false", "false", "false");
     }
 
-    private void assertGeneralInfoCard(EServiceSummaryPage page) {
+    private void assertGeneralInfoCard(ProviderEServiceSummaryPage page) {
         //Verify that the General Info card has the correct content and values
         GeneralInfoCard card = page.generalInfoCard();
         var content = card.content();
@@ -190,7 +190,7 @@ public class WebEServiceSummaryContractTest {
         assertField(content.signalHub(), GeneralInfoCard.SIGNAL_HUB, "No, non è attivo");
     }
 
-    private void assertThresholdsAttributesCard(EServiceSummaryPage page) {
+    private void assertThresholdsAttributesCard(ProviderEServiceSummaryPage page) {
         //Verify that the Thresholds and Attributes card has the correct content and values
         ThresholdsAttributesCard card = page.thresholdsAttributesCard();
         card.expand();
@@ -223,7 +223,7 @@ public class WebEServiceSummaryContractTest {
         section.emptyStateMessage().readAndAssert(emptyMessage);
     }
 
-    private void assertTechnicalSpecsCard(EServiceSummaryPage page, EService eService) {
+    private void assertTechnicalSpecsCard(ProviderEServiceSummaryPage page, EService eService) {
         //Verify that the Technical Specs card has the correct content and values
         TechnicalSpecsCard card = page.technicalSpecsCard();
         card.expand();
@@ -244,7 +244,7 @@ public class WebEServiceSummaryContractTest {
         assertField(content.voucherLifespan(), TechnicalSpecsCard.VOUCHER_LIFESPAN, "1 minuto");
     }
 
-    private void assertAdditionalInfoCard(EServiceSummaryPage page) {
+    private void assertAdditionalInfoCard(ProviderEServiceSummaryPage page) {
         //Verify that the Additional Info card has the correct content and values
         AdditionalInfoCard card = page.additionalInfoCard();
         card.expand();
@@ -260,7 +260,7 @@ public class WebEServiceSummaryContractTest {
                 yesNo(APPROVAL_POLICY == AgreementApprovalPolicy.MANUAL));
     }
 
-    private void assertFooterActions(EServiceSummaryPage page) {
+    private void assertFooterActions(ProviderEServiceSummaryPage page) {
         // ES-SUMM-12...ES-SUMM-14 - Verify that the action buttons are present and enabled
         assertThat(page.deleteDraftButton().isDisabled()).as("Elimina bozza abilitato").isFalse();
         page.deleteDraftButton().readAndAssert(BTN_DELETE_DRAFT);

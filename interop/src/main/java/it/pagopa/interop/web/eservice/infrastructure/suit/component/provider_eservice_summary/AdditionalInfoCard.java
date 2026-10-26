@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_modify_summary;
+package it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 
