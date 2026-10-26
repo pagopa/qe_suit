@@ -1,9 +1,11 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
+import it.pagopa.interop.bff.eservice.application.BffEServiceTemplateInstanceUpdateDescriptorCommand;
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.EServiceTemplateInstanceUpdateDescriptorCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
@@ -50,15 +52,6 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 .create();
     }
 
-    public UpdateEServiceDescriptorTemplateInstanceSeed updateTemplateInstanceDescriptorRequest() {
-        UpdateEServiceDescriptorSeed source = defaultUpdateDescriptorSeed();
-        return new UpdateEServiceDescriptorTemplateInstanceSeed()
-                .audience(source.getAudience())
-                .dailyCallsPerConsumer(source.getDailyCallsPerConsumer())
-                .dailyCallsTotal(source.getDailyCallsTotal())
-                .agreementApprovalPolicy(source.getAgreementApprovalPolicy());
-    }
-
     @Override
     public EServiceCreationCommand defaultCreationEServiceCommand() {
         return BffEServiceCreationCommand.from(defaultEServiceSeed());
@@ -66,16 +59,7 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
 
     @Override
     public UpdateEServiceDescriptorCommand defaultUpdateDescriptorCommand() {
-        return BffUpdateEServiceDescriptorCommand.from(defaultUpdateDescriptorSeed());
-    }
-
-    @Override
-    public boolean supports(@NonNull Channel delimiter) {
-        return delimiter == Channel.BFF;
-    }
-
-    private UpdateEServiceDescriptorSeed defaultUpdateDescriptorSeed() {
-        return Instancio.of(UpdateEServiceDescriptorSeed.class)
+        var payload = Instancio.of(UpdateEServiceDescriptorSeed.class)
                 .set(field(UpdateEServiceDescriptorSeed::getVoucherLifespan), 60)
                 .set(field(UpdateEServiceDescriptorSeed::getDailyCallsTotal), 10)
                 .set(field(UpdateEServiceDescriptorSeed::getDailyCallsPerConsumer), 1)
@@ -91,6 +75,50 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 .ignore(field(UpdateEServiceDescriptorSeed::getAsyncExchangeProperties))
                 .create();
 
+        return BffUpdateEServiceDescriptorCommand.from(payload);
+    }
+
+    @Override
+    public EServiceTemplateInstanceUpdateDescriptorCommand defaultUpdateDescriptorInstanceCommand(it.pagopa.interop.common.eservice.domain.EServiceDescriptorState currentState) {
+
+        BffEServiceTemplateInstanceUpdateDescriptorCommand command = switch (currentState) {
+            case PUBLISHED -> {
+                var publishedInstancePayload = Instancio.of(UpdateEServiceTemplateInstanceDescriptorQuotas.class)
+                        .set(field(UpdateEServiceTemplateInstanceDescriptorQuotas::getDailyCallsTotal), 1000)
+                        .set(field(UpdateEServiceTemplateInstanceDescriptorQuotas::getDailyCallsPerConsumer), 100)
+                        .set(field(UpdateEServiceTemplateInstanceDescriptorQuotas::getAttributes),
+                                new DescriptorAttributesSeed()
+                                        .certified(List.of())
+                                        .declared(List.of())
+                                        .verified(List.of())
+                        )
+                        .create();
+                yield BffEServiceTemplateInstanceUpdateDescriptorCommand.from(publishedInstancePayload);
+            }
+            case DRAFT -> {
+                var draftInstancePayload = Instancio.of(UpdateEServiceDescriptorTemplateInstanceSeed.class)
+                        .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getAudience), List.of("QA"))
+                        .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getAgreementApprovalPolicy), AgreementApprovalPolicy.AUTOMATIC)
+                        .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getDailyCallsTotal), 1000)
+                        .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getDailyCallsPerConsumer), 100)
+                        .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getAttributes),
+                                new DescriptorAttributesSeed()
+                                        .certified(List.of())
+                                        .declared(List.of())
+                                        .verified(List.of())
+                        )
+                        .create();
+                yield BffEServiceTemplateInstanceUpdateDescriptorCommand.from(draftInstancePayload);
+            }
+            default -> throw new IllegalArgumentException("Unsupported state: " + currentState);
+        };
+
+        return command;
+    }
+
+    @Override
+    public boolean supports(@NonNull Channel delimiter) {
+        return delimiter == Channel.BFF;
     }
 
     private EServiceSeed defaultEServiceSeed() {

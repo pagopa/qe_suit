@@ -20,7 +20,7 @@ public class ReadableImpl<T> extends AbstractCapabilityImpl implements Readable<
     
     @Override
     public T read() {
-        Optional<WebPresentationElement> elementOpt = adapter.findElement(xPathSelector.get(), FindPolicy.PRESENT);
+        Optional<WebPresentationElement> elementOpt = adapter.findElement(xPathSelector.get(), FindPolicy.VISIBLE);
         if (elementOpt.isEmpty()) return null;
         String text = elementOpt.get().getText();
         return convert(text, type);

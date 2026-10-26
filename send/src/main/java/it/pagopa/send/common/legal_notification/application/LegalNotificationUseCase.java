@@ -1,6 +1,6 @@
 package it.pagopa.send.common.legal_notification.application;
 
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
@@ -31,7 +31,7 @@ public class LegalNotificationUseCase {
         legalNotificationGateway.addRecipient(recipient);
     }
 
-    public void sendNotification(Tenant sender, NotificationStatus targetStatus) {
+    public void sendNotification(User sender, NotificationStatus targetStatus) {
         legalNotificationGateway.sendNotification(sender, targetStatus);
     }
 

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -117,7 +118,10 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
         byte[] content = download(templateRef.id(), versionRef.versionId(), metadata.getId());
 
         EServiceTemplateInterface downloaded = metadata.withContent(content);
-        EServiceTemplate enriched = replaceInterface(templateRef, versionRef, downloaded);
+        EServiceTemplateVersion enrichedVersion = templateVersion.toBuilder()
+                .interfaceDocument(downloaded)
+                .build();
+        EServiceTemplate enriched = upsertVersion(templateRef, enrichedVersion);
         entityStore.upsert(enriched);
 
         return downloaded;
@@ -140,17 +144,29 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
                 .get();
     }
 
-    private EServiceTemplate replaceInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, EServiceTemplateInterface document) {
+    private EServiceTemplate upsertVersion(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersion updatedVersion
+    ) {
         EServiceTemplate template = this.entityStore.getById(templateRef.id(), EServiceTemplate.class)
                 .orElseThrow(() -> new IllegalStateException("Template not found in entity store"));
 
-        List<EServiceTemplateVersion> versions = template.getVersions().stream()
-                .map(version -> version.getId().equals(versionRef.versionId())
-                        ? version.toBuilder().interfaceDocument(document).build()
-                        : version)
-                .toList();
+        List<EServiceTemplateVersion> versions = new ArrayList<>(template.getVersions());
+        for (int i = 0; i < versions.size(); i++) {
+            if (versions.get(i).getId().equals(updatedVersion.getId())) {
+                versions.set(i, updatedVersion);
+                return template.toBuilder()
+                        .clearVersions()
+                        .versions(versions)
+                        .build();
+            }
+        }
 
-        return template.toBuilder().versions(versions).build();
+        versions.add(updatedVersion);
+        return template.toBuilder()
+                .clearVersions()
+                .versions(versions)
+                .build();
     }
 
     @Override
@@ -158,4 +174,3 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
         return delimiter == Channel.BFF;
     }
 }
-
