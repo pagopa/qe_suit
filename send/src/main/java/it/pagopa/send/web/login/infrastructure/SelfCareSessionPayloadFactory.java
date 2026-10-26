@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.send.common.user.domain.OrganizationRole;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -33,6 +31,20 @@ public class SelfCareSessionPayloadFactory {
         if (desiredExp != null) {
             payload.put("desired_exp", desiredExp);
         }
+    /**
+     * Sessione dell'utente: la parte comune ({@link #basePayload}) più i campi del suo tipo di utenza, ente (PA)
+     * oppure persona fisica o giuridica (PF/PG).
+     */
+    public String build(User user, String sessionToken) {
+        Map<String, Object> payload = basePayload(user, sessionToken);
+        switch (user.getType()) {
+            case PA -> addTenantFields(payload, user);
+            case PF, PG -> addRecipientFields(payload, user);
+        }
+        return serialize(payload, user.getUsername());
+    }
+
+    private void addTenantFields(Map<String, Object> payload, User tenant) {
         payload.put("email", tenant.getEmail());
         payload.put("family_name", tenant.getFamilyName());
         payload.put("fiscal_number", tenant.getFiscalNumber());
@@ -46,7 +58,6 @@ public class SelfCareSessionPayloadFactory {
         organization.put("ipaCode", tenant.getIpaCode());
         organization.put("hasGroups", tenant.isHasGroups());
         payload.put("organization", organization);
-
         payload.put("sessionToken", sessionToken);
         payload.put("uid", tenant.getUid());
 
@@ -59,8 +70,7 @@ public class SelfCareSessionPayloadFactory {
      * a parte): {@link #basePayload} li spalma tutti, qui si aggiungono solo i campi anagrafici
      * SPID (cognome, livello, {@code from_aa}) che il JWT non porta con sé.
      */
-    public String buildForRecipient(Recipient recipient, String sessionToken) {
-        Map<String, Object> payload = basePayload(recipient, sessionToken);
+    private void addRecipientFields(Map<String, Object> payload, User recipient) {
         payload.put("family_name", recipient.getFamilyName());
         payload.put("level", "L2");
         payload.put("from_aa", false);
@@ -73,8 +83,6 @@ public class SelfCareSessionPayloadFactory {
             organization.put("fiscal_code", recipient.getTaxId());
             payload.put("organization", organization);
         }
-
-        return serialize(payload, recipient.getUsername());
     }
 
     /**

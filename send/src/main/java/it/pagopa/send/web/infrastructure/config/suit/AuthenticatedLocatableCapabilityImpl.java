@@ -3,8 +3,6 @@ package it.pagopa.send.web.infrastructure.config.suit;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.capability.impl.LocatableCapabilityImpl;
 import it.frontend.e2e.framework.web.model.location.Url;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import it.pagopa.send.web.login.infrastructure.DynamicUserTokenProvider;
@@ -64,16 +62,10 @@ public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImp
     }
 
     private String sessionTokenFor(User user) {
-        return tokenProvider.getToken(user.getUsername());
+        return tokenProvider.requireToken(user.getUsername());
     }
 
     private String buildSessionPayload(User user, String sessionToken) {
-        if (user instanceof Tenant tenant) {
-            return sessionPayloadFactory.buildForTenant(tenant, sessionToken);
-        }
-        if (user instanceof Recipient recipient) {
-            return sessionPayloadFactory.buildForRecipient(recipient, sessionToken);
-        }
-        throw new IllegalStateException("Tipo utente non supportato per la sessione self-care: " + user.getClass());
+        return sessionPayloadFactory.build(user, sessionToken);
     }
 }
