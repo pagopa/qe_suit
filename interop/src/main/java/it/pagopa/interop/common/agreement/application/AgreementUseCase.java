@@ -2,9 +2,11 @@ package it.pagopa.interop.common.agreement.application;
 
 import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
+import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.Delegation;
+import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,24 @@ public class AgreementUseCase {
 
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor) {
         return createAgreement(eService, descriptor, null);
+    }
+
+    public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, AgreementState agreementState, @Nullable Delegation delegation) {
+        Agreement agreement = createAgreement(eService, descriptor, delegation);
+
+        return switch (agreementState) {
+            case DRAFT -> agreement;
+            case PENDING -> submitAgreement(agreement);
+            case ACTIVE -> {
+                Agreement submitted = submitAgreement(agreement);
+                yield PollingUtils.pollUntil(
+                        () -> getAgreement(submitted),
+                        refreshed -> refreshed.getState() == AgreementState.ACTIVE,
+                        "La richiesta di fruizione non ha raggiunto lo stato ACTIVE"
+                );
+            }
+            default -> throw new UnsupportedOperationException("Not implemented yet: " + agreementState);
+        };
     }
 
     public void shouldFailToCreateAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation, AgreementCreationFailureReason reason) {
