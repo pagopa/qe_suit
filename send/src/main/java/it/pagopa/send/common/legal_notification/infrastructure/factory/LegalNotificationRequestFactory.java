@@ -1,7 +1,6 @@
 package it.pagopa.send.common.legal_notification.infrastructure.factory;
 
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.legal_notification.domain.DocumentRef;
 import it.pagopa.send.common.legal_notification.domain.FeePolicy;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
@@ -91,7 +90,7 @@ public class LegalNotificationRequestFactory {
      * in preparazione.
      */
     public ResolvedRecipient resolveRecipient(RecipientSpec spec) {
-        Recipient recipient = spec.recipient();
+        User recipient = spec.recipient();
         String taxId = spec.taxIdOverride() != null ? spec.taxIdOverride() : recipient.getTaxId();
         String denomination = spec.denominationOverride() != null ? spec.denominationOverride() : recipient.getName();
 
@@ -105,7 +104,7 @@ public class LegalNotificationRequestFactory {
     /**
      * Compila i campi che dipendono dal mittente, noto solo all'invio della notifica.
      */
-    public void applySender(LegalNotificationCreationRequest request, Tenant sender) {
+    public void applySender(LegalNotificationCreationRequest request, User sender) {
         request.senderDenomination(sender.getOrganization())
                 .senderTaxId(sender.getTaxId())
                 .group(paGroupService.findActiveGroupId(sender).orElse(null));
