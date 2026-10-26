@@ -27,6 +27,11 @@ public class EService implements Identifiable {
     Boolean isConsumerDelegable;
     Boolean isClientAccessDelegable;
     List<EServiceDescriptor> descriptors;
+    // TODO: L'entità EServiceRiskAnalysis è attualmente gestita come entità separata, ma a livello di dominio
+    //  è strettamente legata all'EService (in particolare obbligatoria quando mode == EServiceMode.RECEIVE).
+    //  Allo stato attuale manca il legame esplicito in EService (es. @Singular("riskAnalysis") List<EServiceRiskAnalysis> riskAnalyses,
+    //  analogamente a quanto già fatto in EServiceTemplate), con il rischio di perdere l'associazione tra una
+    //  EServiceRiskAnalysis salvata nell'EntityStore e l'EService di appartenenza (es. in presenza di più EService).
 
     public EServiceDescriptor findDescriptor(UUID descriptorId) {
         return descriptors.stream()

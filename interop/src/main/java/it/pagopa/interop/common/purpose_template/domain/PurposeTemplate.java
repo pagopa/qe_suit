@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.purpose_template.domain;
 
 import it.pagopa.domain.Identifiable;
+import it.pagopa.interop.common.kernel.domain.PurposeTemplateRef;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
@@ -27,4 +28,8 @@ public class PurposeTemplate implements Identifiable {
 
     @Singular("resourceId")
     List<UUID> linkedResourceIds;
+
+    public PurposeTemplateRef getRef() {
+        return PurposeTemplateRef.of(this.id);
+    }
 }

@@ -2,6 +2,7 @@ package it.pagopa.interop.web.eservice.infrastructure;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
+import it.pagopa.interop.web.eservice.infrastructure.page.*;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCatalogPage;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceDetailPage;
@@ -33,4 +34,15 @@ public class WebEServiceConfig {
         return webPresentationGateway.bind(EServiceDetailPage.class);
     }
 
+    @Bean
+    @ScenarioScope
+    public EServiceEditPage eServiceEditPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(EServiceEditPage.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public EServiceViewPage eServiceViewPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(EServiceViewPage.class);
+    }
 }

@@ -14,6 +14,7 @@ spring:
       on-profile: uat
     import:
       - optional:classpath:secrets/bearer-token-uat.properties
+      - classpath:users/application-users-uat.yaml
 
 # ============================================================================
 # URLs Configuration
@@ -80,9 +81,12 @@ token:
   mittente: ${pn.external.bearer-token.tokentestMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
   session:
+    lucrezia: ${pn.external.session-token.lucrezia:REPLACE_ME}
+    garibaldi: ${pn.external.session-token.garibaldi:REPLACE_ME}
+    dantealighieri: ${pn.external.session-token.dantealighieri:REPLACE_ME}
+    francescopetrarca: ${pn.external.session-token.francescopetrarca:REPLACE_ME}
     grossini: ${pn.external.session-token.grossini:REPLACE_ME}
-    francescopetrarca: REPLACE_ME
-    lucrezia: REPLACE_ME
+    albino63: ${pn.external.session-token.albino63:REPLACE_ME}
 
 # ============================================================================
 # BFF API Configuration (notifiche legali via API)

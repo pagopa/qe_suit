@@ -2,8 +2,6 @@ package it.pagopa.send.web.login.infrastructure;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.web.login.infrastructure.page.AbstractOneIdPage;
 import it.pagopa.send.web.login.infrastructure.page.OneIdPage;
@@ -37,7 +35,7 @@ public class LoginService {
     private final SelfCareSessionPayloadFactory sessionPayloadFactory;
     private final DynamicUserTokenProvider tokenProvider;
 
-    public void loginAsTenant(Tenant tenant) {
+    public void loginAsTenant(User tenant) {
         OneIdPage loginPage = uiGateway.bind(OneIdPage.class);
         loginPage.navigateTo();
         loginPage.loginWithSpid(tenant);
@@ -47,7 +45,7 @@ public class LoginService {
         webBrowserContext.setCurrentUser(tenant);
     }
 
-    public void loginAsRecipient(String userType, Recipient recipient) {
+    public void loginAsRecipient(String userType, User recipient) {
         AbstractOneIdPage loginPage = switch (userType) {
             case "PG" -> uiGateway.bind(PgLoginPage.class);
             default -> uiGateway.bind(PfLoginPage.class);
@@ -59,16 +57,16 @@ public class LoginService {
         webBrowserContext.setCurrentUser(recipient);
     }
 
-    public void forceTenantSession(Tenant tenant) {
-        String payload = sessionPayloadFactory.buildForTenant(tenant, sessionTokenFor(tenant));
+    public void forceTenantSession(User tenant) {
+        String payload = sessionPayloadFactory.build(tenant, sessionTokenFor(tenant));
         forceSession(payload, dashboardPage);
 
         webBrowserContext.setTenant(tenant);
         webBrowserContext.setCurrentUser(tenant);
     }
 
-    public void forceRecipientSession(String userType, Recipient recipient) {
-        String payload = sessionPayloadFactory.buildForRecipient(recipient, sessionTokenFor(recipient));
+    public void forceRecipientSession(String userType, User recipient) {
+        String payload = sessionPayloadFactory.build(recipient, sessionTokenFor(recipient));
         Page landingPage = "PG".equals(userType) ? notificationPage : notificationPFPage;
         forceSession(payload, landingPage);
 
@@ -77,7 +75,7 @@ public class LoginService {
     }
 
     private String sessionTokenFor(User user) {
-        return tokenProvider.getToken(user.getUsername());
+        return tokenProvider.requireToken(user.getUsername());
     }
 
     private void forceSession(String sessionPayload, Page landingPage) {

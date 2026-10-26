@@ -68,6 +68,7 @@ public enum Recipient implements User {
      * Codice fiscale della persona che accede, se diverso da {@link #taxId}: per una PG {@code taxId} è quello
      * dell'impresa, usato come destinatario delle notifiche, mentre la sessione del portale vuole quello personale.
      */
+    @Getter
     private final String personalTaxId;
     /**
      * Ruoli SelfCare della persona nell'impresa: il portale PG li legge dalla sessione per decidere le voci visibili
@@ -100,6 +101,22 @@ public enum Recipient implements User {
     @Override
     public String getFiscalNumber() {
         return this.personalTaxId != null ? this.personalTaxId : this.taxId;
+    }
+
+    // email, codice IPA e gruppi sono dati degli enti (PA): i destinatari non li hanno
+    @Override
+    public String getEmail() {
+        return null;
+    }
+
+    @Override
+    public String getIpaCode() {
+        return null;
+    }
+
+    @Override
+    public boolean isHasGroups() {
+        return false;
     }
 
     public static Recipient fromUsername(String username) {

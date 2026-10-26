@@ -3,9 +3,11 @@ package it.pagopa.interop.common.journey.infrastructure;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.PurposeJourney;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,15 +19,27 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
     private final EntityStore entityStore;
 
     @Override
-    public PurposeJourneyImpl linkPurpose(PurposeVersionState state) {
+    public PurposeJourneyImpl createPurpose(PurposeVersionState state) {
         EService lastEService = entityStore.getLastOrThrow(EService.class);
-        Purpose draftPurpose = purposeUseCase.addDraftPurpose(lastEService);
+        Purpose draftPurpose = purposeUseCase.createPurpose(lastEService);
         return processLifecycle(draftPurpose, state);
     }
 
     @Override
-    public PurposeJourneyImpl linkPurpose(EService eService, PurposeVersionState state) {
-        Purpose draftPurpose = purposeUseCase.addDraftPurpose(eService);
+    public PurposeJourneyImpl createPurposeAndLinkToEService(EService eService, PurposeVersionState state) {
+        Purpose draftPurpose = purposeUseCase.createPurpose(eService);
+        return processLifecycle(draftPurpose, state);
+    }
+
+    @Override
+    public PurposeJourneyImpl createReversePurposeAndLinkToEService(EService eService, EServiceRiskAnalysis riskAnalysis, PurposeVersionState state) {
+        Purpose draftPurpose = purposeUseCase.createReversePurpose(eService, riskAnalysis);
+        return processLifecycle(draftPurpose, state);
+    }
+
+    @Override
+    public PurposeJourneyImpl createPurposeFromTemplateAndLinkToEService(PurposeTemplate purposeTemplate, EService eService, PurposeVersionState state) {
+        Purpose draftPurpose = purposeUseCase.createPurposeFromTemplate(purposeTemplate, eService);
         return processLifecycle(draftPurpose, state);
     }
 

@@ -4,6 +4,7 @@ import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.attribute.domain.Attributes;
 
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 public interface UpdateEServiceDescriptorCommand {
     UpdateEServiceDescriptorCommand voucherLifespan(Integer voucherLifespan);
@@ -12,5 +13,6 @@ public interface UpdateEServiceDescriptorCommand {
     UpdateEServiceDescriptorCommand audience(List<String> audience);
     UpdateEServiceDescriptorCommand description(String description);
     UpdateEServiceDescriptorCommand attributes(Attributes attributes);
+    UpdateEServiceDescriptorCommand attributes(UnaryOperator<Attributes> attributes);
     UpdateEServiceDescriptorCommand agreementApprovalPolicy(AgreementApprovalPolicy policy);
 }

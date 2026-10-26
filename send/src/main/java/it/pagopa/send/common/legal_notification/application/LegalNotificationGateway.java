@@ -1,6 +1,6 @@
 package it.pagopa.send.common.legal_notification.application;
 
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
@@ -19,7 +19,7 @@ import java.util.Map;
 public interface LegalNotificationGateway extends Plugin<Channel> {
     void prepareNotification(Map<String, String> data);
     void addRecipient(RecipientSpec recipient);
-    void sendNotification(Tenant sender, NotificationStatus targetStatus);
+    void sendNotification(User sender, NotificationStatus targetStatus);
     void waitForNotificationStatus(NotificationStatus targetStatus);
     void deleteNotification(String iun);
     LegalNotificationDomain readNotification(String iun);

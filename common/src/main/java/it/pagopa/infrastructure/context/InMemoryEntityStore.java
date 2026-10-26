@@ -73,6 +73,11 @@ public class InMemoryEntityStore implements EntityStore {
         return Optional.empty();
     }
 
+    @Override
+    public <Model extends Identifiable> List<Model> getAll(Class<Model> modelClass) {
+        return entries(modelClass);
+    }
+
     @SuppressWarnings("unchecked")
     private <Model extends Identifiable> List<Model> entries(Class<Model> modelClass) {
         return (List<Model>) storage.get().computeIfAbsent(modelClass, ignored -> new ArrayList<>());

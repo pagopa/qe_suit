@@ -116,7 +116,7 @@
         Modulo infrastructure/common:
         HttpLoggingFilter, contract validation e infrastruttura condivisa.
     -->
-    <logger name="it.pagopa.infrastructure"
+    <logger name="it.pagopa"
             level="${suitLogLevel}"
             additivity="false">
 

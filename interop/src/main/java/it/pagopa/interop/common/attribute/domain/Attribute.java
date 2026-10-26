@@ -21,7 +21,7 @@ public class Attribute implements Identifiable {
     AttributeCertifiedDiscreteConfig discreteConfig;
 
     @Builder.Default
-    Integer group = 1;
+    Integer group = 0;
 
     public AttributeRef getRef() {
         return AttributeRef.of(id);

@@ -143,6 +143,11 @@ public class CucumberEntityStore implements EntityStore {
                 .orElseThrow(() -> new NoSuchElementException("Nessun elemento trovato per il tipo: " + modelClass.getSimpleName()));
     }
 
+    @Override
+    public <Model extends Identifiable> List<Model> getAll(Class<Model> modelClass) {
+        return  entries(modelClass).stream().map(ContextEntry::getItem).toList();
+    }
+
     public <Model extends Identifiable> Optional<Model> getAtIndex(Class<Model> modelClass, int index) {
         List<ContextEntry<Model>> entryList = entries(modelClass);
         if (index < 0 || index >= entryList.size()) {

@@ -1,6 +1,7 @@
 package it.pagopa.send.bff.infrastructure;
 
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.infrastructure.config.UsersProperties;
 import it.pagopa.send.generated.openapi.clients.externalregistries.api.InfoPaApi;
 import it.pagopa.send.generated.openapi.clients.externalregistries.model.PaGroup;
 import it.pagopa.send.generated.openapi.clients.externalregistries.model.PaGroupStatus;
@@ -8,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -17,20 +17,22 @@ import java.util.function.Function;
 public class PaGroupService {
 
     private final InfoPaApi infoPaApi;
-    private final Map<String, String> paGroupsApiKeys;
+    private final UsersProperties usersProperties;
 
     /**
-     * Ritorna l'id del primo gruppo attivo per il {@link Tenant} indicato, se esiste.
-     * L'api-key per la chiamata è unica per PA e per ambiente (vedi {@code pa.groups-api-key} negli
-     * application-{profilo}.yaml), quindi va risolta per tenant a ogni chiamata, non può essere un
+     * Ritorna l'id del primo gruppo attivo per l'ente mittente indicato, se esiste.
+     * L'api-key per la chiamata è unica per PA e per ambiente (campo {@code groups-api-key} della voce dell'ente in
+     * users/application-users-{profilo}.yaml), quindi va risolta per ente a ogni chiamata, non può essere un
      * unico valore condiviso a livello di bean del client.
      */
-    public Optional<String> findActiveGroupId(Tenant tenant) {
-        String apiKey = paGroupsApiKeys.get(tenant.name());
+    public Optional<String> findActiveGroupId(User sender) {
+        String apiKey = usersProperties.findByUsername(sender.getUsername())
+                .map(UsersProperties.UserEntry::groupsApiKey)
+                .orElse(null);
         if (apiKey == null || apiKey.isBlank()) {
             throw new IllegalStateException(
-                    "Nessuna api-key configurata per il tenant " + tenant.name()
-                            + " (property pa.groups-api-key." + tenant.name() + ")");
+                    "Nessuna api-key dei gruppi configurata per l'utenza " + sender.getUsername()
+                            + " (campo groups-api-key in users/application-users-<ambiente>.yaml)");
         }
 
         List<PaGroup> groups = infoPaApi.getGroupsB2B()

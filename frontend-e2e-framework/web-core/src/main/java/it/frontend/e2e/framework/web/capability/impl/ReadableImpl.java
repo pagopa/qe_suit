@@ -2,6 +2,7 @@ package it.frontend.e2e.framework.web.capability.impl;
 
 import it.frontend.e2e.framework.core.assertion.AssertionAction;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
+import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 
@@ -16,10 +17,10 @@ public class ReadableImpl<T> extends AbstractCapabilityImpl implements Readable<
         super(adapter);
         this.type = type;
     }
-
+    
     @Override
     public T read() {
-        Optional<WebPresentationElement> elementOpt = adapter.findElement(xPathSelector.get());
+        Optional<WebPresentationElement> elementOpt = adapter.findElement(xPathSelector.get(), FindPolicy.VISIBLE);
         if (elementOpt.isEmpty()) return null;
         String text = elementOpt.get().getText();
         return convert(text, type);

@@ -3,7 +3,7 @@ package it.pagopa.send.bff.legal_notification.infrastructure;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.send.bff.delivery.infrastructure.BffDeliveryRestClient;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
@@ -55,7 +55,7 @@ public class BffLegalNotificationGateway implements LegalNotificationGateway {
     }
 
     @Override
-    public void sendNotification(Tenant sender, NotificationStatus targetStatus) {
+    public void sendNotification(User sender, NotificationStatus targetStatus) {
         requestFactory.applySender(request, sender);
 
         BffNewNotificationRequest bffRequest = mapper.toBffRequest(request);
