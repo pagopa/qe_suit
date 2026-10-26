@@ -10,6 +10,7 @@ import it.pagopa.send.common.informal_notification.domain.ResolvedInformalRecipi
 import it.pagopa.send.common.informal_notification.infrastructure.factory.InformalNotificationRequestFactory;
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.generated.openapi.clients.informal.model.FullSentInformalNotificationV1;
 import it.pagopa.send.generated.openapi.clients.informal.model.InformalNotificationRequestV1;
 import it.pagopa.send.generated.openapi.clients.informal.model.NewNotificationResponse;
@@ -46,6 +47,12 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
     @Override
     public void addRecipient(Tenant sender, InformalRecipientSpec recipient) {
         ResolvedInformalRecipient resolved = requestFactory.resolveRecipient(sender, recipient);
+        request.addRecipient(resolved);
+    }
+
+    @Override
+    public void addRecipient(User user, InformalRecipientSpec recipient) {
+        ResolvedInformalRecipient resolved = requestFactory.resolveRecipient(user, recipient);
         request.addRecipient(resolved);
     }
 

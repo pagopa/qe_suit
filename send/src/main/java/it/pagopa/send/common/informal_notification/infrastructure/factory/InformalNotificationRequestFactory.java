@@ -17,6 +17,7 @@ import it.pagopa.send.common.legal_notification.domain.PreloadedDocument;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.RequestOverrideApplier;
 import it.pagopa.send.common.user.domain.Recipient;
 import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -91,6 +92,37 @@ public class InformalNotificationRequestFactory {
         InformalMessageSpec msg = spec.messageSpec();
         String messageId = deliveryPushMessagesRestClient.createMessage(
                 sender,
+                msg.subject(),
+                msg.longBody(),
+                msg.shortBody(),
+                msg.language()
+        );
+
+        List<ResolvedInformalPagoPaPayment> resolvedPayments = spec.payments().stream()
+                .map(p -> buildPagoPaPayment(p, denomination, taxId))
+                .toList();
+
+        return new ResolvedInformalRecipient(
+                spec.recipientType(),
+                taxId,
+                denomination,
+                messageId,
+                spec.email(),
+                spec.phoneNumber(),
+                spec.additionalLanguage(),
+                spec.physicalAddress(),
+                resolvedPayments
+        );
+    }
+
+    public ResolvedInformalRecipient resolveRecipient(User user, InformalRecipientSpec spec) {
+        Recipient recipient = spec.recipient();
+        String taxId = spec.taxIdOverride() != null ? spec.taxIdOverride() : recipient.getTaxId();
+        String denomination = spec.denominationOverride() != null ? spec.denominationOverride() : (recipient.getDenomination() != null ? recipient.getDenomination() : recipient.getName());
+
+        InformalMessageSpec msg = spec.messageSpec();
+        String messageId = deliveryPushMessagesRestClient.createMessage(
+                user,
                 msg.subject(),
                 msg.longBody(),
                 msg.shortBody(),

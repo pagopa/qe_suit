@@ -4,6 +4,7 @@ import io.restassured.response.Response;
 import it.pagopa.send.common.legal_notification.domain.PreloadedDocument;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,9 +47,9 @@ public class InformalDocumentPreloadService {
                 "sha256", sha256Base64
         );
 
-        Tenant sender = currentUserSession.getSender();
+        User sender = currentUserSession.getSender();
         String apiKey = (sender != null && paDeliveryApiKeys != null)
-                ? paDeliveryApiKeys.getOrDefault(sender.name(), defaultApiKey)
+                ? paDeliveryApiKeys.getOrDefault(sender.getName(), defaultApiKey)
                 : defaultApiKey;
 
         Response response = informalDeliveryRestClient.preloadAttachments(apiKey, List.of(preloadRequest));

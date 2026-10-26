@@ -3,6 +3,7 @@ package it.pagopa.send.common.informal_notification.application;
 import it.pagopa.send.common.informal_notification.domain.InformalNotificationDomain;
 import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.generated.openapi.clients.informal.model.FullSentInformalNotificationV1;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,10 @@ public class InformalNotificationUseCase {
 
     public void addRecipient(Tenant sender, InformalRecipientSpec recipient) {
         informalNotificationGateway.addRecipient(sender, recipient);
+    }
+
+    public void addRecipient(User user, InformalRecipientSpec recipient) {
+        informalNotificationGateway.addRecipient(user, recipient);
     }
 
     public InformalNotificationDomain sendNotification(Tenant sender) {
