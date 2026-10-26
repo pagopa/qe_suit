@@ -53,6 +53,7 @@ public class WebConsumerAgreementsListPageContractTest {
                         page -> {
                         },
                         page -> assertSoftly(softly -> {
+                                    softly.assertThat(page.pageTitle().read()).isNotBlank();
                                     softly.assertThat(page.pageDescription().read()).isNotBlank();
                                     softly.assertThat(page.eServiceFilterLabel().read())
                                             .as("E-Service filter label")

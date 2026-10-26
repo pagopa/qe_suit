@@ -30,9 +30,7 @@ public interface BffPurposeTemplateMapper {
     @Mapping(target = "createdAt", source = "createdAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "updatedAt", source = "updatedAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "linkedEServiceIds", ignore = true)
-    @Mapping(target = "eserviceId", ignore = true)
     @Mapping(target = "linkedResourceIds", ignore = true)
-    @Mapping(target = "resourceId", ignore = true)
     PurposeTemplate toPurposeTemplate(PurposeTemplateWithCompactCreator source);
 
     @ValueMapping(source = MappingConstants.ANY_REMAINING, target = "UNKNOWN")
