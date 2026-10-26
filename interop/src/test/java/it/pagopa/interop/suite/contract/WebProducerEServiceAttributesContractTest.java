@@ -17,7 +17,6 @@ import it.pagopa.interop.web.eservice_template.infrastructure.page.ProducerEServ
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -31,7 +30,7 @@ import java.util.stream.Stream;
                 JunitContextConfig.class,
                 WebJUnitSuitConfig.class
         },
-        properties = {"spring.profiles.include=junit","channel.web.browser=chrome","channel.web.headless=false"}
+        properties = {"spring.profiles.include=junit"}//,"channel.web.browser=chrome","channel.web.headless=false"}
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
@@ -69,12 +68,15 @@ public class WebProducerEServiceAttributesContractTest {
                 )));
     }
 
-    @Disabled
     @TestFactory
     Stream<DynamicTest> shouldSaveEServiceTemplateAttributesWithoutChanges() {
         EServiceTemplate eServiceTemplate = interopJourney
                 .withProducer(TENANT, UserRole.ADMIN)
-                .createEServiceTemplate(EServiceTemplateVersionState.PUBLISHED)
+                .createCertifiedAttribute()
+                .createEServiceTemplate(EServiceTemplateVersionState.DRAFT)
+                .updateTemplateVersionWithContextAttributes(command -> {}, EServiceTemplateVersionState.PUBLISHED)
+                .waitUntilEServiceTemplate(template ->
+                        template.getLatestVersion().getState() == EServiceTemplateVersionState.PUBLISHED)
                 .get(EServiceTemplate.class);
 
         return webContractValidator
