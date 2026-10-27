@@ -59,6 +59,11 @@ public class DebtPositionService {
         return iuv;
     }
 
+    /**
+     * IUV di 17 cifre: il noticeCode pagoPA è lungo 18 cifre, cioè la cifra ausiliaria "3" aggiunta dal chiamante
+     * seguita dallo IUV. Con uno IUV di 13 cifre il noticeCode era di 14 e il BFF rifiutava la creazione della
+     * notifica con 400 PN_INVALID_BODY ("is too short (length: 14, required minimum: 18)").
+     */
     private String generateRandomIuv() {
         return RandomNumericGenerator.generate(17);
     }
