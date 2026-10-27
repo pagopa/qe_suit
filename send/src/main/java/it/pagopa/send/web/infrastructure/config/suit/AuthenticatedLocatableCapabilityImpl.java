@@ -38,17 +38,17 @@ public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImp
 
     @Override
     public void navigateTo(String... pathParams) {
-        User currentUser = currentUserSession.getCurrentActor();
         Url targetUrl = resolveUrl(pathParams, urlSupplier.get().getUrl());
 
         // Nessun utente noto: pagine del flusso SPID reale (OneIdPage, PfLoginPage, ...),
         // navigazione semplice senza toccare il sessionStorage.
-        if (currentUser == null) {
+        if (!currentUserSession.hasUser()) {
             adapter.navigateTo(targetUrl);
             browserContext.setCurrentUrl(targetUrl);
             return;
         }
 
+        User currentUser = currentUserSession.getUser();
         String sessionToken = sessionTokenFor(currentUser);
         String sessionPayload = buildSessionPayload(currentUser, sessionToken);
 

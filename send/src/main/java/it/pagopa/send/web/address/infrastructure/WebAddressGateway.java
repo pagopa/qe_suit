@@ -42,7 +42,7 @@ public class WebAddressGateway implements AddressGateway {
 
     // la pagina dei recapiti dipende dal tipo dell'utente del login
     private AddressPage currentAddressPage() {
-        if (currentUserSession.getCurrentActor().getType() == UserType.PG) {
+        if (currentUserSession.getUser().getType() == UserType.PG) {
             AddressPGPage page = browser.bind(AddressPGPage.class);
             page.navigateTo();
             page.assertLoaded();

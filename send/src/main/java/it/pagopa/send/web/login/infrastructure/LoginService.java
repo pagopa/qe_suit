@@ -15,7 +15,6 @@ import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 
 /**
  * Azioni di login sul browser: nessun servizio esterno coinvolto, solo interazione con le pagine.
@@ -43,7 +42,7 @@ public class LoginService {
         loginPage.loginWithSpid(tenant);
         tenantSelectionPage.selectComune(tenant.getOrganization());
 
-        currentUserSession.setSender(tenant);
+        currentUserSession.setUser(tenant);
     }
 
     public void loginAsRecipient(String userType, User recipient) {
@@ -54,12 +53,12 @@ public class LoginService {
         loginPage.navigateTo();
         loginPage.loginWithSpid(recipient);
 
-        setRecipient(recipient);
+        currentUserSession.setUser(recipient);
     }
 
     public void forceTenantSession(User tenant) {
-        // prima di navigare: ogni navigazione riscrive il sessionStorage con l'attore corrente della sessione
-        currentUserSession.setSender(tenant);
+        // prima di navigare: ogni navigazione riscrive il sessionStorage con l'utente della sessione
+        currentUserSession.setUser(tenant);
 
         String payload = sessionPayloadFactory.build(tenant, sessionTokenFor(tenant));
         forceSession(payload, dashboardPage);
@@ -68,14 +67,8 @@ public class LoginService {
     public void forceRecipientSession(String userType, User recipient) {
         String payload = sessionPayloadFactory.build(recipient, sessionTokenFor(recipient));
         Page landingPage = "PG".equals(userType) ? notificationPage : notificationPFPage;
-        setRecipient(recipient);
+        currentUserSession.setUser(recipient);
         forceSession(payload, landingPage);
-    }
-
-    // il destinatario diventa l'unico attore: un mittente rimasto da step precedenti avrebbe la precedenza
-    private void setRecipient(User recipient) {
-        currentUserSession.setSender(null);
-        currentUserSession.setRecipients(List.of(recipient));
     }
 
     private String sessionTokenFor(User user) {

@@ -2,23 +2,19 @@ package it.pagopa.send.common.kernel.context;
 
 import it.pagopa.send.common.user.domain.User;
 
-import java.util.List;
-
+/**
+ * Utente con cui opera lo scenario: lo impostano login, step utente, journey e contract
+ * validator; lo leggono gli adapter di ogni canale (sessione del browser, api-key delle chiamate B2B,
+ * pagine PA/PF/PG). Mittente e destinatari di una notifica sono dati della notifica, non della sessione.
+ */
 public interface CurrentUserSession {
-    void setSender(User sender);
+    void setUser(User user);
 
-    User getSender();
-
-    void setRecipients(List<User> recipients);
-
-    List<User> getRecipients();
+    User getUser();
 
     /**
-     * Attore dello scenario: il sender se impostato, altrimenti il primo destinatario, altrimenti
-     * {@code null} (nessun utente da impersonare: navigazione diretta senza faking di sessione, es. i
-     * link con token già valorizzato usati dal portale di supporto). Usato dagli adapter web, sia nei
-     * test di contratto sia negli scenari Cucumber, per autenticare il browser e per scegliere le
-     * pagine in base al tipo di utente (PA, PF, PG).
+     * {@code false} quando nessun utente è impostato: navigazione anonima, es. i link con token già
+     * valorizzato usati dal portale di supporto.
      */
-    User getCurrentActor();
+    boolean hasUser();
 }
