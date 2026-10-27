@@ -12,7 +12,7 @@ import it.pagopa.send.common.legal_notification.application.LegalNotificationUse
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationType;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.RecipientSpecFactory;
-import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
+import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -28,7 +28,7 @@ public class LegalNotificationSteps {
     private final LegalNotificationJourneyImpl journey;
     private final LegalNotificationUseCase legalNotificationUseCase;
     private final RecipientSpecFactory recipientSpecFactory;
-    private final WebBrowserContext webBrowserContext;
+    private final CurrentUserSession currentUserSession;
     private final EntityStore entityStore;
 
     @When("l'ente {user} crea una notifica di tipo {legalNotificationType} per il destinatario {user}")
@@ -38,11 +38,7 @@ public class LegalNotificationSteps {
 
     @When("l'ente crea una notifica di tipo {legalNotificationType} per il destinatario {user}")
     public void enteContestoCreaNotifica(LegalNotificationType type, User recipient) {
-        User tenant = webBrowserContext.getTenant();
-        if (tenant == null) {
-            throw new IllegalStateException("Nessun ente autenticato nel contesto: specifica l'ente esplicitamente oppure effettua prima il login");
-        }
-        createNotification(tenant, type, recipient, Map.of());
+        createNotification(currentUserSession.getUser(), type, recipient, Map.of());
     }
 
     @When("l'ente {user} crea una notifica di tipo {legalNotificationType} per il destinatario {user} con i seguenti valori:")

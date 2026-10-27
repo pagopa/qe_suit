@@ -13,7 +13,7 @@ spring:
     activate:
       on-profile: dev
     import:
-      - optional:classpath:secrets/bearer-token-test.properties
+      - optional:classpath:secrets/bearer-token-dev.properties
       - classpath:users/application-users-dev.yaml
 
 # ============================================================================
@@ -77,7 +77,6 @@ selettore:
 # Bearer token for users
 # ============================================================================
 token:
-  mittente: ${pn.external.bearer-token.tokentestMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
   session:
     lucrezia: ${pn.external.session-token.lucrezia:REPLACE_ME}
