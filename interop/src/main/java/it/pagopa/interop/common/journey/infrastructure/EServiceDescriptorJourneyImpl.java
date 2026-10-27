@@ -1,8 +1,11 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorLifecycleUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
@@ -14,6 +17,10 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
 @Component
 @RequiredArgsConstructor
 public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<EServiceDescriptorJourneyImpl> {
@@ -21,6 +28,7 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EServiceDescriptorLifecycleUseCase lifecycle;
     private final EntityStore entityStore;
+    private final EServiceRequestFactory requestFactory;
     private final CurrentUserSession currentUserSession;
 
     @Override
@@ -38,6 +46,13 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
     }
 
     @Override
+    public EServiceDescriptorJourneyImpl updateDescriptor(Consumer<UpdateEServiceDescriptorCommand> commandConfig, EServiceDescriptorState state) {
+        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        commandConfig.accept(command);
+        return updateDescriptor(command, state);
+    }
+
+    @Override
     public EServiceDescriptorJourneyImpl updateDescriptor(
             UpdateEServiceDescriptorCommand command,
             EServiceDescriptorState state
@@ -45,6 +60,27 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
         EService eService = entityStore.getLastOrThrow(EService.class);
         requireDelegatedApprovalActor(eService, state);
         return processLifecycle(eService, eService.getLastDraftDescriptor(), state, command);
+    }
+
+    @Override
+    public EServiceDescriptorJourneyImpl updateDescriptorWithContextAttributes(
+            Consumer<UpdateEServiceDescriptorCommand> commandConfig,
+            int dailyCallsPerConsumer,
+            EServiceDescriptorState state
+    ) {
+        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        commandConfig.accept(command);
+        return updateDescriptorWithContextAttributes(command, dailyCallsPerConsumer, state);
+    }
+
+    @Override
+    public EServiceDescriptorJourneyImpl updateDescriptorWithContextAttributes(
+            UpdateEServiceDescriptorCommand command,
+            int dailyCallsPerConsumer,
+            EServiceDescriptorState state
+    ) {
+        command.attributes(attributes -> prepareContextAttributes(attributes, dailyCallsPerConsumer));
+        return updateDescriptor(command, state);
     }
 
     @Override
@@ -70,7 +106,6 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
         EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceDescriptor descriptor = eService.getDescriptorOrThrow(version);
         lifecycle.prepareForPublication(eService, descriptor);
-
         return this;
     }
 
@@ -123,5 +158,22 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
                     "WAITING_FOR_APPROVAL setup requires an active producer delegation and its delegate actor"
             );
         }
+    }
+
+    private Attributes prepareContextAttributes(Attributes attributes, int dailyCallsPerConsumer) {
+        List<Attribute> certified = new ArrayList<>(attributes.getCertified());
+        List<Attribute> declared = new ArrayList<>(attributes.getDeclared());
+        List<Attribute> verified = new ArrayList<>(attributes.getVerified());
+        for (Attribute attribute : entityStore.getAll(Attribute.class)) {
+            Attribute updatedAttribute = attribute.toBuilder().dailyCallsPerConsumer(dailyCallsPerConsumer).build();
+            switch (updatedAttribute.getKind()) {
+                case CERTIFIED, CERTIFIED_DISCRETE -> certified.add(updatedAttribute);
+                case DECLARED -> declared.add(updatedAttribute);
+                case VERIFIED -> verified.add(updatedAttribute);
+            }
+        }
+        return attributes.toBuilder().clearCertified().clearDeclared().clearVerified()
+                .certified(certified).declared(declared).verified(verified)
+                .build();
     }
 }

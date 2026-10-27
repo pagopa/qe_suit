@@ -118,11 +118,11 @@ class BffEServiceDescriptorMapperTest {
         assertThat(mapped.getCertified()).extracting("id")
                 .containsExactly(firstCertifiedId, secondCertifiedId);
         assertThat(mapped.getCertified()).extracting("group")
-                .containsExactly(0, 1);
+                .containsExactly(1, 2);
         assertThat(mapped.getDeclared()).extracting("id").containsExactly(declaredId);
-        assertThat(mapped.getDeclared().get(0).getGroup()).isZero();
+        assertThat(mapped.getDeclared().get(0).getGroup()).isEqualTo(1);
         assertThat(mapped.getVerified()).extracting("id").containsExactly(verifiedId);
-        assertThat(mapped.getVerified().get(0).getGroup()).isZero();
+        assertThat(mapped.getVerified().get(0).getGroup()).isEqualTo(1);
     }
 
     private static DescriptorAttribute descriptorAttribute(UUID id) {

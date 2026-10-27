@@ -22,6 +22,7 @@ class EServiceJourneyLifecycleTest {
     private final EServiceDescriptorUseCase descriptors = mock(EServiceDescriptorUseCase.class);
     private final EServiceDescriptorLifecycleUseCase lifecycle = mock(EServiceDescriptorLifecycleUseCase.class);
     private final EntityStore store = mock(EntityStore.class);
+    private final EServiceRequestFactory requestFactory = mock(EServiceRequestFactory.class);
     private final CurrentUserSession session = mock(CurrentUserSession.class);
     private final EServiceDescriptor draft = EServiceDescriptor.builder()
             .id(UUID.randomUUID()).version("1").state(DRAFT).build();
@@ -31,7 +32,8 @@ class EServiceJourneyLifecycleTest {
     @Test
     void serviceJourneyCallsLifecycleDirectlyAndStoresItsResult() {
         var journey = new EServiceJourneyImpl(services, descriptors, lifecycle, store,
-                mock(EServiceRiskAnalysisUseCase.class), mock(CurrentUserSession.class));
+                mock(EServiceRiskAnalysisUseCase.class), mock(CurrentUserSession.class),
+                mock(EServiceRequestFactory.class));
         var command = mock(EServiceCreationCommand.class);
         var suspended = draft.toBuilder().state(SUSPENDED).build();
         when(services.createEService(command)).thenReturn(eService);
@@ -49,7 +51,7 @@ class EServiceJourneyLifecycleTest {
 
     @Test
     void descriptorJourneySeparatesVersionResolutionFromLifecycle() {
-        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store, session);
+        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store, requestFactory, session);
         when(descriptors.getOrCreateDescriptor(eService, 1)).thenReturn(draft);
         var suspended = draft.toBuilder().state(SUSPENDED).build();
         when(lifecycle.bringToState(eService, draft, SUSPENDED, null)).thenReturn(suspended);
@@ -65,7 +67,7 @@ class EServiceJourneyLifecycleTest {
 
     @Test
     void rejectsUnsupportedArchivePathBeforeResolvingOrCreatingMissingVersion() {
-        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store, session);
+        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store, requestFactory, session);
         doThrow(new UnsupportedOperationException("unsupported"))
                 .when(lifecycle).validateCanReachState(DRAFT, ARCHIVED);
 
@@ -77,7 +79,7 @@ class EServiceJourneyLifecycleTest {
 
     @Test
     void requiresADelegateActorBeforeCreatingPendingDescriptor() {
-        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store, session);
+        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store, requestFactory, session);
         EService owned = eService.toBuilder()
                 .producerId(Tenant.COMUNE_DI_MILANO.getOrganizationId().toString()).build();
         when(session.getTenant()).thenReturn(Tenant.COMUNE_DI_MILANO);
@@ -91,7 +93,7 @@ class EServiceJourneyLifecycleTest {
 
     @Test
     void allowsPendingDescriptorSetupUnderADelegateActor() {
-        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store, session);
+        var journey = new EServiceDescriptorJourneyImpl(descriptors, lifecycle, store, requestFactory, session);
         EService owned = eService.toBuilder()
                 .producerId(Tenant.COMUNE_DI_MILANO.getOrganizationId().toString()).build();
         when(session.getTenant()).thenReturn(Tenant.COMUNE_DI_POZZALLO);
@@ -109,7 +111,7 @@ class EServiceJourneyLifecycleTest {
     @Test
     void rejectsDirectServiceCreationIntoApprovalBeforeCreatingTheService() {
         var journey = new EServiceJourneyImpl(services, descriptors, lifecycle, store,
-                mock(EServiceRiskAnalysisUseCase.class), session);
+                mock(EServiceRiskAnalysisUseCase.class), session, mock(EServiceRequestFactory.class));
 
         assertThatThrownBy(() -> journey.createEService(WAITING_FOR_APPROVAL))
                 .isInstanceOf(UnsupportedOperationException.class)

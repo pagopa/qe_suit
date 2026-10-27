@@ -33,11 +33,12 @@ class PrivateCatalogAttributeFixtureFeatureTest {
         assertThat(scenarios).hasSize(5);
         for (var scenario : scenarios) {
             var steps = scenario.getSteps().stream().map(step -> step.getText()).toList();
-            assertThat(steps).anyMatch(step -> step.contains("crea i seguenti attributi certificati"));
+            assertThat(steps).anyMatch(step -> step.startsWith("i seguenti attributi certificati creati da "));
             if (scenario.getName().contains("FILTERS_7B")) {
-                assertThat(steps).noneMatch(step -> step.contains("assegna a "));
+                assertThat(steps).noneMatch(step -> step.contains("assegnati da "));
             } else {
-                assertThat(steps).anyMatch(step -> step.contains("assegna a "));
+                assertThat(steps).anyMatch(step -> step.startsWith("i seguenti attributi certificati assegnati da ")
+                        && step.endsWith(" a PagoPA:"));
             }
             assertThat(steps).anyMatch(step -> step.contains("configurata con i seguenti attributi richiesti"));
             assertThat(steps).noneMatch(step -> step.contains("un attributo posseduto da PagoPA")
@@ -59,10 +60,10 @@ class PrivateCatalogAttributeFixtureFeatureTest {
             var steps = scenario.getSteps().stream().map(step -> step.getText()).toList();
             assertThat(steps).noneMatch(step -> step.contains("assegna"));
             if (scenario.getName().contains("FILTERS_9]")) {
-                assertThat(steps).anyMatch(step -> step.endsWith("crea i seguenti attributi dichiarati:"));
-                assertThat(steps).anyMatch(step -> step.endsWith("crea i seguenti attributi verificati:"));
+                assertThat(steps).anyMatch(step -> step.startsWith("i seguenti attributi dichiarati creati da "));
+                assertThat(steps).anyMatch(step -> step.startsWith("i seguenti attributi verificati creati da "));
             } else {
-                assertThat(steps).anyMatch(step -> step.endsWith("crea i seguenti attributi discreti:"));
+                assertThat(steps).anyMatch(step -> step.startsWith("i seguenti attributi discreti creati da "));
                 assertThat(scenario.getTags()).extracting(tag -> tag.getName()).contains("@flag-discrete-attribute-on");
             }
             for (var step : scenario.getSteps()) {

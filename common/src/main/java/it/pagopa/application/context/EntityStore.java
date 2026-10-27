@@ -35,6 +35,4 @@ public interface EntityStore {
     <Model extends Identifiable> Model getLastOrThrow(Class<Model> modelClass);
 
     <Model extends Identifiable> Optional<Model> find(Class<Model> modelClass, Predicate<? super Model> predicate);
-
-    <Model extends Identifiable> List<Model> getAll(Class<Model> modelClass);
 }

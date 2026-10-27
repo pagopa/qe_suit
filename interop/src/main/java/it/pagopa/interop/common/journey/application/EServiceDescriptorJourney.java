@@ -6,6 +6,8 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 
+import java.util.function.Consumer;
+
 public interface EServiceDescriptorJourney<SELF extends EServiceDescriptorJourney<SELF>> extends JourneyModule {
     SELF addDescriptor(EServiceDescriptorState state);
 
@@ -26,4 +28,18 @@ public interface EServiceDescriptorJourney<SELF extends EServiceDescriptorJourne
     SELF publishDescriptor(int version);
 
     SELF bringEServiceDescriptorToState(EService eService, int version, EServiceDescriptorState state);
+
+    SELF updateDescriptor(Consumer<UpdateEServiceDescriptorCommand> commandConfig, EServiceDescriptorState state);
+
+    SELF updateDescriptorWithContextAttributes(
+            UpdateEServiceDescriptorCommand command,
+            int dailyCallsPerConsumer,
+            EServiceDescriptorState state
+    );
+
+    SELF updateDescriptorWithContextAttributes(
+            Consumer<UpdateEServiceDescriptorCommand> commandConfig,
+            int dailyCallsPerConsumer,
+            EServiceDescriptorState state
+    );
 }

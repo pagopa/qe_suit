@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
@@ -15,6 +16,7 @@ import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 public class EServiceCreationJourneySteps {
@@ -104,26 +106,6 @@ public class EServiceCreationJourneySteps {
                 .archiveEService(GracePeriodDays.NUMBER_60);
     }
 
-    @Given("crea un EService {asyncExchange} con un attributo certificato e soglia personalizzata per fruitore a {int}")
-    public void createEServiceWithCertifiedAttributeAndCustomThreshold(boolean asyncExchange, int customThreshold, DataTable defaultThresholds) {
-        Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
-        interopJourney.createCertifiedAttribute();
-
-        EServiceCreationCommand eServiceCommand = eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(asyncExchange);
-        UpdateEServiceDescriptorCommand updateCommand = eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(
-                thresholdsMap.getOrDefault("consumerThreshold", 10),
-                thresholdsMap.getOrDefault("totalThreshold", 20)
-        );
-
-        Attribute attribute = entityStore.getLastOrThrow(Attribute.class);
-        attribute = attribute.toBuilder().dailyCallsPerConsumer(customThreshold).build();
-        Attributes attributes = Attributes.builder().certified(List.of(attribute)).build();
-        updateCommand.attributes(attributes);
-
-        interopJourney
-                .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
-                .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
-    }
 
     @Given("un e-service in {eServiceDescriptorState}, creato dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}")
     public void createEService(EServiceDescriptorState state, Tenant producer, int customThreshold, DataTable defaultThresholds) {

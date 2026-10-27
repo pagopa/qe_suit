@@ -2,6 +2,8 @@ package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.interop.bff.eservice_template.infrastructure.BffEServiceTemplateRequestFactory;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice_template.application.*;
 import it.pagopa.interop.common.eservice_template.domain.*;
@@ -21,7 +23,9 @@ class EServiceTemplateJourneyTest {
     private final BffEServiceTemplateRequestFactory factory = new BffEServiceTemplateRequestFactory();
     private final EServiceTemplateVersionUseCase versions = new EServiceTemplateVersionUseCase(gateway, factory);
     private final InMemoryEntityStore store = new InMemoryEntityStore();
-    private final EServiceTemplateJourneyImpl journey = new EServiceTemplateJourneyImpl(templates, versions, factory, store);
+    private final EServiceTemplateJourneyImpl journey = new EServiceTemplateJourneyImpl(
+            templates, versions, mock(EServiceTemplateInstanceUseCase.class),
+            mock(EServiceDescriptorUseCase.class), factory, mock(EServiceRequestFactory.class), store);
     private final EServiceTemplateVersion draft = EServiceTemplateVersion.builder()
             .id(UUID.randomUUID()).version("1").state(DRAFT).build();
     private final EServiceTemplate template = EServiceTemplate.builder().id(UUID.randomUUID())

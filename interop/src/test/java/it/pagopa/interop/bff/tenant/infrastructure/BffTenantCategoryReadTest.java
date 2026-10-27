@@ -9,6 +9,7 @@ import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.bff.attribute.infrastructure.BffAttributeGateway;
 import it.pagopa.interop.bff.attribute.infrastructure.BffAttributeMapper;
 import it.pagopa.interop.bff.attribute.infrastructure.BffAttributeRestClient;
+import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorGateway;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
@@ -129,6 +130,7 @@ class BffTenantCategoryReadTest {
                     """.formatted(attributeId)));
         });
         var gateway = new BffAttributeGateway(new BffAttributeRestClient(chains, apiClient),
+                mock(BffEServiceDescriptorGateway.class),
                 Mappers.getMapper(BffAttributeMapper.class));
 
         assertThat(gateway.findAttributeByOriginAndCode("IPA", "L6")).get()
@@ -156,6 +158,7 @@ class BffTenantCategoryReadTest {
                     .setBody("{\"status\":" + status + ",\"detail\":\"Attribute IPA/L18 not found\"}").build());
         });
         var gateway = new BffAttributeGateway(new BffAttributeRestClient(chains, apiClient),
+                mock(BffEServiceDescriptorGateway.class),
                 Mappers.getMapper(BffAttributeMapper.class));
 
         assertThat(gateway.findAttributeByOriginAndCode("IPA", "L18")).isEmpty();

@@ -143,7 +143,7 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
             case DRAFT -> {}
             case PUBLISHED -> {
                 EServiceDescriptor publishedDescriptor = eServiceDescriptorUseCase.publishDescriptor(updatedEService, updatedDescriptor);
-                updatedEService.addDescriptor(publishedDescriptor);
+                updatedEService.upsertDescriptor(publishedDescriptor);
                 entityStore.upsert(updatedEService);
             }
             default -> throw new UnsupportedOperationException(String.format("La transizione allo stato %s non è ancora supportata nel Journey.", state));

@@ -13,6 +13,8 @@ import it.pagopa.interop.web.infrastructure.WebCommonGateway;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
@@ -30,6 +32,16 @@ public class WebAttributeGateway implements AttributeGateway {
 
     @Override
     public Attribute getAttribute(AttributeRef attributeRef) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Optional<Attribute> findAttributeByOriginAndCode(String origin, String code) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Attribute createAttribute(Attribute attribute) {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 

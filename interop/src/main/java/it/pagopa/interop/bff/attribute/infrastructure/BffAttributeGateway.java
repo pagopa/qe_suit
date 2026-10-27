@@ -80,6 +80,11 @@ public class BffAttributeGateway implements AttributeGateway {
     }
 
     @Override
+    public Attribute createCertifiedAttribute(Attribute attribute) {
+        return createAttribute(attribute);
+    }
+
+    @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
     }

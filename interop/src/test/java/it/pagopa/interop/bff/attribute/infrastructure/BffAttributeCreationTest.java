@@ -6,6 +6,7 @@ import io.restassured.response.Response;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
+import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorGateway;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
@@ -51,6 +52,7 @@ class BffAttributeCreationTest {
         var store = mock(EntityStore.class);
         var chains = new TestChainFactory(mock(LastApiResponseStore.class), store);
         var gateway = new BffAttributeGateway(new BffAttributeRestClient(chains, client),
+                mock(BffEServiceDescriptorGateway.class),
                 Mappers.getMapper(BffAttributeMapper.class));
 
         Attribute attribute = gateway.createAttribute(Attribute.builder()

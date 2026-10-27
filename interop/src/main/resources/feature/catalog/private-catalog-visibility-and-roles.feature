@@ -152,10 +152,10 @@ Feature: Visibilità degli e-service nel catalogo privato
       | ente               |
       | Comune di Pozzallo |
     And i seguenti e-service pubblicati:
-      | alias | erogatore        | nome          |
-      | ES-1  | Comune di Milano | E-service Mio |
+      | alias | erogatore        | nome               |
+      | ES-1  | Comune di Milano | E-service Pomodoro |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
-    When <tenant> cerca nel catalogo "Mio"
+    When <tenant> cerca nel catalogo "Pomodoro"
     Then per l'e-service "ES-1" il risultato riporta:
       | proprietà | valore   |
       | è mio     | <valore> |

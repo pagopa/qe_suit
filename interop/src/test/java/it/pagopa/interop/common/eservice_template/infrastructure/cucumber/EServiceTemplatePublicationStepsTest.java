@@ -40,7 +40,8 @@ class EServiceTemplatePublicationStepsTest {
     void aliasesAreRegisteredAndCreatorIsExplicitForEveryTemplate() {
         var first = configuration("TPL-1", "Template Stampo Alfa", Tenant.COMUNE_DI_MILANO);
         var second = configuration("TPL-2", "Template Stampo Beta", Tenant.SOGECAP);
-        when(journey.createEServiceTemplate(any(), eq(EServiceTemplateVersionState.PUBLISHED))).thenAnswer(invocation -> {
+        when(journey.createEServiceTemplate(any(EServiceTemplateCreationCommand.class),
+                eq(EServiceTemplateVersionState.PUBLISHED))).thenAnswer(invocation -> {
             var command = (BffEServiceTemplateCreationCommand) invocation.getArgument(0);
             entities.upsert(EServiceTemplate.builder().id(UUID.randomUUID())
                     .name(command.getBffCreationPayload().getName()).build());
