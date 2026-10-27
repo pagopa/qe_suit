@@ -17,7 +17,9 @@ import jakarta.validation.constraints.NotEmpty;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public final class JacksonMutationValidityResolver implements MutationValidityResolver {
     private final ObjectMapper objectMapper;
@@ -60,7 +62,8 @@ public final class JacksonMutationValidityResolver implements MutationValidityRe
             return ContractValidity.UNKNOWN;
         }
 
-        if (meta.notBlank || meta.notEmpty || meta.minSize != null || meta.maxSize != null) return ContractValidity.VALID;
+        if (meta.notBlank || meta.notEmpty || meta.minSize != null || meta.maxSize != null)
+            return ContractValidity.VALID;
 
         return ContractValidity.UNKNOWN;
     }
@@ -141,7 +144,10 @@ public final class JacksonMutationValidityResolver implements MutationValidityRe
         }
 
         static PropertyMeta from(BeanPropertyDefinition property) {
-            List<AnnotatedMember> members = List.of(property.getAccessor(), property.getField(), property.getGetter()).stream().filter(java.util.Objects::nonNull).toList();
+            List<AnnotatedMember> members = Stream.of(property.getAccessor(), property.getField(), property.getGetter())
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .toList();
             JsonProperty jsonProperty = firstAnnotation(members, JsonProperty.class);
             jakarta.validation.constraints.Size size = firstAnnotation(members, jakarta.validation.constraints.Size.class);
             boolean notNull = hasAny(members, Nonnull.class, NotNull.class);
