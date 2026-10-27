@@ -77,7 +77,6 @@ selettore:
 # Bearer token for users
 # ============================================================================
 token:
-  mittente: ${pn.external.bearer-token.tokentestMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
   session:
     lucrezia: ${pn.external.session-token.lucrezia:REPLACE_ME}

@@ -1,3 +1,4 @@
+@channel:Given=WEB,When=WEB,Then=WEB
 Feature: Login pagoPA demo
 
 Scenario: Login pagoPA mittente
