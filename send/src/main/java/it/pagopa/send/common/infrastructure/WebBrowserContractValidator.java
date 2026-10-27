@@ -5,7 +5,6 @@ import it.pagopa.infrastructure.contract.browser.WebContractValidator;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 
-import java.util.List;
 import java.util.Objects;
 
 public class WebBrowserContractValidator {
@@ -21,33 +20,19 @@ public class WebBrowserContractValidator {
         this.currentUserSession = Objects.requireNonNull(currentUserSession);
     }
 
-    public WebContractStages.UserStage as(User tenant, List<? extends User> recipients) {
-        Objects.requireNonNull(tenant);
-        Objects.requireNonNull(recipients);
+    /**
+     * Esegue i test autenticando il browser con l'utente indicato (PA, PF o PG).
+     */
+    public WebContractStages.UserStage as(User user) {
+        Objects.requireNonNull(user);
 
-        return delegate.withContext(
-                () -> {
-                    currentUserSession.setSender(tenant);
-                    currentUserSession.setRecipients(List.copyOf(recipients));
-                }
-        );
+        return delegate.withContext(() -> currentUserSession.setUser(user));
     }
 
     /**
-     * Come {@link #as(User, List)}, ma per gli scenari "come destinatario PF/PG": nessun
-     * tenant mittente, un solo destinatario che diventa anche l'attore autenticato lato UI
-     * (vedi {@code CurrentUserSession#getCurrentActor()}).
+     * Come {@link #as(User)}: rende esplicito, nei test, che l'utente è un destinatario PF/PG.
      */
     public WebContractStages.UserStage asRecipient(User recipient) {
-        Objects.requireNonNull(recipient);
-
-        return delegate.withContext(
-                () -> {
-                    // la sessione è condivisa tra i test dello stesso thread: senza azzerare il mittente di un test
-                    // precedente, getCurrentActor() restituirebbe ancora lui al posto del destinatario
-                    currentUserSession.setSender(null);
-                    currentUserSession.setRecipients(List.of(recipient));
-                }
-        );
+        return as(recipient);
     }
 }

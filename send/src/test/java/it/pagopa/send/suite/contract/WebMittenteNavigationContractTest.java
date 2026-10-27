@@ -82,7 +82,7 @@ public class WebMittenteNavigationContractTest {
     }
 
     private <P extends Page> Stream<DynamicTest> reachabilityTest(Class<P> pageType) {
-        return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1), List.of())
+        return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1))
                 .on(pageType)
                 .tests(Stream.of(new WebScenario<>(
                         "controllo caricamento pagina " + pageType.getSimpleName(),
@@ -110,7 +110,7 @@ public class WebMittenteNavigationContractTest {
     }
 
     private Stream<DynamicTest> checkColumnGroupsScenarios() {
-        return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1), List.of())
+        return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1))
                 .on(DashboardPage.class)
                 .tests(Stream.of(new WebScenario<>(
                         "Check presenza colonna 'Gruppi' su Dashboard Notifiche",

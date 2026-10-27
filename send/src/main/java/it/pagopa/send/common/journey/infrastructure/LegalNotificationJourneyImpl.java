@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,14 +37,13 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
 
     @Override
     public LegalNotificationJourneyImpl withSender(User tenant) {
-        currentUserSession.setSender(tenant);
+        currentUserSession.setUser(tenant);
         return this;
     }
 
     @Override
     public LegalNotificationJourneyImpl withRecipient(RecipientSpec recipient) {
         legalNotificationUseCase.addRecipient(recipient);
-        currentUserSession.setRecipients(List.of(recipient.recipient()));
         return this;
     }
 
@@ -57,7 +55,7 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
 
     @Override
     public LegalNotificationJourneyImpl sendNotification(User sender, NotificationStatus targetStatus) {
-        currentUserSession.setSender(sender);
+        currentUserSession.setUser(sender);
         legalNotificationUseCase.sendNotification(sender, targetStatus);
         log.info("Notifica legale inviata, stato raggiunto: {}", targetStatus);
         return this;
