@@ -5,7 +5,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.DelegatedNotificationPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
@@ -28,25 +28,25 @@ import java.util.stream.Stream;
  * compaiono solo se ci sono notifiche delegate all'impresa, il selettore del gruppo solo se l'impresa ha dei gruppi: non
  * vengono verificati.
  */
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebDelegatedNotificationPGContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Titolo "In arrivo dalle deleghe".
      */
     @TestFactory
     Stream<DynamicTest> shouldShowDelegatedNotificationListTexts() {
-        return webContractValidator.asRecipient(Recipient.PETRARCA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.IMPRESA_2))
                 .on(DelegatedNotificationPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
@@ -64,7 +64,7 @@ public class WebDelegatedNotificationPGContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldNotShowNotificationListOnlyComponents() {
-        return webContractValidator.asRecipient(Recipient.PETRARCA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.IMPRESA_2))
                 .on(DelegatedNotificationPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(

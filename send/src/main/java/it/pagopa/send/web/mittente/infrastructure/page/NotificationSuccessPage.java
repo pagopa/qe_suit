@@ -7,7 +7,7 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import org.assertj.core.api.Assertions;
 
-@Url("${url.selfcare.notifiche.base}/dashboard/nuova-notifica#selfCareToken=${token.mittente}")
+@Url("${url.notifiche.mittente.new-notification}")
 public interface NotificationSuccessPage extends Page {
 
     @XPath("//*[@id='title-sync-feedback']")

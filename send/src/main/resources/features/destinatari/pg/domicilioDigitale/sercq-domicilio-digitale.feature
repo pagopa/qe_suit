@@ -1,3 +1,4 @@
+@channel:Given=WEB,When=WEB,Then=WEB
 Feature: Abilitazione Domicilio Digitale (SERCQ) per persone giuridiche
    In qualità di un utente di una PG
    voglio ricevere le notifiche al mio domicilio digitale

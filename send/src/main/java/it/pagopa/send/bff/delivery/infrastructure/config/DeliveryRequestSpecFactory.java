@@ -29,7 +29,7 @@ public class DeliveryRequestSpecFactory {
     }
 
     public RequestSpecBuilder create() {
-        User sender = currentUserSessionProvider.getObject().getSender();
+        User sender = currentUserSessionProvider.getObject().getUser();
         String apiKey = usersProperties.findByUsername(sender.getUsername())
                 .map(UsersProperties.UserEntry::deliveryApiKey)
                 .orElse(null);

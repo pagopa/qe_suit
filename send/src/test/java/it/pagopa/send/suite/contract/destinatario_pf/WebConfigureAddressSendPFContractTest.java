@@ -4,7 +4,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.send.web.infrastructure.page.ConfigureAddressSendPage;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
@@ -32,13 +32,12 @@ import java.util.stream.Stream;
  * La terza card, "Preferisco attivare solo SEND sull'app IO", è mostrata solo agli utenti senza recapiti di cortesia e
  * non viene verificata. Nessuno scenario preme "Salta e vai alle tue notifiche", che segna la configurazione come fatta, né conferma i wizard.
  */
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebConfigureAddressSendPFContractTest {
@@ -67,13 +66,14 @@ public class WebConfigureAddressSendPFContractTest {
     private static final String SKIP = "Salta e vai alle tue notifiche";
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Testi della pagina e delle due card mostrate a tutti, "Scelgo il meglio di SEND" e "Voglio solo gli avvisi".
      */
     @TestFactory
     Stream<DynamicTest> shouldShowConfigureSendTexts() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(ConfigureAddressSendPage.class)
                 .tests(textScenarios());
     }
@@ -117,7 +117,7 @@ public class WebConfigureAddressSendPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowConfigureSendButtons() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(ConfigureAddressSendPage.class)
                 .tests(buttonScenarios());
     }

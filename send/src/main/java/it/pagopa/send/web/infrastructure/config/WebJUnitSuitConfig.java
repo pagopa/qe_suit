@@ -7,13 +7,13 @@ import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
 import it.frontend.e2e.framework.web.adapter.selenium.SeleniumApiAdapter;
 import it.frontend.e2e.framework.web.config.WebSuiteBuilder;
 import it.frontend.e2e.framework.web.model.location.Url;
+import it.pagopa.infrastructure.context.InMemoryBrowserContext;
 import it.pagopa.infrastructure.contract.browser.WebContractValidator;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.web.infrastructure.config.WebConfig;
 import it.pagopa.send.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityHandler;
 import it.pagopa.send.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityImpl;
-import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import it.pagopa.send.web.login.infrastructure.DynamicUserTokenProvider;
 import it.pagopa.send.web.login.infrastructure.SelfCareSessionPayloadFactory;
 import org.springframework.beans.factory.ObjectProvider;
@@ -28,16 +28,12 @@ import org.springframework.core.env.Environment;
 /**
  * Equivalente di {@link WebConfig} per i test JUnit puri (contract test), che girano fuori da uno
  * scenario Cucumber: {@code cucumber-glue} (lo scope dietro {@code @ScenarioScope}) non è
- * registrato, quindi non si possono riusare i bean {@code @ScenarioScope} già scansionati
- * ({@link WebBrowserContext}, {@code AuthenticatedLocatableCapabilityImpl}/{@code Handler} — che
- * dipende da quello). Si ricostruisce qui, a mano, la stessa identica catena
- * (adapter → {@link AuthenticatedLocatableCapabilityImpl}, stesso meccanismo a sessionStorage
- * usato da Cucumber, invariato) usando un {@link WebBrowserContext} semplice (oggetto Java, non
- * bean Spring: registrarlo come bean con lo stesso nome/tipo di quello scansionato farebbe fallire
- * l'avvio del contesto per bean duplicati) il cui {@code currentUser} viene letto da
- * {@link CurrentUserSession#getCurrentActor()} (sender se presente, altrimenti il primo
- * recipient), già popolato a quel punto da {@code LegalNotificationJourneyImpl.sendNotification}
- * oppure esplicitamente da {@code WebBrowserContractValidator#as}/{@code #asRecipient}.
+ * registrato, quindi non si possono riusare i bean {@code @ScenarioScope} già scansionati. Si
+ * ricostruisce qui, a mano, la catena adapter → {@link AuthenticatedLocatableCapabilityImpl}, con lo
+ * stesso meccanismo a sessionStorage usato da Cucumber. La capability legge l'utente da
+ * {@link CurrentUserSession#getUser()} al momento della navigazione (impostato da
+ * {@code WebBrowserContractValidator#as}/{@code #asRecipient}) e tiene l'URL corrente in un
+ * {@link InMemoryBrowserContext} proprio di ogni browser.
  */
 @Configuration(proxyBeanMethods = false)
 @Profile("junit")
@@ -75,11 +71,8 @@ public class WebJUnitSuitConfig {
         );
         IWebPresentationApiAdapter adapter = new SeleniumApiAdapter(settings);
 
-        WebBrowserContext webBrowserContext = new WebBrowserContext();
-        webBrowserContext.setCurrentUser(currentUserSession.getCurrentActor());
-
         AuthenticatedLocatableCapabilityImpl capability = new AuthenticatedLocatableCapabilityImpl(
-                adapter, webBrowserContext, sessionPayloadFactory, tokenProvider);
+                adapter, currentUserSession, new InMemoryBrowserContext(), sessionPayloadFactory, tokenProvider);
         AuthenticatedLocatableCapabilityHandler handler = new AuthenticatedLocatableCapabilityHandler(capability);
 
         return WebSuiteBuilder.builder()

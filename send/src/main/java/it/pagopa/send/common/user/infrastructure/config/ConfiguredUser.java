@@ -55,7 +55,7 @@ record ConfiguredUser(UserType type, String username, String password, String ta
         return familyName;
     }
 
-    // come in Recipient: il codice fiscale personale se c'è, altrimenti il taxId (per una PF coincidono)
+    // il codice fiscale personale se c'è, altrimenti il taxId (per una PF coincidono)
     @Override
     public String getFiscalNumber() {
         return personalTaxId != null ? personalTaxId : taxId;

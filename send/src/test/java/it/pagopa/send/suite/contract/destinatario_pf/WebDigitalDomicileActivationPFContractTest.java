@@ -4,7 +4,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DigitalDomicileActivationPFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
@@ -33,13 +33,12 @@ import java.util.stream.Stream;
  * aggiungerli) e non viene verificato, come l'avviso sulla PEC del primo passo. Il riepilogo si raggiunge solo se
  * l'utente ha un'email di cortesia, quindi non viene verificato.
  */
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebDigitalDomicileActivationPFContractTest {
@@ -70,6 +69,7 @@ public class WebDigitalDomicileActivationPFContractTest {
     private static final String EMAIL_STEP_DESCRIPTION = "L’email dove ti avviseremo quando ricevi una comunicazione a valore legale su SEND.";
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Testi comuni a tutti i passi: titolo del wizard e nomi dei passi "Come funziona", "Inserisci la tua email" e
@@ -77,7 +77,7 @@ public class WebDigitalDomicileActivationPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowActivationWizardTexts() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(DigitalDomicileActivationPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
@@ -101,7 +101,7 @@ public class WebDigitalDomicileActivationPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowHowItWorksStep() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(DigitalDomicileActivationPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
@@ -137,7 +137,7 @@ public class WebDigitalDomicileActivationPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowEmailStep() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(DigitalDomicileActivationPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(

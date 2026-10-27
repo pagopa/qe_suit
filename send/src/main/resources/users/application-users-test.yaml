@@ -79,6 +79,9 @@ users:
     email: b.barone@test.email.it
     ipa-code: c_e897
     has-groups: true
+    # api-key delle chiamate B2B (header x-api-key): gruppi della PA e notifiche
+    groups-api-key: ${pn.external.groups-api-key.albino63:}
+    delivery-api-key: ${pn.external.delivery-api-key.albino63:}
     roles:
       - party-role: DELEGATE
         role: admin

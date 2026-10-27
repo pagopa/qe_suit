@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * Un destinatario dopo la risoluzione dell'identità (taxId/denominazione, eventualmente
- * sovrascritti rispetto al {@code Recipient} censito), dell'indirizzo e dei pagamenti (vedi
+ * sovrascritti rispetto all'utenza configurata), dell'indirizzo e dei pagamenti (vedi
  * {@link ResolvedPayment}), pronto per essere tradotto nel DTO OpenAPI del canale scelto.
  */
 public record ResolvedRecipient(UserType type, String taxId, String denomination,

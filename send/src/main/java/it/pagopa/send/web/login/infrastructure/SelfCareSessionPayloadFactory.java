@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,6 +65,10 @@ public class SelfCareSessionPayloadFactory {
     }
 
     private void addTenantFields(Map<String, Object> payload, User tenant) {
+        // il portale mittente usa desired_exp come scadenza della sessione (è l'exp del sessionToken) e non vuole i
+        // claim del JWT alla radice, a differenza del portale cittadino
+        payload.put("desired_exp", payload.get("exp"));
+        List.of("iat", "exp", "iss", "aud", "jti").forEach(payload::remove);
         payload.put("email", tenant.getEmail());
         payload.put("family_name", tenant.getFamilyName());
 

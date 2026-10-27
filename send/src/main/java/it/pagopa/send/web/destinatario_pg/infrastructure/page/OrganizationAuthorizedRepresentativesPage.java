@@ -9,7 +9,8 @@ import org.assertj.core.api.Assertions;
 @Url("${url.notifiche.persona-giuridica.delegati}")
 public interface OrganizationAuthorizedRepresentativesPage extends Page {
 
-    @XPath("//*[@id=\"simple-tabpanel--1\"]/div/div/div[1]/h6")
+    // titolo della sezione: il primo h2 (con lo stile h6) del pannello del tab
+    @XPath("(//*[@role=\"tabpanel\"]//h2)[1]")
     Readable<String> breadcrumbs();
 
     @Override

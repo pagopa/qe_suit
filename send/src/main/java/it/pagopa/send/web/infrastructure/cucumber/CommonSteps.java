@@ -9,7 +9,6 @@ import it.pagopa.send.web.infrastructure.page.component.Header;
 import it.pagopa.send.web.infrastructure.page.component.Sidebar;
 import it.pagopa.send.web.login.infrastructure.page.AbstractComunePickerPage;
 import it.pagopa.send.web.supporto.infrastructure.page.BackstageProfilePage;
-import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import it.pagopa.send.web.infrastructure.page.component.BackNavigable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

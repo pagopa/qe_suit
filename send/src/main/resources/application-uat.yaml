@@ -78,7 +78,6 @@ selettore:
 # Bearer token for users
 # ============================================================================
 token:
-  mittente: ${pn.external.bearer-token.tokentestMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
   session:
     lucrezia: ${pn.external.session-token.lucrezia:REPLACE_ME}
@@ -94,7 +93,7 @@ token:
 bff:
   api:
     base-url: https://webapi.uat.notifichedigitali.it
-    bearer-token: ${pn.external.bearer-token.tokenBffApiTest}
+    bearer-token: ${pn.external.bearer-token.tokenBffApiUat:REPLACE_ME}
 
 # ============================================================================
 # GPD API Configuration (posizioni debitorie)

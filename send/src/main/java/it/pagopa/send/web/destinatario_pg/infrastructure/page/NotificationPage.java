@@ -19,7 +19,7 @@ import org.assertj.core.api.Assertions;
  * filtri, tabella e banner dipendono dalle notifiche ricevute, dai recapiti e dal ruolo. È usato anche dal login degli
  * step Cucumber. Il titolo completo è verificato da {@code WebNotificationPGContractTest}.
  */
-@Url("${url.notifiche.persona-giuridica.notifiche}#selfCareToken=${token}")
+@Url("${url.notifiche.persona-giuridica.notifiche}")
 public interface NotificationPage extends RecipientNotificationsPage {
 
     // il titolo contiene il nome dell'impresa, per esempio "In arrivo per Le Epistolae srl"
