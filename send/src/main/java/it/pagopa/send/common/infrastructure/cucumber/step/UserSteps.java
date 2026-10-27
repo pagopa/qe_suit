@@ -5,8 +5,6 @@ import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 /**
  * Impostazione dell'utente dello scenario, agnostica dal canale: scrive solo in {@link CurrentUserSession}, da cui
  * gli adapter di ogni canale leggono l'utente con cui operare.
@@ -16,13 +14,12 @@ public class UserSteps {
     private final CurrentUserSession currentUserSession;
 
     @Given("l'utente è un {string} di {user}")
-    public void setSender(String role, User tenant) {
-        currentUserSession.setSender(tenant);
+    public void setTenantUser(String role, User tenant) {
+        currentUserSession.setUser(tenant);
     }
 
     @Given("il destinatario è {user}")
     public void setRecipient(User recipient) {
-        currentUserSession.setSender(null);
-        currentUserSession.setRecipients(List.of(recipient));
+        currentUserSession.setUser(recipient);
     }
 }
