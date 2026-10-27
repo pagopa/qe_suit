@@ -5,10 +5,8 @@ import io.cucumber.java.en.When;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
-import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
-import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationType;
@@ -24,7 +22,6 @@ public class LegalNotificationJourneySteps {
     private final SendJourney sendJourney;
     private final LegalNotificationUseCase legalNotificationUseCase;
     private final RecipientSpecFactory recipientSpecFactory;
-    private final CurrentChannel<Channel> currentChannel;
     private final CurrentUserSession currentUserSession;
     private final UserProvider userProvider;
 
@@ -52,7 +49,7 @@ public class LegalNotificationJourneySteps {
      * (Lucrezia e Petrarca), utile per scenari che non hanno bisogno di destinatari/dati
      * configurabili. Per scenari che richiedono destinatari/dati variabili, usare invece i tre
      * step separati ({@link #prepareNotification}, {@link #addRecipientToNotification},
-     * {@link #sendNotificationViaBff}).
+     * {@link #sendNotification}).
      */
     @Given("una notifica di tipo multidestinatario creata dalla PA {user}")
     public void createMultiRecipientNotification(User sender) {
@@ -84,7 +81,7 @@ public class LegalNotificationJourneySteps {
                 .sendNotification(sender, NotificationStatus.ACCEPTED);
     }
 
-    @Given("viene ricercata e aperta una notifica che rispetta i seguenti criteri:")
+    @When("viene ricercata e aperta una notifica che rispetta i seguenti criteri:")
     public void searchAndReadLegalNotification(Map<String, String> criteria) {
         sendJourney
                 .prepareNotification(criteria)
@@ -93,9 +90,9 @@ public class LegalNotificationJourneySteps {
 
     /**
      * Primo step del flusso di creazione notifica multi-destinatario: compila i campi base della
-     * notifica (mittente escluso: viene impostato dallo step di invio). Agnostico dal channel;
+     * notifica e imposta la PA indicata come mittente nella sessione. Agnostico dal channel;
      * ripetibile in combinazione con {@link #addRecipientToNotification} e concluso da
-     * {@link #sendNotificationViaBff}. A differenza degli step sopra, che compongono un unico
+     * {@link #sendNotification}. A differenza degli step sopra, che compongono un unico
      * step tramite {@link SendJourney}, questi tre step chiamano {@link LegalNotificationUseCase}
      * direttamente: devono per forza restare su step Cucumber separati.
      */
@@ -117,12 +114,15 @@ public class LegalNotificationJourneySteps {
     }
 
     /**
-     * Terzo e ultimo step: invia la notifica predisposta tramite il canale BFF e attende che
-     * raggiunga lo stato indicato. Quando verrà implementato il canale WEB si aggiungerà un
-     * secondo metodo analogo con testo letterale "tramite interfaccia web".
+     * Terzo e ultimo step: invia la notifica predisposta tramite il canale attivo e attende che
+     * raggiunga lo stato indicato.
      */
     @When("la notifica viene sottomessa e si attende che lo stato diventi {string}")
-    public void sendNotificationViaBff(User sender, String targetStatus) {
-        legalNotificationUseCase.sendNotification(sender, NotificationStatus.fromValue(targetStatus));
+    public void sendNotification(String targetStatus) {
+        // il mittente è quello impostato dallo step "la PA ... predispone una nuova notifica"
+        legalNotificationUseCase.sendNotification(currentUserSession.getSender(), NotificationStatus.ACCEPTED);
+        // sendNotification attende lo stato della richiesta (che arriva al massimo ad ACCEPTED): lo stato
+        // della notifica indicato nella feature si attende a parte
+        legalNotificationUseCase.waitForNotificationStatus(NotificationStatus.fromValue(targetStatus));
     }
 }

@@ -13,7 +13,8 @@ import it.pagopa.infrastructure.context.CucumberLastApiResponseStore;
 import it.pagopa.infrastructure.context.CucumberTestContext;
 import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngine;
 import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngineConfig;
-import it.pagopa.send.common.infrastructure.context.cucumber.UserSessionContext;
+import it.pagopa.send.common.infrastructure.context.CucumberCurrentUserSession;
+import it.pagopa.send.common.infrastructure.cucumber.channel.SendChannelEngineConfigs;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.kernel.domain.Channel;
 import org.springframework.context.annotation.Bean;
@@ -64,7 +65,12 @@ public class CucumberConfig {
     @ScenarioScope
     @Primary
     CurrentUserSession currentUserSession() {
-        return new UserSessionContext();
+        return new CucumberCurrentUserSession();
+    }
+
+    @Bean
+    GherkinChannelEngineConfig<Channel> channelModule() {
+        return SendChannelEngineConfigs.sendChannelModule();
     }
 
     @Bean

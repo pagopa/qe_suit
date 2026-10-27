@@ -2,8 +2,9 @@ package it.pagopa.send.suite.contract;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.journey.application.SendJourney;
@@ -22,20 +23,18 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebNotificationDetailsContractTest {
@@ -43,10 +42,12 @@ public class WebNotificationDetailsContractTest {
     private final SendJourney sendJourney;
     private final WebBrowserContractValidator webContractValidator;
     private final RecipientSpecFactory recipientSpecFactory;
+    private final UserProvider userProvider;
 
     @TestFactory
     Stream<DynamicTest> shouldValidateNotificationTimeline() {
-        RecipientSpec lucrezia = recipientSpecFactory.build(Recipient.LUCREZIA, Map.of(
+        User sender = userProvider.resolve(UserAlias.COMUNE_1);
+        RecipientSpec user1 = recipientSpecFactory.build(userProvider.resolve(UserAlias.USER_1), Map.of(
                 "physicalAddress_address", "Via@ok_890",
                 "physicalAddress_municipality", "COLLELUNGO",
                 "physicalAddress_province", "TR",
@@ -56,18 +57,18 @@ public class WebNotificationDetailsContractTest {
         ));
 
         LegalNotificationDomain createdNotification = sendJourney
-                .withSender(Tenant.GROSSINI)
+                .withSender(sender)
                 .prepareNotification(Map.of(
                         "subject", "Comunicazione di test multi-destinatario",
                         "physicalCommunication", "REGISTERED_LETTER_890",
                         "feePolicy", "FLAT_RATE"
                 ))
-                .withRecipient(lucrezia)
-                .sendNotification(Tenant.GROSSINI, NotificationStatus.ACCEPTED)
+                .withRecipient(user1)
+                .sendNotification(sender, NotificationStatus.ACCEPTED)
                 .waitForNotificationStatus(NotificationStatus.EFFECTIVE_DATE)
                 .get(LegalNotificationDomain.class);
 
-        return webContractValidator.as(Tenant.GROSSINI, List.of(lucrezia.recipient()))
+        return webContractValidator.as(sender, List.of(user1.recipient()))
                 .on(MittenteNotificationDetailsPage.class, createdNotification.getIun())
                 .tests(scenarios());
 
