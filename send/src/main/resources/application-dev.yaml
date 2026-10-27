@@ -45,6 +45,7 @@ url:
     persona-giuridica:
       base: https://imprese.dev.notifichedigitali.it
       notifiche: ${url.notifiche.persona-giuridica.base}/notifiche
+      notifiche-dettaglio: ${url.notifiche.persona-giuridica.base}/notifiche/${iun}/dettaglio
       notifiche-delegato: ${url.notifiche.persona-giuridica.base}/notifiche-delegato
       app-status: ${url.notifiche.persona-giuridica.base}/app-status
       integrazione-api: ${url.notifiche.persona-giuridica.base}/integrazione-api
