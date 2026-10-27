@@ -123,12 +123,12 @@ delivery:
 # ogni costante di Tenant, univoca per PA e per ambiente (qui: dev)
 pa:
   groups-api-key:
-    GROSSINI: ab1ea42c-baea-4fd2-9b2f-32e7f34c36b6
+    GROSSINI: REPLACE_ME
 
 # api-key per le API B2B delivery (header x-api-key), una entry per ogni costante di Tenant,
 # univoca per PA e per ambiente (qui: dev)
   delivery-api-key:
-    GROSSINI: 68c854bc-a234-4f08-b738-d632814c84cc
+    GROSSINI: REPLACE_ME
 
 # ============================================================================
 # Comunicazioni Bonarie (Combo) IUN Configuration for Dev
