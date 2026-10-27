@@ -6,7 +6,6 @@ import it.pagopa.send.common.delegation.domain.Delegation;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.journey.application.SendJourney;
-import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
@@ -62,7 +61,6 @@ public class WebNotificationTimelineDelegatoContractTest {
     private final WebBrowserContractValidator webContractValidator;
     private final SendJourney sendJourney;
     private final RecipientSpecFactory recipientSpecFactory;
-    private final LegalNotificationCreationRequest creationRequest;
     private final UserProvider userProvider;
 
     /**
@@ -156,24 +154,15 @@ public class WebNotificationTimelineDelegatoContractTest {
                 "pagoPA_number", "0",
                 "F24_number", "0"
         ));
-        // la richiesta di creazione è condivisa (singleton) e non viene svuotata tra un invio e l'altro: senza
-        // svuotarla, la notifica includerebbe anche i destinatari rimasti da invii precedenti
-        creationRequest.getRecipients().clear();
-        try {
-            return sendJourney
-                    .withSender(sender)
-                    .prepareNotification(Map.of(
-                            "subject", SUBJECT,
-                            "physicalCommunication", "REGISTERED_LETTER_890",
-                            "feePolicy", "FLAT_RATE"
-                    ))
-                    .withRecipient(recipient)
-                    .sendNotification(sender, NotificationStatus.ACCEPTED)
-                    .get(LegalNotificationDomain.class);
-        }
-        finally {
-            // anche dopo un invio fallito: i destinatari non restano per gli invii successivi
-            creationRequest.getRecipients().clear();
-        }
+        return sendJourney
+                .withSender(sender)
+                .prepareNotification(Map.of(
+                        "subject", SUBJECT,
+                        "physicalCommunication", "REGISTERED_LETTER_890",
+                        "feePolicy", "FLAT_RATE"
+                ))
+                .withRecipient(recipient)
+                .sendNotification(sender, NotificationStatus.ACCEPTED)
+                .get(LegalNotificationDomain.class);
     }
 }
