@@ -70,6 +70,15 @@ public class BffEServiceContractTest {
                 .tests();
     }
 
+    @TestFactory
+    Stream<DynamicTest> queryEServicesCatalog() {
+        return httpContractValidator
+                .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .apiCall(() -> apiClient.eservices().queryEServicesCatalog())
+                .payload(requestFactory::defaultSearchEServiceCatalogCommand)
+                .tests();
+    }
+
     private UUID createEServiceId(EServiceDescriptorState descriptorState) {
         EService createdEService = interopJourney
                 .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
