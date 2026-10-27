@@ -211,25 +211,42 @@ class EServiceDescriptorLifecycleUseCaseTest {
         verifyNoMoreInteractions(operations);
     }
 
-    @Test
-    void schedulesArchivingAndRefreshesStateBeforeSuspending() {
-        EServiceDescriptor published = draft.toBuilder().state(PUBLISHED).build();
+    @ParameterizedTest
+    @EnumSource(value = EServiceDescriptorState.class, names = {"ARCHIVING", "ARCHIVING_SUSPENDED"})
+    void schedulesArchivingAndWaitsForVisibilityBeforeCheckingOrSuspending(EServiceDescriptorState target) {
+        EServiceDescriptor deprecated = draft.toBuilder().state(DEPRECATED).build();
         EServiceDescriptor archiving = draft.toBuilder().state(ARCHIVING).build();
         EServiceDescriptor suspended = draft.toBuilder().state(ARCHIVING_SUSPENDED).build();
-        when(operations.getDescriptor(eService, draft)).thenReturn(published);
-        when(operations.getDescriptor(eService, published)).thenReturn(archiving);
+        when(operations.getDescriptor(eService, draft)).thenReturn(deprecated);
+        when(operations.awaitState(eService, deprecated, ARCHIVING)).thenReturn(archiving);
         when(operations.suspendDescriptor(eService, archiving)).thenReturn(suspended);
 
-        assertThat(lifecycle.bringToState(eService, draft, ARCHIVING_SUSPENDED)).isSameAs(suspended);
+        assertThat(lifecycle.bringToState(eService, draft, target))
+                .isSameAs(target == ARCHIVING ? archiving : suspended);
 
         var order = inOrder(operations);
         order.verify(operations).getDescriptor(eService, draft);
-        order.verify(operations).archiveDescriptor(eService, published, GracePeriodDays.NUMBER_60);
-        order.verify(operations).getDescriptor(eService, published);
-        order.verify(operations).suspendDescriptor(eService, archiving);
+        order.verify(operations).archiveDescriptor(eService, deprecated, GracePeriodDays.NUMBER_60);
+        order.verify(operations).awaitState(eService, deprecated, ARCHIVING);
+        if (target == ARCHIVING_SUSPENDED) {
+            order.verify(operations).suspendDescriptor(eService, archiving);
+        }
         order.verifyNoMoreInteractions();
     }
 
+    @Test
+    void stopsBeforeSuspendingWhenArchivingNeverBecomesVisible() {
+        var deprecated = draft.toBuilder().state(DEPRECATED).build();
+        when(operations.getDescriptor(eService, draft)).thenReturn(deprecated);
+        var timeout = new IllegalStateException("Archiving visibility timed out");
+        when(operations.awaitState(eService, deprecated, ARCHIVING)).thenThrow(timeout);
+
+        assertThatThrownBy(() -> lifecycle.bringToState(eService, draft, ARCHIVING_SUSPENDED))
+                .isSameAs(timeout);
+
+        verify(operations).archiveDescriptor(eService, deprecated, GracePeriodDays.NUMBER_60);
+        verify(operations, never()).suspendDescriptor(any(), any());
+    }
     @Test
     void failsWhenOperationReturnsAnUnexpectedState() {
         EServiceDescriptor published = draft.toBuilder().state(PUBLISHED).build();

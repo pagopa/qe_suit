@@ -60,6 +60,21 @@ class BffEServiceDescriptorLifecycleTest {
     }
 
     @Test
+    void archivingVisibilityPollingRetriesStaleReadsWithoutReschedulingTheWrite() {
+        var deprecated = EServiceDescriptor.builder().id(descriptorRef.id())
+                .state(EServiceDescriptorState.DEPRECATED).build();
+        var archiving = deprecated.toBuilder().state(EServiceDescriptorState.ARCHIVING).build();
+        doReturn(deprecated, deprecated, archiving).when(gateway)
+                .getEServiceDescriptor(serviceRef, descriptorRef);
+
+        assertThat(gateway.awaitDescriptorState(serviceRef, descriptorRef, EServiceDescriptorState.ARCHIVING))
+                .isSameAs(archiving);
+
+        verify(gateway, times(3)).getEServiceDescriptor(serviceRef, descriptorRef);
+        verifyNoInteractions(restClient);
+    }
+
+    @Test
     void delegatedPublicationPollsForWaitingForApprovalInsteadOfPublished() {
         EServiceDescriptor draft = EServiceDescriptor.builder()
                 .id(descriptorRef.id()).state(EServiceDescriptorState.DRAFT).build();

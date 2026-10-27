@@ -61,7 +61,7 @@ public class EServiceDescriptorLifecycleUseCase {
                 case SUSPEND -> descriptors.suspendDescriptor(eService, current);
                 case ARCHIVE -> {
                     descriptors.archiveDescriptor(eService, current, GracePeriodDays.NUMBER_60);
-                    yield descriptors.getDescriptor(eService, current);
+                    yield descriptors.awaitState(eService, current, step.expectedState());
                 }
             };
             requireState(current, step.expectedState());
