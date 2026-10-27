@@ -7,8 +7,6 @@ import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.informal_notification.infrastructure.factory.InformalRecipientSpecFactory;
 import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,10 +22,10 @@ public class InformalNotificationJourneySteps {
     private final InformalRecipientSpecFactory informalRecipientSpecFactory;
     private final CurrentUserSession currentUserSession;
 
-    @Given("una comunicazione bonaria di campagna {string} creata dalla PA {tenant} per {recipient}")
-    public void createInformalNotificationAllInOne(String campaignId, Tenant sender, Recipient recipient) {
+    @Given("una comunicazione bonaria di campagna {string} creata dalla PA {user} per {user}")
+    public void createInformalNotificationAllInOne(String campaignId, User sender, User recipient) {
         InformalRecipientSpec recipientSpec = informalRecipientSpecFactory.build(recipient, Map.of());
-        currentUserSession.setSender(sender);
+        currentUserSession.setUser(sender);
         sendJourney
                 .withInformalSender(sender)
                 .prepareInformalNotification(Map.of("campaignId", campaignId))
@@ -35,25 +33,23 @@ public class InformalNotificationJourneySteps {
                 .sendInformalNotification(sender);
     }
 
-    @Given("la PA {tenant} predispone una nuova comunicazione bonaria con i seguenti dati:")
-    public void prepareInformalNotification(Tenant tenant, Map<String, String> data) {
-        currentUserSession.setSender(tenant);
+    @Given("la PA {user} predispone una nuova comunicazione bonaria con i seguenti dati:")
+    public void prepareInformalNotification(User tenant, Map<String, String> data) {
+        currentUserSession.setUser(tenant);
         informalNotificationUseCase.prepareNotification(data);
     }
 
-    @Given("viene aggiunto {recipient} come destinatario della comunicazione bonaria con i seguenti dati:")
-    public void addRecipientToInformalNotification(Recipient recipient, Map<String, String> data) {
-        User sender = currentUserSession.getSender();
-        if (sender == null) {
-            throw new IllegalStateException("Nessun mittente impostato nella sessione prima di aggiungere il destinatario.");
-        }
+    @Given("viene aggiunto {user} come destinatario della comunicazione bonaria con i seguenti dati:")
+    public void addRecipientToInformalNotification(User recipient, Map<String, String> data) {
+        // il mittente è l'utente impostato dallo step "la PA ... predispone una nuova comunicazione bonaria"
+        User sender = currentUserSession.getUser();
         InformalRecipientSpec spec = informalRecipientSpecFactory.build(recipient, data);
         informalNotificationUseCase.addRecipient(sender, spec);
     }
 
-    @When("la comunicazione bonaria viene inviata dalla PA {tenant}")
-    public void sendInformalNotification(Tenant sender) {
-        currentUserSession.setSender(sender);
+    @When("la comunicazione bonaria viene inviata dalla PA {user}")
+    public void sendInformalNotification(User sender) {
+        currentUserSession.setUser(sender);
         informalNotificationUseCase.sendNotification(sender);
     }
 }

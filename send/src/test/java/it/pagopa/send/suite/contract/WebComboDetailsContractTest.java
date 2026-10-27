@@ -1,26 +1,23 @@
 package it.pagopa.send.suite.contract;
 
+import it.pagopa.send.common.user.domain.UserProvider;
+import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.informal_notification.domain.InformalNotificationDomain;
 import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.informal_notification.infrastructure.factory.InformalRecipientSpecFactory;
 import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.send.web.mittente.infrastructure.page.MittenteComboDetailsPage;
-import it.pagopa.send.JunitActiveProfilesResolver;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -32,16 +29,16 @@ import java.util.stream.Stream;
  * Documenti e Pagamenti e al corretto comportamento nel layout desktop e mobile.
  *
  */
-@ActiveProfiles(resolver = JunitActiveProfilesResolver.class)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebComboDetailsContractTest {
 
+    private final UserProvider userProvider;
     private final SendJourney sendJourney;
     private final InformalRecipientSpecFactory informalRecipientSpecFactory;
     private final WebBrowserContractValidator webContractValidator;
@@ -49,16 +46,16 @@ public class WebComboDetailsContractTest {
 
     @TestFactory
     Stream<DynamicTest> shouldValidateComboDetailsPageLayout() {
-        InformalRecipientSpec lucrezia = informalRecipientSpecFactory.build(Recipient.LUCREZIA, Map.of());
+        InformalRecipientSpec lucrezia = informalRecipientSpecFactory.build(userProvider.resolve(UserAlias.USER_1), Map.of());
 
         InformalNotificationDomain created = sendJourney
-                .withInformalSender(Tenant.GROSSINI)
+                .withInformalSender(userProvider.resolve(UserAlias.COMUNE_1))
                 .prepareInformalNotification(Map.of(
                         "subject", "Test notifica bonaria per contratto Web Dettaglio",
                         "campaignId", "FattOrd"
                 ))
                 .withInformalRecipient(lucrezia)
-                .sendInformalNotification(Tenant.GROSSINI);
+                .sendInformalNotification(userProvider.resolve(UserAlias.COMUNE_1));
 
         String campaignId = created.getCampaignId();
         String iun = created.getIun();
@@ -74,7 +71,7 @@ public class WebComboDetailsContractTest {
                     return detail != null && detail.getChannelsStatus() != null && !detail.getChannelsStatus().isEmpty();
                 });
 
-        return webContractValidator.as(Tenant.GROSSINI, List.of(Recipient.LUCREZIA))
+        return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1))
                 .on(MittenteComboDetailsPage.class, campaignId, iun)
                 .tests(scenarios());
     }

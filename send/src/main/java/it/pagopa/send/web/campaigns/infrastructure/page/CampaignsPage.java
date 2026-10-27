@@ -10,7 +10,7 @@ import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import org.assertj.core.api.Assertions;
 import java.util.Optional;
 
-@Url("${url.notifiche.mittente.campaigns}#selfCareToken=${selfCareToken}")
+@Url("${url.notifiche.mittente.campaigns}")
 public interface CampaignsPage extends Page {
     @XPath("//*[@id=\"Campagne-page\"]")
     Readable<String> header();

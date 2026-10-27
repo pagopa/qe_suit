@@ -118,17 +118,6 @@ delivery:
   api:
     base-url: https://api.dev.notifichedigitali.it # TODO verificare host corretto per l'ambiente dev
 
-# api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
-# ogni costante di Tenant, univoca per PA e per ambiente (qui: dev)
-pa:
-  groups-api-key:
-    GROSSINI: REPLACE_ME
-
-# api-key per le API B2B delivery (header x-api-key), una entry per ogni costante di Tenant,
-# univoca per PA e per ambiente (qui: dev)
-  delivery-api-key:
-    GROSSINI: REPLACE_ME
-
 # ============================================================================
 # Comunicazioni Bonarie (Combo) IUN Configuration for Dev
 # ============================================================================

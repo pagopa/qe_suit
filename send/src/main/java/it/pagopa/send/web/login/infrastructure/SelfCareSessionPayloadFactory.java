@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.send.common.user.domain.OrganizationRole;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -24,32 +23,6 @@ import java.util.Map;
 public class SelfCareSessionPayloadFactory {
 
     private final ObjectMapper objectMapper;
-
-    public String buildForTenant(Tenant tenant, String sessionToken) {
-        Map<String, Object> claims = extractClaims(sessionToken);
-        Object desiredExp = claims.getOrDefault("desired_exp", claims.get("exp"));
-
-        Map<String, Object> payload = new LinkedHashMap<>();
-        if (desiredExp != null) {
-            payload.put("desired_exp", desiredExp);
-        }
-        payload.put("email", tenant.getEmail());
-        payload.put("family_name", tenant.getFamilyName());
-        payload.put("fiscal_number", tenant.getFiscalNumber());
-        payload.put("name", tenant.getName());
-
-        Map<String, Object> organization = new LinkedHashMap<>();
-        organization.put("id", tenant.getOrganizationId());
-        organization.put("name", tenant.getOrganization());
-        organization.put("roles", tenant.getRoles().stream().map(this::toRoleMap).toList());
-        organization.put("fiscal_code", tenant.getTaxId());
-        organization.put("ipaCode", tenant.getIpaCode());
-        organization.put("hasGroups", tenant.isHasGroups());
-        payload.put("organization", organization);
-        payload.put("sessionToken", sessionToken);
-        payload.put("uid", tenant.getUid());
-        return serialize(payload, tenant.getUsername());
-    }
 
     /**
      *  Sessione dell'utente: la parte comune ({@link #basePayload}) più i campi del suo tipo di utenza, ente (PA)

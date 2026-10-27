@@ -7,7 +7,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @Suite
 @IncludeEngines("cucumber")
 @SelectClasspathResources({
-        @SelectClasspathResource("features")
+        @SelectClasspathResource("features-expanded")
 })
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),

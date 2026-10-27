@@ -9,7 +9,6 @@ import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.informal_notification.domain.ResolvedInformalRecipient;
 import it.pagopa.send.common.informal_notification.infrastructure.factory.InformalNotificationRequestFactory;
 import it.pagopa.send.common.kernel.domain.Channel;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.generated.openapi.clients.informal.model.FullSentInformalNotificationV1;
 import it.pagopa.send.generated.openapi.clients.informal.model.InformalNotificationRequestV1;
@@ -45,19 +44,13 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
     }
 
     @Override
-    public void addRecipient(Tenant sender, InformalRecipientSpec recipient) {
-        ResolvedInformalRecipient resolved = requestFactory.resolveRecipient(sender, recipient);
-        request.addRecipient(resolved);
-    }
-
-    @Override
     public void addRecipient(User user, InformalRecipientSpec recipient) {
         ResolvedInformalRecipient resolved = requestFactory.resolveRecipient(user, recipient);
         request.addRecipient(resolved);
     }
 
     @Override
-    public InformalNotificationDomain sendNotification(Tenant sender) {
+    public InformalNotificationDomain sendNotification(User sender) {
         requestFactory.applySender(request, sender);
 
         InformalNotificationRequestV1 payload = mapper.toRequestV1(request);
@@ -91,7 +84,7 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
         return domain;
     }
 
-    public InformalNotificationDomain sendNotification(Tenant sender, int interval) {
+    public InformalNotificationDomain sendNotification(User sender, int interval) {
         requestFactory.applySender(request, sender);
 
         InformalNotificationRequestV1 payload = mapper.toRequestV1(request);
