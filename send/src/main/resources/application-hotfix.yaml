@@ -29,6 +29,19 @@ url:
       deleghe: ${url.notifiche.cittadino.base}/deleghe
       add-deleghe: ${url.notifiche.cittadino.base}/deleghe/nuova
       app-status: ${url.notifiche.cittadino.base}/app-status
+      notifiche-dettaglio: ${url.notifiche.cittadino.base}/notifiche/${iun}/dettaglio
+      notifiche-dettaglio-timeline: ${url.notifiche.cittadino.base}/notifiche/${iun}/dettaglio/timeline
+      recapiti-domicilio-digitale-attivazione: ${url.notifiche.cittadino.base}/recapiti/domicilio-digitale/attivazione
+      recapiti-domicilio-digitale-gestione: ${url.notifiche.cittadino.base}/recapiti/domicilio-digitale/gestione
+      onboarding: ${url.notifiche.cittadino.base}/onboarding
+      onboarding-domicilio-digitale: ${url.notifiche.cittadino.base}/onboarding/domicilio-digitale
+      onboarding-domicilio-avvisi: ${url.notifiche.cittadino.base}/onboarding/avvisi
+      onboarding-domicilio-io: ${url.notifiche.cittadino.base}/onboarding/io
+      informativa-privacy: ${url.notifiche.cittadino.base}/informativa-privacy
+      termini-di-servizio: ${url.notifiche.cittadino.base}/termini-di-servizio
+      termini-di-servizio-sercq-send: ${url.notifiche.cittadino.base}/termini-di-servizio/sercq-send
+      assistenza: ${url.notifiche.cittadino.base}/assistenza
+      profilo: ${url.notifiche.cittadino.base}/profilo
     persona-giuridica:
       base: https://imprese.hotfix.notifichedigitali.it
       notifiche: ${url.notifiche.persona-giuridica.base}/notifiche
@@ -64,7 +77,6 @@ selettore:
 # Bearer token for users
 # ============================================================================
 token:
-  mittente: ${pn.external.bearer-token.tokenhotfixMittente}
   supporto: ${pn.external.bearer-token.tokenSupporto}
   session:
     lucrezia: ${pn.external.session-token.lucrezia:REPLACE_ME}
