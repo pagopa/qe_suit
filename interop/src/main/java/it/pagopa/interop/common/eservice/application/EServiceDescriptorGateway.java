@@ -25,10 +25,6 @@ public interface EServiceDescriptorGateway extends Plugin<Channel> {
             EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef
     );
 
-    EServiceDescriptor rejectDescriptor(
-            EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String reason
-    );
-
     EServiceDescriptor suspendDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
 
     EServiceDescriptor updateDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, UpdateEServiceDescriptorCommand command);

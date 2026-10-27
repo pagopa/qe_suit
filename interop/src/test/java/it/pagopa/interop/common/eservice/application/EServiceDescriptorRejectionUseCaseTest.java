@@ -11,9 +11,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class EServiceDescriptorRejectionUseCaseTest {
-    private final EServiceDescriptorGateway gateway = mock(EServiceDescriptorGateway.class);
-    private final EServiceDescriptorUseCase useCase =
-            new EServiceDescriptorUseCase(gateway, mock(EServiceRequestFactory.class));
+    private final EServiceDescriptorApprovalGateway gateway = mock(EServiceDescriptorApprovalGateway.class);
+    private final EServiceDescriptorApprovalUseCase useCase = new EServiceDescriptorApprovalUseCase(gateway);
     private final EService service = EService.builder().id(UUID.randomUUID()).build();
     private final EServiceDescriptor pending =
             EServiceDescriptor.builder().id(UUID.randomUUID()).state(WAITING_FOR_APPROVAL).build();

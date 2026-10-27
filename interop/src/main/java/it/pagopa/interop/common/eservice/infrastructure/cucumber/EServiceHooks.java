@@ -3,7 +3,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 import io.cucumber.java.After;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
-import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorApprovalUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
@@ -22,7 +22,7 @@ import java.util.UUID;
 public class EServiceHooks {
     private final EntityStore entityStore;
     private final EServiceUseCase eServiceUseCase;
-    private final EServiceDescriptorUseCase descriptorUseCase;
+    private final EServiceDescriptorApprovalUseCase descriptorUseCase;
     private final CurrentUserSession currentUserSession;
     private final CurrentChannel<Channel> currentChannel;
 

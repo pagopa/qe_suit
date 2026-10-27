@@ -2,7 +2,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
-import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorApprovalUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 class EServiceHooksTest {
     private final EntityStore store = mock(EntityStore.class);
     private final EServiceUseCase services = mock(EServiceUseCase.class);
-    private final EServiceDescriptorUseCase descriptors = mock(EServiceDescriptorUseCase.class);
+    private final EServiceDescriptorApprovalUseCase descriptors = mock(EServiceDescriptorApprovalUseCase.class);
     private final CurrentUserSession session = mock(CurrentUserSession.class);
     @SuppressWarnings("unchecked")
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);

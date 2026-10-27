@@ -62,16 +62,6 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.publishDescriptorAwaitingApproval(eService.getRef(), descriptor.getRef());
     }
 
-    public EServiceDescriptor rejectDescriptor(EService eService, EServiceDescriptor descriptor, String reason) {
-        if (descriptor.getState() != EServiceDescriptorState.WAITING_FOR_APPROVAL) {
-            throw new IllegalStateException("Only a descriptor awaiting approval can be rejected");
-        }
-        if (reason == null || reason.isBlank()) {
-            throw new IllegalArgumentException("A rejection reason is required");
-        }
-        return eServiceDescriptorGateway.rejectDescriptor(eService.getRef(), descriptor.getRef(), reason);
-    }
-
     public EServiceDescriptor updateDescriptor(EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand command) {
         return eServiceDescriptorGateway.updateDescriptor(eService.getRef(), descriptor.getRef(), command);
     }

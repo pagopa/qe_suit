@@ -41,22 +41,23 @@ class BffEServiceDescriptorRejectionTest {
             return handler.apply(new ResponseBuilder().setStatusCode(status).build());
         });
         var entities = mock(EntityStore.class);
-        var restClient = new BffEServiceRestClient(
+        var restClient = new BffEServiceDescriptorApprovalRestClient(
                 new TestChainFactory(mock(LastApiResponseStore.class), entities), client);
-        var gateway = spy(new BffEServiceDescriptorGateway(restClient, entities,
+        var descriptors = spy(new BffEServiceDescriptorGateway(mock(BffEServiceRestClient.class), entities,
                 mock(BffEServiceDescriptorMapper.class), mock(BffEServiceDescriptorInterfaceGateway.class),
                 mock(BffEServiceDescriptorArchiveGateway.class), mock(BffEServiceDescriptorUpdateGateway.class)));
+        var gateway = new BffEServiceDescriptorApprovalGateway(restClient, descriptors);
         var pending = EServiceDescriptor.builder().id(descriptorRef.id()).state(WAITING_FOR_APPROVAL).build();
         var draft = pending.toBuilder().state(DRAFT).build();
-        doReturn(pending, pending, draft).when(gateway).getEServiceDescriptor(serviceRef, descriptorRef);
+        doReturn(pending, pending, draft).when(descriptors).getEServiceDescriptor(serviceRef, descriptorRef);
 
         if (status == 204) {
             assertThat(gateway.rejectDescriptor(serviceRef, descriptorRef, "Cleanup dello scenario")).isSameAs(draft);
-            verify(gateway, times(3)).getEServiceDescriptor(serviceRef, descriptorRef);
+            verify(descriptors, times(3)).getEServiceDescriptor(serviceRef, descriptorRef);
         } else {
             assertThatThrownBy(() -> gateway.rejectDescriptor(serviceRef, descriptorRef, "Cleanup dello scenario"))
                     .isInstanceOf(IllegalStateException.class).hasMessageContaining("HTTP " + status);
-            verify(gateway, never()).getEServiceDescriptor(any(), any());
+            verifyNoInteractions(descriptors);
         }
 
         var payload = ArgumentCaptor.forClass(RejectDelegatedEServiceDescriptorSeed.class);
