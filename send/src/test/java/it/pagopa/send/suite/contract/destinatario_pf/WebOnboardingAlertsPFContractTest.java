@@ -6,7 +6,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingAlertsPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.OnboardingWizardPFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
@@ -17,7 +18,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
@@ -40,13 +40,12 @@ import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpected
  * attivo con "Modifica" oppure campo per inserirlo) e non vengono verificati. Nessuno scenario preme "Conferma" del
  * wizard.
  */
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebOnboardingAlertsPFContractTest {
@@ -68,13 +67,14 @@ public class WebOnboardingAlertsPFContractTest {
     private static final String COURTESY_BANNER = "Più avvisi attivi, più possibilità hai di leggere la notifica digitale in tempo ed evitare la raccomandata!";
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Testi comuni a tutti i passi: titolo, "Esci" e nomi dei passi "Attiva gli avvisi su IO" ed "Email e SMS".
      */
     @TestFactory
     Stream<DynamicTest> shouldShowAlertsWizardTexts() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(OnboardingAlertsPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
@@ -98,7 +98,7 @@ public class WebOnboardingAlertsPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowIoSection() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(OnboardingAlertsPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
@@ -122,7 +122,7 @@ public class WebOnboardingAlertsPFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowEmailSmsSection() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(OnboardingAlertsPFPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
