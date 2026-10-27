@@ -65,6 +65,12 @@ public class TenantJourneyImpl implements TenantJourney<TenantJourneyImpl> {
     }
 
     @Override
+    public TenantJourneyImpl assignCertifiedAttribute(TenantRef tenant, AttributeRef attributeRef) {
+        tenantUseCase.assignCertifiedAttribute(tenant, attributeRef);
+        return this;
+    }
+
+    @Override
     public TenantJourneyImpl assignCertifiedDiscreteAttribute(TenantRef tenantRef, int value) {
         AttributeRef attribute = entityStore.getLastOrThrow(Attribute.class).getRef();
         tenantUseCase.assignCertifiedDiscreteAttribute(tenantRef, attribute, value);

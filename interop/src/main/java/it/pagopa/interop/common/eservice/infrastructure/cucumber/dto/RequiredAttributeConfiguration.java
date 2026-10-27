@@ -27,7 +27,6 @@ public class RequiredAttributeConfiguration {
     @JsonAlias("attributo")
     @JsonSetter(nulls = Nulls.FAIL)
     @NotNull
-    @Pattern(regexp = "un attributo posseduto da PagoPA|un attributo non posseduto da PagoPA"
-            + "|un attributo non posseduto e uno posseduto da PagoPA")
+    @Pattern(regexp = "(CERT|DECL|VER|DISC)-[A-Za-z0-9_-]+")
     private String attribute;
 }

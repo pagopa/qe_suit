@@ -10,7 +10,9 @@ Feature: Filtri ad alto impatto nel catalogo privato
   Assunzioni:
   - gli e-service predisposti sono eliminati o archiviati al termine dello scenario da un hook;
   - ogni scenario usa una parola chiave improbabile per delimitare il perimetro dei risultati;
-  - gli attributi usati negli scenari di fruibilità sono già presenti sui tenant e non vengono modificati;
+  - gli scenari di fruibilità creano attributi come admin del Comune di Milano, come nei contract test, con alias locali;
+  - le assegnazioni create sono revocate dall'hook; gli attributi issuer non sono eliminabili e restano registrati;
+  - gli attributi dichiarati, verificati e discreti appena creati non sono assegnati al fruitore;
   - gli attributi discreti sono usati solo se la relativa feature flag è attiva.
 
   # --- onlyActiveEservices ---
@@ -113,52 +115,119 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | richiedibili dal fruitore | sì     |
     Then l'e-service "ES-1" è presente tra i risultati della ricerca
 
-  Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_7] Fruibilità con un solo gruppo di attributi certificati
-    Given i seguenti e-service in bozza:
+  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_7A] Fruibilità con un attributo certificato posseduto da PagoPA
+    Given i seguenti attributi certificati creati da un admin del Comune di Milano:
+      | alias  |
+      | CERT-1 |
+    And i seguenti attributi certificati assegnati da un admin del Comune di Milano a PagoPA:
+      | alias  |
+      | CERT-1 |
+    And i seguenti e-service in bozza:
       | alias | erogatore        | nome           |
-      | ES-1  | Comune di Milano | E-service Gelu |
+      | ES-1  | Comune di Milano | E-service GeluOwned |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
+      | tipo        | gruppo | attributo |
+      | certificato | 1      | CERT-1    |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    When PagoPA cerca nel catalogo "GeluOwned" con i seguenti filtri:
+      | filtro                    | valore |
+      | richiedibili dal fruitore | sì     |
+    Then l'e-service "ES-1" è presente tra i risultati della ricerca
+
+  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_7B] Fruibilità con un attributo certificato non posseduto da PagoPA
+    Given i seguenti attributi certificati creati da un admin del Comune di Milano:
+      | alias  |
+      | CERT-2 |
+    And i seguenti e-service in bozza:
+      | alias | erogatore        | nome           |
+      | ES-1  | Comune di Milano | E-service GeluAbsent |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
       | tipo        | gruppo | attributo   |
-      | certificato | 1      | <attributi> |
+      | certificato | 1      | CERT-2      |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
-    When PagoPA cerca nel catalogo "Gelu" con i seguenti filtri:
+    When PagoPA cerca nel catalogo "GeluAbsent" con i seguenti filtri:
       | filtro                    | valore |
       | richiedibili dal fruitore | sì     |
-    Then l'e-service "ES-1" <esito> tra i risultati della ricerca
+    Then l'e-service "ES-1" non è presente tra i risultati della ricerca
 
-    Examples:
-      | attributi                                            | esito          |
-      | un attributo posseduto da PagoPA                     | è presente     |
-      | un attributo non posseduto da PagoPA                 | non è presente |
-      | un attributo non posseduto e uno posseduto da PagoPA | è presente     |
+  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_7C] Fruibilità OR fra attributi certificati nello stesso gruppo
+    Given i seguenti attributi certificati creati da un admin del Comune di Milano:
+      | alias  |
+      | CERT-1 |
+      | CERT-2 |
+    And i seguenti attributi certificati assegnati da un admin del Comune di Milano a PagoPA:
+      | alias  |
+      | CERT-2 |
+    And i seguenti e-service in bozza:
+      | alias | erogatore        | nome           |
+      | ES-1  | Comune di Milano | E-service GeluEither |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
+      | tipo        | gruppo | attributo |
+      | certificato | 1      | CERT-1    |
+      | certificato | 1      | CERT-2    |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    When PagoPA cerca nel catalogo "GeluEither" con i seguenti filtri:
+      | filtro                    | valore |
+      | richiedibili dal fruitore | sì     |
+    Then l'e-service "ES-1" è presente tra i risultati della ricerca
 
-  Scenario Outline: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_8] Fruibilità con più gruppi di attributi certificati: tutti devono essere soddisfatti
-    Given i seguenti e-service in bozza:
+  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_8A] Fruibilità con più gruppi di attributi certificati: tutti soddisfatti
+    Given i seguenti attributi certificati creati da un admin del Comune di Milano:
+      | alias  |
+      | CERT-1 |
+      | CERT-2 |
+    And i seguenti attributi certificati assegnati da un admin del Comune di Milano a PagoPA:
+      | alias  |
+      | CERT-1 |
+      | CERT-2 |
+    And i seguenti e-service in bozza:
       | alias | erogatore        | nome               |
-      | ES-1  | Comune di Milano | E-service Gelu bis |
+      | ES-1  | Comune di Milano | E-service GeluAll |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
+      | tipo        | gruppo | attributo |
+      | certificato | 1      | CERT-1    |
+      | certificato | 2      | CERT-2    |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    When PagoPA cerca nel catalogo "GeluAll" con i seguenti filtri:
+      | filtro                    | valore |
+      | richiedibili dal fruitore | sì     |
+    Then l'e-service "ES-1" è presente tra i risultati della ricerca
+
+  Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_8B] Fruibilità bloccata se un gruppo non è soddisfatto
+    Given i seguenti attributi certificati creati da un admin del Comune di Milano:
+      | alias  |
+      | CERT-1 |
+      | CERT-2 |
+    And i seguenti attributi certificati assegnati da un admin del Comune di Milano a PagoPA:
+      | alias  |
+      | CERT-1 |
+    And i seguenti e-service in bozza:
+      | alias | erogatore        | nome               |
+      | ES-1  | Comune di Milano | E-service GeluMissing |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
       | tipo        | gruppo | attributo            |
-      | certificato | 1      | <attributo gruppo 1> |
-      | certificato | 2      | <attributo gruppo 2> |
+      | certificato | 1      | CERT-1               |
+      | certificato | 2      | CERT-2               |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
-    When PagoPA cerca nel catalogo "Gelu" con i seguenti filtri:
+    When PagoPA cerca nel catalogo "GeluMissing" con i seguenti filtri:
       | filtro                    | valore |
       | richiedibili dal fruitore | sì     |
-    Then l'e-service "ES-1" <esito> tra i risultati della ricerca
-
-    Examples:
-      | attributo gruppo 1               | attributo gruppo 2                   | esito          |
-      | un attributo posseduto da PagoPA | un attributo posseduto da PagoPA     | è presente     |
-      | un attributo posseduto da PagoPA | un attributo non posseduto da PagoPA | non è presente |
+    Then l'e-service "ES-1" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_9] Attributi dichiarati e verificati non limitano la fruibilità
-    Given i seguenti e-service in bozza:
+    Given i seguenti attributi dichiarati creati da un admin del Comune di Milano:
+      | alias  |
+      | DECL-1 |
+    And i seguenti attributi verificati creati da un admin del Comune di Milano:
+      | alias |
+      | VER-1 |
+    And i seguenti e-service in bozza:
       | alias | erogatore        | nome            |
       | ES-1  | Comune di Milano | E-service Hiems |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
-      | tipo       | gruppo | attributo                            |
-      | dichiarato | 1      | un attributo non posseduto da PagoPA |
-      | verificato | 1      | un attributo non posseduto da PagoPA |
+      | tipo       | gruppo | attributo |
+      | dichiarato | 1      | DECL-1    |
+      | verificato | 1      | VER-1     |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     When PagoPA cerca nel catalogo "Hiems" con i seguenti filtri:
       | filtro                    | valore |
@@ -167,12 +236,15 @@ Feature: Filtri ad alto impatto nel catalogo privato
 
   @flag-discrete-attribute-on
   Scenario: [PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_10] Gli attributi discreti limitano la fruibilità
-    Given i seguenti e-service in bozza:
+    Given i seguenti attributi discreti creati da un admin del Comune di Milano:
+      | alias  |
+      | DISC-1 |
+    And i seguenti e-service in bozza:
       | alias | erogatore        | nome            |
       | ES-1  | Comune di Milano | E-service Iubar |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
-      | tipo     | gruppo | attributo                            |
-      | discreto | 1      | un attributo non posseduto da PagoPA |
+      | tipo     | gruppo | attributo |
+      | discreto | 1      | DISC-1    |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     When PagoPA cerca nel catalogo "Iubar" con i seguenti filtri:
       | filtro                    | valore |

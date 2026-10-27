@@ -12,5 +12,5 @@ public interface AttributeGateway extends Plugin<Channel> {
 
     Optional<Attribute> findAttributeByOriginAndCode(String origin, String code);
 
-    Attribute createCertifiedAttribute(Attribute attribute);
+    Attribute createAttribute(Attribute attribute);
 }

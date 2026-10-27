@@ -17,7 +17,7 @@ public class TenantCategorySteps {
     private final TenantCategoryUseCase categories;
     private final CurrentUserSession session;
 
-    @Given("gli enti appartengono alle categorie indicate secondo i seguenti dati:")
+    @Given("gli enti appartenenti alle categorie indicate secondo i seguenti dati:")
     public void checkCategories(List<TenantCategoryExpectation> expectations) {
         var commands = mapper.toCommands(expectations);
         if (commands.isEmpty()) {

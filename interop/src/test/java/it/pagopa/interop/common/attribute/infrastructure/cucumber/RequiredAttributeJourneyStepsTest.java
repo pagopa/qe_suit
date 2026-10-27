@@ -1,12 +1,13 @@
 package it.pagopa.interop.common.attribute.infrastructure.cucumber;
 
 import it.pagopa.interop.common.attribute.domain.AttributeKind;
-import it.pagopa.interop.common.attribute.domain.AttributeOwnershipSelection;
+import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.RequiredAttributeConfiguration;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.SelectedEServiceDescriptor;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.RequiredAttributeConfigurationMapper;
 import it.pagopa.interop.common.eservice.application.command.RequiredAttributeCommand;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
@@ -28,11 +29,15 @@ class RequiredAttributeJourneyStepsTest {
         var row = new RequiredAttributeConfiguration();
         row.setKind("verificato");
         row.setGroup(1);
-        row.setAttribute("un attributo non posseduto da PagoPA");
+        row.setAttribute("VER-1");
+        var attribute = Attribute.builder().id(UUID.randomUUID()).kind(AttributeKind.VERIFIED).build();
         var expected = List.of(new RequiredAttributeCommand(AttributeKind.VERIFIED, 1,
-                AttributeOwnershipSelection.NOT_OWNED_BY_PAGOPA));
+                attribute.getRef()));
         var journey = mock(InteropJourney.class, RETURNS_SELF);
-        var steps = new RequiredAttributeJourneySteps(journey, new RequiredAttributeConfigurationMapper());
+        var store = mock(EntityStore.class);
+        when(store.getByAliasOrThrow("VER-1", Attribute.class)).thenReturn(attribute);
+        var steps = new RequiredAttributeJourneySteps(journey,
+                new RequiredAttributeConfigurationMapper(store));
 
         steps.configureRequiredAttributes(selected, Tenant.COMUNE_DI_MILANO, List.of(row));
 
@@ -48,11 +53,12 @@ class RequiredAttributeJourneyStepsTest {
         var service = EService.builder().id(UUID.randomUUID())
                 .producerId(Tenant.COMUNE_DI_MILANO.getOrganizationId().toString()).build();
         var journey = mock(InteropJourney.class, RETURNS_SELF);
-        var steps = new RequiredAttributeJourneySteps(journey, new RequiredAttributeConfigurationMapper());
+        var steps = new RequiredAttributeJourneySteps(journey,
+                new RequiredAttributeConfigurationMapper(mock(EntityStore.class)));
         var row = new RequiredAttributeConfiguration();
         row.setKind("certificato");
         row.setGroup(1);
-        row.setAttribute("un attributo posseduto da PagoPA");
+        row.setAttribute("CERT-1");
 
         org.assertj.core.api.Assertions.assertThatThrownBy(() -> steps.configureRequiredAttributes(
                         new SelectedEServiceDescriptor(service, 1), Tenant.PAGO_PA, List.of(row)))

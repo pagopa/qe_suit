@@ -38,6 +38,27 @@ public class BffAttributeRestClient extends RestClient {
         );
     }
 
+    public TestChain<CreatedResource> createDeclaredAttribute(@Nonnull AttributeSeed payload) {
+        return execute(
+                () -> attributesApi.createDeclaredAttribute().body(payload).execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
+    public TestChain<CreatedResource> createVerifiedAttribute(@Nonnull AttributeSeed payload) {
+        return execute(
+                () -> attributesApi.createVerifiedAttribute().body(payload).execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
+    public TestChain<CreatedResource> createCertifiedDiscreteAttribute(@Nonnull AttributeSeed payload) {
+        return execute(
+                () -> attributesApi.createCertifiedDiscreteAttribute().body(payload).execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
     public TestChain<Attribute> getAttributeByOriginAndCode(@Nonnull String origin, @Nonnull String code) {
         return execute(
                 () -> attributesApi.getAttributeByOriginAndCode()

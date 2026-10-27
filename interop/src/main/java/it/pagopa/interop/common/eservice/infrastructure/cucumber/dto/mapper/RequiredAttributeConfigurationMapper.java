@@ -1,19 +1,26 @@
 package it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper;
 
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.AttributeKind;
-import it.pagopa.interop.common.attribute.domain.AttributeOwnershipSelection;
 import it.pagopa.interop.common.eservice.application.command.RequiredAttributeCommand;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.RequiredAttributeConfiguration;
+import it.pagopa.interop.common.kernel.domain.AttributeRef;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class RequiredAttributeConfigurationMapper {
+    private final EntityStore entityStore;
 
     public List<RequiredAttributeCommand> toRequests(List<RequiredAttributeConfiguration> configurations) {
         if (configurations == null || configurations.isEmpty()) {
@@ -23,6 +30,7 @@ public class RequiredAttributeConfigurationMapper {
                 .map(this::toRequest)
                 .toList();
         validateGroups(requests);
+        validateDistinctReferences(requests);
         return requests;
     }
 
@@ -31,7 +39,7 @@ public class RequiredAttributeConfigurationMapper {
                 || configuration.getAttribute() == null) {
             throw new IllegalArgumentException("Required attribute rows need tipo, gruppo and attributo");
         }
-        AttributeKind kind = switch (configuration.getKind().strip().toLowerCase(java.util.Locale.ROOT)) {
+        AttributeKind kind = switch (configuration.getKind().strip().toLowerCase(Locale.ROOT)) {
             case "certificato" -> AttributeKind.CERTIFIED;
             case "dichiarato" -> AttributeKind.DECLARED;
             case "verificato" -> AttributeKind.VERIFIED;
@@ -39,15 +47,28 @@ public class RequiredAttributeConfigurationMapper {
             default -> throw new IllegalArgumentException("Unsupported required attribute type: "
                     + configuration.getKind());
         };
-        AttributeOwnershipSelection selection = switch (configuration.getAttribute().strip()) {
-            case "un attributo posseduto da PagoPA" -> AttributeOwnershipSelection.OWNED_BY_PAGOPA;
-            case "un attributo non posseduto da PagoPA" -> AttributeOwnershipSelection.NOT_OWNED_BY_PAGOPA;
-            case "un attributo non posseduto e uno posseduto da PagoPA" ->
-                    AttributeOwnershipSelection.NOT_OWNED_AND_OWNED_BY_PAGOPA;
-            default -> throw new IllegalArgumentException("Unsupported attribute selector: "
-                    + configuration.getAttribute());
-        };
-        return new RequiredAttributeCommand(kind, configuration.getGroup(), selection);
+        String value = configuration.getAttribute().strip();
+        if (!value.matches("(CERT|DECL|VER|DISC)-[A-Za-z0-9_-]+")) {
+            throw new IllegalArgumentException("Required attribute must be a registered alias: " + value);
+        }
+        Attribute attribute = entityStore.getByAliasOrThrow(value, Attribute.class);
+        if (attribute.getKind() != kind) {
+            throw new IllegalArgumentException("Attribute alias " + value + " has kind " + attribute.getKind()
+                    + ", expected " + kind);
+        }
+        return new RequiredAttributeCommand(kind, configuration.getGroup(), attribute.getRef());
+    }
+
+    private void validateDistinctReferences(List<RequiredAttributeCommand> requests) {
+        Set<UUID> references = new HashSet<>();
+        requests.stream().map(RequiredAttributeCommand::getAttributeRef)
+                .map(AttributeRef::id)
+                .forEach(id -> {
+                    if (!references.add(id)) {
+                        throw new IllegalArgumentException(
+                                "An aliased attribute can be required only once across groups: " + id);
+                    }
+                });
     }
 
     private void validateGroups(List<RequiredAttributeCommand> requests) {

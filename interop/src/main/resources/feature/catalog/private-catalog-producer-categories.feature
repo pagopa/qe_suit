@@ -13,7 +13,7 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
   - gli e-service predisposti sono eliminati o archiviati al termine dello scenario da un hook.
 
   Scenario: [PRIVATE_CATALOG_PRODUCER_CATEGORIES_1] Una sola categoria
-    Given gli enti appartengono alle categorie indicate secondo i seguenti dati:
+    Given gli enti appartenenti alle categorie indicate secondo i seguenti dati:
       | ente               | categoria | appartenenza |
       | Comune di Milano   | COMUNI    | sì           |
       | Comune di Pozzallo | COMUNI    | sì           |
@@ -33,7 +33,7 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
     And l'e-service "ES-3" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_PRODUCER_CATEGORIES_2] Più categorie in alternativa
-    Given gli enti appartengono alle categorie indicate secondo i seguenti dati:
+    Given gli enti appartenenti alle categorie indicate secondo i seguenti dati:
       | ente             | categoria                                    | appartenenza |
       | Comune di Milano | COMUNI                                       | sì           |
       | Comune di Milano | STAZIONI_APPALTANTI_GESTORI_PUBBLICI_SERVIZI | no           |
@@ -56,7 +56,7 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
     And l'e-service "ES-3" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_PRODUCER_CATEGORIES_3] Categoria senza e-service corrispondenti
-    Given gli enti appartengono alle categorie indicate secondo i seguenti dati:
+    Given gli enti appartenenti alle categorie indicate secondo i seguenti dati:
       | ente             | categoria | appartenenza |
       | Comune di Milano | COMUNI    | sì           |
       | Sogecap          | COMUNI    | no           |
@@ -69,7 +69,7 @@ Feature: Filtro per categoria dell'erogatore nel catalogo privato
     Then l'e-service "ES-1" non è presente tra i risultati della ricerca
 
   Scenario: [PRIVATE_CATALOG_PRODUCER_CATEGORIES_4] Elenco di categorie vuoto: nessuna restrizione
-    Given gli enti appartengono alle categorie indicate secondo i seguenti dati:
+    Given gli enti appartenenti alle categorie indicate secondo i seguenti dati:
       | ente             | categoria | appartenenza |
       | Comune di Milano | COMUNI    | sì           |
       | Sogecap          | COMUNI    | no           |

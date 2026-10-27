@@ -11,6 +11,7 @@ Feature: Combinazioni di filtri nel catalogo privato
   - i filtri combinati si applicano in AND;
   - ogni scenario ha almeno un e-service escluso per ciascun filtro combinato, così un filtro ignorato fa fallire lo scenario;
   - gli e-service predisposti sono eliminati o archiviati al termine dello scenario da un hook;
+  - gli attributi certificati creati sono assegnati solo ai tenant esplicitati e le assegnazioni sono revocate dall'hook;
   - ogni scenario usa una parola chiave improbabile per delimitare il perimetro dei risultati.
 
   Scenario: [PRIVATE_CATALOG_FILTER_COMBINATIONS_1] Parola chiave e solo e-service attivi
@@ -32,7 +33,10 @@ Feature: Combinazioni di filtri nel catalogo privato
       | ES-3  |
 
   Scenario: [PRIVATE_CATALOG_FILTER_COMBINATIONS_2] E-service richiedibili e non ancora sottoscritti
-    Given i seguenti e-service in bozza:
+    Given i seguenti attributi certificati creati da un admin del Comune di Milano:
+      | alias  |
+      | CERT-1 |
+    And i seguenti e-service in bozza:
       | alias | erogatore        | nome                        |
       | ES-1  | Comune di Milano | E-service Fruibile Libero   |
       | ES-2  | Comune di Milano | E-service Fruibile Iscritto |
@@ -41,7 +45,7 @@ Feature: Combinazioni di filtri nel catalogo privato
     And la versione 1 dell'e-service "ES-2" del Comune di Milano pubblicata
     And la versione 1 dell'e-service "ES-3" del Comune di Milano configurata con i seguenti attributi richiesti:
       | tipo        | gruppo | attributo                            |
-      | certificato | 1      | un attributo non posseduto da PagoPA |
+      | certificato | 1      | CERT-1                               |
     And la versione 1 dell'e-service "ES-3" del Comune di Milano pubblicata
     And l'e-service "ES-2" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     When PagoPA cerca nel catalogo "Fruibile" con i seguenti filtri:
@@ -122,7 +126,7 @@ Feature: Combinazioni di filtri nel catalogo privato
       | ES-4  |
 
   Scenario: [PRIVATE_CATALOG_FILTER_COMBINATIONS_6] Parola chiave, categoria dell'erogatore e istanze di template
-    Given gli enti appartengono alle categorie indicate secondo i seguenti dati:
+    Given gli enti appartenenti alle categorie indicate secondo i seguenti dati:
       | ente             | categoria | appartenenza |
       | Comune di Milano | COMUNI    | sì           |
       | Sogecap          | COMUNI    | no           |
