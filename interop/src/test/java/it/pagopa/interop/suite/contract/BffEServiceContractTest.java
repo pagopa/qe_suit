@@ -75,7 +75,7 @@ public class BffEServiceContractTest {
         return httpContractValidator
                 .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .apiCall(() -> apiClient.eservices().queryEServicesCatalog())
-                .payload(requestFactory::defaultSearchEServiceCatalogCommand)
+                .payload(requestFactory::searchCatalogRequest)
                 .tests();
     }
 

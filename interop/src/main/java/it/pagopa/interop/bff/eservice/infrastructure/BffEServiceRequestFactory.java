@@ -54,6 +54,13 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 .create();
     }
 
+    public CatalogFilterPayload searchCatalogRequest() {
+        return Instancio.of(CatalogFilterPayload.class)
+                .set(field(CatalogFilterPayload::getOffset), 0)
+                .set(field(CatalogFilterPayload::getLimit), 200)
+                .create();
+    }
+
     @Override
     public EServiceCreationCommand defaultCreationEServiceCommand() {
         return BffEServiceCreationCommand.from(defaultEServiceSeed());
