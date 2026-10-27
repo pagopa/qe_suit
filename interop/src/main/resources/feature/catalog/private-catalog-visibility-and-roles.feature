@@ -77,7 +77,7 @@ Feature: Visibilità degli e-service nel catalogo privato
     Given i seguenti e-service in bozza:
       | alias | erogatore        | nome            |
       | ES-1  | Comune di Milano | E-service Bozza |
-    When il Comune di Milano cerca nel catalogo "E-service Bozza"
+    When il Comune di Milano cerca nel catalogo "Bozza"
     Then la ricerca termina senza errori
     And l'e-service "ES-1" non è presente tra i risultati della ricerca
 
@@ -87,7 +87,7 @@ Feature: Visibilità degli e-service nel catalogo privato
       | ES-1  | Comune di Milano | E-service Doppio |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And la versione 2 dell'e-service "ES-1" del Comune di Milano in bozza
-    When PagoPA cerca nel catalogo "E-service Doppio"
+    When PagoPA cerca nel catalogo "Doppio"
     Then l'e-service "ES-1" è presente tra i risultati della ricerca
     And per l'e-service "ES-1" il risultato riporta:
       | proprietà           | valore |
@@ -99,7 +99,7 @@ Feature: Visibilità degli e-service nel catalogo privato
       | ES-1  | Comune di Milano | E-service Versioni |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano <prima versione>
     And la versione 2 dell'e-service "ES-1" del Comune di Milano <seconda versione>
-    When PagoPA cerca nel catalogo "E-service Versioni"
+    When PagoPA cerca nel catalogo "Versioni"
     Then l'e-service "ES-1" è presente tra i risultati della ricerca
     And per l'e-service "ES-1" il risultato riporta:
       | proprietà           | valore                |
@@ -117,11 +117,11 @@ Feature: Visibilità degli e-service nel catalogo privato
       | ente               |
       | Comune di Pozzallo |
     And i seguenti e-service pubblicati:
-      | alias | erogatore        | nome               |
-      | ES-1  | Comune di Milano | E-service Versioni |
+      | alias | erogatore        | nome                 |
+      | ES-1  | Comune di Milano | E-service Matterello |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
     And la versione 2 dell'e-service "ES-1" predisposta dal delegato Comune di Pozzallo in attesa di approvazione
-    When PagoPA cerca nel catalogo "E-service Versioni"
+    When PagoPA cerca nel catalogo "Matterello"
     Then l'e-service "ES-1" è presente tra i risultati della ricerca
     And per l'e-service "ES-1" il risultato riporta:
       | proprietà           | valore |
@@ -136,7 +136,7 @@ Feature: Visibilità degli e-service nel catalogo privato
       | alias | erogatore        | nome            |
       | ES-1  | Comune di Milano | E-service Ruoli |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
-    When <tenant> cerca nel catalogo "E-service Ruoli"
+    When <tenant> cerca nel catalogo "Ruoli"
     Then l'e-service "ES-1" è presente tra i risultati della ricerca
 
     Examples:
@@ -155,7 +155,7 @@ Feature: Visibilità degli e-service nel catalogo privato
       | alias | erogatore        | nome          |
       | ES-1  | Comune di Milano | E-service Mio |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
-    When <tenant> cerca nel catalogo "E-service Mio"
+    When <tenant> cerca nel catalogo "Mio"
     Then per l'e-service "ES-1" il risultato riporta:
       | proprietà | valore   |
       | è mio     | <valore> |
@@ -180,7 +180,7 @@ Feature: Visibilità degli e-service nel catalogo privato
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     And la versione 2 dell'e-service "ES-1" del Comune di Milano pubblicata
     And una notifica non letta generata per l'utente admin del fruitore PagoPA sull'e-service "ES-1"
-    When PagoPA cerca nel catalogo "E-service Notificato"
+    When PagoPA cerca nel catalogo "Notificato"
     Then per l'e-service "ES-1" il risultato riporta:
       | proprietà           | valore |
       | notifiche non lette | sì     |
@@ -194,7 +194,7 @@ Feature: Visibilità degli e-service nel catalogo privato
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     And la versione 2 dell'e-service "ES-1" del Comune di Milano pubblicata
     And una notifica non letta generata per l'utente admin del fruitore PagoPA sull'e-service "ES-1"
-    When il Comune di Pozzallo cerca nel catalogo "E-service Non Notificato"
+    When il Comune di Pozzallo cerca nel catalogo "Non Notificato"
     Then la ricerca termina senza errori
     And per l'e-service "ES-1" il risultato riporta:
       | proprietà           | valore |
