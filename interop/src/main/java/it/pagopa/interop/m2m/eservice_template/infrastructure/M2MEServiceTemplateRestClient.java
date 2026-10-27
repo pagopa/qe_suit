@@ -1,11 +1,13 @@
 package it.pagopa.interop.m2m.eservice_template.infrastructure;
 
+// import it.pagopa.domain.FileDownloadMultipart;
 import it.pagopa.infrastructure.template.RestClient;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.api.EserviceTemplatesApi;
-import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.FileDownloadMultipart;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceTemplateVersion;
+// import it.pagopa.utils.http.FileDownloadMultipartUtils;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
@@ -22,31 +24,32 @@ public class M2MEServiceTemplateRestClient extends RestClient {
         this.eServiceTemplatesApi = apiClient.eserviceTemplates();
     }
 
-
-    public TestChain<byte[]> downloadEServiceTemplateVersionInterface(
-    // public TestChain<FileDownloadMultipart> downloadEServiceTemplateVersionInterface(
+    public TestChain<EServiceTemplateVersion> getEServiceTemplateVersion(
             @Nonnull UUID templateId,
             @Nonnull UUID versionId
     ) {
+        return execute(
+                () -> eServiceTemplatesApi
+                        .getEServiceTemplateVersion()
+                        .templateIdPath(templateId)
+                        .versionIdPath(versionId)
+                        .execute(Function.identity()),
+                EServiceTemplateVersion.class
+        );
+    }
 
-        var tmp = eServiceTemplatesApi.downloadEServiceTemplateVersionInterface()
-                .templateIdPath(templateId)
-                .versionIdPath(versionId);
-        tmp.respSpec(r -> {
-
-            r.expectStatusCode(200);
-            r.expectHeader("Content-Type", "multipart/form-data");
-
-        });
-
+    /*public TestChain<FileDownloadMultipart> downloadEServiceTemplateVersionInterface(
+            @Nonnull UUID templateId,
+            @Nonnull UUID versionId
+    ) {
         return execute(
                 () -> eServiceTemplatesApi
                         .downloadEServiceTemplateVersionInterface()
                         .templateIdPath(templateId)
                         .versionIdPath(versionId)
                         .execute(Function.identity()),
-                // FileDownloadMultipart.class
-                byte[].class
+                FileDownloadMultipart.class,
+                response -> FileDownloadMultipartUtils.from(response.asByteArray())
         );
-    }
+    }*/
 }

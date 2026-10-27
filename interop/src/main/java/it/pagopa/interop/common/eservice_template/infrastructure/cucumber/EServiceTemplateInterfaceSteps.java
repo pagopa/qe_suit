@@ -15,7 +15,10 @@ public class EServiceTemplateInterfaceSteps {
 
     @And("l'erogatore recupera l'interfaccia {templateVersion}")
     public void retrieveTemplateVersionInterface(EServiceTemplateVersion version) {
-        EServiceTemplate lastTemplate = entityStore.getLast(EServiceTemplate.class).get();
+        EServiceTemplate lastTemplate = entityStore.getLast(EServiceTemplate.class).isPresent() ?
+                entityStore.getLast(EServiceTemplate.class).get() :
+                null;
+        Assertions.assertThat(lastTemplate).isNotNull();
         Assertions.assertThat(lastTemplate.getRef()).isNotNull();
         Assertions.assertThat(lastTemplate.getLatestVersion().getRef().versionId()).isEqualTo(version.getRef().versionId());
         templateVersionUseCase.downloadInterface(lastTemplate, version);
