@@ -4,8 +4,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationPFPage;
 import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
@@ -18,24 +18,22 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.List;
 import java.util.stream.Stream;
 
-@ActiveProfiles({"hotfix", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 @Slf4j
 public class WebFooterContractTest {
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
 
     /**
@@ -58,9 +56,8 @@ public class WebFooterContractTest {
 
     private Stream<DynamicTest> captionOnlySpaPAFooterScenarios()
     {
-        String token = "";
-        return webContractValidator.as(Tenant.GROSSINI, List.of())
-                .on(DashboardPage.class,token)
+        return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1))
+                .on(DashboardPage.class)
                 .tests(Stream.of(new WebScenario<>(
                         "Check assenza dicitura 'Socio Unico'",
                         page -> {
@@ -93,7 +90,7 @@ public class WebFooterContractTest {
     }
 
     private Stream<DynamicTest> captionOnlySpaPFFooterScenarios() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(NotificationPFPage.class)
                 .tests(Stream.of(new WebScenario<>(
                         "Check assenza dicitura 'Socio Unico'",
@@ -127,9 +124,8 @@ public class WebFooterContractTest {
     }
 
     private Stream<DynamicTest> captionOnlySpaPGScenarios() {
-        String token = "";
-        return webContractValidator.asRecipient(Recipient.PETRARCA)
-                .on(NotificationPage.class,token)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.IMPRESA_2))
+                .on(NotificationPage.class)
                 .tests(Stream.of(new WebScenario<>(
                         "Check assenza dicitura 'Socio Unico'",
                         page -> {
