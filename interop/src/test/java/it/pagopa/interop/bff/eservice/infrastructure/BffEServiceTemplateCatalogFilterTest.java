@@ -49,7 +49,7 @@ class BffEServiceTemplateCatalogFilterTest {
             Function<Response, Response> response = invocation.getArgument(0);
             return response.apply(new ResponseBuilder().setStatusCode(200).setContentType(ContentType.JSON)
                     .setBody("{\"results\":[{\"id\":\"" + resultId
-                            + "\",\"name\":\"server result\"}],\"pagination\":{\"offset\":0,\"limit\":20,\"totalCount\":1}}").build());
+                            + "\",\"name\":\"server result\"}],\"pagination\":{\"offset\":0,\"limit\":200,\"totalCount\":1}}").build());
         });
         var factory = new BffEServiceRequestFactory();
         var command = (BffSearchEServiceCatalogCommand) factory.defaultSearchEServiceCatalogCommand();

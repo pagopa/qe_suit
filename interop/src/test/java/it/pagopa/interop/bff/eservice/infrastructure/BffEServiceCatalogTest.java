@@ -75,7 +75,7 @@ class BffEServiceCatalogTest {
         when(operation.execute(any())).thenAnswer(invocation -> {
             Function<Response, Response> handler = invocation.getArgument(0);
             return handler.apply(new ResponseBuilder().setStatusCode(200).setContentType(ContentType.JSON)
-                    .setBody("{\"results\":[],\"pagination\":{\"offset\":0,\"limit\":20,\"totalCount\":0}}").build());
+                    .setBody("{\"results\":[],\"pagination\":{\"offset\":0,\"limit\":200,\"totalCount\":0}}").build());
         });
         var client = new BffEServiceCatalogRestClient(
                 new TestChainFactory(mock(LastApiResponseStore.class), mock(EntityStore.class)), apiClient);
@@ -92,7 +92,7 @@ class BffEServiceCatalogTest {
         var result = new EServiceCatalogUseCase(gateway).search(command);
 
         assertThat(result.getResults()).isEmpty();
-        assertThat(result.getLimit()).isEqualTo(20);
+        assertThat(result.getLimit()).isEqualTo(200);
         verify(operation).body(same(command.getBffPayload()));
         assertThat(command.getBffPayload().getProducerCategories()).containsExactly(EServiceProducerCategory.COMUNI);
         assertThat(command.getBffPayload().getAvailableForRequester()).isTrue();
@@ -194,7 +194,7 @@ class BffEServiceCatalogTest {
             return handler.apply(new ResponseBuilder().setStatusCode(firstAttempt ? status : 200)
                     .setContentType(ContentType.JSON)
                     .setBody(firstAttempt ? "{\"status\":" + status + "}"
-                            : "{\"results\":[],\"pagination\":{\"offset\":0,\"limit\":20,\"totalCount\":0}}")
+                            : "{\"results\":[],\"pagination\":{\"offset\":0,\"limit\":200,\"totalCount\":0}}")
                     .build());
         });
         var client = new BffEServiceCatalogRestClient(
@@ -204,7 +204,7 @@ class BffEServiceCatalogTest {
         var result = gateway.search(new BffEServiceRequestFactory().defaultSearchEServiceCatalogCommand());
 
         assertThat(result.getResults()).isEmpty();
-        assertThat(result.getLimit()).isEqualTo(20);
+        assertThat(result.getLimit()).isEqualTo(200);
         verify(operation, times(2)).execute(any());
     }
 
@@ -213,7 +213,7 @@ class BffEServiceCatalogTest {
         var command = (BffSearchEServiceCatalogCommand)
                 new BffEServiceRequestFactory().defaultSearchEServiceCatalogCommand();
 
-        assertThat(command.getBffPayload()).isEqualTo(new CatalogFilterPayload().offset(0).limit(20));
+        assertThat(command.getBffPayload()).isEqualTo(new CatalogFilterPayload().offset(0).limit(200));
     }
 
     @Test

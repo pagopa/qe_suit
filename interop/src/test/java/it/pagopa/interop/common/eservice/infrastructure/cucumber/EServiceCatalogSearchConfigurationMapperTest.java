@@ -51,7 +51,7 @@ class EServiceCatalogSearchConfigurationMapperTest {
 
         assertThat(command.getBffPayload().getOnlyActiveEservices()).isEqualTo(!value.equals("no"));
         assertThat(command.getBffPayload().getOffset()).isZero();
-        assertThat(command.getBffPayload().getLimit()).isEqualTo(20);
+        assertThat(command.getBffPayload().getLimit()).isEqualTo(200);
     }
 
     @Test
@@ -100,7 +100,7 @@ class EServiceCatalogSearchConfigurationMapperTest {
         assertThat(payload.getOnlySignalHubEnabled()).isFalse();
         assertThat(payload.getOnlyActiveEservices()).isNull();
         assertThat(payload.getOffset()).isZero();
-        assertThat(payload.getLimit()).isEqualTo(20);
+        assertThat(payload.getLimit()).isEqualTo(200);
     }
 
     @Test
@@ -231,7 +231,7 @@ class EServiceCatalogSearchConfigurationMapperTest {
         assertThat(command.getBffPayload().getProducersIds())
                 .containsExactly(Tenant.COMUNE_DI_MILANO.getOrganizationId());
         assertThat(command.getBffPayload().getOffset()).isZero();
-        assertThat(command.getBffPayload().getLimit()).isEqualTo(20);
+        assertThat(command.getBffPayload().getLimit()).isEqualTo(200);
     }
 
     @Test

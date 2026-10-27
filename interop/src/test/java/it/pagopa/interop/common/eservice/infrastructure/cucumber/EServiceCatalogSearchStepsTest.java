@@ -128,7 +128,7 @@ class EServiceCatalogSearchStepsTest {
         assertThat(payload.getProducersIds()).containsExactly(Tenant.COMUNE_DI_MILANO.getOrganizationId());
         assertThat(payload.getSortBy().name()).isEqualTo("NAME_ASC");
         assertThat(payload.getOffset()).isZero();
-        assertThat(payload.getLimit()).isEqualTo(20);
+        assertThat(payload.getLimit()).isEqualTo(200);
     }
 
     @Test
