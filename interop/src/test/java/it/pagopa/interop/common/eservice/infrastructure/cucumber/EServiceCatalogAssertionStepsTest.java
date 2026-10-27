@@ -244,18 +244,37 @@ class EServiceCatalogAssertionStepsTest {
     }
 
     @Test
-    void propertiesAreReadFromAllPagesWhenTheEServiceIsNotOnTheObservedPages() {
+    void propertiesWaitForTheTargetWithoutFetchingTheCompletePageSet() {
         when(store.getByAlias("ES-1", EService.class)).thenReturn(Optional.of(included));
         when(searches.getObservedPages()).thenReturn(List.of(page(0, 4, UUID.randomUUID(), UUID.randomUUID())));
-        when(searches.getSearchPages()).thenReturn(List.of(page(0, 4, UUID.randomUUID(), UUID.randomUUID()),
-                new EServiceCatalog(List.of(EServiceCatalog.Entry.builder().id(included.getId()).version("2").build(),
-                        EServiceCatalog.Entry.builder().id(UUID.randomUUID()).build()), 2, 2, 4)));
+        doAnswer(invocation -> {
+            when(searches.getObservedPages()).thenReturn(List.of(
+                    page(0, 3, UUID.randomUUID(), UUID.randomUUID()),
+                    new EServiceCatalog(List.of(EServiceCatalog.Entry.builder().id(included.getId())
+                            .version("2").isMine(false).build()), 2, 2, 3)));
+            return null;
+        }).when(searches).awaitPresence(List.of(included));
 
-        steps.shouldReportProperties("ES-1", List.of(property("versione presentata", "2")));
+        steps.shouldReportProperties("ES-1",
+                List.of(property("versione presentata", "2"), property("è mio", "no")));
 
-        when(searches.getSearchPages()).thenReturn(List.of(page(0, 2, UUID.randomUUID(), UUID.randomUUID())));
+        assertThatThrownBy(() -> steps.shouldReportProperties("ES-1", List.of(property("è mio", "sì"))))
+                .isInstanceOf(AssertionError.class);
+        verify(searches, times(1)).awaitPresence(List.of(included));
+        verify(searches, never()).getSearchPages();
+        verifyNoInteractions(gateway);
+    }
+
+    @Test
+    void propertyPresenceTimeoutIsPropagatedWithoutFallingBackToCompletePagination() {
+        when(store.getByAlias("ES-1", EService.class)).thenReturn(Optional.of(included));
+        when(searches.getObservedPages()).thenReturn(List.of(result()));
+        var failure = new IllegalStateException("Timed out waiting for catalog presence");
+        doThrow(failure).when(searches).awaitPresence(List.of(included));
+
         assertThatThrownBy(() -> steps.shouldReportProperties("ES-1", List.of(property("versione presentata", "2"))))
-                .isInstanceOf(AssertionError.class).hasMessageContaining("non presente");
+                .isSameAs(failure);
+        verify(searches, never()).getSearchPages();
         verifyNoInteractions(gateway);
     }
 

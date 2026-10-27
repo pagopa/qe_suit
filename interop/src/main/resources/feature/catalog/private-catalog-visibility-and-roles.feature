@@ -145,10 +145,9 @@ Feature: Visibilità degli e-service nel catalogo privato
       | PagoPA             |
       | Comune di Pozzallo |
 
-  # TODO: test di business valido solo per il canale BFF (l'indicazione "è mio"
-  # non è replicabile sul frontend): non estenderlo agli altri canali.
+  # TODO: test di business valido solo per il canale BFF (l'indicazione "è mio" non è replicabile sul frontend): non estenderlo agli altri canali.
   @producer-delegation-settings
-  Scenario Outline: [PRIVATE_CATALOG_VISIBILITY_6] Indicazione "è mio" solo per il produttore
+  Scenario Outline: [PRIVATE_CATALOG_VISIBILITY_6] Indicazione 'è mio' solo per il produttore
     Given i seguenti enti abilitati a ricevere deleghe di erogazione:
       | ente               |
       | Comune di Pozzallo |

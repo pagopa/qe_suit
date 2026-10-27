@@ -80,9 +80,13 @@ public class EServiceCatalogAssertionSteps {
     @Then("per l'e-service {string} il risultato riporta:")
     public void shouldReportProperties(String alias, List<EServiceCatalogPropertyExpectation> properties) {
         assertThat(properties).as("Proprietà attese per l'e-service %s", alias).isNotEmpty();
-        UUID id = entityStore.getByAliasOrThrow(alias, EService.class).getId();
+        EService service = entityStore.getByAliasOrThrow(alias, EService.class);
+        UUID id = service.getId();
         EServiceCatalog.Entry entry = catalog.findEntry(searchSteps.getObservedPages(), id)
-                .or(() -> catalog.findEntry(searchSteps.getSearchPages(), id))
+                .or(() -> {
+                    searchSteps.awaitPresence(List.of(service));
+                    return catalog.findEntry(searchSteps.getObservedPages(), id);
+                })
                 .orElseThrow(() -> new AssertionError("E-service " + alias + " non presente nei risultati"));
         for (EServiceCatalogPropertyExpectation property : properties) {
             assertProperty(entry, property);

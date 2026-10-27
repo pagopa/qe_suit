@@ -34,7 +34,7 @@ Feature: Ordinamento e paginazione nel catalogo privato
       | ES-1  | Comune di Milano | E-service Sorte Beta  |
       | ES-2  | Comune di Milano | E-service Sorte Gamma |
       | ES-3  | Comune di Milano | E-service Sorte Alfa  |
-    When PagoPA cerca nel catalogo senza indicare alcuna parola con i seguenti filtri:
+    When PagoPA cerca nel catalogo "Sorte" con i seguenti filtri:
       | filtro      | valore           |
       | erogatore   | Comune di Milano |
       | ordinamento | <ordinamento>    |
