@@ -58,14 +58,16 @@ public class LegalNotificationRequestFactory {
     private final PaGroupService paGroupService;
 
     /**
-     * Compila i campi base della notifica (indipendenti dal mittente e dai destinatari) con i
+     * Prepara una nuova notifica: compila i campi base (indipendenti dal mittente e dai destinatari) con i
      * default statici del template, sovrascritti puntualmente dalle chiavi riconosciute da
-     * {@link RequestOverrideApplier} presenti in {@code data}.
+     * {@link RequestOverrideApplier} presenti in {@code data}, e svuota i destinatari, che altrimenti
+     * resterebbero dalla notifica precedente quando la richiesta è condivisa (es. tra i contract test).
      */
     public void applyPreliminaryData(LegalNotificationCreationRequest request, Map<String, String> data) {
         NotificationDefaults defaults = defaultsLoader.load();
 
-        request.paProtocolNumber(generateParProtocolNumber())
+        request.clearRecipients()
+                .paProtocolNumber(generateParProtocolNumber())
                 .subject(defaults.subject())
                 .abstractText(defaults.abstractText())
                 .document(buildAttachment())
