@@ -25,7 +25,7 @@ public class EServiceHooks {
     private final CurrentChannel<Channel> currentChannel;
 
     /**
-     * Deletes draft e-services and archives the others through BFF as their respective producers.
+     * Deletes drafts and schedules retirement through BFF unless every version is already retiring or archived.
      * All cleanups are attempted; failures are propagated together.
      */
     @After(value = "@private-catalog", order = 100)
@@ -46,6 +46,16 @@ public class EServiceHooks {
                 try {
                     Tenant producer = Tenant.fromOrganizationId(UUID.fromString(eservice.getProducerId()));
                     currentUserSession.set(User.getTenantAdmin(producer), producer);
+                    boolean retirementAlreadyScheduled = !eservice.getDescriptors().isEmpty()
+                            && eservice.getDescriptors().stream().allMatch(descriptor -> switch (descriptor.getState()) {
+                                case ARCHIVING, ARCHIVING_SUSPENDED, ARCHIVED -> true;
+                                default -> false;
+                            });
+                    if (retirementAlreadyScheduled) {
+                        log.info("E-service gia' in archiviazione o archiviato, nessuna nuova richiesta: {}",
+                                eservice.getId());
+                        continue;
+                    }
                     boolean draftOnly = eservice.getDescriptors().stream()
                             .allMatch(descriptor -> descriptor.getState() == EServiceDescriptorState.DRAFT);
                     if (draftOnly) {

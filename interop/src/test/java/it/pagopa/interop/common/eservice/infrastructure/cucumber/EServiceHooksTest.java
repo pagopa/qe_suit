@@ -52,7 +52,8 @@ class EServiceHooksTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = EServiceDescriptorState.class, mode = EnumSource.Mode.EXCLUDE, names = "DRAFT")
+    @EnumSource(value = EServiceDescriptorState.class, mode = EnumSource.Mode.EXCLUDE,
+            names = {"DRAFT", "ARCHIVING", "ARCHIVING_SUSPENDED", "ARCHIVED"})
     void archivesNonDraftEServicesWithSixtyDaysGrace(EServiceDescriptorState state) {
         EService service = eService(state);
         when(store.getAll(EService.class)).thenReturn(List.of(service));
@@ -60,6 +61,57 @@ class EServiceHooksTest {
         hooks.cleanUpEServices();
 
         verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
+        verifyNoMoreInteractions(services);
+    }
+
+    @Test
+    void doesNotScheduleArchivingAgainWhenEveryVersionIsRetiringOrArchivedAndRestoresContext() {
+        EService service = eService(ARCHIVING, ARCHIVING_SUSPENDED, ARCHIVED);
+        User previousUser = mock(User.class);
+        when(store.getAll(EService.class)).thenReturn(List.of(service));
+        when(session.getUser()).thenReturn(previousUser);
+        when(session.getTenant()).thenReturn(Tenant.AGID);
+        when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
+
+        hooks.cleanUpEServices();
+
+        verifyNoInteractions(services);
+        verify(session).set(previousUser, Tenant.AGID);
+        verify(channel).setCurrentChannel(Channel.WEB_BROWSER);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = EServiceDescriptorState.class,
+            names = {"ARCHIVING", "ARCHIVING_SUSPENDED", "ARCHIVED"})
+    void skipsASingleVersionAlreadyRetiringOrArchived(EServiceDescriptorState state) {
+        when(store.getAll(EService.class)).thenReturn(List.of(eService(state)));
+
+        hooks.cleanUpEServices();
+
+        verifyNoInteractions(services);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = EServiceDescriptorState.class, names = {"PUBLISHED", "SUSPENDED"})
+    void stillArchivesTheWholeServiceWhenOnlyOlderVersionsAreRetiring(EServiceDescriptorState state) {
+        EService service = eService(ARCHIVED, ARCHIVING, ARCHIVING_SUSPENDED, state);
+        when(store.getAll(EService.class)).thenReturn(List.of(service));
+
+        hooks.cleanUpEServices();
+
+        verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
+        verifyNoMoreInteractions(services);
+    }
+
+    @Test
+    void continuesCleaningOtherServicesAfterSkippingAnAlreadyRetiringService() {
+        EService retiring = eService(ARCHIVING);
+        EService draft = eService(DRAFT);
+        when(store.getAll(EService.class)).thenReturn(List.of(retiring, draft));
+
+        hooks.cleanUpEServices();
+
+        verify(services).deleteEService(draft);
         verifyNoMoreInteractions(services);
     }
 
