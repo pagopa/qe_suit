@@ -93,7 +93,7 @@ token:
 bff:
   api:
     base-url: https://webapi.test.notifichedigitali.it
-    bearer-token: ${pn.external.bearer-token.tokenBffApiTest}
+    bearer-token: ${pn.external.bearer-token.tokenBffApiTest:REPLACE_ME}
 
 
 # ============================================================================
@@ -123,18 +123,6 @@ delivery:
   informal:
     api:
       base-url: https://api.test.notifichedigitali.it/informal
-
-# api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
-# ogni costante di Tenant, univoca per PA e per ambiente (qui: test)
-pa:
-  groups-api-key:
-    GROSSINI: REPLACE_ME
-
-# api-key per le API B2B delivery (header x-api-key), una entry per ogni costante di Tenant,
-# univoca per PA e per ambiente (qui: test)
-  delivery-api-key:
-    GROSSINI: REPLACE_ME
-    PALERMO: REPLACE_ME
 
 # ============================================================================
 # Comunicazioni Bonarie (Combo) IUN Configuration for Test
@@ -181,5 +169,3 @@ combo:
       flow-io-fail-analog: ${COMBO_IUN_MESSAMORA_PF:NPZE-HEAE-PKWJ-202608-V-A}
       flow-io-ok-analog: ${COMBO_IUN_MESSAMORA_PF_ANALOG:VGAK-PKJE-DGYR-202609-R-A}
       viewed: ${COMBO_IUN_MESSAMORA_VIEWED:MRGH-DEJL-VYEA-202609-M-A}
-
-    PALERMO: 5df3a854-110c-46e9-a94b-274e2e74132d

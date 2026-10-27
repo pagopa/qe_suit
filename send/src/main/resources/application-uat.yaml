@@ -122,19 +122,3 @@ delivery:
   informal:
     api:
       base-url: https://api.uat.notifichedigitali.it/informal
-
-# api-key per la chiamata GET /ext-registry-b2b/pa/v1/groups (header x-api-key), una entry per
-# ogni costante di Tenant, univoca per PA e per ambiente (qui: uat)
-pa:
-  groups-api-key:
-    GROSSINI: ${pn.pa.groups-api-key.grossini:REPLACE_ME}
-    PALERMO: ${pn.pa.groups-api-key.palermo:REPLACE_ME}
-
-# api-key per le API B2B delivery (header x-api-key), una entry per ogni costante di Tenant,
-# univoca per PA e per ambiente (qui: uat)
-  delivery-api-key:
-    GROSSINI: ${pn.pa.delivery-api-key.grossini:REPLACE_ME}
-    PALERMO: ${pn.pa.delivery-api-key.palermo:REPLACE_ME}
-
-
-

@@ -1,12 +1,12 @@
 package it.pagopa.send.common.informal_notification.domain;
 
 import it.pagopa.send.common.legal_notification.domain.NotificationDefaults;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.User;
 
 import java.util.List;
 
 public record InformalRecipientSpec(
-        Recipient recipient,
+        User recipient,
         String taxIdOverride,
         String denominationOverride,
         InformalRecipientType recipientType,

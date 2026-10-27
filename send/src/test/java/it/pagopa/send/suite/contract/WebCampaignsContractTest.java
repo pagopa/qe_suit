@@ -1,12 +1,13 @@
 package it.pagopa.send.suite.contract;
 
+import it.pagopa.send.common.user.domain.UserProvider;
+import it.pagopa.send.common.user.domain.UserAlias;
 import it.frontend.e2e.framework.core.capability.core.Readable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.campaigns.application.CampaignsGateway;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.generated.openapi.clients.sender.informal.bff.model.CampaignSummary;
 import it.pagopa.send.web.campaigns.infrastructure.page.CampaignDetailPage;
 import it.pagopa.send.web.campaigns.infrastructure.page.CampaignsPage;
@@ -20,32 +21,27 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.List;
 import java.util.stream.Stream;
 
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebCampaignsContractTest {
+    private final UserProvider userProvider;
     private final WebBrowserContractValidator webContractValidator;
-    @Value("${token.mittente}")
-    private String veronaSelfCareToken;
 
     @TestFactory
     Stream<DynamicTest> campagneButtonIsPresentIntoSidebar() {
         return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
+                .as(userProvider.resolve(UserAlias.COMUNE_1))
                 .on(DashboardPage.class)
                 .tests(campagneButtonIsPresentIntoSidebarScenarios());
     }
@@ -65,10 +61,9 @@ public class WebCampaignsContractTest {
 
     @TestFactory
     Stream<DynamicTest> campagneEmptyState() {
-        String selfCareToken = "";
         return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
-                .on(CampaignsPage.class,selfCareToken)
+                .as(userProvider.resolve(UserAlias.COMUNE_1))
+                .on(CampaignsPage.class)
                 .tests(campagneEmptyStateScenarios());
     }
 
@@ -87,8 +82,8 @@ public class WebCampaignsContractTest {
     Stream<DynamicTest> campagneListaPopolata() {
 
         return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
-                .on(CampaignsPage.class,veronaSelfCareToken)
+                .as(userProvider.resolve(UserAlias.COMUNE_1))
+                .on(CampaignsPage.class)
                 .tests(campagneListaPopolataScenarios());
     }
 
@@ -106,8 +101,8 @@ public class WebCampaignsContractTest {
     @TestFactory
     Stream<DynamicTest> campagneElementiListaCorretti() {
         return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
-                .on(CampaignsPage.class,veronaSelfCareToken)
+                .as(userProvider.resolve(UserAlias.COMUNE_1))
+                .on(CampaignsPage.class)
                 .tests(campagneElementiListaCorrettiScenarios());
     }
 
@@ -132,8 +127,8 @@ public class WebCampaignsContractTest {
     }@TestFactory
     Stream<DynamicTest> campagneElementiPaginazione() {
         return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
-                .on(CampaignsPage.class,veronaSelfCareToken)
+                .as(userProvider.resolve(UserAlias.COMUNE_1))
+                .on(CampaignsPage.class)
                 .tests(campagneElementiPaginazioneScenarios());
     }
 

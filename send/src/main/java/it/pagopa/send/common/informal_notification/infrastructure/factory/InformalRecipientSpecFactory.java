@@ -5,7 +5,7 @@ import it.pagopa.send.common.informal_notification.domain.InformalPagoPaPaymentS
 import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.informal_notification.domain.InformalRecipientType;
 import it.pagopa.send.common.legal_notification.domain.NotificationDefaults;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.user.domain.UserType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -41,7 +41,7 @@ public class InformalRecipientSpecFactory {
 
     private final InformalNotificationDefaultsLoader defaultsLoader;
 
-    public InformalRecipientSpec build(Recipient recipient, Map<String, String> data) {
+    public InformalRecipientSpec build(User recipient, Map<String, String> data) {
         Map<String, String> remaining = new HashMap<>(data);
         Map<String, Object> defaults = defaultsLoader.load();
 

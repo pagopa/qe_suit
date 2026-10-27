@@ -43,17 +43,10 @@ public class CampaignsRestClientConfig {
             String fallback
     ) {
         CurrentUserSession session = sessionProvider.getIfAvailable();
-        if (session != null && session.getCurrentActor() != null) {
-            User user = session.getCurrentActor();
-            String token = tokenProvider.getToken(user.getUsername());
+        if (session != null && session.hasUser()) {
+            String token = tokenProvider.getToken(session.getUser().getUsername());
             if (token != null && !token.isBlank()) {
                 return token;
-            }
-            if (user instanceof Enum<?> e) {
-                token = tokenProvider.getToken(e.name());
-                if (token != null && !token.isBlank()) {
-                    return token;
-                }
             }
         }
         return fallback;

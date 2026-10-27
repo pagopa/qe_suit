@@ -1,5 +1,7 @@
 package it.pagopa.send.suite.contract;
 
+import it.pagopa.send.common.user.domain.UserProvider;
+import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.bff.delivery.infrastructure.BffComboRestClient;
@@ -8,16 +10,12 @@ import it.pagopa.send.common.informal_notification.domain.InformalNotificationDo
 import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.informal_notification.infrastructure.factory.InformalRecipientSpecFactory;
 import it.pagopa.send.common.journey.application.SendJourney;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.generated.openapi.clients.sender.informal.bff.model.BffInformalNotificationTimelineStatusHistoryV1;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import it.pagopa.send.JunitActiveProfilesResolver;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.time.Duration;
@@ -36,30 +34,30 @@ import java.util.Map;
  *
  */
 @Slf4j
-@ActiveProfiles(resolver = JunitActiveProfilesResolver.class)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class BffComboContractTest {
 
+    private final UserProvider userProvider;
     private final BffComboRestClient bffComboRestClient;
     private final SendJourney sendJourney;
     private final InformalRecipientSpecFactory informalRecipientSpecFactory;
 
     private InformalNotificationDomain createComboNotification(String subject) {
-        InformalRecipientSpec lucrezia = informalRecipientSpecFactory.build(Recipient.LUCREZIA, Map.of());
+        InformalRecipientSpec lucrezia = informalRecipientSpecFactory.build(userProvider.resolve(UserAlias.USER_1), Map.of());
 
         return sendJourney
-                .withInformalSender(Tenant.GROSSINI)
+                .withInformalSender(userProvider.resolve(UserAlias.COMUNE_1))
                 .prepareInformalNotification(Map.of(
                         "subject", subject,
                         "campaignId", "FattOrd"
                 ))
                 .withInformalRecipient(lucrezia)
-                .sendInformalNotification(Tenant.GROSSINI);
+                .sendInformalNotification(userProvider.resolve(UserAlias.COMUNE_1));
     }
 
     // ===========================

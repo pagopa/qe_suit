@@ -1,5 +1,7 @@
 package it.pagopa.send.suite.contract;
 
+import it.pagopa.send.common.user.domain.UserProvider;
+import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.campaigns.application.CampaignsGateway;
@@ -7,8 +9,6 @@ import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.journey.application.SendJourney;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.generated.openapi.clients.sender.informal.bff.model.CampaignSummary;
 import it.pagopa.send.web.campaigns.infrastructure.page.CampaignDetailPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
@@ -20,9 +20,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 import it.pagopa.send.common.informal_notification.infrastructure.factory.InformalRecipientSpecFactory;
 
@@ -30,31 +28,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 @Slf4j
 public class WebCampaignDetailsContractTest {
+    private final UserProvider userProvider;
     private final WebBrowserContractValidator webContractValidator;
     private final CampaignsGateway campaignsGateway;
     private final SendJourney sendJourney;
     private final InformalRecipientSpecFactory informalRecipientSpecFactory;
-    @Value("${token.mittente}")
-    private String veronaSelfCareToken;
-    private final String personalSelfCareToken="";
 
     @TestFactory
     Stream<DynamicTest> dettaglioCampagna() {
         List<CampaignSummary> results = campaignsGateway.getCampaigns();
         return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
-                .on(CampaignDetailPage.class,results.get(0).getCampaignId(),personalSelfCareToken)
+                .as(userProvider.resolve(UserAlias.COMUNE_1))
+                .on(CampaignDetailPage.class,results.get(0).getCampaignId())
                 .tests(dettaglioCampagnaScenarios(results.get(0)));
     }
 
@@ -75,8 +70,8 @@ public class WebCampaignDetailsContractTest {
         CampaignSummary result = campaignsGateway.getCampaignByID("CampCancelled");
 
         return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
-                .on(CampaignDetailPage.class,result.getCampaignId(),personalSelfCareToken)
+                .as(userProvider.resolve(UserAlias.COMUNE_1))
+                .on(CampaignDetailPage.class,result.getCampaignId())
                 .tests(dettaglioCampagnaEmptyStateScenarios(result));
     }
 
@@ -97,17 +92,17 @@ public class WebCampaignDetailsContractTest {
         //questo step lo utilizzo per vedere se la campagna esiste o meno
         campaignId = campaignsGateway.getCampaignByID(campaignId).getCampaignId();
         return webContractValidator
-                .as(Tenant.GROSSINI, List.of())
-                .on(CampaignDetailPage.class,campaignId,personalSelfCareToken)
-                .tests(dettaglioCampagnaRicercaScenarios(iun));
+                .as(userProvider.resolve(UserAlias.COMUNE_1))
+                .on(CampaignDetailPage.class,campaignId)
+                .tests(dettaglioCampagnaRicercaScenarios(iun, userProvider.resolve(UserAlias.USER_1).getTaxId()));
     }
 
-    private static @NonNull Stream<WebScenario<CampaignDetailPage>> dettaglioCampagnaRicercaScenarios(String iun) {
+    private static @NonNull Stream<WebScenario<CampaignDetailPage>> dettaglioCampagnaRicercaScenarios(String iun, String recipientTaxId) {
         return Stream.of(new WebScenario<>(
                 "Verifica pagina dettaglio notifica con ricerca",
                 page -> {
                     page.iunSearchInput().fill(iun);
-                    page.recipientId().fill(Recipient.LUCREZIA.getTaxId());
+                    page.recipientId().fill(recipientTaxId);
                     page.filterButton().click();
                 },
                 page -> {
@@ -118,7 +113,7 @@ public class WebCampaignDetailsContractTest {
                             .cells()
                             .get(0)
                             .value()
-                            .read()).as("Valore campo recipientId non congruo").isEqualTo("BRGLRZ80D58H501Q");
+                            .read()).as("Valore campo recipientId non congruo").isEqualTo(recipientTaxId);
 
                     Assertions.assertThat(page.communications()
                             .rows()
@@ -133,7 +128,7 @@ public class WebCampaignDetailsContractTest {
 
     private String sendDefaultInformalNotification(String campaignId) {
         InformalRecipientSpec recipientSpec = informalRecipientSpecFactory.build(
-                Recipient.LUCREZIA,
+                userProvider.resolve(UserAlias.USER_1),
                 Map.of(
                         "email", "complaint@simulator.amazonses.com",
                         "phoneNumber", "+390000032181",
@@ -146,13 +141,13 @@ public class WebCampaignDetailsContractTest {
         );
 
         return sendJourney
-                .withInformalSender(Tenant.GROSSINI)
+                .withInformalSender(userProvider.resolve(UserAlias.COMUNE_1))
                 .prepareInformalNotification(Map.of(
                         "subject", "Test notifica bonaria Cucumber",
                         "campaignId", campaignId
                 ))
                 .withInformalRecipient(recipientSpec)
-                .sendInformalNotification(Tenant.GROSSINI)
+                .sendInformalNotification(userProvider.resolve(UserAlias.COMUNE_1))
                 .getIun();
     }
 }

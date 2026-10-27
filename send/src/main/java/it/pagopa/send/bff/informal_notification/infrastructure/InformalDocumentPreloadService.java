@@ -1,13 +1,12 @@
 package it.pagopa.send.bff.informal_notification.infrastructure;
 
+import it.pagopa.send.common.user.infrastructure.config.UsersProperties;
 import io.restassured.response.Response;
 import it.pagopa.send.common.legal_notification.domain.PreloadedDocument;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -32,10 +31,7 @@ public class InformalDocumentPreloadService {
 
     private final InformalDeliveryRestClient informalDeliveryRestClient;
     private final CurrentUserSession currentUserSession;
-    private final Map<String, String> paDeliveryApiKeys;
-
-    @Value("${pa.delivery-api-key.PALERMO}")
-    private String defaultApiKey;
+    private final UsersProperties usersProperties;
 
     public PreloadedDocument preloadTestPdf(String preloadIdx) {
         byte[] fileBytes = readClasspathResource(TEST_PDF_CLASSPATH);
@@ -47,10 +43,13 @@ public class InformalDocumentPreloadService {
                 "sha256", sha256Base64
         );
 
-        User sender = currentUserSession.getSender();
-        String apiKey = (sender != null && paDeliveryApiKeys != null)
-                ? paDeliveryApiKeys.getOrDefault(sender.getName(), defaultApiKey)
-                : defaultApiKey;
+        User sender = currentUserSession.getUser();
+        String apiKey = usersProperties.findByUsername(sender.getUsername())
+                .map(UsersProperties.UserEntry::deliveryApiKey)
+                .filter(key -> !key.isBlank())
+                .orElseThrow(() -> new IllegalStateException(
+                        "Nessuna api-key delivery configurata per l'utenza " + sender.getUsername()
+                                + " (campo delivery-api-key in users/application-users-<ambiente>.yaml)"));
 
         Response response = informalDeliveryRestClient.preloadAttachments(apiKey, List.of(preloadRequest));
         if (response.getStatusCode() < 200 || response.getStatusCode() >= 300) {

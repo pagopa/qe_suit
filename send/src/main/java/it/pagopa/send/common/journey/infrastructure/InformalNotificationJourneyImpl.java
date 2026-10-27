@@ -5,14 +5,12 @@ import it.pagopa.send.common.informal_notification.domain.InformalNotificationDo
 import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.journey.application.InformalNotificationJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.generated.openapi.clients.informal.model.FullSentInformalNotificationV1;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -24,8 +22,8 @@ public class InformalNotificationJourneyImpl implements InformalNotificationJour
     private final CurrentUserSession currentUserSession;
 
     @Override
-    public InformalNotificationJourneyImpl withInformalSender(Tenant tenant) {
-        currentUserSession.setSender(tenant);
+    public InformalNotificationJourneyImpl withInformalSender(User tenant) {
+        currentUserSession.setUser(tenant);
         return this;
     }
 
@@ -37,15 +35,14 @@ public class InformalNotificationJourneyImpl implements InformalNotificationJour
 
     @Override
     public InformalNotificationJourneyImpl withInformalRecipient(InformalRecipientSpec recipient) {
-        User sender = currentUserSession.getSender();
+        User sender = currentUserSession.getUser();
         informalNotificationUseCase.addRecipient(sender, recipient);
-        currentUserSession.setRecipients(List.of(recipient.recipient()));
         return this;
     }
 
     @Override
-    public InformalNotificationDomain sendInformalNotification(Tenant sender) {
-        currentUserSession.setSender(sender);
+    public InformalNotificationDomain sendInformalNotification(User sender) {
+        currentUserSession.setUser(sender);
         InformalNotificationDomain domain = informalNotificationUseCase.sendNotification(sender);
         log.info("Comunicazione bonaria inviata con successo: {}", domain);
         return domain;
