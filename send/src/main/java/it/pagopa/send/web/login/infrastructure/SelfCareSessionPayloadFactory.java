@@ -51,7 +51,7 @@ public class SelfCareSessionPayloadFactory {
     }
 
     /**
-     * Sessione dell'utente: la parte comune ({@link #basePayload}) più i campi del suo tipo di utenza, ente (PA)
+     *  Sessione dell'utente: la parte comune ({@link #basePayload}) più i campi del suo tipo di utenza, ente (PA)
      * oppure persona fisica o giuridica (PF/PG).
      */
     public String build(User user, String sessionToken) {
