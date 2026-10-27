@@ -14,12 +14,11 @@ public interface CurrentUserSession {
     List<User> getRecipients();
 
     /**
-     * Attore da usare per l'autenticazione UI nei test di contratto: il sender se impostato,
-     * altrimenti il primo destinatario, altrimenti {@code null} (nessun utente da impersonare:
-     * navigazione diretta senza faking di sessione, es. i link con token già valorizzato usati
-     * dal portale di supporto). Usato da {@code WebJUnitSuitConfig} per popolare il
-     * {@code WebBrowserContext} sia negli scenari "come mittente"/"come PF/PG" sia in quelli
-     * anonimi.
+     * Attore dello scenario: il sender se impostato, altrimenti il primo destinatario, altrimenti
+     * {@code null} (nessun utente da impersonare: navigazione diretta senza faking di sessione, es. i
+     * link con token già valorizzato usati dal portale di supporto). Usato dagli adapter web, sia nei
+     * test di contratto sia negli scenari Cucumber, per autenticare il browser e per scegliere le
+     * pagine in base al tipo di utente (PA, PF, PG).
      */
     User getCurrentActor();
 }

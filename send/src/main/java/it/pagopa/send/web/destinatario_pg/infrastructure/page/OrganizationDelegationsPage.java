@@ -9,7 +9,8 @@ import org.assertj.core.api.Assertions;
 @Url("${url.notifiche.persona-giuridica.deleghe-a-carico}")
 public interface OrganizationDelegationsPage extends Page {
 
-    @XPath("//*[@id=\"simple-tabpanel--1\"]/div/div/h6")
+    // titolo della sezione: un h2 con lo stile h6, dentro il blocco con data-testid stabile
+    @XPath("//*[@data-testid=\"delegationsOfTheCompany\"]/h2")
     Readable<String> breadcrumbs();
 
     @Override
