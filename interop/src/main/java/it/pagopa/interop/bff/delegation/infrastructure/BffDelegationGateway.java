@@ -82,15 +82,18 @@ public class BffDelegationGateway implements DelegationGateway {
 
     @Override
     public void revokeProducerDelegation(DelegationRef delegationRef) {
-        var response = restClient.revokeProducerDelegation(delegationRef.id()).withoutPolling();
-        requireSuccessfulResponse(response.getRaw(), "revoca della delega di erogazione");
+        restClient.revokeProducerDelegation(delegationRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
     }
 
     @Override
     public ProducerDelegation getProducerDelegation(DelegationRef delegationRef) {
-        var response = restClient.getProducerDelegation(delegationRef.id()).withoutPolling();
-        requireSuccessfulResponse(response.getRaw(), "lettura della delega di erogazione");
-        return response.map(mapper::toProducerDelegation).updateContext().get();
+        return restClient
+                .getProducerDelegation(delegationRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(mapper::toProducerDelegation)
+                .updateContext()
+                .get();
     }
 
     @Override

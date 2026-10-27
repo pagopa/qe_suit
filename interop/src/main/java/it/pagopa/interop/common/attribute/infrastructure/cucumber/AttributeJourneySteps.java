@@ -50,8 +50,12 @@ public class AttributeJourneySteps {
                 .assignCertifiedAttribute(TenantRef.of(consumer.getOrganizationId()));
     }
 
-    @When("un {userRole} di/del {tenant} crea i seguenti attributi {word}:")
     @Given("i seguenti attributi {word} creati da un {userRole} di/del {tenant}:")
+    public void createAttriburtes(String type,  UserRole userRole, Tenant producer, List<AttributeAliasConfiguration> attributes){
+        createAttributes(userRole, producer, type, attributes);
+    }
+
+    @When("un {userRole} di/del {tenant} crea i seguenti attributi {word}:")
     public void createAttributes(
             UserRole userRole, Tenant producer, String type, List<AttributeAliasConfiguration> attributes
     ) {
