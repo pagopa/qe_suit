@@ -25,7 +25,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -68,7 +67,7 @@ public class WebNotificationDetailsContractTest {
                 .waitForNotificationStatus(NotificationStatus.EFFECTIVE_DATE)
                 .get(LegalNotificationDomain.class);
 
-        return webContractValidator.as(sender, List.of(user1.recipient()))
+        return webContractValidator.as(sender)
                 .on(MittenteNotificationDetailsPage.class, createdNotification.getIun())
                 .tests(scenarios());
 

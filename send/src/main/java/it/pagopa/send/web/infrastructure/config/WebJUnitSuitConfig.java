@@ -31,7 +31,7 @@ import org.springframework.core.env.Environment;
  * registrato, quindi non si possono riusare i bean {@code @ScenarioScope} già scansionati. Si
  * ricostruisce qui, a mano, la catena adapter → {@link AuthenticatedLocatableCapabilityImpl}, con lo
  * stesso meccanismo a sessionStorage usato da Cucumber. La capability legge l'utente da
- * {@link CurrentUserSession#getCurrentActor()} al momento della navigazione (impostato da
+ * {@link CurrentUserSession#getUser()} al momento della navigazione (impostato da
  * {@code WebBrowserContractValidator#as}/{@code #asRecipient}) e tiene l'URL corrente in un
  * {@link InMemoryBrowserContext} proprio di ogni browser.
  */
