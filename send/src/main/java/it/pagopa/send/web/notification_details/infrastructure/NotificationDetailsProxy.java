@@ -1,5 +1,6 @@
 package it.pagopa.send.web.notification_details.infrastructure;
 
+import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.user.domain.UserType;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationDetailsPFPage;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationPFPage;
@@ -24,6 +25,7 @@ public class NotificationDetailsProxy implements NotificationDetailsPage, Notifi
     private final NotificationPFPage notificationPFPage;
     private final NotificationDetailsPFPage notificationDetailsPFPage;
     private final WebBrowserContext webBrowserContext;
+    private final CurrentUserSession currentUserSession;
 
     @Override
     public void goToNotificationDetails() {
@@ -37,13 +39,13 @@ public class NotificationDetailsProxy implements NotificationDetailsPage, Notifi
     }
 
     private NotificationSearchPage currentSearchPage() {
-        return webBrowserContext.getCurrentUser().getType() == UserType.PA
+        return currentUserSession.getCurrentActor().getType() == UserType.PA
                 ? dashboardPage
                 : notificationPFPage;
     }
 
     private NotificationDetailsPage currentDetailsPage() {
-        return webBrowserContext.getCurrentUser().getType() == UserType.PA
+        return currentUserSession.getCurrentActor().getType() == UserType.PA
                 ? mittenteNotificationDetailsPage
                 : notificationDetailsPFPage;
     }
