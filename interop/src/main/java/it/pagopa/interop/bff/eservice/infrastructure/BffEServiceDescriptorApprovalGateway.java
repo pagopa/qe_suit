@@ -9,9 +9,11 @@ import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegatedEServiceDescriptorSeed;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class BffEServiceDescriptorApprovalGateway implements EServiceDescriptorApprovalGateway {
     private final BffEServiceDescriptorApprovalRestClient restClient;
@@ -24,6 +26,16 @@ public class BffEServiceDescriptorApprovalGateway implements EServiceDescriptorA
         var response = restClient.rejectDescriptor(serviceRef.id(), descriptorRef.id(),
                 new RejectDelegatedEServiceDescriptorSeed().rejectionReason(reason)).withoutPolling();
         if (!response.getRaw().isSuccess()) {
+            if (response.getRaw() instanceof ApiResponse apiResponse
+                    && (apiResponse.getStatusCode() == 400 || apiResponse.getStatusCode() == 409
+                    || apiResponse.getStatusCode() == 500)) {
+                var current = descriptors.getEServiceDescriptor(serviceRef, descriptorRef);
+                if (current.getState() == EServiceDescriptorState.DRAFT) {
+                    log.warn("Rifiuto della versione {} non riuscito (HTTP {}), ma la rilettura conferma DRAFT",
+                            descriptorRef.id(), apiResponse.getStatusCode());
+                    return current;
+                }
+            }
             String status = response.getRaw() instanceof ApiResponse apiResponse
                     ? Integer.toString(apiResponse.getStatusCode()) : "sconosciuto";
             throw new IllegalStateException("Rifiuto della versione " + descriptorRef.id()

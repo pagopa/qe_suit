@@ -12,7 +12,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegatedEServiceDescriptorSeed;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 
 import java.util.UUID;
@@ -24,8 +24,9 @@ import static org.mockito.Mockito.*;
 
 class BffEServiceDescriptorRejectionTest {
     @ParameterizedTest
-    @ValueSource(ints = {204, 400, 403})
-    void submitsRejectionOnceAndPollsOnlySuccessfulWrites(int status) {
+    @CsvSource({"204,false", "400,false", "403,false", "409,false", "500,false",
+            "400,true", "409,true", "500,true", "403,true"})
+    void submitsRejectionOnceAndReconcilesOnlyConfirmedDraftRaces(int status, boolean alreadyDraft) {
         var client = mock(ApiClient.class);
         var api = mock(EservicesApi.class);
         var operation = mock(EservicesApi.RejectDelegatedEServiceDescriptorOper.class);
@@ -49,15 +50,27 @@ class BffEServiceDescriptorRejectionTest {
         var gateway = new BffEServiceDescriptorApprovalGateway(restClient, descriptors);
         var pending = EServiceDescriptor.builder().id(descriptorRef.id()).state(WAITING_FOR_APPROVAL).build();
         var draft = pending.toBuilder().state(DRAFT).build();
-        doReturn(pending, pending, draft).when(descriptors).getEServiceDescriptor(serviceRef, descriptorRef);
+        if (status == 204) {
+            doReturn(pending, pending, draft).when(descriptors).getEServiceDescriptor(serviceRef, descriptorRef);
+        } else {
+            doReturn(alreadyDraft ? draft : pending).when(descriptors)
+                    .getEServiceDescriptor(serviceRef, descriptorRef);
+        }
 
         if (status == 204) {
             assertThat(gateway.rejectDescriptor(serviceRef, descriptorRef, "Cleanup dello scenario")).isSameAs(draft);
             verify(descriptors, times(3)).getEServiceDescriptor(serviceRef, descriptorRef);
+        } else if (alreadyDraft && status != 403) {
+            assertThat(gateway.rejectDescriptor(serviceRef, descriptorRef, "Cleanup dello scenario")).isSameAs(draft);
+            verify(descriptors).getEServiceDescriptor(serviceRef, descriptorRef);
         } else {
             assertThatThrownBy(() -> gateway.rejectDescriptor(serviceRef, descriptorRef, "Cleanup dello scenario"))
                     .isInstanceOf(IllegalStateException.class).hasMessageContaining("HTTP " + status);
-            verifyNoInteractions(descriptors);
+            if (status == 403) {
+                verifyNoInteractions(descriptors);
+            } else {
+                verify(descriptors).getEServiceDescriptor(serviceRef, descriptorRef);
+            }
         }
 
         var payload = ArgumentCaptor.forClass(RejectDelegatedEServiceDescriptorSeed.class);

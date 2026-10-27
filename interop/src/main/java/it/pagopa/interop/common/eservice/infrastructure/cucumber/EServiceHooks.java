@@ -4,6 +4,7 @@ import io.cucumber.java.After;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorApprovalUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
@@ -23,6 +24,7 @@ public class EServiceHooks {
     private final EntityStore entityStore;
     private final EServiceUseCase eServiceUseCase;
     private final EServiceDescriptorApprovalUseCase descriptorUseCase;
+    private final EServiceDescriptorUseCase descriptorReader;
     private final CurrentUserSession currentUserSession;
     private final CurrentChannel<Channel> currentChannel;
 
@@ -49,6 +51,8 @@ public class EServiceHooks {
                     Tenant producer = Tenant.fromOrganizationId(UUID.fromString(eservice.getProducerId()));
                     currentUserSession.set(User.getTenantAdmin(producer), producer);
                     var descriptors = eservice.getDescriptors().stream()
+                            .map(descriptor -> descriptor.getState() == EServiceDescriptorState.WAITING_FOR_APPROVAL
+                                    ? descriptorReader.getDescriptor(eservice, descriptor) : descriptor)
                             .map(descriptor -> descriptor.getState() == EServiceDescriptorState.WAITING_FOR_APPROVAL
                                     ? descriptorUseCase.rejectDescriptor(eservice, descriptor, "Cleanup dello scenario")
                                     : descriptor)

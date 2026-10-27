@@ -3,6 +3,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorApprovalUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
@@ -28,10 +29,11 @@ class EServiceHooksTest {
     private final EntityStore store = mock(EntityStore.class);
     private final EServiceUseCase services = mock(EServiceUseCase.class);
     private final EServiceDescriptorApprovalUseCase descriptors = mock(EServiceDescriptorApprovalUseCase.class);
+    private final EServiceDescriptorUseCase reader = mock(EServiceDescriptorUseCase.class);
     private final CurrentUserSession session = mock(CurrentUserSession.class);
     @SuppressWarnings("unchecked")
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);
-    private final EServiceHooks hooks = new EServiceHooks(store, services, descriptors, session, channel);
+    private final EServiceHooks hooks = new EServiceHooks(store, services, descriptors, reader, session, channel);
 
     @Test
     void deletesDraftEServiceAsProducerThroughBffAndRestoresContext() {
@@ -128,6 +130,34 @@ class EServiceHooksTest {
     }
 
     @Test
+    void deletesWithoutRejectionWhenRevocationHasAlreadyReturnedThePendingVersionToDraft() {
+        EService service = eService(WAITING_FOR_APPROVAL);
+        var pending = service.getDescriptors().get(0);
+        when(store.getAll(EService.class)).thenReturn(List.of(service));
+        when(reader.getDescriptor(service, pending)).thenReturn(pending.toBuilder().state(DRAFT).build());
+
+        hooks.cleanUpEServices();
+
+        verify(services).deleteEService(service);
+        verifyNoMoreInteractions(services);
+        verifyNoInteractions(descriptors);
+    }
+
+    @Test
+    void archivesPublishedServiceWithoutRejectingSuccessorAlreadyReturnedToDraft() {
+        EService service = eService(PUBLISHED, WAITING_FOR_APPROVAL);
+        var pending = service.getDescriptors().get(1);
+        when(store.getAll(EService.class)).thenReturn(List.of(service));
+        when(reader.getDescriptor(service, pending)).thenReturn(pending.toBuilder().state(DRAFT).build());
+
+        hooks.cleanUpEServices();
+
+        verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
+        verifyNoMoreInteractions(services);
+        verifyNoInteractions(descriptors);
+    }
+
+    @Test
     void rejectsTheOnlyPendingVersionBeforeDeletingTheUnpublishedService() {
         EService service = eService(WAITING_FOR_APPROVAL);
         var pending = service.getDescriptors().get(0);
@@ -211,10 +241,13 @@ class EServiceHooksTest {
     }
 
     private EService eService(EServiceDescriptorState... states) {
-        return EService.builder().id(UUID.randomUUID())
+        EService service = EService.builder().id(UUID.randomUUID())
                 .producerId(Tenant.COMUNE_DI_MILANO.getOrganizationId().toString())
                 .descriptors(Arrays.stream(states).map(state -> EServiceDescriptor.builder()
                         .id(UUID.randomUUID()).state(state).build()).toList())
                 .build();
+        service.getDescriptors().stream().filter(descriptor -> descriptor.getState() == WAITING_FOR_APPROVAL)
+                .forEach(descriptor -> when(reader.getDescriptor(service, descriptor)).thenReturn(descriptor));
+        return service;
     }
 }
