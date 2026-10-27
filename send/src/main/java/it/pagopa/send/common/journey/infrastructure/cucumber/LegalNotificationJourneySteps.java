@@ -90,7 +90,7 @@ public class LegalNotificationJourneySteps {
 
     /**
      * Primo step del flusso di creazione notifica multi-destinatario: compila i campi base della
-     * notifica e imposta la PA indicata come mittente nella sessione. Agnostico dal channel;
+     * notifica e imposta la PA indicata come utente della sessione. Agnostico dal channel;
      * ripetibile in combinazione con {@link #addRecipientToNotification} e concluso da
      * {@link #sendNotification}. A differenza degli step sopra, che compongono un unico
      * step tramite {@link SendJourney}, questi tre step chiamano {@link LegalNotificationUseCase}
@@ -98,7 +98,7 @@ public class LegalNotificationJourneySteps {
      */
     @Given("la PA {user} predispone una nuova notifica con i seguenti dati:")
     public void prepareNotification(User tenant, Map<String, String> data) {
-        currentUserSession.setSender(tenant);
+        currentUserSession.setUser(tenant);
         legalNotificationUseCase.prepareNotification(data);
     }
 
@@ -119,8 +119,8 @@ public class LegalNotificationJourneySteps {
      */
     @When("la notifica viene sottomessa e si attende che lo stato diventi {string}")
     public void sendNotification(String targetStatus) {
-        // il mittente è quello impostato dallo step "la PA ... predispone una nuova notifica"
-        legalNotificationUseCase.sendNotification(currentUserSession.getSender(), NotificationStatus.ACCEPTED);
+        // il mittente è l'utente impostato dallo step "la PA ... predispone una nuova notifica"
+        legalNotificationUseCase.sendNotification(currentUserSession.getUser(), NotificationStatus.ACCEPTED);
         // sendNotification attende lo stato della richiesta (che arriva al massimo ad ACCEPTED): lo stato
         // della notifica indicato nella feature si attende a parte
         legalNotificationUseCase.waitForNotificationStatus(NotificationStatus.fromValue(targetStatus));

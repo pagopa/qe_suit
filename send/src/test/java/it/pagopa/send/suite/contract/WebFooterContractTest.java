@@ -20,7 +20,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 @Execution(ExecutionMode.CONCURRENT)
@@ -57,7 +56,7 @@ public class WebFooterContractTest {
 
     private Stream<DynamicTest> captionOnlySpaPAFooterScenarios()
     {
-        return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1), List.of())
+        return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1))
                 .on(DashboardPage.class)
                 .tests(Stream.of(new WebScenario<>(
                         "Check assenza dicitura 'Socio Unico'",
