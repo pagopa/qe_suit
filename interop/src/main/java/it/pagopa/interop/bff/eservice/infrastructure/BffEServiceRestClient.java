@@ -33,21 +33,28 @@ public class BffEServiceRestClient extends RestClient {
 
     public TestChain<CreatedEServiceDescriptor> createEServiceInstanceFromTemplate(@Nonnull UUID templateId, @Nonnull InstanceEServiceSeed payload) {
         return execute(
-                () -> eservicesApi.createEServiceInstanceFromTemplate()
-                        .templateIdPath(templateId)
-                        .body(payload)
-                        .execute(Function.identity()),
+                () -> eservicesApi.createEServiceInstanceFromTemplate().templateIdPath(templateId).body(payload).execute(Function.identity()),
                 CreatedEServiceDescriptor.class
+        );
+    }
+
+    public TestChain<CreatedResource> updateDraftDescriptorTemplateInstance(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceDescriptorTemplateInstanceSeed payload) {
+        return execute(
+                () -> eservicesApi.updateDraftDescriptorTemplateInstance().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).body(payload).execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
+    public TestChain<CreatedResource> updateTemplateInstanceDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceTemplateInstanceDescriptorQuotas payload) {
+        return execute(
+                () -> eservicesApi.updateTemplateInstanceDescriptor().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).body(payload).execute(Function.identity()),
+                CreatedResource.class
         );
     }
 
     public TestChain<CreatedResource> addDescriptor(@Nonnull UUID eserviceId) {
         return execute(
-                () -> eservicesApi
-                        .createDescriptor()
-                        .eServiceIdPath(eserviceId)
-                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
-                        .execute(Function.identity()),
+                () -> eservicesApi.createDescriptor().eServiceIdPath(eserviceId).reqSpec(reqSpec -> reqSpec.setContentType("application/json")).execute(Function.identity()),
                 CreatedResource.class
         );
     }
@@ -68,10 +75,7 @@ public class BffEServiceRestClient extends RestClient {
 
     public TestChain<Void> addRiskAnalysis(@Nonnull UUID eserviceId, @Nonnull EServiceRiskAnalysisSeed payload) {
         return execute(
-                () -> eservicesApi.addRiskAnalysisToEService()
-                        .eServiceIdPath(eserviceId)
-                        .body(payload)
-                        .execute(Function.identity()),
+                () -> eservicesApi.addRiskAnalysisToEService().eServiceIdPath(eserviceId).body(payload).execute(Function.identity()),
                 Void.class
         );
     }

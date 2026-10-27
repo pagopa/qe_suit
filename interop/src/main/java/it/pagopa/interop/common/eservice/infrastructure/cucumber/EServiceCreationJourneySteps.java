@@ -103,4 +103,70 @@ public class EServiceCreationJourneySteps {
                 .waitUntilEService(eservice -> eservice.getDescriptors().get(0).getState() == EServiceDescriptorState.DEPRECATED)
                 .archiveEService(GracePeriodDays.NUMBER_60);
     }
+
+    @Given("crea un EService {asyncExchange} con un attributo certificato e soglia personalizzata per fruitore a {int}")
+    public void createEServiceWithCertifiedAttributeAndCustomThreshold(boolean asyncExchange, int customThreshold, DataTable defaultThresholds) {
+        Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
+        interopJourney.createCertifiedAttribute();
+
+        EServiceCreationCommand eServiceCommand = eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(asyncExchange);
+        UpdateEServiceDescriptorCommand updateCommand = eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(
+                thresholdsMap.getOrDefault("consumerThreshold", 10),
+                thresholdsMap.getOrDefault("totalThreshold", 20)
+        );
+
+        Attribute attribute = entityStore.getLastOrThrow(Attribute.class);
+        attribute = attribute.toBuilder().dailyCallsPerConsumer(customThreshold).build();
+        Attributes attributes = Attributes.builder().certified(List.of(attribute)).build();
+        updateCommand.attributes(attributes);
+
+        interopJourney
+                .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
+                .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
+    }
+
+    @Given("un e-service in {eServiceDescriptorState}, creato dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}")
+    public void createEService(EServiceDescriptorState state, Tenant producer, int customThreshold, DataTable defaultThresholds) {
+
+        Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
+
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createCertifiedAttribute()
+                .createEService(EServiceDescriptorState.DRAFT)
+                .updateDescriptorWithContextAttributes(
+                        config -> config
+                                .dailyCallsPerConsumer(thresholdsMap.get("consumerThreshold"))
+                                .dailyCallsTotal(thresholdsMap.get("totalThreshold")),
+                        customThreshold,
+                        state
+                )
+                .waitUntilEService(eService ->
+                        eService.getLatestDescriptor().getState() == state
+                );
+    }
+
+    @Given("una nuova versione dell'e-service in {eServiceDescriptorState}, creata dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}")
+    public void createNewInstanceDraftEService(EServiceDescriptorState state, Tenant producer, int customThreshold, DataTable defaultThresholds) {
+        Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
+
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createCertifiedAttribute()
+                .createEService(EServiceDescriptorState.DRAFT)
+                .updateDescriptorWithContextAttributes(
+                        config -> config
+                                .dailyCallsPerConsumer(thresholdsMap.get("consumerThreshold"))
+                                .dailyCallsTotal(thresholdsMap.get("totalThreshold")),
+                        customThreshold,
+                        EServiceDescriptorState.PUBLISHED
+                )
+                .waitUntilEService(eService ->
+                        eService.getLatestDescriptor().getState() == EServiceDescriptorState.PUBLISHED
+                )
+                .addDescriptor(state)
+                .waitUntilEService(eService ->
+                        eService.getDescriptors().size() == 2 && eService.getLatestDescriptor().getState() == state
+                );
+    }
 }

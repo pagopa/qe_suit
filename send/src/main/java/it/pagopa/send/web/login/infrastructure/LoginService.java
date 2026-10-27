@@ -2,8 +2,6 @@ package it.pagopa.send.web.login.infrastructure;
 
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.web.login.infrastructure.page.AbstractOneIdPage;
 import it.pagopa.send.web.login.infrastructure.page.OneIdPage;
@@ -13,9 +11,10 @@ import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationPage;
 import it.pagopa.send.web.login.infrastructure.page.PgLoginPage;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import it.pagopa.send.web.login.infrastructure.page.TenantSelectionPage;
-import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
+import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
 
 /**
  * Azioni di login sul browser: nessun servizio esterno coinvolto, solo interazione con le pagine.
@@ -29,7 +28,7 @@ public class LoginService {
     private static final String SESSION_STORAGE_KEY = "user";
 
     private final WebPresentationGateway uiGateway;
-    private final WebBrowserContext webBrowserContext;
+    private final CurrentUserSession currentUserSession;
     private final TenantSelectionPage tenantSelectionPage;
     private final DashboardPage dashboardPage;
     private final NotificationPage notificationPage;
@@ -37,17 +36,16 @@ public class LoginService {
     private final SelfCareSessionPayloadFactory sessionPayloadFactory;
     private final DynamicUserTokenProvider tokenProvider;
 
-    public void loginAsTenant(Tenant tenant) {
+    public void loginAsTenant(User tenant) {
         OneIdPage loginPage = uiGateway.bind(OneIdPage.class);
         loginPage.navigateTo();
         loginPage.loginWithSpid(tenant);
         tenantSelectionPage.selectComune(tenant.getOrganization());
 
-        webBrowserContext.setTenant(tenant);
-        webBrowserContext.setCurrentUser(tenant);
+        currentUserSession.setUser(tenant);
     }
 
-    public void loginAsRecipient(String userType, Recipient recipient) {
+    public void loginAsRecipient(String userType, User recipient) {
         AbstractOneIdPage loginPage = switch (userType) {
             case "PG" -> uiGateway.bind(PgLoginPage.class);
             default -> uiGateway.bind(PfLoginPage.class);
@@ -55,29 +53,26 @@ public class LoginService {
         loginPage.navigateTo();
         loginPage.loginWithSpid(recipient);
 
-        webBrowserContext.setRecipient(recipient);
-        webBrowserContext.setCurrentUser(recipient);
+        currentUserSession.setUser(recipient);
     }
 
-    public void forceTenantSession(Tenant tenant) {
-        String payload = sessionPayloadFactory.buildForTenant(tenant, sessionTokenFor(tenant));
+    public void forceTenantSession(User tenant) {
+        // prima di navigare: ogni navigazione riscrive il sessionStorage con l'utente della sessione
+        currentUserSession.setUser(tenant);
+
+        String payload = sessionPayloadFactory.build(tenant, sessionTokenFor(tenant));
         forceSession(payload, dashboardPage);
-
-        webBrowserContext.setTenant(tenant);
-        webBrowserContext.setCurrentUser(tenant);
     }
 
-    public void forceRecipientSession(String userType, Recipient recipient) {
-        String payload = sessionPayloadFactory.buildForRecipient(recipient, sessionTokenFor(recipient));
+    public void forceRecipientSession(String userType, User recipient) {
+        String payload = sessionPayloadFactory.build(recipient, sessionTokenFor(recipient));
         Page landingPage = "PG".equals(userType) ? notificationPage : notificationPFPage;
+        currentUserSession.setUser(recipient);
         forceSession(payload, landingPage);
-
-        webBrowserContext.setRecipient(recipient);
-        webBrowserContext.setCurrentUser(recipient);
     }
 
     private String sessionTokenFor(User user) {
-        return tokenProvider.getToken(user.getUsername());
+        return tokenProvider.requireToken(user.getUsername());
     }
 
     private void forceSession(String sessionPayload, Page landingPage) {

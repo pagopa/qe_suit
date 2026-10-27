@@ -1,27 +1,20 @@
 package it.pagopa.send.common.kernel.context;
 
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
 import it.pagopa.send.common.user.domain.User;
 
-import java.util.List;
-
+/**
+ * Utente con cui opera lo scenario: lo impostano login, step utente, journey e contract
+ * validator; lo leggono gli adapter di ogni canale (sessione del browser, api-key delle chiamate B2B,
+ * pagine PA/PF/PG). Mittente e destinatari di una notifica sono dati della notifica, non della sessione.
+ */
 public interface CurrentUserSession {
-    void setSender(Tenant sender);
+    void setUser(User user);
 
-    Tenant getSender();
-
-    void setRecipients(List<Recipient> recipients);
-
-    List<Recipient> getRecipients();
+    User getUser();
 
     /**
-     * Attore da usare per l'autenticazione UI nei test di contratto: il sender se impostato,
-     * altrimenti il primo destinatario, altrimenti {@code null} (nessun utente da impersonare:
-     * navigazione diretta senza faking di sessione, es. i link con token già valorizzato usati
-     * dal portale di supporto). Usato da {@code WebJUnitSuitConfig} per popolare il
-     * {@code WebBrowserContext} sia negli scenari "come mittente"/"come PF/PG" sia in quelli
-     * anonimi.
+     * {@code false} quando nessun utente è impostato: navigazione anonima, es. i link con token già
+     * valorizzato usati dal portale di supporto.
      */
-    User getCurrentActor();
+    boolean hasUser();
 }

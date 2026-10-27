@@ -171,3 +171,4 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
         return delimiter == Channel.BFF;
     }
 }
+

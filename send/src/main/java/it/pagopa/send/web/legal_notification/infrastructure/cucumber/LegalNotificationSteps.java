@@ -4,8 +4,7 @@ import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.journey.infrastructure.LegalNotificationJourneyImpl;
@@ -13,7 +12,7 @@ import it.pagopa.send.common.legal_notification.application.LegalNotificationUse
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationType;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.RecipientSpecFactory;
-import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
+import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -29,31 +28,25 @@ public class LegalNotificationSteps {
     private final LegalNotificationJourneyImpl journey;
     private final LegalNotificationUseCase legalNotificationUseCase;
     private final RecipientSpecFactory recipientSpecFactory;
-    private final WebBrowserContext webBrowserContext;
+    private final CurrentUserSession currentUserSession;
     private final EntityStore entityStore;
 
-    @When("l'ente {string} crea una notifica di tipo {legalNotificationType} per il destinatario {string}")
-    public void enteCreaNotifica(String enteName, LegalNotificationType type, String destinatarioName) {
-        createNotification(Tenant.fromOrganization(enteName), type, destinatarioName, Map.of());
+    @When("l'ente {user} crea una notifica di tipo {legalNotificationType} per il destinatario {user}")
+    public void enteCreaNotifica(User sender, LegalNotificationType type, User recipient) {
+        createNotification(sender, type, recipient, Map.of());
     }
 
-    @When("l'ente crea una notifica di tipo {legalNotificationType} per il destinatario {string}")
-    public void enteContestoCreaNotifica(LegalNotificationType type, String destinatarioName) {
-        Tenant tenant = webBrowserContext.getTenant();
-        if (tenant == null) {
-            throw new IllegalStateException("Nessun ente autenticato nel contesto: specifica l'ente esplicitamente oppure effettua prima il login");
-        }
-        createNotification(tenant, type, destinatarioName, Map.of());
+    @When("l'ente crea una notifica di tipo {legalNotificationType} per il destinatario {user}")
+    public void enteContestoCreaNotifica(LegalNotificationType type, User recipient) {
+        createNotification(currentUserSession.getUser(), type, recipient, Map.of());
     }
 
-    @When("l'ente {string} crea una notifica di tipo {legalNotificationType} per il destinatario {string} con i seguenti valori:")
-    public void createNotificationWithOverride(String enteName, LegalNotificationType type, String destinatarioName, DataTable overrides) {
-        createNotification(Tenant.fromOrganization(enteName), type, destinatarioName, overrides.asMap(String.class, String.class));
+    @When("l'ente {user} crea una notifica di tipo {legalNotificationType} per il destinatario {user} con i seguenti valori:")
+    public void createNotificationWithOverride(User sender, LegalNotificationType type, User recipient, DataTable overrides) {
+        createNotification(sender, type, recipient, overrides.asMap(String.class, String.class));
     }
 
-    private void createNotification(Tenant sender, LegalNotificationType type, String destinatarioName, Map<String, String> recipientOverrides) {
-        Recipient recipient = Recipient.fromUsername(destinatarioName);
-
+    private void createNotification(User sender, LegalNotificationType type, User recipient, Map<String, String> recipientOverrides) {
         Map<String, String> overrides = new HashMap<>(type.recipientOverrides());
         overrides.putAll(recipientOverrides);
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, overrides);

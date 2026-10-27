@@ -1,7 +1,7 @@
 package it.pagopa.send.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.journey.application.LegalNotificationJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,15 +36,14 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
     private final EntityStore entityStore;
 
     @Override
-    public LegalNotificationJourneyImpl withSender(Tenant tenant) {
-        currentUserSession.setSender(tenant);
+    public LegalNotificationJourneyImpl withSender(User tenant) {
+        currentUserSession.setUser(tenant);
         return this;
     }
 
     @Override
     public LegalNotificationJourneyImpl withRecipient(RecipientSpec recipient) {
         legalNotificationUseCase.addRecipient(recipient);
-        currentUserSession.setRecipients(List.of(recipient.recipient()));
         return this;
     }
 
@@ -56,8 +54,8 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
     }
 
     @Override
-    public LegalNotificationJourneyImpl sendNotification(Tenant sender, NotificationStatus targetStatus) {
-        currentUserSession.setSender(sender);
+    public LegalNotificationJourneyImpl sendNotification(User sender, NotificationStatus targetStatus) {
+        currentUserSession.setUser(sender);
         legalNotificationUseCase.sendNotification(sender, targetStatus);
         log.info("Notifica legale inviata, stato raggiunto: {}", targetStatus);
         return this;

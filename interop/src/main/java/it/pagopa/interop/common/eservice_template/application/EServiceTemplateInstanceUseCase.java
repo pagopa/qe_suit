@@ -1,7 +1,11 @@
 package it.pagopa.interop.common.eservice_template.application;
 
+import it.pagopa.interop.common.eservice.application.command.EServiceTemplateInstanceUpdateDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateInstanceCreationCommand;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
@@ -41,5 +45,14 @@ public class EServiceTemplateInstanceUseCase {
         descriptor = descriptors.prepareDescriptorForPublication(instance, descriptor,
                 (it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand) null);
         descriptors.publishDescriptor(instance, descriptor);
+    }
+
+    public EService updateEServiceInstanceDescriptor(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef,
+            EServiceDescriptorState currentDescriptorState,
+            EServiceTemplateInstanceUpdateDescriptorCommand command
+    ) {
+        return gateway.updateEServiceInstanceDescriptor(eServiceRef, descriptorRef, currentDescriptorState, command);
     }
 }
