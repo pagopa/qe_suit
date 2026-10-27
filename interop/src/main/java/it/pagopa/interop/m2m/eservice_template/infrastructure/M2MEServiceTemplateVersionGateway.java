@@ -10,7 +10,7 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
-// import it.pagopa.domain.FileDownloadMultipart;
+import it.pagopa.domain.FileDownloadMultipart;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
@@ -24,8 +24,8 @@ import java.util.UUID;
 public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersionGateway {
 
     private final M2MEServiceTemplateRestClient restClient;
+    private final M2MEServiceTemplateVersionMapper mapper;
     private final EntityStore entityStore;
-    // private final M2MEServiceTemplateVersionMapper mapper;
 
     @Override
     public EServiceTemplateVersion addVersion(EServiceTemplateRef templateRef) {
@@ -34,24 +34,21 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
 
     @Override
     public EServiceTemplateVersion getEServiceTemplateVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
-        return null;
-        /*return restClient.getEServiceTemplateVersion(templateRef.id(), versionRef.versionId())
+        return restClient.getEServiceTemplateVersion(templateRef.id(), versionRef.versionId())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(versionDetails -> {
                     Optional<EServiceTemplate> maybeTemplate = entityStore.getById(templateRef.id(), EServiceTemplate.class);
-                    // return mapper.toTemplateWithUpsertVersion(versionDetails, maybeTemplate.orElse(null));
-                    return null;
+                    return mapper.toTemplateWithUpsertVersion(versionDetails, maybeTemplate.orElse(null));
                 })
                 .updateContext()
                 .map(template -> {
-                    *//*EServiceTemplateVersion foundVersion = template.findVersion(versionRef.versionId());
+                    EServiceTemplateVersion foundVersion = template.findVersion(versionRef.versionId());
                     if (foundVersion == null) {
                         throw new IllegalStateException("Template version not found after upsert");
                     }
-                    return foundVersion;*//*
-                    return null;
+                    return foundVersion;
                 })
-                .get();*/
+                .get();
     }
 
     @Override
@@ -71,7 +68,7 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
 
     @Override
     public EServiceTemplateInterface downloadInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
-        /*var fileDownloadMultipart = download(templateRef.id(), versionRef.versionId());
+        var fileDownloadMultipart = download(templateRef.id(), versionRef.versionId());
         return new EServiceTemplateInterface(
                 fileDownloadMultipart.getId(),
                 templateRef,
@@ -79,8 +76,7 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
                 fileDownloadMultipart.getFilename(),
                 fileDownloadMultipart.getPrettyName(),
                 fileDownloadMultipart.getFile().getBytes(StandardCharsets.UTF_8)
-        );*/
-        throw new UnsupportedOperationException();
+        );
     }
 
     @Override
@@ -97,9 +93,9 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
         return delimiter == Channel.M2M_V3;
     }
 
-    /*private FileDownloadMultipart download(UUID templateId, UUID versionId) {
+    private FileDownloadMultipart download(UUID templateId, UUID versionId) {
         return restClient.downloadEServiceTemplateVersionInterface(templateId, versionId)
             .withPolling(PollingStrategy.UNTIL_SUCCESS)
             .get();
-    }*/
+    }
 }
