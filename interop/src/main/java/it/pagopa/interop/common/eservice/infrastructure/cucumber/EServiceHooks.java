@@ -3,6 +3,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 import io.cucumber.java.After;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
@@ -21,11 +22,12 @@ import java.util.UUID;
 public class EServiceHooks {
     private final EntityStore entityStore;
     private final EServiceUseCase eServiceUseCase;
+    private final EServiceDescriptorUseCase descriptorUseCase;
     private final CurrentUserSession currentUserSession;
     private final CurrentChannel<Channel> currentChannel;
 
     /**
-     * Deletes drafts and schedules retirement through BFF unless every version is already retiring or archived.
+     * Rejects pending versions, deletes drafts and schedules retirement through BFF.
      * All cleanups are attempted; failures are propagated together.
      */
     @After(value = "@private-catalog", order = 100)
@@ -46,8 +48,13 @@ public class EServiceHooks {
                 try {
                     Tenant producer = Tenant.fromOrganizationId(UUID.fromString(eservice.getProducerId()));
                     currentUserSession.set(User.getTenantAdmin(producer), producer);
-                    boolean retirementAlreadyScheduled = !eservice.getDescriptors().isEmpty()
-                            && eservice.getDescriptors().stream().allMatch(descriptor -> switch (descriptor.getState()) {
+                    var descriptors = eservice.getDescriptors().stream()
+                            .map(descriptor -> descriptor.getState() == EServiceDescriptorState.WAITING_FOR_APPROVAL
+                                    ? descriptorUseCase.rejectDescriptor(eservice, descriptor, "Cleanup dello scenario")
+                                    : descriptor)
+                            .toList();
+                    boolean retirementAlreadyScheduled = !descriptors.isEmpty()
+                            && descriptors.stream().allMatch(descriptor -> switch (descriptor.getState()) {
                                 case ARCHIVING, ARCHIVING_SUSPENDED, ARCHIVED -> true;
                                 default -> false;
                             });
@@ -56,7 +63,7 @@ public class EServiceHooks {
                                 eservice.getId());
                         continue;
                     }
-                    boolean draftOnly = eservice.getDescriptors().stream()
+                    boolean draftOnly = descriptors.stream()
                             .allMatch(descriptor -> descriptor.getState() == EServiceDescriptorState.DRAFT);
                     if (draftOnly) {
                         eServiceUseCase.deleteEService(eservice);

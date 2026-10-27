@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
@@ -26,10 +27,11 @@ import static org.mockito.Mockito.*;
 class EServiceHooksTest {
     private final EntityStore store = mock(EntityStore.class);
     private final EServiceUseCase services = mock(EServiceUseCase.class);
+    private final EServiceDescriptorUseCase descriptors = mock(EServiceDescriptorUseCase.class);
     private final CurrentUserSession session = mock(CurrentUserSession.class);
     @SuppressWarnings("unchecked")
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);
-    private final EServiceHooks hooks = new EServiceHooks(store, services, session, channel);
+    private final EServiceHooks hooks = new EServiceHooks(store, services, descriptors, session, channel);
 
     @Test
     void deletesDraftEServiceAsProducerThroughBffAndRestoresContext() {
@@ -52,8 +54,7 @@ class EServiceHooksTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = EServiceDescriptorState.class, mode = EnumSource.Mode.EXCLUDE,
-            names = {"DRAFT", "ARCHIVING", "ARCHIVING_SUSPENDED", "ARCHIVED"})
+    @EnumSource(value = EServiceDescriptorState.class, names = {"PUBLISHED", "SUSPENDED", "DEPRECATED"})
     void archivesNonDraftEServicesWithSixtyDaysGrace(EServiceDescriptorState state) {
         EService service = eService(state);
         when(store.getAll(EService.class)).thenReturn(List.of(service));
@@ -124,6 +125,55 @@ class EServiceHooksTest {
 
         verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
         verifyNoMoreInteractions(services);
+    }
+
+    @Test
+    void rejectsTheOnlyPendingVersionBeforeDeletingTheUnpublishedService() {
+        EService service = eService(WAITING_FOR_APPROVAL);
+        var pending = service.getDescriptors().get(0);
+        var draft = pending.toBuilder().state(DRAFT).build();
+        when(store.getAll(EService.class)).thenReturn(List.of(service));
+        when(descriptors.rejectDescriptor(service, pending, "Cleanup dello scenario")).thenReturn(draft);
+
+        hooks.cleanUpEServices();
+
+        var order = inOrder(descriptors, services);
+        order.verify(descriptors).rejectDescriptor(service, pending, "Cleanup dello scenario");
+        order.verify(services).deleteEService(service);
+        verifyNoMoreInteractions(services, descriptors);
+    }
+
+    @Test
+    void rejectsPendingSuccessorBeforeArchivingThePublishedService() {
+        EService service = eService(PUBLISHED, WAITING_FOR_APPROVAL);
+        var pending = service.getDescriptors().get(1);
+        when(store.getAll(EService.class)).thenReturn(List.of(service));
+        when(descriptors.rejectDescriptor(service, pending, "Cleanup dello scenario"))
+                .thenReturn(pending.toBuilder().state(DRAFT).build());
+
+        hooks.cleanUpEServices();
+
+        var order = inOrder(descriptors, services);
+        order.verify(descriptors).rejectDescriptor(service, pending, "Cleanup dello scenario");
+        order.verify(services).archiveEService(service, GracePeriodDays.NUMBER_60);
+        verifyNoMoreInteractions(services, descriptors);
+    }
+
+    @Test
+    void doesNotAttemptDeletionOrArchivingAfterRejectionFailsButContinuesCleanup() {
+        EService pendingService = eService(WAITING_FOR_APPROVAL);
+        EService draft = eService(DRAFT);
+        var failure = new IllegalStateException("rejection state wait timed out");
+        when(store.getAll(EService.class)).thenReturn(List.of(pendingService, draft));
+        when(descriptors.rejectDescriptor(eq(pendingService), any(), anyString())).thenThrow(failure);
+
+        assertThatThrownBy(hooks::cleanUpEServices)
+                .satisfies(error -> assertThat(error.getSuppressed()).containsExactly(failure));
+
+        verify(services).deleteEService(draft);
+        verifyNoMoreInteractions(services);
+        verify(session).set(null, null);
+        verify(channel).setCurrentChannel(null);
     }
 
     @Test

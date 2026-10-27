@@ -86,6 +86,20 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
+    public EServiceDescriptor rejectDescriptor(
+            EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String reason
+    ) {
+        var payload = new it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegatedEServiceDescriptorSeed()
+                .rejectionReason(reason);
+        var response = restClient.rejectDescriptor(serviceRef.id(), descriptorRef.id(), payload).withoutPolling();
+        if (!response.getRaw().isSuccess()) {
+            throw new IllegalStateException("Rifiuto della versione " + descriptorRef.id()
+                    + " dell'e-service " + serviceRef.id() + " non riuscito: " + response.getRaw());
+        }
+        return awaitDescriptorState(serviceRef, descriptorRef, EServiceDescriptorState.DRAFT);
+    }
+
+    @Override
     public EServiceDescriptor suspendDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
         EServiceDescriptorState expectedState = EServiceDescriptorTransitions.suspensionTarget(
                 getEServiceDescriptor(eServiceRef, descriptorRef).getState()

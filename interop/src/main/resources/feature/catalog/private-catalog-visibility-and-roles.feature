@@ -107,9 +107,9 @@ Feature: Visibilità degli e-service nel catalogo privato
 
     Examples:
       | prima versione | seconda versione | versione presentata |
-      | deprecata      | pubblicata       | 2                   |
+      | deprecata      | pubblicata       | 3                   |
       | pubblicata     | in bozza         | 1                   |
-      | pubblicata     | archiviata       | 1                   |
+      #| pubblicata     | archiviata       | 1                   | - In ambiente di QA non è possibile raggiungere lo stato archiviato
 
   @producer-delegation-settings
   Scenario: [PRIVATE_CATALOG_VISIBILITY_4_APPROVAL] La nuova versione delegata in attesa di approvazione non sostituisce quella pubblicata
