@@ -38,7 +38,7 @@ public class LegalNotificationSteps {
 
     @When("l'ente crea una notifica di tipo {legalNotificationType} per il destinatario {user}")
     public void enteContestoCreaNotifica(LegalNotificationType type, User recipient) {
-        createNotification(currentUserSession.getSender(), type, recipient, Map.of());
+        createNotification(currentUserSession.getUser(), type, recipient, Map.of());
     }
 
     @When("l'ente {user} crea una notifica di tipo {legalNotificationType} per il destinatario {user} con i seguenti valori:")
