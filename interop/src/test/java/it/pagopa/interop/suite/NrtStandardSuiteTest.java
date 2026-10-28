@@ -10,7 +10,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @IncludeEngines({"cucumber", "junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
 @SelectPackages("it.pagopa.interop.suite.contract")
-@ExcludeTags("wait_for_qa")
+@ExcludeTags({"wait_for_qa", "ignore"})
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-reports/report.json," + "html:target/cucumber-reports/report.html"),
@@ -44,6 +44,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                 value = """
                         (@debug-client-assertion-page-ui-flow
                          or @agreement
+                         or @eservice-archiving
                          or @debug-client-assertion-page-ui-behavior
                          or @dev-tools-page-ui-behavior)
                         and not @wait_for_fix
