@@ -30,7 +30,5 @@ public interface AgreementGateway extends Plugin<Channel> {
 
     Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation);
 
-    void blockUnauthorizedAccessToErogazioneSection(String agreementRequestId);
-
-    String accessToErogazioneSection(EService eService);
+    void blockUnauthorizedAccessToErogazioneSection(Agreement agreement);
 }
