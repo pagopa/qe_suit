@@ -19,7 +19,6 @@ import it.pagopa.interop.common.journey.application.EServiceJourney;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -28,7 +27,6 @@ import java.util.function.Predicate;
 @Component
 @RequiredArgsConstructor
 public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl> {
-
     private final EServiceUseCase eServiceUseCase;
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EntityStore entityStore;
@@ -150,7 +148,6 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState targetState, UpdateEServiceDescriptorCommand command) {
         entityStore.upsert(eService);
-
         return switch (targetState) {
             case DRAFT -> this;
             case PUBLISHED -> publishPipeline(eService, eServiceDescriptor, command);
