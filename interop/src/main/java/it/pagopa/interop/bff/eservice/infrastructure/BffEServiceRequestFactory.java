@@ -15,6 +15,7 @@ import org.instancio.Instancio;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static it.pagopa.utils.RandomUtils.randomAlphanumericName;
@@ -55,10 +56,22 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
     }
 
     public CatalogFilterPayload searchCatalogRequest() {
-        return Instancio.of(CatalogFilterPayload.class)
-                .set(field(CatalogFilterPayload::getOffset), 0)
-                .set(field(CatalogFilterPayload::getLimit), 200)
-                .create();
+        CatalogFilterPayload payload = new CatalogFilterPayload();
+        payload.setOffset(0);
+        payload.setLimit(200);
+        payload.setKeyword("catalogo");
+        payload.setSortBy(EServiceSortBy.NAME_ASC);
+        payload.setMode(EServiceMode.DELIVER);
+        payload.setProducerCategories(new ArrayList<>(List.of(EServiceProducerCategory.COMUNI)));
+        payload.setRequesterDelegationRoles(new ArrayList<>(List.of(RequesterDelegationRole.DELEGATE)));
+        payload.setOnlyActiveEservices(false);
+        payload.setAvailableForRequester(false);
+        payload.setSubscribedByRequester(false);
+        payload.setHasLinkedPurposeTemplates(false);
+        payload.setOnlyTemplateInstances(false);
+        payload.setAsyncExchange(false);
+        payload.setOnlySignalHubEnabled(false);
+        return payload;
     }
 
     @Override
