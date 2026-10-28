@@ -16,6 +16,8 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -34,20 +36,15 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
 
     @Override
     public EServiceTemplateVersion getEServiceTemplateVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
+        var templateFromStore = entityStore.getById(templateRef.id(), EServiceTemplate.class).orElseThrow();
         return restClient.getEServiceTemplateVersion(templateRef.id(), versionRef.versionId())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(versionDetails -> {
-                    Optional<EServiceTemplate> maybeTemplate = entityStore.getById(templateRef.id(), EServiceTemplate.class);
-                    return mapper.toTemplateWithUpsertVersion(versionDetails, maybeTemplate.orElse(null));
+                .map(version -> {
+                    var mapped = mapper.toTemplateVersion(version);
+                    templateFromStore.addVersion(mapped);
+                    return mapped;
                 })
                 .updateContext()
-                .map(template -> {
-                    EServiceTemplateVersion foundVersion = template.findVersion(versionRef.versionId());
-                    if (foundVersion == null) {
-                        throw new IllegalStateException("Template version not found after upsert");
-                    }
-                    return foundVersion;
-                })
                 .get();
     }
 
@@ -69,7 +66,7 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
     @Override
     public EServiceTemplateInterface downloadInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
         var fileDownloadMultipart = download(templateRef.id(), versionRef.versionId());
-        return new EServiceTemplateInterface(
+        var eServiceTemplateInterface = new EServiceTemplateInterface(
                 fileDownloadMultipart.getId(),
                 templateRef,
                 versionRef,
@@ -81,14 +78,20 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
                 null,
                 fileDownloadMultipart.getFile().getBytes(StandardCharsets.UTF_8)
         );
+
+        var templateVersion = getEServiceTemplateVersion(templateRef, versionRef);
+        var enrichedVersion = templateVersion.toBuilder()
+                .interfaceDocument(eServiceTemplateInterface)
+                .build();
+
+        EServiceTemplate enriched = upsertVersion(templateRef, enrichedVersion);
+        entityStore.upsert(enriched);
+
+        return eServiceTemplateInterface;
     }
 
     @Override
     public Optional<EServiceTemplateInterface> readCurrentInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
-        var templateVersion = getEServiceTemplateVersion(templateRef, versionRef);
-        EServiceTemplateInterface metadata = Optional.ofNullable(templateVersion.getInterfaceDocument())
-            .orElseThrow(() -> new IllegalStateException("La versione del template non ha un'interfaccia"));
-
         return Optional.of(downloadInterface(templateRef, versionRef));
     }
 
@@ -101,5 +104,29 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
         return restClient.downloadEServiceTemplateVersionInterface(templateId, versionId)
             .withPolling(PollingStrategy.UNTIL_SUCCESS)
             .get();
+    }
+
+    private EServiceTemplate upsertVersion(
+        EServiceTemplateRef templateRef,
+        EServiceTemplateVersion updatedVersion
+    ) {
+        EServiceTemplate template = this.entityStore.getById(templateRef.id(), EServiceTemplate.class)
+            .orElseThrow(() -> new IllegalStateException("Template not found in entity store"));
+
+        List<EServiceTemplateVersion> versions = new ArrayList<>(template.getVersions());
+        for (int i = 0; i < versions.size(); i++) {
+            if (versions.get(i).getId().equals(updatedVersion.getId())) {
+                versions.set(i, updatedVersion);
+                return template.toBuilder()
+                        .clearVersions()
+                        .versions(versions)
+                        .build();
+            }
+        }
+        versions.add(updatedVersion);
+        return template.toBuilder()
+            .clearVersions()
+            .versions(versions)
+            .build();
     }
 }
