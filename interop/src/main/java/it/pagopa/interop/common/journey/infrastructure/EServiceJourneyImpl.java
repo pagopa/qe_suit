@@ -99,21 +99,13 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
-    public EServiceJourneyImpl updateDescriptorWithContextAttributes(
-            UpdateEServiceDescriptorCommand command,
-            int dailyCallsPerConsumer,
-            EServiceDescriptorState state
-    ) {
+    public EServiceJourneyImpl updateDescriptorWithContextAttributes(UpdateEServiceDescriptorCommand command, int dailyCallsPerConsumer, EServiceDescriptorState state) {
         command.attributes(attributes -> prepareContextAttributes(attributes, dailyCallsPerConsumer));
         return updateDescriptor(command, state);
     }
 
     @Override
-    public EServiceJourneyImpl updateDescriptorWithContextAttributes(
-            Consumer<UpdateEServiceDescriptorCommand> commandConfig,
-            int dailyCallsPerConsumer,
-            EServiceDescriptorState state
-    ) {
+    public EServiceJourneyImpl updateDescriptorWithContextAttributes(Consumer<UpdateEServiceDescriptorCommand> commandConfig, int dailyCallsPerConsumer, EServiceDescriptorState state) {
         UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
         commandConfig.accept(command);
         return updateDescriptorWithContextAttributes(command, dailyCallsPerConsumer, state);
@@ -154,8 +146,6 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         return switch (targetState) {
             case DRAFT -> this;
             case PUBLISHED -> publishPipeline(eService, eServiceDescriptor, command);
-            // Facilmente estensibile in futuro senza toccare i metodi pubblici:
-            // case SUSPENDED -> publishPipeline(eService).suspendPipeline(eService);
             default -> throw new UnsupportedOperationException(
                     String.format("La transizione allo stato %s non è ancora supportata nel Journey.", targetState)
             );
