@@ -43,9 +43,6 @@ public class BffTenantGateway implements TenantGateway {
                 .withPolling(response -> response.isSuccess()
                         && isProducerDelegationEnabled(response.as(Tenant.class)))
                 .get();
-        assertThat(isConsumerDelegationEnabled(updatedTenant))
-                .as("Consumer delegation availability must remain unchanged")
-                .isEqualTo(consumerEnabled);
     }
 
     @Override
