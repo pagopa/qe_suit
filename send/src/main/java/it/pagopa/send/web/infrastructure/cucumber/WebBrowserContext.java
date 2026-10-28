@@ -2,10 +2,6 @@ package it.pagopa.send.web.infrastructure.cucumber;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.frontend.e2e.framework.web.model.location.Url;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
-import it.pagopa.send.common.user.domain.User;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Component;
@@ -15,10 +11,6 @@ import org.springframework.stereotype.Component;
 @Getter
 @Setter
 public class WebBrowserContext {
-    private Recipient recipient;
-    private Tenant tenant;
-    private User currentUser;
     private Page currentPage;
     private Page previousPage;
-    private Url currentUrl;
 }

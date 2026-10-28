@@ -102,4 +102,49 @@ public class EServiceJourneySteps {
                 .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
                 .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
     }
+
+    @Given("un e-service in {eServiceDescriptorState}, creato dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}")
+    public void createEService(EServiceDescriptorState state, Tenant producer, int customThreshold, DataTable defaultThresholds) {
+
+        Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
+
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createCertifiedAttribute()
+                .createEService(EServiceDescriptorState.DRAFT)
+                .updateDescriptorWithContextAttributes(
+                        config -> config
+                                .dailyCallsPerConsumer(thresholdsMap.get("consumerThreshold"))
+                                .dailyCallsTotal(thresholdsMap.get("totalThreshold")),
+                        customThreshold,
+                        state
+                )
+                .waitUntilEService(eService ->
+                        eService.getLatestDescriptor().getState() == state
+                );
+    }
+
+    @Given("una nuova versione dell'e-service in {eServiceDescriptorState}, creata dal {tenant}, con un attributo certificato e una soglia personalizzata per fruitore pari a {int}")
+    public void createNewInstanceDraftEService(EServiceDescriptorState state, Tenant producer, int customThreshold, DataTable defaultThresholds) {
+        Map<String, Integer> thresholdsMap = defaultThresholds.asMap(String.class, Integer.class);
+
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createCertifiedAttribute()
+                .createEService(EServiceDescriptorState.DRAFT)
+                .updateDescriptorWithContextAttributes(
+                        config -> config
+                                .dailyCallsPerConsumer(thresholdsMap.get("consumerThreshold"))
+                                .dailyCallsTotal(thresholdsMap.get("totalThreshold")),
+                        customThreshold,
+                        EServiceDescriptorState.PUBLISHED
+                )
+                .waitUntilEService(eService ->
+                        eService.getLatestDescriptor().getState() == EServiceDescriptorState.PUBLISHED
+                )
+                .addDescriptor(state)
+                .waitUntilEService(eService ->
+                        eService.getDescriptors().size() == 2 && eService.getLatestDescriptor().getState() == state
+                );
+    }
 }

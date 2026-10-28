@@ -240,6 +240,13 @@
     </dependencies>
 
     <build>
+        <testResources>
+            <!-- Generated expanded feature files -->
+            <testResource>
+                <directory>${project.build.directory}/generated-test-resources</directory>
+            </testResource>
+        </testResources>
+
         <plugins>
 
             <plugin>
@@ -451,6 +458,43 @@
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
                             </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Channel feature expansion: duplicate multi-channel scenarios before Cucumber discovery -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.1</version>
+
+                <executions>
+                    <execution>
+                        <id>expand-channel-features</id>
+                        <phase>generate-test-resources</phase>
+
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+
+                        <configuration>
+                            <mainClass>
+                                it.pagopa.send.common.infrastructure.cucumber.channel.SendChannelFeatureGenerator
+                            </mainClass>
+
+                            <arguments>
+                                <argument>
+                                    ${project.basedir}/src/main/resources/features
+                                </argument>
+
+                                <argument>
+                                    ${project.build.directory}/generated-test-resources/features-expanded
+                                </argument>
+                            </arguments>
+
+                            <includeProjectDependencies>true</includeProjectDependencies>
+                            <includePluginDependencies>false</includePluginDependencies>
                         </configuration>
                     </execution>
                 </executions>

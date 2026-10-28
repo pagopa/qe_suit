@@ -3,14 +3,8 @@ package it.pagopa.send.web.login.infrastructure.cucumber;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.web.infrastructure.page.ConfigureAddressSendPage;
-import it.pagopa.send.web.destinatario_pf.infrastructure.page.NotificationPFPage;
-import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationPage;
-import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
-import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import it.pagopa.send.web.login.infrastructure.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,38 +14,25 @@ public class LoginSteps {
 
     private final WebPresentationGateway uiGateway;
     private final LoginService loginService;
-    private final WebBrowserContext webBrowserContext;
-    private final DashboardPage dashboardPage;
-    private final NotificationPage notificationPage;
-    private final NotificationPFPage notificationPFPage;
 
-    @Given("la PA {tenant} effettua l'accesso a SelfCare con autenticazione SPID")
-    public void spidAuthPa(Tenant tenant) {
+    @Given("la PA {user} effettua l'accesso a SelfCare con autenticazione SPID")
+    public void spidAuthPa(User tenant) {
         loginService.loginAsTenant(tenant);
     }
 
-    @Given("{recipientType} {recipient} effettua l'accesso a SelfCare con autenticazione SPID")
-    public void spidAuthRecipient(String userType, Recipient recipient) {
+    @Given("{recipientType} {user} effettua l'accesso a SelfCare con autenticazione SPID")
+    public void spidAuthRecipient(String userType, User recipient) {
         loginService.loginAsRecipient(userType, recipient);
     }
 
-    @Given("la PA {tenant} è loggata a SEND")
-    public void forceTenantSession(Tenant tenant) {
-        webBrowserContext.setTenant(tenant);
-        webBrowserContext.setCurrentUser(tenant);
-
-        dashboardPage.navigateTo();
-        dashboardPage.assertLoaded();
+    @Given("la PA {user} è loggata a SEND")
+    public void forceTenantSession(User tenant) {
+        loginService.forceTenantSession(tenant);
     }
 
-    @Given("{recipientType} {recipient} forza l'accesso a SelfCare tramite sessionStorage")
-    public void forceRecipientSession(String userType, Recipient recipient) {
-        webBrowserContext.setRecipient(recipient);
-        webBrowserContext.setCurrentUser(recipient);
-
-        Page landingPage = "PG".equals(userType) ? notificationPage : notificationPFPage;
-        landingPage.navigateTo();
-        landingPage.assertLoaded();
+    @Given("{recipientType} {user} forza l'accesso a SelfCare tramite sessionStorage")
+    public void forceRecipientSession(String userType, User recipient) {
+        loginService.forceRecipientSession(userType, recipient);
     }
 
     @And("se presente, viene saltata la configurazione del prodotto SEND")

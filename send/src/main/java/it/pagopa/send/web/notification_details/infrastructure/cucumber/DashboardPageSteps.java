@@ -3,12 +3,11 @@ package it.pagopa.send.web.notification_details.infrastructure.cucumber;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import it.pagopa.send.web.notification_creation.infrastructure.cucumber.NotificationContext;
-import it.pagopa.send.common.infrastructure.IUNHelper;
-import it.pagopa.infrastructure.suit.component.Chip;
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.web.notification_details.infrastructure.NotificationDetailsProxy;
 import lombok.RequiredArgsConstructor;
-import org.assertj.core.api.SoftAssertions;
+import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
@@ -22,7 +21,7 @@ public class DashboardPageSteps {
     private static final DateTimeFormatter SEARCH_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private final NotificationDetailsProxy notificationDetailsProxy;
-    private final NotificationContext notificationContext;
+    private final EntityStore entityStore;
 
     @When("viene aperto il dettaglio di una notifica")
     public void openNotificationDetail() {
@@ -41,32 +40,23 @@ public class DashboardPageSteps {
 
     @Then("la notifica è in stato annullata")
     public void assertNotificationChipStatus() {
-        Chip statusChip = notificationDetailsProxy.notificationStatusSection().statusChip();
-        SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(statusChip.isWarning())
-                    .as("L'alert è di tipo warning")
-                    .isTrue();
-
-            softly.assertThat(statusChip.text().read())
-                    .as("Il messaggio dell'alert")
-                    .isIn("Annullata");
-        });
+        Assertions.assertThat(notificationDetailsProxy.notificationStatusSection().statusChip().text().read())
+                .as("Etichetta dello stato della notifica")
+                .isEqualTo("Annullata");
     }
 
     /**
-     * Risolve i token dinamici ammessi nella DataTable di ricerca: {@code $currentIUN} è lo IUN
-     * dell'ultima notifica creata nello scenario tramite,
+     * Risolve i token dinamici ammessi nella DataTable di ricerca: {@code $currentIUN} e
+     * {@code $currentNotificationIUN} sono lo IUN dell'ultima notifica creata nello scenario,
      * {@code $currentDate} è la data odierna nel formato atteso dal campo di ricerca (gg/mm/aaaa).
      * Qualunque altro valore passa invariato, per permettere override letterali.
      */
     private String resolveToken(String rawValue) {
         String resolvedValue;
-        if(rawValue.equals("$currentIUN"))
-            resolvedValue = IUNHelper.extractFromBffNewNotificationResponse(notificationContext.getBffNewNotificationResponse());
+        if(rawValue.equals("$currentIUN") || rawValue.equals("$currentNotificationIUN"))
+            resolvedValue = entityStore.getLastOrThrow(LegalNotificationDomain.class).getIun();
         else if(rawValue.equals("$currentDate"))
             resolvedValue = LocalDate.now().format(SEARCH_DATE_FORMAT);
-        else if(rawValue.equals("$currentNotificationIUN"))
-            resolvedValue = IUNHelper.extractFromBffNewNotificationResponse(notificationContext.getBffNewNotificationResponse());
         else if(rawValue.contains("DaysAgo")) {
             long days = Long.parseLong(rawValue
                     .replace("DaysAgo","")
