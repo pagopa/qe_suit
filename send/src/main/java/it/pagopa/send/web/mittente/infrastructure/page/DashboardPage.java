@@ -5,6 +5,7 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.capability.core.Writable;
+import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.send.web.infrastructure.page.component.Footer;
 import it.pagopa.send.web.infrastructure.page.component.Table;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
@@ -47,6 +48,13 @@ public interface DashboardPage extends NotificationSearchPage {
 
     @XPath("//footer[contains(@class, 'MuiBox-root')]")
     Footer footer();
+
+    @XPath("//*[@data-testid=\"sideMenuItem-API Key\"]")
+    Button apiKeysMenuItem();
+
+    // pagina "API Key" aperta dalla voce di menu
+    @XPath("//main")
+    APIKeyPage apiKeys();
 
     @Override
     default void assertLoaded() {
