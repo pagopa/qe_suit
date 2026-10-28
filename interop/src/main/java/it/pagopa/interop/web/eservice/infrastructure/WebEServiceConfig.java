@@ -38,6 +38,12 @@ public class WebEServiceConfig {
 
     @Bean
     @ScenarioScope
+    public ProducerEServiceDetailPage producerEServiceDetailPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(ProducerEServiceDetailPage.class);
+    }
+
+    @Bean
+    @ScenarioScope
     public EServiceEditPage eServiceEditPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(EServiceEditPage.class);
     }
