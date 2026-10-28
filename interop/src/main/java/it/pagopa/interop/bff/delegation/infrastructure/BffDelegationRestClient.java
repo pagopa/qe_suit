@@ -30,6 +30,21 @@ public class BffDelegationRestClient extends RestClient {
         this.delegationsApi = apiClient.delegations();
     }
 
+    public TestChain<CreatedResource> createProducerDelegation(
+            @Nonnull UUID delegateId,
+            @Nonnull UUID eServiceId
+    ) {
+        DelegationSeed seed = new DelegationSeed()
+                .delegateId(delegateId)
+                .eserviceId(eServiceId);
+        return execute(
+                () -> producerDelegationsApi.createProducerDelegation()
+                        .body(seed)
+                        .execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
     public TestChain<Void> approveProducerDelegation(@Nonnull UUID delegationId) {
         return execute(
                 () -> producerDelegationsApi.approveProducerDelegation()
@@ -61,21 +76,6 @@ public class BffDelegationRestClient extends RestClient {
                         .body(seed)
                         .execute(Function.identity()),
                 Delegation.class
-        );
-    }
-
-    public TestChain<CreatedResource> createProducerDelegation(
-            @Nonnull UUID delegateId,
-            @Nonnull UUID eServiceId
-    ) {
-        DelegationSeed seed = new DelegationSeed()
-                .delegateId(delegateId)
-                .eserviceId(eServiceId);
-        return execute(
-                () -> producerDelegationsApi.createProducerDelegation()
-                        .body(seed)
-                        .execute(Function.identity()),
-                CreatedResource.class
         );
     }
 
