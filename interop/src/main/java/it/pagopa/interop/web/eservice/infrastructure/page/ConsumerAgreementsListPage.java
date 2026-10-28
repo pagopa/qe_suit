@@ -9,7 +9,7 @@ import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 
 
-@Url("${interop.web.base-url}/fruizione/richieste")
+@Url("${interop.web.base-url}/fruizione/richieste${queryParams}")
 public interface ConsumerAgreementsListPage extends Page {
 
     Breadcrumbs breadcrumbs();

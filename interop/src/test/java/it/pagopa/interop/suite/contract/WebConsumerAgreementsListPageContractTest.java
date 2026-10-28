@@ -8,7 +8,6 @@ import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerAgreementsListPage;
-import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerAgreementsNoResultPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
@@ -43,7 +42,7 @@ public class WebConsumerAgreementsListPageContractTest {
                         User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
                         Tenant.COMUNE_DI_MILANO
                 )
-                .on(ConsumerAgreementsListPage.class)
+                .on(ConsumerAgreementsListPage.class, "")
                 .tests(contractScenarios());
     }
 
@@ -54,7 +53,10 @@ public class WebConsumerAgreementsListPageContractTest {
                         User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
                         Tenant.COMUNE_DI_MILANO
                 )
-                .on(ConsumerAgreementsNoResultPage.class)
+                .on(
+                        ConsumerAgreementsListPage.class,
+                        "?eservicesIds=%5B%5B\"no-result\"%2C\"11111111-1111-1111-1111-111111111111\"%5D%5D"
+                )
                 .tests(noResultContractScenarios());
     }
 
@@ -130,7 +132,7 @@ public class WebConsumerAgreementsListPageContractTest {
         );
     }
 
-    private Stream<WebScenario<ConsumerAgreementsNoResultPage>> noResultContractScenarios() {
+    private Stream<WebScenario<ConsumerAgreementsListPage>> noResultContractScenarios() {
         return Stream.of(
                 new WebScenario<>(
                         "Consumer agreements list page hides the rows per page selector",
