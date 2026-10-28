@@ -36,7 +36,6 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class WebPurposeTemplateContractTest {
 
-    private final PurposeTemplateCreationPage purposeTemplateCreationPage;
     private final WebBrowserContractValidator webContractValidator;
 
     @TestFactory
