@@ -16,4 +16,11 @@ public interface BffDelegationMapper {
 
     @Mapping(target = "id", source = "id")
     it.pagopa.interop.common.delegation.domain.Delegation toDelegation(Delegation consumerDelegation);
+
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "delegatorId", source = "delegator.id")
+    @Mapping(target = "delegateId", source = "delegate.id")
+    @Mapping(target = "eServiceId", source = "eservice.id")
+    @Mapping(target = "state", source = "state")
+    it.pagopa.interop.common.delegation.domain.ProducerDelegation toProducerDelegation(Delegation producerDelegation);
 }

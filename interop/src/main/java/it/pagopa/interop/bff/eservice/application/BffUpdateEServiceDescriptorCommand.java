@@ -14,7 +14,14 @@ import java.util.function.UnaryOperator;
 @Getter
 public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescriptorCommand {
     private final UpdateEServiceDescriptorSeed bffPayload;
+    private String interfaceDocumentPath;
     private Attributes attributes = Attributes.builder().build();
+
+    @Override
+    public UpdateEServiceDescriptorCommand interfaceDocumentPath(String path) {
+        this.interfaceDocumentPath = path;
+        return this;
+    }
 
     public static BffUpdateEServiceDescriptorCommand from(UpdateEServiceDescriptorSeed payload) {
         return new BffUpdateEServiceDescriptorCommand(payload);
@@ -22,6 +29,10 @@ public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescrip
 
     private BffUpdateEServiceDescriptorCommand(UpdateEServiceDescriptorSeed payload) {
         this.bffPayload = payload;
+    }
+
+    public BffUpdateEServiceDescriptorCommand() {
+        this.bffPayload = new UpdateEServiceDescriptorSeed();
     }
 
     @Override
@@ -90,7 +101,7 @@ public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescrip
     ) {
         ArrayList<List<DescriptorAttributeSeed>> attributeRequirements = createListsAsManyGroupsInCommonAttributes(attributes);
         for (Attribute commonAttribute : attributes) {
-            attributeRequirements.get(commonAttribute.getGroup()).add(
+            attributeRequirements.get(commonAttribute.getGroup() - 1).add(
                     createAttributeSeedFromCommonAttribute(commonAttribute)
             );
         }
@@ -102,10 +113,13 @@ public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescrip
         ArrayList<List<DescriptorAttributeSeed>> attributeRequirements = new ArrayList<>();
         int groupCount = 0;
         for (Attribute attribute : attributes) {
-            int currentGroup = attribute.getGroup();
+            Integer currentGroup = attribute.getGroup();
+            if (currentGroup == null || currentGroup < 1) {
+                throw new IllegalArgumentException("Required attribute groups must start at 1");
+            }
             if (currentGroup >= groupCount) groupCount = currentGroup;
         }
-        for (int i = 0; i <= groupCount; i++) attributeRequirements.add(new ArrayList<>());
+        for (int i = 0; i < groupCount; i++) attributeRequirements.add(new ArrayList<>());
         return attributeRequirements;
     }
 

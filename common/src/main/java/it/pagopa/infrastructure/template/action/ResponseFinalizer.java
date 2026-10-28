@@ -14,10 +14,14 @@ public interface ResponseFinalizer<Response> {
     EntityStore getEntityStore();
 
     default ResponseFinalizer<Response> updateContext() {
+        return updateContext(null);
+    }
+
+    default ResponseFinalizer<Response> updateContext(String alias) {
         Response response = get();
 
         if (response instanceof Identifiable identifiable) {
-            getEntityStore().upsert(identifiable);
+            getEntityStore().upsert(alias, identifiable);
             return this;
         }
 

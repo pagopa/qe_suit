@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.function.UnaryOperator;
 
 public interface UpdateEServiceDescriptorCommand {
+    UpdateEServiceDescriptorCommand interfaceDocumentPath(String path);
+    String getInterfaceDocumentPath();
+
     UpdateEServiceDescriptorCommand voucherLifespan(Integer voucherLifespan);
     UpdateEServiceDescriptorCommand dailyCallsPerConsumer(Integer dailyCallsPerConsumer);
     UpdateEServiceDescriptorCommand dailyCallsTotal(Integer dailyCallsTotal);

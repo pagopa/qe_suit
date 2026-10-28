@@ -1,5 +1,6 @@
 package it.pagopa.interop.web.attribute.infrastructure;
 
+import it.pagopa.infrastructure.suit.component.Snackbar;
 import it.pagopa.interop.common.attribute.application.AttributeGateway;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
@@ -9,9 +10,10 @@ import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceEditPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceViewPage;
-import it.pagopa.interop.web.infrastructure.WebCommonGateway;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,7 +23,7 @@ public class WebAttributeGateway implements AttributeGateway {
 
     private final EServiceEditPage eServiceEditPage;
     private final EServiceViewPage eServiceViewPage;
-    private final WebCommonGateway webCommonGateway;
+    private final Snackbar snackbar;
 
     @Override
     public Attribute createCertifiedAttribute(Attribute attribute) {
@@ -33,6 +35,16 @@ public class WebAttributeGateway implements AttributeGateway {
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
+    @Override
+    public Optional<Attribute> findAttributeByOriginAndCode(String origin, String code) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
+    @Override
+    public Attribute createAttribute(Attribute attribute) {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
+
     private void removeCertifiedAttributeThresholdFromDraftEService(EServiceRef eServiceRef, EServiceDescriptorRef eServiceDescriptorRef, int groupIndex, int attributeIndex) {
 
         eServiceEditPage.navigateTo(eServiceRef.id().toString(), eServiceDescriptorRef.id().toString());
@@ -40,8 +52,8 @@ public class WebAttributeGateway implements AttributeGateway {
         eServiceEditPage.saveDraftAndProceed();
 
         var attribute = eServiceEditPage.thresholdAndAttributeForm().requiredAttributeSection()
-                .certifiedAttributeTabPanel().certifiedAttributeGroups().get(groupIndex-1)
-                .certifiedAttributes().get(attributeIndex-1);
+                .certifiedAttributeTabPanel().certifiedAttributeGroups().get(groupIndex - 1)
+                .certifiedAttributes().get(attributeIndex - 1);
 
         attribute.removeThresholdValue();
         assertThat(attribute.isThresholdNotSet())
@@ -56,8 +68,8 @@ public class WebAttributeGateway implements AttributeGateway {
         eServiceViewPage.navigateTo(eServiceRef.id().toString(), eServiceDescriptorRef.id().toString());
         eServiceViewPage.assertLoaded();
 
-        eServiceViewPage.certifiedAttributeGroups().get(groupIndex-1)
-                .certifiedAttributes().get(attributeIndex-1)
+        eServiceViewPage.certifiedAttributeGroups().get(groupIndex - 1)
+                .certifiedAttributes().get(attributeIndex - 1)
                 .removeThresholdValue()
                 .confirmThesholdValueDeletion();
     }
@@ -78,7 +90,7 @@ public class WebAttributeGateway implements AttributeGateway {
 
     @Override
     public void certifiedAttributeThresholdShouldBeRemoved() {
-        String actualSuccessMessage = webCommonGateway.getSnackbarSuccessMessage();
+        String actualSuccessMessage = snackbar.getSuccessMessage();
         String successMessage = "Hai rimosso la soglia di chiamate API dell’attributo certificato.";
 
         assertThat(actualSuccessMessage)

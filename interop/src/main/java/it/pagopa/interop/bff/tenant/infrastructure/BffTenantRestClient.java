@@ -35,6 +35,20 @@ public class BffTenantRestClient extends RestClient {
         );
     }
 
+    public TestChain<Tenant> getTenant(@Nonnull UUID tenantId) {
+        return execute(
+                () -> tenantsApi.getTenant().tenantIdPath(tenantId).execute(Function.identity()),
+                Tenant.class
+        );
+    }
+
+    public TestChain<Void> updateTenantDelegatedFeatures(@Nonnull TenantDelegatedFeaturesFlagsUpdateSeed seed) {
+        return execute(
+                () -> tenantsApi.updateTenantDelegatedFeatures().body(seed).execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<Void> addCertifiedDiscreteAttribute(
             @Nonnull UUID tenantId,
             @Nonnull CertifiedDiscreteTenantAttributeSeed seed
@@ -120,4 +134,3 @@ public class BffTenantRestClient extends RestClient {
         );
     }
 }
-

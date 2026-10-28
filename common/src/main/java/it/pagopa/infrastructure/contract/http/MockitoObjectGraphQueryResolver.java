@@ -87,7 +87,7 @@ final class MockitoObjectGraphQueryResolver implements ObjectGraphQueryResolver 
             propertyMethods.add(method);
             isPropertyStep.add(Boolean.TRUE);
             Class<?> returnType = method.getReturnType();
-            if (returnType == Void.TYPE || returnType.isPrimitive() || returnType == String.class || Number.class.isAssignableFrom(returnType) || returnType.isEnum()) {
+            if (returnType == Void.TYPE || isTerminal(returnType)) {
                 terminalReached = true;
                 expectedReceiver = null;
                 return Defaults.defaultValue(returnType);
@@ -116,7 +116,7 @@ final class MockitoObjectGraphQueryResolver implements ObjectGraphQueryResolver 
                 expectedReceiver = null;
                 return null;
             }
-            if (elementType.isPrimitive() || elementType == String.class || Number.class.isAssignableFrom(elementType) || elementType.isEnum()) {
+            if (isTerminal(elementType)) {
                 terminalReached = true;
                 expectedReceiver = null;
                 return Defaults.defaultValue(elementType);
@@ -138,6 +138,20 @@ final class MockitoObjectGraphQueryResolver implements ObjectGraphQueryResolver 
                 }
             }
             return query;
+        }
+
+        private boolean isTerminal(Class<?> type) {
+            return type.isPrimitive()
+                    || type.isEnum()
+                    || type == Boolean.class
+                    || type == Character.class
+                    || Number.class.isAssignableFrom(type)
+                    || CharSequence.class.isAssignableFrom(type)
+                    || type == java.util.UUID.class
+                    || java.time.temporal.Temporal.class.isAssignableFrom(type)
+                    || java.util.Date.class.isAssignableFrom(type)
+                    || type == java.net.URI.class
+                    || type == java.net.URL.class;
         }
 
         private boolean isPropertyGetter(Method method) {

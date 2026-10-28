@@ -1,5 +1,6 @@
 package it.pagopa.interop.web.eservice.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class WebEServiceGateway implements EServiceGateway {
 
     private final EServiceCreatePage eServiceCreatePage;
+    private final EntityStore entityStore;
     private final WebEServiceGeneralDataGateway generalDataGateway;
 
     @Override
@@ -28,7 +30,9 @@ public class WebEServiceGateway implements EServiceGateway {
 
         generalDataGateway.fillEServiceGeneralData(creationCommand.getWebEServiceGeneralData());
 
-        return generalDataGateway.readEServiceGeneralData();
+        EService draftEService = generalDataGateway.readEServiceGeneralData();
+        entityStore.upsert(command.getAlias(), draftEService);
+        return draftEService;
     }
 
     @Override

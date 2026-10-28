@@ -2,10 +2,12 @@ package it.pagopa.interop.bff.eservice.infrastructure;
 
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.bff.eservice.application.BffEServiceTemplateInstanceUpdateDescriptorCommand;
+import it.pagopa.interop.bff.eservice.application.BffSearchEServiceCatalogCommand;
 import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.EServiceTemplateInstanceUpdateDescriptorCommand;
+import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatalogCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
@@ -13,6 +15,7 @@ import org.instancio.Instancio;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static it.pagopa.utils.RandomUtils.randomAlphanumericName;
@@ -52,10 +55,27 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 .create();
     }
 
-    @Override
-    public EServiceCreationCommand defaultCreationEServiceCommand() {
-        return BffEServiceCreationCommand.from(defaultEServiceSeed());
+    public CatalogFilterPayload searchCatalogRequest() {
+        CatalogFilterPayload payload = new CatalogFilterPayload();
+        payload.setOffset(0);
+        payload.setLimit(200);
+        payload.setKeyword("catalogo");
+        payload.setSortBy(EServiceSortBy.NAME_ASC);
+        payload.setMode(EServiceMode.DELIVER);
+        payload.setProducerCategories(new ArrayList<>(List.of(EServiceProducerCategory.COMUNI)));
+        payload.setRequesterDelegationRoles(new ArrayList<>(List.of(RequesterDelegationRole.DELEGATE)));
+        payload.setOnlyActiveEservices(false);
+        payload.setAvailableForRequester(false);
+        payload.setSubscribedByRequester(false);
+        payload.setHasLinkedPurposeTemplates(false);
+        payload.setOnlyTemplateInstances(false);
+        payload.setAsyncExchange(false);
+        payload.setOnlySignalHubEnabled(false);
+        return payload;
     }
+
+    @Override
+    public EServiceCreationCommand defaultCreationEServiceCommand() {return BffEServiceCreationCommand.from(defaultEServiceSeed());}
 
     @Override
     public UpdateEServiceDescriptorCommand defaultUpdateDescriptorCommand() {
@@ -76,6 +96,48 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 .create();
 
         return BffUpdateEServiceDescriptorCommand.from(payload);
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand defaultSearchEServiceCatalogCommand() {
+        return new BffSearchEServiceCatalogCommand().offset(0).limit(200);
+    }
+
+    @Override
+    public SearchEServiceCatalogCommand searchEServiceCatalogCommandForOffset(
+            SearchEServiceCatalogCommand original, Integer offset) {
+        if (!(original instanceof BffSearchEServiceCatalogCommand bffCommand)) {
+            throw new IllegalArgumentException("Command must be an instance of BffSearchEServiceCatalogCommand");
+        }
+        BffSearchEServiceCatalogCommand copy = new BffSearchEServiceCatalogCommand();
+        copy.offset(offset);
+        CatalogFilterPayload source = bffCommand.getBffPayload();
+        CatalogFilterPayload target = copy.getBffPayload();
+        target.setLimit(source.getLimit());
+        target.setKeyword(source.getKeyword());
+        target.setSortBy(source.getSortBy());
+        target.setOnlyActiveEservices(source.getOnlyActiveEservices());
+        target.setAvailableForRequester(source.getAvailableForRequester());
+        target.setSubscribedByRequester(source.getSubscribedByRequester());
+        target.setOnlyTemplateInstances(source.getOnlyTemplateInstances());
+        target.setHasLinkedPurposeTemplates(source.getHasLinkedPurposeTemplates());
+        target.setProducerCategories(copyList(source.getProducerCategories()));
+        target.setAsyncExchange(source.getAsyncExchange());
+        target.setMode(source.getMode());
+        target.setOnlySignalHubEnabled(source.getOnlySignalHubEnabled());
+        target.setRequesterDelegationRoles(copyList(source.getRequesterDelegationRoles()));
+        target.setTemplateId(source.getTemplateId());
+        target.setProducersIds(copyList(source.getProducersIds()));
+        return copy;
+    }
+
+    private static <T> List<T> copyList(List<T> values) {
+        return values == null ? null : List.copyOf(values);
+    }
+
+    @Override
+    public UpdateEServiceDescriptorCommand prepareDescriptorForPublicationCommand() {
+        return defaultUpdateDescriptorCommand().interfaceDocumentPath("assets/origin-interface.yaml");
     }
 
     @Override
@@ -116,11 +178,6 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
         return command;
     }
 
-    @Override
-    public boolean supports(@NonNull Channel delimiter) {
-        return delimiter == Channel.BFF;
-    }
-
     private EServiceSeed defaultEServiceSeed() {
         return Instancio.of(EServiceSeed.class)
                 .set(field(EServiceSeed::getName), randomAlphanumericName("eservice", 15))
@@ -133,5 +190,10 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 .set(field(EServiceSeed::getAsyncExchange), false)
                 .set(field(EServiceSeed::getIsSignalHubEnabled), false)
                 .create();
+    }
+
+    @Override
+    public boolean supports(@NonNull Channel delimiter) {
+        return delimiter == Channel.BFF;
     }
 }

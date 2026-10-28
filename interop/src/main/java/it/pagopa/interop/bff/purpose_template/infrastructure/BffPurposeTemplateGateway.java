@@ -4,11 +4,13 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.purpose_template.application.PurposeTemplateGateway;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResourceRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResources;
@@ -24,8 +26,11 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,19 +56,36 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
     }
 
     @Override
-    public PurposeTemplate createPurposeTemplate(Tenant targetTenant, RiskAnalysisForm riskAnalysisForm) {
+    public PurposeTemplate createPurposeTemplate(
+            Tenant targetTenant, RiskAnalysisForm riskAnalysisForm, RiskAnalysisFormConfig config
+    ) {
+        if (!Objects.equals(config.getVersion(), riskAnalysisForm.getVersion())) {
+            throw new IllegalArgumentException("Risk analysis form and configuration versions must match");
+        }
+
+        var questions = config.getQuestions().stream().collect(Collectors.toMap(
+                RiskAnalysisFormConfig.Question::getId, Function.identity()));
         Map<String, RiskAnalysisTemplateAnswerSeed> answers = new HashMap<>();
-        riskAnalysisForm.getAnswers().forEach((question, values) ->
-                answers.put(question, new RiskAnalysisTemplateAnswerSeed()
-                        .values(List.copyOf(values))
-                        .editable(false)
-                        .suggestedValues(List.of())));
+        riskAnalysisForm.getAnswers().forEach((question, values) -> {
+            var definition = questions.get(question);
+            if (definition == null) {
+                throw new IllegalArgumentException("Unknown risk analysis question: " + question);
+            }
+            boolean freeText = "FREETEXT".equals(definition.getDataType());
+            answers.put(question, new RiskAnalysisTemplateAnswerSeed()
+                    .values(freeText ? List.of() : List.copyOf(values))
+                    .editable(false)
+                    .suggestedValues(freeText ? List.copyOf(values) : List.of()));
+        });
 
         String title = RandomUtils.randomAlphanumericName("purpose-template");
 
         PurposeTemplateSeed payload = new PurposeTemplateSeed()
                 .targetDescription(RandomUtils.randomAlphanumericName("target-description"))
-                .targetTenantKind(TargetTenantKind.fromValue(targetTenant.getTenantType().name()))
+                .targetTenantKind(switch (targetTenant.getTenantType()) {
+                    case PA -> TargetTenantKind.PA;
+                    case PRIVATE, GSP -> TargetTenantKind.PRIVATE;
+                })
                 .purposeTitle(title)
                 .purposeDescription(RandomUtils.randomAlphanumericName("purpose-description"))
                 .purposeIsFreeOfCharge(false)
@@ -97,15 +119,27 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
         LinkableResourceRequest payload = new LinkableResourceRequest()
                 .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE)
                 .eserviceId(eServiceRef.id());
+        return linkResource(purposeTemplate, payload, eServiceRef.id(), false);
+    }
 
+    @Override
+    public PurposeTemplate linkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplateRef templateRef) {
+        var payload = new LinkableResourceRequest()
+                .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE_TEMPLATE)
+                .eserviceTemplateId(templateRef.id());
+        return linkResource(purposeTemplate, payload, templateRef.id(), true);
+    }
+
+    private PurposeTemplate linkResource(
+            PurposeTemplate purposeTemplate, LinkableResourceRequest payload, UUID resourceId, boolean template) {
         restClient.linkResource(purposeTemplate.getId(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .assertThat(linked -> eServiceRef.id().equals(linked.getEserviceId()))
+                .assertThat(linked -> resourceId.equals(template ? linked.getEserviceTemplateId() : linked.getEserviceId()))
                 .get();
 
         return PollingUtils.pollUntil(
                 () -> fetchAllLinkedResources(purposeTemplate),
-                pt -> pt.getLinkedEServiceIds().contains(eServiceRef.id())
+                pt -> pt.getLinkedResourceIds().contains(resourceId)
         );
     }
 
@@ -147,4 +181,3 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
         return delimiter == Channel.BFF;
     }
 }
-

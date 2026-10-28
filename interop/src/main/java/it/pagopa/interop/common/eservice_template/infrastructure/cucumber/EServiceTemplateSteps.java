@@ -4,12 +4,11 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.DataTableType;
 import io.cucumber.datatable.DataTable;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
-import it.pagopa.interop.common.eservice_template.application.EServiceTemplateUseCase;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplatePreparationConfiguration;
 import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import lombok.RequiredArgsConstructor;
-import org.assertj.core.api.Assertions;
+import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapper;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,14 +21,12 @@ public class EServiceTemplateSteps {
     private final InteropJourney journey;
     private final EServiceTemplateRequestFactory requestFactory;
     private final ObjectMapper objectMapper;
+    private final EServiceTemplateConfigurationMapper configurationMapper;
 
     @Given("un template e-service preparato con la seguente configurazione:")
     public void prepareTemplate(EServiceTemplatePreparationConfiguration configuration) {
-        Assertions.assertThat(configuration.getTechnology()).isNotNull();
-        Assertions.assertThat(configuration.getState()).isNotNull();
-        Assertions.assertThat(configuration.getInterfaceFixture()).isNotBlank();
-
-        var command = requestFactory.defaultCreationEServiceTemplateCommand(configuration);
+        var command = requestFactory.defaultCreationEServiceTemplateCommand();
+        configurationMapper.apply(configuration, command);
         journey.createEServiceTemplate(command, configuration.getState());
     }
 

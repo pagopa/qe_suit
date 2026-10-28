@@ -30,6 +30,22 @@ class MockitoObjectGraphQueryResolverTest {
     }
 
     @Test
+    void resolvesWrapperAndValueTypeGettersAsTerminalProperties() {
+        assertEquals(ObjectGraphQuery.root().property(method(ValuePayload.class, "getFlag")),
+                resolver.resolve(ValuePayload.class, ValuePayload::getFlag));
+        assertEquals(ObjectGraphQuery.root().property(method(ValuePayload.class, "getId")),
+                resolver.resolve(ValuePayload.class, ValuePayload::getId));
+        assertEquals(ObjectGraphQuery.root().property(method(ValuePayload.class, "getCreatedAt")),
+                resolver.resolve(ValuePayload.class, ValuePayload::getCreatedAt));
+    }
+
+    @Test
+    void resolvesValueTypeListElementsAsTerminal() {
+        ObjectGraphQuery query = resolver.resolve(ValuePayload.class, p -> p.getIds().get(0));
+        assertEquals(ObjectGraphQuery.root().property(method(ValuePayload.class, "getIds")).index(0), query);
+    }
+
+    @Test
     void mapNavigationFailsFastWithExplicitMessage() {
         ContractHttpException exception = assertThrows(
                 ContractHttpException.class,
@@ -89,6 +105,24 @@ class MockitoObjectGraphQueryResolverTest {
     static class Contact {
         public String getEmail() {
             return "a@b";
+        }
+    }
+
+    static class ValuePayload {
+        public Boolean getFlag() {
+            return true;
+        }
+
+        public java.util.UUID getId() {
+            return null;
+        }
+
+        public java.time.OffsetDateTime getCreatedAt() {
+            return null;
+        }
+
+        public List<java.util.UUID> getIds() {
+            return List.of();
         }
     }
 

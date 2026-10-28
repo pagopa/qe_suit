@@ -13,9 +13,19 @@ public interface EServiceDescriptorGateway extends Plugin<Channel> {
 
     EServiceDescriptor getEServiceDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
 
+    EServiceDescriptor awaitDescriptorState(
+            EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, EServiceDescriptorState expectedState
+    );
+
     EServiceDescriptor addDescriptor(EServiceRef eServiceRef);
 
     EServiceDescriptor publishDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    EServiceDescriptor publishDescriptorAwaitingApproval(
+            EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef
+    );
+
+    EServiceDescriptor suspendDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
 
     EServiceDescriptor updateDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, UpdateEServiceDescriptorCommand command);
 
