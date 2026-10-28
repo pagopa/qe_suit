@@ -17,6 +17,9 @@ public interface TextField extends Component, Writable<String>, Readable<String>
     @XPath(".//following::span[contains(@class, 'MuiFormHelperText-root')]")
     FormHelperText helperText();
 
+    @XPath("./ancestor::div[contains(@class,'MuiTextField-root')]//label")
+    Label label();
+
     default String getErrorMessage(String labelId) {
         return helperText().getAll()
                 .orElse(List.of()).stream()
@@ -25,6 +28,10 @@ public interface TextField extends Component, Writable<String>, Readable<String>
                 .findFirst()
                 .map(WebPresentationElement::getText)
                 .orElse("");
+    }
+
+    default String getLabelText() {
+        return this.label().read();
     }
 
     default String getHelperText(String labelId) {
