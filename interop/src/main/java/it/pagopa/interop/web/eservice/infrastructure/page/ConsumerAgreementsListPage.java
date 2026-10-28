@@ -46,6 +46,9 @@ public interface ConsumerAgreementsListPage extends Page {
     @XPath("//nav[contains(@aria-label,'pagination')]")
     Pagination pagination();
 
+    @XPath("//*[contains(@class,'MuiAlert-message') and .='La ricerca corrente non ha prodotto risultati']")
+    Alert noResultMessage();
+
     @Override
     default void assertLoaded() {
         Assertions.assertThat(breadcrumbs().items().stream().map(Readable::read).toList())
