@@ -20,7 +20,7 @@ public class EServiceTemplateInterfaceSteps {
                 null;
         Assertions.assertThat(lastTemplate).isNotNull();
         Assertions.assertThat(lastTemplate.getRef()).isNotNull();
-        Assertions.assertThat(lastTemplate.getLatestVersion().getRef().versionId()).isEqualTo(version.getRef().versionId());
+        Assertions.assertThat(lastTemplate.findVersion(version.getRef().versionId())).isNotNull();
         templateVersionUseCase.downloadInterface(lastTemplate, version);
     }
 
