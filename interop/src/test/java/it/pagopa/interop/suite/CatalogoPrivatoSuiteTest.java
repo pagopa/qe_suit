@@ -11,7 +11,11 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @GenerateContractReport
 @IncludeEngines({"cucumber","junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
-@Tag("private-catalog")
+@IncludeTags("private-catalog")
+@SelectClasses({
+        BffEServiceContractTest.class,
+        WebEServiceCatalogContractTest.class
+})
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-reports/report.json," + "html:target/cucumber-reports/report.html"),
