@@ -1,13 +1,12 @@
 package it.pagopa.interop.m2m.eservice_template.infrastructure;
 
-import it.pagopa.domain.FileDownloadMultipart;
+import it.pagopa.interop.common.eservice_template.domain.FileDownloadMultipart;
 import it.pagopa.infrastructure.template.RestClient;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.api.EserviceTemplatesApi;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceTemplateVersion;
-import it.pagopa.utils.http.FileDownloadMultipartUtils;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 

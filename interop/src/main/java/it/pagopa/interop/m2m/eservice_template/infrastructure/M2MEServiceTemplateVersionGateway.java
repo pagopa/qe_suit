@@ -10,7 +10,7 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
-import it.pagopa.domain.FileDownloadMultipart;
+import it.pagopa.interop.common.eservice_template.domain.FileDownloadMultipart;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;

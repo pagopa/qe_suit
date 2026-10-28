@@ -1,6 +1,6 @@
-package it.pagopa.utils.http;
+package it.pagopa.interop.m2m.eservice_template.infrastructure;
 
-import it.pagopa.domain.FileDownloadMultipart;
+import it.pagopa.interop.common.eservice_template.domain.FileDownloadMultipart;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
