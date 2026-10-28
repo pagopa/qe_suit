@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("cucumber")
+@Profile({"cucumber","junit"})
 @RequiredArgsConstructor
 public class WebCommonGateway {
 
@@ -18,6 +18,24 @@ public class WebCommonGateway {
 
         if (!snackbar.alert().isError())
             throw new IllegalStateException("Snackbar non in stato di errore, impossibile leggere il messaggio");
+
+        return snackbar.alert().message().read();
+    }
+
+    public String getSnackbarInfoMessage() {
+        Snackbar snackbar = presentationGateway.bind(Snackbar.class);
+
+        if (!snackbar.alert().isInfo())
+            throw new IllegalStateException("Snackbar non in stato di info, impossibile leggere il messaggio");
+
+        return snackbar.alert().message().read();
+    }
+
+    public String getSnackbarSuccessMessage() {
+        Snackbar snackbar = presentationGateway.bind(Snackbar.class);
+
+        if (!snackbar.alert().isSuccess())
+            throw new IllegalStateException("Snackbar non in stato di successo, impossibile leggere il messaggio");
 
         return snackbar.alert().message().read();
     }
