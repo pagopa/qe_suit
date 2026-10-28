@@ -44,8 +44,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     @Override
     public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {
-        EService draftEService = eServiceUseCase.createEService(cmd -> {
-        });
+        EService draftEService = eServiceUseCase.createEService(cmd -> {});
         return processLifecycle(draftEService, draftEService.getLastDraftDescriptor(), targetState);
     }
 
@@ -54,7 +53,6 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         Attribute attribute = entityStore.getLastOrThrow(Attribute.class);
         UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
         command.attributes(Attributes.builder().certified(attribute).build());
-
         createEService(EServiceDescriptorState.DRAFT);
         return updateDescriptor(command, state);
     }
@@ -150,7 +148,6 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState targetState, UpdateEServiceDescriptorCommand command) {
         entityStore.upsert(eService);
-
         return switch (targetState) {
             case DRAFT -> this;
             case PUBLISHED -> publishPipeline(eService, eServiceDescriptor, command);
@@ -168,8 +165,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
             updatedDescriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor, command);
         } else {
             updatedDescriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(
-                    eService,
-                    eServiceDescriptor,
+                    eService, eServiceDescriptor,
                     cmd -> cmd.dailyCallsTotal(eServiceDescriptor.getDailyCallsTotal())
                             .dailyCallsPerConsumer(eServiceDescriptor.getDailyCallsPerConsumer())
                             .attributes(Attributes.builder()
