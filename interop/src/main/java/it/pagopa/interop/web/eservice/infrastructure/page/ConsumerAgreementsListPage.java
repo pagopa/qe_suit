@@ -15,8 +15,8 @@ public interface ConsumerAgreementsListPage extends Page {
     @XPath(".//h1")
     Readable<String> pageTitle();
 
-    @XPath(".//p")
-    Readable<String> pageDescription();
+    @XPath(".//h1/following-sibling::p[1]")
+    Label pageDescription();
 
     @XPath("(//div[contains(@class,'MuiFormControl-root')])[1]//label")
     Label eServiceFilterLabel();
@@ -25,10 +25,10 @@ public interface ConsumerAgreementsListPage extends Page {
     TextField eServiceFilterInput();
 
     @XPath("(//div[contains(@class,'MuiFormControl-root')])[2]//label")
-    Label producerFilterLabel();
+    Label providerFilterLabel();
 
     @XPath("(//div[contains(@class,'MuiFormControl-root')])[2]//input")
-    TextField producerFilterInput();
+    TextField providerFilterInput();
 
     @XPath("(//div[contains(@class,'MuiFormControl-root')])[3]//label")
     Label statusFilterLabel();
