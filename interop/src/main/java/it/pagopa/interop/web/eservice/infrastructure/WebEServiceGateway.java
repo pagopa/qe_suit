@@ -1,5 +1,6 @@
 package it.pagopa.interop.web.eservice.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -13,14 +14,23 @@ import it.pagopa.interop.web.eservice.infrastructure.page.component.EServiceArch
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
 import it.pagopa.interop.web.infrastructure.WebCommonGateway;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor
 public class WebEServiceGateway implements EServiceGateway {
 
+    private static final String DEFAULT_ARCHIVING_REASON = "Archiviazione per sostituzione dell'e-service.";
+
     private final EServiceCreatePage eServiceCreatePage;
     private final WebEServiceGeneralDataGateway generalDataGateway;
+    private final ProducerEServiceDetailPage producerEServiceDetailPage;
+    private final EntityStore entityStore;
+    // The shared snackbar reader is only registered in the Cucumber profile.
+    private final ObjectProvider<WebCommonGateway> webCommonGatewayProvider;
 
     @Override
     public EService createEService(EServiceCreationCommand command) {
@@ -55,7 +65,58 @@ public class WebEServiceGateway implements EServiceGateway {
 
     @Override
     public void shouldFailToArchiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason) {
-        throw new UnsupportedOperationException("Verification of EService archiving rejection is not supported on the WEB_BROWSER channel yet");
+        String expectedMessage = expectedArchivingFailureMessage(reason);
+        WebCommonGateway webCommonGateway = webCommonGatewayProvider.getObject();
+
+        openEServiceArchivingDialog(eServiceRef);
+        EServiceArchivingDialog dialog = producerEServiceDetailPage.getArchivingDialog();
+        fillArchivingDialog(dialog, gracePeriodDays);
+        dialog.getArchiveButton().click();
+
+        assertArchivingRejection(webCommonGateway, expectedMessage, reason);
+    }
+
+    @Override
+    public void shouldFailToRequestEServiceArchiving(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason) {
+        String expectedMessage = expectedArchivingFailureMessage(reason);
+        WebCommonGateway webCommonGateway = webCommonGatewayProvider.getObject();
+
+        openEServiceArchivingDialog(eServiceRef);
+        EServiceArchivingDialog dialog = producerEServiceDetailPage.getArchivingRequestDialog();
+        fillArchivingDialog(dialog, gracePeriodDays);
+        dialog.getRequestArchivingButton().click();
+
+        assertArchivingRejection(webCommonGateway, expectedMessage, reason);
+    }
+
+    private void openEServiceArchivingDialog(EServiceRef eServiceRef) {
+        EService eService = entityStore.getById(eServiceRef.id(), EService.class)
+                .orElseThrow(() -> new IllegalStateException("EService not found in scenario context: " + eServiceRef.id()));
+        producerEServiceDetailPage.navigateTo(
+                eService.getId().toString(), eService.getActiveDescriptor().getId().toString()
+        );
+        producerEServiceDetailPage.assertLoaded();
+        producerEServiceDetailPage.getActionsMenuButton().click();
+        producerEServiceDetailPage.getArchiveEServiceButton().click();
+    }
+
+    private void fillArchivingDialog(EServiceArchivingDialog dialog, GracePeriodDays gracePeriodDays) {
+        dialog.setGracePeriodDays(gracePeriodDays);
+        dialog.getContinueButton().click();
+        dialog.setArchivingReason(DEFAULT_ARCHIVING_REASON);
+    }
+
+    private String expectedArchivingFailureMessage(EServiceArchivingFailureReason reason) {
+        return switch (reason) {
+            case ARCHIVING_BEFORE_DESCRIPTOR ->
+                    "Non puoi archiviare l\u2019e-service prima di una versione gi\u00e0 in fase di archiviazione. Seleziona una durata pi\u00f9 lunga.";
+        };
+    }
+
+    private void assertArchivingRejection(WebCommonGateway webCommonGateway, String expectedMessage, EServiceArchivingFailureReason reason) {
+        assertThat(webCommonGateway.getSnackbarErrorMessage())
+                .as("EService archiving rejection: %s", reason)
+                .isEqualTo(expectedMessage);
     }
 
     @Override
