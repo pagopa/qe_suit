@@ -53,7 +53,6 @@ public class WebAgreementGateway implements AgreementGateway {
         throw new UnsupportedOperationException("WebAgreementGateway does not support activateAgreement operation");
     }
 
-    @Override
     public void blockUnauthorizedAccessToErogazioneSection(Agreement agreement) {
         producerAgreementDetailPage.navigateTo(agreement.getId().toString());
         notFoundComponent.assertLoaded();

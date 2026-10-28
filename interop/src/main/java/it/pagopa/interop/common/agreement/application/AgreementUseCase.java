@@ -45,8 +45,4 @@ public class AgreementUseCase {
     public Agreement submitAgreement(Agreement agreement) {
         return agreementGateway.submitAgreement(agreement);
     }
-
-    public void blockUnauthorizedAccessToErogazioneSection(Agreement agreement) {
-        agreementGateway.blockUnauthorizedAccessToErogazioneSection(agreement);
-    }
 }
