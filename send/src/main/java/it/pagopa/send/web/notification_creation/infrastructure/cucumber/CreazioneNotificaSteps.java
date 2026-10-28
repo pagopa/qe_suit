@@ -29,7 +29,11 @@ public class CreazioneNotificaSteps {
         // Fill form
         // TODO: page.fillAndSubmit(data)
         page.compileInformazioniPreliminari(notification);
-        browser.click(page.informazioniPreliminariStep().groupOptionSelector(notification.getGroup()));
+        // il gruppo è facoltativo: i gruppi esistono solo per alcuni enti e cambiano da ambiente ad ambiente
+        if (notification.getGroup() != null && !notification.getGroup().isBlank()) {
+            page.informazioniPreliminariStep().openGroupDropdown().click();
+            browser.click(page.informazioniPreliminariStep().groupOptionSelector(notification.getGroup()));
+        }
         page.continueButton().click();
 
         page.compileDestinatari(notification);
