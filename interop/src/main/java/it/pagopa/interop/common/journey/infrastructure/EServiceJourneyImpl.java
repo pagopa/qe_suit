@@ -50,6 +50,16 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
+    public EServiceJourneyImpl createEServiceWithCertifiedAttribute(EServiceDescriptorState state) {
+        Attribute attribute = entityStore.getLastOrThrow(Attribute.class);
+        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        command.attributes(Attributes.builder().certified(attribute).build());
+
+        createEService(EServiceDescriptorState.DRAFT);
+        return updateDescriptor(command, state);
+    }
+
+    @Override
     public EServiceJourneyImpl addDescriptor(EServiceDescriptorState state) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceDescriptor eServiceDescriptor = eServiceDescriptorUseCase.addDescriptor(eService);
