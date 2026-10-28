@@ -20,20 +20,11 @@ public interface ConsumerAgreementsListPage extends Page {
     @XPath(".//h1/following-sibling::p[1]")
     Label pageDescription();
 
-    @XPath(".//div[contains(@class,'MuiFormControl-root')]/label[.='Cerca per e-service']")
-    Label eServiceFilterLabel();
-
     @XPath(".//div[contains(@class,'MuiAutocomplete-root') and @label='Cerca per e-service']//input")
     TextField eServiceFilterInput();
 
-    @XPath("(//div[contains(@class,'MuiFormControl-root')])[2]//label")
-    Label providerFilterLabel();
-
     @XPath("(//div[contains(@class,'MuiFormControl-root')])[2]//input")
     TextField providerFilterInput();
-
-    @XPath(".//div[contains(@class,'MuiFormControl-root')]/label[.='Stato della richiesta']")
-    Label statusFilterLabel();
 
     @XPath(".//div[contains(@class,'MuiAutocomplete-root') and @label='Stato della richiesta']//input")
     TextField statusFilterInput();

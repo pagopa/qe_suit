@@ -70,25 +70,24 @@ public class WebConsumerAgreementsListPageContractTest {
                                     softly.assertThat(page.pageDescription().read())
                                             .as("Page description")
                                             .isEqualTo("Le richieste di fruizione inoltrate verranno raccolte in questa area.");
-
-                                    softly.assertThat(page.eServiceFilterLabel().read())
-                                            .as("E-Service filter label")
-                                            .isEqualTo("Cerca per e-service");
                                     softly.assertThat(page.eServiceFilterInput().read())
                                             .as("E-Service filter initial value")
                                             .isEmpty();
-                                    softly.assertThat(page.providerFilterLabel().read())
-                                            .as("Producer filter label")
-                                            .isEqualTo("Cerca per erogatore");
+                                    softly.assertThat(page.eServiceFilterInput().getLabelText())
+                                            .as("E-Service filter label")
+                                            .isEqualTo("Cerca per e-service");
                                     softly.assertThat(page.providerFilterInput().read())
                                             .as("Producer filter initial value")
                                             .isEmpty();
-                                    softly.assertThat(page.statusFilterLabel().read())
-                                            .as("Status filter label")
-                                            .isEqualTo("Stato della richiesta");
+                                    softly.assertThat(page.providerFilterInput().getLabelText())
+                                            .as("Producer filter label")
+                                            .isEqualTo("Cerca per erogatore");
                                     softly.assertThat(page.statusFilterInput().read())
                                             .as("Status filter initial value")
                                             .isEmpty();
+                                    softly.assertThat(page.statusFilterInput().getLabelText())
+                                            .as("Status filter label")
+                                            .isEqualTo("Stato della richiesta");
 
                                     softly.assertThat(page.agreementsTable().get().isPresent()).isTrue();
                                     TableRow header = page.agreementsTable().tHead().rows().get(0);
