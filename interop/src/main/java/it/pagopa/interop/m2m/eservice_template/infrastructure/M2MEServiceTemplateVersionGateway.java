@@ -74,7 +74,11 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
                 templateRef,
                 versionRef,
                 fileDownloadMultipart.getFilename(),
+                fileDownloadMultipart.getContentType(),
                 fileDownloadMultipart.getPrettyName(),
+                // The checksum is not available in the response from
+                // /eserviceTemplates/{templateId}/versions/{versionId}/interface
+                null,
                 fileDownloadMultipart.getFile().getBytes(StandardCharsets.UTF_8)
         );
     }
