@@ -1,6 +1,6 @@
 @eservice-archiving
 @channel:Given=BFF,When=WEB,Then=WEB
-Feature: Coerenza dell'archiviazione di un e-service e delle sue versioni
+Feature: Coerenza tra l'archiviazione di un e-service e quella delle sue versioni
 
   Come erogatore proprietario di un e-service o ente delegato alla sua erogazione
   Voglio che l'archiviazione dell'intero e-service rispetti quella già pianificata per le sue versioni
