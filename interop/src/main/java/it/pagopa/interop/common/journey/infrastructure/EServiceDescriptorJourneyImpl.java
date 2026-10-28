@@ -73,6 +73,7 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
         return updateDescriptorWithContextAttributes(command, dailyCallsPerConsumer, state);
     }
 
+
     @Override
     public EServiceDescriptorJourneyImpl updateDescriptorWithContextAttributes(
             UpdateEServiceDescriptorCommand command,
