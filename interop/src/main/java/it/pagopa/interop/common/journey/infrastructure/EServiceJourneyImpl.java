@@ -52,7 +52,6 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         Attribute attribute = entityStore.getLastOrThrow(Attribute.class);
         UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
         command.attributes(Attributes.builder().certified(attribute).build());
-
         createEService(EServiceDescriptorState.DRAFT);
         return updateDescriptor(command, state);
     }
