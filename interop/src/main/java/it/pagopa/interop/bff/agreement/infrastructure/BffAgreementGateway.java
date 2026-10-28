@@ -102,7 +102,7 @@ public class BffAgreementGateway implements AgreementGateway {
     @Override
     public Agreement archiveAgreement(Agreement agreement) {
         restClient.archive(agreement.getId())
-                .withoutPolling()
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .assertStatusCode(204);
         return awaitState(agreement, Set.of(AgreementState.ARCHIVED));
     }
