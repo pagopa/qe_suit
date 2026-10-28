@@ -1,14 +1,17 @@
 package it.pagopa.interop.suite;
 
 import it.pagopa.infrastructure.reporting.contract.lifecycle.GenerateContractReport;
+import it.pagopa.interop.suite.contract.*;
+import org.junit.jupiter.api.Tag;
 import org.junit.platform.suite.api.*;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
 
 @Suite
 @GenerateContractReport
-@IncludeEngines({"cucumber"})
+@IncludeEngines({"cucumber","junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
+@Tag("private-catalog")
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-reports/report.json," + "html:target/cucumber-reports/report.html"),

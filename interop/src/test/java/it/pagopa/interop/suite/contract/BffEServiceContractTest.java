@@ -15,6 +15,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogFilterPayload;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
@@ -77,6 +78,7 @@ public class BffEServiceContractTest {
     }
 
 
+    @Tag("private-catalog")
     @TestFactory
     Stream<DynamicTest> queryEServicesCatalog() {
         return httpContractValidator
