@@ -2,12 +2,11 @@ package it.pagopa.send.common.journey.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
-import it.pagopa.send.common.user.domain.Recipient;
-import it.pagopa.send.common.user.domain.Tenant;
-import it.pagopa.infrastructure.channel.CurrentChannel;
+import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
-import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationType;
@@ -23,21 +22,21 @@ public class LegalNotificationJourneySteps {
     private final SendJourney sendJourney;
     private final LegalNotificationUseCase legalNotificationUseCase;
     private final RecipientSpecFactory recipientSpecFactory;
-    private final CurrentChannel<Channel> currentChannel;
     private final CurrentUserSession currentUserSession;
+    private final UserProvider userProvider;
 
-    @Given("una notifica di tipo {legalNotificationType} creata dalla PA {tenant} per il destinatario {string} in stato {string}")
-    public void createLegalNotification(LegalNotificationType type, Tenant sender, String recipient, String targetStatus) {
-        RecipientSpec recipientSpec = recipientSpecFactory.build(Recipient.fromUsername(recipient), type.recipientOverrides());
+    @Given("una notifica di tipo {legalNotificationType} creata dalla PA {user} per il destinatario {user} in stato {string}")
+    public void createLegalNotification(LegalNotificationType type, User sender, User recipient, String targetStatus) {
+        RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, type.recipientOverrides());
         sendJourney
                 .prepareNotification(Map.of())
                 .withRecipient(recipientSpec)
                 .sendNotification(sender, NotificationStatus.fromValue(targetStatus));
     }
 
-    @Given("la PA {tenant} ha creato ed annullato una notifica di tipo {legalNotificationType} per il destinatario {string}")
-    public void createAndCancelLegalNotification(Tenant sender, LegalNotificationType type, String recipient) {
-        RecipientSpec recipientSpec = recipientSpecFactory.build(Recipient.fromUsername(recipient), type.recipientOverrides());
+    @Given("la PA {user} ha creato ed annullato una notifica di tipo {legalNotificationType} per il destinatario {user}")
+    public void createAndCancelLegalNotification(User sender, LegalNotificationType type, User recipient) {
+        RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, type.recipientOverrides());
         sendJourney
                 .prepareNotification(Map.of())
                 .withRecipient(recipientSpec)
@@ -50,11 +49,11 @@ public class LegalNotificationJourneySteps {
      * (Lucrezia e Petrarca), utile per scenari che non hanno bisogno di destinatari/dati
      * configurabili. Per scenari che richiedono destinatari/dati variabili, usare invece i tre
      * step separati ({@link #prepareNotification}, {@link #addRecipientToNotification},
-     * {@link #sendNotificationViaBff}).
+     * {@link #sendNotification}).
      */
-    @Given("una notifica di tipo multidestinatario creata dalla PA {tenant}")
-    public void createMultiRecipientNotification(Tenant sender) {
-        RecipientSpec lucrezia = recipientSpecFactory.build(Recipient.LUCREZIA, Map.of(
+    @Given("una notifica di tipo multidestinatario creata dalla PA {user}")
+    public void createMultiRecipientNotification(User sender) {
+        RecipientSpec lucrezia = recipientSpecFactory.build(userProvider.resolve(UserAlias.USER_1), Map.of(
                 "physicalAddress_address", "Via Ok 890",
                 "physicalAddress_municipality", "Palermo",
                 "physicalAddress_province", "PA",
@@ -63,7 +62,8 @@ public class LegalNotificationJourneySteps {
                 "F24_number", "0"
         ));
 
-        RecipientSpec petrarca = recipientSpecFactory.build(Recipient.PETRARCA, Map.of(
+        // IMPRESA_1: stesso codice fiscale numerico (12666810299) del destinatario PG usato finora
+        RecipientSpec petrarca = recipientSpecFactory.build(userProvider.resolve(UserAlias.IMPRESA_1), Map.of(
                 "digitalDomicile", "test@pec.it",
                 "pagoPA_number", "1",
                 "F24_number", "0"
@@ -81,7 +81,7 @@ public class LegalNotificationJourneySteps {
                 .sendNotification(sender, NotificationStatus.ACCEPTED);
     }
 
-    @Given("viene ricercata e aperta una notifica che rispetta i seguenti criteri:")
+    @When("viene ricercata e aperta una notifica che rispetta i seguenti criteri:")
     public void searchAndReadLegalNotification(Map<String, String> criteria) {
         sendJourney
                 .prepareNotification(criteria)
@@ -90,36 +90,39 @@ public class LegalNotificationJourneySteps {
 
     /**
      * Primo step del flusso di creazione notifica multi-destinatario: compila i campi base della
-     * notifica (mittente escluso: viene impostato dallo step di invio). Agnostico dal channel;
+     * notifica e imposta la PA indicata come utente della sessione. Agnostico dal channel;
      * ripetibile in combinazione con {@link #addRecipientToNotification} e concluso da
-     * {@link #sendNotificationViaBff}. A differenza degli step sopra, che compongono un unico
+     * {@link #sendNotification}. A differenza degli step sopra, che compongono un unico
      * step tramite {@link SendJourney}, questi tre step chiamano {@link LegalNotificationUseCase}
      * direttamente: devono per forza restare su step Cucumber separati.
      */
-    @Given("la PA {tenant} predispone una nuova notifica con i seguenti dati:")
-    public void prepareNotification(Tenant tenant, Map<String, String> data) {
-        currentUserSession.setSender(tenant);
+    @Given("la PA {user} predispone una nuova notifica con i seguenti dati:")
+    public void prepareNotification(User tenant, Map<String, String> data) {
+        currentUserSession.setUser(tenant);
         legalNotificationUseCase.prepareNotification(data);
     }
 
     /**
      * Secondo step, ripetibile una volta per destinatario: aggiunge un destinatario censito
-     * ({@link Recipient}) alla notifica in preparazione, con default sensati (1 pagoPA + 1 F24,
+     * ({@link User}) alla notifica in preparazione, con default sensati (1 pagoPA + 1 F24,
      * indirizzo fisico di default) sovrascrivibili puntualmente da {@link RecipientSpecFactory}.
      */
-    @Given("viene aggiunto {recipient} come destinatario con i seguenti dati:")
-    public void addRecipientToNotification(Recipient recipient, Map<String, String> data) {
+    @Given("viene aggiunto {user} come destinatario con i seguenti dati:")
+    public void addRecipientToNotification(User recipient, Map<String, String> data) {
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, data);
         legalNotificationUseCase.addRecipient(recipientSpec);
     }
 
     /**
-     * Terzo e ultimo step: invia la notifica predisposta tramite il canale BFF e attende che
-     * raggiunga lo stato indicato. Quando verrà implementato il canale WEB si aggiungerà un
-     * secondo metodo analogo con testo letterale "tramite interfaccia web".
+     * Terzo e ultimo step: invia la notifica predisposta tramite il canale attivo e attende che
+     * raggiunga lo stato indicato.
      */
     @When("la notifica viene sottomessa e si attende che lo stato diventi {string}")
-    public void sendNotificationViaBff(Tenant sender, String targetStatus) {
-        legalNotificationUseCase.sendNotification(sender, NotificationStatus.fromValue(targetStatus));
+    public void sendNotification(String targetStatus) {
+        // il mittente è l'utente impostato dallo step "la PA ... predispone una nuova notifica"
+        legalNotificationUseCase.sendNotification(currentUserSession.getUser(), NotificationStatus.ACCEPTED);
+        // sendNotification attende lo stato della richiesta (che arriva al massimo ad ACCEPTED): lo stato
+        // della notifica indicato nella feature si attende a parte
+        legalNotificationUseCase.waitForNotificationStatus(NotificationStatus.fromValue(targetStatus));
     }
 }

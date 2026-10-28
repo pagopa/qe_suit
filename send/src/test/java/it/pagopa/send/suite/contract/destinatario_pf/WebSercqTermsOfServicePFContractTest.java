@@ -5,7 +5,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.send.common.user.domain.Recipient;
+import it.pagopa.send.common.user.domain.UserAlias;
+import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.SercqTermsOfServicePFPage;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,6 @@ import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
@@ -32,13 +32,12 @@ import java.util.stream.Stream;
  * Il testo è un documento legale caricato da OneTrust: se cambiano i titoli delle sezioni il test fallisce e va
  * aggiornato insieme al documento.
  */
-@ActiveProfiles({"test", "junit"})
 @Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
         WebJUnitSuitConfig.class
-})
+}, properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebSercqTermsOfServicePFContractTest {
@@ -67,13 +66,14 @@ public class WebSercqTermsOfServicePFContractTest {
     ).flatMap(s -> s).toList();
 
     private final WebBrowserContractValidator webContractValidator;
+    private final UserProvider userProvider;
 
     /**
      * Testi della pagina: titolo, inizio dell'introduzione e titoli delle 10 sezioni.
      */
     @TestFactory
     Stream<DynamicTest> shouldShowSercqTermsOfServiceTexts() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(SercqTermsOfServicePFPage.class)
                 .tests(textScenarios());
     }
@@ -104,7 +104,7 @@ public class WebSercqTermsOfServicePFContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldShowSercqTermsOfServiceIndex() {
-        return webContractValidator.asRecipient(Recipient.LUCREZIA)
+        return webContractValidator.asRecipient(userProvider.resolve(UserAlias.USER_1))
                 .on(SercqTermsOfServicePFPage.class)
                 .tests(indexScenarios());
     }

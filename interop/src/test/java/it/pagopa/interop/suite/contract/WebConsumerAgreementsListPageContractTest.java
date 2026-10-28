@@ -65,17 +65,20 @@ public class WebConsumerAgreementsListPageContractTest {
                         page -> {
                         },
                         page -> assertSoftly(softly -> {
-                                    softly.assertThat(page.pageDescription().read()).isNotBlank();
+                                    softly.assertThat(page.pageDescription().read())
+                                            .as("Page description")
+                                            .isEqualTo("Le richieste di fruizione inoltrate verranno raccolte in questa area.");
+
                                     softly.assertThat(page.eServiceFilterLabel().read())
                                             .as("E-Service filter label")
                                             .isEqualTo("Cerca per e-service");
                                     softly.assertThat(page.eServiceFilterInput().read())
                                             .as("E-Service filter initial value")
                                             .isEmpty();
-                                    softly.assertThat(page.producerFilterLabel().read())
+                                    softly.assertThat(page.providerFilterLabel().read())
                                             .as("Producer filter label")
                                             .isEqualTo("Cerca per erogatore");
-                                    softly.assertThat(page.producerFilterInput().read())
+                                    softly.assertThat(page.providerFilterInput().read())
                                             .as("Producer filter initial value")
                                             .isEmpty();
                                     softly.assertThat(page.statusFilterLabel().read())
@@ -105,11 +108,11 @@ public class WebConsumerAgreementsListPageContractTest {
                                     rows.forEach(row -> {
                                         softly.assertThat(row.cells().get(0).read())
                                                 .as("E-Service cell value at row %s", rowCounter)
-                                        .isNotBlank();
+                                                .isNotBlank();
 
                                         softly.assertThat(row.cells().get(1).read())
-                                        .as("Provider cell value at row %s", rowCounter)
-                                        .isNotBlank();
+                                                .as("Provider cell value at row %s", rowCounter)
+                                                .isNotBlank();
 
                                         softly.assertThat(row.cells().get(2).read())
                                                 .as("Status cell value at row %s", rowCounter)
