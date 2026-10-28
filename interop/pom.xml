@@ -851,7 +851,6 @@ import java.io.File;
                             </includes>
                             <excludes>
                                 <exclude>**/suite/**</exclude>
-                                <exclude>**/architecture/**</exclude>
                                 <exclude>**/ci/**</exclude>
                             </excludes>
                             <failIfNoTests>true</failIfNoTests>
