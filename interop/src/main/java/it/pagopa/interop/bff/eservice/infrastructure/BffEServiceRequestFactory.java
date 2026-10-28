@@ -75,9 +75,7 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
     }
 
     @Override
-    public EServiceCreationCommand defaultCreationEServiceCommand() {
-        return BffEServiceCreationCommand.from(defaultEServiceSeed());
-    }
+    public EServiceCreationCommand defaultCreationEServiceCommand() {return BffEServiceCreationCommand.from(defaultEServiceSeed());}
 
     @Override
     public UpdateEServiceDescriptorCommand defaultUpdateDescriptorCommand() {
