@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("cucumber")
+@Profile({"cucumber","junit"})
 @RequiredArgsConstructor
 public class WebCommonGateway {
 
