@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserSteps {
 
+    // TODO La gestione dell'autenticazione per canale deve essere incapsulata e automatizzata nei livelli sottostanti.
+
     private final CurrentUserSession currentUserSession;
 
     private final CurrentM2MSession currentM2MSession;
