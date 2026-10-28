@@ -3,9 +3,9 @@ package it.pagopa.interop.web.eservice.infrastructure.page;
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
-import it.pagopa.infrastructure.suit.component.Snackbar;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 
@@ -23,7 +23,11 @@ public interface ProducerEServiceDetailPage extends Page {
     @XPath("//div[contains(@class, 'MuiDrawer-root')]//button[normalize-space()='Salva modifiche']")
     Button attributesDrawerSaveButton();
 
-    Snackbar snackbar();
+    @XPath("//main[not(//div[contains(@class, 'MuiDrawer-root') and not(@aria-hidden='true')])]")
+    Component closedAttributesDrawer();
+
+    @XPath("//main[not(//div[contains(@class, 'MuiSnackbar-root')]//div[contains(@class, 'MuiAlert-standardError') or contains(@class, 'MuiAlert-outlinedError')])]")
+    Component noErrorSnackbar();
 
     @Override
     default void assertLoaded() {
