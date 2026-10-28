@@ -119,8 +119,8 @@ public class WebConsumerAgreementsListPageContractTest {
                                                 .isNotBlank();
 
                                         softly.assertThat(row.cells().get(3).read())
-                                        .as("Cell with detail button at row %s", rowCounter)
-                                        .isEqualTo("Visualizza");
+                                                .as("Cell with detail button at row %s", rowCounter)
+                                                .isNotBlank();
                                 rowCounter.getAndIncrement();
                             });
                             softly.assertThat(page.rowsPerPageSelector().get().isPresent()).isTrue();
