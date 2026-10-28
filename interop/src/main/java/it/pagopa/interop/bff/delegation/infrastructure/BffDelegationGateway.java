@@ -41,8 +41,8 @@ public class BffDelegationGateway implements DelegationGateway {
     public Delegation createConsumerDelegation(@NonNull TenantRef delegateRef, @NonNull EServiceRef eServiceRef) {
         return restClient.createConsumerDelegation(delegateRef.id(), eServiceRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(mapper::toDelegation)
-                .updateContext()
+                .map(createdResource -> awaitDelegation(
+                        DelegationRef.of(createdResource.getId()), DelegationState.WAITING_FOR_APPROVAL))
                 .get();
     }
 
