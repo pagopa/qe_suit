@@ -8,6 +8,7 @@ import it.frontend.e2e.framework.web.capability.core.Writable;
 import it.pagopa.send.web.infrastructure.page.component.Footer;
 import it.pagopa.send.web.infrastructure.page.component.Table;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
+import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import it.pagopa.send.web.notification_search.infrastructure.suit.NotificationSearchPage;
 import org.assertj.core.api.Assertions;
 
@@ -22,6 +23,13 @@ public interface DashboardPage extends NotificationSearchPage {
 
     @XPath("//*[@id='notifications-table']/tbody/tr[1]//button[@data-testid='goToNotificationDetail']")
     Clickable notificationDetails();
+
+    @XPath("//*[@data-testid=\"newNotificationBtn\"]")
+    Clickable newNotificationButton();
+
+    // pagina "Invia una nuova notifica" aperta con "Invia una nuova notifica"
+    @XPath("//main")
+    CreateNotificationPage createNotification();
 
     @XPath("//*[@id=\"iunMatch\"]")
     Writable<String> iunSearchInput();
