@@ -6,11 +6,16 @@ import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_create_process.DelegationsCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_create_process.DetailsCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_create_process.InformationCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_create_process.SignalHubCard;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestFactory;
@@ -18,6 +23,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
+
+import static it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(
         classes = {
@@ -33,6 +41,156 @@ import java.util.stream.Stream;
 public class WebEServiceCreatePageContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
+
+    /**
+     * Verifies the initial state of the e-service creation page, opened as a tenant admin.
+     * <p>
+     * The single scenario checks:
+     * <ul>
+     *   <li>the header, breadcrumbs and stepper;</li>
+     *   <li>the copy, links and default values of the four cards (information, details,
+     *       delegations and Signal Hub);</li>
+     *   <li>the enabled "Salva bozza e prosegui" button.</li>
+     * </ul>
+     *
+     * @return a stream containing the dynamic test of the initial page contracts
+     */
+    @TestFactory
+    @DisplayName("Verify visual and contractual state of the initial e-service creation page")
+    Stream<DynamicTest> initialCreatePageContractMustBeCompliant() {
+        return webContractValidator
+                .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
+                .on(EServiceCreatePage.class)
+                .tests(Stream.of(
+                        new WebScenario<>(
+                                "All components, the 4 cards, and the initial states must comply with the contract",
+                                page -> {},
+                                page -> {
+                                    assertHeaderAndStepper(page);
+                                    assertInformationCard(page.infoCard());
+                                    assertDetailsCard(page.detailsCard());
+                                    assertDelegationsCard(page.delegationsCard());
+                                    assertSignalHubCard(page.signalHubCard());
+                                    assertSubmitAction(page);
+                                }
+                        )
+                ));
+    }
+
+    /**
+     * Verifies the back button, breadcrumbs, page title and stepper (progress label, active
+     * step and active step title).
+     *
+     * @param page the e-service creation page
+     */
+    private void assertHeaderAndStepper(EServiceCreatePage page) {
+        assertThat(page.backButton().isDisabled()).isFalse();
+        page.backButton().readAndAssert(BACK_TO_ESERVICE);
+        assertThat(page.breadcrumbErogazione().get().orElseThrow().getText()).isEqualTo(BREADCRUMB_EROGAZIONE);
+        assertThat(page.breadcrumbMyEServices().get().orElseThrow().getText()).isEqualTo(BREADCRUMB_MY_ESERVICES);
+        page.breadcrumbCurrentPage().readAndAssert(BREADCRUMB_CURRENT);
+        page.title().readAndAssert(PAGE_TITLE);
+        var stepper = page.stepper();
+        assertThat(stepper.get().isPresent()).as("Stepper must be present").isTrue();
+        stepper.label().readAndAssert(STEPPER_LABEL);
+        stepper.activeStep().readAndAssert(STEP_1);
+        stepper.activeTitle().readAndAssert(GENERAL_INFO);
+    }
+
+    /**
+     * Verifies the title, description, guidelines link, name and description fields, with their
+     * labels and helper texts, of the information card.
+     *
+     * @param card the information card
+     */
+    private void assertInformationCard(InformationCard card) {
+        card.sectionTitle().readAndAssert(CARD_INFO_TITLE);
+        assertThat(card.description().read()).isEqualToNormalizingWhitespace(CARD_INFO_DESCRIPTION);
+        assertThat(card.nameLabel().read()).contains(CARD_INFO_NAME_LABEL);
+        assertThat(card.descriptionLabel().read()).contains(CARD_INFO_DESCRIPTION_LABEL);
+        assertThat(card.guidelinesLink().get().isPresent()).as("The guidelines link must be present").isTrue();
+        assertThat(card.nameInput().get().isPresent()).as("The name field must be present").isTrue();
+        card.nameHelperText().readAndAssert(CARD_INFO_NAME_HELPER);
+        assertThat(card.descriptionInput().get().isPresent()).as("The description field must be present").isTrue();
+        card.descriptionHelperText().readAndAssert(CARD_INFO_DESC_HELPER);
+    }
+
+    /**
+     * Verifies the title, warning alert and questions of the details card, then the label and
+     * default selection of each radio option.
+     *
+     * @param card the details card
+     */
+    private void assertDetailsCard(DetailsCard card) {
+        card.sectionTitle().readAndAssert(CARD_DETAILS_TITLE);
+        card.warningAlert().readAndAssert(CARD_DETAILS_ALERT);
+        assertThat(card.exchangeModeQuestion().read()).contains(CARD_DETAILS_EXCHANGE_MODE_QUESTION);
+        assertThat(card.technologyQuestion().read()).contains(CARD_DETAILS_TECHNOLOGY_QUESTION);
+        assertThat(card.dataFlowQuestion().read()).contains(CARD_DETAILS_DATA_FLOW_QUESTION);
+        assertThat(card.personalDataQuestion().read()).contains(CARD_DETAILS_PERSONAL_DATA_QUESTION);
+
+        card.syncRadio().label().readAndAssert(CARD_DETAILS_SYNC_LABEL);
+        card.asyncRadio().label().readAndAssert(CARD_DETAILS_ASYNC_LABEL);
+        card.restRadio().label().readAndAssert(CARD_DETAILS_REST_LABEL);
+        card.soapRadio().label().readAndAssert(CARD_DETAILS_SOAP_LABEL);
+        card.deliverRadio().label().readAndAssert(CARD_DETAILS_DELIVER_LABEL);
+        card.receiveRadio().label().readAndAssert(CARD_DETAILS_RECEIVE_LABEL);
+        card.personalDataYesRadio().label().readAndAssert(CARD_DETAILS_PERSONAL_DATA_YES_LABEL);
+        card.personalDataNoRadio().label().readAndAssert(CARD_DETAILS_PERSONAL_DATA_NO_LABEL);
+        assertThat(card.syncRadio().isSelected()).as("Synchronous exchange must be selected").isTrue();
+        assertThat(card.asyncRadio().isSelected()).as("Asynchronous exchange must not be selected").isFalse();
+        assertThat(card.restRadio().isSelected()).as("REST must be selected").isTrue();
+        assertThat(card.soapRadio().isSelected()).as("SOAP must not be selected").isFalse();
+        assertThat(card.deliverRadio().isSelected()).as("Deliver must be selected").isTrue();
+        assertThat(card.receiveRadio().isSelected()).as("Receive must not be selected").isFalse();
+        assertThat(card.personalDataYesRadio().isSelected()).as("Deliver personal data must not be selected").isFalse();
+        assertThat(card.personalDataNoRadio().isSelected()).as("Do not deliver personal data must not be selected").isFalse();
+    }
+
+    /**
+     * Verifies the title, description, section titles, switch and checkbox labels, documentation
+     * links and the default checked state of the delegation controls.
+     *
+     * @param card the delegations card
+     */
+    private void assertDelegationsCard(DelegationsCard card) {
+        card.sectionTitle().readAndAssert(CARD_DELEGATIONS_TITLE);
+        assertThat(card.description().read()).isEqualToNormalizingWhitespace(CARD_DELEGATIONS_DESCRIPTION);
+        card.consumerDelegableTitle().readAndAssert(CARD_DELEGATIONS_CONSUMER_DELEGABLE_TITLE);
+        card.clientAccessDelegableTitle().readAndAssert(CARD_DELEGATIONS_CLIENT_ACCESS_DELEGABLE_TITLE);
+        card.consumerDelegableLabel().readAndAssert(CARD_DELEGATIONS_CONSUMER_DELEGABLE_LABEL);
+        assertThat(card.clientAccessDelegableLabel().read()).isEqualToNormalizingWhitespace(CARD_DELEGATIONS_CLIENT_ACCESS_DELEGABLE_LABEL);
+        assertThat(card.documentationLink().get().isPresent()).as("The delegations documentation link must be present").isTrue();
+        assertThat(card.consumerDelegableSwitch().isChecked()).as("The delegation consumption must be enabled").isTrue();
+        assertThat(card.clientAccessDelegableCheckbox().isChecked()).as("The access to data by delegation must be authorized").isTrue();
+        assertThat(card.clientAccessDocLink().get().isPresent()).as("The link to the access by delegation documentation must be present").isTrue();
+    }
+
+    /**
+     * Verifies the title, descriptions, switch label and links of the Signal Hub card, and that
+     * the Signal Hub switch is disabled by default.
+     *
+     * @param card the Signal Hub card
+     */
+    private void assertSignalHubCard(SignalHubCard card) {
+        card.sectionTitle().readAndAssert(CARD_SIGNAL_HUB_TITLE);
+        assertThat(card.description().read()).isEqualToNormalizingWhitespace(CARD_SIGNAL_HUB_DESCRIPTION);
+        assertThat(card.designationDescription().read()).isEqualToNormalizingWhitespace(CARD_SIGNAL_HUB_DESIGNATION_DESCRIPTION);
+        card.signalHubLabel().readAndAssert(CARD_SIGNAL_HUB_LABEL);
+        assertThat(card.solutionLink().get().isPresent()).as("The link to the integrated solution must be present").isTrue();
+        assertThat(card.designationPdfLink().get().isPresent()).as("The link to the designation document must be present").isTrue();
+        assertThat(card.signalHubSwitch().isChecked()).as("Signal Hub must be disabled").isFalse();
+    }
+
+    /**
+     * Verifies that the "Salva bozza e prosegui" button is enabled and shows the expected text.
+     *
+     * @param page the e-service creation page
+     */
+    private void assertSubmitAction(EServiceCreatePage page) {
+        assertThat(page.saveDraftAndProceedButton().isDisabled()).isFalse();
+        page.saveDraftAndProceedButton().readAndAssert(SUBMIT_BTN_TEXT);
+    }
 
     /**
      * Verifies the links and copy shown in the "required attributes" section of the
