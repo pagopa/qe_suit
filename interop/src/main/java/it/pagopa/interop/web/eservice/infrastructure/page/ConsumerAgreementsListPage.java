@@ -23,7 +23,7 @@ public interface ConsumerAgreementsListPage extends Page {
     @XPath(".//div[contains(@class,'MuiAutocomplete-root') and @label='Cerca per e-service']//input")
     TextField eServiceFilterInput();
 
-    @XPath("(//div[contains(@class,'MuiFormControl-root')])[2]//input")
+    @XPath(".//div[contains(@class,'MuiAutocomplete-root') and @label='Cerca per erogatore']//input")
     TextField providerFilterInput();
 
     @XPath(".//div[contains(@class,'MuiAutocomplete-root') and @label='Stato della richiesta']//input")
