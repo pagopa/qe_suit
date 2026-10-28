@@ -64,7 +64,7 @@ public class BffDelegationRestClient extends RestClient {
         );
     }
 
-    public TestChain<Delegation> createConsumerDelegation(
+    public TestChain<CreatedResource> createConsumerDelegation(
             @Nonnull UUID delegateId,
             @Nonnull UUID eServiceId
     ) {
@@ -75,7 +75,7 @@ public class BffDelegationRestClient extends RestClient {
                 () -> consumerDelegationsApi.createConsumerDelegation()
                         .body(seed)
                         .execute(Function.identity()),
-                Delegation.class
+                CreatedResource.class
         );
     }
 
