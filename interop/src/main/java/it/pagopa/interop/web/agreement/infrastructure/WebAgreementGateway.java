@@ -8,8 +8,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
-import it.pagopa.interop.web.agreement.infrastructure.page.AgreementCatalogErogatorePage;
-import it.pagopa.interop.web.agreement.infrastructure.page.AgreementDetailErogatorePage;
+import it.pagopa.interop.web.agreement.infrastructure.page.ProducerAgreementDetailPage;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceDetailPage;
 import it.pagopa.interop.web.infrastructure.suit.component.NotFoundComponent;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +20,7 @@ import org.springframework.stereotype.Service;
 public class WebAgreementGateway implements AgreementGateway {
 
     private final EServiceDetailPage eServiceDetailPage;
-    private final AgreementCatalogErogatorePage agreementCatalogErogatorePage;
-    private final AgreementDetailErogatorePage agreementDetailErogatorePage;
+    private final ProducerAgreementDetailPage producerAgreementDetailPage;
     private final NotFoundComponent notFoundComponent;
 
     @Override
@@ -56,16 +54,11 @@ public class WebAgreementGateway implements AgreementGateway {
     }
 
     @Override
-    public void blockUnauthorizedAccessToErogazioneSection(String agreementRequestId) {
-        agreementDetailErogatorePage.navigateTo(agreementRequestId);
+    public void blockUnauthorizedAccessToErogazioneSection(Agreement agreement) {
+        producerAgreementDetailPage.navigateTo(agreement.getId().toString());
         notFoundComponent.assertLoaded();
     }
 
-    @Override
-    public String accessToErogazioneSection(EService eService) {
-        agreementCatalogErogatorePage.navigateTo();
-        return agreementCatalogErogatorePage.getFruitionRequestId(eService);
-    }
 
     @Override
     public boolean supports(Channel delimiter) {

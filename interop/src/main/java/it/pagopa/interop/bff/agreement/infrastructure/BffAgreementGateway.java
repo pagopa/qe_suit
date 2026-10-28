@@ -81,13 +81,8 @@ public class BffAgreementGateway implements AgreementGateway {
     }
 
     @Override
-    public void blockUnauthorizedAccessToErogazioneSection(String agreementRequestId) {
+    public void blockUnauthorizedAccessToErogazioneSection(Agreement agreement) {
         throw new UnsupportedOperationException("blockUnauthorizedAccessToErogazioneSection Not supported yet.");
-    }
-
-    @Override
-    public String accessToErogazioneSection(EService eService) {
-        throw new UnsupportedOperationException("AccessToErogazioneSection Not supported yet.");
     }
 
 
