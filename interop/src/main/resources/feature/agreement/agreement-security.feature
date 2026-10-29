@@ -1,4 +1,4 @@
-@agreement-security
+@agreement
 @channel:Given=BFF,When=WEB,Then=WEB
 Feature: Gestione ambito sicurezza relativo alle pagine delle richieste di fruizione di un eservice
 

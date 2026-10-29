@@ -1,4 +1,3 @@
-@ignored
 @agreement
 @channel:Given=BFF,When=WEB,Then=WEB
 Feature: Creazione di una richiesta di fruizione verso un EService
