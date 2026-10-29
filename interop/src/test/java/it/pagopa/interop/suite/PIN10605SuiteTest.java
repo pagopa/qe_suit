@@ -24,6 +24,6 @@ import org.junit.platform.suite.api.*;
         value = "dynamic"
     )
 })
-public class PIN10605ContractTest {
+public class PIN10605SuiteTest {
 }
 
