@@ -8,15 +8,19 @@ import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Pagination;
 import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.infrastructure.suit.component.TextField;
+import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
+import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.base-url}/fruizione/richieste")
 public interface ConsumerAgreementsListPage extends Page {
 
+    Breadcrumbs breadcrumbs();
+
     @XPath(".//h1")
     Readable<String> pageTitle();
 
-    @XPath(".//p")
-    Readable<String> pageDescription();
+    @XPath(".//h1/following-sibling::p[1]")
+    Label pageDescription();
 
     @XPath("(//div[contains(@class,'MuiFormControl-root')])[1]//label")
     Label eServiceFilterLabel();
@@ -25,10 +29,10 @@ public interface ConsumerAgreementsListPage extends Page {
     TextField eServiceFilterInput();
 
     @XPath("(//div[contains(@class,'MuiFormControl-root')])[2]//label")
-    Label producerFilterLabel();
+    Label providerFilterLabel();
 
     @XPath("(//div[contains(@class,'MuiFormControl-root')])[2]//input")
-    TextField producerFilterInput();
+    TextField providerFilterInput();
 
     @XPath("(//div[contains(@class,'MuiFormControl-root')])[3]//label")
     Label statusFilterLabel();
@@ -44,6 +48,9 @@ public interface ConsumerAgreementsListPage extends Page {
 
     @Override
     default void assertLoaded() {
+        Assertions.assertThat(breadcrumbs().items().stream().map(Readable::read).toList())
+                .as("Breadcrumbs")
+                .containsExactly("Fruizione", "Richieste inoltrate");
         pageTitle().readAndAssert("Richieste di fruizione inoltrate");
     }
 }
