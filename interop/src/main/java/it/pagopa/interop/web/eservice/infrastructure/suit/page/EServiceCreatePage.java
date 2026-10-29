@@ -8,7 +8,7 @@ import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Link;
 import it.pagopa.infrastructure.suit.component.Stepper;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.additional_info_form.AdditionalInfoForm;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_create_process.*;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_create_card.*;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data_form.GeneralDataForm;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.technical_specs_form.TechnicalSpecsForm;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.threshold_attribute_form.ThresholdAndAttributeForm;
