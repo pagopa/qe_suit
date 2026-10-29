@@ -3,18 +3,12 @@ package it.pagopa.interop.common.journey.infrastructure;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.Attributes;
-import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
-import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
-import it.pagopa.interop.common.eservice.application.EServiceUseCase;
-import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
+import it.pagopa.interop.common.eservice.application.*;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
-import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
-import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +41,16 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         EService draftEService = eServiceUseCase.createEService(cmd -> {
         });
         return processLifecycle(draftEService, draftEService.getLastDraftDescriptor(), targetState);
+    }
+
+    @Override
+    public EServiceJourneyImpl createEServiceWithCertifiedAttribute(EServiceDescriptorState state) {
+        Attribute attribute = entityStore.getLastOrThrow(Attribute.class);
+        UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
+        command.attributes(Attributes.builder().certified(attribute).build());
+
+        createEService(EServiceDescriptorState.DRAFT);
+        return updateDescriptor(command, state);
     }
 
     @Override
@@ -89,21 +93,13 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
-    public EServiceJourneyImpl updateDescriptorWithContextAttributes(
-            UpdateEServiceDescriptorCommand command,
-            int dailyCallsPerConsumer,
-            EServiceDescriptorState state
-    ) {
+    public EServiceJourneyImpl updateDescriptorWithContextAttributes(UpdateEServiceDescriptorCommand command, int dailyCallsPerConsumer, EServiceDescriptorState state) {
         command.attributes(attributes -> prepareContextAttributes(attributes, dailyCallsPerConsumer));
         return updateDescriptor(command, state);
     }
 
     @Override
-    public EServiceJourneyImpl updateDescriptorWithContextAttributes(
-            Consumer<UpdateEServiceDescriptorCommand> commandConfig,
-            int dailyCallsPerConsumer,
-            EServiceDescriptorState state
-    ) {
+    public EServiceJourneyImpl updateDescriptorWithContextAttributes(Consumer<UpdateEServiceDescriptorCommand> commandConfig, int dailyCallsPerConsumer, EServiceDescriptorState state) {
         UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
         commandConfig.accept(command);
         return updateDescriptorWithContextAttributes(command, dailyCallsPerConsumer, state);
@@ -144,8 +140,6 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         return switch (targetState) {
             case DRAFT -> this;
             case PUBLISHED -> publishPipeline(eService, eServiceDescriptor, command);
-            // Facilmente estensibile in futuro senza toccare i metodi pubblici:
-            // case SUSPENDED -> publishPipeline(eService).suspendPipeline(eService);
             default -> throw new UnsupportedOperationException(
                     String.format("La transizione allo stato %s non è ancora supportata nel Journey.", targetState)
             );
