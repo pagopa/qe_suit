@@ -1,3 +1,4 @@
+@channel:Given=WEB,When=WEB,Then=WEB
 Feature: Abilitazione Domicilio Digitale (SERCQ) per persone fisiche
    In qualità di un utente di una PF
    voglio ricevere le notifiche al mio domicilio digitale
@@ -5,7 +6,7 @@ Feature: Abilitazione Domicilio Digitale (SERCQ) per persone fisiche
 
   @sercqDomicilioDigitale @removeCourtesyAddress
   Scenario: [SERCQ_PF_DOMICILIO_DIGITALE_1] Abilitazione Domicilio Digitale per SERCQ
-    Given l'utente Cesare effettua l'accesso a SelfCare con autenticazione SPID
+    Given l'utente User_2 effettua l'accesso a SelfCare con autenticazione SPID
     And se presente, viene saltata la configurazione del prodotto SEND
     Then la pagina NotificationPF è caricata con successo
     When naviga alla pagina AddressPF
