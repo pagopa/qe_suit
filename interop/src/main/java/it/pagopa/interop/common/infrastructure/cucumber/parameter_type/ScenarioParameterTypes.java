@@ -2,6 +2,7 @@ package it.pagopa.interop.common.infrastructure.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -52,5 +53,10 @@ public class ScenarioParameterTypes {
     public EServiceDescriptor currentArchivedEServiceDescriptor(String token) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         return eService.getLastArchivedDescriptor();
+    }
+
+    @ParameterType("richiesta di fruizione|agreement|richiesta di fruizione creata")
+    public Agreement currentAgreement(String token) {
+        return entityStore.getLastOrThrow(Agreement.class);
     }
 }
