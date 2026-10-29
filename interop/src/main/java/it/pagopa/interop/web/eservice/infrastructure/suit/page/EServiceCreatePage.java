@@ -2,16 +2,19 @@ package it.pagopa.interop.web.eservice.infrastructure.suit.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Link;
+import it.pagopa.infrastructure.suit.component.Stepper;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.additional_info_form.AdditionalInfoForm;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_create_process.*;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data_form.GeneralDataForm;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.technical_specs_form.TechnicalSpecsForm;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.threshold_attribute_form.ThresholdAndAttributeForm;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @Url("${interop.web.base-url}/erogazione/e-service/crea/")
 public interface EServiceCreatePage extends Page {
@@ -20,8 +23,6 @@ public interface EServiceCreatePage extends Page {
     String BREADCRUMB_MY_ESERVICES = "I miei e-service";
     String BREADCRUMB_CURRENT = "Crea e-service";
     String PAGE_TITLE = "Crea e-service";
-    String STEPPER_LABEL = "1 of 4";
-    String STEP_1 = "Step 1";
     String GENERAL_INFO = "Informazioni generali";
 
     String CARD_INFO_TITLE = "Informazioni sull’e-service";
@@ -75,8 +76,6 @@ public interface EServiceCreatePage extends Page {
     @XPath("//nav[contains(@class, 'MuiBreadcrumbs-root')]//li[contains(@class, 'MuiBreadcrumbs-li')]//span[normalize-space()='" + BREADCRUMB_CURRENT + "']")
     Label breadcrumbCurrentPage();
 
-    EServiceCreateStepper stepper();
-
     @XPath("//h2[normalize-space()='" + CARD_INFO_TITLE + "']/ancestor::div[contains(@class, 'MuiPaper-root')][1]")
     InformationCard infoCard();
 
@@ -96,20 +95,16 @@ public interface EServiceCreatePage extends Page {
 
     ThresholdAndAttributeForm thresholdAndAttributeForm();
 
-     @XPath(".//main")
     TechnicalSpecsForm technicalSpecsForm();
 
     AdditionalInfoForm additionalInfoForm();
 
-    /**
-     * Il componente viene commentato visto il restyling previsto nell'ambiente di dev e non compatibile con l'ambiente di QA
-     * @return the stepper component for creating or updating an e-service
-     */
-    //Stepper upsertStepper();
+    @XPath("//*[@data-testid='desktopWizardStepper']")
+    Stepper upsertStepper();
 
     @Override
     default void assertLoaded() {
         title().readAndAssert("Crea e-service");
-        //Assertions.assertThat(upsertStepper().get()).as("The stepper must be presents").isPresent();
+        assertThat(upsertStepper().get()).as("The stepper must be presents").isPresent();
     }
 }
