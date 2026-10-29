@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Service
 @Profile({"cucumber", "junit"})
 @RequiredArgsConstructor
+@Profile({"cucumber","junit"})
 public class WebAttributeGateway implements AttributeGateway {
 
     private final EServiceEditPage eServiceEditPage;

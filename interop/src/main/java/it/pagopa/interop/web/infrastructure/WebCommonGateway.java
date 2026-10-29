@@ -13,6 +13,15 @@ public class WebCommonGateway {
 
     private final WebPresentationGateway presentationGateway;
 
+    public String getSnackbarSuccessMessage() {
+        Snackbar snackbar = presentationGateway.bind(Snackbar.class);
+
+        if (!snackbar.alert().isSuccess())
+            throw new IllegalStateException("Snackbar non in stato di successo, impossibile leggere il messaggio");
+
+        return snackbar.alert().message().read();
+    }
+
     public String getSnackbarErrorMessage() {
         Snackbar snackbar = presentationGateway.bind(Snackbar.class);
 
@@ -27,15 +36,6 @@ public class WebCommonGateway {
 
         if (!snackbar.alert().isInfo())
             throw new IllegalStateException("Snackbar non in stato di info, impossibile leggere il messaggio");
-
-        return snackbar.alert().message().read();
-    }
-
-    public String getSnackbarSuccessMessage() {
-        Snackbar snackbar = presentationGateway.bind(Snackbar.class);
-
-        if (!snackbar.alert().isSuccess())
-            throw new IllegalStateException("Snackbar non in stato di successo, impossibile leggere il messaggio");
 
         return snackbar.alert().message().read();
     }

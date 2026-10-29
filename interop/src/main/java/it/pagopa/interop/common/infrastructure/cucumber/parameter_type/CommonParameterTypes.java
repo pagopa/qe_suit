@@ -2,6 +2,7 @@ package it.pagopa.interop.common.infrastructure.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.client.domain.ClientKind;
+import it.pagopa.interop.common.delegation.domain.DelegationState;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.*;
@@ -53,6 +54,11 @@ public class CommonParameterTypes {
     @ParameterType("SUSPENDED")
     public PurposeVersionState purposeState(String name) {
         return PurposeVersionState.valueOf(name.toUpperCase());
+    }
+
+    @ParameterType("ACTIVE|WAITING_FOR_APPROVAL|WAITING FOR APPROVAL")
+    public DelegationState delegationState(String name) {
+        return DelegationState.valueOf(name.replace(' ', '_'));
     }
 
     @ParameterType("sincrono|asincrono")

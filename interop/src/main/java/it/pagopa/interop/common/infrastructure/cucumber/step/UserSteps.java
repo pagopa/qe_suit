@@ -20,6 +20,7 @@ public class UserSteps {
 
     @Given("un {userRole} appartenente all'erogatore {tenant}")
     @Given("un {userRole} appartenente al fruitore {tenant}")
+    @Given("un {userRole} appartenente al delegato {tenant}")
     public void setUser(UserRole userRole, Tenant tenant) {
         currentUserSession.set(User.getTenantUser(tenant, userRole), tenant);
     }
