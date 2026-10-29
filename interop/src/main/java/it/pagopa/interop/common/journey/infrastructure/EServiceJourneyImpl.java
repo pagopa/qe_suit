@@ -35,9 +35,24 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
-    public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {
-        EService draftEService = eServiceUseCase.createEService(cmd -> {});
+    public EServiceJourneyImpl createEService(Consumer<EServiceCreationCommand> commandConfig, EServiceDescriptorState targetState) {
+        EService draftEService = eServiceUseCase.createEService(commandConfig);
         return processLifecycle(draftEService, draftEService.getLastDraftDescriptor(), targetState);
+    }
+
+    @Override
+    public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {
+        return createEService(cmd -> {}, targetState);
+    }
+
+    @Override
+    public EServiceJourneyImpl linkOpenApiInterface() {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        EServiceDescriptor descriptor = eService.getLastDraftDescriptor();
+        EServiceDescriptor updatedDescriptor = eServiceDescriptorUseCase.linkOpenApiInterface(eService, descriptor, "assets/origin-interface.yaml");
+        eService.addDescriptor(updatedDescriptor);
+        entityStore.upsert(eService);
+        return this;
     }
 
     @Override
