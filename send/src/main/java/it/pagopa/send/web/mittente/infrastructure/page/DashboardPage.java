@@ -4,41 +4,55 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
-import it.frontend.e2e.framework.web.capability.core.Writable;
+import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.TextField;
 import it.pagopa.send.web.infrastructure.page.component.Footer;
 import it.pagopa.send.web.infrastructure.page.component.Table;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import it.pagopa.send.web.notification_search.infrastructure.suit.NotificationSearchPage;
+import it.pagopa.send.web.notification_search.infrastructure.suit.component.NotificationsTable;
 import org.assertj.core.api.Assertions;
 
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * {@code {baseUrl}/dashboard}
+ * Pagina "Notifiche" della PA: notifiche inviate dall'ente, con i filtri di ricerca e i pulsanti "Impostazioni lingua"
+ * e "Invia una notifica". Filtri e tabella compaiono solo se l'ente ha inviato almeno una notifica.
+ * Testi e stato iniziale sono verificati da {@code WebDashboardPaContractTest}.
+ */
 @Url("${url.notifiche.mittente.dashboard}")
 public interface DashboardPage extends NotificationSearchPage {
 
     @XPath("//*[@data-testid=\"titleBox\"]")
     Readable<String> header();
 
+    @XPath("//*[@id=\"subtitle-page\"]")
+    Readable<String> subtitle();
+
+    @XPath("//*[@data-testid=\"settingsLangBtn\"]")
+    Button languageSettingsButton();
+
     @XPath("//*[@id='notifications-table']/tbody/tr[1]//button[@data-testid='goToNotificationDetail']")
     Clickable notificationDetails();
 
     @XPath("//*[@data-testid=\"newNotificationBtn\"]")
-    Clickable newNotificationButton();
+    Button newNotificationButton();
 
     // pagina "Invia una nuova notifica" aperta con "Invia una nuova notifica"
     @XPath("//main")
     CreateNotificationPage createNotification();
 
     @XPath("//*[@id=\"iunMatch\"]")
-    Writable<String> iunSearchInput();
+    TextField iunSearchInput();
 
     @XPath("//*[@id=\"startDate\"]")
-    Writable<String> startDateSearchInput();
+    TextField startDateSearchInput();
 
     @XPath("//*[@id=\"endDate\"]")
-    Writable<String> endDateSearchInput();
+    TextField endDateSearchInput();
 
     Table notifications();
 
@@ -46,10 +60,19 @@ public interface DashboardPage extends NotificationSearchPage {
      * Filtro esclusivo del portale mittenti: assente lato PF.
      */
     @XPath("//*[@id=\"recipientId\"]")
-    Writable<String> recipientIdSearchInput();
+    TextField recipientIdSearchInput();
 
     @XPath("//*[@id=\"filter-button\"]")
-    Clickable filterButton();
+    Button filterButton();
+
+    @XPath("//*[@data-testid=\"filter-form\"]//label")
+    Readable<String> filterLabels();
+
+    // valore mostrato dal filtro "Stato"
+    @XPath("//*[@id=\"status\"]")
+    Readable<String> statusFilter();
+
+    NotificationsTable notificationsTable();
 
     Optional<OneTrustBanner> oneTrustBanner();
 
@@ -58,7 +81,7 @@ public interface DashboardPage extends NotificationSearchPage {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         header().readAndAssert((h) -> {
            Assertions.assertThat(h).isNotNull();
            Assertions.assertThat(h).isIn("Notifiche", "Notifications");
