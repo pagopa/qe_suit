@@ -1,6 +1,5 @@
 package it.pagopa.interop.m2m.eservice_template.infrastructure;
 
-import it.pagopa.interop.common.eservice_template.domain.FileDownloadMultipart;
 import it.pagopa.infrastructure.template.RestClient;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;

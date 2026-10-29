@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.eservice_template.domain;
+package it.pagopa.interop.m2m.eservice_template.infrastructure;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
