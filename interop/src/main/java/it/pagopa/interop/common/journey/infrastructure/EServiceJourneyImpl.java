@@ -36,8 +36,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     @Override
     public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {
-        EService draftEService = eServiceUseCase.createEService(cmd -> {
-        });
+        EService draftEService = eServiceUseCase.createEService(cmd -> {});
         return processLifecycle(draftEService, draftEService.getLastDraftDescriptor(), targetState);
     }
 
@@ -148,8 +147,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
             updatedDescriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor, command);
         } else {
             updatedDescriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(
-                    eService,
-                    eServiceDescriptor,
+                    eService, eServiceDescriptor,
                     cmd -> cmd.dailyCallsTotal(eServiceDescriptor.getDailyCallsTotal())
                             .dailyCallsPerConsumer(eServiceDescriptor.getDailyCallsPerConsumer())
                             .attributes(Attributes.builder()
