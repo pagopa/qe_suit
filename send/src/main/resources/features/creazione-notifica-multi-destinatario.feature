@@ -1,4 +1,4 @@
-@bff @channel:Given=BFF,When=BFF,Then=BFF
+@bff
 Feature: Creazione notifica multi-destinatario via BFF
   verifico che una notifica con più destinatari, ciascuno con il proprio indirizzo e i propri
   documenti pagoPA/F24, venga creata e inviata correttamente componendo gli step di preparazione,
@@ -6,7 +6,8 @@ Feature: Creazione notifica multi-destinatario via BFF
 
   Scenario: [BFF_NOTIFICA_MULTI_DESTINATARIO] Notifica con due destinatari, uno con solo indirizzo
   fisico e uno con pagoPA e domicilio digitale
-    Given la PA Comune_1 predispone una nuova notifica con i seguenti dati:
+    Given una sessione HTTP programmatica su BFF
+    And la PA Comune_1 predispone una nuova notifica con i seguenti dati:
       | subject               | Comunicazione di test multi-destinatario |
       | physicalCommunication | REGISTERED_LETTER_890                    |
       | feePolicy             | FLAT_RATE                                |

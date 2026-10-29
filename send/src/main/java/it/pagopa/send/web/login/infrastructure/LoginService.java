@@ -11,10 +11,9 @@ import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationPage;
 import it.pagopa.send.web.login.infrastructure.page.PgLoginPage;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import it.pagopa.send.web.login.infrastructure.page.TenantSelectionPage;
-import it.pagopa.send.common.kernel.context.CurrentUserSession;
+import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 
 /**
  * Azioni di login sul browser: nessun servizio esterno coinvolto, solo interazione con le pagine.
@@ -28,7 +27,7 @@ public class LoginService {
     private static final String SESSION_STORAGE_KEY = "user";
 
     private final WebPresentationGateway uiGateway;
-    private final CurrentUserSession currentUserSession;
+    private final WebBrowserContext webBrowserContext;
     private final TenantSelectionPage tenantSelectionPage;
     private final DashboardPage dashboardPage;
     private final NotificationPage notificationPage;
@@ -42,7 +41,8 @@ public class LoginService {
         loginPage.loginWithSpid(tenant);
         tenantSelectionPage.selectComune(tenant.getOrganization());
 
-        currentUserSession.setUser(tenant);
+        webBrowserContext.setTenant(tenant);
+        webBrowserContext.setCurrentUser(tenant);
     }
 
     public void loginAsRecipient(String userType, User recipient) {
@@ -53,22 +53,25 @@ public class LoginService {
         loginPage.navigateTo();
         loginPage.loginWithSpid(recipient);
 
-        currentUserSession.setUser(recipient);
+        webBrowserContext.setRecipient(recipient);
+        webBrowserContext.setCurrentUser(recipient);
     }
 
     public void forceTenantSession(User tenant) {
-        // prima di navigare: ogni navigazione riscrive il sessionStorage con l'utente della sessione
-        currentUserSession.setUser(tenant);
-
         String payload = sessionPayloadFactory.build(tenant, sessionTokenFor(tenant));
         forceSession(payload, dashboardPage);
+
+        webBrowserContext.setTenant(tenant);
+        webBrowserContext.setCurrentUser(tenant);
     }
 
     public void forceRecipientSession(String userType, User recipient) {
         String payload = sessionPayloadFactory.build(recipient, sessionTokenFor(recipient));
         Page landingPage = "PG".equals(userType) ? notificationPage : notificationPFPage;
-        currentUserSession.setUser(recipient);
         forceSession(payload, landingPage);
+
+        webBrowserContext.setRecipient(recipient);
+        webBrowserContext.setCurrentUser(recipient);
     }
 
     private String sessionTokenFor(User user) {

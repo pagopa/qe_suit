@@ -3,9 +3,8 @@ package it.pagopa.send.web.infrastructure.config.suit;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.capability.impl.LocatableCapabilityImpl;
 import it.frontend.e2e.framework.web.model.location.Url;
-import it.pagopa.application.context.BrowserContext;
-import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.web.infrastructure.cucumber.WebBrowserContext;
 import it.pagopa.send.web.login.infrastructure.DynamicUserTokenProvider;
 import it.pagopa.send.web.login.infrastructure.SelfCareSessionPayloadFactory;
 import org.springframework.stereotype.Component;
@@ -16,52 +15,49 @@ public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImp
     private static final String SESSION_STORAGE_KEY = "user";
 
     private final IWebPresentationApiAdapter adapter;
-    private final CurrentUserSession currentUserSession;
-    private final BrowserContext browserContext;
+    private final WebBrowserContext webBrowserContext;
     private final SelfCareSessionPayloadFactory sessionPayloadFactory;
     private final DynamicUserTokenProvider tokenProvider;
 
     public AuthenticatedLocatableCapabilityImpl(
             IWebPresentationApiAdapter adapter,
-            CurrentUserSession currentUserSession,
-            BrowserContext browserContext,
+            WebBrowserContext webBrowserContext,
             SelfCareSessionPayloadFactory sessionPayloadFactory,
             DynamicUserTokenProvider tokenProvider
     ) {
         super(adapter);
         this.adapter = adapter;
-        this.currentUserSession = currentUserSession;
-        this.browserContext = browserContext;
+        this.webBrowserContext = webBrowserContext;
         this.sessionPayloadFactory = sessionPayloadFactory;
         this.tokenProvider = tokenProvider;
     }
 
     @Override
     public void navigateTo(String... pathParams) {
+        User currentUser = webBrowserContext.getCurrentUser();
         Url targetUrl = resolveUrl(pathParams, urlSupplier.get().getUrl());
 
         // Nessun utente noto: pagine del flusso SPID reale (OneIdPage, PfLoginPage, ...),
         // navigazione semplice senza toccare il sessionStorage.
-        if (!currentUserSession.hasUser()) {
+        if (currentUser == null) {
             adapter.navigateTo(targetUrl);
-            browserContext.setCurrentUrl(targetUrl);
+            webBrowserContext.setCurrentUrl(targetUrl);
             return;
         }
 
-        User currentUser = currentUserSession.getUser();
         String sessionToken = sessionTokenFor(currentUser);
         String sessionPayload = buildSessionPayload(currentUser, sessionToken);
 
         // Il sessionStorage è legato all'origin corrente. Se il browser non è ancora atterrato
         // sul portale, il payload verrebbe scritto sull'origin sbagliato.
-        if (browserContext.getCurrentUrl() == null) {
+        if (webBrowserContext.getCurrentUrl() == null) {
             adapter.navigateTo(targetUrl);
         }
 
         adapter.setSessionStorageItem(SESSION_STORAGE_KEY, sessionPayload);
 
         adapter.navigateTo(targetUrl);
-        browserContext.setCurrentUrl(targetUrl);
+        webBrowserContext.setCurrentUrl(targetUrl);
     }
 
     private String sessionTokenFor(User user) {

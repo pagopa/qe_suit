@@ -3,19 +3,19 @@ Feature: Tramite nuova interfaccia di notifica
   verifico che tutti gli elementi siano correttamente posti
   per mittente e per destinatario
 
-  @channel:Given=BFF,When=WEB,Then=WEB
   Scenario: [NUI_DETTAGLIO_NOTIFICA_ANNULLO_NOTIFICA] Viene controllato che, a seguito di annullamento, la pagina
     riporti correttamente l'informazione tramite apposita chip
-    Given una notifica di tipo semplice creata dalla PA Comune_1 per il destinatario User_1 in stato "ACCEPTED"
+    Given una sessione HTTP programmatica su BFF
+    And una notifica di tipo semplice creata dalla PA Comune_1 per il destinatario User_1 in stato "ACCEPTED"
     And la PA Comune_1 ha creato ed annullato una notifica di tipo semplice per il destinatario User_1
-    And la PA Comune_1 è loggata a SEND
-    When naviga alla pagina Dashboard
-    And viene aperto il dettaglio della notifica che soddisfa i seguenti criteri:
+    And la PA Comune_1 è loggata al portale SEND tramite Browser
+    And naviga alla pagina Dashboard
+    And viene ricercata e aperta una notifica che rispetta i seguenti criteri:
       | iun   | $currentNotificationIUN |
-    Then la pagina di dettaglio della notifica contiene la sezione relativa al sommario della notifica
+    And la pagina di dettaglio della notifica contiene la sezione relativa al sommario della notifica
     And la pagina di dettaglio della notifica contiene la sezione relativa al documenti allegati
     And la pagina di dettaglio della notifica contiene la sezione relativa al stato della notifica
-    And la notifica è in stato annullata
+    Then la notifica è in stato annullata
 
 
 
@@ -31,7 +31,6 @@ Feature: Tramite nuova interfaccia di notifica
     Then la notifica è in stato annullata
 
 
-  @channel:Given=WEB,When=WEB,Then=WEB
   Scenario: [NUI_DETTAGLIO_NOTIFICA_AFTER_120_GIORNI] Viene controllato che, dopo 120 giorni giorni, gli allegati
     non siano presenti allegati e che compaia il relativo banner
     Given la PA Comune_1 è loggata a SEND
@@ -40,7 +39,6 @@ Feature: Tramite nuova interfaccia di notifica
     #Then
 
 
-  @channel:Given=WEB,When=BFF,Then=WEB
   Scenario: [NUI_DETTAGLIO_NOTIFICA_5_PAGOPA] Viene controllato che la paginazione sia mostrata con
   5 bollettini PagoPA
     Given la PA Comune_1 è loggata a SEND
@@ -50,7 +48,6 @@ Feature: Tramite nuova interfaccia di notifica
       | iun   | IUN da notifica corrente |
     #Then
 
-  @channel:Given=WEB,When=BFF,Then=WEB
   Scenario: [NUI_DETTAGLIO_NOTIFICA_5_F24] Viene controllato che la tabella specifica sia mostrata con
   5 bollettini F24
     Given la PA Comune_1 effettua l'accesso a SelfCare con autenticazione SPID

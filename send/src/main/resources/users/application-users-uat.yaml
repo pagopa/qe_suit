@@ -49,40 +49,8 @@ users:
       - party-role: MANAGER
         role: pg-admin
   Comune_1:
-    username: grossini
-    password: ${pn.external.password.grossini:}
-    organization: "Comune di Palermo"
-    tax-id: "80016350821"
-    organization-id: 5b994d4a-0fa8-47ac-9c7b-354f1d44a1ce
-    uid: e9e4a9c7-9586-4b92-a7dd-ee1a0e77d398
-    denomination: giuseppe
-    family-name: rossini
-    personal-tax-id: RSSGPP80B02G273H
-    email: grossini@test.cert.it
-    ipa-code: c_g273
-    has-groups: false
-    # api-key delle chiamate B2B (header x-api-key): gruppi della PA e notifiche
-    groups-api-key: ${pn.external.groups-api-key.grossini:}
-    delivery-api-key: ${pn.external.delivery-api-key.grossini:}
-    roles:
-      - party-role: SUB_DELEGATE
-        role: admin
+    # REPLACE_ME: nessun ente censito in uat (QA-18477)
+    username: REPLACE_ME
   Comune_2:
-    username: albino63
-    password: ${pn.external.password.albino63:}
-    organization: "Comune di Verona"
-    tax-id: "00215150236"
-    organization-id: a95dace4-4a47-4149-a814-0e669113ce40
-    uid: 2134d92b-5d1b-49b5-9a6e-4283f4879bbf
-    denomination: Bacchisio
-    family-name: Barone
-    personal-tax-id: BRNBCH91L49H822E
-    email: rsanna@gmail.com
-    ipa-code: c_l781
-    has-groups: false
-    # api-key delle chiamate B2B (header x-api-key): gruppi della PA e notifiche
-    groups-api-key: ${pn.external.groups-api-key.albino63:}
-    delivery-api-key: ${pn.external.delivery-api-key.albino63:}
-    roles:
-      - party-role: SUB_DELEGATE
-        role: admin
+    # REPLACE_ME: nessun ente censito in uat (QA-18477)
+    username: REPLACE_ME
