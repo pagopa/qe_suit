@@ -5,7 +5,6 @@ import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescr
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
-import it.pagopa.interop.common.journey.infrastructure.EServiceJourneyImpl;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -17,7 +16,15 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
         return createEService(command, EServiceDescriptorState.DRAFT);
     }
 
+    SELF createEService(Consumer<EServiceCreationCommand> commandConfig, EServiceDescriptorState state);
+
+    default SELF createEService(Consumer<EServiceCreationCommand> commandConfig) {
+        return createEService(commandConfig, EServiceDescriptorState.DRAFT);
+    }
+
     SELF createEService(EServiceDescriptorState state);
+
+    SELF linkOpenApiInterface();
 
     /** Crea un e-service associando al descrittore l'ultimo attributo certificato presente nel contesto. */
     SELF createEServiceWithCertifiedAttribute(EServiceDescriptorState state);
