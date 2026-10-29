@@ -24,7 +24,6 @@ import org.junit.platform.suite.api.*;
         value = "dynamic"
     )
 })
-/* Parte 2 di Hyperlink injection: raccoglie i test di contratto implementati successivamente alla parte 1. */
 public class PIN10605ContractTest {
 }
 
