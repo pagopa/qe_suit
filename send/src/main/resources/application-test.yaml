@@ -45,7 +45,10 @@ url:
     persona-giuridica:
       base: https://imprese.test.notifichedigitali.it
       notifiche: ${url.notifiche.persona-giuridica.base}/notifiche
+      notifiche-dettaglio: ${url.notifiche.persona-giuridica.base}/notifiche/${iun}/dettaglio
+      notifiche-dettaglio-timeline: ${url.notifiche.persona-giuridica.base}/notifiche/${iun}/dettaglio/timeline
       notifiche-delegato: ${url.notifiche.persona-giuridica.base}/notifiche-delegato
+      notifiche-delegato-dettaglio: ${url.notifiche.persona-giuridica.notifiche-delegato}/${mandateId}/${iun}/dettaglio
       app-status: ${url.notifiche.persona-giuridica.base}/app-status
       integrazione-api: ${url.notifiche.persona-giuridica.base}/integrazione-api
       recapiti: ${url.notifiche.persona-giuridica.base}/recapiti

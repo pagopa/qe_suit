@@ -45,7 +45,10 @@ url:
     persona-giuridica:
       base: https://imprese.uat.notifichedigitali.it
       notifiche: ${url.notifiche.persona-giuridica.base}/notifiche
+      notifiche-dettaglio: ${url.notifiche.persona-giuridica.base}/notifiche/${iun}/dettaglio
+      notifiche-dettaglio-timeline: ${url.notifiche.persona-giuridica.base}/notifiche/${iun}/dettaglio/timeline
       notifiche-delegato: ${url.notifiche.persona-giuridica.base}/notifiche-delegato
+      notifiche-delegato-dettaglio: ${url.notifiche.persona-giuridica.notifiche-delegato}/${mandateId}/${iun}/dettaglio
       app-status: ${url.notifiche.persona-giuridica.base}/app-status
       integrazione-api: ${url.notifiche.persona-giuridica.base}/integrazione-api
       recapiti: ${url.notifiche.persona-giuridica.base}/recapiti
@@ -92,8 +95,7 @@ token:
 # ============================================================================
 bff:
   api:
-    # REPLACE_ME: host BFF reale per l'ambiente uat
-    base-url: REPLACE_ME
+    base-url: https://webapi.uat.notifichedigitali.it
     bearer-token: ${pn.external.bearer-token.tokenBffApiUat:REPLACE_ME}
 
 # ============================================================================
