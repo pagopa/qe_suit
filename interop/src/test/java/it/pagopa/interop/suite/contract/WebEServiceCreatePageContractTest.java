@@ -1,5 +1,6 @@
 package it.pagopa.interop.suite.contract;
 
+import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
@@ -42,6 +43,10 @@ public class WebEServiceCreatePageContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
+    String SECOND_STEP_LABEL = "Soglie e attributi";
+    String THIRD_STEP_LABEL = "Specifiche tecniche";
+    String FOURTH_STEP_LABEL = "Informazioni aggiuntive";
+
     /**
      * Verifies the initial state of the e-service creation page, opened as a tenant admin.
      * <p>
@@ -78,8 +83,7 @@ public class WebEServiceCreatePageContractTest {
     }
 
     /**
-     * Verifies the back button, breadcrumbs, page title and stepper (progress label, active
-     * step and active step title).
+     * Verifies the back button, breadcrumbs, page title and stepper.
      *
      * @param page the e-service creation page
      */
@@ -90,11 +94,67 @@ public class WebEServiceCreatePageContractTest {
         assertThat(page.breadcrumbMyEServices().get().orElseThrow().getText()).isEqualTo(BREADCRUMB_MY_ESERVICES);
         page.breadcrumbCurrentPage().readAndAssert(BREADCRUMB_CURRENT);
         page.title().readAndAssert(PAGE_TITLE);
-        var stepper = page.stepper();
-        assertThat(stepper.get().isPresent()).as("Stepper must be present").isTrue();
-        stepper.label().readAndAssert(STEPPER_LABEL);
-        stepper.activeStep().readAndAssert(STEP_1);
-        stepper.activeTitle().readAndAssert(GENERAL_INFO);
+        assertStepper(page);
+    }
+
+    /**
+     * Verifies the rendered steps and their initial active/disabled states.
+     *
+     * @param page the e-service creation page
+     */
+    private void assertStepper(EServiceCreatePage page) {
+        var stepper = page.upsertStepper();
+        var stepperElement = stepper.get(FindPolicy.VISIBLE);
+        assertThat(stepperElement).as("The stepper must be visible").isPresent();
+        assertThat(stepperElement.orElseThrow().getAttributes())
+                .containsEntry("role", "list");
+
+        var steps = stepper.steps();
+        assertThat(steps).as("The stepper must contain four steps").hasSize(4);
+        assertThat(steps.stream().map(step -> step.get(FindPolicy.VISIBLE).isPresent()).toList())
+                .as("All four steps must be visible")
+                .containsExactly(true, true, true, true);
+        assertThat(steps.stream().map(step -> step.number().get(FindPolicy.VISIBLE).isPresent()).toList())
+                .as("All four step numbers must be visible")
+                .containsExactly(true, true, true, true);
+        assertThat(steps.stream().map(step -> step.label().get(FindPolicy.VISIBLE).isPresent()).toList())
+                .as("All four step labels must be visible")
+                .containsExactly(true, true, true, true);
+
+        assertThat(steps.stream().map(step -> step.number().read()).toList())
+                .containsExactly("1", "2", "3", "4");
+        assertThat(steps.stream().map(step -> step.label().read()).toList())
+                .containsExactly(
+                        GENERAL_INFO,
+                        SECOND_STEP_LABEL,
+                        THIRD_STEP_LABEL,
+                        FOURTH_STEP_LABEL
+                );
+
+        var stepElements = steps.stream()
+                .map(step -> step.get(FindPolicy.VISIBLE).orElseThrow())
+                .toList();
+        assertThat(stepElements.stream()
+                        .map(element -> element.getAttributes().get("role"))
+                        .toList())
+                .containsExactly("listitem", "listitem", "listitem", "listitem");
+        assertThat(stepElements.stream()
+                        .map(element -> element.getAttributes().get("data-testid"))
+                        .toList())
+                .containsExactly("step-0", "step-1", "step-2", "step-3");
+        assertThat(stepElements.stream()
+                        .map(element -> element.getAttributes().get("aria-current"))
+                        .toList())
+                .as("Only the first step must be current")
+                .containsExactly("step", null, null, null);
+        assertThat(steps.get(0).isActiveOnLabel())
+                .as("The first step must be active")
+                .isTrue();
+        for (int index = 1; index < steps.size(); index++) {
+            assertThat(steps.get(index).isActiveOnLabel())
+                    .as("Step %s must not be active", index + 1)
+                    .isFalse();
+        }
     }
 
     /**
