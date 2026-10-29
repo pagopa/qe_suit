@@ -42,8 +42,22 @@ public class WebConsumerAgreementsListPageContractTest {
                         User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
                         Tenant.COMUNE_DI_MILANO
                 )
-                .on(ConsumerAgreementsListPage.class)
+                .on(ConsumerAgreementsListPage.class, "")
                 .tests(contractScenarios());
+    }
+
+    @TestFactory
+    Stream<DynamicTest> noResultOnConsumerAgreementPageContract() {
+        return webContractValidator
+                .as(
+                        User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
+                        Tenant.COMUNE_DI_MILANO
+                )
+                .on(
+                        ConsumerAgreementsListPage.class,
+                        "?eservicesIds=%5B%5B\"no-result\"%2C\"11111111-1111-1111-1111-111111111111\"%5D%5D"
+                )
+                .tests(noResultContractScenarios());
     }
 
     private Stream<WebScenario<ConsumerAgreementsListPage>> contractScenarios() {
@@ -56,25 +70,24 @@ public class WebConsumerAgreementsListPageContractTest {
                                     softly.assertThat(page.pageDescription().read())
                                             .as("Page description")
                                             .isEqualTo("Le richieste di fruizione inoltrate verranno raccolte in questa area.");
-
-                                    softly.assertThat(page.eServiceFilterLabel().read())
-                                            .as("E-Service filter label")
-                                            .isEqualTo("Cerca per e-service");
                                     softly.assertThat(page.eServiceFilterInput().read())
                                             .as("E-Service filter initial value")
                                             .isEmpty();
-                                    softly.assertThat(page.providerFilterLabel().read())
-                                            .as("Producer filter label")
-                                            .isEqualTo("Cerca per erogatore");
+                                    softly.assertThat(page.eServiceFilterInput().getLabelText())
+                                            .as("E-Service filter label")
+                                            .isEqualTo("Cerca per e-service");
                                     softly.assertThat(page.providerFilterInput().read())
                                             .as("Producer filter initial value")
                                             .isEmpty();
-                                    softly.assertThat(page.statusFilterLabel().read())
-                                            .as("Status filter label")
-                                            .isEqualTo("Stato della richiesta");
+                                    softly.assertThat(page.providerFilterInput().getLabelText())
+                                            .as("Producer filter label")
+                                            .isEqualTo("Cerca per erogatore");
                                     softly.assertThat(page.statusFilterInput().read())
                                             .as("Status filter initial value")
                                             .isEmpty();
+                                    softly.assertThat(page.statusFilterInput().getLabelText())
+                                            .as("Status filter label")
+                                            .isEqualTo("Stato della richiesta");
 
                                     softly.assertThat(page.agreementsTable().get().isPresent()).isTrue();
                                     TableRow header = page.agreementsTable().tHead().rows().get(0);
@@ -108,12 +121,28 @@ public class WebConsumerAgreementsListPageContractTest {
 
                                         softly.assertThat(row.cells().get(3).read())
                                                 .as("Cell with detail button at row %s", rowCounter)
-                                                .isEqualTo("Visualizza");
-                                        rowCounter.getAndIncrement();
-                                    });
+                                                .isNotBlank();
+                                rowCounter.getAndIncrement();
+                            });
+                            softly.assertThat(page.rowsPerPageSelector().get().isPresent()).isTrue();
+                            softly.assertThat(page.pagination().get().isPresent()).isTrue();
+                        })
+                )
+        );
+    }
 
-                                    softly.assertThat(page.pagination().get().isPresent()).isTrue();
-                                }
-                        )));
+    private Stream<WebScenario<ConsumerAgreementsListPage>> noResultContractScenarios() {
+        return Stream.of(
+                new WebScenario<>(
+                        "Consumer agreements list page hides the rows per page selector",
+                        page -> {
+                        },
+                        page -> assertSoftly(softly -> {
+                            softly.assertThat(page.noResultMessage().get().isPresent()).isTrue();
+                            softly.assertThat(page.rowsPerPageSelector().get().isPresent()).isFalse();
+                            softly.assertThat(page.pagination().get().isPresent()).isFalse();
+                        })
+                )
+        );
     }
 }
