@@ -17,6 +17,7 @@ import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.jspecify.annotations.NonNull;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
@@ -59,6 +60,7 @@ public class WebCampaignsContractTest {
         ));
     }
 
+    @Disabled("Serve un ente senza campagne: Comune_1 ne ha. Da riattivare quando ci sarà un'utenza adatta")
     @TestFactory
     Stream<DynamicTest> campagneEmptyState() {
         return webContractValidator
