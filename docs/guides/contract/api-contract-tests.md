@@ -427,6 +427,57 @@ Stream<DynamicTest>
 
 The QA Engineer should not manually duplicate one JUnit test for every structural variation when the validator can derive those cases from the declared rules.
 
+## Authorization tests (identity x API)
+
+`as(identities).apiCalls(...)` generates one dynamic test for every identity x API combination.
+Each case authenticates the identity, creates a fresh operation from the supplier, sends **one**
+request exactly as the supplier prepared it (body, path, query and headers are not mutated, validated or
+fixed) and checks the exact HTTP status. The default expected status is `403`; use `expectedStatus(int)` to
+change it for the whole declaration. A `400` instead of `403` is a KO: the system under test must check
+permissions before validating the request.
+
+```java
+@TestFactory
+Stream<DynamicTest> forbiddenForReadOnlyUsers() {
+    List<User> users = List.of(
+            User.getTenantUser(Tenant.COMUNE_DI_MILANO, UserRole.VIEWER),
+            User.getTenantUser(Tenant.COMUNE_DI_MILANO, UserRole.REVIEWER));
+
+    return httpContractValidator
+            .as(Tenant.COMUNE_DI_MILANO, users)
+            .apiCalls(
+                    () -> apiClient.agreements().createAgreement(),
+                    () -> apiClient.agreements().getAgreementById().agreementIdPath(agreementId))
+            .tests();                       // expected 403
+}
+
+@TestFactory
+Stream<DynamicTest> unauthorizedAcrossTenants() {
+    return httpContractValidator
+            .as(List.of(
+                    InteropContractIdentity.bff(Tenant.AGID, UserRole.VIEWER),
+                    InteropContractIdentity.m2m(Tenant.PAGO_PA, M2MRole.M2M)))
+            .apiCalls(() -> apiClient.agreements().createAgreement())
+            .expectedStatus(401)
+            .tests();
+}
+```
+
+Notes:
+
+* `tests()` only builds the cases: it does not authenticate, call the suppliers or send requests.
+* Authentication runs inside each dynamic test, before the supplier, exactly like `apiCall(...)`; parallelism is left to
+  the JUnit configuration.
+* Case names look like `[authorization] Comune di Milano / API | api #2 | expected 403`; repeated identity labels are
+  disambiguated with `identity #n`.
+* The report shows the API each case actually invoked (`METHOD /route`, read from the generated client), one report
+  group per API, even though the `@TestFactory` name does not match a single operation. Cases that fail before the
+  operation is created are listed under `API not resolved (operation not created)`.
+* The factory-name = operation-name architecture rule applies to `apiCall(...)` only; a factory must use either
+  `apiCall(...)` or `apiCalls(...)`.
+* In SEND, `SendHttpContractValidator.as(users)` sets the user in `CurrentUserSession`; the HTTP request specs read it
+  when the operation is created. It needs an `HttpContractValidator` instance (no Spring bean is provided yet).
+
 ## Design principle
 
 Prefer declarative contract definitions over imperative test duplication.

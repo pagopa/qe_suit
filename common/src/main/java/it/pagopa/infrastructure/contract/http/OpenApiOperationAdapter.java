@@ -27,7 +27,10 @@ final class OpenApiOperationAdapter {
         return execute(operation);
     }
 
-    private Response execute(Object operation) {
+    /**
+     * Esegue l'operazione così come predisposta, senza alcun binding di mutazioni.
+     */
+    Response execute(Object operation) {
         try {
             Method method = operation.getClass().getMethod(
                     "execute",

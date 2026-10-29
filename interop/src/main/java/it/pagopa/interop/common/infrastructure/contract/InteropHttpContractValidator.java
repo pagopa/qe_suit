@@ -1,8 +1,6 @@
 package it.pagopa.interop.common.infrastructure.contract;
 
-import it.pagopa.infrastructure.contract.http.HttpContractAuthentication;
-import it.pagopa.infrastructure.contract.http.HttpContractStages;
-import it.pagopa.infrastructure.contract.http.HttpContractValidator;
+import it.pagopa.infrastructure.contract.http.*;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -10,7 +8,9 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class InteropHttpContractValidator {
     private final HttpContractValidator delegate;
@@ -47,5 +47,41 @@ public class InteropHttpContractValidator {
 
         HttpContractAuthentication authentication = () -> currentM2MSession.set(tenant, m2MRole);
         return operationSupplier -> delegate.apiCall(authentication, operationSupplier);
+    }
+
+    /**
+     * Test di autorizzazione (utenza x API, default 403) per utenti BFF dello stesso tenant.
+     */
+    public HttpAuthorizationStages.ApiCallsStage as(Tenant tenant, List<User> users) {
+        Objects.requireNonNull(tenant, "tenant must not be null");
+        Objects.requireNonNull(users, "users must not be null");
+        return as(users.stream().map(user -> InteropContractIdentity.bff(tenant, user)));
+    }
+
+    public HttpAuthorizationStages.ApiCallsStage as(Tenant tenant, Stream<User> users) {
+        Objects.requireNonNull(tenant, "tenant must not be null");
+        Objects.requireNonNull(users, "users must not be null");
+        return as(users.map(user -> InteropContractIdentity.bff(tenant, user)));
+    }
+
+    /**
+     * Test di autorizzazione per utenze con tenant differenti, BFF o M2M.
+     */
+    public HttpAuthorizationStages.ApiCallsStage as(List<InteropContractIdentity> identities) {
+        Objects.requireNonNull(identities, "identities must not be null");
+        return as(identities.stream());
+    }
+
+    public HttpAuthorizationStages.ApiCallsStage as(Stream<InteropContractIdentity> identities) {
+        Objects.requireNonNull(identities, "identities must not be null");
+        return delegate.as(identities.map(this::toHttpIdentity));
+    }
+
+    private HttpContractIdentity toHttpIdentity(InteropContractIdentity identity) {
+        Objects.requireNonNull(identity, "identity must not be null");
+        HttpContractAuthentication authentication = identity.user() != null
+                ? () -> currentUserSession.set(identity.user(), identity.tenant())
+                : () -> currentM2MSession.set(identity.tenant(), identity.m2mRole());
+        return new HttpContractIdentity(identity.label(), authentication);
     }
 }

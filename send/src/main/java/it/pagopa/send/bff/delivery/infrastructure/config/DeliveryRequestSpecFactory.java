@@ -3,6 +3,7 @@ package it.pagopa.send.bff.delivery.infrastructure.config;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.config.ObjectMapperConfig;
 import io.restassured.config.RestAssuredConfig;
+import it.pagopa.infrastructure.http.restassured.HttpLoggingFilter;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.user.infrastructure.config.UsersProperties;
@@ -44,6 +45,7 @@ public class DeliveryRequestSpecFactory {
                 .setConfig(RestAssuredConfig.config()
                         .objectMapperConfig(ObjectMapperConfig.objectMapperConfig()
                                 .defaultObjectMapper(JacksonObjectMapper.jackson())))
-                .addHeader("x-api-key", apiKey);
+                .addHeader("x-api-key", apiKey)
+                .addFilter(new HttpLoggingFilter());
     }
 }

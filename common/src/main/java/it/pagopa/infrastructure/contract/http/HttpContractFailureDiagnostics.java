@@ -22,6 +22,17 @@ final class HttpContractFailureDiagnostics {
         return new AssertionError(message.toString(), cause);
     }
 
+    static AssertionError authorizationFailure(String identity, HttpOperationTarget target, int expectedStatus, Response response) {
+        StringBuilder message = new StringBuilder("HTTP authorization expectation failed");
+        message.append("\n- identity: ").append(identity);
+        message.append("\n- api: ").append(target.label());
+        message.append("\n- request: ").append(target.reportTarget());
+        message.append("\n- expectedStatus: ").append(expectedStatus);
+        message.append("\n- responseStatus: ").append(readSafely(() -> String.valueOf(response.getStatusCode())));
+        message.append("\n- responseBody: ").append(readSafely(response::asString));
+        return new AssertionError(message.toString());
+    }
+
     private static String renderJson(Object value, ObjectMapper objectMapper) {
         if (value == null) return "null";
         return readSafely(() -> objectMapper.writeValueAsString(value));

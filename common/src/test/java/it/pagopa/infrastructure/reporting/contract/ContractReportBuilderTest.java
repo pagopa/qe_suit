@@ -10,6 +10,7 @@ import it.pagopa.infrastructure.reporting.contract.parser.JUnitExecutionStatus;
 import it.pagopa.infrastructure.reporting.contract.resolver.ContractFactoryContext;
 import it.pagopa.infrastructure.reporting.contract.resolver.ContractTargetResolver;
 import it.pagopa.infrastructure.reporting.contract.resolver.ContractTargetResolverRegistry;
+import it.pagopa.infrastructure.reporting.contract.target.ContractCaseTargetRegistry;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
@@ -104,6 +105,53 @@ class ContractReportBuilderTest {
         assertEquals(1, report.failed());
         assertEquals(10_000, report.effectiveDuration().toMillis());
         assertTrue(report.groups().get(0).aggregateStatus() == ContractScenarioStatus.FAILED);
+    }
+
+    @Test
+    void authorizationFactoryIsReportedPerCaseTargetWithoutResolvingTheFactoryName() {
+        CountingResolver countingResolver = new CountingResolver();
+        JUnitExecutionNode factory = node("1", null, "[class:x]/[test-factory:authorization()]", "it.pagopa.interop.suite.contract.BffAuthorizationContractTest", "authorization", JUnitExecutionStatus.FAILED);
+        JUnitExecutionNode first = dynamicCase("2", "1", 1, "case-read-1", "GET /things/{id}", JUnitExecutionStatus.SUCCESSFUL);
+        JUnitExecutionNode second = dynamicCase("3", "1", 2, "case-write", "POST /things", JUnitExecutionStatus.FAILED);
+        JUnitExecutionNode third = dynamicCase("4", "1", 3, "case-read-2", "GET /things/{id}", JUnitExecutionStatus.SUCCESSFUL);
+        JUnitExecutionNode notCreated = dynamicCase("5", "1", 4, "case-missing", null, JUnitExecutionStatus.FAILED);
+        List.of(first, second, third, notCreated).forEach(factory::addChild);
+
+        ContractReport report = builder(countingResolver).build(
+                List.of(factory, first, second, third, notCreated), config(), Instant.parse("2026-09-25T10:10:00Z"));
+
+        assertEquals(0, countingResolver.calls.get());
+        assertEquals(
+                List.of("GET /things/{id}", "POST /things", "API not resolved (operation not created)"),
+                report.groups().stream().map(group -> group.target()).toList()
+        );
+        assertEquals(2, report.groups().get(0).scenarioCount());
+        assertEquals(ContractScenarioStatus.PASSED, report.groups().get(0).aggregateStatus());
+        assertEquals(ContractScenarioStatus.FAILED, report.groups().get(1).aggregateStatus());
+        assertEquals("authorization", report.groups().get(1).methodName());
+    }
+
+    @Test
+    void fuzzingFactoryKeepsResolvingTargetFromFactoryNameEvenWithUnrelatedSources() {
+        CountingResolver countingResolver = new CountingResolver();
+        JUnitExecutionNode factory = node("1", null, "[class:x]/[test-factory:createAgreement()]", "it.pagopa.interop.suite.contract.BffAgreementContractTest", "createAgreement", JUnitExecutionStatus.SUCCESSFUL);
+        JUnitExecutionNode dynamic = node("2", "1", "[class:x]/[test-factory:createAgreement()]/[dynamic-test:#1]", null, null, JUnitExecutionStatus.SUCCESSFUL);
+        dynamic.setSourceUri("file:/other");
+        factory.addChild(dynamic);
+
+        ContractReport report = builder(countingResolver).build(List.of(factory, dynamic), config(), Instant.parse("2026-09-25T10:10:00Z"));
+
+        assertEquals(1, countingResolver.calls.get());
+        assertEquals("TARGET:createAgreement", report.groups().get(0).target());
+    }
+
+    private JUnitExecutionNode dynamicCase(String id, String parentId, int index, String caseId, String target, JUnitExecutionStatus status) {
+        JUnitExecutionNode node = node(id, parentId, "[class:x]/[test-factory:authorization()]/[dynamic-test:#" + index + "]", null, null, status);
+        node.setSourceUri(ContractCaseTargetRegistry.sourceUri(caseId).toString());
+        if (target != null) {
+            ContractCaseTargetRegistry.register(caseId, target);
+        }
+        return node;
     }
 
     private ContractReportBuilder builder(ContractTargetResolver resolver) {

@@ -329,6 +329,15 @@ public class ArchitectureRulesTest {
                         continue;
                     }
 
+                    // I @TestFactory di autorizzazione usano apiCalls(...): contengono più API,
+                    // quindi il nome del metodo non coincide con una singola operazione e il
+                    // controllo qui sotto, che riguarda solo apiCall(...), non li considera.
+                    boolean authorizationFactory = factory.findAll(MethodCallExpr.class).stream()
+                            .anyMatch(call -> call.getNameAsString().equals("apiCalls"));
+                    if (authorizationFactory) {
+                        continue;
+                    }
+
                     for (MethodCallExpr apiCall
                             : factory.findAll(MethodCallExpr.class)) {
 
@@ -382,6 +391,38 @@ public class ArchitectureRulesTest {
                             + "l'operazione invocata in .apiCall(...):\n"
                             + String.join("\n", violations)
             );
+        }
+    }
+
+    @Test
+    void authorization_factories_must_not_mix_apiCalls_with_apiCall()
+            throws IOException {
+
+        StaticJavaParser.getParserConfiguration()
+                .setLanguageLevel(ParserConfiguration.LanguageLevel.JAVA_17);
+
+        Set<String> violations = new TreeSet<>();
+        try (Stream<Path> paths = Files.walk(Path.of("src/test/java"))) {
+            for (Path sourceFile : paths
+                    .filter(Files::isRegularFile)
+                    .filter(path -> path.toString().endsWith("ContractTest.java"))
+                    .sorted()
+                    .toList()) {
+                for (var method : StaticJavaParser.parse(sourceFile).findAll(
+                        com.github.javaparser.ast.body.MethodDeclaration.class)) {
+                    var calls = method.findAll(MethodCallExpr.class);
+                    boolean authorization = calls.stream().anyMatch(call -> call.getNameAsString().equals("apiCalls"));
+                    boolean fuzzing = calls.stream().anyMatch(call -> call.getNameAsString().equals("apiCall"));
+                    if (authorization && fuzzing) {
+                        violations.add(sourceFile + " | " + method.getNameAsString());
+                    }
+                }
+            }
+        }
+
+        if (!violations.isEmpty()) {
+            fail("Un @TestFactory deve usare apiCalls(...) (autorizzazione) oppure apiCall(...) (fuzzing), non entrambi: "
+                    + violations);
         }
     }
 

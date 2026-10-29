@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.infrastructure.fuzzing.FuzzEngine;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 public final class HttpContractValidator {
     private final ObjectMapper objectMapper;
@@ -81,5 +83,20 @@ public final class HttpContractValidator {
 
     public HttpContractStages.ApiCallStage apiCall(Supplier<?> operationSupplier) {
         return apiCall(HttpContractAuthentication.noOp(), operationSupplier);
+    }
+
+    /**
+     * Genera un test per ogni combinazione utenza x API, verificando lo status HTTP atteso
+     * (default 403) senza mutazioni della richiesta.
+     */
+    public HttpAuthorizationStages.ApiCallsStage as(List<HttpContractIdentity> identities) {
+        return new HttpAuthorizationInvocationBuilder(operationAdapter, identities);
+    }
+
+    public HttpAuthorizationStages.ApiCallsStage as(Stream<HttpContractIdentity> identities) {
+        if (identities == null) {
+            throw new ContractHttpException("identities must not be null");
+        }
+        return as(identities.toList());
     }
 }

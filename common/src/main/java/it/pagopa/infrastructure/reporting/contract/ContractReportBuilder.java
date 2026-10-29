@@ -11,17 +11,15 @@ import it.pagopa.infrastructure.reporting.contract.resolver.ContractChannelResol
 import it.pagopa.infrastructure.reporting.contract.resolver.ContractFactoryContext;
 import it.pagopa.infrastructure.reporting.contract.resolver.ContractTargetResolverRegistry;
 import it.pagopa.infrastructure.reporting.contract.resolver.ResolvedContractChannel;
+import it.pagopa.infrastructure.reporting.contract.target.ContractCaseTargetRegistry;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class ContractReportBuilder {
+
+    private static final String UNRESOLVED_CASE_TARGET = "API not resolved (operation not created)";
 
     private final ContractTargetResolverRegistry targetResolverRegistry;
     private final ContractReportSummaryCalculator summaryCalculator = new ContractReportSummaryCalculator();
@@ -44,29 +42,72 @@ public class ContractReportBuilder {
             if (channel.isEmpty()) {
                 continue;
             }
+            if (isPerCaseTargetFactory(factory)) {
+                List<ContractScenario> scenarios = buildScenarios(factory, methodName);
+                for (Map.Entry<String, List<ContractScenario>> entry : groupByCaseTarget(factory, scenarios).entrySet()) {
+                    groups.add(toGroup(channel.get(), entry.getKey(), className, methodName, entry.getValue()));
+                }
+                continue;
+            }
             String target = targetResolverRegistry.get(channel.get().config().targetType())
                     .resolveTarget(new ContractFactoryContext(channel.get().config(), className, methodName));
             List<ContractScenario> scenarios = buildScenarios(factory, methodName);
             if (scenarios.isEmpty()) {
                 continue;
             }
-            ContractScenarioStatus aggregateStatus = aggregateStatus(scenarios);
-            String searchText = buildSearchText(channel.get().config().label(), target, methodName, className, scenarios);
-            groups.add(new ContractGroup(
-                    channel.get().key(),
-                    channel.get().config().label(),
-                    channel.get().config().targetType(),
-                    target,
-                    className,
-                    methodName,
-                    searchText,
-                    aggregateStatus,
-                    scenarios.size(),
-                    scenarios
-            ));
+            groups.add(toGroup(channel.get(), target, className, methodName, scenarios));
         }
         groups.sort(Comparator.comparing(ContractGroup::channelLabel).thenComparing(ContractGroup::methodName));
         return summaryCalculator.summarize(groups, generatedAt);
+    }
+
+    private ContractGroup toGroup(
+            ResolvedContractChannel channel,
+            String target,
+            String className,
+            String methodName,
+            List<ContractScenario> scenarios
+    ) {
+        return new ContractGroup(
+                channel.key(),
+                channel.config().label(),
+                channel.config().targetType(),
+                target,
+                className,
+                methodName,
+                buildSearchText(channel.config().label(), target, methodName, className, scenarios),
+                aggregateStatus(scenarios),
+                scenarios.size(),
+                scenarios
+        );
+    }
+
+    /**
+     * I @TestFactory di autorizzazione contengono più API: il target è del singolo caso dinamico
+     * e non del nome del metodo.
+     */
+    private boolean isPerCaseTargetFactory(JUnitExecutionNode factory) {
+        return factory.getChildren().stream()
+                .filter(this::isDynamicScenario)
+                .anyMatch(child -> ContractCaseTargetRegistry.caseId(child.getSourceUri()).isPresent());
+    }
+
+    private Map<String, List<ContractScenario>> groupByCaseTarget(JUnitExecutionNode factory, List<ContractScenario> scenarios) {
+        Map<String, String> targetByScenarioId = new HashMap<>();
+        for (JUnitExecutionNode child : factory.getChildren()) {
+            targetByScenarioId.put(
+                    child.getUniqueId(),
+                    ContractCaseTargetRegistry.caseId(child.getSourceUri())
+                            .flatMap(ContractCaseTargetRegistry::find)
+                            .orElse(UNRESOLVED_CASE_TARGET)
+            );
+        }
+        Map<String, List<ContractScenario>> grouped = new LinkedHashMap<>();
+        for (ContractScenario scenario : scenarios) {
+            grouped.computeIfAbsent(targetByScenarioId.getOrDefault(scenario.uniqueId(), UNRESOLVED_CASE_TARGET), key -> new ArrayList<>())
+                    .add(scenario);
+        }
+        return grouped;
     }
 
     private List<ContractScenario> buildScenarios(JUnitExecutionNode factory, String methodName) {

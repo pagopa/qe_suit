@@ -13,6 +13,7 @@ public class JUnitExecutionNode {
     private String junitType;
     private String className;
     private String methodName;
+    private String sourceUri;
     private Instant startedAt;
     private Instant finishedAt;
     private JUnitExecutionStatus status = JUnitExecutionStatus.UNKNOWN;
@@ -74,6 +75,14 @@ public class JUnitExecutionNode {
 
     public void setMethodName(String methodName) {
         this.methodName = methodName;
+    }
+
+    public String getSourceUri() {
+        return sourceUri;
+    }
+
+    public void setSourceUri(String sourceUri) {
+        this.sourceUri = sourceUri;
     }
 
     public Instant getStartedAt() {
