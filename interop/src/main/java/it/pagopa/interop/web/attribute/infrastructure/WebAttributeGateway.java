@@ -11,12 +11,14 @@ import it.pagopa.interop.web.eservice.infrastructure.page.EServiceEditPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceViewPage;
 import it.pagopa.interop.web.infrastructure.WebCommonGateway;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor
+@Profile({"cucumber","junit"})
 public class WebAttributeGateway implements AttributeGateway {
 
     private final EServiceEditPage eServiceEditPage;

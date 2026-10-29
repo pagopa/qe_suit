@@ -16,6 +16,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         WebDebugClientAssertionContractTest.class,
         WebTOSContractTest.class
 })
+@ExcludeTags("ignore")
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "json:target/cucumber-reports/report.json," + "html:target/cucumber-reports/report.html"),
