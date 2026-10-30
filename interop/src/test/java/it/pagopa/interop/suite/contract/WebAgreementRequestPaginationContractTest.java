@@ -73,34 +73,32 @@ public class WebAgreementRequestPaginationContractTest {
                 page -> {
 
                 },
-                page -> Assertions.assertThat(page.pagination())
-                        .isPresent()
-                        .get()
-                        .extracting(Pagination::isUsable)
-                        .isEqualTo(true)
+                page -> {
+                    Assertions.assertThat(page.pagination().exists())
+                            .as("Pagination navbar is present")
+                            .isTrue();
+
+                    Assertions.assertThat(page.pagination().isUsable())
+                            .as("Pagination navbar is usable")
+                            .isTrue();
+                }
         );
     }
 
     private WebScenario<AgreementRequestPage> highOffsetScenario() {
         return new WebScenario<>(
                 "offset elevato mantiene la navbar visibile a fine pagina",
+                page -> page.navigateTo("10", "1000"),
                 page -> {
-                    page.navigateTo("10", "1000");
-                },
-                page -> Assertions.assertThat(page.pagination())
-                        .isPresent()
-                        .get()
-                        .extracting(Pagination::isUsable)
-                        .isEqualTo(true)
-        );
-    }
+                    Assertions.assertThat(page.pagination().exists())
+                            .as("Pagination navbar is present")
+                            .isTrue();
 
-    private void createPendingAgreementRequest() {
-        interopJourney
-                .withProducer(PRODUCER, UserRole.ADMIN)
-                .createEService(EServiceDescriptorState.PUBLISHED)
-                .withConsumer(CONSUMER, UserRole.ADMIN)
-                .linkAgreement(AgreementState.PENDING);
+                    Assertions.assertThat(page.pagination().isUsable())
+                            .as("Pagination navbar is usable")
+                            .isTrue();
+                }
+        );
     }
 }
 
