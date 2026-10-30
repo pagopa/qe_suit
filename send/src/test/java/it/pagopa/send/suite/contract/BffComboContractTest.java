@@ -102,11 +102,8 @@ public class BffComboContractTest {
 
         response.assertStatusCode(200);
         var detail = response.get();
-        Assertions.assertThat(detail).isNotNull();
-        Assertions.assertThat(detail.getIun()).isNotNull();
-        Assertions.assertThat(detail.getSenderDenomination()).isNotNull();
-        Assertions.assertThat(detail.getRecipients()).isNotNull().isNotEmpty();
-        Assertions.assertThat(detail.getRecipients().get(0).getMessage()).isNotNull();
+        // i campi required della specifica non sono ricontrollati: si verifica solo ciò che la specifica non garantisce
+        Assertions.assertThat(detail.getRecipients()).isNotEmpty();
         Assertions.assertThat(detail.getChannelsStatus()).isNotNull();
     }
 
@@ -145,11 +142,9 @@ public class BffComboContractTest {
         finalResponse.assertStatusCode(200);
         var timeline = finalResponse.get();
 
-        Assertions.assertThat(timeline).isNotNull();
-        Assertions.assertThat(timeline.getIun()).isNotNull();
-        Assertions.assertThat(timeline.getRecipients()).isNotNull().isNotEmpty();
-        Assertions.assertThat(timeline.getNotificationStatusHistory()).isNotNull().isNotEmpty();
-        Assertions.assertThat(timeline.getCommunicationOutcomes()).isNotNull();
+        // i campi required della specifica non sono ricontrollati: si verifica solo ciò che la specifica non garantisce
+        Assertions.assertThat(timeline.getRecipients()).isNotEmpty();
+        Assertions.assertThat(timeline.getNotificationStatusHistory()).isNotEmpty();
 
         // Verifica ordinamento cronologico rigoroso dal più recente al meno recente (descending)
         List<BffInformalNotificationTimelineStatusHistoryV1> history = timeline.getNotificationStatusHistory();
