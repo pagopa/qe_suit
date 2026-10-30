@@ -91,7 +91,7 @@ token:
 # ============================================================================
 bff:
   api:
-    base-url: https://webapi.test.notifichedigitali.it
+    base-url: https://webapi.test.notifichedigitali.it/bff
     bearer-token: ${pn.external.bearer-token.tokenBffApiTest:REPLACE_ME}
 
 # ============================================================================
