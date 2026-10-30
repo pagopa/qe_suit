@@ -46,6 +46,12 @@ public class WebAgreementRequestPaginationContractTest {
 
     @TestFactory
     Stream<DynamicTest> shouldShowPaginationNavbarRegardlessOfOffset() {
+        interopJourney
+                .withProducer(PRODUCER, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(CONSUMER, UserRole.ADMIN)
+                .linkAgreement(AgreementState.PENDING);
+
         return webContractValidator
                 .as(
                         User.getTenantAdmin(CONSUMER),
@@ -66,8 +72,7 @@ public class WebAgreementRequestPaginationContractTest {
         return new WebScenario<>(
                 "offset = 0: la navbar di paginazione è presente",
                 page -> {
-                    createPendingAgreementRequest();
-                    page.navigateTo("10", "0");
+
                 },
                 page -> Assertions.assertThat(page.pagination())
                         .isPresent()
@@ -81,7 +86,6 @@ public class WebAgreementRequestPaginationContractTest {
         return new WebScenario<>(
                 "offset elevato mantiene la navbar visibile a fine pagina",
                 page -> {
-                    createPendingAgreementRequest();
                     page.navigateTo("10", "1000");
                 },
                 page -> Assertions.assertThat(page.pagination())

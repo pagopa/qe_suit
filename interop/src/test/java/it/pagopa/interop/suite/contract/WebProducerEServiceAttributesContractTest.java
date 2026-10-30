@@ -1,6 +1,6 @@
 package it.pagopa.interop.suite.contract;
 
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.core.capability.core.Gettable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -62,11 +62,11 @@ public class WebProducerEServiceAttributesContractTest {
                         page -> {
                             page.addAttributesButton().click();
                             page.attributesDrawerSaveButton().click();
-                            Assertions.assertThat(page.closedAttributesDrawer().get(FindPolicy.PRESENT))
+                            Assertions.assertThat(page.closedAttributesDrawer().get(Gettable.FindPolicy.PRESENT))
                                     .as("Chiusura del drawer degli attributi al termine del salvataggio")
                                     .isPresent();
                         },
-                        page -> Assertions.assertThat(page.noErrorSnackbar().get(FindPolicy.PRESENT))
+                        page -> Assertions.assertThat(page.noErrorSnackbar().get(Gettable.FindPolicy.PRESENT))
                                 .as("Assenza di snackbar di errore dopo il salvataggio senza modifiche")
                                 .isPresent()
                 )));
@@ -95,11 +95,11 @@ public class WebProducerEServiceAttributesContractTest {
                         page -> {
                             page.addAttributesButton().click();
                             page.attributesDrawerSaveButton().click();
-                            Assertions.assertThat(page.closedAttributesDrawer().get(FindPolicy.PRESENT))
+                            Assertions.assertThat(page.closedAttributesDrawer().get(Gettable.FindPolicy.PRESENT))
                                     .as("Chiusura del drawer degli attributi al termine del salvataggio")
                                     .isPresent();
                         },
-                        page -> Assertions.assertThat(page.noErrorSnackbar().get(FindPolicy.PRESENT))
+                        page -> Assertions.assertThat(page.noErrorSnackbar().get(Gettable.FindPolicy.PRESENT))
                                 .as("Assenza di snackbar di errore dopo il salvataggio senza modifiche")
                                 .isPresent()
                 )));

@@ -2,7 +2,7 @@ package it.pagopa.interop.web.eservice.infrastructure.suit.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.web.capability.core.Gettable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
@@ -47,7 +47,7 @@ public interface EServiceDetailPage extends Page {
         SoftAssertions.assertSoftly(softly -> {
             softly.assertThat(breadcrumbs().getLastItemText()).as("Breadcrumbs last item text").isEqualTo("Visualizza e-service");
             softly.assertThat(pageTitle().read()).as("Page title").isNotBlank();
-            softly.assertThat(agreementButton().get(FindPolicy.PRESENT)).as("Request agreement button").isPresent();
+            softly.assertThat(agreementButton().get(Gettable.FindPolicy.PRESENT)).as("Request agreement button").isPresent();
         });
     }
 }
