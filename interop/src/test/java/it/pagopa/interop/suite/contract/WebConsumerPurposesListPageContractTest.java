@@ -129,7 +129,15 @@ public class WebConsumerPurposesListPageContractTest {
                                         rowCounter.getAndIncrement();
                                     });
 
-                                    softly.assertThat(page.pagination().get().isPresent()).isTrue();
+                                    if(page.rowsPerPageSelector().getSelectedSize() >= rowCounter.get())
+                                        softly.assertThat(page.pagination().exists())
+                                                .as("Pagination should not be present when the number of rows is less than the selected page size")
+                                                .isFalse();
+                                    else
+                                        softly.assertThat(page.pagination().exists())
+                                                .as("Pagination should be present when the number of rows is greater than to the selected page size")
+                                                .isTrue();
+
                                 }
                         )));
     }

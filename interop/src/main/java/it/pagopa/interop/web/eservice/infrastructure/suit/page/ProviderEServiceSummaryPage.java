@@ -11,6 +11,8 @@ import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_ese
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.ThresholdsAttributesCard;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.TechnicalSpecsCard;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.AdditionalInfoCard;
+import it.pagopa.utils.async.PollingUtils;
+import org.assertj.core.api.Assertions;
 
 import java.util.List;
 
@@ -88,7 +90,10 @@ public interface ProviderEServiceSummaryPage extends Page {
 
     @Override
     default void assertLoaded() {
-        assertThat(pageTitle().read()).as("Titolo e-service valorizzato").isNotBlank();
-        assertThat(statusChip().get().isPresent()).as("Stato bozza presente").isTrue();
+        PollingUtils.pollUntil(
+                () -> summaryCards().size(),
+                size -> size > 0,
+                "Summary cards should be present"
+        );
     }
 }

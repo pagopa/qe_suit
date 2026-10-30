@@ -4,10 +4,9 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.infrastructure.suit.component.PageSize;
 import it.pagopa.infrastructure.suit.component.Pagination;
 import it.pagopa.interop.web.agreement.infrastructure.page.component.AgreementRequestTable;
-
-import java.util.Optional;
 
 @Url("${interop.web.consumer-agreement-list}?limit=${limit}&offset=${offset}")
 public interface AgreementRequestPage extends Page {
@@ -17,10 +16,13 @@ public interface AgreementRequestPage extends Page {
 
     AgreementRequestTable table();
 
-    Optional<Pagination> pagination();
+    Pagination pagination();
+
+    PageSize pageSize();
 
     @Override
     default void assertLoaded() {
+        table().assertLoaded();
         pageTitle().readAndAssert("Richieste di fruizione inoltrate");
     }
 }
