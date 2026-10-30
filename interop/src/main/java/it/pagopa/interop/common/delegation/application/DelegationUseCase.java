@@ -42,6 +42,10 @@ public class DelegationUseCase {
         return delegationGateway.createConsumerDelegation(delegateRef, eServiceRef);
     }
 
+    /* TODO Possibile sovrapposizione involontaria con it.pagopa.interop.common.delegation.application.DelegationUseCase.createProducerDelegation(it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand)
+    *   (per esempio a causa di lavorazioni su pr separate). Verificare che uno dei due non possa essere rimosso.
+    *   createProducerDelegation(@NonNull ProducerDelegationCreationCommand command) ha in più l'abilitazione
+    *   alle deleghe, e l'averla solo lì può creare ambiguità nell'utilizzo di questi metodi. */
     public Delegation createProducerDelegation(TenantRef delegateRef, EServiceRef eServiceRef) {
         return delegationGateway.createProducerDelegation(delegateRef, eServiceRef);
     }
