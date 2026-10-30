@@ -353,8 +353,7 @@ public class WebEServiceCreatePageContractTest {
                                             .description()
                                             .read();
 
-                                    Assertions.assertThat(certifiedAttributeHref).as("The attribute link must be correct")
-                                           // .isEqualTo("https://developer.pagopa.it/it/pdnd-interoperabilita/guides/manuale-operativo-pdnd-interoperabilita/v1.0/riferimenti-tecnici/attributi/gli-attributi-piu-utilizzati");
+                                    Assertions.assertThat(certifiedAttributeHref).as("The attribute link must be correct")//.isEqualTo("https://developer.pagopa.it/it/pdnd-interoperabilita/guides/manuale-operativo-pdnd-interoperabilita/v1.0/riferimenti-tecnici/attributi/gli-attributi-piu-utilizzati");
                                     .isEqualTo("https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-pdnd-interoperabilita/v1.0/riferimenti-tecnici/attributi/gli-attributi-piu-utilizzati");
                                     Assertions.assertThat(certifiedAttributeDescription).as("The certified attribute description must be correct")
                                             .isEqualTo("Sono attributi riconosciuti da fonti certificate come IPA. Tra i più usati, per esempio, ci sono Comuni e loro Consorzi e Associazioni, Province e loro Consorzi e Associazioni, Gestori di Pubblici Servizi. Scopri di più su quali attributi usare.");
