@@ -97,7 +97,17 @@ class DefaultBinderTest {
         }
 
         @Override
+        public Optional<TestElement> get(FindPolicy policy) {
+            return Optional.empty();
+        }
+
+        @Override
         public Optional<List<TestElement>> getAll() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<List<TestElement>> getAll(FindPolicy policy) {
             return Optional.empty();
         }
     }

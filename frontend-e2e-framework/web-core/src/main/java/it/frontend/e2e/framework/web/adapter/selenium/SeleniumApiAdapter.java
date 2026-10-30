@@ -4,7 +4,7 @@ import it.frontend.e2e.framework.core.assertion.AssertionAction;
 import it.frontend.e2e.framework.core.model.selector.XPathSelector;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.web.capability.core.Gettable;
 import it.frontend.e2e.framework.web.config.WebSuiteContext;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
@@ -53,7 +53,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     }
 
     @Override
-    public Optional<WebPresentationElement> findElement(XPathSelector selector, FindPolicy findPolicy) {
+    public Optional<WebPresentationElement> findElement(XPathSelector selector, Gettable.FindPolicy findPolicy) {
         try {
             WebPresentationElement webPresentationElement = withRetry(() -> {
                 WebElement webElement = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, findPolicy);
@@ -74,11 +74,11 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public Optional<List<WebPresentationElement>> findElements(XPathSelector selector) {
-        return findElements(selector, FindPolicy.CLICKABLE);
+        return findElements(selector, Gettable.FindPolicy.CLICKABLE);
     }
 
     @Override
-    public Optional<List<WebPresentationElement>> findElements(XPathSelector selector, FindPolicy policy) {
+    public Optional<List<WebPresentationElement>> findElements(XPathSelector selector, Gettable.FindPolicy policy) {
         try {
             List<WebPresentationElement> elements = withRetry(() -> {
                 List<WebElement> webElements = findWebElements(selector, policy);
@@ -110,7 +110,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void click(XPathSelector selector) {
         withRetry(() -> {
-            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, FindPolicy.CLICKABLE);
+            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, Gettable.FindPolicy.CLICKABLE);
             element.click();
             return element;
         });
@@ -119,13 +119,13 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void clickAndAssert(XPathSelector selector, AssertionAction<WebPresentationElement> assertion) {
         click(selector);
-        findElement(selector, FindPolicy.CLICKABLE).ifPresent(found -> applyAssertion(found, assertion));
+        findElement(selector, Gettable.FindPolicy.CLICKABLE).ifPresent(found -> applyAssertion(found, assertion));
     }
 
     @Override
     public void sendText(XPathSelector selector, String text) {
         withRetry(() -> {
-            WebElement element = findWebElement(selector, FindPolicy.CLICKABLE);
+            WebElement element = findWebElement(selector, Gettable.FindPolicy.CLICKABLE);
             element.sendKeys(text);
             return element;
         });
@@ -134,7 +134,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void sendTextAndAssert(XPathSelector selector, String text, AssertionAction<WebPresentationElement> assertion) {
         sendText(selector, text);
-        findElement(selector).ifPresent(found -> applyAssertion(found, assertion));
+        findElement(selector, Gettable.FindPolicy.CLICKABLE).ifPresent(found -> applyAssertion(found, assertion));
     }
 
     @Override
@@ -149,7 +149,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void clear(XPathSelector selector) {
         withRetry(() -> {
-            WebElement element = findWebElement(selector, FindPolicy.CLICKABLE);
+            WebElement element = findWebElement(selector, Gettable.FindPolicy.CLICKABLE);
 
             // 1. Gestione Cross-Platform: Rileva se gira su Mac (COMMAND) o Windows/Linux (CONTROL)
             boolean isMac = System.getProperty("os.name").toLowerCase().contains("mac");
@@ -186,13 +186,13 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void clearAndAssert(XPathSelector selector, AssertionAction<WebPresentationElement> assertion) {
         clear(selector);
-        findElement(selector).ifPresent(found -> applyAssertion(found, assertion));
+        findElement(selector, Gettable.FindPolicy.CLICKABLE).ifPresent(found -> applyAssertion(found, assertion));
     }
 
     @Override
     public boolean isDisplayed(XPathSelector selector) {
         try {
-            return findWebElement(selector, FindPolicy.VISIBLE).isDisplayed();
+            return findWebElement(selector, Gettable.FindPolicy.VISIBLE).isDisplayed();
         } catch (Exception e) {
             return false;
         }
@@ -201,7 +201,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public boolean isEnabled(XPathSelector selector) {
         try {
-            return findWebElement(selector, FindPolicy.PRESENT).isEnabled();
+            return findWebElement(selector, Gettable.FindPolicy.PRESENT).isEnabled();
         } catch (Exception e) {
             return false;
         }
@@ -211,7 +211,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     public Optional<String> getText(XPathSelector selector) {
         try {
             String text = withRetry(() -> {
-                WebElement element = findWebElement(selector, FindPolicy.VISIBLE);
+                WebElement element = findWebElement(selector, Gettable.FindPolicy.VISIBLE);
                 return resolveElementText(element);
             });
             return Optional.of(text);
@@ -229,7 +229,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public void waitForElement(XPathSelector selector, long timeoutSeconds) {
-        findWebElement(selector, timeoutSeconds, FindPolicy.PRESENT);
+        findWebElement(selector, timeoutSeconds, Gettable.FindPolicy.PRESENT);
     }
 
     @Override
@@ -376,7 +376,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
         }
     }
 
-    private WebElement findWebElement(XPathSelector selector, long timeoutSeconds, FindPolicy policy) {
+    private WebElement findWebElement(XPathSelector selector, long timeoutSeconds, Gettable.FindPolicy policy) {
 
         By by = toBy(selector);
         WebDriverWait wait = new WebDriverWait(
@@ -400,7 +400,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
         return findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, policy);
     }
 
-    private List<WebElement> findWebElements(XPathSelector selector, long timeoutSeconds, FindPolicy policy) {
+    private List<WebElement> findWebElements(XPathSelector selector, long timeoutSeconds, Gettable.FindPolicy policy) {
 
         By by = toBy(selector);
         WebDriverWait wait = new WebDriverWait(
@@ -432,7 +432,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
         };
     }
 
-    private List<WebElement> findWebElements(XPathSelector selector, FindPolicy policy) {
+    private List<WebElement> findWebElements(XPathSelector selector, Gettable.FindPolicy policy) {
         return findWebElements(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, policy);
     }
 
