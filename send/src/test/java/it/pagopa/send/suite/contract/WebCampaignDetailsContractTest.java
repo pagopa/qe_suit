@@ -4,7 +4,7 @@ import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
-import it.pagopa.send.common.campaigns.application.CampaignsGateway;
+import it.pagopa.send.common.campaigns.application.CampaignsUseCase;
 import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
@@ -40,13 +40,13 @@ import java.util.stream.Stream;
 public class WebCampaignDetailsContractTest {
     private final UserProvider userProvider;
     private final WebBrowserContractValidator webContractValidator;
-    private final CampaignsGateway campaignsGateway;
+    private final CampaignsUseCase campaignsUseCase;
     private final SendJourney sendJourney;
     private final InformalRecipientSpecFactory informalRecipientSpecFactory;
 
     @TestFactory
     Stream<DynamicTest> dettaglioCampagna() {
-        List<CampaignSummary> results = campaignsGateway.getCampaigns();
+        List<CampaignSummary> results = campaignsUseCase.getCampaigns();
         return webContractValidator
                 .as(userProvider.resolve(UserAlias.COMUNE_1))
                 .on(CampaignDetailPage.class,results.get(0).getCampaignId())
@@ -67,7 +67,7 @@ public class WebCampaignDetailsContractTest {
 
     @TestFactory
     Stream<DynamicTest> dettaglioCampagnaEmptyState() {
-        CampaignSummary result = campaignsGateway.getCampaignByID("CampCancelled");
+        CampaignSummary result = campaignsUseCase.getCampaignByID("CampCancelled");
 
         return webContractValidator
                 .as(userProvider.resolve(UserAlias.COMUNE_1))
@@ -90,7 +90,7 @@ public class WebCampaignDetailsContractTest {
         String campaignId="BonarieAllChannels";
         String iun = sendJourney.getInformalNotification(sendDefaultInformalNotification(campaignId),60).getIun();
         //questo step lo utilizzo per vedere se la campagna esiste o meno
-        campaignId = campaignsGateway.getCampaignByID(campaignId).getCampaignId();
+        campaignId = campaignsUseCase.getCampaignByID(campaignId).getCampaignId();
         return webContractValidator
                 .as(userProvider.resolve(UserAlias.COMUNE_1))
                 .on(CampaignDetailPage.class,campaignId)
