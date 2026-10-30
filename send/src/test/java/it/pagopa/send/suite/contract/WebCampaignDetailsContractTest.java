@@ -106,22 +106,10 @@ public class WebCampaignDetailsContractTest {
                     page.filterButton().click();
                 },
                 page -> {
-                    Assertions.assertThat(page.communications().rows().size()).as("Le comunicazioni trovate sono diverse da 1").isEqualTo(2);
-                    Assertions.assertThat(page.communications()
-                            .rows()
-                            .get(1)
-                            .cells()
-                            .get(0)
-                            .value()
-                            .read()).as("Valore campo recipientId non congruo").isEqualTo(recipientTaxId);
-
-                    Assertions.assertThat(page.communications()
-                            .rows()
-                            .get(1)
-                            .cells()
-                            .get(1)
-                            .value()
-                            .read()).as("Valore campo iun non congruo").isEqualTo(iun);
+                    var rows = page.communications().tBody().rows();
+                    Assertions.assertThat(rows.size()).as("Le comunicazioni trovate sono diverse da 1").isEqualTo(1);
+                    Assertions.assertThat(rows.get(0).cells().get(0).read()).as("Valore campo recipientId non congruo").isEqualTo(recipientTaxId);
+                    Assertions.assertThat(rows.get(0).cells().get(1).read()).as("Valore campo iun non congruo").isEqualTo(iun);
                 }
         ));
     }
