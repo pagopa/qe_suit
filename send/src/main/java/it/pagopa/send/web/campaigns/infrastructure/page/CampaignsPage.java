@@ -23,7 +23,7 @@ public interface CampaignsPage extends Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         header().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
             Assertions.assertThat(h).isIn("Campaigns", "Campagne");
