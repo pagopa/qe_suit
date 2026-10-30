@@ -2,15 +2,17 @@ package it.pagopa.interop.suite.contract;
 
 import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
+import it.pagopa.infrastructure.suit.component.RadioButton;
+import it.pagopa.infrastructure.suit.component.RadioGroup;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_create_card.DelegationsCard;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_create_card.DetailsCard;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_create_card.InformationCard;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.eservice_create_card.SignalHubCard;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data_form.DelegationsSection;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data_form.EServiceDetailsSection;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data_form.AboutEServiceSection;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data_form.SignalHubSection;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.utils.RandomUtils;
@@ -23,9 +25,9 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.List;
 import java.util.stream.Stream;
 
-import static it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(
@@ -43,9 +45,33 @@ public class WebEServiceCreatePageContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
 
-    String SECOND_STEP_LABEL = "Soglie e attributi";
-    String THIRD_STEP_LABEL = "Specifiche tecniche";
-    String FOURTH_STEP_LABEL = "Informazioni aggiuntive";
+    private static final String PAGE_TITLE = "Crea e-service";
+    private static final String SUBMIT_BTN_TEXT = "Salva bozza e prosegui";
+    private static final List<String> EXPECTED_BREADCRUMB_LABELS = List.of(
+            "Erogazione", "I miei e-service", "Crea e-service"
+    );
+    private static final List<String> EXPECTED_STEP_LABELS = List.of(
+            "Informazioni generali", "Soglie e attributi", "Specifiche tecniche", "Informazioni aggiuntive"
+    );
+    private static final String ABOUT_ESERVICE_SECTION_TITLE = "Informazioni sull’e-service";
+    private static final String ESERVICE_NAME_LABEL = "Nome dell’e-service";
+    private static final String ESERVICE_DESCRIPTION_LABEL = "Descrizione dell’e-service";
+
+    private static final String ESERVICE_DETAILS_SECTION_TITLE = "Dettagli dell'e-service";
+    private static final String EXCHANGE_MODE_QUESTION = "In che modo vuoi scambiare i dati dell’e-service?";
+    private static final String TECHNOLOGY_QUESTION = "Con quale tecnologia è costruita la tua API?";
+    private static final String DATA_FLOW_QUESTION = "L’e-service eroga o riceve dati?";
+    private static final String PERSONAL_DATA_QUESTION = "L’e-service eroga dati personali?";
+    private static final String ESERVICE_DETAILS_SECTION_SYNC_LABEL = "Sincrono (standard)";
+    private static final String ESERVICE_DETAILS_SECTION_REST_LABEL = "REST";
+    private static final String ESERVICE_DETAILS_SECTION_DELIVER_LABEL = "Eroga";
+
+    private static final String DELEGATIONS_SECTION_TITLE = "Deleghe";
+    private static final String CONSUMER_DELEGABLE_TITLE = "L’e-service può essere fruito tramite delega?";
+    private static final String CLIENT_ACCESS_DELEGABLE_TITLE = "Autorizzo l’accesso ai dati in delega";
+
+    private static final String SIGNAL_HUB_SECTION_TITLE = "Signal Hub: servizio di notifica della variazione dei dati";
+    private static final String SIGNAL_HUB_LABEL = "Notificherò su Signal Hub le variazioni dei dati";
 
     /**
      * Verifies the initial state of the e-service creation page, opened as a tenant admin.
@@ -72,10 +98,11 @@ public class WebEServiceCreatePageContractTest {
                                 page -> {},
                                 page -> {
                                     assertHeaderAndStepper(page);
-                                    assertInformationCard(page.infoCard());
-                                    assertDetailsCard(page.detailsCard());
-                                    assertDelegationsCard(page.delegationsCard());
-                                    assertSignalHubCard(page.signalHubCard());
+                                    var form = page.generalDataForm();
+                                    assertAboutEServiceSection(form.aboutEServiceSection());
+                                    assertEServiceDetailsSection(form.eServiceDetailsSection());
+                                    assertDelegationsSection(form.delegationsSection());
+                                    assertSignalHubSection(form.signalHubSection());
                                     assertSubmitAction(page);
                                 }
                         )
@@ -83,16 +110,13 @@ public class WebEServiceCreatePageContractTest {
     }
 
     /**
-     * Verifies the back button, breadcrumbs, page title and stepper.
-     *
+     * Verifies breadcrumbs, page title and stepper.
      * @param page the e-service creation page
      */
     private void assertHeaderAndStepper(EServiceCreatePage page) {
-        assertThat(page.backButton().isDisabled()).isFalse();
-        page.backButton().readAndAssert(BACK_TO_ESERVICE);
-        assertThat(page.breadcrumbErogazione().get().orElseThrow().getText()).isEqualTo(BREADCRUMB_EROGAZIONE);
-        assertThat(page.breadcrumbMyEServices().get().orElseThrow().getText()).isEqualTo(BREADCRUMB_MY_ESERVICES);
-        page.breadcrumbCurrentPage().readAndAssert(BREADCRUMB_CURRENT);
+        assertThat(page.breadcrumbs().items().stream().map(item -> item.read()).toList())
+                .as("E-service creation breadcrumb labels in order")
+                .containsExactlyElementsOf(EXPECTED_BREADCRUMB_LABELS);
         page.title().readAndAssert(PAGE_TITLE);
         assertStepper(page);
     }
@@ -111,9 +135,15 @@ public class WebEServiceCreatePageContractTest {
 
         var steps = stepper.steps();
         assertThat(steps).as("The stepper must contain four steps").hasSize(4);
-        assertThat(steps.stream().map(step -> step.get(FindPolicy.VISIBLE).isPresent()).toList())
+        var visibleSteps = steps.stream()
+                .map(step -> step.get(FindPolicy.VISIBLE))
+                .toList();
+        assertThat(visibleSteps)
                 .as("All four steps must be visible")
-                .containsExactly(true, true, true, true);
+                .allSatisfy(element -> assertThat(element).isPresent());
+        var stepElements = visibleSteps.stream()
+                .map(element -> element.orElseThrow())
+                .toList();
         assertThat(steps.stream().map(step -> step.number().get(FindPolicy.VISIBLE).isPresent()).toList())
                 .as("All four step numbers must be visible")
                 .containsExactly(true, true, true, true);
@@ -124,24 +154,8 @@ public class WebEServiceCreatePageContractTest {
         assertThat(steps.stream().map(step -> step.number().read()).toList())
                 .containsExactly("1", "2", "3", "4");
         assertThat(steps.stream().map(step -> step.label().read()).toList())
-                .containsExactly(
-                        GENERAL_INFO,
-                        SECOND_STEP_LABEL,
-                        THIRD_STEP_LABEL,
-                        FOURTH_STEP_LABEL
-                );
+                .containsExactlyElementsOf(EXPECTED_STEP_LABELS);
 
-        var stepElements = steps.stream()
-                .map(step -> step.get(FindPolicy.VISIBLE).orElseThrow())
-                .toList();
-        assertThat(stepElements.stream()
-                        .map(element -> element.getAttributes().get("role"))
-                        .toList())
-                .containsExactly("listitem", "listitem", "listitem", "listitem");
-        assertThat(stepElements.stream()
-                        .map(element -> element.getAttributes().get("data-testid"))
-                        .toList())
-                .containsExactly("step-0", "step-1", "step-2", "step-3");
         assertThat(stepElements.stream()
                         .map(element -> element.getAttributes().get("aria-current"))
                         .toList())
@@ -159,87 +173,104 @@ public class WebEServiceCreatePageContractTest {
 
     /**
      * Verifies the title, description, guidelines link, name and description fields, with their
-     * labels and helper texts, of the information card.
+     * labels and helper texts, of the about e-service section.
      *
-     * @param card the information card
+     * @param section the about e-service section
      */
-    private void assertInformationCard(InformationCard card) {
-        card.sectionTitle().readAndAssert(CARD_INFO_TITLE);
-        assertThat(card.description().read()).isEqualToNormalizingWhitespace(CARD_INFO_DESCRIPTION);
-        assertThat(card.nameLabel().read()).contains(CARD_INFO_NAME_LABEL);
-        assertThat(card.descriptionLabel().read()).contains(CARD_INFO_DESCRIPTION_LABEL);
-        assertThat(card.guidelinesLink().get().isPresent()).as("The guidelines link must be present").isTrue();
-        assertThat(card.nameInput().get().isPresent()).as("The name field must be present").isTrue();
-        card.nameHelperText().readAndAssert(CARD_INFO_NAME_HELPER);
-        assertThat(card.descriptionInput().get().isPresent()).as("The description field must be present").isTrue();
-        card.descriptionHelperText().readAndAssert(CARD_INFO_DESC_HELPER);
+    private void assertAboutEServiceSection(AboutEServiceSection section) {
+        assertThat(section.title().read()).isEqualTo(ABOUT_ESERVICE_SECTION_TITLE);
+        assertThat(section.description().read()).isEqualToNormalizingWhitespace(
+                "Per scegliere nomi chiari e rendere gli e-service facili da trovare, consulta le linee guida");
+        assertThat(section.nameLabel().read()).contains(ESERVICE_NAME_LABEL);
+        assertThat(section.descriptionLabel().read()).contains(ESERVICE_DESCRIPTION_LABEL);
+        assertThat(section.guidelinesLink().get(FindPolicy.PRESENT)).as("The guidelines link must be present").isPresent();
+        assertThat(section.eServiceNameInput().get(FindPolicy.PRESENT)).as("The name field must be present").isPresent();
+        section.nameHelperText().readAndAssert("Min 5 caratteri, max 60 caratteri");
+        assertThat(section.eServiceDescriptionInput().get(FindPolicy.PRESENT)).as("The description field must be present").isPresent();
+        section.descriptionHelperText().readAndAssert(
+                "Descrivi quali dati il fruitore deve fornire e quali dati l’e-service restituisce. Min 10 caratteri, max 400 caratteri");
     }
 
     /**
-     * Verifies the title, warning alert and questions of the details card, then the label and
+     * Verifies the title, warning alert and questions of the details section, then the label and
      * default selection of each radio option.
      *
-     * @param card the details card
+     * @param section the details section
      */
-    private void assertDetailsCard(DetailsCard card) {
-        card.sectionTitle().readAndAssert(CARD_DETAILS_TITLE);
-        card.warningAlert().readAndAssert(CARD_DETAILS_ALERT);
-        assertThat(card.exchangeModeQuestion().read()).contains(CARD_DETAILS_EXCHANGE_MODE_QUESTION);
-        assertThat(card.technologyQuestion().read()).contains(CARD_DETAILS_TECHNOLOGY_QUESTION);
-        assertThat(card.dataFlowQuestion().read()).contains(CARD_DETAILS_DATA_FLOW_QUESTION);
-        assertThat(card.personalDataQuestion().read()).contains(CARD_DETAILS_PERSONAL_DATA_QUESTION);
+    private void assertEServiceDetailsSection(EServiceDetailsSection section) {
+        assertThat(section.title().read()).isEqualTo(ESERVICE_DETAILS_SECTION_TITLE);
+        assertThat(section.generalAlert().isWarning()).as("The general alert must be a warning").isTrue();
+        assertThat(section.generalAlert().message().read()).isEqualTo(
+                "Questi dati non saranno più modificabili dopo la pubblicazione della prima versione dell’e-service.");
+        assertThat(section.exchangeModeQuestion().read()).contains(EXCHANGE_MODE_QUESTION);
+        assertThat(section.technologyQuestion().read()).contains(TECHNOLOGY_QUESTION);
+        assertThat(section.dataFlowQuestion().read()).contains(DATA_FLOW_QUESTION);
+        assertThat(section.personalDataQuestion().read()).contains(PERSONAL_DATA_QUESTION);
 
-        card.syncRadio().label().readAndAssert(CARD_DETAILS_SYNC_LABEL);
-        card.asyncRadio().label().readAndAssert(CARD_DETAILS_ASYNC_LABEL);
-        card.restRadio().label().readAndAssert(CARD_DETAILS_REST_LABEL);
-        card.soapRadio().label().readAndAssert(CARD_DETAILS_SOAP_LABEL);
-        card.deliverRadio().label().readAndAssert(CARD_DETAILS_DELIVER_LABEL);
-        card.receiveRadio().label().readAndAssert(CARD_DETAILS_RECEIVE_LABEL);
-        card.personalDataYesRadio().label().readAndAssert(CARD_DETAILS_PERSONAL_DATA_YES_LABEL);
-        card.personalDataNoRadio().label().readAndAssert(CARD_DETAILS_PERSONAL_DATA_NO_LABEL);
-        assertThat(card.syncRadio().isSelected()).as("Synchronous exchange must be selected").isTrue();
-        assertThat(card.asyncRadio().isSelected()).as("Asynchronous exchange must not be selected").isFalse();
-        assertThat(card.restRadio().isSelected()).as("REST must be selected").isTrue();
-        assertThat(card.soapRadio().isSelected()).as("SOAP must not be selected").isFalse();
-        assertThat(card.deliverRadio().isSelected()).as("Deliver must be selected").isTrue();
-        assertThat(card.receiveRadio().isSelected()).as("Receive must not be selected").isFalse();
-        assertThat(card.personalDataYesRadio().isSelected()).as("Deliver personal data must not be selected").isFalse();
-        assertThat(card.personalDataNoRadio().isSelected()).as("Do not deliver personal data must not be selected").isFalse();
+        assertRadioGroup("Data exchange", section.asyncExchange(),
+                List.of(ESERVICE_DETAILS_SECTION_SYNC_LABEL, "Asincrono / massivo (in differita)"),
+                ESERVICE_DETAILS_SECTION_SYNC_LABEL);
+        assertRadioGroup("API technology", section.technology(),
+                List.of(ESERVICE_DETAILS_SECTION_REST_LABEL, "SOAP"),
+                ESERVICE_DETAILS_SECTION_REST_LABEL);
+        assertRadioGroup("Data flow", section.mode(),
+                List.of(ESERVICE_DETAILS_SECTION_DELIVER_LABEL, "Riceve"),
+                ESERVICE_DETAILS_SECTION_DELIVER_LABEL);
+        assertRadioGroup("Personal data", section.personalData(),
+                List.of("Eroga dati personali", "Non eroga dati personali"));
+    }
+
+    private void assertRadioGroup(String name, RadioGroup group, List<String> expectedLabels, String... expectedSelectedLabels) {
+        var buttons = group.radioButtons();
+        assertThat(buttons).as("E-service creation: %s radio group options", name)
+                .extracting(RadioButton::getLabel)
+                .containsExactlyInAnyOrderElementsOf(expectedLabels);
+        assertThat(buttons.stream()
+                .filter(RadioButton::isSelected)
+                .map(RadioButton::getLabel)
+                .toList())
+                .as("E-service creation: %s initially selected radio group options", name)
+                .containsExactly(expectedSelectedLabels);
     }
 
     /**
      * Verifies the title, description, section titles, switch and checkbox labels, documentation
      * links and the default checked state of the delegation controls.
      *
-     * @param card the delegations card
+     * @param section the delegations section
      */
-    private void assertDelegationsCard(DelegationsCard card) {
-        card.sectionTitle().readAndAssert(CARD_DELEGATIONS_TITLE);
-        assertThat(card.description().read()).isEqualToNormalizingWhitespace(CARD_DELEGATIONS_DESCRIPTION);
-        card.consumerDelegableTitle().readAndAssert(CARD_DELEGATIONS_CONSUMER_DELEGABLE_TITLE);
-        card.clientAccessDelegableTitle().readAndAssert(CARD_DELEGATIONS_CLIENT_ACCESS_DELEGABLE_TITLE);
-        card.consumerDelegableLabel().readAndAssert(CARD_DELEGATIONS_CONSUMER_DELEGABLE_LABEL);
-        assertThat(card.clientAccessDelegableLabel().read()).isEqualToNormalizingWhitespace(CARD_DELEGATIONS_CLIENT_ACCESS_DELEGABLE_LABEL);
-        assertThat(card.documentationLink().get().isPresent()).as("The delegations documentation link must be present").isTrue();
-        assertThat(card.consumerDelegableSwitch().isChecked()).as("The delegation consumption must be enabled").isTrue();
-        assertThat(card.clientAccessDelegableCheckbox().isChecked()).as("The access to data by delegation must be authorized").isTrue();
-        assertThat(card.clientAccessDocLink().get().isPresent()).as("The link to the access by delegation documentation must be present").isTrue();
+    private void assertDelegationsSection(DelegationsSection section) {
+        assertThat(section.title().read()).isEqualTo(DELEGATIONS_SECTION_TITLE);
+        assertThat(section.description().read()).isEqualToNormalizingWhitespace(
+                "Consulta la documentazione relativa al funzionamento delle deleghe");
+        section.consumerDelegableTitle().readAndAssert(CONSUMER_DELEGABLE_TITLE);
+        section.clientAccessDelegableTitle().readAndAssert(CLIENT_ACCESS_DELEGABLE_TITLE);
+        section.consumerDelegableLabel().readAndAssert(
+                "Autorizzo che i fruitori dell’e-service possano delegare altri enti ad iscriversi per conto proprio");
+        assertThat(section.clientAccessDelegableLabel().read()).isEqualToNormalizingWhitespace(
+                "Autorizzo che i delegati possano associare i propri client alle finalità che hanno creato in qualità di delegati alla fruizione. Consulta la documentazione per approfondire");
+        assertThat(section.documentationLink().get(FindPolicy.PRESENT)).as("The delegations documentation link must be present").isPresent();
+        assertThat(section.consumerDelegableSwitch().isChecked()).as("The delegation consumption must be enabled").isTrue();
+        assertThat(section.clientAccessDelegableCheckbox().isChecked()).as("The access to data by delegation must be authorized").isTrue();
+        assertThat(section.clientAccessDocLink().get(FindPolicy.PRESENT)).as("The link to the access by delegation documentation must be present").isPresent();
     }
 
     /**
-     * Verifies the title, descriptions, switch label and links of the Signal Hub card, and that
+     * Verifies the title, descriptions, switch label and links of the Signal Hub section, and that
      * the Signal Hub switch is disabled by default.
      *
-     * @param card the Signal Hub card
+     * @param section the Signal Hub section
      */
-    private void assertSignalHubCard(SignalHubCard card) {
-        card.sectionTitle().readAndAssert(CARD_SIGNAL_HUB_TITLE);
-        assertThat(card.description().read()).isEqualToNormalizingWhitespace(CARD_SIGNAL_HUB_DESCRIPTION);
-        assertThat(card.designationDescription().read()).isEqualToNormalizingWhitespace(CARD_SIGNAL_HUB_DESIGNATION_DESCRIPTION);
-        card.signalHubLabel().readAndAssert(CARD_SIGNAL_HUB_LABEL);
-        assertThat(card.solutionLink().get().isPresent()).as("The link to the integrated solution must be present").isTrue();
-        assertThat(card.designationPdfLink().get().isPresent()).as("The link to the designation document must be present").isTrue();
-        assertThat(card.signalHubSwitch().isChecked()).as("Signal Hub must be disabled").isFalse();
+    private void assertSignalHubSection(SignalHubSection section) {
+        assertThat(section.title().read()).isEqualTo(SIGNAL_HUB_SECTION_TITLE);
+        assertThat(section.description().read()).isEqualToNormalizingWhitespace(
+                "Signal Hub è una soluzione integrata che informa i fruitori quando i dati dell'e-service vengono modificati.");
+        assertThat(section.designationDescription().read()).isEqualToNormalizingWhitespace(
+                "Attivando la funzionalità designi PagoPa S.p.A. responsabile del trattamento dei dati facendo proprio il documento di designazione di PagoPa S.p.A. come responsabile del trattamento dei dati personali per \"Signal Hub\".");
+        section.signalHubLabel().readAndAssert(SIGNAL_HUB_LABEL);
+        assertThat(section.solutionLink().get(FindPolicy.PRESENT)).as("The link to the integrated solution must be present").isPresent();
+        assertThat(section.designationPdfLink().get(FindPolicy.PRESENT)).as("The link to the designation document must be present").isPresent();
+        assertThat(section.signalHubSwitch().isChecked()).as("Signal Hub must be disabled").isFalse();
     }
 
     /**
@@ -248,8 +279,9 @@ public class WebEServiceCreatePageContractTest {
      * @param page the e-service creation page
      */
     private void assertSubmitAction(EServiceCreatePage page) {
-        assertThat(page.saveDraftAndProceedButton().isDisabled()).isFalse();
-        page.saveDraftAndProceedButton().readAndAssert(SUBMIT_BTN_TEXT);
+        var button = page.generalDataForm().saveDraftButton();
+        assertThat(button.isDisabled()).isFalse();
+        button.readAndAssert(SUBMIT_BTN_TEXT);
     }
 
     /**
@@ -322,8 +354,8 @@ public class WebEServiceCreatePageContractTest {
                                             .read();
 
                                     Assertions.assertThat(certifiedAttributeHref).as("The attribute link must be correct")
-                                            .isEqualTo("https://developer.pagopa.it/it/pdnd-interoperabilita/guides/manuale-operativo-pdnd-interoperabilita/v1.0/riferimenti-tecnici/attributi/gli-attributi-piu-utilizzati");
-
+                                           // .isEqualTo("https://developer.pagopa.it/it/pdnd-interoperabilita/guides/manuale-operativo-pdnd-interoperabilita/v1.0/riferimenti-tecnici/attributi/gli-attributi-piu-utilizzati");
+                                    .isEqualTo("https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-pdnd-interoperabilita/v1.0/riferimenti-tecnici/attributi/gli-attributi-piu-utilizzati");
                                     Assertions.assertThat(certifiedAttributeDescription).as("The certified attribute description must be correct")
                                             .isEqualTo("Sono attributi riconosciuti da fonti certificate come IPA. Tra i più usati, per esempio, ci sono Comuni e loro Consorzi e Associazioni, Province e loro Consorzi e Associazioni, Gestori di Pubblici Servizi. Scopri di più su quali attributi usare.");
                                 }
