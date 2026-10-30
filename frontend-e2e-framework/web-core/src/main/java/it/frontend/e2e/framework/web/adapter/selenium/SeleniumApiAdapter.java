@@ -30,12 +30,19 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     private final WebDriver driver;
 
     public SeleniumApiAdapter(BrowserSettings settings) {
-        BrowserSettings safeSettings = settings == null ? BrowserSettings.defaults() : settings;
+        BrowserSettings safeSettings =
+                settings == null ? BrowserSettings.defaults() : settings;
+
         this.driver = WebDriverFactory.create(safeSettings.browser(), safeSettings);
+
+        // Log per identificare ogni sessione Chrome creata
+        log.info("Chrome WebDriver created: {}", driver);
+
         this.defaultWaitTimeoutSeconds = safeSettings.waits().defaultWaitTimeoutSeconds();
         this.retryWaitTimeoutSeconds = safeSettings.waits().retryWaitTimeoutSeconds();
         this.existsTimeoutSeconds = safeSettings.waits().existsTimeoutSeconds();
     }
+
 
     SeleniumApiAdapter(WebDriver driver, long defaultWaitTimeoutSeconds) {
         if (driver == null) {
@@ -412,11 +419,10 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void close() {
         try {
-            if (driver != null) {
-                driver.quit();
-            }
+            log.info("Closing Chrome WebDriver: {}", driver);
+            if (driver != null) driver.quit();
+            log.info("Chrome WebDriver closed: {}", driver);
         } finally {
-            // Reset del contesto dopo la chiusura del browser
             WebSuiteContext.reset();
         }
     }
