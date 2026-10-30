@@ -13,7 +13,6 @@ import it.pagopa.interop.common.journey.application.EServiceJourney;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -22,7 +21,6 @@ import java.util.function.Predicate;
 @Component
 @RequiredArgsConstructor
 public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl> {
-
     private final EServiceUseCase eServiceUseCase;
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EntityStore entityStore;
@@ -37,10 +35,24 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
-    public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {
-        EService draftEService = eServiceUseCase.createEService(cmd -> {
-        });
+    public EServiceJourneyImpl createEService(Consumer<EServiceCreationCommand> commandConfig, EServiceDescriptorState targetState) {
+        EService draftEService = eServiceUseCase.createEService(commandConfig);
         return processLifecycle(draftEService, draftEService.getLastDraftDescriptor(), targetState);
+    }
+
+    @Override
+    public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {
+        return createEService(cmd -> {}, targetState);
+    }
+
+    @Override
+    public EServiceJourneyImpl linkOpenApiInterface() {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        EServiceDescriptor descriptor = eService.getLastDraftDescriptor();
+        EServiceDescriptor updatedDescriptor = eServiceDescriptorUseCase.linkOpenApiInterface(eService, descriptor, "assets/origin-interface.yaml");
+        eService.addDescriptor(updatedDescriptor);
+        entityStore.upsert(eService);
+        return this;
     }
 
     @Override
@@ -48,7 +60,6 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         Attribute attribute = entityStore.getLastOrThrow(Attribute.class);
         UpdateEServiceDescriptorCommand command = requestFactory.defaultUpdateDescriptorCommand();
         command.attributes(Attributes.builder().certified(attribute).build());
-
         createEService(EServiceDescriptorState.DRAFT);
         return updateDescriptor(command, state);
     }
@@ -136,7 +147,6 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     private EServiceJourneyImpl processLifecycle(EService eService, EServiceDescriptor eServiceDescriptor, EServiceDescriptorState targetState, UpdateEServiceDescriptorCommand command) {
         entityStore.upsert(eService);
-
         return switch (targetState) {
             case DRAFT -> this;
             case PUBLISHED -> publishPipeline(eService, eServiceDescriptor, command);
@@ -152,8 +162,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
             updatedDescriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor, command);
         } else {
             updatedDescriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(
-                    eService,
-                    eServiceDescriptor,
+                    eService, eServiceDescriptor,
                     cmd -> cmd.dailyCallsTotal(eServiceDescriptor.getDailyCallsTotal())
                             .dailyCallsPerConsumer(eServiceDescriptor.getDailyCallsPerConsumer())
                             .attributes(Attributes.builder()
