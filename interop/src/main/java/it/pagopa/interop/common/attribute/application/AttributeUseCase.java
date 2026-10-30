@@ -4,6 +4,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
+import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,9 @@ public class AttributeUseCase {
     }
 
     public Attribute createCertifiedAttribute() {
+        String name = RandomUtils.randomAlphanumericName("certified-", 10);
         Attribute attribute = Attribute.builder()
-                .name("attribute-" + Instant.now().getEpochSecond() + "-CERTIFIED")
+                .name(name)
                 .description("Test Description")
                 .build();
         return attributeGateway.createCertifiedAttribute(attribute);
