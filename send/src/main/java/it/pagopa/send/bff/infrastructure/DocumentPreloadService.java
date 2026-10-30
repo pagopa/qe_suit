@@ -3,8 +3,8 @@ package it.pagopa.send.bff.infrastructure;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.Response;
 import it.pagopa.send.generated.openapi.clients.bff.api.NotificationSentApi;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffPreLoadRequest;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffPreLoadResponse;
+import it.pagopa.send.generated.openapi.clients.bff.model.PreLoadRequest;
+import it.pagopa.send.generated.openapi.clients.bff.model.PreLoadResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.Problem;
 import it.pagopa.send.common.legal_notification.domain.PreloadedDocument;
 import lombok.RequiredArgsConstructor;
@@ -42,14 +42,14 @@ public class DocumentPreloadService {
         byte[] fileBytes = readClasspathResource(TEST_PDF_CLASSPATH);
         String sha256Base64 = sha256Base64(fileBytes);
 
-        BffPreLoadRequest preLoadRequest = new BffPreLoadRequest()
+        PreLoadRequest preLoadRequest = new PreLoadRequest()
                 .preloadIdx(preloadIdx)
                 .contentType("application/pdf")
                 .sha256(sha256Base64);
 
-        List<BffPreLoadResponse> responses = executePreload(preLoadRequest);
+        List<PreLoadResponse> responses = executePreload(preLoadRequest);
 
-        BffPreLoadResponse response = responses.stream()
+        PreLoadResponse response = responses.stream()
                 .filter(r -> preloadIdx.equals(r.getPreloadIdx()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Nessuna risposta di preload per idx " + preloadIdx));
@@ -60,12 +60,12 @@ public class DocumentPreloadService {
     }
 
     /**
-     * Il body di successo (200) è un array di BffPreLoadResponse, ma in caso di errore (400, 401,
+     * Il body di successo (200) è un array di PreLoadResponse, ma in caso di errore (400, 401,
      * ecc.) l'API restituisce un singolo oggetto Problem: deserializzare sempre come lista, senza
      * prima controllare lo status code, produce un MismatchedInputException che nasconde l'errore
      * reale restituito dal BFF.
      */
-    private List<BffPreLoadResponse> executePreload(BffPreLoadRequest preLoadRequest) {
+    private List<PreLoadResponse> executePreload(PreLoadRequest preLoadRequest) {
         Response rawResponse = notificationSentApi.preSignedUploadV1()
                 .body(List.of(preLoadRequest))
                 .execute(Function.identity());
@@ -79,7 +79,7 @@ public class DocumentPreloadService {
                     problem != null ? problem.getDetail() : rawResponse.asString()));
         }
 
-        return rawResponse.as(new TypeRef<List<BffPreLoadResponse>>() {});
+        return rawResponse.as(new TypeRef<List<PreLoadResponse>>() {});
     }
 
     /**
@@ -100,7 +100,7 @@ public class DocumentPreloadService {
      * si usa quindi java.net.http.HttpClient, che tratta l'URL come stringa opaca (comportamento
      * analogo a URI.create(url) + RestTemplate usato in pn-b2b-client per lo stesso upload).
      */
-    private void uploadFile(BffPreLoadResponse response, byte[] fileBytes, String sha256Base64) {
+    private void uploadFile(PreLoadResponse response, byte[] fileBytes, String sha256Base64) {
         try {
             HttpRequest request = HttpRequest.newBuilder(URI.create(response.getUrl()))
                     .header("Content-Type", "application/pdf")

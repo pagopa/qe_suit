@@ -8,9 +8,9 @@ import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationRequest;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
+import it.pagopa.send.generated.openapi.clients.bff.model.NewNotificationRequestV26;
+import it.pagopa.send.generated.openapi.clients.bff.model.NewNotificationResponse;
 import it.pagopa.send.common.legal_notification.application.LegalNotificationGateway;
 import it.pagopa.send.bff.legal_notification.infrastructure.LegalNotificationRestClient;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
@@ -59,10 +59,10 @@ public class BffLegalNotificationGateway implements LegalNotificationGateway {
     public void sendNotification(User sender, NotificationStatus targetStatus) {
         requestFactory.applySender(request, sender);
 
-        BffNewNotificationRequest bffRequest = mapper.toBffRequest(request);
+        NewNotificationRequestV26 bffRequest = mapper.toBffRequest(request);
         BffNotificationStatus bffTargetStatus = mapper.toBffStatus(targetStatus);
 
-        BffNewNotificationResponse response = restClient.create(bffRequest)
+        NewNotificationResponse response = restClient.create(bffRequest)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
         String iun = IUNHelper.extractFromBffNewNotificationResponse(response);

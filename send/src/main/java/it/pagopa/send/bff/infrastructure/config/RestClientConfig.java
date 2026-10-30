@@ -19,6 +19,18 @@ public class RestClientConfig {
     @Value("${bff.api.bearer-token}")
     private String bearerToken;
 
+    /**
+     * Client BFF con autenticazione per utenza: il {@code reqSpecSupplier} viene risolto a ogni
+     * costruzione di operazione, cosi' il token segue l'utenza in sessione sul thread corrente.
+     * Usato dai contract test di autorizzazione; il bean {@link #notificationSentApi()} resta
+     * invariato per i flussi preesistenti, che usano il token statico del profilo.
+     */
+    @Bean
+    public ApiClient bffApiClient(BffRequestSpecFactory requestSpecFactory) {
+        return ApiClient.api(ApiClient.Config.apiConfig()
+                .reqSpecSupplier(requestSpecFactory::create));
+    }
+
     @Bean
     public NotificationSentApi notificationSentApi() {
         ApiClient.Config config = ApiClient.Config.apiConfig()

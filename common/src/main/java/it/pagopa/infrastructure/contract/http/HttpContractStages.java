@@ -20,6 +20,22 @@ public interface HttpContractStages {
         ApiCallStage apiCall(Supplier<?> operationSupplier);
     }
 
+    /**
+     * Stage della modalita' autorizzazione: dichiara le operazioni da provare con ciascuna delle
+     * identita' gia' selezionate. Non genera mutazioni fuzzing e non valida ne' corregge payload
+     * o parametri: il chiamante li prepara dentro ciascun supplier.
+     */
+    interface AuthorizationApiCallsStage {
+        AuthorizationTestsStage apiCalls(Supplier<?>... operationSuppliers);
+    }
+
+    interface AuthorizationTestsStage extends TestsStage {
+        /**
+         * Facoltativo: omesso, lo status atteso e' {@code 403}. Vale per l'intera dichiarazione.
+         */
+        AuthorizationTestsStage expectedStatus(int status);
+    }
+
     interface ApiCallStage extends TestsStage {
         default <T> PayloadStage<T> payload(T payload) {
             return payload(() -> payload);

@@ -259,6 +259,25 @@
 
     <build>
         <plugins>
+            <!--
+              Lombok va dichiarato esplicitamente come annotation processor: con
+              maven-compiler-plugin 3.14.x la sola presenza sul classpath (scope provided) non
+              attiva piu' la discovery, e le classi @Value/@Getter non vedono generati i propri
+              accessor. Stessa configurazione gia' presente nel modulo send.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
