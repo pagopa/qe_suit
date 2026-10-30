@@ -62,6 +62,7 @@ url:
       new-api-key: ${url.notifiche.mittente.api-keys}/nuova-api-key
       app-status: ${url.notifiche.mittente.base}/app-status
       statistics: ${url.notifiche.mittente.base}/statistiche
+      campaigns: ${url.notifiche.mittente.base}/campaigns
     supporto:
       base: https://uat.selfcare.pagopa.it
 
@@ -116,5 +117,32 @@ external-registries:
 # Pn Delivery B2B API Configuration (lettura notifiche via SenderReadB2BApi)
 # ============================================================================
 delivery:
+  push:
+    base-url: ${pn.delivery.push.base-url:} # es. http://localhost:8889 con il tunnel
   api:
     base-url: https://api.dev.notifichedigitali.it # TODO verificare host corretto per l'ambiente dev
+  informal:
+    api:
+      base-url: https://api.dev.notifichedigitali.it/informal
+
+# ============================================================================
+# Comunicazioni Bonarie (Combo) IUN Configuration for Dev
+# ============================================================================
+combo:
+  iun:
+    fattord:
+      pf: ${COMBO_IUN_FATTORD_PF:XKDZ-PXRU-ARWP-202609-J-A}
+      pg: ${COMBO_IUN_FATTORD_PG:MUZL-GJHU-DEHX-202609-N-A}
+      flow-io-fail-email-ok: ${COMBO_IUN_FATTORD_PF:XKDZ-PXRU-ARWP-202609-J-A}
+      flow-email-unavail: ${COMBO_IUN_FATTORD_EMAIL_UNAVAIL:GLAM-ZTPT-NZQG-202609-K-A}
+    reminder:
+      pf: ${COMBO_IUN_REMINDER_PF:DPKG-ENTQ-KHZA-202609-V-A}
+      pg: ${COMBO_IUN_REMINDER_PG:PXUQ-UTJE-QMGW-202609-V-A}
+      flow-io-fail-email-ok: ${COMBO_IUN_REMINDER_PF_1:VGMV-XTEV-YZLQ-202609-U-A}
+      flow-io-fail-email-delivered: ${COMBO_IUN_REMINDER_PF:DPKG-ENTQ-KHZA-202609-V-A}
+      flow-io-fail-excluded: ${COMBO_IUN_REMINDER_PF_EXCLUDED:AWLP-DTLX-RNTH-202609-A-A}
+    messamora:
+      pf: ${COMBO_IUN_MESSAMORA_PF:EXVA-TVPL-QPVJ-202609-Q-A}
+      pg: ${COMBO_IUN_MESSAMORA_PG:HWUJ-TGYU-MEXW-202609-D-A}
+      flow-io-fail-analog: ${COMBO_IUN_MESSAMORA_PF:EXVA-TVPL-QPVJ-202609-Q-A}
+      flow-io-ok-analog: ${COMBO_IUN_MESSAMORA_PF_ANALOG:TEUE-ZDGY-VETY-202609-Q-A}

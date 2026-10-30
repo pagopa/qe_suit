@@ -1,0 +1,65 @@
+package it.pagopa.send.common.journey.infrastructure;
+
+import it.pagopa.send.common.informal_notification.application.InformalNotificationUseCase;
+import it.pagopa.send.common.informal_notification.domain.InformalNotificationDomain;
+import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
+import it.pagopa.send.common.journey.application.InformalNotificationJourney;
+import it.pagopa.send.common.kernel.context.CurrentUserSession;
+import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.generated.openapi.clients.informal.model.FullSentInformalNotificationV1;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
+
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class InformalNotificationJourneyImpl implements InformalNotificationJourney<InformalNotificationJourneyImpl> {
+
+    private final InformalNotificationUseCase informalNotificationUseCase;
+    private final CurrentUserSession currentUserSession;
+
+    @Override
+    public InformalNotificationJourneyImpl withInformalSender(User tenant) {
+        currentUserSession.setUser(tenant);
+        return this;
+    }
+
+    @Override
+    public InformalNotificationJourneyImpl prepareInformalNotification(Map<String, String> data) {
+        informalNotificationUseCase.prepareNotification(data);
+        return this;
+    }
+
+    @Override
+    public InformalNotificationJourneyImpl withInformalRecipient(InformalRecipientSpec recipient) {
+        User sender = currentUserSession.getUser();
+        informalNotificationUseCase.addRecipient(sender, recipient);
+        return this;
+    }
+
+    @Override
+    public InformalNotificationDomain sendInformalNotification(User sender) {
+        currentUserSession.setUser(sender);
+        InformalNotificationDomain domain = informalNotificationUseCase.sendNotification(sender);
+        log.info("Comunicazione bonaria inviata con successo: {}", domain);
+        return domain;
+    }
+
+    @Override
+    public FullSentInformalNotificationV1 getInformalNotification(String iun){
+        return informalNotificationUseCase.getInformalNotification(iun);
+    }
+
+    @Override
+    public FullSentInformalNotificationV1 getInformalNotification(String iun,int interval){
+        return informalNotificationUseCase.getInformalNotification(iun,interval);
+    }
+
+    @Override
+    public FullSentInformalNotificationV1 getLastInformalNotification(){
+        return informalNotificationUseCase.getLastInformalNotification();
+    }
+}

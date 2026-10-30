@@ -62,6 +62,7 @@ url:
       new-api-key: ${url.notifiche.mittente.api-keys}/nuova-api-key
       app-status: ${url.notifiche.mittente.base}/app-status
       statistics: ${url.notifiche.mittente.base}/statistiche
+      campaigns: ${url.notifiche.mittente.base}/campaigns
     supporto:
       base: https://uat.selfcare.pagopa.it
 
@@ -94,8 +95,7 @@ token:
 # ============================================================================
 bff:
   api:
-    # REPLACE_ME: host BFF reale per l'ambiente uat
-    base-url: REPLACE_ME
+    base-url: https://webapi.uat.notifichedigitali.it
     bearer-token: ${pn.external.bearer-token.tokenBffApiUat:REPLACE_ME}
 
 # ============================================================================
@@ -112,13 +112,16 @@ gpd:
 # ============================================================================
 external-registries:
   api:
-    # REPLACE_ME: host reale per l'ambiente uat
-    base-url: REPLACE_ME
+    base-url: https://api.uat.notifichedigitali.it
 
 # ============================================================================
 # Pn Delivery B2B API Configuration (lettura notifiche via SenderReadB2BApi)
 # ============================================================================
 delivery:
+  push:
+    base-url: ${pn.delivery.push.base-url:} # es. http://localhost:8889 con il tunnel
   api:
-    # REPLACE_ME: host reale per l'ambiente uat
-    base-url: REPLACE_ME
+    base-url: https://api.uat.notifichedigitali.it
+  informal:
+    api:
+      base-url: https://api.uat.notifichedigitali.it/informal
