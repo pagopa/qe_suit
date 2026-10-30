@@ -11,6 +11,7 @@ import it.pagopa.send.web.notification_details.infrastructure.page.section.Mitte
 import it.pagopa.send.web.notification_details.infrastructure.page.section.MittenteAttachmentSection;
 import it.pagopa.send.web.notification_details.infrastructure.page.section.MittentePaymentSection;
 import it.pagopa.send.web.notification_details.infrastructure.page.section.MittenteNotificationSummarySection;
+import it.pagopa.send.web.notification_details.infrastructure.page.timeline.TimelineDetailsPage;
 
 import org.assertj.core.api.Assertions;
 
@@ -47,6 +48,10 @@ public interface MittenteNotificationDetailsPage extends NotificationDetailsPage
 
     @XPath("//*[@data-testid=\"notificationDetailsDrawer\"]")
     NotificationDetailsDrawer notificationDetailsDrawer();
+
+    // pagina "Stato della notifica" aperta con "Vai al dettaglio" della sezione di stato
+    @XPath("//main")
+    TimelineDetailsPage notificationTimeline();
 
     @Override
     MittenteNotificationSummarySection notificationSummarySection();
