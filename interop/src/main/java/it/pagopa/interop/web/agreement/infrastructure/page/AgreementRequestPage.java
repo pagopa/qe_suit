@@ -17,7 +17,7 @@ public interface AgreementRequestPage extends Page {
 
     AgreementRequestTable table();
 
-    Optional<Pagination> pagination();
+    Pagination pagination();
 
     @Override
     default void assertLoaded() {
