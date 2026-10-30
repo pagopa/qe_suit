@@ -3,6 +3,7 @@ package it.pagopa.interop.suite;
 import it.pagopa.infrastructure.reporting.contract.lifecycle.GenerateContractReport;
 import it.pagopa.interop.suite.contract.BffDelegationContractTest;
 import it.pagopa.interop.suite.contract.BffPurposeContractTest;
+import it.pagopa.interop.suite.contract.BffPurposeTemplateContractTest;
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.ConfigurationParameters;
 import org.junit.platform.suite.api.IncludeEngines;
@@ -15,6 +16,7 @@ import org.junit.platform.suite.api.Suite;
 @SelectClasses({
     BffDelegationContractTest.class,
     BffPurposeContractTest.class,
+    BffPurposeTemplateContractTest.class,
 })
 @ConfigurationParameters({
     @ConfigurationParameter(
