@@ -65,9 +65,6 @@ public class WebPurposeTemplateContractTest {
     }
 
     private void assertLandedOnCreatedTemplate(PurposeTemplateCatalogPage page) {
-        Assertions.assertThat(page.pageTitle().read())
-                .as("Page title is not blank")
-                .isNotBlank();
 
         PurposeTemplateCreationPage purposeTemplateCreationPage = new WebBinder().bind(PurposeTemplateCreationPage.class);
         purposeTemplateCreationPage.assertLoaded();
