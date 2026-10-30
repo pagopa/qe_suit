@@ -49,9 +49,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
-    public EServiceJourneyImpl linkOpenApiInterface() {
-        return linkOpenApiInterface("assets/origin-interface.yaml", null);
-    }
+    public EServiceJourneyImpl linkOpenApiInterface() {return linkOpenApiInterface("assets/origin-interface.yaml", null);}
 
     @Override
     public EServiceJourneyImpl linkOpenApiInterface(String path, @Nullable String name) {
@@ -158,9 +156,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         return switch (targetState) {
             case DRAFT -> this;
             case PUBLISHED -> publishPipeline(eService, eServiceDescriptor, command);
-            default -> throw new UnsupportedOperationException(
-                    String.format("La transizione allo stato %s non è ancora supportata nel Journey.", targetState)
-            );
+            default -> throw new UnsupportedOperationException(String.format("La transizione allo stato %s non è ancora supportata nel Journey.", targetState));
         };
     }
 
