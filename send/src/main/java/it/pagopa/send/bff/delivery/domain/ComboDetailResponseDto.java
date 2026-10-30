@@ -1,5 +1,6 @@
 package it.pagopa.send.bff.delivery.domain;
 
+import it.pagopa.send.common.user.domain.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +21,7 @@ public class ComboDetailResponseDto {
     private String senderPaName;
     private String recipientId;
     private String recipientName;
-    private ComboRecipientType recipientType;
+    private UserType recipientType;
     private String messageSubject;
     private String messageBody;
     private ComboProcessStatus processStatus;
