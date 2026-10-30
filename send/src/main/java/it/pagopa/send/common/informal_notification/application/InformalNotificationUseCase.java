@@ -1,6 +1,7 @@
 package it.pagopa.send.common.informal_notification.application;
 
 import it.pagopa.send.common.informal_notification.domain.InformalNotificationDomain;
+import it.pagopa.send.common.informal_notification.domain.InformalNotificationTimeline;
 import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.generated.openapi.clients.informal.model.FullSentInformalNotificationV1;
@@ -37,5 +38,13 @@ public class InformalNotificationUseCase {
 
     public FullSentInformalNotificationV1 getLastInformalNotification() {
         return informalNotificationGateway.getInformalNotification();
+    }
+
+    public int getSenderDetailStatus(String iun) {
+        return informalNotificationGateway.getSenderDetailStatus(iun);
+    }
+
+    public InformalNotificationTimeline getLastSenderTimeline() {
+        return informalNotificationGateway.getSenderTimeline();
     }
 }
