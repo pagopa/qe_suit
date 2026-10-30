@@ -140,8 +140,8 @@ public class WebComboDetailsContractTest {
                         "Controllo accessibilità ed integrità sezioni in layout responsive desktop/mobile",
                         page -> {},
                         page -> {
-                            page.overviewSection().openSidebarButton();
-                            page.statusSection().openTimelineButton();
+                            page.overviewSection().openSidebarButton().assertLoaded();
+                            page.statusSection().openTimelineButton().assertLoaded();
                         }
                 )
         );
