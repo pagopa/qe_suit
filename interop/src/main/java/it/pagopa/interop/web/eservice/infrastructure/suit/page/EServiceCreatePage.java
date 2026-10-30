@@ -2,36 +2,41 @@ package it.pagopa.interop.web.eservice.infrastructure.suit.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.infrastructure.suit.component.Label;
+import it.pagopa.infrastructure.suit.component.Stepper;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.additional_info_form.AdditionalInfoForm;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data_form.GeneralDataForm;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.technical_specs_form.TechnicalSpecsForm;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.threshold_attribute_form.ThresholdAndAttributeForm;
+import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 @Url("${interop.web.base-url}/erogazione/e-service/crea/")
 public interface EServiceCreatePage extends Page {
-
     @XPath(".//h1")
-    Readable<String> title();
+    Label title();
+
+    Breadcrumbs breadcrumbs();
 
     GeneralDataForm generalDataForm();
 
     ThresholdAndAttributeForm thresholdAndAttributeForm();
 
-     @XPath(".//main")
     TechnicalSpecsForm technicalSpecsForm();
 
     AdditionalInfoForm additionalInfoForm();
-    /**
-     * Il componente viene commentato visto il restyling previsto nell'ambiente di dev e non compatibile con l'ambiente di QA
-     * @return the stepper component for creating or updating an e-service
-     */
-    //Stepper upsertStepper();
+
+    @XPath(".//*[@data-testid='desktopWizardStepper']")
+    Stepper upsertStepper();
 
     @Override
     default void assertLoaded() {
         title().readAndAssert("Crea e-service");
-        //Assertions.assertThat(upsertStepper().get()).as("The stepper must be presents").isPresent();
+        assertThat(upsertStepper().get(FindPolicy.PRESENT))
+                .as("The e-service creation stepper must be present").isPresent();
     }
 }
