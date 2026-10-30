@@ -13,17 +13,11 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResourceRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResources;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TargetTenantKind;
-import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,6 +30,7 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
 
     private final BffPurposeTemplateRestClient restClient;
     private final BffPurposeTemplateMapper mapper;
+    private final BffPurposeTemplateRequestFactory requestFactory;
     private final EntityStore entityStore;
 
     @Override
@@ -52,26 +47,7 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
 
     @Override
     public PurposeTemplate createPurposeTemplate(Tenant targetTenant, RiskAnalysisForm riskAnalysisForm) {
-        Map<String, RiskAnalysisTemplateAnswerSeed> answers = new HashMap<>();
-        riskAnalysisForm.getAnswers().forEach((question, values) ->
-                answers.put(question, new RiskAnalysisTemplateAnswerSeed()
-                        .values(List.copyOf(values))
-                        .editable(false)
-                        .suggestedValues(List.of())));
-
-        String title = RandomUtils.randomAlphanumericName("purpose-template");
-
-        PurposeTemplateSeed payload = new PurposeTemplateSeed()
-                .targetDescription(RandomUtils.randomAlphanumericName("target-description"))
-                .targetTenantKind(TargetTenantKind.fromValue(targetTenant.getTenantType().name()))
-                .purposeTitle(title)
-                .purposeDescription(RandomUtils.randomAlphanumericName("purpose-description"))
-                .purposeIsFreeOfCharge(false)
-                .purposeDailyCalls(1)
-                .handlesPersonalData(false)
-                .purposeRiskAnalysisForm(new RiskAnalysisFormTemplateSeed()
-                        .version(riskAnalysisForm.getVersion())
-                        .answers(answers));
+        PurposeTemplateSeed payload = requestFactory.creationRequest(targetTenant, riskAnalysisForm);
 
         return restClient.createPurposeTemplate(payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
@@ -89,6 +65,18 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
         return PollingUtils.pollUntil(
                 () -> getPurposeTemplate(purposeTemplate.getId()),
                 pt -> pt.getState() == PurposeTemplateState.PUBLISHED
+        );
+    }
+
+    @Override
+    public PurposeTemplate suspendPurposeTemplate(PurposeTemplate purposeTemplate) {
+        restClient.suspendPurposeTemplate(purposeTemplate.getId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        return PollingUtils.pollUntil(
+                () -> getPurposeTemplate(purposeTemplate.getId()),
+                pt -> pt.getState() == PurposeTemplateState.SUSPENDED
         );
     }
 
