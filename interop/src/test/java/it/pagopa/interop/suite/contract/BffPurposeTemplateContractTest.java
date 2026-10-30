@@ -11,6 +11,7 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -55,7 +56,7 @@ public class BffPurposeTemplateContractTest {
                                 it.pagopa.infrastructure.fuzzing.FuzzScenario.REMOVED,
                                 it.pagopa.infrastructure.fuzzing.FuzzScenario.REPLACED_WITH_NULL),
                         response -> response.then().statusCode(400),
-                        java.util.List.of(seed -> seed.getPurposeFreeOfChargeReason()))
+                        java.util.List.of(PurposeTemplateSeed::getPurposeFreeOfChargeReason))
                 .tests();
     }
 

@@ -45,8 +45,7 @@ public class BffPurposeTemplateRequestFactory {
                 answers.put(question, new RiskAnalysisTemplateAnswerSeed()
                         .values(List.copyOf(values))
                         .editable(false)
-                        .suggestedValues(List.of())
-                        .annotation(addRiskAnalysisAnswerAnnotationRequest())));
+                        .suggestedValues(List.of())));
 
         return new PurposeTemplateSeed()
                 .targetDescription(randomAlphanumericName("target-description", 20))
