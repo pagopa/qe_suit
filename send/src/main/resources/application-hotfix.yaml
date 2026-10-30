@@ -54,6 +54,7 @@ url:
       deleghe-a-carico: ${url.notifiche.persona-giuridica.base}/deleghe/a-carico
       delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati
       add-delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati/nuova
+      termini-di-servizio: ${url.notifiche.persona-giuridica.base}/termini-di-servizio
     mittente:
       base: https://selfcare.hotfix.notifichedigitali.it
       dashboard: ${url.notifiche.mittente.base}/dashboard
