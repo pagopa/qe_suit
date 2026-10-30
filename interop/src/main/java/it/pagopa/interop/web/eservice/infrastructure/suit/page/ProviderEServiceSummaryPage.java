@@ -88,7 +88,7 @@ public interface ProviderEServiceSummaryPage extends Page {
 
     @Override
     default void assertLoaded() {
-        assertThat(pageTitle().read()).as("Titolo e-service valorizzato").isNotBlank();
+        pageTitle().readAndAssert("Riepilogo e-service");
         assertThat(statusChip().get().isPresent()).as("Stato bozza presente").isTrue();
     }
 }
