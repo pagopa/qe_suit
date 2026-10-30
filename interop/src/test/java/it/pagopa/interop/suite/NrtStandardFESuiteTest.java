@@ -11,10 +11,26 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @IncludeEngines({"cucumber", "junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
 @SelectClasses({
-        WebConsumerAgreementContractTest.class,
+        WebAgreementRequestPaginationContractTest.class,
+        WebConsumerAgreementDetailsPageContractTest.class,
+        WebConsumerAgreementsListPageContractTest.class,
+        WebConsumerPurposeDetailsPageContractTest.class,
+        WebConsumerPurposesListPageContractTest.class,
         WebConsumerPurposeTemplateCatalogPageContractTest.class,
         WebDebugClientAssertionContractTest.class,
-        WebTOSContractTest.class
+        WebEServiceCatalogContractTest.class,
+        WebEServiceContractTest.class,
+        WebEServiceCreatePageContractTest.class,
+        WebEServiceDetailsCatalogPageContractTest.class,
+        WebEServiceDuplicationContractTest.class,
+        WebEServiceProviderListContractTest.class,
+        WebEServiceThresholdContractTest.class,
+        WebProducerAgreementContractTest.class,
+        WebProducerEServiceAttributesContractTest.class,
+        WebProducerPurposeContractTest.class,
+        WebProviderEServiceSummaryContractTest.class,
+        WebPurposeTemplateContractTest.class,
+        WebTOSContractTest.class,
 })
 @ExcludeTags("ignore")
 @ConfigurationParameters({

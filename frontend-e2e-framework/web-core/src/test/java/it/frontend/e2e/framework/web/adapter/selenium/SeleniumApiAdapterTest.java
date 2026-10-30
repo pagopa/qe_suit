@@ -2,28 +2,20 @@ package it.frontend.e2e.framework.web.adapter.selenium;
 
 import it.frontend.e2e.framework.core.assertion.AssertionAction;
 import it.frontend.e2e.framework.core.model.selector.XPathSelector;
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.web.capability.core.Gettable;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.frontend.e2e.framework.web.model.location.Url;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Interactive;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @DisplayName("SeleniumApiAdapter")
@@ -165,7 +157,7 @@ class SeleniumApiAdapterTest {
         when(js.executeScript(anyString(), eq(second))).thenReturn(Map.of("data-id", "2"));
 
         SeleniumApiAdapter adapter = new SeleniumApiAdapter(driver);
-        Optional<List<WebPresentationElement>> elements = adapter.findElements(XPathSelector.of("//li[@class='item']"), FindPolicy.PRESENT);
+        Optional<List<WebPresentationElement>> elements = adapter.findElements(XPathSelector.of("//li[@class='item']"), Gettable.FindPolicy.PRESENT);
 
         assertTrue(elements.isPresent());
         assertEquals(2, elements.get().size());

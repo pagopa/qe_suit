@@ -2,7 +2,7 @@ package it.frontend.e2e.framework.web.capability.impl;
 
 import it.frontend.e2e.framework.core.assertion.AssertionAction;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.web.capability.core.Gettable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 
@@ -20,7 +20,8 @@ public class ReadableImpl<T> extends AbstractCapabilityImpl implements Readable<
     
     @Override
     public T read() {
-        Optional<WebPresentationElement> elementOpt = adapter.findElement(xPathSelector.get(), FindPolicy.VISIBLE);
+        Optional<WebPresentationElement> elementOpt = adapter.findElement(xPathSelector.get(), Gettable.FindPolicy.VISIBLE);
+
         if (elementOpt.isEmpty()) return null;
         String text = elementOpt.get().getText();
         return convert(text, type);
@@ -45,7 +46,7 @@ public class ReadableImpl<T> extends AbstractCapabilityImpl implements Readable<
 
     @Override
     public List<T> readAll() {
-        var elementsOpt = adapter.findElements(xPathSelector.get());
+        var elementsOpt = adapter.findElements(xPathSelector.get(), Gettable.FindPolicy.VISIBLE);
         return elementsOpt.map(webPresentationElements -> webPresentationElements.stream()
                 .map(e -> convert(e.getText(), type))
                 .toList()).orElseGet(List::of);

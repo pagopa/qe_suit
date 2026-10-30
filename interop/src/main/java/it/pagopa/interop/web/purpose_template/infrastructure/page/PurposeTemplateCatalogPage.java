@@ -7,6 +7,7 @@ import it.frontend.e2e.framework.web.config.WebSuiteContext;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.RadioButton;
+import it.pagopa.utils.async.PollingUtils;
 import org.assertj.core.api.SoftAssertions;
 
 import java.util.UUID;
@@ -77,11 +78,11 @@ public interface PurposeTemplateCatalogPage extends Page {
 
     @Override
     default void assertLoaded() {
-        SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(pageTitle().read())
-                    .isEqualTo("I miei template di finalità agevolata");
-
-            createNewButton().assertLoaded();
-        });
+        PollingUtils.pollUntil(
+                () -> pageTitle().read(),
+                name -> name.equals("I miei template di finalità agevolata"),
+                "Purpose Template Catalog Page is not loaded yet. Page title is blank"
+        );
+        createNewButton().assertLoaded();
     }
 }

@@ -26,7 +26,10 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SpringBootTest(
         classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
-        properties = {"spring.profiles.include=junit", "channel.web.browser=chrome", "channel.web.headless=false"}
+        properties = {
+                "spring.profiles.include=junit",
+                "channel.web.browser=chrome"
+        }
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor

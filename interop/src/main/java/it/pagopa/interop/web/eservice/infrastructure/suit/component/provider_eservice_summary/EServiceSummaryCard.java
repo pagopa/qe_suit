@@ -2,10 +2,9 @@ package it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_es
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Card;
 import it.pagopa.infrastructure.suit.component.Label;
-import it.frontend.e2e.framework.web.domain.Component;
 
 @XPath(".//*[contains(@class,'MuiAccordion-root')]")
 public interface EServiceSummaryCard extends Card {

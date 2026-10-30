@@ -2,15 +2,15 @@ package it.pagopa.interop.web.eservice.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.web.capability.core.Gettable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Dialog;
-import it.pagopa.interop.web.eservice.infrastructure.page.component.EServiceArchivingDialog;
 import it.pagopa.infrastructure.suit.component.Drawer;
 import it.pagopa.infrastructure.suit.component.Snackbar;
+import it.pagopa.interop.web.eservice.infrastructure.page.component.EServiceArchivingDialog;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 
@@ -54,7 +54,7 @@ public interface ProducerEServiceDetailPage extends Page {
 
     default void duplicateEService() {
         actionsMenuButton().click();
-        Assertions.assertThat(duplicateEServiceButton().get(FindPolicy.CLICKABLE))
+        Assertions.assertThat(duplicateEServiceButton().get(Gettable.FindPolicy.CLICKABLE))
                 .as("Duplica e-service is visible and enabled")
                 .isPresent();
         duplicateEServiceButton().click();
