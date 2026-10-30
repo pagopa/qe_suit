@@ -51,9 +51,9 @@ public interface ConsumerAgreementDetailsPage extends Page {
 
     @Override
     default void assertLoaded() {
-        Assertions.assertThat(breadcrumbs().items().stream().map(Readable::read).toList())
+        Assertions.assertThat(breadcrumbs().getPath())
                 .as("Breadcrumbs")
-                .containsExactly("Fruizione", "Richieste inoltrate", "Gestisci Richiesta");
+                .isEqualTo("Fruizione/Richieste inoltrate/Gestisci Richiesta");
         pageTitle().readAndAssert("Gestisci richiesta di fruizione");
     }
 }
