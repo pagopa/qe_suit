@@ -130,6 +130,11 @@ public class LegalNotificationCreationRequest {
         return this;
     }
 
+    public LegalNotificationCreationRequest clearRecipients() {
+        this.recipients.clear();
+        return this;
+    }
+
     public String getPaProtocolNumber() {
         return paProtocolNumber;
     }
