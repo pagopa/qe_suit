@@ -18,6 +18,16 @@ public class GettableImpl extends AbstractCapabilityImpl implements Gettable {
     }
 
     @Override
+    public boolean exists() {
+        return adapter.exists(xPathSelector.get(), FindPolicy.PRESENT);
+    }
+
+    @Override
+    public boolean exists(FindPolicy policy) {
+        return adapter.exists(xPathSelector.get(), policy);
+    }
+
+    @Override
     public Optional<List<WebPresentationElement>> getAll() {
         return adapter.findElements(xPathSelector.get());
     }

@@ -36,6 +36,11 @@ public class TestCapabilityHandler extends AbstractCapabilityHandler<TestCapabil
             }
 
             @Override
+            public boolean exists(FindPolicy policy) {
+                return false;
+            }
+
+            @Override
             public Optional<TestElement> get(FindPolicy policy) {
                 return Optional.empty();
             }

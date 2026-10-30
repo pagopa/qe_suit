@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.core.assertion.AssertionAction;
 import it.frontend.e2e.framework.core.model.selector.XPathSelector;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.adapter.model.BrowserSettings;
+import it.frontend.e2e.framework.web.adapter.model.WebWaitSettings;
 import it.frontend.e2e.framework.web.capability.core.Gettable;
 import it.frontend.e2e.framework.web.config.WebSuiteContext;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
@@ -23,13 +24,17 @@ import java.util.function.Supplier;
 @Slf4j
 public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
-    private static final long RETRY_WAIT_TIMEOUT_SECONDS = 60;
-    private static long DEFAULT_WAIT_TIMEOUT_SECONDS = 10;
+    private final long retryWaitTimeoutSeconds;
+    private final long defaultWaitTimeoutSeconds;
+    private final long existsTimeoutSeconds;
     private final WebDriver driver;
 
     public SeleniumApiAdapter(BrowserSettings settings) {
         BrowserSettings safeSettings = settings == null ? BrowserSettings.defaults() : settings;
         this.driver = WebDriverFactory.create(safeSettings.browser(), safeSettings);
+        this.defaultWaitTimeoutSeconds = safeSettings.waits().defaultWaitTimeoutSeconds();
+        this.retryWaitTimeoutSeconds = safeSettings.waits().retryWaitTimeoutSeconds();
+        this.existsTimeoutSeconds = safeSettings.waits().existsTimeoutSeconds();
     }
 
     SeleniumApiAdapter(WebDriver driver, long defaultWaitTimeoutSeconds) {
@@ -37,7 +42,9 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
             throw new IllegalArgumentException("driver cannot be null");
         }
         this.driver = driver;
-        DEFAULT_WAIT_TIMEOUT_SECONDS = defaultWaitTimeoutSeconds;
+        this.defaultWaitTimeoutSeconds = defaultWaitTimeoutSeconds;
+        this.retryWaitTimeoutSeconds = 60;
+        this.existsTimeoutSeconds = 0;
     }
 
     SeleniumApiAdapter(WebDriver driver) {
@@ -45,6 +52,18 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
             throw new IllegalArgumentException("driver cannot be null");
         }
         this.driver = driver;
+        WebWaitSettings defaults = WebWaitSettings.defaults();
+        this.defaultWaitTimeoutSeconds = defaults.defaultWaitTimeoutSeconds();
+        this.retryWaitTimeoutSeconds = defaults.retryWaitTimeoutSeconds();
+        this.existsTimeoutSeconds = defaults.existsTimeoutSeconds();
+    }
+
+    SeleniumApiAdapter(WebDriver driver, WebWaitSettings waits) {
+        this.driver = java.util.Objects.requireNonNull(driver, "driver");
+        WebWaitSettings settings = java.util.Objects.requireNonNull(waits, "waits");
+        this.defaultWaitTimeoutSeconds = settings.defaultWaitTimeoutSeconds();
+        this.retryWaitTimeoutSeconds = settings.retryWaitTimeoutSeconds();
+        this.existsTimeoutSeconds = settings.existsTimeoutSeconds();
     }
 
     @Override
@@ -56,12 +75,38 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     public Optional<WebPresentationElement> findElement(XPathSelector selector, Gettable.FindPolicy findPolicy) {
         try {
             WebPresentationElement webPresentationElement = withRetry(() -> {
-                WebElement webElement = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, findPolicy);
+                WebElement webElement = findWebElement(selector, defaultWaitTimeoutSeconds, findPolicy);
                 return toPresentationElement(selector, webElement);
             });
             return Optional.of(webPresentationElement);
         } catch (Exception e) {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public boolean exists(XPathSelector selector, Gettable.FindPolicy policy) {
+        By by = toBy(selector);
+        try {
+            if (existsTimeoutSeconds > 0) {
+                findWebElement(selector, existsTimeoutSeconds, policy);
+                return true;
+            }
+            // No explicit wait and no outer retry: a snapshot of the current DOM.
+            // Requires WebDriver implicit wait = 0 for an immediate lookup.
+            return driver.findElements(by).stream().anyMatch(element -> {
+                try {
+                    return switch (policy) {
+                        case PRESENT -> true;
+                        case VISIBLE -> element.isDisplayed();
+                        case CLICKABLE -> element.isDisplayed() && element.isEnabled();
+                    };
+                } catch (StaleElementReferenceException e) {
+                    return false;
+                }
+            });
+        } catch (TimeoutException | NoSuchElementException | StaleElementReferenceException e) {
+            return false;
         }
     }
 
@@ -110,7 +155,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     @Override
     public void click(XPathSelector selector) {
         withRetry(() -> {
-            WebElement element = findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, Gettable.FindPolicy.CLICKABLE);
+            WebElement element = findWebElement(selector, defaultWaitTimeoutSeconds, Gettable.FindPolicy.CLICKABLE);
             element.click();
             return element;
         });
@@ -141,7 +186,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     public void sendFile(XPathSelector selector, String absolutePath) {
         // file inputs: presenceOfElementLocated, no scroll, no focus, just sendKeys.
         // è necessario l'uso esplicito di presenceOfElementLocated pertanto il metodo centralizzato findWebElement non è adatto
-        WebElement element = new WebDriverWait(driver, Duration.ofSeconds(DEFAULT_WAIT_TIMEOUT_SECONDS))
+        WebElement element = new WebDriverWait(driver, Duration.ofSeconds(defaultWaitTimeoutSeconds))
                 .until(ExpectedConditions.presenceOfElementLocated(toBy(selector)));
         element.sendKeys(absolutePath);
     }
@@ -397,7 +442,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     }
 
     private WebElement findWebElement(XPathSelector selector, Gettable.FindPolicy policy) {
-        return findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, policy);
+        return findWebElement(selector, defaultWaitTimeoutSeconds, policy);
     }
 
     private List<WebElement> findWebElements(XPathSelector selector, long timeoutSeconds, Gettable.FindPolicy policy) {
@@ -433,7 +478,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     }
 
     private List<WebElement> findWebElements(XPathSelector selector, Gettable.FindPolicy policy) {
-        return findWebElements(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, policy);
+        return findWebElements(selector, defaultWaitTimeoutSeconds, policy);
     }
 
     private By toBy(XPathSelector selector) {
@@ -494,9 +539,9 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     }
 
     private <T> T withRetry(Supplier<T> action) {
-        long end = System.currentTimeMillis() + (RETRY_WAIT_TIMEOUT_SECONDS * 1000);
+        long end = System.currentTimeMillis() + (retryWaitTimeoutSeconds * 1000);
         Throwable lastException = null;
-        log.info("Starting action with retry mechanism. Will retry for up to {} seconds if exception occurs.", RETRY_WAIT_TIMEOUT_SECONDS);
+        log.info("Starting action with retry mechanism. Will retry for up to {} seconds if exception occurs.", retryWaitTimeoutSeconds);
         while (System.currentTimeMillis() < end) {
             log.info("Attempting action. Time remaining for retries: {} seconds", (end - System.currentTimeMillis()) / 1000);
 

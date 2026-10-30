@@ -12,6 +12,12 @@ import java.util.Optional;
 public interface Gettable<S extends Selector, L extends Location, E extends AbstractPresentationElement<S,L> > extends Capability {
     Optional<E> get();
 
+    default boolean exists() {
+        return exists(FindPolicy.VISIBLE);
+    }
+
+    boolean exists(FindPolicy policy);
+
     Optional<E> get(FindPolicy policy);
     Optional<List<E>> getAll();
 

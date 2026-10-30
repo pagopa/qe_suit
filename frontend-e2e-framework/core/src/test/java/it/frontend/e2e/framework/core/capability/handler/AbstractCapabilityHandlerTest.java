@@ -48,6 +48,11 @@ class AbstractCapabilityHandlerTest {
             public Optional<TestElement> get() { return Optional.empty(); }
 
             @Override
+            public boolean exists(FindPolicy policy) {
+                return false;
+            }
+
+            @Override
             public Optional<TestElement> get(FindPolicy policy) {
                 return Optional.empty();
             }
@@ -70,6 +75,11 @@ class AbstractCapabilityHandlerTest {
             public void differentAction() {}
             @Override
             public Optional<TestElement> get() { return Optional.empty(); }
+
+            @Override
+            public boolean exists(FindPolicy policy) {
+                return false;
+            }
 
             @Override
             public Optional<TestElement> get(FindPolicy policy) {
@@ -100,6 +110,11 @@ class AbstractCapabilityHandlerTest {
             public Optional<TestElement> get() { return Optional.empty(); }
 
             @Override
+            public boolean exists(FindPolicy policy) {
+                return false;
+            }
+
+            @Override
             public Optional<TestElement> get(FindPolicy policy) {
                 return Optional.empty();
             }
@@ -122,6 +137,11 @@ class AbstractCapabilityHandlerTest {
             public void unrelatedAction() {}
             @Override
             public Optional<TestElement> get() { return Optional.empty(); }
+
+            @Override
+            public boolean exists(FindPolicy policy) {
+                return false;
+            }
 
             @Override
             public Optional<TestElement> get(FindPolicy policy) {

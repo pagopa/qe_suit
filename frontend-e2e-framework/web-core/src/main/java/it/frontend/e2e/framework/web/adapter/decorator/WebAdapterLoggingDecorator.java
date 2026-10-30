@@ -32,6 +32,12 @@ public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<
     }
 
     @Override
+    public boolean exists(XPathSelector selector, it.frontend.e2e.framework.core.capability.core.Gettable.FindPolicy policy) {
+        logger.logDebug("Check if element exists by selector: " + selector + " with find policy: " + policy);
+        return webAdapter.exists(selector, policy);
+    }
+
+    @Override
     public Optional<List<WebPresentationElement>> findElements(XPathSelector selector, Gettable.FindPolicy policy) {
         logger.logDebug("Find elements by selector: " + selector + " with find policy: " + policy);
         return webAdapter.findElements(selector, policy);

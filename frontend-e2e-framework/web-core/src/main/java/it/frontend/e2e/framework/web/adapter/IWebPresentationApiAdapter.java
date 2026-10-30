@@ -16,6 +16,8 @@ public interface IWebPresentationApiAdapter
 
     Optional<WebPresentationElement> findElement(XPathSelector selector, Gettable.FindPolicy findPolicy);
 
+    boolean exists(XPathSelector selector, Gettable.FindPolicy policy);
+
     Optional<List<WebPresentationElement>> findElements(XPathSelector selector, Gettable.FindPolicy policy);
     Optional<String> getLocalStorageItem(String key);
     Optional<String> getSessionStorageItem(String key);
