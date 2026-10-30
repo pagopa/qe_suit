@@ -53,7 +53,7 @@ public interface ConsumerAgreementDetailsPage extends Page {
     default void assertLoaded() {
         Assertions.assertThat(breadcrumbs().getPath())
                 .as("Breadcrumbs")
-                .isEqualTo("Fruizione/Richieste inoltrate/Gestisci Richiesta");
+                .isEqualTo("Fruizione/Richieste inoltrate/Gestisci richiesta");
         pageTitle().readAndAssert("Gestisci richiesta di fruizione");
     }
 }
