@@ -46,7 +46,7 @@ public class InformalDeliveryRestClient {
                 .body(requests)
                 .post("/informal/delivery/v1/attachments/preload");
 
-        log.info("Risposta preload allegati informal: status={}, body={}", response.getStatusCode(), response.getBody().asString());
+        log.info("Risposta preload allegati informal: status={}", response.getStatusCode());
         return response;
     }
 
