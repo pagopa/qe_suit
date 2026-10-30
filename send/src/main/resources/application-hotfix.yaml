@@ -117,3 +117,6 @@ external-registries:
 delivery:
   api:
     base-url: https://api.hotfix.notifichedigitali.it
+  informal:
+    api:
+      base-url: https://api.hotfix.notifichedigitali.it/informal
