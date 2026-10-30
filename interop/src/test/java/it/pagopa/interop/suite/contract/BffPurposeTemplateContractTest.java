@@ -50,6 +50,12 @@ public class BffPurposeTemplateContractTest {
                 .as(PRODUCER, UserRole.ADMIN)
                 .apiCall(() -> apiClient.purposeTemplates().createPurposeTemplate())
                 .payload(asProducer(() -> requestFactory.creationRequest(PRODUCER)))
+                .targets(
+                        java.util.List.of(
+                                it.pagopa.infrastructure.fuzzing.FuzzScenario.REMOVED,
+                                it.pagopa.infrastructure.fuzzing.FuzzScenario.REPLACED_WITH_NULL),
+                        response -> response.then().statusCode(400),
+                        java.util.List.of(seed -> seed.getPurposeFreeOfChargeReason()))
                 .tests();
     }
 
