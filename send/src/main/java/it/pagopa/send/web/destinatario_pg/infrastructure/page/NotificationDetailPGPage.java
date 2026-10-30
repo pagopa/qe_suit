@@ -6,7 +6,10 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import org.assertj.core.api.Assertions;
+
+import java.util.Optional;
 
 /**
  * {@code {baseUrl}/notifiche/<IUN>/dettaglio}
@@ -75,8 +78,16 @@ public interface NotificationDetailPGPage extends Page {
     @XPath("//*[@data-testid=\"aarDownload\"]//h2")
     Readable<String> notificationDetailsTitle();
 
+    // pagina "Stato della notifica" aperta con "Vai al dettaglio"
+    @XPath("//main")
+    NotificationTimelinePGPage notificationTimeline();
+
+    // il banner dei cookie copre "Vai al dettaglio": va accettato prima di cliccarlo
+    Optional<OneTrustBanner> oneTrustBanner();
+
     @Override
     default void assertLoaded() {
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         title().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
         notificationsBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
         iun().readAndAssert(h -> Assertions.assertThat(h).isNotBlank());
