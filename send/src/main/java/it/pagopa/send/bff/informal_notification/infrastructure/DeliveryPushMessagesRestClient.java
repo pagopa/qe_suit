@@ -39,6 +39,11 @@ public class DeliveryPushMessagesRestClient {
         payload.put("primaryMessage", primaryMessage);
         payload.put("additionalMessage", null);
 
+        if (baseUrl == null || baseUrl.isBlank()) {
+            throw new IllegalStateException(
+                    "Nessun url delivery push configurato (pn.delivery.push.base-url nei secret, es. http://localhost:8889 con il tunnel)");
+        }
+
         Response response = RestAssured.given()
                 .baseUri(baseUrl)
                 .contentType(ContentType.JSON)
