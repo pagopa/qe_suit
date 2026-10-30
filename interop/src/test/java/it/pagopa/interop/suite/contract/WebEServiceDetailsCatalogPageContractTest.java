@@ -72,7 +72,15 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 true,
                 false
         );
-        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+        PreparedScenario prepared = prepareCustomThresholdsForYourTenant(params);
+        EService eService = prepared.eService();
+        Tenant portalUser = prepared.portalUser();
+
+        return webContractValidator
+                .as(User.getTenantAdmin(portalUser), portalUser)
+                .on(EServiceDetailPage.class, eService.getId().toString(),
+                        eService.getActiveDescriptor().getId().toString())
+                .tests(Stream.of(prepared.scenario()));
     }
 
     @TestFactory
@@ -86,7 +94,15 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 true,
                 false
         );
-        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+        PreparedScenario prepared = prepareCustomThresholdsForYourTenant(params);
+        EService eService = prepared.eService();
+        Tenant portalUser = prepared.portalUser();
+
+        return webContractValidator
+                .as(User.getTenantAdmin(portalUser), portalUser)
+                .on(EServiceDetailPage.class, eService.getId().toString(),
+                        eService.getActiveDescriptor().getId().toString())
+                .tests(Stream.of(prepared.scenario()));
     }
 
     @TestFactory
@@ -100,7 +116,15 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 false,
                 false
         );
-        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+        PreparedScenario prepared = prepareCustomThresholdsForYourTenant(params);
+        EService eService = prepared.eService();
+        Tenant portalUser = prepared.portalUser();
+
+        return webContractValidator
+                .as(User.getTenantAdmin(portalUser), portalUser)
+                .on(EServiceDetailPage.class, eService.getId().toString(),
+                        eService.getActiveDescriptor().getId().toString())
+                .tests(Stream.of(prepared.scenario()));
     }
 
     @TestFactory
@@ -114,7 +138,15 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 false,
                 false
         );
-        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+        PreparedScenario prepared = prepareCustomThresholdsForYourTenant(params);
+        EService eService = prepared.eService();
+        Tenant portalUser = prepared.portalUser();
+
+        return webContractValidator
+                .as(User.getTenantAdmin(portalUser), portalUser)
+                .on(EServiceDetailPage.class, eService.getId().toString(),
+                        eService.getActiveDescriptor().getId().toString())
+                .tests(Stream.of(prepared.scenario()));
     }
 
     @TestFactory
@@ -128,7 +160,15 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 false,
                 false
         );
-        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+        PreparedScenario prepared = prepareCustomThresholdsForYourTenant(params);
+        EService eService = prepared.eService();
+        Tenant portalUser = prepared.portalUser();
+
+        return webContractValidator
+                .as(User.getTenantAdmin(portalUser), portalUser)
+                .on(EServiceDetailPage.class, eService.getId().toString(),
+                        eService.getActiveDescriptor().getId().toString())
+                .tests(Stream.of(prepared.scenario()));
     }
 
     @TestFactory
@@ -142,7 +182,15 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 false,
                 false
         );
-        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+        PreparedScenario prepared = prepareCustomThresholdsForYourTenant(params);
+        EService eService = prepared.eService();
+        Tenant portalUser = prepared.portalUser();
+
+        return webContractValidator
+                .as(User.getTenantAdmin(portalUser), portalUser)
+                .on(EServiceDetailPage.class, eService.getId().toString(),
+                        eService.getActiveDescriptor().getId().toString())
+                .tests(Stream.of(prepared.scenario()));
     }
 
     @TestFactory
@@ -156,7 +204,15 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 true,
                 false
         );
-        return shouldSeeOrNotCustomThresholdsForOtherTenant(params);
+        PreparedScenario prepared = prepareCustomThresholdsForOtherTenant(params);
+        EService eService = prepared.eService();
+        Tenant portalUser = prepared.portalUser();
+
+        return webContractValidator
+                .as(User.getTenantAdmin(portalUser), portalUser)
+                .on(EServiceDetailPage.class, eService.getId().toString(),
+                        eService.getActiveDescriptor().getId().toString())
+                .tests(Stream.of(prepared.scenario()));
     }
 
     @TestFactory
@@ -170,7 +226,15 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 true,
                 false
         );
-        return shouldSeeOrNotCustomThresholdsForOtherTenant(params);
+        PreparedScenario prepared = prepareCustomThresholdsForOtherTenant(params);
+        EService eService = prepared.eService();
+        Tenant portalUser = prepared.portalUser();
+
+        return webContractValidator
+                .as(User.getTenantAdmin(portalUser), portalUser)
+                .on(EServiceDetailPage.class, eService.getId().toString(),
+                        eService.getActiveDescriptor().getId().toString())
+                .tests(Stream.of(prepared.scenario()));
     }
 
     @TestFactory
@@ -184,7 +248,15 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 true,
                 false
         );
-        return shouldSeeOrNotCustomThresholdsForOtherTenant(params);
+        PreparedScenario prepared = prepareCustomThresholdsForOtherTenant(params);
+        EService eService = prepared.eService();
+        Tenant portalUser = prepared.portalUser();
+
+        return webContractValidator
+                .as(User.getTenantAdmin(portalUser), portalUser)
+                .on(EServiceDetailPage.class, eService.getId().toString(),
+                        eService.getActiveDescriptor().getId().toString())
+                .tests(Stream.of(prepared.scenario()));
     }
 
     @TestFactory
@@ -198,7 +270,15 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 true,
                 false
         );
-        return shouldSeeOrNotCustomThresholdsForOtherTenant(params);
+        PreparedScenario prepared = prepareCustomThresholdsForOtherTenant(params);
+        EService eService = prepared.eService();
+        Tenant portalUser = prepared.portalUser();
+
+        return webContractValidator
+                .as(User.getTenantAdmin(portalUser), portalUser)
+                .on(EServiceDetailPage.class, eService.getId().toString(),
+                        eService.getActiveDescriptor().getId().toString())
+                .tests(Stream.of(prepared.scenario()));
     }
 
     @TestFactory
@@ -212,7 +292,15 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 false,
                 true
         );
-        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+        PreparedScenario prepared = prepareCustomThresholdsForYourTenant(params);
+        EService eService = prepared.eService();
+        Tenant portalUser = prepared.portalUser();
+
+        return webContractValidator
+                .as(User.getTenantAdmin(portalUser), portalUser)
+                .on(EServiceDetailPage.class, eService.getId().toString(),
+                        eService.getActiveDescriptor().getId().toString())
+                .tests(Stream.of(prepared.scenario()));
     }
 
     @TestFactory
@@ -226,10 +314,18 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 false,
                 true
         );
-        return shouldSeeOrNotCustomThresholdsForYourTenant(params);
+        PreparedScenario prepared = prepareCustomThresholdsForYourTenant(params);
+        EService eService = prepared.eService();
+        Tenant portalUser = prepared.portalUser();
+
+        return webContractValidator
+                .as(User.getTenantAdmin(portalUser), portalUser)
+                .on(EServiceDetailPage.class, eService.getId().toString(),
+                        eService.getActiveDescriptor().getId().toString())
+                .tests(Stream.of(prepared.scenario()));
     }
 
-    private Stream<DynamicTest> shouldSeeOrNotCustomThresholdsForYourTenant(CustomThresholdTestParams params) {
+    private PreparedScenario prepareCustomThresholdsForYourTenant(CustomThresholdTestParams params) {
         int consumerThreshold = 20;
         int totalThreshold = 40;
         int customThresholdForYourTenant = 30;
@@ -262,10 +358,10 @@ public class WebEServiceDetailsCatalogPageContractTest {
         if (params.certifiedAttributeToConsumer) interopJourney.assignCertifiedAttribute(consumerTenantRef);
 
         EService eService = entityStore.getLastOrThrow(EService.class);
-        return webContractValidator
-                .as(User.getTenantAdmin(portalUser), portalUser)
-                .on(EServiceDetailPage.class, eService.getId().toString(), eService.getActiveDescriptor().getId().toString())
-                .tests(Stream.of(new WebScenario<>(
+        return new PreparedScenario(
+                portalUser,
+                eService,
+                new WebScenario<>(
                         "Should see correct values for thresholds and custom thresholds",
                         page -> {},
                         page -> {
@@ -282,10 +378,10 @@ public class WebEServiceDetailsCatalogPageContractTest {
                                 Assertions.assertThat(page.otherTenantDailyThreshold().get().isPresent()).isFalse();
                             }
                         }
-                )));
+                ));
     }
 
-    private Stream<DynamicTest> shouldSeeOrNotCustomThresholdsForOtherTenant(CustomThresholdTestParams params) {
+    private PreparedScenario prepareCustomThresholdsForOtherTenant(CustomThresholdTestParams params) {
         int consumerThreshold = 20;
         int totalThreshold = 40;
         int customThresholdForDelegator = 35;
@@ -333,10 +429,10 @@ public class WebEServiceDetailsCatalogPageContractTest {
                 .withConsumer(delegatee, UserRole.ADMIN)
                 .approveConsumerDelegation(entityStore.getLastOrThrow(Delegation.class).getRef());
 
-        return webContractValidator
-                .as(User.getTenantAdmin(portalUser), portalUser)
-                .on(EServiceDetailPage.class, eService.getId().toString(), eService.getActiveDescriptor().getId().toString())
-                .tests(Stream.of(new WebScenario<>(
+        return new PreparedScenario(
+                portalUser,
+                eService,
+                new WebScenario<>(
                         "Should see correct values for thresholds and custom thresholds",
                         page -> {},
                         page -> {
@@ -355,7 +451,14 @@ public class WebEServiceDetailsCatalogPageContractTest {
                                 Assertions.assertThat(page.otherTenantDailyThreshold().get().isPresent()).isFalse();
                             }
                         }
-                )));
+                ));
+    }
+
+    private record PreparedScenario(
+            Tenant portalUser,
+            EService eService,
+            WebScenario<EServiceDetailPage> scenario
+    ) {
     }
 
     private void addNthAttributeWithCustomThresholdToAttributeRequirement(int nthAttribute, int customThreshold, List<Attribute> requirement) {

@@ -2,6 +2,7 @@ package it.pagopa.interop.web.eservice.infrastructure.suit.component.additional_
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.TextField;
@@ -11,6 +12,9 @@ public interface AdditionalInfoForm extends Component {
 
     @XPath(".//textarea[@name='description' and not(@aria-hidden='true')]")
     TextField descriptionInput();
+
+    @XPath(".//*[contains(text(), 'Puoi caricare solo file con estensione')]")
+    Readable<String> documentFormatsHint();
 
     @XPath(".//button[contains(., 'Vai al riepilogo')]")
     Button goToSummaryButton();
