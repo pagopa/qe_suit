@@ -24,7 +24,8 @@ public interface ComboStatusSection extends Component {
         SoftAssertions softly = new SoftAssertions();
         header().readAndAssert(h -> softly.assertThat(h).as("Header Sezione Stato").isNotNull());
         statusChip().text().readAndAssert(s -> softly.assertThat(s).as("Chip Stato Comunicazione").isNotNull());
-        softly.assertThat(openTimelineButton()).as("Pulsante Vai alla Timeline").isNotNull();
+        softly.assertThatCode(() -> openTimelineButton().assertLoaded())
+                .as("Pulsante Vai alla Timeline").doesNotThrowAnyException();
         softly.assertAll();
     }
 }

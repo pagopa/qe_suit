@@ -26,7 +26,8 @@ public interface ComboOverviewSection extends Component {
     default void assertLoaded() {
         SoftAssertions softly = new SoftAssertions();
         title().readAndAssert(t -> softly.assertThat(t).as("Titolo comunicazione").isNotNull());
-        softly.assertThat(openSidebarButton()).as("Pulsante sidebar dettaglio messaggio").isNotNull();
+        softly.assertThatCode(() -> openSidebarButton().assertLoaded())
+                .as("Pulsante sidebar dettaglio messaggio").doesNotThrowAnyException();
         softly.assertAll();
     }
 }
