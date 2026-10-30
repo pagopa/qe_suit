@@ -12,7 +12,7 @@ public interface ComboTimelineComponent extends Component {
     @XPath(".//li[contains(@class, 'MuiTimelineItem-root')]")
     List<ComboTimelineItemComponent> items();
 
-    @XPath(".//li[contains(@class, 'MuiTimelineItem-root') and .//*[@data-testid='dateItem']]")
+    @XPath(".//li[contains(@class, 'MuiTimelineItem-root') and (.//*[@data-testid='dateItem'] or .//*[contains(@class, 'MuiTimelineOppositeContent-root')])]")
     List<ComboTimelineItemComponent> itemsWithTimestamp();
 
     @Override
