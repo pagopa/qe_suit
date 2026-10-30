@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 
@@ -12,6 +13,12 @@ public interface ProducerEServiceListPage extends Page {
 
     @XPath(".//h1[normalize-space(.)='I miei e-service']")
     Readable<String> pageTitle();
+
+    @XPath(".//button[normalize-space(.)='Importa']")
+    Button importButton();
+
+    @XPath("//div[contains(@class, 'MuiDrawer-root')]//*[contains(text(), 'Puoi caricare solo file con estensione')]")
+    Readable<String> importFormatsHint();
 
     Breadcrumbs breadcrumbs();
 
