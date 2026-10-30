@@ -86,8 +86,7 @@ public class InformalDocumentPreloadService {
             HttpResponse<String> uploadResponse = HttpClient.newHttpClient()
                     .send(request, HttpResponse.BodyHandlers.ofString());
 
-            log.info("Upload informale su {} {} -> status {} body: {}",
-                    httpMethod, url, uploadResponse.statusCode(), uploadResponse.body());
+            log.info("Upload informale {} -> status {}", httpMethod, uploadResponse.statusCode());
 
             if (uploadResponse.statusCode() >= 300) {
                 throw new IllegalStateException(String.format(
