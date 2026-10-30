@@ -18,7 +18,8 @@ public interface ComboOverviewSection extends Component {
     @XPath(".//p[normalize-space()='Persona destinataria' or normalize-space()='Destinatario']/following-sibling::div[1]")
     Readable<String> recipientName();
 
-    @XPath(".//button[contains(., 'Vai al dettaglio') or contains(@aria-label, 'dettagli') or contains(@aria-label, 'Dettaglio')]")
+    // il pulsante sta sotto l'header, non dentro
+    @XPath("//button[@aria-label='Vai al dettaglio della comunicazione']")
     Button openSidebarButton();
 
     @Override
