@@ -1,0 +1,8 @@
+# Merge this block into interop/src/main/resources/application.yaml
+# under the existing channel.web node (do not duplicate it).
+channel:
+  web:
+    waits:
+      default-wait-timeout-seconds: 3
+      retry-wait-timeout-seconds: 10
+      exists-timeout-seconds: 0

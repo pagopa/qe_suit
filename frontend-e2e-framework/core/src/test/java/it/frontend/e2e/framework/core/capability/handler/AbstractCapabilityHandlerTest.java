@@ -13,9 +13,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("AbstractCapabilityHandler")
 class AbstractCapabilityHandlerTest {
@@ -50,7 +48,22 @@ class AbstractCapabilityHandlerTest {
             public Optional<TestElement> get() { return Optional.empty(); }
 
             @Override
+            public boolean exists(FindPolicy policy) {
+                return false;
+            }
+
+            @Override
+            public Optional<TestElement> get(FindPolicy policy) {
+                return Optional.empty();
+            }
+
+            @Override
             public Optional<List<TestElement>> getAll() {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<List<TestElement>> getAll(FindPolicy policy) {
                 return Optional.empty();
             }
         };
@@ -64,7 +77,22 @@ class AbstractCapabilityHandlerTest {
             public Optional<TestElement> get() { return Optional.empty(); }
 
             @Override
+            public boolean exists(FindPolicy policy) {
+                return false;
+            }
+
+            @Override
+            public Optional<TestElement> get(FindPolicy policy) {
+                return Optional.empty();
+            }
+
+            @Override
             public Optional<List<TestElement>> getAll() {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<List<TestElement>> getAll(FindPolicy policy) {
                 return Optional.empty();
             }
         };
@@ -82,7 +110,22 @@ class AbstractCapabilityHandlerTest {
             public Optional<TestElement> get() { return Optional.empty(); }
 
             @Override
+            public boolean exists(FindPolicy policy) {
+                return false;
+            }
+
+            @Override
+            public Optional<TestElement> get(FindPolicy policy) {
+                return Optional.empty();
+            }
+
+            @Override
             public Optional<List<TestElement>> getAll() {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<List<TestElement>> getAll(FindPolicy policy) {
                 return Optional.empty();
             }
         };
@@ -96,7 +139,22 @@ class AbstractCapabilityHandlerTest {
             public Optional<TestElement> get() { return Optional.empty(); }
 
             @Override
+            public boolean exists(FindPolicy policy) {
+                return false;
+            }
+
+            @Override
+            public Optional<TestElement> get(FindPolicy policy) {
+                return Optional.empty();
+            }
+
+            @Override
             public Optional<List<TestElement>> getAll() {
+                return Optional.empty();
+            }
+
+            @Override
+            public Optional<List<TestElement>> getAll(FindPolicy policy) {
                 return Optional.empty();
             }
         };

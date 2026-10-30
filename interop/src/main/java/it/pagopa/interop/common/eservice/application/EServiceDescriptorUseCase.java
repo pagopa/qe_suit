@@ -37,8 +37,8 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.updateDescriptor(eService.getRef(), descriptor.getRef(), command);
     }
 
-    public EServiceDescriptor linkOpenApiInterface(EService eService, EServiceDescriptor descriptor, String openApiInterfacePath) {
-        return eServiceDescriptorGateway.linkOpenApiInterface(eService.getRef(), descriptor.getRef(), openApiInterfacePath);
+    public EServiceDescriptor linkOpenApiInterface(EService eService, EServiceDescriptor descriptor, String openApiInterfacePath, String name) {
+        return eServiceDescriptorGateway.linkOpenApiInterface(eService.getRef(), descriptor.getRef(), openApiInterfacePath, name);
     }
 
     public EServiceDescriptor archiveDescriptor(EService eService, EServiceDescriptor descriptor, GracePeriodDays gracePeriodDays) {
