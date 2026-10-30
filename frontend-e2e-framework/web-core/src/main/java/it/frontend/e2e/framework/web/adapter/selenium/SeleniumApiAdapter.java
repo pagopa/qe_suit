@@ -49,7 +49,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
 
     @Override
     public Optional<WebPresentationElement> findElement(XPathSelector selector) {
-       return findElement(selector, FindPolicy.CLICKABLE);
+        return findElement(selector, Gettable.FindPolicy.CLICKABLE);
     }
 
     @Override
@@ -396,7 +396,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
         };
     }
 
-    private WebElement findWebElement(XPathSelector selector, FindPolicy policy){
+    private WebElement findWebElement(XPathSelector selector, Gettable.FindPolicy policy) {
         return findWebElement(selector, DEFAULT_WAIT_TIMEOUT_SECONDS, policy);
     }
 
