@@ -117,6 +117,9 @@ external-registries:
 delivery:
   api:
     base-url: https://api.dev.notifichedigitali.it # TODO verificare host corretto per l'ambiente dev
+  informal:
+    api:
+      base-url: https://api.dev.notifichedigitali.it/informal
 
 # ============================================================================
 # Comunicazioni Bonarie (Combo) IUN Configuration for Dev
