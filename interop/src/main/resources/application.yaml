@@ -11,8 +11,12 @@ spring:
 # ============================================================================
 channel:
   web:
+    waits:
+      default-wait-timeout-seconds: 3
+      retry-wait-timeout-seconds: 20
+      exists-timeout-seconds: 0
     browser: chrome
-    headless: true
+    headless: false
     arguments:
       - --window-size=1920,1080
       - --incognito
