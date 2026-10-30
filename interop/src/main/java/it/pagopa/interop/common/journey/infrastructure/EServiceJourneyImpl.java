@@ -43,10 +43,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
-    public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {
-        return createEService(cmd -> {
-        }, targetState);
-    }
+    public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {return createEService(cmd -> {}, targetState);}
 
     @Override
     public EServiceJourneyImpl linkOpenApiInterface() {return linkOpenApiInterface("assets/origin-interface.yaml", null);}
