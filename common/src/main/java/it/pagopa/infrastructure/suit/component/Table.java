@@ -8,6 +8,7 @@ public interface Table extends Component {
 
     @XPath(".//thead[contains(@class,'MuiTableHead-root')]")
     TableHead tHead();
+
     @XPath(".//tbody[contains(@class,'MuiTableBody-root')]")
     TableBody tBody();
 }
