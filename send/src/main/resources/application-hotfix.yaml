@@ -115,6 +115,8 @@ external-registries:
 # Pn Delivery B2B API Configuration (lettura notifiche via SenderReadB2BApi)
 # ============================================================================
 delivery:
+  push:
+    base-url: ${pn.delivery.push.base-url:} # es. http://localhost:8889 con il tunnel
   api:
     base-url: https://api.hotfix.notifichedigitali.it
   informal:

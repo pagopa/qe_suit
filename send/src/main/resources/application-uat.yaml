@@ -117,7 +117,7 @@ external-registries:
 # ============================================================================
 delivery:
   push:
-    base-url: ${pn.delivery.push.base-url:http://localhost:8889}
+    base-url: ${pn.delivery.push.base-url:} # es. http://localhost:8889 con il tunnel
   api:
     base-url: https://api.uat.notifichedigitali.it
   informal:
