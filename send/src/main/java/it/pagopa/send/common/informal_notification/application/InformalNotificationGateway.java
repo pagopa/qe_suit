@@ -1,6 +1,7 @@
 package it.pagopa.send.common.informal_notification.application;
 
 import it.pagopa.send.common.informal_notification.domain.InformalNotificationDomain;
+import it.pagopa.send.common.informal_notification.domain.InformalNotificationTimeline;
 import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.user.domain.User;
@@ -16,4 +17,6 @@ public interface InformalNotificationGateway extends Plugin<Channel> {
     FullSentInformalNotificationV1 getInformalNotification(String iun);
     FullSentInformalNotificationV1 getInformalNotification(String iun,int interval);
     FullSentInformalNotificationV1 getInformalNotification();
+    int getSenderDetailStatus(String iun);
+    InformalNotificationTimeline getSenderTimeline();
 }

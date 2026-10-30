@@ -1,10 +1,13 @@
 package it.pagopa.send.bff.informal_notification.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.send.bff.delivery.infrastructure.BffComboRestClient;
 import it.pagopa.send.common.informal_notification.application.InformalNotificationGateway;
 import it.pagopa.send.common.informal_notification.domain.InformalNotificationCreationRequest;
 import it.pagopa.send.common.informal_notification.domain.InformalNotificationDomain;
+import it.pagopa.send.common.informal_notification.domain.InformalNotificationTimeline;
 import it.pagopa.send.common.informal_notification.domain.InformalRecipientSpec;
 import it.pagopa.send.common.informal_notification.domain.ResolvedInformalRecipient;
 import it.pagopa.send.common.informal_notification.infrastructure.factory.InformalNotificationRequestFactory;
@@ -32,6 +35,8 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
     private final InformalNotificationCreationRequest request;
     private final BffInformalNotificationMapper mapper;
     private final EntityStore entityStore;
+    private final BffComboRestClient bffComboRestClient;
+    private final BffInformalNotificationTimelineMapper timelineMapper;
 
     @Override
     public boolean supports(Channel channel) {
@@ -136,5 +141,32 @@ public class BffInformalNotificationGateway implements InformalNotificationGatew
     public FullSentInformalNotificationV1 getInformalNotification() {
        String iun = entityStore.getLastOrThrow(InformalNotificationDomain.class).getIun();
        return  getInformalNotification(iun);
+    }
+
+    @Override
+    public int getSenderDetailStatus(String iun) {
+        // l'API del dettaglio usa solo lo IUN
+        return ((ApiResponse) bffComboRestClient.getComboDetails(null, iun).withoutPolling().getRaw()).getStatusCode();
+    }
+
+    @Override
+    public InformalNotificationTimeline getSenderTimeline() {
+        String iun = entityStore.getLastOrThrow(InformalNotificationDomain.class).getIun();
+        InformalNotificationTimeline timeline = timelineMapper.toDomain(bffComboRestClient.getComboTimeline(null, iun)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS, Duration.ofSeconds(90), Duration.ofSeconds(3))
+                .get());
+        // gli step dei canali arrivano dopo l'invio: si attendono per al massimo 60 secondi
+        long deadline = System.currentTimeMillis() + Duration.ofSeconds(60).toMillis();
+        while (timeline.statusHistory().stream().noneMatch(status -> status.channelSteps() > 0)
+                && System.currentTimeMillis() < deadline) {
+            try {
+                Thread.sleep(Duration.ofSeconds(3).toMillis());
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+            timeline = timelineMapper.toDomain(bffComboRestClient.getComboTimeline(null, iun).withoutPolling().get());
+        }
+        return timeline;
     }
 }
