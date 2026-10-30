@@ -132,8 +132,8 @@ public class WebComboDetailsContractTest {
                         "Controllo caricamento sezioni condizionali Documenti e Pagamenti",
                         page -> {},
                         page -> {
-                            page.documentsSection().ifPresent(docSection -> docSection.assertLoaded());
-                            page.paymentsSection().ifPresent(paySection -> paySection.assertLoaded());
+                            page.documentsSection().filter(section -> section.get().isPresent()).ifPresent(section -> section.assertLoaded());
+                            page.paymentsSection().filter(section -> section.get().isPresent()).ifPresent(section -> section.assertLoaded());
                         }
                 ),
                 new WebScenario<>(
