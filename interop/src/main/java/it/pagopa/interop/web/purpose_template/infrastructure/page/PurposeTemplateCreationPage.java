@@ -8,6 +8,7 @@ import it.pagopa.infrastructure.suit.component.Switch;
 import it.pagopa.infrastructure.suit.component.TextField;
 import it.pagopa.utils.async.PollingUtils;
 
+import java.time.Duration;
 import java.util.Optional;
 
 @Url("${interop.web.purpose-template}/${templateId}/modifica")
@@ -33,6 +34,8 @@ public interface PurposeTemplateCreationPage extends Page {
         PollingUtils.pollUntil(
                 () -> pageTitle().read(),
                 title -> title.equals("Crea template finalità"),
+                Duration.ofSeconds(20),
+                Duration.ofSeconds(1),
                 "Purpose Template Creation Page is not loaded yet. Page title is blank"
         );
     }
