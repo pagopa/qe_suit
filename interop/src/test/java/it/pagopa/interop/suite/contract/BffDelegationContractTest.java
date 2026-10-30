@@ -4,7 +4,9 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.delegation.infrastructure.BffDelegationRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
+import it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand;
 import it.pagopa.interop.common.delegation.domain.Delegation;
+import it.pagopa.interop.common.delegation.domain.DelegationState;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
@@ -13,6 +15,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -79,12 +82,21 @@ public class BffDelegationContractTest {
     }
 
     private UUID createPendingProducerDelegationId() {
+        UUID eServiceId = interopJourney
+            .withProducer(PRODUCER, UserRole.ADMIN)
+            .createEService(EServiceDescriptorState.PUBLISHED)
+            .get(EService.class)
+            .getId();
+        ProducerDelegationCreationCommand delegationCommand = ProducerDelegationCreationCommand.builder()
+            .delegator(Tenant.fromOrganizationId(PRODUCER.getOrganizationId()))
+            .delegate(Tenant.fromOrganizationId(DELEGATE_PRODUCER.getOrganizationId()))
+            .targetState(DelegationState.WAITING_FOR_APPROVAL)
+            .eServiceRef(EServiceRef.of(eServiceId))
+            .build();
         return interopJourney
-                .withProducer(PRODUCER, UserRole.ADMIN)
-                .createEService(EServiceDescriptorState.PUBLISHED)
-                .createProducerDelegation(TenantRef.of(DELEGATE_PRODUCER.getOrganizationId()))
-                .get(Delegation.class)
-                .getId();
+            .createProducerDelegation(delegationCommand)
+            .get(Delegation.class)
+            .getId();
     }
 
     private UUID createPendingConsumerDelegationId() {
