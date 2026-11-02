@@ -8,7 +8,7 @@ import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Link;
 import it.pagopa.infrastructure.suit.component.Switch;
 
-@XPath(".//input[@name='isConsumerDelegable']/ancestor::*[contains(@class, 'MuiPaper-root')][1]")
+@XPath(".//div[contains(@class, 'MuiPaper-root') and .//h2[normalize-space(.)='Deleghe']]")
 public interface DelegationsSection extends Component {
     @XPath(".//h2")
     Readable<String> title();

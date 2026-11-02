@@ -2,8 +2,9 @@ package it.pagopa.interop.web.eservice.infrastructure.suit.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.web.capability.core.Gettable;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Stepper;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.additional_info_form.AdditionalInfoForm;
@@ -17,6 +18,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Url("${interop.web.base-url}/erogazione/e-service/crea/")
 public interface EServiceCreatePage extends Page {
+    String BTN_BACK_ESERVICE = "Torna agli e-service";
+
+    @XPath("//a[contains(., '" + BTN_BACK_ESERVICE + "')]")
+    Button backToEServicesButton();
+
     @XPath(".//h1")
     Label title();
 
@@ -36,7 +42,7 @@ public interface EServiceCreatePage extends Page {
     @Override
     default void assertLoaded() {
         title().readAndAssert("Crea e-service");
-        assertThat(upsertStepper().get(FindPolicy.PRESENT))
+        assertThat(upsertStepper().get(Gettable.FindPolicy.PRESENT))
                 .as("The e-service creation stepper must be present").isPresent();
     }
 }

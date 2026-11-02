@@ -1,6 +1,7 @@
 package it.pagopa.interop.suite.contract;
 
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.core.capability.core.Readable;
+import it.frontend.e2e.framework.web.capability.core.Gettable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.infrastructure.suit.component.RadioButton;
 import it.pagopa.infrastructure.suit.component.RadioGroup;
@@ -26,6 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,6 +52,8 @@ public class WebEServiceCreatePageContractTest {
     private static final List<String> EXPECTED_BREADCRUMB_LABELS = List.of(
             "Erogazione", "I miei e-service", "Crea e-service"
     );
+    private static final String EXPECTED_EROGAZIONE_BREADCRUMB_HREF = "/ui/it/erogazione";
+    private static final String EXPECTED_MY_ESERVICES_BREADCRUMB_HREF = "/ui/it/erogazione/e-service";
     private static final List<String> EXPECTED_STEP_LABELS = List.of(
             "Informazioni generali", "Soglie e attributi", "Specifiche tecniche", "Informazioni aggiuntive"
     );
@@ -97,7 +101,7 @@ public class WebEServiceCreatePageContractTest {
                                 "All components, the 4 cards, and the initial states must comply with the contract",
                                 page -> {},
                                 page -> {
-                                    assertHeaderAndStepper(page);
+                                    assertBreadcrumbAndStepper(page);
                                     var form = page.generalDataForm();
                                     assertAboutEServiceSection(form.aboutEServiceSection());
                                     assertEServiceDetailsSection(form.eServiceDetailsSection());
@@ -113,10 +117,22 @@ public class WebEServiceCreatePageContractTest {
      * Verifies breadcrumbs, page title and stepper.
      * @param page the e-service creation page
      */
-    private void assertHeaderAndStepper(EServiceCreatePage page) {
-        assertThat(page.breadcrumbs().items().stream().map(item -> item.read()).toList())
+    private void assertBreadcrumbAndStepper(EServiceCreatePage page) {
+        assertThat(page.backToEServicesButton().isDisabled())
+                .as("Torna agli e-service abilitato")
+                .isFalse();
+        page.backToEServicesButton().readAndAssert(EServiceCreatePage.BTN_BACK_ESERVICE);
+
+        assertThat(page.breadcrumbs().items().stream().map(Readable::read).toList())
                 .as("E-service creation breadcrumb labels in order")
                 .containsExactlyElementsOf(EXPECTED_BREADCRUMB_LABELS);
+        assertThat(page.breadcrumbs().links()).hasSize(2);
+        assertThat(page.breadcrumbs().links().get(0).getHref())
+                .as("Erogazione breadcrumb href")
+                .isEqualTo(EXPECTED_EROGAZIONE_BREADCRUMB_HREF);
+        assertThat(page.breadcrumbs().links().get(1).getHref())
+                .as("I miei e-service breadcrumb href")
+                .isEqualTo(EXPECTED_MY_ESERVICES_BREADCRUMB_HREF);
         page.title().readAndAssert(PAGE_TITLE);
         assertStepper(page);
     }
@@ -128,7 +144,7 @@ public class WebEServiceCreatePageContractTest {
      */
     private void assertStepper(EServiceCreatePage page) {
         var stepper = page.upsertStepper();
-        var stepperElement = stepper.get(FindPolicy.VISIBLE);
+        var stepperElement = stepper.get(Gettable.FindPolicy.VISIBLE);
         assertThat(stepperElement).as("The stepper must be visible").isPresent();
         assertThat(stepperElement.orElseThrow().getAttributes())
                 .containsEntry("role", "list");
@@ -136,18 +152,18 @@ public class WebEServiceCreatePageContractTest {
         var steps = stepper.steps();
         assertThat(steps).as("The stepper must contain four steps").hasSize(4);
         var visibleSteps = steps.stream()
-                .map(step -> step.get(FindPolicy.VISIBLE))
+                .map(step -> step.get(Gettable.FindPolicy.VISIBLE))
                 .toList();
         assertThat(visibleSteps)
                 .as("All four steps must be visible")
                 .allSatisfy(element -> assertThat(element).isPresent());
         var stepElements = visibleSteps.stream()
-                .map(element -> element.orElseThrow())
+                .map(Optional::orElseThrow)
                 .toList();
-        assertThat(steps.stream().map(step -> step.number().get(FindPolicy.VISIBLE).isPresent()).toList())
+        assertThat(steps.stream().map(step -> step.number().get(Gettable.FindPolicy.VISIBLE).isPresent()).toList())
                 .as("All four step numbers must be visible")
                 .containsExactly(true, true, true, true);
-        assertThat(steps.stream().map(step -> step.label().get(FindPolicy.VISIBLE).isPresent()).toList())
+        assertThat(steps.stream().map(step -> step.label().get(Gettable.FindPolicy.VISIBLE).isPresent()).toList())
                 .as("All four step labels must be visible")
                 .containsExactly(true, true, true, true);
 
@@ -183,10 +199,10 @@ public class WebEServiceCreatePageContractTest {
                 "Per scegliere nomi chiari e rendere gli e-service facili da trovare, consulta le linee guida");
         assertThat(section.nameLabel().read()).contains(ESERVICE_NAME_LABEL);
         assertThat(section.descriptionLabel().read()).contains(ESERVICE_DESCRIPTION_LABEL);
-        assertThat(section.guidelinesLink().get(FindPolicy.PRESENT)).as("The guidelines link must be present").isPresent();
-        assertThat(section.eServiceNameInput().get(FindPolicy.PRESENT)).as("The name field must be present").isPresent();
+        assertThat(section.guidelinesLink().get(Gettable.FindPolicy.PRESENT)).as("The guidelines link must be present").isPresent();
+        assertThat(section.eServiceNameInput().get(Gettable.FindPolicy.PRESENT)).as("The name field must be present").isPresent();
         section.nameHelperText().readAndAssert("Min 5 caratteri, max 60 caratteri");
-        assertThat(section.eServiceDescriptionInput().get(FindPolicy.PRESENT)).as("The description field must be present").isPresent();
+        assertThat(section.eServiceDescriptionInput().get(Gettable.FindPolicy.PRESENT)).as("The description field must be present").isPresent();
         section.descriptionHelperText().readAndAssert(
                 "Descrivi quali dati il fruitore deve fornire e quali dati l’e-service restituisce. Min 10 caratteri, max 400 caratteri");
     }
@@ -249,10 +265,10 @@ public class WebEServiceCreatePageContractTest {
                 "Autorizzo che i fruitori dell’e-service possano delegare altri enti ad iscriversi per conto proprio");
         assertThat(section.clientAccessDelegableLabel().read()).isEqualToNormalizingWhitespace(
                 "Autorizzo che i delegati possano associare i propri client alle finalità che hanno creato in qualità di delegati alla fruizione. Consulta la documentazione per approfondire");
-        assertThat(section.documentationLink().get(FindPolicy.PRESENT)).as("The delegations documentation link must be present").isPresent();
+        assertThat(section.documentationLink().get(Gettable.FindPolicy.PRESENT)).as("The delegations documentation link must be present").isPresent();
         assertThat(section.consumerDelegableSwitch().isChecked()).as("The delegation consumption must be enabled").isTrue();
         assertThat(section.clientAccessDelegableCheckbox().isChecked()).as("The access to data by delegation must be authorized").isTrue();
-        assertThat(section.clientAccessDocLink().get(FindPolicy.PRESENT)).as("The link to the access by delegation documentation must be present").isPresent();
+        assertThat(section.clientAccessDocLink().get(Gettable.FindPolicy.PRESENT)).as("The link to the access by delegation documentation must be present").isPresent();
     }
 
     /**
@@ -268,8 +284,8 @@ public class WebEServiceCreatePageContractTest {
         assertThat(section.designationDescription().read()).isEqualToNormalizingWhitespace(
                 "Attivando la funzionalità designi PagoPa S.p.A. responsabile del trattamento dei dati facendo proprio il documento di designazione di PagoPa S.p.A. come responsabile del trattamento dei dati personali per \"Signal Hub\".");
         section.signalHubLabel().readAndAssert(SIGNAL_HUB_LABEL);
-        assertThat(section.solutionLink().get(FindPolicy.PRESENT)).as("The link to the integrated solution must be present").isPresent();
-        assertThat(section.designationPdfLink().get(FindPolicy.PRESENT)).as("The link to the designation document must be present").isPresent();
+        assertThat(section.solutionLink().get(Gettable.FindPolicy.PRESENT)).as("The link to the integrated solution must be present").isPresent();
+        assertThat(section.designationPdfLink().get(Gettable.FindPolicy.PRESENT)).as("The link to the designation document must be present").isPresent();
         assertThat(section.signalHubSwitch().isChecked()).as("Signal Hub must be disabled").isFalse();
     }
 
