@@ -26,6 +26,8 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
 
     SELF linkOpenApiInterface();
 
+    SELF linkOpenApiInterface(String path, String name);
+
     /** Crea un e-service associando al descrittore l'ultimo attributo certificato presente nel contesto. */
     SELF createEServiceWithCertifiedAttribute(EServiceDescriptorState state);
 

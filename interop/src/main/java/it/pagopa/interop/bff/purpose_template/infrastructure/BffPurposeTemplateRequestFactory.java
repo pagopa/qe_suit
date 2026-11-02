@@ -17,6 +17,8 @@ import org.springframework.stereotype.Component;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static it.pagopa.utils.RandomUtils.randomAlphanumericName;
 
@@ -25,6 +27,7 @@ import static it.pagopa.utils.RandomUtils.randomAlphanumericName;
 public class BffPurposeTemplateRequestFactory {
 
     private static final String DEFAULT_ANSWER_KEY = "institutionalPurpose";
+    private static final String FREETEXT_DATA_TYPE = "FREETEXT";
 
     private final RiskAnalysisGateway riskAnalysisGateway;
     private final RiskAnalysisDataFactory riskAnalysisDataFactory;
@@ -36,16 +39,21 @@ public class BffPurposeTemplateRequestFactory {
                 .answers(riskAnalysisDataFactory.getTemplateForTenant(targetTenant, true))
                 .build();
 
-        return creationRequest(targetTenant, form);
+        return buildCreationRequest(targetTenant, form, latestConfig);
     }
 
     public PurposeTemplateSeed creationRequest(Tenant targetTenant, RiskAnalysisForm riskAnalysisForm) {
+        RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(targetTenant);
+        return buildCreationRequest(targetTenant, riskAnalysisForm, latestConfig);
+    }
+
+    private PurposeTemplateSeed buildCreationRequest(Tenant targetTenant,
+                                                     RiskAnalysisForm riskAnalysisForm,
+                                                     RiskAnalysisFormConfig config) {
+        Set<String> freeTextQuestions = freeTextQuestionIds(config);
         Map<String, RiskAnalysisTemplateAnswerSeed> answers = new LinkedHashMap<>();
         riskAnalysisForm.getAnswers().forEach((question, values) ->
-                answers.put(question, new RiskAnalysisTemplateAnswerSeed()
-                        .values(List.copyOf(values))
-                        .editable(false)
-                        .suggestedValues(List.of())));
+                answers.put(question, toAnswerSeed(List.copyOf(values), freeTextQuestions.contains(question))));
 
         return new PurposeTemplateSeed()
                 .targetDescription(randomAlphanumericName("target-description", 20))
@@ -68,11 +76,30 @@ public class BffPurposeTemplateRequestFactory {
     public RiskAnalysisTemplateAnswerRequest addRiskAnalysisAnswerRequest() {
         return new RiskAnalysisTemplateAnswerRequest()
                 .answerKey(DEFAULT_ANSWER_KEY)
-                .answerData(new RiskAnalysisTemplateAnswerSeed()
-                        .values(List.of(randomAlphanumericName("answer-value", 15)))
-                        .editable(false)
-                        .suggestedValues(List.of())
+                // institutionalPurpose è FREETEXT: il testo va in suggestedValues, values vuoto
+                .answerData(toAnswerSeed(List.of(randomAlphanumericName("answer-value", 15)), true)
                         .annotation(addRiskAnalysisAnswerAnnotationRequest()));
+    }
+
+    /**
+     * Per le domande FREETEXT il backend accetta solo values=[] con il testo in suggestedValues
+     * (stessa configurazione prodotta dalla web app); per SINGLE/MULTI il valore va in values.
+     */
+    private static RiskAnalysisTemplateAnswerSeed toAnswerSeed(List<String> values, boolean freeText) {
+        return new RiskAnalysisTemplateAnswerSeed()
+                .values(freeText ? List.of() : values)
+                .editable(false)
+                .suggestedValues(freeText ? values : List.of());
+    }
+
+    private static Set<String> freeTextQuestionIds(RiskAnalysisFormConfig config) {
+        if (config == null || config.getQuestions() == null) {
+            return Set.of();
+        }
+        return config.getQuestions().stream()
+                .filter(q -> FREETEXT_DATA_TYPE.equals(q.getDataType()))
+                .map(RiskAnalysisFormConfig.Question::getId)
+                .collect(Collectors.toUnmodifiableSet());
     }
 
     public RiskAnalysisTemplateAnswerAnnotationSeed addRiskAnalysisAnswerAnnotationRequest() {

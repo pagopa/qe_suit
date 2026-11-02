@@ -1,3 +1,4 @@
+
 package it.pagopa.interop.suite.contract;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
@@ -15,30 +16,42 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.util.List;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Visual checks for the initial state of the terms-of-service page as a Comune di Milano administrator.
+ * Contract checks for the initial state of the terms-of-service page
+ * as a Comune di Milano administrator.
+ *
  * <ul>
- *     <li>Page title: exact copy {@code Termini di servizio}.</li>
- *     <li>Document: eleven ordered sections with identifiers, expected headings, and nonempty paragraphs.
- *         Only the numeric prefix of {@code Proprietà intellettuale} is excluded from comparison.</li>
- *     <li>Indexes: two DOM indexes, including hidden variants, with eleven links each targeting the same
- *         page and matching the unique section identifiers one to one in document order.</li>
+ *     <li>Page title: exact copy "Termini di servizio".</li>
+ *     <li>Document: eleven ordered sections with expected headings
+ *         and nonempty paragraphs.</li>
+ *     <li>Section numbering: exact comparison, including
+ *         "9. Proprietà intellettuale".</li>
+ *     <li>Index: one DOM index containing eleven links targeting
+ *         the corresponding section identifiers in document order.</li>
  * </ul>
- * Excludes layout, colors, fonts, full legal text, index-entry copy, {@code TIMESTAMP}, global header/footer,
- * and index visibility or interaction. Responsive coverage depends on the actual viewport used for the run.
+ *
+ * Excludes layout, colors, fonts, full legal text, TIMESTAMP,
+ * global header/footer and index interaction.
  */
-@SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
-        properties = "spring.profiles.include=junit")
+@SpringBootTest(
+        classes = {
+                TestBootApp.class,
+                JunitContextConfig.class,
+                WebJUnitSuitConfig.class
+        },
+        properties = "spring.profiles.include=junit"
+)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebTOSContractTest {
 
-    private static final int EXPECTED_INDEX_COUNT = 2;
+    private static final int EXPECTED_INDEX_COUNT = 1;
+
     private static final List<SectionExpectation> EXPECTED_SECTIONS = List.of(
             new SectionExpectation("Introduzione", "Termini e condizioni d'uso"),
             new SectionExpectation("Descrizione del servizio", "1. Descrizione del servizio"),
@@ -49,8 +62,7 @@ public class WebTOSContractTest {
             new SectionExpectation("Misure della Società", "6. Misure a disposizione della Società"),
             new SectionExpectation("Responsabilità", "7. Esclusioni e limitazione di responsabilità"),
             new SectionExpectation("Modifiche ai ToS", "8. Modifiche ai ToS"),
-            // Only the numbering awaits confirmation; the section identity is checked.
-            new SectionExpectation("Proprietà intellettuale", null),
+            new SectionExpectation("Proprietà intellettuale", "9. Proprietà intellettuale"),
             new SectionExpectation("Legge e foro", "10. Legge applicabile e foro competente")
     );
 
@@ -66,63 +78,124 @@ public class WebTOSContractTest {
 
     private Stream<WebScenario<TOSPage>> scenarios() {
         return Stream.of(
-                new WebScenario<>("Visuale TOS: copy esatto del titolo pagina", page -> {},
+                new WebScenario<>(
+                        "Visuale TOS: copy esatto del titolo pagina",
+                        page -> {},
                         page -> Assertions.assertThat(page.pageTitle().read())
-                                .as("Copy titolo pagina TOS").isEqualTo("Termini di servizio")),
-                new WebScenario<>("Visuale TOS: 11 sezioni ordinate, titoli attesi e paragrafi non vuoti",
-                        page -> {}, this::assertSections),
-                new WebScenario<>("Visuale TOS: 2 indici nel DOM, 11 link ciascuno e destinazioni univoche ordinate",
-                        page -> {}, this::assertIndexes)
+                                .as("Copy titolo pagina TOS")
+                                .isEqualTo("Termini di servizio")
+                ),
+                new WebScenario<>(
+                        "Visuale TOS: 11 sezioni ordinate, titoli esatti e paragrafi non vuoti",
+                        page -> {},
+                        this::assertSections
+                ),
+                new WebScenario<>(
+                        "Visuale TOS: 1 indice nel DOM, 11 link e destinazioni univoche ordinate",
+                        page -> {},
+                        this::assertIndexes
+                )
         );
     }
 
     private void assertSections(TOSPage page) {
         var sections = page.sections();
-        Assertions.assertThat(sections).as("Sezioni del documento TOS").hasSize(EXPECTED_SECTIONS.size());
+
+        Assertions.assertThat(sections)
+                .as("Sezioni del documento TOS")
+                .hasSize(EXPECTED_SECTIONS.size());
+
         for (int i = 0; i < sections.size(); i++) {
             var section = sections.get(i);
             var expected = EXPECTED_SECTIONS.get(i);
-            Assertions.assertThat(section.id()).as("Identificativo: %s", expected.name()).isNotBlank();
+
+            Assertions.assertThat(section.id())
+                    .as("Identificativo: %s", expected.name())
+                    .isNotBlank();
+
             Assertions.assertThat(section.content().readAll())
-                    .as("Paragrafi: %s", expected.name()).isNotEmpty().allSatisfy(text ->
-                            Assertions.assertThat(text).isNotBlank());
+                    .as("Paragrafi: %s", expected.name())
+                    .isNotEmpty()
+                    .allSatisfy(text ->
+                            Assertions.assertThat(text).isNotBlank()
+                    );
+
             String heading = section.heading().read();
-            Assertions.assertThat(heading).as("Titolo: %s", expected.name()).isNotBlank();
-            if (expected.copy() != null) {
-                Assertions.assertThat(heading).as("Copy: %s", expected.name()).isEqualTo(expected.copy());
-            } else {
-                Assertions.assertThat(heading.replaceFirst("^\\d+\\.\\s*", ""))
-                        .as("Titolo senza numerazione: %s", expected.name()).isEqualTo(expected.name());
-            }
+
+            Assertions.assertThat(heading)
+                    .as("Titolo: %s", expected.name())
+                    .isNotBlank()
+                    .isEqualTo(expected.copy());
         }
     }
 
     private void assertIndexes(TOSPage page) {
-        List<String> sectionIds = page.sections().stream().map(section -> section.id()).toList();
-        Assertions.assertThat(sectionIds).as("Identificativi univoci delle sezioni TOS")
-                .hasSize(EXPECTED_SECTIONS.size()).doesNotHaveDuplicates().allSatisfy(id ->
-                        Assertions.assertThat(id).isNotBlank());
+        List<String> sectionIds = page.sections()
+                .stream()
+                .map(section -> section.id())
+                .toList();
+
+        Assertions.assertThat(sectionIds)
+                .as("Identificativi univoci delle sezioni TOS")
+                .hasSize(EXPECTED_SECTIONS.size())
+                .doesNotHaveDuplicates()
+                .allSatisfy(id ->
+                        Assertions.assertThat(id).isNotBlank()
+                );
+
         URI pageUri = URI.create(page.getUrl().getUrl());
+
         String baseHref = page.documentBaseHref();
-        Assertions.assertThat(baseHref).as("Base URL del documento").isNotBlank();
+
+        Assertions.assertThat(baseHref)
+                .as("Base URL del documento")
+                .isNotBlank();
+
         URI documentBase = pageUri.resolve(baseHref);
+
         var indexes = page.indexes();
-        Assertions.assertThat(indexes).as("Indici TOS presenti nel DOM, incluse varianti nascoste")
+
+        Assertions.assertThat(indexes)
+                .as("Indice TOS presente nel DOM")
                 .hasSize(EXPECTED_INDEX_COUNT);
+
         for (int i = 0; i < indexes.size(); i++) {
             List<String> hrefs = indexes.get(i).hrefs();
-            Assertions.assertThat(hrefs).as("Collegamenti indice %s", i + 1).hasSize(EXPECTED_SECTIONS.size());
+
+            Assertions.assertThat(hrefs)
+                    .as("Collegamenti indice %s", i + 1)
+                    .hasSize(EXPECTED_SECTIONS.size());
+
             List<String> targets = new ArrayList<>();
+
             for (String href : hrefs) {
-                Assertions.assertThat(href).as("Href indice %s", i + 1).isNotBlank();
+                Assertions.assertThat(href)
+                        .as("Href indice %s", i + 1)
+                        .isNotBlank();
+
                 URI target = documentBase.resolve(href);
-                Assertions.assertThat(target.getScheme()).as("Schema collegamento %s", href).isEqualTo(pageUri.getScheme());
-                Assertions.assertThat(target.getRawAuthority()).as("Host collegamento %s", href).isEqualTo(pageUri.getRawAuthority());
-                Assertions.assertThat(target.getPath()).as("Pagina collegamento %s", href).isEqualTo(pageUri.getPath());
-                Assertions.assertThat(target.getQuery()).as("Query collegamento %s", href).isEqualTo(pageUri.getQuery());
+
+                Assertions.assertThat(target.getScheme())
+                        .as("Schema collegamento %s", href)
+                        .isEqualTo(pageUri.getScheme());
+
+                Assertions.assertThat(target.getRawAuthority())
+                        .as("Host collegamento %s", href)
+                        .isEqualTo(pageUri.getRawAuthority());
+
+                Assertions.assertThat(target.getPath())
+                        .as("Pagina collegamento %s", href)
+                        .isEqualTo(pageUri.getPath());
+
+                Assertions.assertThat(target.getQuery())
+                        .as("Query collegamento %s", href)
+                        .isEqualTo(pageUri.getQuery());
+
                 targets.add(target.getFragment());
             }
-            Assertions.assertThat(targets).as("Destinazioni univoche e ordinate dell'indice %s", i + 1)
+
+            Assertions.assertThat(targets)
+                    .as("Destinazioni univoche e ordinate dell'indice %s", i + 1)
                     .containsExactlyElementsOf(sectionIds);
         }
     }
