@@ -9,6 +9,7 @@ import lombok.extern.jackson.Jacksonized;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Value
@@ -29,7 +30,17 @@ public class PurposeTemplate implements Identifiable {
     @Singular("resourceId")
     List<UUID> linkedResourceIds;
 
+    @Singular("riskAnalysisAnswerId")
+    Map<String, UUID> riskAnalysisAnswerIds;
+
     public PurposeTemplateRef getRef() {
         return PurposeTemplateRef.of(this.id);
+    }
+
+    public UUID getFirstRiskAnalysisAnswerId() {
+        if (riskAnalysisAnswerIds == null || riskAnalysisAnswerIds.isEmpty()) {
+            throw new IllegalStateException("No risk analysis answers available on PurposeTemplate " + id);
+        }
+        return riskAnalysisAnswerIds.values().iterator().next();
     }
 }
