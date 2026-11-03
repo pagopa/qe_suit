@@ -57,10 +57,10 @@ public class WebProviderEServiceSummaryContractTest {
     private static final int DAILY_CALLS_TOTAL = 2;
     private static final String AUDIENCE = "QA";
     private static final AgreementApprovalPolicy APPROVAL_POLICY = AgreementApprovalPolicy.AUTOMATIC;
+    private static final String INTERFACE_NAME = "Specifica API_" + ESERVICE_DESCRIPTION + "_Comune di Milano_v" + 1;
 
     private final WebBrowserContractValidator webContractValidator;
     private final InteropJourney interopJourney;
-    private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
 
     @TestFactory
     Stream<DynamicTest> summaryPageContractTests() {
@@ -71,7 +71,8 @@ public class WebProviderEServiceSummaryContractTest {
                 .on(ProviderEServiceSummaryPage.class, pathParams)
                 .tests(Stream.of(
                         new WebScenario<>("Verifica riepilogo e dettagli delle quattro card",
-                                page -> {},
+                                page -> {
+                                },
                                 page -> {
                                     assertHeaderAndBreadcrumbs(page);
                                     assertSummaryCards(page);
@@ -81,36 +82,34 @@ public class WebProviderEServiceSummaryContractTest {
                                     assertTechnicalSpecsCard(page, eService);
                                     assertAdditionalInfoCard(page);
                                 })
-                        ));
+                ));
     }
 
     private EService prepareDraft() {
-        interopJourney
+        return interopJourney
                 .switchChannel(Channel.BFF)
-                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-        var creationCommand = eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(ASYNC_EXCHANGE)
-                .description(ESERVICE_DESCRIPTION)
-                .technology(ESERVICE_TECHNOLOGY)
-                .handlePersonalData(PERSONAL_DATA)
-                .isConsumerDelegable(CONSUMER_DELEGABLE)
-                .isClientAccessDelegable(CLIENT_ACCESS_DELEGABLE)
-                .isSignalHubEnabled(SIGNAL_HUB_ENABLED);
-        EService eService = interopJourney
-                .createEService(creationCommand, EServiceDescriptorState.DRAFT)
+                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .createEService(
+                        config -> config
+                                .description(ESERVICE_DESCRIPTION)
+                                .technology(ESERVICE_TECHNOLOGY)
+                                .handlePersonalData(PERSONAL_DATA)
+                                .isConsumerDelegable(CONSUMER_DELEGABLE)
+                                .isClientAccessDelegable(CLIENT_ACCESS_DELEGABLE)
+                                .isSignalHubEnabled(SIGNAL_HUB_ENABLED),
+                        EServiceDescriptorState.DRAFT
+                )
+                .updateDescriptor(config -> config
+                                .description(VERSION_DESCRIPTION)
+                                .audience(List.of(AUDIENCE))
+                                .voucherLifespan(60)
+                                .agreementApprovalPolicy(APPROVAL_POLICY)
+                                .dailyCallsPerConsumer(DAILY_CALLS_PER_CONSUMER)
+                                .dailyCallsTotal(DAILY_CALLS_TOTAL),
+                        EServiceDescriptorState.DRAFT
+                )
+                .linkOpenApiInterface("assets/origin-interface.yaml", INTERFACE_NAME)
                 .get(EService.class);
-
-        var descriptor = eService.getLastDraftDescriptor();
-        var command = eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(
-                        DAILY_CALLS_PER_CONSUMER, DAILY_CALLS_TOTAL)
-                .description(VERSION_DESCRIPTION)
-                .audience(List.of(AUDIENCE))
-                .voucherLifespan(60)
-                .agreementApprovalPolicy(APPROVAL_POLICY);
-        var preparedDescriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(
-                eService, descriptor, command);
-        eServiceDescriptorUseCase.linkOpenApiInterface(
-                eService, preparedDescriptor, "assets/origin-interface.yaml");
-        return eService;
     }
 
 
@@ -166,7 +165,7 @@ public class WebProviderEServiceSummaryContractTest {
         assertThat(page.summaryCards())
                 .extracting(card -> card.header().subtitle().read())
                 .containsExactly(
-                        "1","2","3","4"
+                        "1", "2", "3", "4"
                 );
         //Verify that only the first card is initially expanded and the others are closed
         assertThat(page.summaryCards())
@@ -235,9 +234,7 @@ public class WebProviderEServiceSummaryContractTest {
 
         var content = card.content();
         content.apiInterface().label().readAndAssert(TechnicalSpecsCard.INTERFACE);
-        content.apiInterface().attachmentButton().readAndAssert(
-                "Specifica API_" + eService.getName() + "_Comune di Milano_v"
-                        + eService.getLastDraftDescriptor().getVersion());
+        content.apiInterface().attachmentButton().readAndAssert(INTERFACE_NAME);
         assertThat(content.apiInterface().attachmentButton().isDisabled())
                 .as("Pulsante interfaccia abilitato").isFalse();
         assertField(content.audience(), TechnicalSpecsCard.AUDIENCE, AUDIENCE);

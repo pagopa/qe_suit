@@ -59,8 +59,7 @@ public class SendHttpContractValidator {
 
     public HttpContractStages.ApiCallSelectionStage as(UserAlias alias) {
         Objects.requireNonNull(alias, "alias must not be null");
-        User resolved = userProvider.resolve(alias);
-        HttpContractAuthentication authentication = () -> currentUserSession.setUser(resolved);
+        HttpContractAuthentication authentication = () -> currentUserSession.setUser(userProvider.resolve(alias));
         return operationSupplier -> delegate.apiCall(authentication, operationSupplier);
     }
 

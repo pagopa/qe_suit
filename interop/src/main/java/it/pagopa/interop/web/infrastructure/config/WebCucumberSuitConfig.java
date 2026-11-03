@@ -27,7 +27,8 @@ public class WebCucumberSuitConfig {
         BrowserSettings settings = BrowserSettings.of(
                 webSuitConfig.getBrowser(),
                 webSuitConfig.isHeadless(),
-                webSuitConfig.getArguments()
+                webSuitConfig.getArguments(),
+                webSuitConfig.getWaits().toSettings()
         );
 
         return new SeleniumApiAdapter(settings);

@@ -6,12 +6,12 @@ import it.pagopa.infrastructure.reporting.contract.config.ContractReportConfigur
 import it.pagopa.infrastructure.reporting.contract.config.ContractTargetType;
 import it.pagopa.infrastructure.reporting.contract.model.ContractReport;
 import it.pagopa.infrastructure.reporting.contract.openapi.OpenApiContractTargetResolver;
-import it.pagopa.infrastructure.reporting.contract.resolver.TestFactoryContractTargetResolver;
 import it.pagopa.infrastructure.reporting.contract.parser.JUnitExecutionNode;
 import it.pagopa.infrastructure.reporting.contract.parser.OpenTestReportParser;
 import it.pagopa.infrastructure.reporting.contract.renderer.ContractReportRenderer;
 import it.pagopa.infrastructure.reporting.contract.resolver.ContractTargetResolverRegistry;
 import it.pagopa.infrastructure.reporting.contract.resolver.PageContractTargetResolver;
+import it.pagopa.infrastructure.reporting.contract.resolver.TestFactoryContractTargetResolver;
 
 import java.nio.file.Path;
 import java.time.Instant;
