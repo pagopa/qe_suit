@@ -243,8 +243,8 @@ Feature: Filtri ad alto impatto nel catalogo privato
       | alias | erogatore        | nome            |
       | ES-1  | Comune di Milano | E-service Iubar |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
-      | tipo     | gruppo | attributo |
-      | discreto | 1      | DISC-1    |
+      | tipo     | gruppo | attributo | comparatore         | soglia |
+      | discreto | 1      | DISC-1    | maggiore o uguale a | 1      |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     When PagoPA cerca nel catalogo "Iubar" con i seguenti filtri:
       | filtro                    | valore |

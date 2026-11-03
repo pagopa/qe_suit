@@ -29,4 +29,11 @@ public class RequiredAttributeConfiguration {
     @NotNull
     @Pattern(regexp = "(CERT|DECL|VER|DISC)-[A-Za-z0-9_-]+")
     private String attribute;
+
+    @JsonAlias("comparatore")
+    @Pattern(regexp = "maggiore di|minore di|uguale a|maggiore o uguale a|minore o uguale a|diverso da")
+    private String comparator;
+
+    @JsonAlias("soglia")
+    private Integer threshold;
 }

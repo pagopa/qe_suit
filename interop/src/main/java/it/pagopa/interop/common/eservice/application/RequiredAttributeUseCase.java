@@ -37,7 +37,10 @@ public class RequiredAttributeUseCase {
                 throw new IllegalArgumentException("An explicit attribute can be required only once: "
                         + attribute.getId());
             }
-            Attribute requirement = attribute.toBuilder().group(request.getGroup()).build();
+            Attribute requirement = attribute.toBuilder()
+                    .group(request.getGroup())
+                    .discreteConfig(request.getDiscreteConfig())
+                    .build();
             switch (request.getKind()) {
                 case CERTIFIED, CERTIFIED_DISCRETE -> certified.add(requirement);
                 case DECLARED -> declared.add(requirement);

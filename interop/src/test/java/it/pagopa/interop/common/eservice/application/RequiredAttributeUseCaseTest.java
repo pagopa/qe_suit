@@ -2,6 +2,8 @@ package it.pagopa.interop.common.eservice.application;
 
 import it.pagopa.interop.common.attribute.application.AttributeGateway;
 import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.attribute.domain.AttributeCertifiedDiscreteComparator;
+import it.pagopa.interop.common.attribute.domain.AttributeCertifiedDiscreteConfig;
 import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import it.pagopa.interop.common.eservice.application.command.RequiredAttributeCommand;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
@@ -17,6 +19,8 @@ import static org.mockito.Mockito.*;
 class RequiredAttributeUseCaseTest {
     private final AttributeGateway gateway = mock(AttributeGateway.class);
     private final RequiredAttributeUseCase useCase = new RequiredAttributeUseCase(gateway);
+    private static final AttributeCertifiedDiscreteConfig DISCRETE_CONFIG = AttributeCertifiedDiscreteConfig.builder()
+            .comparator(AttributeCertifiedDiscreteComparator.GTE).threshold(1).build();
 
     @Test
     void resolvesAllKindsByExplicitReferenceAndPreservesGroupsWithoutMutatingSnapshots() {
@@ -26,7 +30,8 @@ class RequiredAttributeUseCaseTest {
             Attribute attribute = Attribute.builder().id(UUID.randomUUID()).kind(kind).group(9).build();
             snapshots.add(attribute);
             when(gateway.getAttribute(attribute.getRef())).thenReturn(attribute);
-            requests.add(new RequiredAttributeCommand(kind, 1, attribute.getRef()));
+            requests.add(new RequiredAttributeCommand(kind, 1, attribute.getRef(),
+                    kind == AttributeKind.CERTIFIED_DISCRETE ? DISCRETE_CONFIG : null));
         }
 
         var attributes = useCase.resolve(requests);
@@ -38,6 +43,8 @@ class RequiredAttributeUseCaseTest {
         assertThat(attributes.getCertified()).extracting(Attribute::getGroup).containsExactly(1, 1);
         assertThat(attributes.getDeclared()).extracting(Attribute::getGroup).containsExactly(1);
         assertThat(attributes.getVerified()).extracting(Attribute::getGroup).containsExactly(1);
+        assertThat(attributes.getCertified()).extracting(Attribute::getDiscreteConfig)
+                .containsExactly(null, DISCRETE_CONFIG);
         assertThat(snapshots).extracting(Attribute::getGroup).containsOnly(9);
         requests.forEach(request -> verify(gateway).getAttribute(request.getAttributeRef()));
         verifyNoMoreInteractions(gateway);
@@ -72,6 +79,13 @@ class RequiredAttributeUseCaseTest {
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("group");
         assertThatThrownBy(() -> new RequiredAttributeCommand(AttributeKind.CERTIFIED, 1, null))
                 .isInstanceOf(NullPointerException.class).hasMessageContaining("reference");
+        assertThatThrownBy(() -> new RequiredAttributeCommand(AttributeKind.CERTIFIED_DISCRETE, 1, ref))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("threshold and comparator");
+        assertThatThrownBy(() -> new RequiredAttributeCommand(AttributeKind.CERTIFIED_DISCRETE, 1, ref,
+                AttributeCertifiedDiscreteConfig.builder().threshold(1).build()))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("threshold and comparator");
+        assertThatThrownBy(() -> new RequiredAttributeCommand(AttributeKind.CERTIFIED, 1, ref, DISCRETE_CONFIG))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("only for discrete");
         verifyNoInteractions(gateway);
     }
 }

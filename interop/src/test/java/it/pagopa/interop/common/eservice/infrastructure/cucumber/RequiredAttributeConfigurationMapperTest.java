@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.attribute.domain.AttributeCertifiedDiscreteComparator;
 import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import it.pagopa.interop.common.attribute.infrastructure.cucumber.dto.AttributeAliasConfiguration;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
@@ -35,7 +36,7 @@ class RequiredAttributeConfigurationMapperTest {
                 row("certificato", 1, "CERT-1"),
                 row("dichiarato", 1, "DECL-1"),
                 row("verificato", 1, "VER-1"),
-                row("discreto", 1, "DISC-1")
+                discreteRow(1, "DISC-1", "maggiore o uguale a", 3)
         ));
 
         assertThat(requests).extracting("kind").containsExactly(
@@ -44,6 +45,41 @@ class RequiredAttributeConfigurationMapperTest {
         assertThat(requests).extracting(RequiredAttributeCommand::getAttributeRef).containsExactly(
                 certified.getRef(), declared.getRef(), verified.getRef(), discrete.getRef());
         assertThat(requests).extracting("group").containsExactly(1, 1, 1, 1);
+        assertThat(requests.subList(0, 3)).extracting(RequiredAttributeCommand::getDiscreteConfig).containsOnlyNulls();
+        assertThat(requests.get(3).getDiscreteConfig()).satisfies(config -> {
+            assertThat(config.getComparator()).isEqualTo(AttributeCertifiedDiscreteComparator.GTE);
+            assertThat(config.getThreshold()).isEqualTo(3);
+        });
+    }
+
+    @Test
+    void mapsEveryItalianDiscreteComparator() {
+        register("DISC-1", AttributeKind.CERTIFIED_DISCRETE);
+        Map<String, AttributeCertifiedDiscreteComparator> expected = Map.of(
+                "maggiore di", AttributeCertifiedDiscreteComparator.GT,
+                "minore di", AttributeCertifiedDiscreteComparator.LT,
+                "uguale a", AttributeCertifiedDiscreteComparator.EQ,
+                "maggiore o uguale a", AttributeCertifiedDiscreteComparator.GTE,
+                "minore o uguale a", AttributeCertifiedDiscreteComparator.LTE,
+                "diverso da", AttributeCertifiedDiscreteComparator.NE);
+        expected.forEach((label, comparator) -> assertThat(
+                mapper.toRequests(List.of(discreteRow(1, "DISC-1", label, 0))).get(0).getDiscreteConfig()
+                        .getComparator()).isEqualTo(comparator));
+    }
+
+    @Test
+    void requiresDiscreteConfigOnlyForDiscreteAttributes() {
+        register("CERT-1", AttributeKind.CERTIFIED);
+        register("DISC-1", AttributeKind.CERTIFIED_DISCRETE);
+
+        assertThatThrownBy(() -> mapper.toRequests(List.of(row("discreto", 1, "DISC-1"))))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("comparatore and soglia");
+        assertThatThrownBy(() -> mapper.toRequests(List.of(discreteRow(1, "DISC-1", "maggiore di", null))))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("comparatore and soglia");
+        var certifiedWithConfig = row("certificato", 1, "CERT-1");
+        certifiedWithConfig.setThreshold(1);
+        assertThatThrownBy(() -> mapper.toRequests(List.of(certifiedWithConfig)))
+                .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("only for discreto");
     }
 
     @Test
@@ -76,14 +112,23 @@ class RequiredAttributeConfigurationMapperTest {
             var configuration = (RequiredAttributeConfiguration) dataTableMapper.transform(Map.of(
                     "tipo", "discreto",
                     "gruppo", "1",
-                    "attributo", "DISC-1"
+                    "attributo", "DISC-1",
+                    "comparatore", "minore di",
+                    "soglia", "10"
             ), RequiredAttributeConfiguration.class);
 
             assertThat(mapper.toRequests(List.of(configuration))).singleElement().satisfies(request -> {
                 assertThat(request.getKind()).isEqualTo(AttributeKind.CERTIFIED_DISCRETE);
                 assertThat(request.getGroup()).isEqualTo(1);
                 assertThat(request.getAttributeRef()).isEqualTo(discrete.getRef());
+                assertThat(request.getDiscreteConfig().getComparator())
+                        .isEqualTo(AttributeCertifiedDiscreteComparator.LT);
+                assertThat(request.getDiscreteConfig().getThreshold()).isEqualTo(10);
             });
+            assertThatThrownBy(() -> dataTableMapper.transform(Map.of(
+                    "tipo", "discreto", "gruppo", "1", "attributo", "DISC-1",
+                    "comparatore", "circa", "soglia", "10"
+            ), RequiredAttributeConfiguration.class)).isInstanceOf(ConstraintViolationException.class);
             assertThatThrownBy(() -> dataTableMapper.transform(Map.of(
                     "tipo", "sconosciuto",
                     "gruppo", "1",
@@ -160,10 +205,10 @@ class RequiredAttributeConfigurationMapperTest {
         register("CERT-1", AttributeKind.CERTIFIED);
         register("DISC-1", AttributeKind.CERTIFIED_DISCRETE);
 
-        assertThat(mapper.toRequests(List.of(row("certificato", 1, "CERT-1"), row("discreto", 2, "DISC-1"))))
+        assertThat(mapper.toRequests(List.of(row("certificato", 1, "CERT-1"), discreteRow(2, "DISC-1", "uguale a", 1))))
                 .extracting(RequiredAttributeCommand::getGroup).containsExactly(1, 2);
         assertThatThrownBy(() -> mapper.toRequests(List.of(
-                row("certificato", 1, "CERT-1"), row("discreto", 3, "DISC-1"))))
+                row("certificato", 1, "CERT-1"), discreteRow(3, "DISC-1", "uguale a", 1))))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("contiguous");
     }
 
@@ -172,6 +217,15 @@ class RequiredAttributeConfigurationMapperTest {
         row.setKind(kind);
         row.setGroup(group);
         row.setAttribute(attribute);
+        return row;
+    }
+
+    private static RequiredAttributeConfiguration discreteRow(
+            int group, String attribute, String comparator, Integer threshold
+    ) {
+        var row = row("discreto", group, attribute);
+        row.setComparator(comparator);
+        row.setThreshold(threshold);
         return row;
     }
 

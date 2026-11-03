@@ -2,6 +2,8 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.attribute.domain.AttributeCertifiedDiscreteComparator;
+import it.pagopa.interop.common.attribute.domain.AttributeCertifiedDiscreteConfig;
 import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import it.pagopa.interop.common.eservice.application.command.RequiredAttributeCommand;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.RequiredAttributeConfiguration;
@@ -56,7 +58,41 @@ public class RequiredAttributeConfigurationMapper {
             throw new IllegalArgumentException("Attribute alias " + value + " has kind " + attribute.getKind()
                     + ", expected " + kind);
         }
-        return new RequiredAttributeCommand(kind, configuration.getGroup(), attribute.getRef());
+        return new RequiredAttributeCommand(kind, configuration.getGroup(), attribute.getRef(),
+                toDiscreteConfig(kind, configuration));
+    }
+
+    private AttributeCertifiedDiscreteConfig toDiscreteConfig(
+            AttributeKind kind, RequiredAttributeConfiguration configuration
+    ) {
+        boolean hasComparator = configuration.getComparator() != null && !configuration.getComparator().isBlank();
+        boolean hasThreshold = configuration.getThreshold() != null;
+        if (kind != AttributeKind.CERTIFIED_DISCRETE) {
+            if (hasComparator || hasThreshold) {
+                throw new IllegalArgumentException("comparatore and soglia are allowed only for discreto attributes: "
+                        + configuration.getAttribute());
+            }
+            return null;
+        }
+        if (!hasComparator || !hasThreshold) {
+            throw new IllegalArgumentException("Discrete attribute " + configuration.getAttribute()
+                    + " requires comparatore and soglia");
+        }
+        AttributeCertifiedDiscreteComparator comparator =
+                switch (configuration.getComparator().strip().toLowerCase(Locale.ROOT)) {
+                    case "maggiore di" -> AttributeCertifiedDiscreteComparator.GT;
+                    case "minore di" -> AttributeCertifiedDiscreteComparator.LT;
+                    case "uguale a" -> AttributeCertifiedDiscreteComparator.EQ;
+                    case "maggiore o uguale a" -> AttributeCertifiedDiscreteComparator.GTE;
+                    case "minore o uguale a" -> AttributeCertifiedDiscreteComparator.LTE;
+                    case "diverso da" -> AttributeCertifiedDiscreteComparator.NE;
+                    default -> throw new IllegalArgumentException("Unsupported discrete comparator: "
+                            + configuration.getComparator());
+                };
+        return AttributeCertifiedDiscreteConfig.builder()
+                .comparator(comparator)
+                .threshold(configuration.getThreshold())
+                .build();
     }
 
     private void validateDistinctReferences(List<RequiredAttributeCommand> requests) {
