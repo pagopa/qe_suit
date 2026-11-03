@@ -52,6 +52,7 @@ public class WebNotificationTimelineDelegatoContractTest {
     // testi attesi
 
     private static final String SUBJECT = "Notifica di test per lo stato della notifica PG da delega";
+    private static final String SUBJECT_PLACEHOLDER = "Dettaglio notifica";
     private static final String DEPOSITED_STATUS = "Depositata";
     private static final String DEPOSITED_DESCRIPTION = "L'ente ha depositato la notifica in piattaforma.";
     // data dell'evento, es. "22 OTT, 14:16"
@@ -102,7 +103,8 @@ public class WebNotificationTimelineDelegatoContractTest {
                                 timeline -> {
                                     timeline.title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(NotificationTimelinePGPage.TITLE));
                                     timeline.notificationsBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(DelegatedNotificationPage.TITLE));
-                                    timeline.notificationBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(SUBJECT));
+                                    // finché l'oggetto non è caricato il portale mostra "Dettaglio notifica": sono accettati entrambi
+                                    timeline.notificationBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isIn(SUBJECT, SUBJECT_PLACEHOLDER));
                                     timeline.currentBreadcrumb().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(NotificationTimelinePGPage.TITLE));
                                 }
                         ),
