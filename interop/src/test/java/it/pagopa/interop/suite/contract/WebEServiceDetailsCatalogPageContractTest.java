@@ -373,9 +373,9 @@ public class WebEServiceDetailsCatalogPageContractTest {
                                 Assertions.assertThat(page.customApiCallsThresholdTitle().read()).as("Subsection title").isNotBlank();
                                 assertLabelEqualsTo(page.yourTenantDailyThreshold(), String.valueOf(customThresholdForYourTenant));
                             } else {
-                                Assertions.assertThat(page.customApiCallsThresholdTitle().get().isPresent()).isFalse();
-                                Assertions.assertThat(page.yourTenantDailyThreshold().get().isPresent()).isFalse();
-                                Assertions.assertThat(page.otherTenantDailyThreshold().get().isPresent()).isFalse();
+                                Assertions.assertThat(page.customApiCallsThresholdTitle().exists()).isFalse();
+                                Assertions.assertThat(page.yourTenantDailyThreshold().exists()).isFalse();
+                                Assertions.assertThat(page.otherTenantDailyThreshold().exists()).isFalse();
                             }
                         }
                 ));
@@ -446,9 +446,9 @@ public class WebEServiceDetailsCatalogPageContractTest {
                                 if (params.certifiedAttributeToDelegator)
                                     assertLabelEqualsTo(page.otherTenantDailyThreshold(), String.valueOf(customThresholdForDelegator));
                             } else {
-                                Assertions.assertThat(page.customApiCallsThresholdTitle().get().isPresent()).isFalse();
-                                Assertions.assertThat(page.yourTenantDailyThreshold().get().isPresent()).isFalse();
-                                Assertions.assertThat(page.otherTenantDailyThreshold().get().isPresent()).isFalse();
+                                Assertions.assertThat(page.customApiCallsThresholdTitle().exists()).isFalse();
+                                Assertions.assertThat(page.yourTenantDailyThreshold().exists()).isFalse();
+                                Assertions.assertThat(page.otherTenantDailyThreshold().exists()).isFalse();
                             }
                         }
                 ));
