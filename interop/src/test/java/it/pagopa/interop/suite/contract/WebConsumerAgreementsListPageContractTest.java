@@ -3,8 +3,12 @@ package it.pagopa.interop.suite.contract;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.infrastructure.suit.component.TableRow;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.agreement.domain.AgreementState;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerAgreementsListPage;
@@ -19,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import static it.pagopa.interop.common.kernel.domain.UserRole.ADMIN;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SpringBootTest(
@@ -30,6 +35,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 public class WebConsumerAgreementsListPageContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
+    private final InteropJourney interopJourney;
 
     /**
      * Verifies that the consumer agreements list page shows the expected
@@ -37,13 +43,34 @@ public class WebConsumerAgreementsListPageContractTest {
      */
     @TestFactory
     Stream<DynamicTest> consumerAgreementsListPageContract() {
+        interopJourney
+                .switchChannel(Channel.BFF)
+                .withProducer(Tenant.PAGO_PA, ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(Tenant.COMUNE_DI_MILANO, ADMIN)
+                .linkAgreement(AgreementState.ACTIVE);
+
         return webContractValidator
                 .as(
                         User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
                         Tenant.COMUNE_DI_MILANO
                 )
-                .on(ConsumerAgreementsListPage.class)
+                .on(ConsumerAgreementsListPage.class, "")
                 .tests(contractScenarios());
+    }
+
+    @TestFactory
+    Stream<DynamicTest> noResultOnConsumerAgreementPageContract() {
+        return webContractValidator
+                .as(
+                        User.getTenantAdmin(Tenant.COMUNE_DI_MILANO),
+                        Tenant.COMUNE_DI_MILANO
+                )
+                .on(
+                        ConsumerAgreementsListPage.class,
+                        "?eservicesIds=%5B%5B\"no-result\"%2C\"11111111-1111-1111-1111-111111111111\"%5D%5D"
+                )
+                .tests(noResultContractScenarios());
     }
 
     private Stream<WebScenario<ConsumerAgreementsListPage>> contractScenarios() {
@@ -53,28 +80,29 @@ public class WebConsumerAgreementsListPageContractTest {
                         page -> {
                         },
                         page -> assertSoftly(softly -> {
-                                    softly.assertThat(page.pageTitle().read()).isNotBlank();
-                                    softly.assertThat(page.pageDescription().read()).isNotBlank();
-                                    softly.assertThat(page.eServiceFilterLabel().read())
-                                            .as("E-Service filter label")
-                                            .isEqualTo("Cerca per e-service");
+                                    softly.assertThat(page.pageDescription().read())
+                                            .as("Page description")
+                                            .isEqualTo("Le richieste di fruizione inoltrate verranno raccolte in questa area.");
                                     softly.assertThat(page.eServiceFilterInput().read())
                                             .as("E-Service filter initial value")
                                             .isEmpty();
-                                    softly.assertThat(page.producerFilterLabel().read())
-                                            .as("Producer filter label")
-                                            .isEqualTo("Cerca per erogatore");
-                                    softly.assertThat(page.producerFilterInput().read())
+                                    softly.assertThat(page.eServiceFilterInput().getLabelText())
+                                            .as("E-Service filter label")
+                                            .isEqualTo("Cerca per e-service");
+                                    softly.assertThat(page.providerFilterInput().read())
                                             .as("Producer filter initial value")
                                             .isEmpty();
-                                    softly.assertThat(page.statusFilterLabel().read())
-                                            .as("Status filter label")
-                                            .isEqualTo("Stato della richiesta");
+                                    softly.assertThat(page.providerFilterInput().getLabelText())
+                                            .as("Producer filter label")
+                                            .isEqualTo("Cerca per erogatore");
                                     softly.assertThat(page.statusFilterInput().read())
                                             .as("Status filter initial value")
                                             .isEmpty();
+                                    softly.assertThat(page.statusFilterInput().getLabelText())
+                                            .as("Status filter label")
+                                            .isEqualTo("Stato della richiesta");
 
-                                    softly.assertThat(page.agreementsTable().get().isPresent()).isTrue();
+                                    softly.assertThat(page.agreementsTable().exists()).isTrue();
                                     TableRow header = page.agreementsTable().tHead().rows().get(0);
 
                                     softly.assertThat(header.cells().get(0).read())
@@ -94,11 +122,11 @@ public class WebConsumerAgreementsListPageContractTest {
                                     rows.forEach(row -> {
                                         softly.assertThat(row.cells().get(0).read())
                                                 .as("E-Service cell value at row %s", rowCounter)
-                                        .isNotBlank();
+                                                .isNotBlank();
 
                                         softly.assertThat(row.cells().get(1).read())
-                                        .as("Provider cell value at row %s", rowCounter)
-                                        .isNotBlank();
+                                                .as("Provider cell value at row %s", rowCounter)
+                                                .isNotBlank();
 
                                         softly.assertThat(row.cells().get(2).read())
                                                 .as("Status cell value at row %s", rowCounter)
@@ -106,11 +134,36 @@ public class WebConsumerAgreementsListPageContractTest {
 
                                         softly.assertThat(row.cells().get(3).read())
                                                 .as("Cell with detail button at row %s", rowCounter)
-                                                .isEqualTo("Visualizza");
-                                        rowCounter.getAndIncrement();
-                                    });
-                                    softly.assertThat(page.pagination().get().isPresent()).isTrue();
-                                }
-                        )));
+                                                .isNotBlank();
+                                rowCounter.getAndIncrement();
+                            });
+                            softly.assertThat(page.rowsPerPageSelector().exists()).isTrue();
+
+                            if(page.rowsPerPageSelector().getSelectedSize() >= rowCounter.get())
+                                softly.assertThat(page.pagination().exists())
+                                        .as("Pagination should not be present when the number of rows is less than the selected page size")
+                                        .isFalse();
+                            else
+                                softly.assertThat(page.pagination().exists())
+                                        .as("Pagination should be present when the number of rows is greater than to the selected page size")
+                                        .isTrue();
+                        })
+                )
+        );
+    }
+
+    private Stream<WebScenario<ConsumerAgreementsListPage>> noResultContractScenarios() {
+        return Stream.of(
+                new WebScenario<>(
+                        "Consumer agreements list page hides the rows per page selector",
+                        page -> {
+                        },
+                        page -> assertSoftly(softly -> {
+                            softly.assertThat(page.noResultMessage().exists()).isTrue();
+                            softly.assertThat(page.rowsPerPageSelector().exists()).isTrue();
+                            softly.assertThat(page.pagination().exists()).isFalse();
+                        })
+                )
+        );
     }
 }

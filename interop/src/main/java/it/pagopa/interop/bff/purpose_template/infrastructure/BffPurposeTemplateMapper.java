@@ -8,13 +8,18 @@ import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResources;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplate;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswer;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
+import org.mapstruct.Named;
 import org.mapstruct.ValueMapping;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -31,7 +36,22 @@ public interface BffPurposeTemplateMapper {
     @Mapping(target = "updatedAt", source = "updatedAt", qualifiedByName = "mapStringToInstant")
     @Mapping(target = "linkedEServiceIds", ignore = true)
     @Mapping(target = "linkedResourceIds", ignore = true)
+    @Mapping(target = "riskAnalysisAnswerIds", source = "purposeRiskAnalysisForm", qualifiedByName = "mapRiskAnalysisAnswerIds")
     PurposeTemplate toPurposeTemplate(PurposeTemplateWithCompactCreator source);
+
+    @Named("mapRiskAnalysisAnswerIds")
+    default Map<String, UUID> mapRiskAnalysisAnswerIds(RiskAnalysisFormTemplate form) {
+        if (form == null || form.getAnswers() == null) {
+            return Map.of();
+        }
+        Map<String, UUID> result = new LinkedHashMap<>();
+        for (Map.Entry<String, RiskAnalysisTemplateAnswer> entry : form.getAnswers().entrySet()) {
+            if (entry.getKey() != null && entry.getValue() != null && entry.getValue().getId() != null) {
+                result.put(entry.getKey(), entry.getValue().getId());
+            }
+        }
+        return result;
+    }
 
     @ValueMapping(source = MappingConstants.ANY_REMAINING, target = "UNKNOWN")
     PurposeTemplateState toDomainState(
@@ -51,11 +71,17 @@ public interface BffPurposeTemplateMapper {
             return mapped;
         }
 
+        Map<String, UUID> answerIds = (mapped.getRiskAnalysisAnswerIds() != null && !mapped.getRiskAnalysisAnswerIds().isEmpty())
+                ? mapped.getRiskAnalysisAnswerIds()
+                : (existing.getRiskAnalysisAnswerIds() != null ? existing.getRiskAnalysisAnswerIds() : Map.of());
+
         return mapped.toBuilder()
                 .clearLinkedEServiceIds()
                 .linkedEServiceIds(existing.getLinkedEServiceIds() != null ? existing.getLinkedEServiceIds() : List.of())
                 .clearLinkedResourceIds()
                 .linkedResourceIds(existing.getLinkedResourceIds() != null ? existing.getLinkedResourceIds() : List.of())
+                .clearRiskAnalysisAnswerIds()
+                .riskAnalysisAnswerIds(answerIds)
                 .build();
     }
 
