@@ -16,7 +16,7 @@ channel:
       retry-wait-timeout-seconds: 20
       exists-timeout-seconds: 0
     browser: chrome
-    headless: false
+    headless: true
     arguments:
       - --window-size=1920,1080
       - --incognito
