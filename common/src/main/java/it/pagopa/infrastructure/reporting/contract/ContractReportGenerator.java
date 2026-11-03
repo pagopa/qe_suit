@@ -3,19 +3,15 @@ package it.pagopa.infrastructure.reporting.contract;
 import it.pagopa.infrastructure.reporting.contract.config.ContractReportConfig;
 import it.pagopa.infrastructure.reporting.contract.config.ContractReportConfigurationLoader;
 import it.pagopa.infrastructure.reporting.contract.config.ContractReportConfigurationValidator;
-import it.pagopa.infrastructure.reporting.contract.config.ContractTargetType;
 import it.pagopa.infrastructure.reporting.contract.model.ContractReport;
-import it.pagopa.infrastructure.reporting.contract.openapi.OpenApiContractTargetResolver;
 import it.pagopa.infrastructure.reporting.contract.parser.JUnitExecutionNode;
 import it.pagopa.infrastructure.reporting.contract.parser.OpenTestReportParser;
 import it.pagopa.infrastructure.reporting.contract.renderer.ContractReportRenderer;
 import it.pagopa.infrastructure.reporting.contract.resolver.ContractTargetResolverRegistry;
-import it.pagopa.infrastructure.reporting.contract.resolver.PageContractTargetResolver;
 
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 
 public class ContractReportGenerator {
 
@@ -34,10 +30,7 @@ public class ContractReportGenerator {
                 new ContractReportConfigurationValidator(),
                 new OpenTestReportParser(),
                 new ContractReportBuilder(
-                        new ContractTargetResolverRegistry(Map.of(
-                                ContractTargetType.OPENAPI, new OpenApiContractTargetResolver(),
-                                ContractTargetType.PAGE, new PageContractTargetResolver()
-                        ))
+                        ContractTargetResolverRegistry.defaults()
                 ),
                 new ContractReportRenderer()
         );
@@ -69,3 +62,4 @@ public class ContractReportGenerator {
         renderer.render(report, outputHtml);
     }
 }
+

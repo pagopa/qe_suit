@@ -1,6 +1,7 @@
 package it.pagopa.interop.suite.contract;
 
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+
+import it.frontend.e2e.framework.core.capability.core.Gettable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand;
@@ -35,11 +36,7 @@ import java.util.stream.Stream;
  * dagli NRT tramite {@code @Tag("ignore")}.
  */
 @SpringBootTest(
-        classes = {
-                TestBootApp.class,
-                JunitContextConfig.class,
-                WebJUnitSuitConfig.class
-        },
+        classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
         properties = "spring.profiles.include=junit"
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
@@ -65,7 +62,14 @@ public class WebEServiceDuplicationContractTest {
                     .targetState(DelegationState.ACTIVE)
                     .build());
 
-            return duplicationContract(delegator, role, eService, "ACTIVE");
+            return webContractValidator
+                    .as(User.getTenantUser(delegator, role), delegator)
+                    .on(
+                            ProducerEServiceDetailPage.class,
+                            eService.getId().toString(),
+                            eService.getActiveDescriptor().getId().toString()
+                    )
+                    .tests(Stream.of(duplicationScenario(role, eService, "ACTIVE")));
         });
     }
 
@@ -84,7 +88,14 @@ public class WebEServiceDuplicationContractTest {
                     .targetState(DelegationState.WAITING_FOR_APPROVAL)
                     .build());
 
-            return duplicationContract(delegator, role, eService, "WAITING_FOR_APPROVAL");
+            return webContractValidator
+                    .as(User.getTenantUser(delegator, role), delegator)
+                    .on(
+                            ProducerEServiceDetailPage.class,
+                            eService.getId().toString(),
+                            eService.getActiveDescriptor().getId().toString()
+                    )
+                    .tests(Stream.of(duplicationScenario(role, eService, "WAITING_FOR_APPROVAL")));
         });
     }
 
@@ -103,7 +114,14 @@ public class WebEServiceDuplicationContractTest {
                     .targetState(DelegationState.ACTIVE)
                     .build());
 
-            return unavailableDuplicationContract(delegate, role, eService, "ACTIVE");
+            return webContractValidator
+                    .as(User.getTenantUser(delegate, role), delegate)
+                    .on(
+                            ProducerEServiceDetailPage.class,
+                            eService.getId().toString(),
+                            eService.getActiveDescriptor().getId().toString()
+                    )
+                    .tests(Stream.of(unavailableDuplicationScenario(role, eService, "ACTIVE")));
         });
     }
 
@@ -122,7 +140,14 @@ public class WebEServiceDuplicationContractTest {
                     .targetState(DelegationState.WAITING_FOR_APPROVAL)
                     .build());
 
-            return unavailableDuplicationContract(delegate, role, eService, "WAITING_FOR_APPROVAL");
+            return webContractValidator
+                    .as(User.getTenantUser(delegate, role), delegate)
+                    .on(
+                            ProducerEServiceDetailPage.class,
+                            eService.getId().toString(),
+                            eService.getActiveDescriptor().getId().toString()
+                    )
+                    .tests(Stream.of(unavailableDuplicationScenario(role, eService, "WAITING_FOR_APPROVAL")));
         });
     }
 
@@ -134,47 +159,33 @@ public class WebEServiceDuplicationContractTest {
                 .get(EService.class);
     }
 
-    private Stream<DynamicTest> duplicationContract(
-            Tenant delegator, UserRole role, EService eService, String delegationState) {
-        return webContractValidator
-                .as(User.getTenantUser(delegator, role), delegator)
-                .on(
-                        ProducerEServiceDetailPage.class,
-                        eService.getId().toString(),
-                        eService.getActiveDescriptor().getId().toString()
-                )
-                .tests(Stream.of(new WebScenario<>(
-                        "Duplica e-service disponibile al delegante " + role.name() + " con delega " + delegationState
-                                + ": navigazione alla modifica della nuova bozza",
-                        page -> {
-                            page.pageTitle().readAndAssert(eService.getName());
-                            page.duplicateEService();
-                        },
-                        page -> page.duplicatedEServicePage().assertLoaded()
-                )));
+    private WebScenario<ProducerEServiceDetailPage> duplicationScenario(
+            UserRole role, EService eService, String delegationState) {
+        return new WebScenario<>(
+                "Duplica e-service disponibile al delegante " + role.name() + " con delega " + delegationState
+                        + ": navigazione alla modifica della nuova bozza",
+                page -> {
+                    page.pageTitle().readAndAssert(eService.getName());
+                    page.duplicateEService();
+                },
+                page -> page.duplicatedEServicePage().assertLoaded()
+        );
     }
 
-    private Stream<DynamicTest> unavailableDuplicationContract(
-            Tenant delegate, UserRole role, EService eService, String delegationState) {
-        return webContractValidator
-                .as(User.getTenantUser(delegate, role), delegate)
-                .on(
-                        ProducerEServiceDetailPage.class,
-                        eService.getId().toString(),
-                        eService.getActiveDescriptor().getId().toString()
-                )
-                .tests(Stream.of(new WebScenario<>(
-                        "Duplica e-service assente per il delegato " + role.name() + " con delega " + delegationState,
-                        page -> {
-                            page.pageTitle().readAndAssert(eService.getName());
-                            page.actionsMenuButton().click();
-                        },
-                        this::assertDuplicationIsAbsentFromOpenMenu
-                )));
+    private WebScenario<ProducerEServiceDetailPage> unavailableDuplicationScenario(
+            UserRole role, EService eService, String delegationState) {
+        return new WebScenario<>(
+                "Duplica e-service assente per il delegato " + role.name() + " con delega " + delegationState,
+                page -> {
+                    page.pageTitle().readAndAssert(eService.getName());
+                    page.actionsMenuButton().click();
+                },
+                this::assertDuplicationIsAbsentFromOpenMenu
+        );
     }
 
     private void assertDuplicationIsAbsentFromOpenMenu(ProducerEServiceDetailPage page) {
-        Assertions.assertThat(page.actionsMenu().get(FindPolicy.VISIBLE))
+        Assertions.assertThat(page.actionsMenu().get(Gettable.FindPolicy.VISIBLE))
                 .as("Actions menu is open and visible")
                 .isPresent();
         Assertions.assertThat(page.actionsMenuItems().getAll())
