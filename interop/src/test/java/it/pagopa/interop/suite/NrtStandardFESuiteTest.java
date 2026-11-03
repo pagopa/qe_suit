@@ -10,7 +10,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @GenerateContractReport
 @IncludeEngines({"cucumber", "junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
-@SelectClasses({
+//@SelectClasses({
 //        WebAgreementRequestPaginationContractTest.class,
 //        WebConsumerAgreementDetailsPageContractTest.class,
 //        WebConsumerAgreementsListPageContractTest.class,
