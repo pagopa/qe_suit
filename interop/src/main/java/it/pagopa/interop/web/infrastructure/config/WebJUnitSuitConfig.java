@@ -55,7 +55,8 @@ public class WebJUnitSuitConfig {
         BrowserSettings settings = BrowserSettings.of(
                 webSuitConfig.getBrowser(),
                 webSuitConfig.isHeadless(),
-                webSuitConfig.getArguments()
+                webSuitConfig.getArguments(),
+                webSuitConfig.getWaits().toSettings()
         );
 
         IWebPresentationApiAdapter adapter =

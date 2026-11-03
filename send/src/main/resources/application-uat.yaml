@@ -45,13 +45,19 @@ url:
     persona-giuridica:
       base: https://imprese.uat.notifichedigitali.it
       notifiche: ${url.notifiche.persona-giuridica.base}/notifiche
+      notifiche-dettaglio: ${url.notifiche.persona-giuridica.base}/notifiche/${iun}/dettaglio
+      notifiche-dettaglio-timeline: ${url.notifiche.persona-giuridica.base}/notifiche/${iun}/dettaglio/timeline
       notifiche-delegato: ${url.notifiche.persona-giuridica.base}/notifiche-delegato
+      notifiche-delegato-dettaglio: ${url.notifiche.persona-giuridica.notifiche-delegato}/${mandateId}/${iun}/dettaglio
+      notifiche-delegato-dettaglio-timeline: ${url.notifiche.persona-giuridica.notifiche-delegato-dettaglio}/timeline
       app-status: ${url.notifiche.persona-giuridica.base}/app-status
       integrazione-api: ${url.notifiche.persona-giuridica.base}/integrazione-api
       recapiti: ${url.notifiche.persona-giuridica.base}/recapiti
       deleghe-a-carico: ${url.notifiche.persona-giuridica.base}/deleghe/a-carico
       delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati
       add-delegati: ${url.notifiche.persona-giuridica.base}/deleghe/delegati/nuova
+      termini-di-servizio: ${url.notifiche.persona-giuridica.base}/termini-di-servizio
+      informativa-privacy: ${url.notifiche.persona-giuridica.base}/informativa-privacy
     mittente:
       base: https://selfcare.uat.notifichedigitali.it
       dashboard: ${url.notifiche.mittente.base}/dashboard
@@ -92,8 +98,7 @@ token:
 # ============================================================================
 bff:
   api:
-    # REPLACE_ME: host BFF reale per l'ambiente uat
-    base-url: REPLACE_ME
+    base-url: https://webapi.uat.notifichedigitali.it
     bearer-token: ${pn.external.bearer-token.tokenBffApiUat:REPLACE_ME}
 
 # ============================================================================
