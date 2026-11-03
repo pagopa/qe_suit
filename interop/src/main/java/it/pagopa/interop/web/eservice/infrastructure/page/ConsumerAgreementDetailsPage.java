@@ -9,11 +9,15 @@ import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Chip;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.AgreementDetailsAttributesSection;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.AgreementDetailsGeneralInfoSection;
+import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
+import org.assertj.core.api.Assertions;
 
 import java.util.List;
 
 @Url("${interop.web.base-url}/fruizione/richieste/${agreementId}")
 public interface ConsumerAgreementDetailsPage extends Page {
+
+    Breadcrumbs breadcrumbs();
 
     @XPath(".//h1")
     Readable<String> pageTitle();
@@ -47,6 +51,9 @@ public interface ConsumerAgreementDetailsPage extends Page {
 
     @Override
     default void assertLoaded() {
+        Assertions.assertThat(breadcrumbs().getPath())
+                .as("Breadcrumbs")
+                .isEqualTo("Fruizione/Richieste inoltrate/Gestisci richiesta");
         pageTitle().readAndAssert("Gestisci richiesta di fruizione");
     }
 }

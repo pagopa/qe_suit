@@ -12,6 +12,10 @@ public class TenantUseCase {
 
     private final TenantGateway tenantGateway;
 
+    public void enableProducerDelegationAvailability(TenantRef tenantRef) {
+        tenantGateway.enableProducerDelegationAvailability(tenantRef);
+    }
+
     public void assignCertifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef) {
         tenantGateway.assignCertifiedAttribute(tenantRef, attributeRef);
     }
