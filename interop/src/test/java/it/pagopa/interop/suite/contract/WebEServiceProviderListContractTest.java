@@ -1,6 +1,7 @@
 package it.pagopa.interop.suite.contract;
 
 import it.frontend.e2e.framework.core.capability.core.Gettable;
+import it.frontend.e2e.framework.core.capability.core.Readable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
@@ -59,11 +60,15 @@ public class WebEServiceProviderListContractTest {
                         new WebScenario<>("Visual provider e-services: table and ordered column headings",
                                 page -> {}, page -> {
                             page.table().get(Gettable.FindPolicy.PRESENT)
-                                            .orElseThrow(() -> new IllegalStateException("Provider e-service table missing"));
-                                    Assertions.assertThat(page.table().columnHeadings().readAll())
-                                            .as("Provider e-service list column headings")
-                                            .containsExactly("E-service", "Versione", "Stato", "");
-                                })
+                                    .orElseThrow(() -> new IllegalStateException("Provider e-service table missing"));
+                            Assertions.assertThat(page.table().columnHeadings().readAll())
+                                    .as("Provider e-service list column headings")
+                                    .containsExactly("E-service", "Versione", "Stato", "");
+                            page.pageItemsSelector().click();
+                            Assertions.assertThat(page.pageItemsSelector().sizes().stream().map(Readable::read).toList())
+                                    .as("option list of items on table numbers")
+                                    .containsExactly("12", "24", "36");
+                        })
                 );
     }
 
