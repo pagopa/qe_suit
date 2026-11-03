@@ -6,6 +6,7 @@ import it.pagopa.infrastructure.reporting.contract.config.ContractReportConfigur
 import it.pagopa.infrastructure.reporting.contract.config.ContractTargetType;
 import it.pagopa.infrastructure.reporting.contract.model.ContractReport;
 import it.pagopa.infrastructure.reporting.contract.openapi.OpenApiContractTargetResolver;
+import it.pagopa.infrastructure.reporting.contract.resolver.TestFactoryContractTargetResolver;
 import it.pagopa.infrastructure.reporting.contract.parser.JUnitExecutionNode;
 import it.pagopa.infrastructure.reporting.contract.parser.OpenTestReportParser;
 import it.pagopa.infrastructure.reporting.contract.renderer.ContractReportRenderer;
@@ -36,6 +37,7 @@ public class ContractReportGenerator {
                 new ContractReportBuilder(
                         new ContractTargetResolverRegistry(Map.of(
                                 ContractTargetType.OPENAPI, new OpenApiContractTargetResolver(),
+                                ContractTargetType.TEST_FACTORY, new TestFactoryContractTargetResolver(),
                                 ContractTargetType.PAGE, new PageContractTargetResolver()
                         ))
                 ),
