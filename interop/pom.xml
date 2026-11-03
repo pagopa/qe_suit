@@ -26,13 +26,13 @@
         <rest-assured.version>6.0.1</rest-assured.version>
         <swagger-request-validator.version>2.46.1</swagger-request-validator.version>
         <auth.openapi.url>
-            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.23.1-RC1/packages/api-clients/open-api/authorizationServerApi.yml
+            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC1/packages/api-clients/open-api/authorizationServerApi.yml
         </auth.openapi.url>
         <bff.openapi.url>
-             https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.23.1-RC1/packages/api-clients/open-api/bffApi.yml
+             https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC1/packages/api-clients/open-api/bffApi.yml
         </bff.openapi.url>
         <m2m.v3.openapi.url>
-            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.23.1-RC1/packages/api-clients/open-api/m2mGatewayApiV3.yml
+            https://raw.githubusercontent.com/pagopa/interop-be-monorepo/refs/tags/2.24.0-RC1/packages/api-clients/open-api/m2mGatewayApiV3.yml
         </m2m.v3.openapi.url>
         <!-- FuzzingProfile shared by runtime contract tests and PST generation (pst:generate) -->
         <pst.fuzzingProfile>it.pagopa.interop.common.infrastructure.contract.InteropFuzzingProfile</pst.fuzzingProfile>
@@ -851,7 +851,6 @@ import java.io.File;
                             </includes>
                             <excludes>
                                 <exclude>**/suite/**</exclude>
-                                <exclude>**/architecture/**</exclude>
                                 <exclude>**/ci/**</exclude>
                             </excludes>
                             <failIfNoTests>true</failIfNoTests>

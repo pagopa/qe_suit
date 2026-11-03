@@ -2,12 +2,12 @@ package it.pagopa.interop.web.tos.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.core.capability.core.Gettable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.DomNode;
 import it.frontend.e2e.framework.web.domain.Page;
-import it.pagopa.interop.web.tos.infrastructure.page.component.TOSSection;
 import it.pagopa.interop.web.tos.infrastructure.page.component.TOSIndex;
+import it.pagopa.interop.web.tos.infrastructure.page.component.TOSSection;
 import org.assertj.core.api.Assertions;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public interface TOSPage extends Page {
     DomNode documentBase();
 
     default String documentBaseHref() {
-        return documentBase().get(FindPolicy.PRESENT)
+        return documentBase().get(Gettable.FindPolicy.PRESENT)
                 .orElseThrow(() -> new IllegalStateException("Elemento base del documento TOS non disponibile"))
                 .getAttributes().get("href");
     }
