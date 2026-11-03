@@ -84,6 +84,11 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
         );
     }
 
+    @Override
+    public EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String openApiInterfacePath, String name) {
+        return linkDocument(eServiceRef, descriptorRef, openApiInterfacePath, DocumentKind.INTERFACE, name);
+    }
+
     private void setDefaultAsyncPropertiesIfNeeded(
             EServiceRef serviceRef,
             EServiceDescriptorRef descriptorRef,
@@ -92,7 +97,7 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
         if (command.getBffPayload().getAsyncExchangeProperties() != null) return;
         EService service = entityStore.getById(serviceRef.id(), EService.class).orElseThrow();
         if (!service.getAsyncExchange()) return;
-        linkOpenApiCallbackInterface(serviceRef, descriptorRef, "assets/origin-interface.yaml");
+        linkOpenApiCallbackInterface(serviceRef, descriptorRef, "assets/origin-interface.yaml", null);
         it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties properties =
                 new it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties()
                         .responseTime(60)
@@ -103,31 +108,25 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
         command.getBffPayload().setAsyncExchangeProperties(properties);
     }
 
-    @Override
-    public EServiceDescriptor linkOpenApiInterface(
-            EServiceRef serviceRef,
-            EServiceDescriptorRef descriptorRef,
-            String path
-    ) {
-        return linkDocument(serviceRef, descriptorRef, path, DocumentKind.INTERFACE);
-    }
 
     @Override
     public EServiceDescriptor linkOpenApiCallbackInterface(
             EServiceRef serviceRef,
             EServiceDescriptorRef descriptorRef,
-            String path
+            String path,
+            String name
     ) {
-        return linkDocument(serviceRef, descriptorRef, path, DocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE);
+        return linkDocument(serviceRef, descriptorRef, path, DocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE, name);
     }
 
     private EServiceDescriptor linkDocument(
             EServiceRef serviceRef,
             EServiceDescriptorRef descriptorRef,
             String path,
-            DocumentKind kind
+            DocumentKind kind,
+            String name
     ) {
-        return interfaceGateway.linkDocument(serviceRef, descriptorRef, path, kind);
+        return interfaceGateway.linkDocument(serviceRef, descriptorRef, path, kind, name);
     }
 
     @Override

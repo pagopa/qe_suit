@@ -1,19 +1,15 @@
 package it.pagopa.interop.web.agreement.infrastructure.page.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Alert;
 import it.pagopa.infrastructure.suit.component.PageSize;
-import it.pagopa.infrastructure.suit.component.Pagination;
-import org.assertj.core.api.SoftAssertions;
+import it.pagopa.infrastructure.suit.component.Table;
+import org.assertj.core.api.Assertions;
 
-import java.util.List;
 import java.util.Optional;
 
 @XPath(".//table[contains(@class, 'MuiTable-root')]")
-public interface AgreementRequestTable extends Component {
-
-    List<AgreementRequestRow> rows();
+public interface AgreementRequestTable extends Table {
 
     @XPath(".//tr/td//div[contains(@class, 'MuiAlert-root')]")
     Optional<Alert> noResultsAlert();
@@ -22,11 +18,9 @@ public interface AgreementRequestTable extends Component {
 
     @Override
     default void assertLoaded() {
-        SoftAssertions.assertSoftly(softly ->
-                softly.assertThat(!rows().isEmpty() || noResultsAlert().isPresent())
-                        .as("La tabella deve mostrare righe oppure lo stato 'La ricerca corrente non ha prodotto risultati'")
-                        .isTrue()
-        );
+        Assertions.assertThat(getColumnHeaders())
+                .as("Intestazioni della tabella")
+                .contains("E-service", "Erogatore", "Stato richiesta");
     }
 }
 
