@@ -1,12 +1,17 @@
 package it.pagopa.send.common.infrastructure.contract;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import it.pagopa.infrastructure.fuzzing.*;
 
 import java.util.List;
 
 public final class SendFuzzingProfile implements FuzzingProfile {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    // JavaTimeModule is required to decompose DTOs carrying OpenAPI date-time fields (OffsetDateTime).
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .registerModule(new JavaTimeModule())
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     private final NullAndMissingRule nullAndMissingRule = new NullAndMissingRule();
     private final ScalarRule scalarRule = new ScalarRule();
 
