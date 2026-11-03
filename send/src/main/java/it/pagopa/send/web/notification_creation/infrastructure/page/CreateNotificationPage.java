@@ -21,6 +21,7 @@ import org.assertj.core.api.Assertions;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * {@code {baseUrl}/nuova-notifica}
@@ -61,12 +62,35 @@ public interface CreateNotificationPage extends Page {
         @XPath(".//*[@id='group']")
         Clickable openGroupDropdown();
 
+        // "Gruppo *" quando l'ente ha dei gruppi e il gruppo è obbligatorio, altrimenti "Gruppo"
+        @XPath(".//label[@id='group-label']")
+        Readable<String> groupLabel();
+
+        // voci della tendina aperta: il menu è fuori dal form
+        @XPath("//*[@role='option']")
+        List<Button> groupOptions();
+
         default void fillFields(NotificationData data) {
             //selectLanguageItalian().click();
             subject().write(data.getSubject());
             protocolNumber().write(data.getProtocolNumber());
             taxonomyCode().write(data.getTaxonomyCode());
             //selectModel890().click();
+            // il gruppo indicato dai dati, altrimenti il primo disponibile se l'ente ha dei gruppi e quindi è obbligatorio
+            if (data.getGroup() != null) {
+                selectGroup(option -> data.getGroup().equals(option.read()));
+            } else if (groupLabel().read().endsWith("*")) {
+                selectGroup(option -> true);
+            }
+        }
+
+        default void selectGroup(Predicate<Button> option) {
+            openGroupDropdown().click();
+            groupOptions().stream()
+                    .filter(option)
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Gruppo non presente nella tendina"))
+                    .click();
         }
 
         default XPathSelector groupOptionSelector(String groupName) {
