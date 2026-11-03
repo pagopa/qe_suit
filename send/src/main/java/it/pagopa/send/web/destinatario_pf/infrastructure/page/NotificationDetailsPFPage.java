@@ -6,6 +6,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.send.web.login.infrastructure.page.DowntimeItem;
+import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Chip;
 import it.pagopa.send.web.notification_details.infrastructure.suit.NotificationDetailsPage;
@@ -15,12 +16,15 @@ import it.pagopa.send.web.notification_details.infrastructure.suit.section.Notif
 import it.pagopa.send.web.notification_details.infrastructure.suit.section.PaymentSection;
 import org.assertj.core.api.Assertions;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * {@code {baseUrl}/notifiche/<IUN>/dettaglio}
  * Pagina di dettaglio di una notifica del cittadino.
- * Si apre dal pulsante "Apri" di una riga della pagina {@code {baseUrl}/notifiche}.
+ * Si apre dal pulsante "Apri" di una riga della pagina {@code {baseUrl}/notifiche} oppure direttamente dall'URL, con lo
+ * IUN della notifica come parametro.
  * Il contenuto cambia con il tipo di notifica: una notifica a valore legale ha documenti, stato, avviso di avvenuta
  * ricezione e disservizi; una comunicazione ({@code {baseUrl}/comunicazione/<IUN>/dettaglio}) ha messaggio, documenti,
  * pagamenti e contatti del mittente. Le sezioni che implementano {@link NotificationDetailsPage} sono condivise con gli
@@ -28,7 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * L'assertLoaded verifica che la pagina sia caricata, cioè l'oggetto, il breadcrumb e lo IUN. La pagina esiste solo se
  * l'utente ha delle notifiche, quindi non ha un contract test: va verificata con dei test di business.
  */
-@Url("about:blank")
+@Url("${url.notifiche.cittadino.notifiche-dettaglio}")
 public interface NotificationDetailsPFPage extends NotificationDetailsPage {
 
     @XPath("//*[@data-testid=\"breadcrumb-root-button\"]")
@@ -42,6 +46,9 @@ public interface NotificationDetailsPFPage extends NotificationDetailsPage {
 
     @XPath("//main")
     NotificationTimelinePFPage notificationTimeline();
+
+    // il banner dei cookie copre "Vai al dettaglio": va accettato prima di cliccarlo
+    Optional<OneTrustBanner> oneTrustBanner();
 
     // labels
 

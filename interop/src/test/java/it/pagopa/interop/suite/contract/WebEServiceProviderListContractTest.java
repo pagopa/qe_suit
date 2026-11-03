@@ -1,6 +1,7 @@
 package it.pagopa.interop.suite.contract;
 
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.core.capability.core.Gettable;
+import it.frontend.e2e.framework.core.capability.core.Readable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
@@ -58,12 +59,16 @@ public class WebEServiceProviderListContractTest {
                                 page -> {}, this::assertInitialFilters),
                         new WebScenario<>("Visual provider e-services: table and ordered column headings",
                                 page -> {}, page -> {
-                                    page.table().get(FindPolicy.PRESENT)
-                                            .orElseThrow(() -> new IllegalStateException("Provider e-service table missing"));
-                                    Assertions.assertThat(page.table().columnHeadings().readAll())
-                                            .as("Provider e-service list column headings")
-                                            .containsExactly("E-service", "Versione", "Stato", "");
-                                })
+                            page.table().get(Gettable.FindPolicy.PRESENT)
+                                    .orElseThrow(() -> new IllegalStateException("Provider e-service table missing"));
+                            Assertions.assertThat(page.table().columnHeadings().readAll())
+                                    .as("Provider e-service list column headings")
+                                    .containsExactly("E-service", "Versione", "Stato", "");
+                            page.pageItemsSelector().click();
+                            Assertions.assertThat(page.pageItemsSelector().sizes().stream().map(Readable::read).toList())
+                                    .as("option list of items on table numbers")
+                                    .containsExactly("12", "24", "36");
+                        })
                 );
     }
 
@@ -88,9 +93,9 @@ public class WebEServiceProviderListContractTest {
         var filters = page.filters();
         Assertions.assertThat(filters.nameLabel().read()).as("Name search label").isEqualTo("Cerca per nome");
         Assertions.assertThat(filters.consumerLabel().read()).as("Consumer search label").isEqualTo("Cerca per fruitore");
-        var name = filters.nameInput().get(FindPolicy.PRESENT)
+        var name = filters.nameInput().get(Gettable.FindPolicy.PRESENT)
                 .orElseThrow(() -> new IllegalStateException("Name search input missing"));
-        var consumer = filters.consumerInput().get(FindPolicy.PRESENT)
+        var consumer = filters.consumerInput().get(Gettable.FindPolicy.PRESENT)
                 .orElseThrow(() -> new IllegalStateException("Consumer search input missing"));
         Assertions.assertThat(name.getAttributes()).as("Initial name search state")
                 .containsEntry("value", "").doesNotContainKey("disabled");
