@@ -1,15 +1,15 @@
 package it.pagopa.interop.suite;
 
 import it.pagopa.infrastructure.reporting.contract.lifecycle.GenerateContractReport;
-import it.pagopa.interop.suite.contract.*;
-import org.junit.jupiter.api.Tag;
+import it.pagopa.interop.suite.contract.BffEServiceContractTest;
+import it.pagopa.interop.suite.contract.WebEServiceCatalogContractTest;
 import org.junit.platform.suite.api.*;
 
 import static io.cucumber.junit.platform.engine.Constants.*;
 
 @Suite
 @GenerateContractReport
-@IncludeEngines({"cucumber","junit-jupiter"})
+@IncludeEngines({"cucumber", "junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
 @IncludeTags("private-catalog")
 @SelectClasses({

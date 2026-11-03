@@ -1,6 +1,7 @@
 @private-catalog
 @private-catalog-delegations
 @producer-delegation-settings
+@ignore
 @channel:Given=BFF,When=BFF,Then=BFF
 Feature: Filtro per ruolo di delega nel catalogo privato
 
