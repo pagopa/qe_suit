@@ -127,13 +127,18 @@ public class WebTermsOfServiceB2bPageContractTest {
                         "ogni voce dell'indice porta a una sezione della pagina",
                         page -> {},
                         page -> {
+                            // ogni voce dell'indice porta a questa pagina ("…/termini-di-servizio/b2b#<id>") e alla sezione con quell'id
                             List<String> hrefs = page.indexLinks().getAll().orElse(List.of()).stream()
                                     .map(WebPresentationElement::getAttributes)
                                     .map(attributes -> attributes.get("href"))
                                     .toList();
                             Assertions.assertThat(hrefs)
-                                    .hasSize(page.sections().readAll().size())
+                                    .hasSize(page.sectionIds().size())
                                     .allSatisfy(href -> Assertions.assertThat(href).contains("/termini-di-servizio/b2b#otnotice-section-"));
+                            Assertions.assertThat(hrefs.stream()
+                                            .map(href -> href.substring(href.indexOf('#') + 1))
+                                            .toList())
+                                    .containsExactlyElementsOf(page.sectionIds());
                         }
                 )
         );
