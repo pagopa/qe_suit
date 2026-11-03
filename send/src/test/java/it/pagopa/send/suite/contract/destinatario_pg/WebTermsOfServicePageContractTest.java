@@ -127,13 +127,13 @@ public class WebTermsOfServicePageContractTest {
                         "ogni voce dell'indice porta a una sezione della pagina",
                         page -> {},
                         page -> {
-                            List<String> hrefs = page.indexLinks().getAll().orElse(List.of()).stream()
+                            // l'ancora di ogni voce dell'indice ("…/termini-di-servizio#<id>") deve essere l'id di una sezione
+                            List<String> anchors = page.indexLinks().getAll().orElse(List.of()).stream()
                                     .map(WebPresentationElement::getAttributes)
                                     .map(attributes -> attributes.get("href"))
+                                    .map(href -> href.substring(href.indexOf('#') + 1))
                                     .toList();
-                            Assertions.assertThat(hrefs)
-                                    .hasSize(page.sections().readAll().size())
-                                    .allSatisfy(href -> Assertions.assertThat(href).contains("/termini-di-servizio#otnotice-section-"));
+                            Assertions.assertThat(anchors).containsExactlyElementsOf(page.sectionIds());
                         }
                 )
         );
