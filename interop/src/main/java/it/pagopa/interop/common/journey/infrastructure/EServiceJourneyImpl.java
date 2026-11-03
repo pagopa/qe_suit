@@ -11,6 +11,7 @@ import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescr
 import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
 import it.pagopa.utils.async.PollingUtils;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +23,6 @@ import java.util.function.Predicate;
 @Component
 @RequiredArgsConstructor
 public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl> {
-
     private final EServiceUseCase eServiceUseCase;
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EntityStore entityStore;
@@ -37,9 +37,25 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
-    public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {
-        EService draftEService = eServiceUseCase.createEService(cmd -> {});
+    public EServiceJourneyImpl createEService(Consumer<EServiceCreationCommand> commandConfig, EServiceDescriptorState targetState) {
+        EService draftEService = eServiceUseCase.createEService(commandConfig);
         return processLifecycle(draftEService, draftEService.getLastDraftDescriptor(), targetState);
+    }
+
+    @Override
+    public EServiceJourneyImpl createEService(EServiceDescriptorState targetState) {return createEService(cmd -> {}, targetState);}
+
+    @Override
+    public EServiceJourneyImpl linkOpenApiInterface() {return linkOpenApiInterface("assets/origin-interface.yaml", null);}
+
+    @Override
+    public EServiceJourneyImpl linkOpenApiInterface(String path, @Nullable String name) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        EServiceDescriptor descriptor = eService.getLastDraftDescriptor();
+        EServiceDescriptor updatedDescriptor = eServiceDescriptorUseCase.linkOpenApiInterface(eService, descriptor, path, name);
+        eService.addDescriptor(updatedDescriptor);
+        entityStore.upsert(eService);
+        return this;
     }
 
     @Override
@@ -122,9 +138,9 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     public EServiceJourneyImpl waitUntilEService(Predicate<EService> predicate) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         PollingUtils.pollUntil(() -> {
-                    eService.getDescriptors().forEach(descriptor -> eServiceDescriptorUseCase.getDescriptor(eService, descriptor));
-                    return eServiceUseCase.getEService(eService);
-                }, predicate);
+            eService.getDescriptors().forEach(descriptor -> eServiceDescriptorUseCase.getDescriptor(eService, descriptor));
+            return eServiceUseCase.getEService(eService);
+        }, predicate);
         return this;
     }
 
@@ -137,9 +153,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         return switch (targetState) {
             case DRAFT -> this;
             case PUBLISHED -> publishPipeline(eService, eServiceDescriptor, command);
-            default -> throw new UnsupportedOperationException(
-                    String.format("La transizione allo stato %s non è ancora supportata nel Journey.", targetState)
-            );
+            default -> throw new UnsupportedOperationException(String.format("La transizione allo stato %s non è ancora supportata nel Journey.", targetState));
         };
     }
 
@@ -159,7 +173,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
                                     .build())
             );
         }
-        eServiceDescriptorUseCase.linkOpenApiInterface(eService, updatedDescriptor, "assets/origin-interface.yaml");
+        eServiceDescriptorUseCase.linkOpenApiInterface(eService, updatedDescriptor, "assets/origin-interface.yaml", null);
         eServiceDescriptorUseCase.publishDescriptor(eService, eServiceDescriptor);
         return this;
     }

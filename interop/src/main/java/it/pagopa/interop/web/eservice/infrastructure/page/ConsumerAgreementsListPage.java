@@ -43,8 +43,13 @@ public interface ConsumerAgreementsListPage extends Page {
     @Override
     default void assertLoaded() {
         Assertions.assertThat(breadcrumbs().items().stream().map(Readable::read).toList())
-                .as("Breadcrumbs")
+                .as("Breadcrumbs should be present and in the correct order")
                 .containsExactly("Fruizione", "Richieste inoltrate");
+
+        Assertions.assertThat(agreementsTable().get())
+                .as("Agreements table should be present")
+                .isPresent();
+
         pageTitle().readAndAssert("Richieste di fruizione inoltrate");
     }
 }
