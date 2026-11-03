@@ -31,7 +31,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 //        WebProviderEServiceSummaryContractTest.class,
 //        WebPurposeTemplateContractTest.class,
 //        WebTOSContractTest.class,
-})
+//})
 @ExcludeTags("ignore")
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
