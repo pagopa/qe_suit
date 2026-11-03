@@ -10,28 +10,28 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @GenerateContractReport
 @IncludeEngines({"cucumber", "junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
-//@SelectClasses({
-//        WebAgreementRequestPaginationContractTest.class,
-//        WebConsumerAgreementDetailsPageContractTest.class,
-//        WebConsumerAgreementsListPageContractTest.class,
-//        WebConsumerPurposeDetailsPageContractTest.class,
-//        WebConsumerPurposesListPageContractTest.class,
-//        WebConsumerPurposeTemplateCatalogPageContractTest.class,
-//        WebDebugClientAssertionContractTest.class,
-//        WebEServiceCatalogContractTest.class,
-//        WebEServiceContractTest.class,
-//        WebEServiceCreatePageContractTest.class,
-//        WebEServiceDetailsCatalogPageContractTest.class,
-//        WebEServiceDuplicationContractTest.class,
-//        WebEServiceProviderListContractTest.class,
-//        WebEServiceThresholdContractTest.class,
-//        WebProducerAgreementContractTest.class,
-//        WebProducerEServiceAttributesContractTest.class,
-//        WebProducerPurposeContractTest.class,
-//        WebProviderEServiceSummaryContractTest.class,
-//        WebPurposeTemplateContractTest.class,
-//        WebTOSContractTest.class,
-//})
+@SelectClasses({
+        WebAgreementRequestPaginationContractTest.class,
+        WebConsumerAgreementDetailsPageContractTest.class,
+        WebConsumerAgreementsListPageContractTest.class,
+        WebConsumerPurposeDetailsPageContractTest.class,
+        WebConsumerPurposesListPageContractTest.class,
+        WebConsumerPurposeTemplateCatalogPageContractTest.class,
+        WebDebugClientAssertionContractTest.class,
+        WebEServiceCatalogContractTest.class,
+        WebEServiceContractTest.class,
+        WebEServiceCreatePageContractTest.class,
+        WebEServiceDetailsCatalogPageContractTest.class,
+        WebEServiceDuplicationContractTest.class,
+        WebEServiceProviderListContractTest.class,
+        WebEServiceThresholdContractTest.class,
+        WebProducerAgreementContractTest.class,
+        WebProducerEServiceAttributesContractTest.class,
+        WebProducerPurposeContractTest.class,
+        WebProviderEServiceSummaryContractTest.class,
+        WebPurposeTemplateContractTest.class,
+        WebTOSContractTest.class,
+})
 @ExcludeTags("ignore")
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
@@ -64,7 +64,10 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(
                 key = FILTER_TAGS_PROPERTY_NAME,
                 value = """
-                        @agreement-security
+                        (@debug-client-assertion-page-ui-flow
+                         or @agreement
+                         or @debug-client-assertion-page-ui-behavior
+                         or @dev-tools-page-ui-behavior)
                         and not @wait_for_fix
                         and not @ignore
                         """
