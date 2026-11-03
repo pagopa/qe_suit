@@ -12,11 +12,7 @@ import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("AbstractPresentationBinder")
 class DefaultBinderTest {
@@ -97,7 +93,22 @@ class DefaultBinderTest {
         }
 
         @Override
+        public boolean exists(FindPolicy policy) {
+            return false;
+        }
+
+        @Override
+        public Optional<TestElement> get(FindPolicy policy) {
+            return Optional.empty();
+        }
+
+        @Override
         public Optional<List<TestElement>> getAll() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<List<TestElement>> getAll(FindPolicy policy) {
             return Optional.empty();
         }
     }
