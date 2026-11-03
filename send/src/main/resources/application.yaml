@@ -40,3 +40,27 @@ bff:
     # REPLACE_ME: sempre sovrascritto dal profilo attivo (test/dev/uat), valore reale solo in locale
     bearer-token: REPLACE_ME
 
+# ============================================================================
+# Contract Report
+# ============================================================================
+# Letto da ContractReportGenerator alla chiusura della sessione JUnit, quando la suite lanciata
+# e' annotata @GenerateContractReport (vedi BffRoleAuthorizationTest). Output in
+# target/contract-test/report.html. Il canale si risolve per prefisso del nome della classe: le
+# Web*ContractTest, non mappate, restano fuori dal report.
+#
+# target-type TEST_FACTORY e non OPENAPI perche' ogni factory prova piu' endpoint, quindi il nome
+# del metodo non e' un operationId. Per questo target-type non serve lo spec OpenAPI.
+contract-report:
+  channels:
+    bff:
+      label: BFF
+      class-prefix: Bff
+      target-type: TEST_FACTORY
+
+
+safestorage:
+  api:
+    base-url: http://localhost:8888
+    openapi-url: ${safestorage.openapi.url:https://raw.githubusercontent.com/pagopa/pn-ss/9359720a58de351170031f1513b5cd41b24d98a8/docs/openapi/pn-safestorage-v1.1-api.yaml}
+    api-key: pn-test_api_key
+    client-id: pn-test
