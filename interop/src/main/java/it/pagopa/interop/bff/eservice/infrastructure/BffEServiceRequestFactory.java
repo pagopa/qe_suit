@@ -63,7 +63,7 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
         payload.setSortBy(EServiceSortBy.NAME_ASC);
         payload.setMode(EServiceMode.DELIVER);
         payload.setProducerCategories(new ArrayList<>(List.of(EServiceProducerCategory.COMUNI)));
-        payload.setRequesterDelegationRoles(new ArrayList<>(List.of(RequesterDelegationRole.DELEGATE)));
+        //payload.setRequesterDelegationRoles(new ArrayList<>(List.of(RequesterDelegationRole.DELEGATE)));
         payload.setOnlyActiveEservices(false);
         payload.setAvailableForRequester(false);
         payload.setSubscribedByRequester(false);
@@ -125,7 +125,7 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
         target.setAsyncExchange(source.getAsyncExchange());
         target.setMode(source.getMode());
         target.setOnlySignalHubEnabled(source.getOnlySignalHubEnabled());
-        target.setRequesterDelegationRoles(copyList(source.getRequesterDelegationRoles()));
+        //target.setRequesterDelegationRoles(copyList(source.getRequesterDelegationRoles()));
         target.setTemplateId(source.getTemplateId());
         target.setProducersIds(copyList(source.getProducersIds()));
         return copy;

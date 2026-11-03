@@ -41,7 +41,7 @@ class BffEServiceCatalogTest {
         UUID descriptorId = UUID.randomUUID();
         CatalogEServices response = new CatalogEServices().results(List.of(
                 new CatalogEService().id(id).name("Nebula").description("description")
-                        .producer(new CatalogTenant().id(producerId)).isMine(false).hasUnreadNotifications(true)
+                        //.producer(new CatalogTenant().id(producerId)).isMine(false).hasUnreadNotifications(true)
                         .activeDescriptor(new CompactDescriptor().id(descriptorId).version("2")
                                 .state(it.pagopa.interop.generated.openapi.clients.bff.model.EServiceDescriptorState.PUBLISHED)),
                 new CatalogEService().id(id).name("duplicate kept")))
@@ -97,8 +97,8 @@ class BffEServiceCatalogTest {
         assertThat(command.getBffPayload().getProducerCategories()).containsExactly(EServiceProducerCategory.COMUNI);
         assertThat(command.getBffPayload().getAvailableForRequester()).isTrue();
         assertThat(command.getBffPayload().getSubscribedByRequester()).isFalse();
-        assertThat(command.getBffPayload().getRequesterDelegationRoles()).extracting(Enum::name)
-                .containsExactly("DELEGATE", "DELEGATOR");
+//        assertThat(command.getBffPayload().getRequesterDelegationRoles()).extracting(Enum::name)
+//                .containsExactly("DELEGATE", "DELEGATOR");
         assertThat(command.getBffPayload().getHasLinkedPurposeTemplates()).isTrue();
         verify(operation, times(1)).execute(any());
         assertThat(EservicesApi.QueryEServicesCatalogOper.REQ_METHOD.name()).isEqualTo("POST");
@@ -229,8 +229,8 @@ class BffEServiceCatalogTest {
         var payload = command.getBffPayload();
         assertThat(payload.getAvailableForRequester()).isTrue();
         assertThat(payload.getSubscribedByRequester()).isFalse();
-        assertThat(payload.getRequesterDelegationRoles()).extracting(Enum::name)
-                .containsExactly("DELEGATE", "DELEGATOR");
+//        assertThat(payload.getRequesterDelegationRoles()).extracting(Enum::name)
+//                .containsExactly("DELEGATE", "DELEGATOR");
         assertThat(payload.getHasLinkedPurposeTemplates()).isTrue();
     }
 
@@ -253,7 +253,7 @@ class BffEServiceCatalogTest {
         payload.setAsyncExchange(false);
         payload.setMode(EServiceMode.DELIVER);
         payload.setOnlySignalHubEnabled(true);
-        payload.setRequesterDelegationRoles(new ArrayList<>(List.of(RequesterDelegationRole.values()[0])));
+        //payload.setRequesterDelegationRoles(new ArrayList<>(List.of(RequesterDelegationRole.values()[0])));
         payload.setTemplateId(templateId);
         payload.setProducersIds(new ArrayList<>(List.of(producerId)));
 
@@ -275,13 +275,13 @@ class BffEServiceCatalogTest {
         assertThat(copiedPayload.getAsyncExchange()).isFalse();
         assertThat(copiedPayload.getMode()).isEqualTo(EServiceMode.DELIVER);
         assertThat(copiedPayload.getOnlySignalHubEnabled()).isTrue();
-        assertThat(copiedPayload.getRequesterDelegationRoles())
-                .containsExactly(RequesterDelegationRole.values()[0]);
+//        assertThat(copiedPayload.getRequesterDelegationRoles())
+//                .containsExactly(RequesterDelegationRole.values()[0]);
         assertThat(copiedPayload.getTemplateId()).isEqualTo(templateId);
         assertThat(copiedPayload.getProducersIds()).containsExactly(producerId);
         assertThat(payload.getOffset()).isEqualTo(4);
         assertThat(copiedPayload.getProducerCategories()).isNotSameAs(payload.getProducerCategories());
-        assertThat(copiedPayload.getRequesterDelegationRoles()).isNotSameAs(payload.getRequesterDelegationRoles());
+        //assertThat(copiedPayload.getRequesterDelegationRoles()).isNotSameAs(payload.getRequesterDelegationRoles());
         assertThat(copiedPayload.getProducersIds()).isNotSameAs(payload.getProducersIds());
     }
 

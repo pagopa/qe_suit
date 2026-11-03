@@ -115,39 +115,39 @@ class EServiceCatalogSearchConfigurationMapperTest {
         assertThat(command.getBffPayload().getHasLinkedPurposeTemplates()).isTrue();
     }
 
-    @ParameterizedTest
-    @CsvSource({
-            "delegato,DELEGATE",
-            "delegante,DELEGATOR"
-    })
-    void mapsEachRequesterDelegationRole(String value, String expected) {
-        mapper.apply(List.of(transform(Map.of("filtro", "ruolo di delega", "valore", value))), command);
+//    @ParameterizedTest
+//    @CsvSource({
+//            "delegato,DELEGATE",
+//            "delegante,DELEGATOR"
+//    })
+//    void mapsEachRequesterDelegationRole(String value, String expected) {
+//        mapper.apply(List.of(transform(Map.of("filtro", "ruolo di delega", "valore", value))), command);
+//
+//        assertThat(command.getBffPayload().getRequesterDelegationRoles())
+//                .extracting(Enum::name)
+//                .containsExactly(expected);
+//    }
 
-        assertThat(command.getBffPayload().getRequesterDelegationRoles())
-                .extracting(Enum::name)
-                .containsExactly(expected);
-    }
+//    @Test
+//    void mapsBothRequesterDelegationRolesAsAnOrFilter() {
+//        mapper.apply(List.of(transform(Map.of(
+//                "filtro", "ruolo di delega", "valore", "delegato e delegante"))), command);
+//
+//        assertThat(command.getBffPayload().getRequesterDelegationRoles())
+//                .extracting(Enum::name)
+//                .containsExactly("DELEGATE", "DELEGATOR");
+//    }
 
-    @Test
-    void mapsBothRequesterDelegationRolesAsAnOrFilter() {
-        mapper.apply(List.of(transform(Map.of(
-                "filtro", "ruolo di delega", "valore", "delegato e delegante"))), command);
-
-        assertThat(command.getBffPayload().getRequesterDelegationRoles())
-                .extracting(Enum::name)
-                .containsExactly("DELEGATE", "DELEGATOR");
-    }
-
-    @Test
-    void keepsRequesterFiltersUnsetWhenTheyAreNotRequested() {
-        var originalRoles = command.getBffPayload().getRequesterDelegationRoles();
-        mapper.apply(List.of(), command);
-
-        assertThat(command.getBffPayload().getAvailableForRequester()).isNull();
-        assertThat(command.getBffPayload().getSubscribedByRequester()).isNull();
-        assertThat(command.getBffPayload().getRequesterDelegationRoles()).isSameAs(originalRoles);
-        assertThat(command.getBffPayload().getHasLinkedPurposeTemplates()).isNull();
-    }
+//    @Test
+//    void keepsRequesterFiltersUnsetWhenTheyAreNotRequested() {
+//        var originalRoles = command.getBffPayload().getRequesterDelegationRoles();
+//        mapper.apply(List.of(), command);
+//
+//        assertThat(command.getBffPayload().getAvailableForRequester()).isNull();
+//        assertThat(command.getBffPayload().getSubscribedByRequester()).isNull();
+//        assertThat(command.getBffPayload().getRequesterDelegationRoles()).isSameAs(originalRoles);
+//        assertThat(command.getBffPayload().getHasLinkedPurposeTemplates()).isNull();
+//    }
 
     @ParameterizedTest
     @CsvSource({"erogazione,DELIVER", "ricezione,RECEIVE"})

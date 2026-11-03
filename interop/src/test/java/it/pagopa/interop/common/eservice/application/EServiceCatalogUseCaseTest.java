@@ -7,7 +7,6 @@ import it.pagopa.interop.common.eservice.domain.EServiceCatalog;
 import it.pagopa.interop.common.eservice.domain.EServiceCatalogSortBy;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.tenant.domain.TenantCategory;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RequesterDelegationRole;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -564,7 +563,7 @@ class EServiceCatalogUseCaseTest {
         payload.setSubscribedByRequester(false);
         payload.setOnlyTemplateInstances(true);
         payload.setHasLinkedPurposeTemplates(false);
-        payload.setRequesterDelegationRoles(List.of(RequesterDelegationRole.values()[0]));
+        //payload.setRequesterDelegationRoles(List.of(RequesterDelegationRole.values()[0]));
         payload.setTemplateId(UUID.randomUUID());
         return command;
     }
@@ -584,7 +583,7 @@ class EServiceCatalogUseCaseTest {
         assertThat(payload.getSubscribedByRequester()).isFalse();
         assertThat(payload.getOnlyTemplateInstances()).isTrue();
         assertThat(payload.getHasLinkedPurposeTemplates()).isFalse();
-        assertThat(payload.getRequesterDelegationRoles()).containsExactly(RequesterDelegationRole.values()[0]);
+        //assertThat(payload.getRequesterDelegationRoles()).containsExactly(RequesterDelegationRole.values()[0]);
         assertThat(payload.getTemplateId()).isNotNull();
     }
 

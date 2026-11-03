@@ -56,11 +56,11 @@ public class BffSearchEServiceCatalogCommand implements SearchEServiceCatalogCom
     public SearchEServiceCatalogCommand requesterDelegationRoles(
             List<EServiceCatalogRequesterDelegationRole> roles
     ) {
-        bffPayload.setRequesterDelegationRoles(roles.stream()
-                .map(role -> it.pagopa.interop.generated.openapi.clients.bff.model.RequesterDelegationRole
-                        .valueOf(role.name()))
-                .toList());
-        return this;
+        throw new UnsupportedOperationException("Requester delegation roles are not supported in 2.24.0-RC2 BFF API");
+//        bffPayload.setRequesterDelegationRoles(roles.stream()
+//                .map(role -> it.pagopa.interop.generated.openapi.clients.bff.model.RequesterDelegationRole
+//                        .valueOf(role.name()))
+//                .toList());
     }
 
     @Override

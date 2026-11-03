@@ -132,13 +132,13 @@ public class BffEServiceContractTest {
                                 CatalogFilterPayload::getMode,
                                 CatalogFilterPayload::getTemplateId,
                                 CatalogFilterPayload::getOnlySignalHubEnabled,
-                                CatalogFilterPayload::getRequesterDelegationRoles,
+                                //CatalogFilterPayload::getRequesterDelegationRoles,
                                 CatalogFilterPayload::getProducersIds,
                                 CatalogFilterPayload::getAvailableForRequester,
                                 CatalogFilterPayload::getOnlyTemplateInstances,
                                 CatalogFilterPayload::getHasLinkedPurposeTemplates,
                                 CatalogFilterPayload::getProducerCategories,
-                                p -> p.getRequesterDelegationRoles().get(0),
+                                //p -> p.getRequesterDelegationRoles().get(0),
                                 p -> p.getProducerCategories().get(0)
                         )
                 )
