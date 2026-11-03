@@ -12,6 +12,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.RadioButton;
 import it.pagopa.infrastructure.suit.component.TextField;
+import it.pagopa.send.web.infrastructure.page.component.ErrorSnackbar;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import it.pagopa.send.web.notification_creation.application.NotificationData;
@@ -382,24 +383,38 @@ public interface CreateNotificationPage extends Page {
 
     default void goToRecipientsStep(NotificationData data) {
         compileInformazioniPreliminari(data);
-        continueButton().click();
+        continueToNextStep();
     }
 
     default void goToDebtPositionStep(NotificationData data) {
         goToRecipientsStep(data);
         compileDestinatari(data);
-        continueButton().click();
+        continueToNextStep();
     }
 
     default void goToDebtPositionDetailStep(NotificationData data) {
         goToDebtPositionStep(data);
         pagoPaRadio().select();
-        continueButton().click();
+        continueToNextStep();
     }
 
     default void goToDocumentsStep(NotificationData data) {
         goToDebtPositionStep(data);
         noPaymentRadio().select();
+        continueToNextStep();
+    }
+
+    Optional<ErrorSnackbar> errorSnackbar();
+
+    /**
+     * "Continua" dopo aver chiuso il messaggio d'errore del portale, se compare, perché copre il pulsante: l'ambiente
+     * test risponde con {@code PN_EXTERNALREGISTRIES_INSTITUTIONSERROR} durante la compilazione dei passi e il
+     * messaggio intercetta il clic.
+     * TODO: rimuovere la chiusura del messaggio quando l'errore non si presenterà più, perché nasconde un errore reale
+     * del portale.
+     */
+    default void continueToNextStep() {
+        errorSnackbar().ifPresent(ErrorSnackbar::closeIfShown);
         continueButton().click();
     }
 
