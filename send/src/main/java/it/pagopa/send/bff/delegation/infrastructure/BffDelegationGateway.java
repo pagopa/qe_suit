@@ -1,6 +1,7 @@
 package it.pagopa.send.bff.delegation.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.send.generated.openapi.clients.mandate.model.BffSearchMandateResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.send.common.delegation.application.DelegationCreationCommand;
 import it.pagopa.send.common.delegation.application.DelegationGateway;
@@ -32,16 +33,18 @@ public class BffDelegationGateway implements DelegationGateway {
     private final EntityStore entityStore;
 
     @Override
-    public Optional<Delegation> findDelegation(User delegator, User delegate) {
-        Optional<Delegation> delegation = restClient.searchByDelegate(
-                        sessionToken(delegate),
-                        mapper.toSearchRequest(delegator, List.of(DelegationStatus.ACTIVE, DelegationStatus.PENDING)))
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .get()
-                .getResultsPage().stream()
-                .map(mapper::toDomain)
-                .findFirst();
-        delegation.ifPresent(entityStore::upsert);
+    public boolean hasDelegation(User delegator, User delegate) {
+        return search(delegator, delegate, PollingStrategy.UNTIL_SUCCESS).isPresent();
+    }
+
+    // appena creata la delega può non essere ancora restituita: la ricerca si ripete finché non compare
+    @Override
+    public Delegation findDelegation(User delegator, User delegate) {
+        Delegation delegation = search(delegator, delegate, response -> response.isSuccess()
+                && !response.as(BffSearchMandateResponse.class).getResultsPage().isEmpty())
+                .orElseThrow(() -> new IllegalStateException("Nessuna delega di " + delegator.getUsername()
+                        + " tra quelle di " + delegate.getUsername()));
+        entityStore.upsert(delegation);
         return delegation;
     }
 
@@ -64,6 +67,18 @@ public class BffDelegationGateway implements DelegationGateway {
     @Override
     public boolean supports(Channel channel) {
         return channel == Channel.BFF;
+    }
+
+    // deleghe attive o in attesa del delegante, tra quelle del delegato
+    private Optional<Delegation> search(User delegator, User delegate, PollingStrategy strategy) {
+        return restClient.searchByDelegate(
+                        sessionToken(delegate),
+                        mapper.toSearchRequest(delegator, List.of(DelegationStatus.ACTIVE, DelegationStatus.PENDING)))
+                .withPolling(strategy)
+                .get()
+                .getResultsPage().stream()
+                .map(mapper::toDomain)
+                .findFirst();
     }
 
     private String sessionToken(User user) {
