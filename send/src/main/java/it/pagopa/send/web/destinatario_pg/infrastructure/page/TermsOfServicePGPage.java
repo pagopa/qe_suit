@@ -9,6 +9,8 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import org.assertj.core.api.Assertions;
 
+import java.util.List;
+
 /**
  * {@code {baseUrl}/termini-di-servizio}
  * Pagina dei termini e condizioni d'uso di SEND della persona giuridica.
@@ -30,6 +32,9 @@ public interface TermsOfServicePGPage extends Page {
     @XPath("//section[starts-with(@id,\"otnotice-section-\")]")
     Readable<String> sections();
 
+    @XPath("//section[starts-with(@id,\"otnotice-section-\")]")
+    Component sectionContainers();
+
     @XPath("//section[starts-with(@id,\"otnotice-section-\")]/h2")
     Readable<String> sectionTitles();
 
@@ -41,6 +46,13 @@ public interface TermsOfServicePGPage extends Page {
 
     @XPath("(//section[starts-with(@id,\"otnotice-section-\")]//p)[1]")
     Readable<String> introduction();
+
+    // id delle sezioni: sono le ancore a cui puntano le voci dell'indice
+    default List<String> sectionIds() {
+        return sectionContainers().getAll().orElse(List.of()).stream()
+                .map(section -> section.getAttributes().get("id"))
+                .toList();
+    }
 
     @Override
     default void assertLoaded() {
