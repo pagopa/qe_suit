@@ -2,6 +2,7 @@ package it.pagopa.interop.web.infrastructure.config.suit;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
+import it.frontend.e2e.framework.web.adapter.model.WebWaitSettings;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.config.WebSuiteBuilder;
 import it.frontend.e2e.framework.web.model.location.Url;
@@ -27,6 +28,19 @@ public class WebSuitConfig {
     private String browser;
     private boolean headless;
     private List<String> arguments;
+    private Waits waits = new Waits();
+
+    @Getter
+    @Setter
+    public static class Waits {
+        private long defaultWaitTimeoutSeconds = 10;
+        private long retryWaitTimeoutSeconds = 60;
+        private long existsTimeoutSeconds = 0;
+
+        public WebWaitSettings toSettings() {
+            return new WebWaitSettings(defaultWaitTimeoutSeconds, retryWaitTimeoutSeconds, existsTimeoutSeconds);
+        }
+    }
 
     public WebPresentationGateway createWebPresentationGateway(
             Environment environment,
