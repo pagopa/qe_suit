@@ -64,10 +64,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         @ConfigurationParameter(
                 key = FILTER_TAGS_PROPERTY_NAME,
                 value = """
-                        (@debug-client-assertion-page-ui-flow
-                         or @agreement
-                         or @debug-client-assertion-page-ui-behavior
-                         or @dev-tools-page-ui-behavior)
+                        @agreement-security
                         and not @wait_for_fix
                         and not @ignore
                         """
