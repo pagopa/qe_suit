@@ -6,8 +6,6 @@ import it.pagopa.send.common.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 /**
  * Casi d'uso per le deleghe tra destinatari: cercarle, crearle e accettarle. L'accettazione parte solo da una delega in
  * attesa; su una delega già attiva non fa nulla.
@@ -18,7 +16,11 @@ public class DelegationUseCase {
 
     private final DelegationGateway delegationGateway;
 
-    public Optional<Delegation> findDelegation(User delegator, User delegate) {
+    public boolean hasDelegation(User delegator, User delegate) {
+        return delegationGateway.hasDelegation(delegator, delegate);
+    }
+
+    public Delegation findDelegation(User delegator, User delegate) {
         return delegationGateway.findDelegation(delegator, delegate);
     }
 

@@ -5,8 +5,6 @@ import it.pagopa.send.common.kernel.domain.Channel;
 import it.pagopa.send.common.user.domain.User;
 import org.springframework.plugin.core.Plugin;
 
-import java.util.Optional;
-
 /**
  * Ogni implementazione sa gestire le deleghe tra destinatari per il proprio canale, con le credenziali dell'utente che
  * fa l'operazione: il delegante crea la delega, il delegato la cerca e la accetta.
@@ -14,9 +12,16 @@ import java.util.Optional;
 public interface DelegationGateway extends Plugin<Channel> {
 
     /**
-     * Delega attiva o in attesa del delegante verso il delegato, cercata tra quelle del delegato.
+     * Indica se il delegato ha già una delega attiva o in attesa del delegante: risponde subito, anche quando non ce ne
+     * sono.
      */
-    Optional<Delegation> findDelegation(User delegator, User delegate);
+    boolean hasDelegation(User delegator, User delegate);
+
+    /**
+     * Delega attiva o in attesa del delegante verso il delegato, cercata tra quelle del delegato: la ricerca si ripete
+     * finché la delega non compare, perché appena creata può non essere ancora restituita.
+     */
+    Delegation findDelegation(User delegator, User delegate);
 
     void createDelegation(User delegator, User delegate, DelegationCreationCommand command);
 

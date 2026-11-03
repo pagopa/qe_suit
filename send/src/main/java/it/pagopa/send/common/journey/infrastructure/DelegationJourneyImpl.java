@@ -25,17 +25,12 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
     @Override
     public DelegationJourneyImpl withActiveDelegation(User delegator, User delegate) {
         DelegationCreationCommand command = requestFactory.defaultCreation();
-        Delegation delegation = delegationUseCase.findDelegation(delegator, delegate)
-                .orElseGet(() -> createDelegation(delegator, delegate, command));
+        if (!delegationUseCase.hasDelegation(delegator, delegate)) {
+            delegationUseCase.createDelegation(delegator, delegate, command);
+        }
+        Delegation delegation = delegationUseCase.findDelegation(delegator, delegate);
         delegationUseCase.acceptDelegation(delegate, delegation, command.verificationCode());
         log.info("Delega {} di {} verso {} attiva", delegation.getMandateId(), delegator.getUsername(), delegate.getUsername());
         return this;
-    }
-
-    private Delegation createDelegation(User delegator, User delegate, DelegationCreationCommand command) {
-        delegationUseCase.createDelegation(delegator, delegate, command);
-        return delegationUseCase.findDelegation(delegator, delegate)
-                .orElseThrow(() -> new IllegalStateException("Delega creata da " + delegator.getUsername()
-                        + " non trovata tra quelle di " + delegate.getUsername()));
     }
 }
