@@ -116,3 +116,12 @@ external-registries:
 delivery:
   api:
     base-url: https://api.test.notifichedigitali.it
+
+# ============================================================================
+# Pn National Registries API Configuration (verifica identita' e domicili)
+# ============================================================================
+# Stesso host/tunnel di "delivery" (vedi sopra): i path national-registries-private
+# sono esposti dallo stesso gateway.
+national-registries:
+  api:
+    base-url: http://localhost:8886

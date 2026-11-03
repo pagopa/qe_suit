@@ -196,9 +196,9 @@
 
         <!-- provides javax.annotation.Generated used by the generated OpenAPI code -->
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>2.1.1</version>
         </dependency>
 
         <dependency>
@@ -342,6 +342,7 @@
                                 <apiPackage>it.pagopa.send.generated.openapi.clients.bff.api</apiPackage>
                                 <modelPackage>it.pagopa.send.generated.openapi.clients.bff.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
+                                <useJakartaEe>true</useJakartaEe>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
                                 <openApiNullable>false</openApiNullable>
@@ -377,6 +378,7 @@
                                 <apiPackage>it.pagopa.send.generated.openapi.clients.delivery.api</apiPackage>
                                 <modelPackage>it.pagopa.send.generated.openapi.clients.delivery.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
+                                <useJakartaEe>true</useJakartaEe>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
                                 <openApiNullable>false</openApiNullable>
@@ -412,6 +414,7 @@
                                 <apiPackage>it.pagopa.send.generated.openapi.clients.gpd.api</apiPackage>
                                 <modelPackage>it.pagopa.send.generated.openapi.clients.gpd.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
+                                <useJakartaEe>true</useJakartaEe>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
                                 <openApiNullable>false</openApiNullable>
@@ -447,6 +450,7 @@
                                 <apiPackage>it.pagopa.send.generated.openapi.clients.externalregistries.api</apiPackage>
                                 <modelPackage>it.pagopa.send.generated.openapi.clients.externalregistries.model</modelPackage>
                                 <dateLibrary>java8</dateLibrary>
+                                <useJakartaEe>true</useJakartaEe>
                                 <annotationLibrary>none</annotationLibrary>
                                 <documentationProvider>source</documentationProvider>
                                 <openApiNullable>false</openApiNullable>
@@ -457,6 +461,34 @@
                                 <additionalModelTypeAnnotations>
                                     @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
                                 </additionalModelTypeAnnotations>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+
+                    <!-- pn-national-registries API -->
+                    <execution>
+                        <id>generate-national-registries-client</id>
+                        <goals><goal>generate</goal></goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-national-registries/85cc22fe63319b7e7a4f789ae7ba5908c8c1a09a/docs/openapi/PNT2Y-OpenAPI3_PN-NationalRegistries.yaml</inputSpec>
+                            <generatorName>java</generatorName>
+                            <library>rest-assured</library>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <skipValidateSpec>true</skipValidateSpec>
+                            <configOptions>
+                                <apiPackage>it.pagopa.send.generated.openapi.clients.nationalregistries.api</apiPackage>
+                                <modelPackage>it.pagopa.send.generated.openapi.clients.nationalregistries.model</modelPackage>
+                                <dateLibrary>java8</dateLibrary>
+                                <useJakartaEe>true</useJakartaEe>
+                                <annotationLibrary>none</annotationLibrary>
+                                <documentationProvider>source</documentationProvider>
+                                <openApiNullable>false</openApiNullable>
+                                <useAbstractionForFiles>true</useAbstractionForFiles>
+                                <useBeanValidation>false</useBeanValidation>
+                                <serializableModel>true</serializableModel>
+                                <serializationLibrary>jackson</serializationLibrary>
                             </configOptions>
                         </configuration>
                     </execution>
