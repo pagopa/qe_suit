@@ -10,6 +10,13 @@ import static io.cucumber.junit.platform.engine.Constants.*;
 @IncludeEngines({"cucumber", "junit-jupiter"})
 @SelectClasspathResource("feature-expanded")
 @SelectPackages("it.pagopa.interop.suite.contract")
+// Classi aggiunte tra RC1 e RC2, temporaneamente escluse dalla NRT per agevolare
+// l'analisi della release 2.24.0-RC2.
+@ExcludeClassNamePatterns({
+        "it\\.pagopa\\.interop\\.suite\\.contract\\.BffDelegationContractTest",
+        "it\\.pagopa\\.interop\\.suite\\.contract\\.BffPurposeContractTest",
+        "it\\.pagopa\\.interop\\.suite\\.contract\\.BffPurposeTemplateContractTest"
+})
 @ExcludeTags({"wait_for_qa", "ignore"})
 @ConfigurationParameters({
         @ConfigurationParameter(key = PLUGIN_PROPERTY_NAME, value = "pretty"),
