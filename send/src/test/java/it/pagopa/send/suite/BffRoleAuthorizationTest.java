@@ -1,9 +1,9 @@
 package it.pagopa.send.suite;
 
 import it.pagopa.infrastructure.reporting.contract.lifecycle.GenerateContractReport;
-import it.pagopa.send.suite.contract.BffOwnerPgAuthorizationContractTest;
-import it.pagopa.send.suite.contract.BffRecipientAuthorizationContractTest;
-import it.pagopa.send.suite.contract.BffSenderPaAuthorizationContractTest;
+import it.pagopa.send.suite.authorization.bff.BffOwnerPgAuthorizationContractTest;
+import it.pagopa.send.suite.authorization.bff.BffRecipientAuthorizationContractTest;
+import it.pagopa.send.suite.authorization.bff.BffSenderPaAuthorizationContractTest;
 import org.junit.platform.suite.api.ConfigurationParameter;
 import org.junit.platform.suite.api.ConfigurationParameters;
 import org.junit.platform.suite.api.IncludeEngines;

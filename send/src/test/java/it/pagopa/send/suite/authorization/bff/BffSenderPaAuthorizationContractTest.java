@@ -1,4 +1,4 @@
-package it.pagopa.send.suite.contract;
+package it.pagopa.send.suite.authorization.bff;
 
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.bff.infrastructure.config.BffApiContractConfig;
