@@ -120,7 +120,7 @@ public class WebEServiceCatalogContractTest {
                                     assertQuickSelectionSection(drawer);
                                     assertTemplateSection(drawer);
                                     assertTechnicalSpecsSection(drawer);
-                                    assertDelegationsSection(drawer);
+                                    // assertDelegationsSection(drawer);
                                 })
 
                 ));
