@@ -12,8 +12,7 @@ import static io.restassured.config.ObjectMapperConfig.objectMapperConfig;
 import static io.restassured.config.RestAssuredConfig.config;
 
 /**
- * Costruisce la request specification del client BFF risolvendo il bearer token dell'utenza
- * corrente, invece del token statico di {@code bff.api.bearer-token}.
+ * Costruisce la request specification del client BFF risolvendo il bearer token dell'utenza.
  * <p>
  * Viene invocata dal {@code reqSpecSupplier} del client generato, cioe' alla costruzione di ogni
  * operazione: legge {@link CurrentUserSession} (un {@code ThreadLocal}) in quel momento e congela

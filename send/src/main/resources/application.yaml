@@ -3,7 +3,7 @@
 # ============================================================================
 spring:
   profiles:
-    active: hotfix
+    active: test
   config:
     import:
       - optional:classpath:secrets/application-secrets.yaml
@@ -56,11 +56,3 @@ contract-report:
       label: BFF
       class-prefix: Bff
       target-type: TEST_FACTORY
-
-
-safestorage:
-  api:
-    base-url: http://localhost:8888
-    openapi-url: ${safestorage.openapi.url:https://raw.githubusercontent.com/pagopa/pn-ss/9359720a58de351170031f1513b5cd41b24d98a8/docs/openapi/pn-safestorage-v1.1-api.yaml}
-    api-key: pn-test_api_key
-    client-id: pn-test

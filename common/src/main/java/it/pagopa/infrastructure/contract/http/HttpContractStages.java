@@ -36,7 +36,7 @@ public interface HttpContractStages {
         AuthorizationTestsStage expectedStatus(int status);
 
         /**
-         * Vverifica che lo status <strong>non</strong> sia quello indicato.
+         * Verifica che lo status <strong>non</strong> sia quello indicato.
          * Serve a verificare che un'utenza autorizzata non venga respinta,
          * senza dover conoscere lo status esatto che l'endpoint restituisce per quella chiamata
          * (200, 400, 404, ... dipende dalla logica di business, non dall'autorizzazione).
