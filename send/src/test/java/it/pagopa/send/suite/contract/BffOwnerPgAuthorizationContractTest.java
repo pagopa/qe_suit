@@ -73,6 +73,9 @@ public class BffOwnerPgAuthorizationContractTest {
         return validator.as(NON_PG_USERS).apiCalls(virtualKeysApiCalls()).tests();
     }
 
+    /* Il test relativo alla deleteVirtualKeyV1 attualmente ritorna un 403
+    * per via di un bug aperto: https://pagopa.atlassian.net/browse/PN-22255
+    */
     @TestFactory
     Stream<DynamicTest> virtualKeysAreAllowedForPg() {
         return validator.as(ALLOWED_PG_USERS).apiCalls(virtualKeysApiCalls()).expectedStatusNot(403).tests();
