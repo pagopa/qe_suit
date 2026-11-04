@@ -45,7 +45,7 @@ public class BffEServiceDescriptorContractTest {
     private final BffEServiceRequestFactory requestFactory;
 
     @TestFactory
-    Stream<DynamicTest> updateDraftDescriptorTemplateInstance_rejectsEmptyDeclaredAttributeGroup() {
+    Stream<DynamicTest> updateDraftDescriptorTemplateInstance() {
         return httpContractValidator
                 .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .apiCall(() -> apiClient.eservices().updateDraftDescriptorTemplateInstance())
