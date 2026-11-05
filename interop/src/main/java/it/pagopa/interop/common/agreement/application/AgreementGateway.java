@@ -14,6 +14,8 @@ public interface AgreementGateway extends Plugin<Channel> {
 
     void viewConsumerAgreementDetails(Agreement agreement);
 
+    void viewProducerAgreementDetails(Agreement agreement);
+
     Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation);
 
     default Agreement createAgreement(EService eService, EServiceDescriptor descriptor) {

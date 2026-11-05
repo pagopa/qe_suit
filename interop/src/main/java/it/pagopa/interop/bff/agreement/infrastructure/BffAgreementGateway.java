@@ -32,6 +32,11 @@ public class BffAgreementGateway implements AgreementGateway {
     }
 
     @Override
+    public void viewProducerAgreementDetails(Agreement agreement) {
+        throw new UnsupportedOperationException("BffAgreementGateway does not support viewProducerAgreementDetails operation");
+    }
+
+    @Override
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         AgreementPayload payload = agreementRequestFactory.creationRequest(eService, descriptor, delegation);
 

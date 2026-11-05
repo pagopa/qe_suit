@@ -20,6 +20,10 @@ public class AgreementUseCase {
         agreementGateway.viewConsumerAgreementDetails(agreement);
     }
 
+    public void viewProducerAgreementDetails(Agreement agreement) {
+        agreementGateway.viewProducerAgreementDetails(agreement);
+    }
+
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         return agreementGateway.createAgreement(eService, descriptor, delegation);
     }

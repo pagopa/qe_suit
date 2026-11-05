@@ -27,6 +27,14 @@ public class AgreementSteps {
         agreementUseCase.viewConsumerAgreementDetails(agreement);
     }
 
+    @When("l'erogatore accede ai dettagli della richiesta di fruizione ricevuta")
+    public void viewProducerAgreementDetails() {
+        Agreement agreement = entityStore.getLastOrThrow(Agreement.class);
+        Tenant producer = Tenant.fromOrganizationId(agreement.getProducerId());
+        currentUserSession.set(User.getTenantAdmin(producer), producer);
+        agreementUseCase.viewProducerAgreementDetails(agreement);
+    }
+
     @Given("associa un Agreement in stato DRAFT all'{currentEService}")
     public void createAgreement(EService eService) {
         agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor());

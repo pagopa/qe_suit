@@ -33,6 +33,12 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     }
 
     @Override
+    public void viewProducerAgreementDetails(Agreement agreement) {
+        producerAgreementDetailPage.navigateTo(agreement.getId().toString());
+        producerAgreementDetailPage.assertLoaded();
+    }
+
+    @Override
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support createAgreement operation");
     }
