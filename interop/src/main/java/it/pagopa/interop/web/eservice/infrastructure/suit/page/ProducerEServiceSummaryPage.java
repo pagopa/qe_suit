@@ -5,27 +5,20 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
-import it.pagopa.infrastructure.suit.component.Link;
+import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.EServiceSummaryCard;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.GeneralInfoCard;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.ThresholdsAttributesCard;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.TechnicalSpecsCard;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.AdditionalInfoCard;
 import it.pagopa.utils.async.PollingUtils;
-import org.assertj.core.api.Assertions;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @Url("${interop.web.base-url}/erogazione/e-service/${eserviceId}/${descriptorId}/modifica/riepilogo")
-public interface ProviderEServiceSummaryPage extends Page {
+public interface ProducerEServiceSummaryPage extends Page {
 
     String BTN_BACK_ESERVICE = "Torna agli e-service";
-    String BREADCRUMB_EROGAZIONE = "Erogazione";
-    String BREADCRUMB_MY_ESERVICES = "I miei e-service";
-    String BREADCRUMB_EDIT_ESERVICE = "Modifica e-service";
-    String BREADCRUMB_SUMMARY = "Riepilogo";
     String STATUS_DRAFT = "in bozza";
     String CARD_GENERAL_INFO = "Informazioni generali";
     String CARD_THRESHOLDS_ATTRIBUTES = "Soglie e attributi";
@@ -38,17 +31,7 @@ public interface ProviderEServiceSummaryPage extends Page {
     @XPath("//a[contains(., '" + BTN_BACK_ESERVICE + "')]")
     Button backToEServicesButton();
 
-    @XPath("//nav[contains(@class,'MuiBreadcrumbs-root')]//a[contains(., '" + BREADCRUMB_EROGAZIONE + "')]")
-    Link erogazioneBreadcrumb();
-
-    @XPath("//nav[contains(@class,'MuiBreadcrumbs-root')]//a[contains(., '" + BREADCRUMB_MY_ESERVICES + "')]")
-    Link myEServicesBreadcrumb();
-
-    @XPath("//nav[contains(@class,'MuiBreadcrumbs-root')]//a[contains(., '" + BREADCRUMB_EDIT_ESERVICE + "')]")
-    Link editEServiceBreadcrumb();
-
-    @XPath("//nav[contains(@class,'MuiBreadcrumbs-root')]//*[self::p or self::span or self::li][contains(., '" + BREADCRUMB_SUMMARY + "')]")
-    Label currentBreadcrumb();
+    Breadcrumbs breadcrumbs();
 
     @XPath("//h1")
     Label pageTitle();

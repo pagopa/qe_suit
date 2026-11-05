@@ -1,8 +1,8 @@
 package it.pagopa.interop.suite.contract;
 
+import it.frontend.e2e.framework.core.capability.core.Readable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
-import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
@@ -14,7 +14,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.web.eservice.infrastructure.suit.page.ProviderEServiceSummaryPage;
+import it.pagopa.interop.web.eservice.infrastructure.suit.page.ProducerEServiceSummaryPage;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.EServiceSummaryCard.Field;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.GeneralInfoCard;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary.TechnicalSpecsCard;
@@ -32,7 +32,7 @@ import org.springframework.test.context.TestConstructor;
 import java.util.stream.Stream;
 import java.util.List;
 
-import static it.pagopa.interop.web.eservice.infrastructure.suit.page.ProviderEServiceSummaryPage.*;
+import static it.pagopa.interop.web.eservice.infrastructure.suit.page.ProducerEServiceSummaryPage.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 
@@ -43,8 +43,13 @@ import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 @TestConstructor(autowireMode = ALL)
 @RequiredArgsConstructor
 @DisplayName("Web E-Service Summary Contract Test")
-public class WebProviderEServiceSummaryContractTest {
+public class WebProducerEServiceSummaryContractTest {
 
+    private static final List<String> EXPECTED_BREADCRUMB_LABELS = List.of(
+            "Erogazione", "I miei e-service", "Modifica e-service", "Riepilogo"
+    );
+    private static final String EXPECTED_EROGAZIONE_BREADCRUMB_HREF = "/ui/it/erogazione";
+    private static final String EXPECTED_MY_ESERVICES_BREADCRUMB_HREF = "/ui/it/erogazione/e-service";
     private static final String ESERVICE_DESCRIPTION = "Descrizione e-service per il riepilogo";
     private static final String VERSION_DESCRIPTION = "Versione per il test contrattuale del riepilogo";
     private static final EServiceTechnology ESERVICE_TECHNOLOGY = EServiceTechnology.REST;
@@ -68,18 +73,18 @@ public class WebProviderEServiceSummaryContractTest {
         String[] pathParams = {eService.getId().toString(), eService.getLastDraftDescriptor().getId().toString()};
         return webContractValidator
                 .as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
-                .on(ProviderEServiceSummaryPage.class, pathParams)
+                .on(ProducerEServiceSummaryPage.class, pathParams)
                 .tests(Stream.of(
                         new WebScenario<>("Verifica riepilogo e dettagli delle quattro card",
                                 page -> {
                                 },
                                 page -> {
-                                    assertHeaderAndBreadcrumbs(page);
+                                    assertHeaderAndBreadcrumbs(page, eService);
                                     assertSummaryCards(page);
                                     assertFooterActions(page);
                                     assertGeneralInfoCard(page);
                                     assertThresholdsAttributesCard(page);
-                                    assertTechnicalSpecsCard(page, eService);
+                                    assertTechnicalSpecsCard(page);
                                     assertAdditionalInfoCard(page);
                                 })
                 ));
@@ -113,35 +118,28 @@ public class WebProviderEServiceSummaryContractTest {
     }
 
 
-    private void assertHeaderAndBreadcrumbs(ProviderEServiceSummaryPage page) {
+    private void assertHeaderAndBreadcrumbs(ProducerEServiceSummaryPage page, EService eService) {
         // ES-SUMM-01 - Verify that the button "Torna agli e-service" is enabled
         assertThat(page.backToEServicesButton().isDisabled())
                 .as("Torna agli e-service abilitato").isFalse();
         page.backToEServicesButton().readAndAssert(BTN_BACK_ESERVICE);
 
         // ES-SUMM-02...ES-SUMM-05 - Verify that the breadcrumbs are present and correct
-        assertThat(page.erogazioneBreadcrumb().get().isPresent())
-                .as("Breadcrumb Erogazione presente").isTrue();
-        assertThat(page.erogazioneBreadcrumb().get().orElseThrow().getText())
-                .as("Copy breadcrumb Erogazione").isEqualTo(BREADCRUMB_EROGAZIONE);
-        assertThat(page.erogazioneBreadcrumb().getHref()).contains("/erogazione");
-
-        assertThat(page.myEServicesBreadcrumb().get().isPresent())
-                .as("Breadcrumb I miei e-service presente").isTrue();
-        assertThat(page.myEServicesBreadcrumb().get().orElseThrow().getText())
-                .as("Copy breadcrumb I miei e-service").isEqualTo(BREADCRUMB_MY_ESERVICES);
-        assertThat(page.myEServicesBreadcrumb().getHref()).contains("/erogazione/e-service");
-
-        assertThat(page.editEServiceBreadcrumb().get().isPresent())
-                .as("Breadcrumb Modifica e-service presente").isTrue();
-        assertThat(page.editEServiceBreadcrumb().get().orElseThrow().getText())
-                .as("Copy breadcrumb Modifica e-service").isEqualTo(BREADCRUMB_EDIT_ESERVICE);
-        assertThat(page.editEServiceBreadcrumb().getHref())
-                .contains("/erogazione/e-service/", "/modifica");
-
-        assertThat(page.currentBreadcrumb().get().isPresent())
-                .as("Breadcrumb Riepilogo presente").isTrue();
-        page.currentBreadcrumb().readAndAssert(BREADCRUMB_SUMMARY);
+        assertThat(page.breadcrumbs().items().stream().map(Readable::read).toList())
+                .as("E-service creation breadcrumb labels in order")
+                .containsExactlyElementsOf(EXPECTED_BREADCRUMB_LABELS);
+        assertThat(page.breadcrumbs().links()).hasSize(3);
+        assertThat(page.breadcrumbs().links().get(0).getHref())
+                .as("Erogazione breadcrumb href")
+                .isEqualTo(EXPECTED_EROGAZIONE_BREADCRUMB_HREF);
+        assertThat(page.breadcrumbs().links().get(1).getHref())
+                .as("I miei e-service breadcrumb href")
+                .isEqualTo(EXPECTED_MY_ESERVICES_BREADCRUMB_HREF);
+        String expectedEditEServiceHref = "/erogazione/e-service/"
+                + eService.getId() + "/" + eService.getLastDraftDescriptor().getId() + "/modifica";
+        assertThat(page.breadcrumbs().links().get(2).getHref())
+                .as("Modifica e-service breadcrumb href")
+                .endsWith(expectedEditEServiceHref);
 
         // ES-SUMM-06 - Verify that the page title is present and populated
         assertThat(page.pageTitle().get().isPresent()).as("Titolo e-service presente").isTrue();
@@ -152,7 +150,7 @@ public class WebProviderEServiceSummaryContractTest {
         page.statusChip().readAndAssert(STATUS_DRAFT);
     }
 
-    private void assertSummaryCards(ProviderEServiceSummaryPage page) {
+    private void assertSummaryCards(ProducerEServiceSummaryPage page) {
         // ES-SUMM-08...ES-SUMM-11 - Verify that the cards are present, in the correct order and have the correct title and subtitle
         assertThat(page.summaryCards())
                 .extracting(card -> card.header().title().read())
@@ -176,7 +174,7 @@ public class WebProviderEServiceSummaryContractTest {
                 .containsExactly("true", "false", "false", "false");
     }
 
-    private void assertGeneralInfoCard(ProviderEServiceSummaryPage page) {
+    private void assertGeneralInfoCard(ProducerEServiceSummaryPage page) {
         //Verify that the General Info card has the correct content and values
         GeneralInfoCard card = page.generalInfoCard();
         var content = card.content();
@@ -189,7 +187,7 @@ public class WebProviderEServiceSummaryContractTest {
         assertField(content.signalHub(), GeneralInfoCard.SIGNAL_HUB, "No, non è attivo");
     }
 
-    private void assertThresholdsAttributesCard(ProviderEServiceSummaryPage page) {
+    private void assertThresholdsAttributesCard(ProducerEServiceSummaryPage page) {
         //Verify that the Thresholds and Attributes card has the correct content and values
         ThresholdsAttributesCard card = page.thresholdsAttributesCard();
         card.expand();
@@ -222,7 +220,7 @@ public class WebProviderEServiceSummaryContractTest {
         section.emptyStateMessage().readAndAssert(emptyMessage);
     }
 
-    private void assertTechnicalSpecsCard(ProviderEServiceSummaryPage page, EService eService) {
+    private void assertTechnicalSpecsCard(ProducerEServiceSummaryPage page) {
         //Verify that the Technical Specs card has the correct content and values
         TechnicalSpecsCard card = page.technicalSpecsCard();
         card.expand();
@@ -241,7 +239,7 @@ public class WebProviderEServiceSummaryContractTest {
         assertField(content.voucherLifespan(), TechnicalSpecsCard.VOUCHER_LIFESPAN, "1 minuto");
     }
 
-    private void assertAdditionalInfoCard(ProviderEServiceSummaryPage page) {
+    private void assertAdditionalInfoCard(ProducerEServiceSummaryPage page) {
         //Verify that the Additional Info card has the correct content and values
         AdditionalInfoCard card = page.additionalInfoCard();
         card.expand();
@@ -257,7 +255,7 @@ public class WebProviderEServiceSummaryContractTest {
                 yesNo(APPROVAL_POLICY == AgreementApprovalPolicy.MANUAL));
     }
 
-    private void assertFooterActions(ProviderEServiceSummaryPage page) {
+    private void assertFooterActions(ProducerEServiceSummaryPage page) {
         // ES-SUMM-12...ES-SUMM-14 - Verify that the action buttons are present and enabled
         assertThat(page.deleteDraftButton().isDisabled()).as("Elimina bozza abilitato").isFalse();
         page.deleteDraftButton().readAndAssert(BTN_DELETE_DRAFT);

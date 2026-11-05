@@ -28,7 +28,7 @@ import static io.cucumber.junit.platform.engine.Constants.*;
         WebProducerAgreementContractTest.class,
         WebProducerEServiceAttributesContractTest.class,
         WebProducerPurposeContractTest.class,
-        WebProviderEServiceSummaryContractTest.class,
+        WebProducerEServiceSummaryContractTest.class,
         WebPurposeTemplateContractTest.class,
         WebTOSContractTest.class,
 })

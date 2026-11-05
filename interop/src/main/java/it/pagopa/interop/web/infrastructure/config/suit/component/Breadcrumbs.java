@@ -3,13 +3,18 @@ package it.pagopa.interop.web.infrastructure.config.suit.component;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
+import it.pagopa.infrastructure.suit.component.Link;
 
 import java.util.List;
 
 @XPath(".//nav[contains(@class, 'MuiBreadcrumbs-root')]")
 public interface Breadcrumbs extends Component {
+
     @XPath(".//li[contains(@class, 'MuiBreadcrumbs-li')]")
     List<Readable<String>> items();
+
+    @XPath(".//li[contains(@class, 'MuiBreadcrumbs-li')]/a")
+    List<Link> links();
 
     default String getLastItemText() {
         List<Readable<String>> breadcrumbItems = items();
