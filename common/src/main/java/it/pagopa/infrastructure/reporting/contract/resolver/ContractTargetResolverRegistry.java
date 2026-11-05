@@ -24,6 +24,7 @@ public class ContractTargetResolverRegistry {
     public static ContractTargetResolverRegistry defaults(Path sourceRoot) {
         return new ContractTargetResolverRegistry(Map.of(
                 ContractTargetType.OPENAPI, new OpenApiContractTargetResolver(),
+                ContractTargetType.TEST_FACTORY, new TestFactoryContractTargetResolver(),
                 ContractTargetType.PAGE, new PageContractTargetResolver(sourceRoot)
         ));
     }
