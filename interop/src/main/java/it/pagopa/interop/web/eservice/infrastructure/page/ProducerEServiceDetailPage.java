@@ -73,6 +73,9 @@ public interface ProducerEServiceDetailPage extends Page {
     @XPath("//main[not(//div[contains(@class, 'MuiSnackbar-root')]//div[contains(@class, 'MuiAlert-standardError') or contains(@class, 'MuiAlert-outlinedError')])]")
     Snackbar noErrorSnackbar();
 
+    @XPath("(.//p[normalize-space()='Elenco documenti']/parent::div/following-sibling::div//button)[1]")
+    Button apiSpecsDownloadButton();
+
     @Override
     default void assertLoaded() {
         Assertions.assertThat(breadcrumbs().items().stream().map(Readable::read).toList())
