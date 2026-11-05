@@ -24,6 +24,14 @@ public class AgreementUseCase {
         agreementGateway.viewProducerAgreementDetails(agreement);
     }
 
+    public void verifyConsumerAgreementDownloadAvailability(Agreement agreement) {
+        agreementGateway.verifyConsumerAgreementDownloadAvailability(agreement);
+    }
+
+    public void verifyProducerAgreementDownloadAvailability(Agreement agreement) {
+        agreementGateway.verifyProducerAgreementDownloadAvailability(agreement);
+    }
+
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         return agreementGateway.createAgreement(eService, descriptor, delegation);
     }
