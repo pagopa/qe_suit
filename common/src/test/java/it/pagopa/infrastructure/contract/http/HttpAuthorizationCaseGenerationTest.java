@@ -86,6 +86,37 @@ class HttpAuthorizationCaseGenerationTest {
     }
 
     /**
+     * Controprova: {@code expectedStatusNot} verifica l'assenza di uno status invece
+     * dell'esattezza di uno status. Qualunque altro status, anche diverso dal default 403, deve
+     * far passare il test.
+     */
+    @Test
+    void expectedStatusNotAcceptsAnyOtherStatus() throws Throwable {
+        DynamicTest allowed200 = singleTestNot(() -> new StatusOper(200), 403);
+        allowed200.getExecutable().execute();
+
+        DynamicTest allowed404 = singleTestNot(() -> new StatusOper(404), 403);
+        allowed404.getExecutable().execute();
+
+        DynamicTest failing = singleTestNot(StatusOper::forbidden, 403);
+        AssertionError error = assertThrows(AssertionError.class, () -> failing.getExecutable().execute());
+        assertTrue(error.getMessage().contains("expectedStatus: not 403"));
+        assertTrue(error.getMessage().contains("actualStatus: 403"));
+    }
+
+    /** expectedStatus(...) e expectedStatusNot(...) sono mutuamente esclusivi: vince l'ultimo. */
+    @Test
+    void expectedStatusAndExpectedStatusNotAreMutuallyExclusive() throws Throwable {
+        HttpContractStages.AuthorizationTestsStage stage = validator()
+                .authorization(identities("USER_1"))
+                .apiCalls(StatusOper::forbidden)
+                .expectedStatusNot(200)
+                .expectedStatus(403);
+
+        stage.tests().toList().get(0).getExecutable().execute();
+    }
+
+    /**
      * Il controllo dei permessi precede la validazione del payload: un 400 non e' un esito
      * alternativo accettabile quando ci si aspetta un 403.
      */
@@ -378,6 +409,16 @@ class HttpAuthorizationCaseGenerationTest {
             stage = stage.expectedStatus(expectedStatus);
         }
         return stage.tests().toList().get(0);
+    }
+
+    private DynamicTest singleTestNot(Supplier<?> supplier, int excludedStatus) {
+        return validator()
+                .authorization(identities("USER_1"))
+                .apiCalls(supplier)
+                .expectedStatusNot(excludedStatus)
+                .tests()
+                .toList()
+                .get(0);
     }
 
     private static List<HttpContractIdentity> identities(String... names) {

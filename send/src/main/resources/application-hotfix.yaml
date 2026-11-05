@@ -99,7 +99,7 @@ token:
 # ============================================================================
 bff:
   api:
-    base-url: https://webapi.hotfix.notifichedigitali.it
+    base-url: https://webapi.hotfix.notifichedigitali.it/bff
     bearer-token: ${pn.external.bearer-token.tokenBffApiHotfix:REPLACE_ME}
 
 # ============================================================================

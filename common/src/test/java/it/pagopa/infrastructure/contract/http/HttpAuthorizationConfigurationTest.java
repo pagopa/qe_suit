@@ -120,6 +120,10 @@ class HttpAuthorizationConfigurationTest {
                 ContractHttpException.class,
                 () -> contract.authorization(identities()).apiCalls(ANY_CALL).expectedStatus(600)
         );
+        assertThrows(
+                ContractHttpException.class,
+                () -> contract.authorization(identities()).apiCalls(ANY_CALL).expectedStatusNot(0)
+        );
     }
 
     @Test
