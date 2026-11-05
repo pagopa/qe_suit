@@ -4,6 +4,9 @@ import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.Table;
+import it.pagopa.infrastructure.suit.component.TextField;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.partner_tecnologico.infrastructure.page.component.PtFooter;
 import it.pagopa.send.web.partner_tecnologico.infrastructure.page.component.PtHeader;
@@ -19,7 +22,8 @@ import java.util.Optional;
  * È usata da più test:
  * <ul>
  *     <li>{@code accesso-backoffice-pt.feature}: atterraggio del PT dopo il login da Area Riservata;</li>
- *     <li>{@code WebPtHeaderFooterContractTest}: link dell'header e del footer del portale.</li>
+ *     <li>{@code WebPtHeaderFooterContractTest}: link dell'header e del footer del portale;</li>
+ *     <li>{@code WebInstitutionsPtContractTest}: testi e stato iniziale della pagina.</li>
  * </ul>
  */
 @Url("${url.notifiche.partner-tecnologico.base}")
@@ -30,6 +34,27 @@ public interface PtInstitutionsPage extends Page {
     // il titolo dentro il contenitore della pagina "I tuoi enti"
     @XPath("//*[@data-testid=\"institutionsPage\"]//*[@data-testid=\"titleBox\"]")
     Readable<String> title();
+
+    @XPath("//*[@data-testid=\"institutionsPage\"]//*[@id=\"subtitle-page\"]")
+    Readable<String> subtitle();
+
+    // avviso sullo stato del portale, sotto il titolo
+    @XPath("//*[@data-testid=\"work-in-progress-alert\"]")
+    Readable<String> workInProgressAlert();
+
+    // filtro e tabella seguono il sorgente di pn-pt-webapp (pn-frontend, PN-21981): non ancora rilasciati in dev
+    @XPath("//*[@data-testid=\"institutionsSearch\"]//label")
+    Readable<String> searchLabel();
+
+    @XPath("//*[@data-testid=\"institutionsSearch\"]//input[@id=\"search\"]")
+    TextField searchInput();
+
+    @XPath("//*[@data-testid=\"searchButton\"]")
+    Button searchButton();
+
+    // enti deleganti: nome, codice fiscale e stato della delega
+    @XPath("//*[@data-testid=\"institutionsTable\"]")
+    Table institutionsTable();
 
     PtHeader header();
 
