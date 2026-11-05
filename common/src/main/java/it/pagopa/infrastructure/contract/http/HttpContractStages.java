@@ -34,6 +34,16 @@ public interface HttpContractStages {
          * Facoltativo: omesso, lo status atteso e' {@code 403}. Vale per l'intera dichiarazione.
          */
         AuthorizationTestsStage expectedStatus(int status);
+
+        /**
+         * Verifica che lo status <strong>non</strong> sia quello indicato.
+         * Serve a verificare che un'utenza autorizzata non venga respinta,
+         * senza dover conoscere lo status esatto che l'endpoint restituisce per quella chiamata
+         * (200, 400, 404, ... dipende dalla logica di business, non dall'autorizzazione).
+         * <p>
+         * Mutuamente esclusivo con {@link #expectedStatus(int)}: vince l'ultimo invocato.
+         */
+        AuthorizationTestsStage expectedStatusNot(int status);
     }
 
     interface ApiCallStage extends TestsStage {
