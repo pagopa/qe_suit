@@ -18,5 +18,6 @@ public interface BffEServiceCatalogMapper {
     @Mapping(target = "descriptorId", source = "activeDescriptor.id")
     @Mapping(target = "version", source = "activeDescriptor.version")
     @Mapping(target = "state", source = "activeDescriptor.state")
+    @Mapping(target = "hasUnreadNotifications", source = "hasUnreadNotifications")
     EServiceCatalog.Entry toEntry(CatalogEService source);
 }
