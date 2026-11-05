@@ -39,7 +39,7 @@ public class BffDelegationGateway implements DelegationGateway {
     @Override
     public Delegation createProducerDelegation(@NonNull TenantRef delegateRef, @NonNull EServiceRef eServiceRef) {
         var response = restClient.createProducerDelegation(delegateRef.id(), eServiceRef.id())
-                .withoutPolling();
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
         requireSuccessfulResponse(response.getRaw(), "creazione della delega di erogazione");
         return response
                 .map(mapper::toDelegation)
@@ -69,7 +69,7 @@ public class BffDelegationGateway implements DelegationGateway {
 
     @Override
     public void approveProducerDelegation(DelegationRef delegationRef) {
-        var response = restClient.approveProducerDelegation(delegationRef.id()).withoutPolling();
+        var response = restClient.approveProducerDelegation(delegationRef.id()).withPolling(PollingStrategy.UNTIL_SUCCESS);
         requireSuccessfulResponse(response.getRaw(), "approvazione della delega di erogazione");
     }
 
@@ -150,15 +150,5 @@ public class BffDelegationGateway implements DelegationGateway {
                     "Errore durante " + operation + " (HTTP " + status + ")"
             );
         }
-    }
-
-    private Delegation awaitDelegation(DelegationRef delegationRef, DelegationState expectedState) {
-        return restClient.getDelegation(delegationRef.id())
-                .withPolling(response -> response.isSuccess()
-                        && response.as(it.pagopa.interop.generated.openapi.clients.bff.model.Delegation.class)
-                        .getState() == expectedState)
-                .map(mapper::toDelegation)
-                .updateContext()
-                .get();
     }
 }

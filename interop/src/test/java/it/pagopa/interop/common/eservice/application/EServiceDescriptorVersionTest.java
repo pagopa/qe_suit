@@ -4,6 +4,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorInterface;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ class EServiceDescriptorVersionTest {
 
         useCase.prepareDescriptorForPublication(eService, draft, (UpdateEServiceDescriptorCommand) null);
 
-        verify(command).interfaceDocumentPath(null);
+        verify(command).apiInterface(null);
         verify(gateway).updateDescriptor(eService.getRef(), draft.getRef(), command);
     }
 
@@ -86,11 +87,13 @@ class EServiceDescriptorVersionTest {
         var draft = published.toBuilder().state(DRAFT)
                 .interfaceDocument(mock(EServiceDescriptorInterface.class)).build();
         var command = mock(UpdateEServiceDescriptorCommand.class);
-        when(command.getInterfaceDocumentPath()).thenReturn("custom-interface.yaml");
+        var apiInterface = ApiInterface.builder()
+                .name("custom-interface").path("custom-interface.yaml").build();
+        when(command.getApiInterface()).thenReturn(apiInterface);
 
         useCase.prepareDescriptorForPublication(eService, draft, command);
 
-        verify(command, never()).interfaceDocumentPath(any());
+        verify(command, never()).apiInterface(any());
         verifyNoInteractions(factory);
         verify(gateway).updateDescriptor(eService.getRef(), draft.getRef(), command);
     }

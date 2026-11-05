@@ -4,6 +4,7 @@ import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import lombok.Getter;
 
@@ -14,12 +15,12 @@ import java.util.function.UnaryOperator;
 @Getter
 public class BffUpdateEServiceDescriptorCommand implements UpdateEServiceDescriptorCommand {
     private final UpdateEServiceDescriptorSeed bffPayload;
-    private String interfaceDocumentPath;
+    private ApiInterface apiInterface;
     private Attributes attributes = Attributes.builder().build();
 
     @Override
-    public UpdateEServiceDescriptorCommand interfaceDocumentPath(String path) {
-        this.interfaceDocumentPath = path;
+    public UpdateEServiceDescriptorCommand apiInterface(ApiInterface apiInterface) {
+        this.apiInterface = apiInterface;
         return this;
     }
 

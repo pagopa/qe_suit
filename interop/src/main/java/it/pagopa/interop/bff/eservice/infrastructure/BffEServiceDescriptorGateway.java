@@ -6,10 +6,7 @@ import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCom
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.*;
-import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.interop.common.kernel.domain.DocumentKind;
-import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
-import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -118,47 +115,26 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
                         && descriptor.getDailyCallsTotal().intValue()
                         == bffCommand.getBffPayload().getDailyCallsTotal().intValue()
                         && BffEServiceDescriptorAttributeValidator.matches(
-                                bffCommand.getBffPayload().getAttributes(), descriptor.getAttributes())
+                        bffCommand.getBffPayload().getAttributes(), descriptor.getAttributes())
         );
-        if (command.getInterfaceDocumentPath() != null) {
-            return linkOpenApiInterface(serviceRef, descriptorRef, command.getInterfaceDocumentPath());
+        if (command.getApiInterface() != null) {
+            return linkOpenApiInterface(serviceRef, descriptorRef, command.getApiInterface());
         }
         return updated;
     }
 
     @Override
-    public EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String openApiInterfacePath, String name) {
-        return linkDocument(eServiceRef, descriptorRef, openApiInterfacePath, DocumentKind.INTERFACE, name);
+    public EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, ApiInterface apiInterface) {
+        return linkDocument(eServiceRef, descriptorRef, apiInterface.getPath(), DocumentKind.INTERFACE, apiInterface.getName());
     }
-
-    private void setDefaultAsyncPropertiesIfNeeded(
-            EServiceRef serviceRef,
-            EServiceDescriptorRef descriptorRef,
-            BffUpdateEServiceDescriptorCommand command
-    ) {
-        if (command.getBffPayload().getAsyncExchangeProperties() != null) return;
-        EService service = entityStore.getById(serviceRef.id(), EService.class).orElseThrow();
-        if (!service.getAsyncExchange()) return;
-        linkOpenApiCallbackInterface(serviceRef, descriptorRef, "assets/origin-interface.yaml", null);
-        it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties properties =
-                new it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties()
-                        .responseTime(60)
-                        .resourceAvailableTime(60)
-                        .maxResultSet(1)
-                        .confirmation(false)
-                        .bulk(true);
-        command.getBffPayload().setAsyncExchangeProperties(properties);
-    }
-
 
     @Override
     public EServiceDescriptor linkOpenApiCallbackInterface(
             EServiceRef serviceRef,
             EServiceDescriptorRef descriptorRef,
-            String path,
-            String name
+            ApiInterface apiInterface
     ) {
-        return linkDocument(serviceRef, descriptorRef, path, DocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE, name);
+        return linkDocument(serviceRef, descriptorRef, apiInterface.getPath(), DocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE, apiInterface.getName());
     }
 
     private EServiceDescriptor linkDocument(

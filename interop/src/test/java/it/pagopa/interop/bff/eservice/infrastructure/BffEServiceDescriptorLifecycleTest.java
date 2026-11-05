@@ -6,6 +6,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorInterface;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import org.junit.jupiter.api.Test;
@@ -97,23 +98,26 @@ class BffEServiceDescriptorLifecycleTest {
         doReturn(updated).when(gateway).getEServiceDescriptor(serviceRef, descriptorRef);
 
         assertThat(gateway.updateDescriptor(serviceRef, descriptorRef, command)).isSameAs(updated);
-        verify(gateway, never()).linkOpenApiInterface(any(), any(), anyString());
+        verify(gateway, never()).linkOpenApiInterface(any(), any(), any(ApiInterface.class));
     }
 
     @Test
     void updateUploadsTheInterfaceSpecifiedByTheCommand() {
         BffUpdateEServiceDescriptorCommand command = updateCommand();
-        command.interfaceDocumentPath("assets/custom-interface.yaml");
+        var apiInterface = ApiInterface.builder()
+                .name("custom-interface").path("assets/custom-interface.yaml").build();
+        command.apiInterface(apiInterface);
         EServiceDescriptor updated = EServiceDescriptor.builder().id(descriptorRef.id())
                 .dailyCallsPerConsumer(1).dailyCallsTotal(10).build();
         EServiceDescriptor linked = updated.toBuilder()
                 .interfaceDocument(mock(EServiceDescriptorInterface.class)).build();
         doReturn(updated).when(gateway).getEServiceDescriptor(serviceRef, descriptorRef);
         doReturn(linked).when(gateway).linkOpenApiInterface(
-                serviceRef, descriptorRef, "assets/custom-interface.yaml"
+                serviceRef, descriptorRef, apiInterface
         );
 
         assertThat(gateway.updateDescriptor(serviceRef, descriptorRef, command)).isSameAs(linked);
+        verify(gateway).linkOpenApiInterface(serviceRef, descriptorRef, apiInterface);
     }
 
     private BffUpdateEServiceDescriptorCommand updateCommand() {

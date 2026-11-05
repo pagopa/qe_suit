@@ -22,15 +22,6 @@ public class BffTenantRestClient extends RestClient {
         this.tenantsApi = apiClient.tenants();
     }
 
-    public TestChain<Tenant> getTenant(@Nonnull UUID tenantId) {
-        return execute(
-                () -> tenantsApi.getTenant()
-                        .tenantIdPath(tenantId)
-                        .execute(Function.identity()),
-                Tenant.class
-        );
-    }
-
     public TestChain<Void> updateDelegatedFeatures(@Nonnull TenantDelegatedFeaturesFlagsUpdateSeed payload) {
         return execute(
                 () -> tenantsApi.updateTenantDelegatedFeatures()

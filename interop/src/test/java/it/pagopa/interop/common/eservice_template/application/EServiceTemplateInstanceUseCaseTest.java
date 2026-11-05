@@ -98,7 +98,7 @@ class EServiceTemplateInstanceUseCaseTest {
         }
         order.verify(descriptorGateway).updateDescriptor(eq(service.getRef()), eq(draft.getRef()), metadata.capture());
         order.verify(descriptorGateway).publishDescriptor(service.getRef(), draft.getRef());
-        assertThat(metadata.getValue().getInterfaceDocumentPath()).isNull();
+        assertThat(metadata.getValue().getApiInterface()).isNull();
         assertThat(((BffUpdateEServiceDescriptorCommand) metadata.getValue()).getBffPayload().getDailyCallsTotal()).isPositive();
     }
 

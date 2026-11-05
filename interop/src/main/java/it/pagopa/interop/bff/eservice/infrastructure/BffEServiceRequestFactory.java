@@ -9,8 +9,10 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.application.command.EServiceTemplateInstanceUpdateDescriptorCommand;
 import it.pagopa.interop.common.eservice.application.command.SearchEServiceCatalogCommand;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
+import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.utils.RandomUtils;
 import org.instancio.Instancio;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Component;
@@ -75,7 +77,9 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
     }
 
     @Override
-    public EServiceCreationCommand defaultCreationEServiceCommand() {return BffEServiceCreationCommand.from(defaultEServiceSeed());}
+    public EServiceCreationCommand defaultCreationEServiceCommand() {
+        return BffEServiceCreationCommand.from(defaultEServiceSeed());
+    }
 
     @Override
     public UpdateEServiceDescriptorCommand defaultUpdateDescriptorCommand() {
@@ -137,7 +141,10 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
 
     @Override
     public UpdateEServiceDescriptorCommand prepareDescriptorForPublicationCommand() {
-        return defaultUpdateDescriptorCommand().interfaceDocumentPath("assets/origin-interface.yaml");
+        return defaultUpdateDescriptorCommand().apiInterface(ApiInterface.builder()
+                .name(RandomUtils.randomAlphanumericName("interface", 14))
+                .path("assets/origin-interface.yaml")
+                .build());
     }
 
     @Override

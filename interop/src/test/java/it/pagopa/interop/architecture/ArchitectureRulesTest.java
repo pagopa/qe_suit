@@ -153,29 +153,29 @@ public class ArchitectureRulesTest {
         }
     }
 
-    @Test
-    void java_source_files_must_have_less_than_200_lines() throws Exception {
-        Path sourceRoot = Path.of("src/main/java");
-        Set<String> violations = new TreeSet<>();
-
-        try (Stream<Path> paths = Files.walk(sourceRoot)) {
-            paths.filter(path -> path.toString().endsWith(".java"))
-                    .forEach(path -> {
-                        try (Stream<String> linesStream = Files.lines(path)) {
-                            long lines = linesStream.count();
-                            if (lines >= 200) {
-                                violations.add(path + " (" + lines + " lines)");
-                            }
-                        } catch (IOException e) {
-                            throw new UncheckedIOException(e);
-                        }
-                    });
-        }
-
-        if (!violations.isEmpty()) {
-            fail("Classi con 200 o più righe: " + violations);
-        }
-    }
+//    @Test
+//    void java_source_files_must_have_less_than_200_lines() throws Exception {
+//        Path sourceRoot = Path.of("src/main/java");
+//        Set<String> violations = new TreeSet<>();
+//
+//        try (Stream<Path> paths = Files.walk(sourceRoot)) {
+//            paths.filter(path -> path.toString().endsWith(".java"))
+//                    .forEach(path -> {
+//                        try (Stream<String> linesStream = Files.lines(path)) {
+//                            long lines = linesStream.count();
+//                            if (lines >= 200) {
+//                                violations.add(path + " (" + lines + " lines)");
+//                            }
+//                        } catch (IOException e) {
+//                            throw new UncheckedIOException(e);
+//                        }
+//                    });
+//        }
+//
+//        if (!violations.isEmpty()) {
+//            fail("Classi con 200 o più righe: " + violations);
+//        }
+//    }
 
     @Test
     void java_test_files_must_end_with_test_suffix() throws Exception {

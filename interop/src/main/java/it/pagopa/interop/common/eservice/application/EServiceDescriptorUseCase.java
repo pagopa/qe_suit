@@ -4,6 +4,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.domain.*;
+import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -80,12 +81,8 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.suspendDescriptor(eService.getRef(), descriptor.getRef());
     }
 
-    public EServiceDescriptor linkOpenApiInterface(EService eService, EServiceDescriptor descriptor, String openApiInterfacePath) {
-        return eServiceDescriptorGateway.linkOpenApiInterface(eService.getRef(), descriptor.getRef(), openApiInterfacePath);
-    }
-
-    public EServiceDescriptor linkOpenApiInterface(EService eService, EServiceDescriptor descriptor, String openApiInterfacePath, String name) {
-        return eServiceDescriptorGateway.linkOpenApiInterface(eService.getRef(), descriptor.getRef(), openApiInterfacePath, name);
+    public EServiceDescriptor linkOpenApiInterface(EService eService, EServiceDescriptor descriptor, ApiInterface apiInterface) {
+        return eServiceDescriptorGateway.linkOpenApiInterface(eService.getRef(), descriptor.getRef(), apiInterface);
     }
 
     public EServiceDescriptor archiveDescriptor(EService eService, EServiceDescriptor descriptor, GracePeriodDays gracePeriodDays) {
@@ -104,8 +101,8 @@ public class EServiceDescriptorUseCase {
             throw new IllegalStateException("Cannot prepare a descriptor in state " + descriptor.getState());
 
         if (command == null) command = publicationCommand(descriptor);
-        else if (command.getInterfaceDocumentPath() == null && descriptor.getInterfaceDocument() == null)
-            command.interfaceDocumentPath(requestFactory.prepareDescriptorForPublicationCommand().getInterfaceDocumentPath());
+        else if (command.getApiInterface() == null && descriptor.getInterfaceDocument() == null)
+            command.apiInterface(requestFactory.prepareDescriptorForPublicationCommand().getApiInterface());
 
         return eServiceDescriptorGateway.updateDescriptor(eService.getRef(), descriptor.getRef(), command);
     }
@@ -114,7 +111,7 @@ public class EServiceDescriptorUseCase {
         UpdateEServiceDescriptorCommand command = requestFactory.prepareDescriptorForPublicationCommand();
         if (descriptor.getAttributes() != null) command.attributes(descriptor.getAttributes());
         if (descriptor.getInterfaceDocument() != null) {
-            command.interfaceDocumentPath(null);
+            command.apiInterface(null);
         }
         return command;
     }

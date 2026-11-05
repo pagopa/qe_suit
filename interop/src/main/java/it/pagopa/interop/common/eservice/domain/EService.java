@@ -1,7 +1,6 @@
 package it.pagopa.interop.common.eservice.domain;
 
 import it.pagopa.domain.Identifiable;
-import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import lombok.Builder;
 import lombok.NonNull;
@@ -44,20 +43,6 @@ public class EService implements Identifiable {
         return descriptors.stream()
                 .filter(descriptor -> Integer.parseInt(descriptor.getVersion()) == version)
                 .findFirst();
-    }
-
-    public EService replaceDocument(UUID descriptorId, UUID documentId, Document updatedDocument) {
-        return this.toBuilder()
-                .descriptors(
-                        descriptors.stream()
-                                .map(descriptor ->
-                                        descriptor.getId().equals(descriptorId)
-                                                ? descriptor.replaceDocument(documentId, updatedDocument)
-                                                : descriptor
-                                )
-                                .toList()
-                )
-                .build();
     }
 
     public EServiceDescriptor getLastDraftDescriptor() {

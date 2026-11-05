@@ -30,7 +30,7 @@ public class BffEServiceDescriptorUpdateGateway {
             throw new IllegalStateException("Descriptor missing from context: " + descriptorRef.id());
         }
         if (descriptor.getTemplateRef() != null) {
-            if (command.getInterfaceDocumentPath() != null) {
+            if (command.getApiInterface() != null) {
                 throw new IllegalArgumentException("Template instance interfaces must be configured, not replaced");
             }
             var source = command.getBffPayload();
@@ -61,7 +61,7 @@ public class BffEServiceDescriptorUpdateGateway {
         if (command.getBffPayload().getAsyncExchangeProperties() != null) return;
         if (Boolean.FALSE.equals(service.getAsyncExchange())) return;
         interfaceGateway.linkDocument(service.getRef(), descriptorRef, "assets/origin-interface.yaml",
-                DocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE);
+                DocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE, null);
         command.getBffPayload().setAsyncExchangeProperties(new AsyncExchangeProperties()
                 .responseTime(60).resourceAvailableTime(60).maxResultSet(1).confirmation(false).bulk(true));
     }

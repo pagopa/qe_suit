@@ -75,10 +75,6 @@ public class DelegationUseCase {
         delegationGateway.approveConsumerDelegation(delegationRef);
     }
 
-    public void approveProducerDelegation(DelegationRef delegationRef) {
-        delegationGateway.approveProducerDelegation(delegationRef);
-    }
-
     public void rejectProducerDelegation(DelegationRef delegationRef) {
         delegationGateway.rejectProducerDelegation(delegationRef);
     }

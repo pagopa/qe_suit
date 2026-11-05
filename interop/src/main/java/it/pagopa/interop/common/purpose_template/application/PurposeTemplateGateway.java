@@ -18,6 +18,8 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
     PurposeTemplate createPurposeTemplate(
             Tenant targetTenant, RiskAnalysisForm riskAnalysisForm, RiskAnalysisFormConfig config);
 
+    PurposeTemplate createPurposeTemplate(Tenant targetTenant, RiskAnalysisForm riskAnalysisForm);
+
     PurposeTemplate publishPurposeTemplate(PurposeTemplate purposeTemplate);
 
     PurposeTemplate suspendPurposeTemplate(PurposeTemplate purposeTemplate);

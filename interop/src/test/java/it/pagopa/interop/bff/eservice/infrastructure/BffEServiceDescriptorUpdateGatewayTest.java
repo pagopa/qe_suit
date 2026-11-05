@@ -12,6 +12,7 @@ import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
 import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
@@ -140,7 +141,7 @@ class BffEServiceDescriptorUpdateGatewayTest {
                 .update(service.getRef(), descriptor.getRef(), command);
 
         verify(interfaces).linkDocument(service.getRef(), descriptor.getRef(), "assets/origin-interface.yaml",
-                it.pagopa.interop.common.kernel.domain.DocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE);
+                it.pagopa.interop.common.kernel.domain.DocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE, null);
         assertThat(command.getBffPayload().getAsyncExchangeProperties()).isEqualTo(new AsyncExchangeProperties()
                 .responseTime(60).resourceAvailableTime(60).maxResultSet(1).confirmation(false).bulk(true));
         verify(restClient).updateDescriptor(service.getId(), descriptor.getId(), command.getBffPayload());
@@ -168,7 +169,8 @@ class BffEServiceDescriptorUpdateGatewayTest {
         var instanceClient = mock(BffEServiceTemplateInstanceDescriptorRestClient.class);
         var interfaces = mock(BffEServiceDescriptorInterfaceGateway.class);
         var command = new BffUpdateEServiceDescriptorCommand();
-        command.interfaceDocumentPath("assets/origin-interface.yaml");
+        command.apiInterface(ApiInterface.builder()
+                .name("interface").path("assets/origin-interface.yaml").build());
 
         assertThatThrownBy(() -> new BffEServiceDescriptorUpdateGateway(
                 restClient, instanceClient, interfaces, store).update(service.getRef(), descriptor.getRef(), command))
