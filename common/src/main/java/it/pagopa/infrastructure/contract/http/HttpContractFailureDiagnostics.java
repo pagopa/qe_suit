@@ -35,13 +35,14 @@ final class HttpContractFailureDiagnostics {
             String apiLabel,
             Object operation,
             int expectedStatus,
+            boolean negate,
             Response response
     ) {
         StringBuilder message = new StringBuilder("HTTP authorization expectation failed");
         message.append("\n- identity: ").append(identity.name());
         message.append("\n- apiCall: ").append(apiLabel);
         message.append("\n- operation: ").append(describeOperation(operation));
-        message.append("\n- expectedStatus: ").append(expectedStatus);
+        message.append("\n- expectedStatus: ").append(negate ? "not " : "").append(expectedStatus);
         message.append("\n- actualStatus: ").append(readSafely(() -> String.valueOf(response.getStatusCode())));
         message.append("\n- responseBody: ").append(readSafely(response::asString));
         return new AssertionError(message.toString());
