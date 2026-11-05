@@ -12,6 +12,8 @@ import org.springframework.plugin.core.Plugin;
 
 public interface AgreementGateway extends Plugin<Channel> {
 
+    void viewConsumerAgreementDetails(Agreement agreement);
+
     Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation);
 
     default Agreement createAgreement(EService eService, EServiceDescriptor descriptor) {

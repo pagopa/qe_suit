@@ -2,7 +2,9 @@ package it.pagopa.interop.common.agreement.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.agreement.application.AgreementUseCase;
+import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
@@ -15,6 +17,15 @@ import lombok.RequiredArgsConstructor;
 public class AgreementSteps {
     private final AgreementUseCase agreementUseCase;
     private final CurrentUserSession currentUserSession;
+    private final EntityStore entityStore;
+
+    @When("il fruitore accede ai dettagli della richiesta di fruizione inoltrata")
+    public void viewConsumerAgreementDetails() {
+        Agreement agreement = entityStore.getLastOrThrow(Agreement.class);
+        Tenant consumer = Tenant.fromOrganizationId(agreement.getConsumerId());
+        currentUserSession.set(User.getTenantAdmin(consumer), consumer);
+        agreementUseCase.viewConsumerAgreementDetails(agreement);
+    }
 
     @Given("associa un Agreement in stato DRAFT all'{currentEService}")
     public void createAgreement(EService eService) {

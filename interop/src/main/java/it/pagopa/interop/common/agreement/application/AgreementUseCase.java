@@ -16,6 +16,10 @@ import org.springframework.stereotype.Service;
 public class AgreementUseCase {
     private final AgreementGateway agreementGateway;
 
+    public void viewConsumerAgreementDetails(Agreement agreement) {
+        agreementGateway.viewConsumerAgreementDetails(agreement);
+    }
+
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         return agreementGateway.createAgreement(eService, descriptor, delegation);
     }

@@ -10,6 +10,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
 import it.pagopa.interop.web.agreement.application.WebAgreementSecurityGateway;
 import it.pagopa.interop.web.agreement.infrastructure.page.ProducerAgreementDetailPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerAgreementDetailsPage;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceDetailPage;
 import it.pagopa.interop.web.infrastructure.suit.component.NotFoundComponent;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,14 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
 
     private final EServiceDetailPage eServiceDetailPage;
     private final ProducerAgreementDetailPage producerAgreementDetailPage;
+    private final ConsumerAgreementDetailsPage consumerAgreementDetailsPage;
     private final NotFoundComponent notFoundComponent;
+
+    @Override
+    public void viewConsumerAgreementDetails(Agreement agreement) {
+        consumerAgreementDetailsPage.navigateTo(agreement.getId().toString());
+        consumerAgreementDetailsPage.assertLoaded();
+    }
 
     @Override
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
