@@ -25,7 +25,7 @@ import org.junit.platform.suite.api.*;
         WebProducerAgreementContractTest.class,
         WebProducerEServiceAttributesContractTest.class,
         WebProducerPurposeContractTest.class,
-        WebProviderEServiceSummaryContractTest.class,
+        WebProducerEServiceSummaryContractTest.class,
         WebPurposeTemplateContractTest.class,
         WebTOSContractTest.class,
 })
