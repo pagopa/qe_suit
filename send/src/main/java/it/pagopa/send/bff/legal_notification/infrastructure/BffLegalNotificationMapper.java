@@ -16,8 +16,8 @@ import it.pagopa.send.common.legal_notification.domain.ResolvedPayment;
 import it.pagopa.send.common.legal_notification.domain.ResolvedRecipient;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffLegalNotificationSearchRow;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
+import it.pagopa.send.generated.openapi.clients.bff.model.NewNotificationRequestV26;
 import it.pagopa.send.generated.openapi.clients.bff.model.F24Payment;
 import it.pagopa.send.generated.openapi.clients.bff.model.NotificationAttachmentBodyRef;
 import it.pagopa.send.generated.openapi.clients.bff.model.NotificationAttachmentDigests;
@@ -36,6 +36,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.List;
+import static it.pagopa.send.bff.legal_notification.infrastructure.BffAmountConverter.toDecimal;
 
 /**
  * Unico punto del canale BFF che conosce sia il dominio interno ({@link
@@ -56,9 +57,9 @@ public interface BffLegalNotificationMapper {
 
     NotificationFeePolicy toBffFeePolicy(FeePolicy feePolicy);
 
-    BffNewNotificationRequest.PhysicalCommunicationTypeEnum toBffPhysicalCommunicationType(PhysicalCommunicationType type);
+    NewNotificationRequestV26.PhysicalCommunicationTypeEnum toBffPhysicalCommunicationType(PhysicalCommunicationType type);
 
-    BffNewNotificationRequest.PagoPaIntModeEnum toBffPagoPaIntMode(PagoPaIntMode mode);
+    NewNotificationRequestV26.PagoPaIntModeEnum toBffPagoPaIntMode(PagoPaIntMode mode);
 
     NotificationRecipientSummary toRecipientSummary(NotificationRecipientV24 recipient);
 
@@ -77,8 +78,8 @@ public interface BffLegalNotificationMapper {
 
     List<LegalNotificationDomain> toDomainList(List<BffLegalNotificationSearchRow> source);
 
-    default BffNewNotificationRequest toBffRequest(LegalNotificationCreationRequest source) {
-        BffNewNotificationRequest request = new BffNewNotificationRequest()
+    default NewNotificationRequestV26 toBffRequest(LegalNotificationCreationRequest source) {
+        NewNotificationRequestV26 request = new NewNotificationRequestV26()
                 .paProtocolNumber(source.getPaProtocolNumber())
                 .subject(source.getSubject())
                 ._abstract(source.getAbstractText())
@@ -89,13 +90,13 @@ public interface BffLegalNotificationMapper {
                 .senderTaxId(source.getSenderTaxId())
                 .group(source.getGroup())
                 .taxonomyCode(source.getTaxonomyCode())
-                .paFee(source.getPaFee())
-                .vat(source.getVat())
+                .paFee(toDecimal(source.getPaFee()))
+                .vat(toDecimal(source.getVat()))
                 .pagoPaIntMode(toBffPagoPaIntMode(source.getPagoPaIntMode()))
-                .physicalCommunicationPriority(source.getPhysicalCommunicationPriority())
+                .physicalCommunicationPriority(toDecimal(source.getPhysicalCommunicationPriority()))
                 .additionalLanguages(source.getAdditionalLanguages())
                 .cancelledIun(source.getCancelledIun())
-                .amount(source.getAmount())
+                .amount(toDecimal(source.getAmount()))
                 .paymentExpirationDate(source.getPaymentExpirationDate());
 
         source.getRecipients().forEach(recipient -> request.addRecipientsItem(toRecipient(recipient)));

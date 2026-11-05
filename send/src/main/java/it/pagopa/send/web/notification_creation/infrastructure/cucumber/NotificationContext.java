@@ -1,6 +1,6 @@
 package it.pagopa.send.web.notification_creation.infrastructure.cucumber;
 
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
+import it.pagopa.send.generated.openapi.clients.bff.model.NewNotificationResponse;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import io.cucumber.spring.ScenarioScope;
@@ -18,7 +18,7 @@ import lombok.Data;
 @Data
 public class NotificationContext {
     private NotificationData notifica;
-    private BffNewNotificationResponse bffNewNotificationResponse;
+    private NewNotificationResponse bffNewNotificationResponse;
 
     public NotificationContext() {
         // Empty constructor for Cucumber DI

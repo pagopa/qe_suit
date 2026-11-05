@@ -306,10 +306,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <!--
+                  Niente `testClassesDirectory`: i test compilano in target/test-classes, e
+                  puntarlo all'output main faceva sì che surefire non trovasse nulla, nemmeno con
+                  -Dtest=...
+
+                  Include espliciti e non `**/suite/**`: di default `mvn test` esegue solo ciò che
+                  non richiede rete, token o browser. Il runner dei contract test di
+                  autorizzazione (che genera il report HTML) e le suite Cucumber dei canali web si
+                  lanciano a mano: mvn test -Dtest=BffRoleAuthorizationTest
+                -->
                 <configuration>
-                    <testClassesDirectory>${project.build.outputDirectory}</testClassesDirectory>
                     <includes>
-                        <include>**/suite/**</include>
+                        <include>**/common/**/*Test.java</include>
+                        <include>**/web/login/**/*Test.java</include>
                     </includes>
                     <useModulePath>false</useModulePath>
                 </configuration>
@@ -321,7 +331,7 @@
             <plugin>
                 <groupId>org.openapitools</groupId>
                 <artifactId>openapi-generator-maven-plugin</artifactId>
-                <version>7.19.0</version>
+                <version>7.27.0</version>
                 <executions>
                     <!-- Bff API -->
                     <execution>
@@ -334,7 +344,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/refs/heads/develop/docs/openapi/api-external-pn-bff-pa-notifications.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/refs/tags/v1.22.1-RC.1/docs/openapi/aws/api-bff-WEB-aws.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>rest-assured</library>
                             <generateApiTests>false</generateApiTests>
