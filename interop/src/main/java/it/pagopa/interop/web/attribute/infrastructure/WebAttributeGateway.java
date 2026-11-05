@@ -11,6 +11,7 @@ import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceEditPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceViewPage;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
+@Profile({"cucumber", "junit"})
 @RequiredArgsConstructor
 public class WebAttributeGateway implements AttributeGateway {
 

@@ -9,7 +9,10 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
+import it.pagopa.interop.web.agreement.application.WebAgreementSecurityGateway;
+import it.pagopa.interop.web.agreement.infrastructure.page.ProducerAgreementDetailPage;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceDetailPage;
+import it.pagopa.interop.web.infrastructure.suit.component.NotFoundComponent;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
@@ -18,9 +21,11 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class WebAgreementGateway implements AgreementGateway {
+public class WebAgreementGateway implements AgreementGateway, WebAgreementSecurityGateway {
 
     private final EServiceDetailPage eServiceDetailPage;
+    private final ProducerAgreementDetailPage producerAgreementDetailPage;
+    private final NotFoundComponent notFoundComponent;
 
     @Override
     public void ensureActiveAgreement(EService eService, EServiceDescriptor descriptor) {
@@ -71,6 +76,13 @@ public class WebAgreementGateway implements AgreementGateway {
     public Agreement awaitState(Agreement agreement, Set<AgreementState> expectedStates) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support awaitState operation");
     }
+
+    @Override
+    public void blockUnauthorizedAccessToErogazioneSection(Agreement agreement) {
+        producerAgreementDetailPage.navigateTo(agreement.getId().toString());
+        notFoundComponent.assertLoaded();
+    }
+
 
     @Override
     public boolean supports(Channel delimiter) {

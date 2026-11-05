@@ -3,6 +3,7 @@ package it.pagopa.interop.common.journey.infrastructure;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.delegation.application.DelegationUseCase;
+import it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand;
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationSetupCommand;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
@@ -15,6 +16,7 @@ import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.User;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -111,5 +113,11 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
         delegationUseCase.waitForProducerDelegationState(
                 delegation.getRef(), ProducerDelegationState.REJECTED
         );
+    }
+
+    @Override
+    public DelegationJourneyImpl createProducerDelegation(@NonNull ProducerDelegationCreationCommand command) {
+        delegationUseCase.createProducerDelegation(command);
+        return this;
     }
 }

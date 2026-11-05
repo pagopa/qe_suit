@@ -7,9 +7,10 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ConsumerDelegationsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.api.DelegationsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerDelegationsApi;
-import it.pagopa.interop.generated.openapi.clients.bff.model.Delegation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectDelegationPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.Delegation;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
@@ -110,6 +111,4 @@ public class BffDelegationRestClient extends RestClient {
                 Void.class
         );
     }
-
-
 }

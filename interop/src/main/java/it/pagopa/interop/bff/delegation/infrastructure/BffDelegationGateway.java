@@ -11,6 +11,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
+import it.pagopa.interop.generated.openapi.clients.bff.model.DelegationState;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -149,5 +150,15 @@ public class BffDelegationGateway implements DelegationGateway {
                     "Errore durante " + operation + " (HTTP " + status + ")"
             );
         }
+    }
+
+    private Delegation awaitDelegation(DelegationRef delegationRef, DelegationState expectedState) {
+        return restClient.getDelegation(delegationRef.id())
+                .withPolling(response -> response.isSuccess()
+                        && response.as(it.pagopa.interop.generated.openapi.clients.bff.model.Delegation.class)
+                        .getState() == expectedState)
+                .map(mapper::toDelegation)
+                .updateContext()
+                .get();
     }
 }

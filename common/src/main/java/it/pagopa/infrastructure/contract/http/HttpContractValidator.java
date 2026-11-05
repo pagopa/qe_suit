@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.infrastructure.fuzzing.FuzzEngine;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -81,5 +82,19 @@ public final class HttpContractValidator {
 
     public HttpContractStages.ApiCallStage apiCall(Supplier<?> operationSupplier) {
         return apiCall(HttpContractAuthentication.noOp(), operationSupplier);
+    }
+
+    /**
+     * Modalita' autorizzazione: per ogni combinazione identita' x API genera un test dinamico che
+     * autentica l'utenza, costruisce una nuova operazione tramite il supplier, esegue la richiesta
+     * e verifica lo status esatto atteso ({@code 403} se non diversamente indicato).
+     * <p>
+     * Percorso distinto da quello di fuzzing: non usa i {@code FuzzEngine}, il
+     * {@code ContractCasePlanner} ne' la {@link HttpContractPolicy}, e non genera mutazioni.
+     */
+    public HttpContractStages.AuthorizationApiCallsStage authorization(
+            List<HttpContractIdentity> identities
+    ) {
+        return new HttpAuthorizationInvocationBuilder(identities, operationAdapter);
     }
 }

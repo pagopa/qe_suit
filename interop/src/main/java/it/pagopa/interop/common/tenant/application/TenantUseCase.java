@@ -16,6 +16,10 @@ public class TenantUseCase {
         tenantGateway.ensureProducerDelegationEnabled(java.util.Objects.requireNonNull(tenantRef));
     }
 
+    public void enableProducerDelegationAvailability(TenantRef tenantRef) {
+        tenantGateway.enableProducerDelegationAvailability(tenantRef);
+    }
+
     public void assignCertifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef) {
         tenantGateway.assignCertifiedAttribute(tenantRef, attributeRef);
     }

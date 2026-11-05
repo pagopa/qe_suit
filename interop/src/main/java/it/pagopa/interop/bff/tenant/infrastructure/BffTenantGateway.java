@@ -20,6 +20,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Service
 @RequiredArgsConstructor
 public class BffTenantGateway implements TenantGateway {
@@ -75,6 +77,28 @@ public class BffTenantGateway implements TenantGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
         return BffTenantAttributeMapper.activeIds(tenant.getAttributes(), kind);
+    }
+
+    @Override
+    public void enableProducerDelegationAvailability(@NonNull TenantRef tenantRef) {
+        Tenant tenant = restClient.getTenant(tenantRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        if (isProducerDelegationEnabled(tenant)) {
+            return;
+        }
+
+        boolean consumerEnabled = isConsumerDelegationEnabled(tenant);
+        var payload = new TenantDelegatedFeaturesFlagsUpdateSeed()
+                .isDelegatedProducerFeatureEnabled(true)
+                .isDelegatedConsumerFeatureEnabled(consumerEnabled);
+        executeWithPolling(restClient.updateDelegatedFeatures(payload));
+
+        Tenant updatedTenant = restClient.getTenant(tenantRef.id())
+                .withPolling(response -> response.isSuccess()
+                        && isProducerDelegationEnabled(response.as(Tenant.class)))
+                .get();
     }
 
     @Override
@@ -137,5 +161,13 @@ public class BffTenantGateway implements TenantGateway {
 
     private static void executeWithPolling(TestChain<Void> chain) {
         chain.withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+    }
+
+    private static boolean isProducerDelegationEnabled(Tenant tenant) {
+        return tenant.getFeatures().stream().anyMatch(feature -> feature.getDelegatedProducer() != null);
+    }
+
+    private static boolean isConsumerDelegationEnabled(Tenant tenant) {
+        return tenant.getFeatures().stream().anyMatch(feature -> feature.getDelegatedConsumer() != null);
     }
 }

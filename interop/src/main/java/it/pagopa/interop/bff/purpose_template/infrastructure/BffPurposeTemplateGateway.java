@@ -15,15 +15,10 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResourceRequest;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResources;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplateSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.TargetTenantKind;
-import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -41,6 +36,7 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
 
     private final BffPurposeTemplateRestClient restClient;
     private final BffPurposeTemplateMapper mapper;
+    private final BffPurposeTemplateRequestFactory requestFactory;
     private final EntityStore entityStore;
 
     @Override
@@ -51,6 +47,17 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
                     Optional<PurposeTemplate> existing = entityStore.getById(purposeTemplateId, PurposeTemplate.class);
                     return mapper.toPurposeTemplate(details, existing.orElse(null));
                 })
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public PurposeTemplate createPurposeTemplate(Tenant targetTenant, RiskAnalysisForm riskAnalysisForm) {
+        PurposeTemplateSeed payload = requestFactory.creationRequest(targetTenant, riskAnalysisForm);
+
+        return restClient.createPurposeTemplate(payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(created -> getPurposeTemplate(created.getId()))
                 .updateContext()
                 .get();
     }
@@ -111,6 +118,18 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
         return PollingUtils.pollUntil(
                 () -> getPurposeTemplate(purposeTemplate.getId()),
                 pt -> pt.getState() == PurposeTemplateState.PUBLISHED
+        );
+    }
+
+    @Override
+    public PurposeTemplate suspendPurposeTemplate(PurposeTemplate purposeTemplate) {
+        restClient.suspendPurposeTemplate(purposeTemplate.getId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        return PollingUtils.pollUntil(
+                () -> getPurposeTemplate(purposeTemplate.getId()),
+                pt -> pt.getState() == PurposeTemplateState.SUSPENDED
         );
     }
 

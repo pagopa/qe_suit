@@ -5,6 +5,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
+import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public class AttributeUseCase {
     }
 
     public Attribute createCertifiedAttribute() {
+        String name = RandomUtils.randomAlphanumericName("certified-", 10);
         return createCertifiedAttribute("attribute-" + UUID.randomUUID() + "-CERTIFIED");
     }
 
