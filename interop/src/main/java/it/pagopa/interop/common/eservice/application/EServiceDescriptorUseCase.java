@@ -26,7 +26,7 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.awaitDescriptorState(eService.getRef(), descriptor.getRef(), expectedState);
     }
 
-    public EServiceDescriptor addDescriptor(EService eService){
+    public EServiceDescriptor addDescriptor(EService eService) {
         return eServiceDescriptorGateway.addDescriptor(eService.getRef());
     }
 
@@ -76,7 +76,7 @@ public class EServiceDescriptorUseCase {
         return updateDescriptor(eService, descriptor, command);
     }
 
-    public EServiceDescriptor suspendDescriptor(EService eService, EServiceDescriptor descriptor){
+    public EServiceDescriptor suspendDescriptor(EService eService, EServiceDescriptor descriptor) {
         EServiceDescriptorTransitions.suspensionTarget(descriptor.getState());
         return eServiceDescriptorGateway.suspendDescriptor(eService.getRef(), descriptor.getRef());
     }
@@ -90,13 +90,13 @@ public class EServiceDescriptorUseCase {
         return descriptor;
     }
 
-    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor,  Consumer<UpdateEServiceDescriptorCommand> config) {
+    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor, Consumer<UpdateEServiceDescriptorCommand> config) {
         UpdateEServiceDescriptorCommand command = publicationCommand(descriptor);
         config.accept(command);
         return prepareDescriptorForPublication(eService, descriptor, command);
     }
 
-    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand command){
+    public EServiceDescriptor prepareDescriptorForPublication(EService eService, EServiceDescriptor descriptor, UpdateEServiceDescriptorCommand command) {
         if (descriptor.getState() != EServiceDescriptorState.DRAFT)
             throw new IllegalStateException("Cannot prepare a descriptor in state " + descriptor.getState());
 
@@ -109,6 +109,12 @@ public class EServiceDescriptorUseCase {
 
     private UpdateEServiceDescriptorCommand publicationCommand(EServiceDescriptor descriptor) {
         UpdateEServiceDescriptorCommand command = requestFactory.prepareDescriptorForPublicationCommand();
+        if (descriptor.getDailyCallsPerConsumer() != null) {
+            command.dailyCallsPerConsumer(descriptor.getDailyCallsPerConsumer());
+        }
+        if (descriptor.getDailyCallsTotal() != null) {
+            command.dailyCallsTotal(descriptor.getDailyCallsTotal());
+        }
         if (descriptor.getAttributes() != null) command.attributes(descriptor.getAttributes());
         if (descriptor.getInterfaceDocument() != null) {
             command.apiInterface(null);
