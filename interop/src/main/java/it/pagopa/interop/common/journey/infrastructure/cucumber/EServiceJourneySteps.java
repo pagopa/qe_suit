@@ -3,6 +3,7 @@ package it.pagopa.interop.common.journey.infrastructure.cucumber;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.Attributes;
@@ -54,6 +55,20 @@ public class EServiceJourneySteps {
                 .createEService(EServiceDescriptorState.PUBLISHED)
                 .withConsumer(consumer, UserRole.ADMIN)
                 .linkAgreement(AgreementState.ACTIVE);
+    }
+
+    @Given("un EService/eservice creato da/dal {tenant} con una richiesta di fruizione associata da/dal {tenant} in attesa di approvazione")
+    public void createEServiceAndLinkAgreementInPending(Tenant producer, Tenant consumer) {
+        EServiceCreationCommand creationCommand = eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(false);
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(creationCommand, EServiceDescriptorState.DRAFT)
+                .updateDescriptor(
+                        command -> command.agreementApprovalPolicy(AgreementApprovalPolicy.MANUAL),
+                        EServiceDescriptorState.PUBLISHED
+                )
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(AgreementState.PENDING);
     }
 
     @Given("un EService/eservice creato da/dal {tenant} con un descrittore divenuto DEPRECATED/deprecato dopo la fruizione di/del {tenant}")
