@@ -35,6 +35,7 @@ final class HttpAuthorizationInvocationBuilder
 
     private List<Supplier<?>> operationSuppliers;
     private int expectedStatus = DEFAULT_EXPECTED_STATUS;
+    private boolean negateExpectedStatus;
 
     HttpAuthorizationInvocationBuilder(
             List<HttpContractIdentity> identities,
@@ -57,11 +58,23 @@ final class HttpAuthorizationInvocationBuilder
 
     @Override
     public HttpContractStages.AuthorizationTestsStage expectedStatus(int status) {
+        this.expectedStatus = validStatus(status);
+        this.negateExpectedStatus = false;
+        return this;
+    }
+
+    @Override
+    public HttpContractStages.AuthorizationTestsStage expectedStatusNot(int status) {
+        this.expectedStatus = validStatus(status);
+        this.negateExpectedStatus = true;
+        return this;
+    }
+
+    private static int validStatus(int status) {
         if (status < 100 || status > 599) {
             throw new ContractHttpException("expectedStatus must be a valid HTTP status, was " + status);
         }
-        this.expectedStatus = status;
-        return this;
+        return status;
     }
 
     @Override
@@ -70,21 +83,22 @@ final class HttpAuthorizationInvocationBuilder
             throw new ContractHttpException("apiCalls(...) must be declared before tests()");
         }
 
-        // Congelato qui: lo stream e' lazy, e expectedStatus resta modificabile dallo stage.
+        // Congelati qui: lo stream e' lazy, e lo stage resta modificabile dopo tests().
         int status = expectedStatus;
+        boolean negate = negateExpectedStatus;
 
         return identities.stream().flatMap(identity ->
                 IntStream.range(0, operationSuppliers.size())
-                        .mapToObj(apiIndex -> toDynamicTest(identity, apiIndex, status))
+                        .mapToObj(apiIndex -> toDynamicTest(identity, apiIndex, status, negate))
         );
     }
 
-    private DynamicTest toDynamicTest(HttpContractIdentity identity, int apiIndex, int status) {
+    private DynamicTest toDynamicTest(HttpContractIdentity identity, int apiIndex, int status, boolean negate) {
         String apiLabel = "api#" + (apiIndex + 1);
         String name = "[" + identity.name() + "] " + apiLabel;
         return dynamicTest(
                 name,
-                () -> execute(name, identity, apiLabel, status, operationSuppliers.get(apiIndex))
+                () -> execute(name, identity, apiLabel, status, negate, operationSuppliers.get(apiIndex))
         );
     }
 
@@ -99,6 +113,7 @@ final class HttpAuthorizationInvocationBuilder
             HttpContractIdentity identity,
             String apiLabel,
             int expectedStatus,
+            boolean negate,
             Supplier<?> operationSupplier
     ) {
         String previousScenarioName = MDC.get(TestMdcKeys.SCENARIO_NAME);
@@ -123,12 +138,16 @@ final class HttpAuthorizationInvocationBuilder
                     new HttpContractRequest(null, false, null, null)
             );
 
-            if (response.getStatusCode() != expectedStatus) {
+            boolean matches = negate
+                    ? response.getStatusCode() != expectedStatus
+                    : response.getStatusCode() == expectedStatus;
+            if (!matches) {
                 throw HttpContractFailureDiagnostics.statusMismatch(
                         identity,
                         apiLabel,
                         operation,
                         expectedStatus,
+                        negate,
                         response
                 );
             }
