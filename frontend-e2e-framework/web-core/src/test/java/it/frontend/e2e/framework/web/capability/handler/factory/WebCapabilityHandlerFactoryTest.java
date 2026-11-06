@@ -23,7 +23,7 @@ class WebCapabilityHandlerFactoryTest {
     void shouldReturnDefaultFactoriesInExpectedOrder() {
         List<IWebCapabilityHandlerSupplier> defaults = WebCapabilityHandlerFactory.defaults();
 
-        assertEquals(6, defaults.size());
+        assertEquals(7, defaults.size());
 
         IWebPresentationApiAdapter adapter = mock(IWebPresentationApiAdapter.class);
         List<ICapabilityHandler> handlers = defaults.stream()
@@ -34,5 +34,8 @@ class WebCapabilityHandlerFactoryTest {
         assertInstanceOf(GettableCapabilityHandler.class, handlers.get(1));
         assertInstanceOf(WritableCapabilityHandler.class, handlers.get(2));
         assertInstanceOf(ReadableCapabilityHandler.class, handlers.get(3));
+        assertInstanceOf(
+                it.frontend.e2e.framework.web.capability.handler.AccessibleNameReadableCapabilityHandler.class,
+                handlers.get(6));
     }
 }

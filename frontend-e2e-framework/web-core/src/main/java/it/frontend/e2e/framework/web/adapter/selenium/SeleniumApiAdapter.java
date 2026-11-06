@@ -499,6 +499,20 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
         return element;
     }
 
+    @Override
+    public String getAccessibleName(XPathSelector selector) {
+        try {
+            String name = withRetry(() -> findWebElement(selector, Gettable.FindPolicy.PRESENT)
+                    .getAccessibleName());
+            if (name == null) {
+                throw new IllegalStateException("WebDriver returned a null accessible name");
+            }
+            return name;
+        } catch (RuntimeException exception) {
+            throw new IllegalStateException("Unable to read accessible name for " + selector, exception);
+        }
+    }
+
     private String resolveElementText(WebElement element) {
         String tagName = element.getTagName();
         if (tagName != null) {
