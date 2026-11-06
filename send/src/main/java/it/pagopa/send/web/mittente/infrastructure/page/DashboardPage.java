@@ -7,11 +7,10 @@ import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.TextField;
 import it.pagopa.send.web.infrastructure.page.component.Footer;
-import it.pagopa.send.web.infrastructure.page.component.Table;
+import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import it.pagopa.send.web.notification_search.infrastructure.suit.NotificationSearchPage;
-import it.pagopa.send.web.notification_search.infrastructure.suit.component.NotificationsTable;
 import it.pagopa.utils.async.PollingUtils;
 import org.assertj.core.api.Assertions;
 
@@ -57,8 +56,6 @@ public interface DashboardPage extends NotificationSearchPage {
     @XPath("//*[@id=\"endDate\"]")
     TextField endDateSearchInput();
 
-    Table notifications();
-
     /**
      * Filtro esclusivo del portale mittenti: assente lato PF.
      */
@@ -75,7 +72,8 @@ public interface DashboardPage extends NotificationSearchPage {
     @XPath("//*[@id=\"status\"]")
     Readable<String> statusFilter();
 
-    NotificationsTable notificationsTable();
+    @XPath("//*[@data-testid=\"notificationsTable\"]")
+    Table notificationsTable();
 
     Optional<OneTrustBanner> oneTrustBanner();
 
@@ -121,7 +119,8 @@ public interface DashboardPage extends NotificationSearchPage {
     default void searchByIun(String iun) {
         searchNotification(Map.of("iun", iun));
         PollingUtils.pollUntil(
-                () -> notificationsTable().iuns().readAll(),
+                // lo IUN è la quarta colonna
+                () -> notificationsTable().tBody().rows().stream().map(row -> row.cells().get(3).read()).toList(),
                 iuns -> iuns.equals(List.of(iun)),
                 Duration.ofSeconds(30),
                 Duration.ofSeconds(1),

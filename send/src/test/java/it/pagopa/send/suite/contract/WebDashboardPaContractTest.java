@@ -3,6 +3,7 @@ package it.pagopa.send.suite.contract;
 import it.frontend.e2e.framework.core.capability.core.Gettable.FindPolicy;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
+import it.pagopa.infrastructure.suit.component.TableCell;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
@@ -16,7 +17,6 @@ import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
-import it.pagopa.send.web.notification_search.infrastructure.suit.component.NotificationsTable;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
@@ -24,6 +24,7 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -159,22 +160,20 @@ public class WebDashboardPaContractTest {
                         new WebScenario<>(
                                 "intestazioni della tabella",
                                 page -> {},
-                                page -> page.notificationsTable().headers().readAllAndAssert(h -> Assertions.assertThat(h).containsExactly(TABLE_HEADERS))
+                                page -> Assertions.assertThat(page.notificationsTable().getColumnHeaders()).containsExactly(TABLE_HEADERS)
                         ),
 
                         new WebScenario<>(
                                 "riga della notifica inviata: data, destinatario, oggetto e apri",
                                 page -> page.searchByIun(notification.getIun()),
                                 page -> {
-                                    NotificationsTable table = page.notificationsTable();
-                                    // le colonne si leggono per tutte le righe: la riga della notifica è quella del suo IUN
-                                    int row = table.iuns().readAll().indexOf(notification.getIun());
-                                    Assertions.assertThat(row).as("riga della notifica %s", notification.getIun()).isNotNegative();
-                                    Assertions.assertThat(table.dateCells().readAll().get(row)).as("data").isEqualTo(TODAY);
+                                    // la tabella filtrata ha solo la riga della notifica, con le colonne nell'ordine delle intestazioni
+                                    List<TableCell> cells = page.notificationsTable().tBody().rows().get(0).cells();
+                                    Assertions.assertThat(cells.get(0).read()).as("data").isEqualTo(TODAY);
                                     // nella pagina della PA la seconda colonna è il codice fiscale del destinatario
-                                    Assertions.assertThat(table.senders().readAll().get(row)).as("codice fiscale").isEqualTo(recipientUser.getTaxId());
-                                    Assertions.assertThat(table.subjectCells().readAll().get(row)).as("oggetto").isEqualTo(NOTIFICATION_SUBJECT);
-                                    Assertions.assertThat(table.openButtons().readAll().get(row)).as("pulsante").isEqualTo(OPEN);
+                                    Assertions.assertThat(cells.get(1).read()).as("codice fiscale").isEqualTo(recipientUser.getTaxId());
+                                    Assertions.assertThat(cells.get(2).read()).as("oggetto").isEqualTo(NOTIFICATION_SUBJECT);
+                                    Assertions.assertThat(cells.get(5).read()).as("pulsante").isEqualTo(OPEN);
                                 }
                         )
                 ));
