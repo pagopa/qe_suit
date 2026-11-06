@@ -6,14 +6,6 @@ Feature: Messaggi di errore nelle analisi del rischio degli e-service in erogazi
   Voglio ricevere un messaggio di errore nella lingua selezionata quando una finalità dell'e-service ha un nome già utilizzato
   Per scegliere un nome diverso e completare la configurazione dell'analisi del rischio.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Le finalità qui descritte sono le analisi predisposte dall'erogatore nell'e-service inverso,
-  # non le finalità create dal fruitore né i template finalità.
-  # Ogni scenario utilizza un e-service e analisi del rischio dedicati.
-  # I riferimenti nominati identificano fixture specifiche, non l'ultima entità creata.
-  # La lingua va verificata nell'interfaccia; il Then verifica la snackbar visibile
-  # e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-
   Scenario Outline: [ESERVICE_RISK_ANALYSIS_ERROR_MESSAGE_1] - Aggiunta di una finalità con nome già presente nell'e-service inverso
     Given un e-service in erogazione inversa in bozza creato dal Comune di Milano
     And una finalità con analisi del rischio valida nell'e-service e identificata come "finalità esistente"

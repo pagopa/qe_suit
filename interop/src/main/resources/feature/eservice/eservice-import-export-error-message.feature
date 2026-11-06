@@ -6,13 +6,6 @@ Feature: Messaggi di errore nell'importazione e nell'esportazione degli e-servic
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un e-service non può essere importato o esportato
   Per comprendere i vincoli dell'operazione e correggere i dati.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza e-service, deleghe e archivi di test dedicati.
-  # Il setup delle deleghe deve evitare interferenze sulla disponibilità condivisa degli enti.
-  # La lingua va verificata nell'interfaccia; il Then verifica la snackbar visibile
-  # e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # Verificare la riproducibilità WEB senza aggirare controlli UI o simulare risposte.
-
   Scenario Outline: [ESERVICE_IMPORT_EXPORT_ERROR_MESSAGE_1] - Esportazione dal proprietario con una delega attiva
     Given un e-service pubblicato dal Comune di Milano con approvazione manuale delle richieste di fruizione
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE

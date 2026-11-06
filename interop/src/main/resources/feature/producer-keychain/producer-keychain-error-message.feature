@@ -6,14 +6,6 @@ Feature: Messaggi di errore nella gestione dei portachiavi dell'erogatore
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un portachiavi o una sua chiave non può essere gestito
   Per comprendere il problema e correggere i dati.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza portachiavi e materiale crittografico di test dedicati.
-  # Le chiavi sono generate per il test; non utilizzare credenziali reali o condivise.
-  # Ogni fixture non valida deve violare soltanto la regola oggetto del messaggio.
-  # La lingua va verificata nell'interfaccia; il Then verifica la snackbar visibile
-  # e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # La riproducibilità WEB resta da verificare, senza aggirare controlli UI o simulare risposte.
-
   Scenario Outline: [PRODUCER_KEYCHAIN_ERROR_MESSAGE_1] - Modifica di un portachiavi con un link nei dati generali
     Given un portachiavi creato dal Comune di Milano e dedicato allo scenario
     And un utente autenticato del Comune di Milano con ruolo admin

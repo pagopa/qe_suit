@@ -6,17 +6,6 @@ Feature: Messaggi di errore nella gestione dei template finalità
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un template finalità non può essere gestito
   Per comprendere il problema e correggere i dati o aggiornare la pagina.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza template, e-service e documenti dedicati.
-  # I riferimenti nominati identificano fixture specifiche, non l'ultima entità creata.
-  # I Given concorrenti non devono aggiornare la pagina né sostituire l'identità WEB.
-  # La selezione della lingua deve essere verificata nell'interfaccia, anche per l'italiano.
-  # Il Then verifica la snackbar visibile e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # La riproducibilità WEB, in particolare del download con ruolo non autorizzato,
-  # resta da verificare: non aggirare controlli UI né simulare risposte per raggiungere il messaggio.
-  # Distinguere il formato non PDF dal contenuto con firma di formato PDF non valida:
-  # il secondo caso non riguarda una firma digitale del documento.
-
   Scenario Outline: [PURPOSE_TEMPLATE_ERROR_MESSAGE_1] - Download dell'analisi del rischio con ruolo non autorizzato
     Given un template finalità in stato PUBLISHED creato dal Comune di Milano con il documento firmato dell'analisi del rischio disponibile
     And un utente autenticato del Comune di Milano con ruolo security

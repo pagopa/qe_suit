@@ -6,17 +6,6 @@ Feature: Messaggi di errore nella gestione delle finalità e delle analisi del r
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un'operazione non può essere completata
   Per comprendere il problema e correggere i dati o aggiornare la pagina.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza e-service, finalità e analisi del rischio dedicati.
-  # I riferimenti nominati identificano fixture specifiche, non l'ultima entità creata.
-  # I Given concorrenti non devono aggiornare la pagina né sostituire l'identità WEB.
-  # I due valutatori devono essere utenti distinti, entrambi assegnati alla stessa analisi.
-  # La selezione della lingua deve essere verificata nell'interfaccia, anche per l'italiano.
-  # Il Then verifica la snackbar visibile e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # Restano da chiarire le note editoriali sui duplicati in creazione ordinaria, inversa e clonazione.
-  # Verificare anche la distinzione WEB tra modifica dei dati generali e salvataggio completo della bozza.
-  # Non simulare risposte né aggirare controlli UI per raggiungere un messaggio.
-
   Scenario Outline: [PURPOSE_ERROR_MESSAGE_1] - Rinomina di una finalità derivata da template con nome duplicato
     Given un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
     And la finalità creata è identificata come "finalità esistente"

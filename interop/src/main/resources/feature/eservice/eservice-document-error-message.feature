@@ -6,18 +6,6 @@ Feature: Messaggi di errore nella gestione dei documenti e delle interfacce dell
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un documento o un'interfaccia non può essere gestito
   Per comprendere il problema e correggere i dati o aggiornare la pagina.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza e-service e documenti dedicati; i riferimenti nominati sono espliciti.
-  # I documenti di supporto sono distinti dall'interfaccia tecnica della versione.
-  # I casi di nome e contenuto duplicati devono violare una sola regola alla volta.
-  # I Given concorrenti non devono aggiornare la pagina né sostituire l'identità WEB.
-  # Il setup delle deleghe deve evitare interferenze sulla disponibilità condivisa degli enti.
-  # La lingua va verificata nell'interfaccia; il Then verifica la snackbar visibile
-  # e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # Verificare la riproducibilità WEB senza aggirare controlli UI o simulare risposte.
-  # Le fixture per formato non riconoscibile, upload non valido e interfaccia non valida
-  # devono produrre errori distinti: verificarne l'effettiva classificazione prima dei binding.
-
   Scenario Outline: [ESERVICE_DOCUMENT_ERROR_MESSAGE_1] - Eliminazione di un documento dopo la revoca della delega
     Given un e-service in bozza creato dal Comune di Milano
     And un documento di supporto valido allegato alla versione in bozza e identificato come "documento da eliminare"

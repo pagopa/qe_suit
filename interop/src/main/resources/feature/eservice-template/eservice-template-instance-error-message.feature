@@ -6,18 +6,6 @@ Feature: Messaggi di errore nella gestione degli e-service istanziati da templat
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un'istanza da template non può essere gestita
   Per comprendere il problema e correggere i dati o aggiornare la pagina.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza template, istanze e parole identificative dedicati.
-  # I riferimenti nominati identificano fixture specifiche, non l'ultima entità creata.
-  # I Given concorrenti non devono aggiornare la pagina né sostituire l'identità WEB.
-  # Il setup delle deleghe deve evitare interferenze sulla disponibilità condivisa degli enti.
-  # La lingua va verificata nell'interfaccia; il Then verifica la snackbar visibile
-  # e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # Modifica generale, bozza di versione, versione pubblicata e parola identificativa
-  # sono mapping distinti: verificare i rispettivi flussi WEB prima di implementare i binding.
-  # Per OpenAPI non riconosciuta serve una precondizione reale riproducibile:
-  # non alterare artefatti generati, aggirare controlli UI o simulare risposte.
-
   Scenario Outline: [ESERVICE_TEMPLATE_INSTANCE_ERROR_MESSAGE_1] - Creazione di un'istanza con parola identificativa duplicata
     Given un admin appartenente all'erogatore Comune di Milano
     And un template e-service preparato con la seguente configurazione:

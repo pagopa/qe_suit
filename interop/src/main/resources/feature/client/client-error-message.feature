@@ -6,15 +6,6 @@ Feature: Messaggi di errore nella gestione dei client e delle loro chiavi
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un client o una sua chiave non può essere gestito
   Per comprendere il problema e correggere i dati.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza client e materiale crittografico di test dedicati.
-  # I riferimenti nominati identificano fixture specifiche, non l'ultima entità creata.
-  # Le chiavi sono generate per il test; non utilizzare credenziali reali o condivise.
-  # Ogni fixture non valida deve violare soltanto la regola oggetto del messaggio.
-  # La lingua va verificata nell'interfaccia; il Then verifica la snackbar visibile
-  # e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # La riproducibilità WEB resta da verificare, senza aggirare controlli UI o simulare risposte.
-
   Scenario Outline: [CLIENT_ERROR_MESSAGE_1] - Eliminazione di una chiave aggiunta da un altro operatore
     Given un client API di PagoPA con due operatori di sicurezza distinti associati, identificati come "autore della chiave" e "operatore corrente"
     And una chiave pubblica RSA valida aggiunta dall'"autore della chiave" al client e identificata come "chiave da eliminare"

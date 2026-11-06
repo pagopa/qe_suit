@@ -6,16 +6,6 @@ Feature: Messaggi di errore nella gestione dell'ente e dei suoi attributi
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un'operazione non può essere completata
   Per comprendere il problema e sapere come proseguire.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza attributi e dati dedicati, senza dipendere da altri scenari.
-  # I Given concorrenti non devono aggiornare la pagina né sostituire l'identità WEB.
-  # I riferimenti nominati identificano le fixture specifiche, non l'ultima entità creata.
-  # La selezione della lingua deve essere verificata nell'interfaccia, anche per l'italiano.
-  # Il Then verifica la snackbar visibile e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # Le date relative sono calcolate rispetto alla data dell'applicativo, senza date fisse.
-  # La riproducibilità WEB dei rifiuti, inclusi date passate e disponibilità alle deleghe,
-  # resta da verificare: non aggirare controlli UI né simulare risposte per raggiungere il messaggio.
-
   Scenario Outline: [TENANT_ERROR_MESSAGE_1] - Assegnazione di un attributo certificato già posseduto dall'ente
     Given un admin del Comune di Milano crea un attributo certificato
     And l'attributo certificato creato è identificato come "certificato da assegnare"

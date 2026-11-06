@@ -6,15 +6,6 @@ Feature: Messaggi di errore nella gestione delle richieste di fruizione
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un'operazione non può essere completata
   Per comprendere il problema e sapere come proseguire.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # I Given successivi all'apertura della pagina preparano modifiche concorrenti tramite BFF.
-  # Questi Given non devono aggiornare la pagina né sostituire l'identità della sessione WEB.
-  # La creazione di un'altra richiesta non deve sostituire il riferimento alla richiesta visualizzata.
-  # La selezione della lingua deve essere verificata nell'interfaccia, anche per l'italiano.
-  # Il Then verifica la snackbar visibile e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # Per il contratto non ancora disponibile serve una precondizione reale e riproducibile:
-  # non introdurre attese arbitrarie, simulazioni o modifiche alle risposte per provocare l'errore.
-
   Scenario Outline: [AGREEMENT_ERROR_MESSAGE_1] - Eliminazione di un documento non più allegato
     Given un e-service pubblicato dal Comune di Milano con approvazione manuale delle richieste di fruizione
     And una richiesta di fruizione in stato DRAFT per l'e-service, creata da PagoPA

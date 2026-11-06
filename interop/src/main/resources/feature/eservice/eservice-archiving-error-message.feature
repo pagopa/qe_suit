@@ -6,17 +6,6 @@ Feature: Messaggi di errore nell'archiviazione degli e-service e delle loro vers
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un'archiviazione non può essere richiesta o annullata
   Per comprendere il problema e scegliere un preavviso corretto o aggiornare la pagina.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza un e-service, versioni e richieste di archiviazione dedicati.
-  # I Given concorrenti non devono aggiornare la pagina né sostituire l'identità WEB.
-  # Il setup delle deleghe deve evitare interferenze sulla disponibilità condivisa degli enti.
-  # I casi sul preavviso riusano il flusso di archive-eservice.feature per verificare il copy IT/EN,
-  # senza aggiungere ulteriori verifiche della regola di business o modificare gli scenari esistenti.
-  # La lingua va verificata nell'interfaccia; il Then verifica la snackbar visibile
-  # e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # Per gli annullamenti dopo revoca verificare che la richiesta resti disponibile al tentativo.
-  # Non aggirare controlli UI né simulare risposte per raggiungere il messaggio.
-
   Scenario Outline: [ESERVICE_ARCHIVING_ERROR_MESSAGE_1] - Annullamento della richiesta di archiviazione di una versione dopo la revoca
     Given un e-service del Comune di Milano con una versione pubblicata e archiviabile
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE

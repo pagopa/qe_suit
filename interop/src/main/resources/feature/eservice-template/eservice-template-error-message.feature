@@ -6,17 +6,6 @@ Feature: Messaggi di errore nella gestione dei template e-service
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un'operazione non può essere completata
   Per comprendere il problema e correggere i dati o aggiornare la pagina.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza template, istanze e documenti dedicati.
-  # I riferimenti nominati identificano fixture specifiche, non l'ultima entità creata.
-  # I Given concorrenti non devono aggiornare la pagina né sostituire l'identità WEB.
-  # La selezione della lingua deve essere verificata nell'interfaccia, anche per l'italiano.
-  # Il Then verifica la snackbar visibile e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # La modifica dei dati generali in bozza e gli aggiornamenti di singoli campi dopo la pubblicazione
-  # sono mapping distinti: verificare il flusso WEB corrispondente prima di implementare i binding.
-  # Le fixture per formato non riconoscibile, upload non valido e interfaccia non valida
-  # devono produrre errori distinti: verificarne l'effettiva classificazione senza simulare risposte.
-
   Background:
     Given un admin appartenente all'erogatore Comune di Milano
     And un template e-service preparato con la seguente configurazione:

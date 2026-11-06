@@ -6,12 +6,6 @@ Feature: Messaggi di errore nella creazione degli attributi
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un attributo non può essere creato
   Per comprendere il problema e correggere i dati inseriti.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza attributi e nomi dedicati, senza dipendere da dati di altri scenari.
-  # I nomi duplicati devono provenire dalla specifica fixture creata nel Given.
-  # La selezione della lingua deve essere verificata nell'interfaccia, anche per l'italiano.
-  # Il Then verifica la snackbar visibile e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-
   Scenario Outline: [ATTRIBUTE_REGISTRY_ERROR_MESSAGE_1] - Creazione di un attributo certificato con un nome già esistente
     Given un admin del Comune di Milano crea un attributo certificato
     And un utente autenticato del Comune di Milano con ruolo admin

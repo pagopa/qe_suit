@@ -6,16 +6,6 @@ Feature: Messaggi di errore nella gestione delle deleghe in fruizione e in eroga
   Voglio ricevere un messaggio di errore nella lingua selezionata quando una delega non può essere gestita
   Per comprendere il problema e sapere come proseguire.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza un e-service e una delega dedicati.
-  # I Given concorrenti non devono aggiornare la pagina né sostituire l'identità WEB.
-  # La configurazione della disponibilità alle deleghe è condivisa per ente:
-  # il setup dovrà evitare interferenze con altri scenari che la modificano.
-  # La selezione della lingua deve essere verificata nell'interfaccia, anche per l'italiano.
-  # Il Then verifica la snackbar visibile e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # La selezione WEB di un delegato non pubblico resta da verificare:
-  # non aggirare controlli UI né simulare risposte per raggiungere il messaggio.
-
   Scenario Outline: [DELEGATION_ERROR_MESSAGE_1] - Revoca di una delega in fruizione non più attiva
     Given un e-service pubblicato dal Comune di Milano che consente la delega in fruizione
     And una delega in fruizione per l'e-service da PagoPA al Comune di Pozzallo in stato ACTIVE

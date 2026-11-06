@@ -6,15 +6,6 @@ Feature: Messaggi di errore nella gestione delle versioni degli e-service
   Voglio ricevere un messaggio di errore nella lingua selezionata quando una versione non può essere gestita
   Per comprendere il problema e correggere i dati o aggiornare la pagina.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza un e-service e versioni dedicati.
-  # I Given concorrenti non devono aggiornare la pagina né sostituire l'identità WEB.
-  # Il setup delle deleghe deve evitare interferenze sulla disponibilità condivisa degli enti.
-  # La lingua va verificata nell'interfaccia; il Then verifica la snackbar visibile
-  # e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # Il caso di link già presente nella versione precedente richiede dati reali riproducibili.
-  # Non aggirare controlli UI né simulare risposte per raggiungere il messaggio.
-
   Scenario Outline: [ESERVICE_VERSION_ERROR_MESSAGE_1] - Eliminazione della bozza di versione dopo la revoca della delega
     Given un e-service del Comune di Milano con una versione pubblicata e una nuova versione in bozza
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE

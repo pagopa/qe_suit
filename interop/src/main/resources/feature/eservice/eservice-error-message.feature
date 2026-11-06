@@ -6,15 +6,6 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un e-service non può essere gestito
   Per comprendere il problema e correggere i dati o aggiornare la pagina.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Ogni scenario utilizza e-service e template dedicati; i riferimenti nominati sono espliciti.
-  # I Given concorrenti non devono aggiornare la pagina né sostituire l'identità WEB.
-  # Il setup delle deleghe deve evitare interferenze sulla disponibilità condivisa degli enti.
-  # La lingua va verificata nell'interfaccia; il Then verifica la snackbar visibile
-  # e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
-  # La modifica generale in bozza e gli aggiornamenti di singoli campi sono mapping distinti.
-  # Verificare la riproducibilità WEB senza aggirare controlli UI o simulare risposte.
-
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_1] - Eliminazione di una bozza da parte del delegato
     Given un e-service in bozza creato dal Comune di Milano
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE

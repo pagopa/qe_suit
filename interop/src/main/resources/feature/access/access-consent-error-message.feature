@@ -6,13 +6,6 @@ Feature: Messaggi di errore nella verifica e nella registrazione dei consensi di
   Voglio ricevere un messaggio di errore nella lingua selezionata quando non è possibile verificare o registrare i consensi
   Per comprendere perché non posso accedere alla piattaforma.
 
-  # Feature in attesa dell'implementazione degli step e di precondizioni reali riproducibili.
-  # Informativa non trovata e informativa assente dalla configurazione sono casi distinti.
-  # Non modificare configurazioni condivise o risorse di ambiente per preparare questi scenari.
-  # Se il caso non è riproducibile con fixture isolate autorizzate, mantenerlo non verificato.
-  # Non simulare risposte né aggirare controlli UI; la lingua va verificata anche prima dell'accesso.
-  # Il Then verifica la snackbar visibile e il testo esatto del catalogo, senza SUPPORT_FOOTER.
-
   Scenario Outline: [ACCESS_CONSENT_ERROR_MESSAGE_1] - Verifica del consenso con informativa non trovata
     Given un utente autenticato del Comune di Milano con ruolo admin
     And una precondizione isolata di accesso con tipo di consenso configurato ma relativa informativa non trovata

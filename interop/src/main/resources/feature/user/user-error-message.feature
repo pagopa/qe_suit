@@ -6,12 +6,6 @@ Feature: Messaggi di errore nella consultazione dei membri dell'ente
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un membro non è più disponibile
   Per sapere che devo aggiornare l'elenco degli utenti.
 
-  # Feature in attesa dell'implementazione degli step mancanti.
-  # Utilizzare un membro di test dedicato, distinto dall'amministratore autenticato.
-  # La disattivazione non deve coinvolgere utenti condivisi né cambiare l'identità WEB.
-  # Verificare la precondizione BFF e il flusso WEB, senza modifiche manuali o risposte simulate.
-  # Il Then verifica la snackbar visibile e il testo esatto del catalogo, senza SUPPORT_FOOTER.
-
   Scenario Outline: [USER_ERROR_MESSAGE_1] - Consultazione di un membro non più attivo
     Given un membro di test attivo del Comune di Milano, distinto dall'amministratore e identificato come "membro da consultare"
     And un utente autenticato del Comune di Milano con ruolo admin
