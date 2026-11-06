@@ -4,9 +4,26 @@ Feature: Messaggi di errore nell'archiviazione degli e-service e delle loro vers
 
   Come amministratore di un ente erogatore o delegato alla sua erogazione
   Voglio ricevere un messaggio di errore nella lingua selezionata quando un'archiviazione non può essere richiesta o annullata
-  Per comprendere il problema e scegliere un preavviso corretto o aggiornare la pagina.
 
-  Scenario Outline: [ESERVICE_ARCHIVING_ERROR_MESSAGE_1] - Annullamento della richiesta di archiviazione di una versione dopo la revoca
+  @work-item:QA-18434
+  Scenario Outline: [ESERVICE_ARCHIVING_ERROR_MESSAGE_1] - Tentativo di annullamento della richiesta di archiviazione di un e-service dopo la revoca della delega in erogazione
+    Given un e-service del Comune di Milano con una versione pubblicata
+    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    And il Comune di Pozzallo ha richiesto al Comune di Milano l'archiviazione dell'intero e-service con un preavviso valido e la richiesta è in attesa di approvazione
+    And un admin appartenente al delegato Comune di Pozzallo
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre il dettaglio della richiesta di archiviazione dell'intero e-service
+    Given la delega in erogazione viene revocata dal Comune di Milano
+    When l'utente tenta di annullare la richiesta di archiviazione dell'intero e-service senza aggiornare la pagina
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_SUBMIT_DELEGATED_ARCHIVING" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  @work-item:QA-18434
+  Scenario Outline: [ESERVICE_ARCHIVING_ERROR_MESSAGE_2] - Tentativo di annullamento della richiesta di archiviazione di un descrittore dopo la revoca della delega in erogazione
     Given un e-service del Comune di Milano con una versione pubblicata e archiviabile
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And il Comune di Pozzallo ha richiesto al Comune di Milano l'archiviazione della versione con un preavviso valido e la richiesta è in attesa di approvazione
@@ -22,22 +39,7 @@ Feature: Messaggi di errore nell'archiviazione degli e-service e delle loro vers
       | it     |
       | en     |
 
-  Scenario Outline: [ESERVICE_ARCHIVING_ERROR_MESSAGE_2] - Annullamento della richiesta di archiviazione dell'e-service dopo la revoca
-    Given un e-service del Comune di Milano con una versione pubblicata e archiviabile
-    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
-    And il Comune di Pozzallo ha richiesto al Comune di Milano l'archiviazione dell'intero e-service con un preavviso valido e la richiesta è in attesa di approvazione
-    And un admin appartenente al delegato Comune di Pozzallo
-    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
-    And l'utente apre il dettaglio della richiesta di archiviazione dell'intero e-service
-    Given la delega in erogazione viene revocata dal Comune di Milano
-    When l'utente tenta di annullare la richiesta di archiviazione dell'intero e-service senza aggiornare la pagina
-    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_SUBMIT_DELEGATED_ARCHIVING" in lingua "<lingua>"
-
-    Examples:
-      | lingua |
-      | it     |
-      | en     |
-
+  @work-item:QA-18434
   Scenario Outline: [ESERVICE_ARCHIVING_ERROR_MESSAGE_3] - Richiesta di archiviazione di una versione dopo la revoca della delega
     Given un e-service del Comune di Milano con una versione pubblicata e archiviabile
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
@@ -53,6 +55,7 @@ Feature: Messaggi di errore nell'archiviazione degli e-service e delle loro vers
       | it     |
       | en     |
 
+  @work-item:QA-18434
   Scenario Outline: [ESERVICE_ARCHIVING_ERROR_MESSAGE_4] - Archiviazione dell'e-service prima di una versione già in archiviazione
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     And un admin appartenente all'erogatore Comune di Milano
@@ -66,6 +69,7 @@ Feature: Messaggi di errore nell'archiviazione degli e-service e delle loro vers
       | it     |
       | en     |
 
+  @work-item:QA-18434
   Scenario Outline: [ESERVICE_ARCHIVING_ERROR_MESSAGE_5] - Richiesta in delega di archiviare l'e-service prima di una versione già in archiviazione
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     And un admin appartenente all'erogatore Comune di Milano
@@ -81,6 +85,7 @@ Feature: Messaggi di errore nell'archiviazione degli e-service e delle loro vers
       | it     |
       | en     |
 
+  @work-item:QA-18434
   Scenario Outline: [ESERVICE_ARCHIVING_ERROR_MESSAGE_6] - Richiesta di archiviazione dell'e-service dopo la revoca della delega
     Given un e-service del Comune di Milano con una versione pubblicata e archiviabile
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
