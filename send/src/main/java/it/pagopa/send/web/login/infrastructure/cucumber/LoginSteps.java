@@ -20,6 +20,12 @@ public class LoginSteps {
         loginService.loginAsTenant(tenant);
     }
 
+    @Given("il PT {user} effettua l'accesso a SelfCare con autenticazione SPID")
+    public void spidAuthPt(User partner) {
+        // il PT entra da SEND come una PA: dopo la scelta dell'ente il portale mittente lo reindirizza al BackOffice PT
+        loginService.loginAsTenant(partner);
+    }
+
     @Given("{recipientType} {user} effettua l'accesso a SelfCare con autenticazione SPID")
     public void spidAuthRecipient(String userType, User recipient) {
         loginService.loginAsRecipient(userType, recipient);
