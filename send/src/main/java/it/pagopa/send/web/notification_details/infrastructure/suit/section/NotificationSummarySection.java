@@ -4,7 +4,7 @@ import it.frontend.e2e.framework.web.domain.Component;
 
 /**
  * Contratto condiviso tra le varianti attore per la sezione di riepilogo della notifica.
- * Non definisce xpath propri: ogni attore la implementa con la propria interfaccia annidata.
+ * Non definisce xpath propri: ogni attore la implementa con la propria interfaccia, annidata nella Page o in un file a parte.
  */
 public interface NotificationSummarySection extends Component {
 }
