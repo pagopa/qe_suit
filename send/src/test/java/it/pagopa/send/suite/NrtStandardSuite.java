@@ -32,6 +32,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
 })
 @ExcludeTags({"ignore"})
+// TODO aggiungere "backofficePt" quando l'NRT girerà su un ambiente con il BackOffice PT (oggi pn-pt-webapp esiste solo su dev)
 @IncludeTags({"loadPage", "backstage", "sercqDomicilioDigitale"})
 public class NrtStandardSuite {
 

@@ -19,4 +19,10 @@ public interface User {
     String getEmail();
     String getIpaCode();
     boolean isHasGroups();
+
+    /**
+     * Chiave del session token dell'utenza ({@code token.session.<chiave>}): di norma lo username, oppure una chiave
+     * propria quando lo stesso utente SPID accede con un altro ente e ha quindi un token diverso.
+     */
+    String getSessionTokenKey();
 }
