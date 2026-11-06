@@ -235,3 +235,33 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | lingua |
       | it     |
       | en     |
+
+  Scenario Outline: [ESERVICE_ERROR_MESSAGE_17] - Consultazione di un e-service non più gestito in delega
+    Given un e-service pubblicato dal Comune di Milano con approvazione manuale delle richieste di fruizione
+    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    And un admin appartenente al delegato Comune di Pozzallo
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre l'elenco dei propri e-service e individua l'e-service gestito in delega
+    Given la delega in erogazione viene revocata dal Comune di Milano
+    When l'utente tenta di aprire il dettaglio dell'e-service dall'elenco senza aggiornarlo
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  Scenario Outline: [ESERVICE_ERROR_MESSAGE_18] - Consultazione di una versione non più gestita in delega
+    Given un e-service pubblicato dal Comune di Milano con approvazione manuale delle richieste di fruizione
+    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    And un admin appartenente al delegato Comune di Pozzallo
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre il dettaglio dell'e-service gestito in delega e individua la versione pubblicata
+    Given la delega in erogazione viene revocata dal Comune di Milano
+    When l'utente tenta di aprire il dettaglio della versione pubblicata senza aggiornare la pagina
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
