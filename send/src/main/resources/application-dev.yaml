@@ -73,6 +73,10 @@ url:
     supporto:
       base: https://uat.selfcare.pagopa.it
 
+# BackOffice dei Partner Tecnologici: abilita i test del portale PT in questo ambiente
+partner-tecnologico:
+  enabled: true # pn-pt-webapp e sessione PT disponibili
+
 # Selettori XPath da properties
 selettore:
   login:
