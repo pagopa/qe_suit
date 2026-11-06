@@ -14,6 +14,8 @@ Feature: Messaggi di errore nella gestione dei template e-service
   # Il Then verifica la snackbar visibile e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
   # La modifica dei dati generali in bozza e gli aggiornamenti di singoli campi dopo la pubblicazione
   # sono mapping distinti: verificare il flusso WEB corrispondente prima di implementare i binding.
+  # Le fixture per formato non riconoscibile, upload non valido e interfaccia non valida
+  # devono produrre errori distinti: verificarne l'effettiva classificazione senza simulare risposte.
 
   Background:
     Given un admin appartenente all'erogatore Comune di Milano
@@ -225,6 +227,112 @@ Feature: Messaggi di errore nella gestione dei template e-service
     And l'utente apre i documenti della versione del template "template principale"
     And l'utente tenta di rinominare il "documento da rinominare" inserendo un link nel nome visualizzato e lasciando validi gli altri dati
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_VERSIONS_E_SERVICE_TEMPLATE_VERSION_ID_DOCUMENTS_DOCUMENT_ID_UPDATE" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  Scenario Outline: [ESERVICE_TEMPLATE_ERROR_MESSAGE_18] - Caricamento di un documento oltre la dimensione consentita
+    Given un documento valido salvo la dimensione di 11 MiB, con nome e contenuto non ancora presenti nella versione del template "template principale", identificato come "documento da caricare"
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre i documenti della versione del template "template principale"
+    And l'utente tenta di allegare il "documento da caricare" alla versione del template "template principale"
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "ESERVICE_TEMPLATE_CONTENT_TOO_LARGE_ERROR" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  Scenario Outline: [ESERVICE_TEMPLATE_ERROR_MESSAGE_19] - Caricamento di un file su una bozza di versione non più disponibile
+    Given il template "template principale" viene pubblicato e viene creata una nuova versione in bozza identificata come "versione destinataria"
+    And un documento valido con nome e contenuto non ancora presenti nella "versione destinataria", identificato come "documento da caricare"
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre l'aggiunta di un documento alla "versione destinataria" e predispone il "documento da caricare" senza confermare
+    Given la "versione destinataria" del template "template principale" viene eliminata da un'altra sessione del Comune di Milano
+    When l'utente tenta di confermare il caricamento del "documento da caricare" senza aggiornare la pagina
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  Scenario Outline: [ESERVICE_TEMPLATE_ERROR_MESSAGE_20] - Caricamento di un WSDL senza indirizzo del servizio
+    Given un template e-service preparato con la seguente configurazione:
+      | tecnologia | stato | interfaccia              |
+      | SOAP       | DRAFT | soap11-un-indirizzo.wsdl |
+    And il template e-service preparato è identificato come "template SOAP"
+    And un file WSDL riconoscibile e ben formato, privo dell'indirizzo del servizio ma con le altre definizioni valide, identificato come "interfaccia da caricare"
+    And il file "interfaccia da caricare" ha nome valido e dimensione consentita
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre il caricamento dell'interfaccia SOAP della versione in bozza del "template SOAP"
+    And l'utente tenta di caricare l'"interfaccia da caricare"
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "ESERVICE_TEMPLATE_INTERFACE_EXTRACTING_SOAP_FIELD_VALUE_ERROR" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  Scenario Outline: [ESERVICE_TEMPLATE_ERROR_MESSAGE_21] - Caricamento di un file di cui non è possibile riconoscere il formato
+    Given un file di test con formato non riconoscibile, nome valido e dimensione consentita, identificato come "documento da caricare"
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre i documenti della versione del template "template principale"
+    And l'utente tenta di allegare il "documento da caricare" alla versione del template "template principale"
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "ESERVICE_TEMPLATE_INVALID_CONTENT_TYPE_DETECTED" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  Scenario Outline: [ESERVICE_TEMPLATE_ERROR_MESSAGE_22] - Caricamento di un'interfaccia REST con struttura non valida
+    Given un file OpenAPI di versione supportata e formato riconoscibile ma con struttura dell'interfaccia non valida, identificato come "interfaccia da caricare"
+    And il file "interfaccia da caricare" ha nome valido e dimensione consentita
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre il caricamento dell'interfaccia REST della versione in bozza del "template principale"
+    And l'utente tenta di caricare l'"interfaccia da caricare"
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "ESERVICE_TEMPLATE_INVALID_ESERVICE_INTERFACE_FILE_DETECTED" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  Scenario Outline: [ESERVICE_TEMPLATE_ERROR_MESSAGE_23] - Caricamento di un file riconoscibile ma non supportato
+    Given un file di test con formato riconoscibile ma non supportato per i documenti del template, nome valido e dimensione consentita, identificato come "documento da caricare"
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre i documenti della versione del template "template principale"
+    And l'utente tenta di allegare il "documento da caricare" alla versione del template "template principale"
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "ESERVICE_TEMPLATE_INVALID_FILE_UPLOAD_ERROR" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  Scenario Outline: [ESERVICE_TEMPLATE_ERROR_MESSAGE_24] - Caricamento di un'interfaccia con URL del server non valido
+    Given un file OpenAPI di versione supportata valido salvo l'URL del server, identificato come "interfaccia da caricare"
+    And il file "interfaccia da caricare" ha nome valido e dimensione consentita
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre il caricamento dell'interfaccia REST della versione in bozza del "template principale"
+    And l'utente tenta di caricare l'"interfaccia da caricare"
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "ESERVICE_TEMPLATE_INVALID_SERVER_URL" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  Scenario Outline: [ESERVICE_TEMPLATE_ERROR_MESSAGE_25] - Caricamento di un'interfaccia con versione OpenAPI non supportata
+    Given un file di interfaccia riconoscibile con versione OpenAPI non supportata e gli altri dati validi, identificato come "interfaccia da caricare"
+    And il file "interfaccia da caricare" ha nome valido e dimensione consentita
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre il caricamento dell'interfaccia REST della versione in bozza del "template principale"
+    And l'utente tenta di caricare l'"interfaccia da caricare"
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "ESERVICE_TEMPLATE_OPENAPI_VERSION_NOT_RECOGNIZED" in lingua "<lingua>"
 
     Examples:
       | lingua |
