@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.infrastructure.cucumber.parameter_type;
 
 import io.cucumber.java.ParameterType;
+import it.pagopa.interop.common.agreement.domain.AgreementParty;
 import it.pagopa.interop.common.client.domain.ClientKind;
 import it.pagopa.interop.common.delegation.domain.DelegationState;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
@@ -39,6 +40,11 @@ public class CommonParameterTypes {
     @ParameterType("GSP|PA|PRIVATE")
     public TenantKind tenantKind(String kind) {
         return TenantKind.valueOf(kind);
+    }
+
+    @ParameterType("l'erogatore|il fruitore")
+    public AgreementParty agreementParty(String party) {
+        return AgreementParty.fromName(party);
     }
 
     @ParameterType("BFF|bff")

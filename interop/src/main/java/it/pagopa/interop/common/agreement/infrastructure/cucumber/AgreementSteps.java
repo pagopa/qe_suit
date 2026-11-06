@@ -1,9 +1,13 @@
 package it.pagopa.interop.common.agreement.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.agreement.application.AgreementUseCase;
+import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
+import it.pagopa.interop.common.agreement.domain.AgreementParty;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
@@ -15,6 +19,42 @@ import lombok.RequiredArgsConstructor;
 public class AgreementSteps {
     private final AgreementUseCase agreementUseCase;
     private final CurrentUserSession currentUserSession;
+    private final EntityStore entityStore;
+
+    @When("{agreementParty} accede ai dettagli della richiesta di fruizione inoltrata/ricevuta")
+    public void viewConsumerAgreementDetails(AgreementParty agreementParty) {
+        Agreement agreement = entityStore.getLastOrThrow(Agreement.class);
+        Tenant tenant = Tenant.fromOrganizationId(
+                (agreementParty.equals(AgreementParty.PRODUCER)) ?
+                agreement.getProducerId() :
+                agreement.getConsumerId()
+        );
+        currentUserSession.set(User.getTenantAdmin(tenant), tenant);
+        if (agreementParty.equals(AgreementParty.PRODUCER)) {
+            agreementUseCase.viewProducerAgreementDetails(agreement);
+        } else {
+            agreementUseCase.viewConsumerAgreementDetails(agreement);
+        }
+    }
+
+    @When("l'erogatore approva la richiesta di fruizione")
+    public void approveAgreement() {
+        Agreement agreement = entityStore.getLastOrThrow(Agreement.class);
+        Tenant producer = Tenant.fromOrganizationId(agreement.getProducerId());
+        currentUserSession.set(User.getTenantAdmin(producer), producer);
+        viewConsumerAgreementDetails(AgreementParty.PRODUCER);
+        agreementUseCase.activateAgreement(agreement);
+    }
+
+    @Then("{agreementParty} può scaricare il documento della richiesta di fruizione solo quanto è pronto")
+    public void verifyAgreementDownloadAvailability(AgreementParty agreementParty) {
+        viewConsumerAgreementDetails(agreementParty);
+        if (agreementParty.equals(AgreementParty.PRODUCER)) {
+            agreementUseCase.verifyProducerAgreementDownloadAvailability(entityStore.getLastOrThrow(Agreement.class));
+        } else {
+            agreementUseCase.verifyConsumerAgreementDownloadAvailability(entityStore.getLastOrThrow(Agreement.class));
+        }
+    }
 
     @Given("associa un Agreement in stato DRAFT all'{currentEService}")
     public void createAgreement(EService eService) {
