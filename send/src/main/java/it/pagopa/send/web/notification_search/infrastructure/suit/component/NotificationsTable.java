@@ -7,9 +7,9 @@ import it.pagopa.infrastructure.suit.component.Button;
 import org.assertj.core.api.Assertions;
 
 /**
- * Tabella delle notifiche ricevute nella pagina "In arrivo" di cittadini e imprese, con la paginazione.
- * Compare solo se il destinatario ha ricevuto almeno una notifica; i pulsanti di pagina solo se le notifiche sono più
- * di quelle mostrate.
+ * Tabella delle notifiche, con la paginazione: notifiche ricevute nella pagina "In arrivo" di cittadini e imprese,
+ * notifiche inviate nella pagina "Notifiche" della PA. Compare solo se ci sono notifiche; i pulsanti di pagina solo se
+ * le notifiche sono più di quelle mostrate.
  */
 public interface NotificationsTable extends Component {
     @XPath("//*[@data-testid=\"notificationsTable\"]//th")
@@ -17,6 +17,10 @@ public interface NotificationsTable extends Component {
 
     @XPath("//*[@data-testid=\"notificationsTable.body.row\"]/td[1]//p")
     Readable<String> dates();
+
+    // data di ogni riga, letta dall'intera cella: nella pagina della PA la data non è in un paragrafo
+    @XPath("//*[@data-testid=\"notificationsTable.body.row\"]/td[1]")
+    Readable<String> dateCells();
 
     @XPath("//*[@data-testid=\"notificationsTable.body.row\"]/td[2]")
     Readable<String> senders();
