@@ -7,8 +7,7 @@ Feature: Messaggi di errore nell'archiviazione degli e-service e delle loro vers
 
   @work-item:QA-18434
   Scenario Outline: [ESERVICE_ARCHIVING_ERROR_MESSAGE_1] - Tentativo di annullamento della richiesta di archiviazione di un e-service dopo la revoca della delega in erogazione
-    Given un e-service del Comune di Milano con una versione pubblicata
-    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And il Comune di Pozzallo ha richiesto al Comune di Milano l'archiviazione dell'intero e-service con un preavviso valido e la richiesta è in attesa di approvazione
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
