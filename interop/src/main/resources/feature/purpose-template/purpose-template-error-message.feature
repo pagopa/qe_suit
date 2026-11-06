@@ -14,6 +14,8 @@ Feature: Messaggi di errore nella gestione dei template finalità
   # Il Then verifica la snackbar visibile e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
   # La riproducibilità WEB, in particolare del download con ruolo non autorizzato,
   # resta da verificare: non aggirare controlli UI né simulare risposte per raggiungere il messaggio.
+  # Distinguere il formato non PDF dal contenuto con firma di formato PDF non valida:
+  # il secondo caso non riguarda una firma digitale del documento.
 
   Scenario Outline: [PURPOSE_TEMPLATE_ERROR_MESSAGE_1] - Download dell'analisi del rischio con ruolo non autorizzato
     Given un template finalità in stato PUBLISHED creato dal Comune di Milano con il documento firmato dell'analisi del rischio disponibile
@@ -149,6 +151,34 @@ Feature: Messaggi di errore nella gestione dei template finalità
     And l'utente apre la modifica dell'annotazione "annotazione da modificare"
     And l'utente tenta di salvare un link nel testo dell'annotazione "annotazione da modificare" lasciando validi gli altri dati
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "PURPOSE_TEMPLATE_HYPERLINK_DETECTION_ERROR__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS_ANSWER_ID_ANNOTATION" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  Scenario Outline: [PURPOSE_TEMPLATE_ERROR_MESSAGE_11] - Caricamento di un allegato non PDF nell'annotazione
+    Given un template finalità in stato DRAFT creato dal Comune di Milano con un'annotazione dell'analisi del rischio identificata come "annotazione con allegati"
+    And un file riconoscibile in formato diverso da PDF, con nome univoco valido e dimensione consentita, identificato come "documento da caricare"
+    And un utente autenticato del Comune di Milano con ruolo admin
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre gli allegati dell'annotazione "annotazione con allegati"
+    And l'utente tenta di allegare il "documento da caricare" all'annotazione "annotazione con allegati"
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "PURPOSE_TEMPLATE_INVALID_CONTENT_TYPE_DETECTED" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  Scenario Outline: [PURPOSE_TEMPLATE_ERROR_MESSAGE_12] - Caricamento di un file con firma di formato PDF non valida
+    Given un template finalità in stato DRAFT creato dal Comune di Milano con un'annotazione dell'analisi del rischio identificata come "annotazione con allegati"
+    And un file presentato come PDF ma con firma di formato non valida, con nome univoco valido e dimensione consentita, identificato come "documento da caricare"
+    And un utente autenticato del Comune di Milano con ruolo admin
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre gli allegati dell'annotazione "annotazione con allegati"
+    And l'utente tenta di allegare il "documento da caricare" all'annotazione "annotazione con allegati"
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "PURPOSE_TEMPLATE_INVALID_PDF_SIGNATURE_ERROR" in lingua "<lingua>"
 
     Examples:
       | lingua |
