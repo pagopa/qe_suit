@@ -68,6 +68,8 @@ url:
       new-api-key: ${url.notifiche.mittente.api-keys}/nuova-api-key
       app-status: ${url.notifiche.mittente.base}/app-status
       statistics: ${url.notifiche.mittente.base}/statistiche
+    partner-tecnologico:
+      base: https://partner.test.notifichedigitali.it
     supporto:
       base: https://uat.selfcare.pagopa.it
 
@@ -76,6 +78,8 @@ selettore:
   login:
     pg:
       area-riservata-selettore-env: '//*[@id="root"]/div/div[2]/div[2]/main/div/div[3]/div[2]/div[8]/div/div/div/div[3]/button'
+    pa:
+      area-riservata-selettore-env: '//*[@id="forward_prod-pn-test"]'
   supporto:
     area-riservata-selettore-env: '//*[@id="root"]//table//tr[4]/td[5]//button'
 
@@ -93,6 +97,7 @@ token:
     francescopetrarca: ${pn.external.session-token.francescopetrarca:REPLACE_ME}
     grossini: ${pn.external.session-token.grossini:REPLACE_ME}
     albino63: ${pn.external.session-token.albino63:REPLACE_ME}
+    grossini-pt: ${pn.external.session-token.grossini-pt:REPLACE_ME}
 
 # ============================================================================
 # WebAPI Configuration (host condiviso da BFF e client mandate)

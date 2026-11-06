@@ -8,6 +8,7 @@ import it.pagopa.send.web.login.infrastructure.page.OneIdPage;
 import it.pagopa.send.web.mittente.infrastructure.page.APIKeyPage;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
+import it.pagopa.send.web.partner_tecnologico.infrastructure.page.PtInstitutionsPage;
 import it.pagopa.send.web.mittente.infrastructure.page.NewAPIKeyPage;
 import it.pagopa.send.web.notification_details.infrastructure.page.MittenteNotificationDetailsPage;
 import it.pagopa.send.web.mittente.infrastructure.page.PlatformStatusPage;
@@ -73,7 +74,8 @@ public class PageType {
         ONBOARDING_IO_PF("OnboardingIoPF", OnboardingIoPFPage.class),
         TERMS_OF_SERVICE_PF("TermsOfServicePF", TermsOfServicePFPage.class),
         SERCQ_TERMS_OF_SERVICE_PF("SercqTermsOfServicePF", SercqTermsOfServicePFPage.class),
-        CONFIGURE_ADDRESS_SEND_PAGE("ConfigureAddressSendPage",ConfigureAddressSendPage .class);
+        CONFIGURE_ADDRESS_SEND_PAGE("ConfigureAddressSendPage",ConfigureAddressSendPage .class),
+        PT_INSTITUTIONS("PtInstitutions", PtInstitutionsPage.class);
 
         private final String pageName;
         private final Class<? extends Page> pageClass;
