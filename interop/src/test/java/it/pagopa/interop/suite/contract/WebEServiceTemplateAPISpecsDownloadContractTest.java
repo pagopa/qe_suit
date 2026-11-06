@@ -1,7 +1,9 @@
 package it.pagopa.interop.suite.contract;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
+import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.bff.eservice_template.infrastructure.BffEServiceTemplateDownloadFixtureFactory;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
@@ -13,11 +15,13 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.web.eservice_template.infrastructure.page.ProducerEServiceTemplateDetailPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 @SpringBootTest(
@@ -26,13 +30,14 @@ import java.util.stream.Stream;
                 JunitContextConfig.class,
                 WebJUnitSuitConfig.class
         },
-        properties = {"spring.profiles.include=junit", "channel.web.browser=chrome", "channel.web.headless=false"}
+        properties = {"spring.profiles.include=junit", "channel.web.browser=chrome"}
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebEServiceTemplateAPISpecsDownloadContractTest {
     private final WebBrowserContractValidator webContractValidator;
     private final InteropJourney interopJourney;
+    private final BffEServiceTemplateDownloadFixtureFactory downloadFixtureFactory;
 
     @TestFactory
     Stream<DynamicTest> shouldDisplayCorrectNameForPublishedEServiceTemplate() {
@@ -62,4 +67,35 @@ public class WebEServiceTemplateAPISpecsDownloadContractTest {
                         ))));
     }
 
+
+    @TestFactory
+    Stream<DynamicTest> shouldAnnounceDocumentNameBeforeDownloadAction() {
+        Tenant producer = Tenant.COMUNE_DI_MILANO;
+        var fixture = downloadFixtureFactory.create(producer, false, true);
+        return webContractValidator
+                .as(User.getTenantAdmin(producer), producer)
+                .on(ProducerEServiceTemplateDetailPage.class,
+                        fixture.resourceId().toString(), fixture.versionId().toString())
+                .tests(Stream.of(new WebScenario<>(
+                        "Accessibilità - documenti del template: nome prima dell'azione",
+                        page -> {},
+                        page -> assertDownloadNames(page.documentationDownloadButtons(),
+                                fixture.documentationNames(), "Documentazione template")
+                )));
+    }
+
+    private void assertDownloadNames(List<Button> buttons, List<String> expected, String section) {
+        Assertions.assertThat(buttons).as(section + " - numero documenti").hasSize(expected.size());
+        Assertions.assertThat(buttons.stream().map(Button::read).toList())
+                .as(section + " - nomi visibili")
+                .containsExactlyInAnyOrderElementsOf(expected);
+        for (String name : expected) {
+            Assertions.assertThat(buttons).filteredOn(button -> name.equals(button.read()))
+                    .as(section + " - controllo del documento " + name)
+                    .singleElement()
+                    .satisfies(button -> Assertions.assertThat(button.readAccessibleName())
+                            .as(section + " - nome accessibile di " + name)
+                            .isEqualTo(name + ", scarica l'allegato"));
+        }
+    }
 }

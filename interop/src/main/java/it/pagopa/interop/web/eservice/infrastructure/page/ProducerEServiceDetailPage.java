@@ -14,6 +14,8 @@ import it.pagopa.interop.web.eservice.infrastructure.page.component.EServiceArch
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import org.assertj.core.api.Assertions;
 
+import java.util.List;
+
 @Url("${interop.web.producer-e-service-list}/${eserviceId}/${descriptorId}")
 public interface ProducerEServiceDetailPage extends Page {
 
@@ -75,6 +77,12 @@ public interface ProducerEServiceDetailPage extends Page {
 
     @XPath("(.//p[normalize-space()='Elenco documenti']/parent::div/following-sibling::div//button)[1]")
     Button apiSpecsDownloadButton();
+
+    @XPath(".//p[normalize-space()='Elenco documenti']/parent::div/following-sibling::div//button")
+    List<Button> documentationDownloadButtons();
+
+    @XPath(".//p[normalize-space()='Interfaccia di callback']/parent::div/following-sibling::div//button")
+    Button callbackDownloadButton();
 
     @Override
     default void assertLoaded() {

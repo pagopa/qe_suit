@@ -10,6 +10,8 @@ import it.pagopa.infrastructure.suit.component.Snackbar;
 import it.pagopa.utils.async.PollingUtils;
 import org.assertj.core.api.Assertions;
 
+import java.util.List;
+
 @Url("${interop.web.producer-e-service-template-list}/${eserviceTemplateId}/${versionId}")
 public interface ProducerEServiceTemplateDetailPage extends Page {
 
@@ -30,6 +32,9 @@ public interface ProducerEServiceTemplateDetailPage extends Page {
 
     @XPath("(.//p[normalize-space()='Elenco documenti']/parent::div/following-sibling::div//button)[1]")
     Button apiSpecsDownloadButton();
+
+    @XPath(".//p[normalize-space()='Elenco documenti']/parent::div/following-sibling::div//button")
+    List<Button> documentationDownloadButtons();
 
     @Override
     default void assertLoaded() {
