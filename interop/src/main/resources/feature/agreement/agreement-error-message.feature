@@ -12,6 +12,8 @@ Feature: Messaggi di errore nella gestione delle richieste di fruizione
   # La creazione di un'altra richiesta non deve sostituire il riferimento alla richiesta visualizzata.
   # La selezione della lingua deve essere verificata nell'interfaccia, anche per l'italiano.
   # Il Then verifica la snackbar visibile e il testo esatto del catalogo, senza aggiungere SUPPORT_FOOTER.
+  # Per il contratto non ancora disponibile serve una precondizione reale e riproducibile:
+  # non introdurre attese arbitrarie, simulazioni o modifiche alle risposte per provocare l'errore.
 
   Scenario Outline: [AGREEMENT_ERROR_MESSAGE_1] - Eliminazione di un documento non più allegato
     Given un e-service pubblicato dal Comune di Milano con approvazione manuale delle richieste di fruizione
@@ -316,6 +318,35 @@ Feature: Messaggi di errore nella gestione delle richieste di fruizione
     And la richiesta di fruizione è ancora in stato SUSPENDED
     When l'utente tenta di riattivare la richiesta di fruizione senza aggiornare la pagina
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  Scenario Outline: [AGREEMENT_ERROR_MESSAGE_21] - Download del documento della richiesta non ancora disponibile
+    Given un EService creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    And il documento della richiesta di fruizione non è ancora disponibile per il download
+    And un admin appartenente al fruitore PagoPA
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre il dettaglio della richiesta di fruizione inviata
+    And l'utente tenta di scaricare il documento della richiesta di fruizione
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "BFF_CONTRACT_EXCEPTION" in lingua "<lingua>"
+
+    Examples:
+      | lingua |
+      | it     |
+      | en     |
+
+  Scenario Outline: [AGREEMENT_ERROR_MESSAGE_22] - Caricamento di un allegato in formato non supportato
+    Given un e-service pubblicato dal Comune di Milano con approvazione manuale delle richieste di fruizione
+    And una richiesta di fruizione in stato DRAFT per l'e-service, creata da PagoPA
+    And un file di test in formato non supportato per gli allegati della richiesta, di dimensione consentita e con nome valido, identificato come "documento da caricare"
+    And un admin appartenente al fruitore PagoPA
+    When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
+    And l'utente apre il dettaglio della richiesta di fruizione inviata
+    And l'utente tenta di allegare il "documento da caricare" alla richiesta di fruizione
+    Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "AGREEMENT_INVALID_FILE_UPLOAD_ERROR" in lingua "<lingua>"
 
     Examples:
       | lingua |
