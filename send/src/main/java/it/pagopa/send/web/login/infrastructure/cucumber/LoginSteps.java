@@ -2,10 +2,12 @@ package it.pagopa.send.web.login.infrastructure.cucumber;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.web.infrastructure.page.ConfigureAddressSendPage;
 import it.pagopa.send.web.login.infrastructure.LoginService;
+import it.pagopa.send.web.login.infrastructure.page.component.PortalLogout;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -50,5 +52,10 @@ public class LoginSteps {
         } catch (AssertionError e) {
             // Se la pagina non è caricata, significa che non è presente, quindi si può procedere
         }
+    }
+
+    @When("l'utente esce dal portale con il pulsante Esci")
+    public void logout() {
+        uiGateway.bind(PortalLogout.class).logout();
     }
 }
