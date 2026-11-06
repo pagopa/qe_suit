@@ -1,0 +1,106 @@
+package it.pagopa.interop.common.eservice.infrastructure.cucumber;
+
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
+import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServicePreparationConfiguration;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServicePreparationConfigurationMapper;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServicePreparationConfigurationMapperImpl;
+import it.pagopa.interop.common.infrastructure.SharedMapper;
+import it.pagopa.interop.common.infrastructure.cucumber.dto.ConfiguredBoolean;
+import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.UserRole;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+
+import java.util.List;
+
+import static org.mockito.Mockito.*;
+
+@SpringJUnitConfig(classes = {
+        EServicePreparationConfigurationMapperImpl.class,
+        SharedMapper.class
+})
+class EServicePreparationConfigurationMapperTest {
+    @Autowired
+    private EServicePreparationConfigurationMapper mapper;
+    private final EServiceCreationCommand command = mock(EServiceCreationCommand.class);
+
+    @Test
+    void preservesFactoryDefaultsWhenPropertiesAreOmitted() {
+        mapper.apply(new EServicePreparationConfiguration(), command);
+
+        verifyNoInteractions(command);
+    }
+
+    @Test
+    void mapsExplicitPropertiesAndFlags() {
+        var configuration = new EServicePreparationConfiguration();
+        configuration.setAlias("ES-1");
+        configuration.setName("Anagrafe");
+        configuration.setDescription("");
+        configuration.setMode(EServiceMode.RECEIVE);
+        configuration.setSignalHub(ConfiguredBoolean.ENABLED);
+        configuration.setAsyncExchange(ConfiguredBoolean.DISABLED);
+
+        mapper.apply(configuration, command);
+
+        verify(command).alias("ES-1");
+        verify(command).name(argThat(
+                name -> name != null && name.matches("Anagrafe-[A-Za-z0-9]{15}")
+        ));
+        verify(command).description("");
+        verify(command).mode(EServiceMode.RECEIVE);
+        verify(command).isSignalHubEnabled(true);
+        verify(command).isAsync(false);
+        verifyNoMoreInteractions(command);
+    }
+
+    @Test
+    void explicitlyUnsetsFlags() {
+        var configuration = new EServicePreparationConfiguration();
+        configuration.setSignalHub(ConfiguredBoolean.UNSET);
+        configuration.setAsyncExchange(ConfiguredBoolean.UNSET);
+
+        mapper.apply(configuration, command);
+
+        verify(command).isSignalHubEnabled(null);
+        verify(command).isAsync(null);
+        verifyNoMoreInteractions(command);
+    }
+
+    @Test
+    void mapsOtherFlagValues() {
+        var configuration = new EServicePreparationConfiguration();
+        configuration.setSignalHub(ConfiguredBoolean.DISABLED);
+        configuration.setAsyncExchange(ConfiguredBoolean.ENABLED);
+
+        mapper.apply(configuration, command);
+
+        verify(command).isSignalHubEnabled(false);
+        verify(command).isAsync(true);
+        verifyNoMoreInteractions(command);
+    }
+
+    @Test
+    void createsAndMapsDraftCommandWithSelectedProducer() {
+        var journey = mock(InteropJourney.class, RETURNS_SELF);
+        var factory = mock(EServiceRequestFactory.class);
+        when(factory.defaultCreationEServiceCommand()).thenReturn(command);
+        var steps = new EServiceCreationJourneySteps(journey, factory, mapper);
+        var configuration = new EServicePreparationConfiguration();
+        configuration.setProducer(Tenant.COMUNE_DI_MILANO);
+        configuration.setAlias("ES-1");
+
+        steps.prepareEServicesForPublication(List.of(configuration));
+
+        var order = inOrder(journey, factory, command);
+        order.verify(factory).defaultCreationEServiceCommand();
+        order.verify(command).alias("ES-1");
+        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
+        order.verify(journey).createEService(command);
+        order.verifyNoMoreInteractions();
+    }
+}

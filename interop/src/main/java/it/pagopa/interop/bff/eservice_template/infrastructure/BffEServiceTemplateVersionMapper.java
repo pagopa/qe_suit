@@ -155,7 +155,7 @@ public interface BffEServiceTemplateVersionMapper {
                 }
 
                 it.pagopa.interop.common.attribute.domain.Attribute mapped = toAttribute(bffAttr);
-                flattenedList.add(mapped.toBuilder().group(i).build());
+                flattenedList.add(mapped.toBuilder().group(i + 1).build());
             }
         }
 
@@ -174,5 +174,4 @@ public interface BffEServiceTemplateVersionMapper {
         versions.add(incoming);
     }
 }
-
 

@@ -22,15 +22,6 @@ public class BffTenantRestClient extends RestClient {
         this.tenantsApi = apiClient.tenants();
     }
 
-    public TestChain<Tenant> getTenant(@Nonnull UUID tenantId) {
-        return execute(
-                () -> tenantsApi.getTenant()
-                        .tenantIdPath(tenantId)
-                        .execute(Function.identity()),
-                Tenant.class
-        );
-    }
-
     public TestChain<Void> updateDelegatedFeatures(@Nonnull TenantDelegatedFeaturesFlagsUpdateSeed payload) {
         return execute(
                 () -> tenantsApi.updateTenantDelegatedFeatures()
@@ -49,6 +40,20 @@ public class BffTenantRestClient extends RestClient {
                         .tenantIdPath(tenantId)
                         .body(seed)
                         .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Tenant> getTenant(@Nonnull UUID tenantId) {
+        return execute(
+                () -> tenantsApi.getTenant().tenantIdPath(tenantId).execute(Function.identity()),
+                Tenant.class
+        );
+    }
+
+    public TestChain<Void> updateTenantDelegatedFeatures(@Nonnull TenantDelegatedFeaturesFlagsUpdateSeed seed) {
+        return execute(
+                () -> tenantsApi.updateTenantDelegatedFeatures().body(seed).execute(Function.identity()),
                 Void.class
         );
     }
@@ -138,4 +143,3 @@ public class BffTenantRestClient extends RestClient {
         );
     }
 }
-

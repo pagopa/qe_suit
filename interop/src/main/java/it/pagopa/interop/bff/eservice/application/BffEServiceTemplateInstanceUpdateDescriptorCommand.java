@@ -106,7 +106,7 @@ public class BffEServiceTemplateInstanceUpdateDescriptorCommand implements EServ
     ) {
         ArrayList<List<DescriptorAttributeSeed>> attributeRequirements = createListsAsManyGroupsInCommonAttributes(attributes);
         for (Attribute commonAttribute : attributes) {
-            attributeRequirements.get(commonAttribute.getGroup()).add(
+            attributeRequirements.get(commonAttribute.getGroup() - 1).add(
                     createAttributeSeedFromCommonAttribute(commonAttribute)
             );
         }
@@ -119,18 +119,17 @@ public class BffEServiceTemplateInstanceUpdateDescriptorCommand implements EServ
             return new ArrayList<>();
         }
 
-        ArrayList<Integer> existingGroups = new ArrayList<>();
+        int groupCount = 0;
         for (Attribute attribute : attributes) {
-            int group = attribute.getGroup();
-            if (group >= 0 && !existingGroups.contains(group)) {
-                existingGroups.add(group);
+            Integer group = attribute.getGroup();
+            if (group == null || group < 1) {
+                throw new IllegalArgumentException("Required attribute groups must start at 1");
             }
+            groupCount = Math.max(groupCount, group);
         }
 
-        existingGroups.sort(Integer::compareTo);
-
         ArrayList<List<DescriptorAttributeSeed>> attributeRequirements = new ArrayList<>();
-        for (Integer group : existingGroups) {
+        for (int i = 0; i < groupCount; i++) {
             attributeRequirements.add(new ArrayList<>());
         }
 
