@@ -53,22 +53,16 @@ class WebRiskAnalysisContractTest {
      * the pending and completed views of the risk-analysis page.
      */
     @TestFactory
-    @DisplayName("Reviewer/Operatore access risks analysis page")
+    @DisplayName("Reviewer access risks analysis page and sees the correct information")
     Stream<DynamicTest> authorizedUserTests() {
         User reviewer = User.getTenantUser(Tenant.PAGO_PA, UserRole.REVIEWER);
         String eServiceName = RandomUtils.randomAlphanumericName("risk-analysis-eservice");
-        interopJourney
-                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
-                .createEService(command -> command.name(eServiceName), EServiceDescriptorState.PUBLISHED)
-                .withConsumer(Tenant.PAGO_PA, UserRole.ADMIN)
-                .linkAgreement(AgreementState.ACTIVE)
-                .createPurpose(PurposeVersionState.DRAFT)
-                .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
-                .assignRiskAnalysisReviewers(
-                        RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS,
-                        List.of(reviewer.getUserId())
-                )
-                .submitRiskAnalysis();
+        createPurposePrerequisites(eServiceName);
+        assignAndSubmitRiskAnalysis(
+                Tenant.PAGO_PA,
+                RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS,
+                reviewer
+        );
 
         return webContractValidator.as(reviewer, Tenant.PAGO_PA)
                 .on(RiskAnalysisPage.class)
@@ -104,14 +98,42 @@ class WebRiskAnalysisContractTest {
 
                                     page.completedTab().click();
                                     assertThat(page.riskAnalysisTable().get().isPresent()).isTrue();
-
-                                    String completedStatus = page.firstRowStatus().read();
-                                    assertThat(completedStatus)
-                                            .as("The status in the 'Concluse' tab must be 'rifiutata' or 'approvata'")
-                                            .matches("(?i)rifiutata|approvata");
+                                    assertThat(page.riskAnalysisTable().tBody().rows().stream()
+                                            .map(row -> row.cells().get(1).read())
+                                            .noneMatch(eServiceName::equals))
+                                            .as("The test risk analysis must not appear in the 'Concluse' tab while it is pending")
+                                            .isTrue();
                                 }
                         )
                 ));
+    }
+
+    /**
+     * Creates the e-service, active agreement, and draft purpose required by the
+     * authorized reviewer scenario. Risk-analysis assignment is performed separately.
+     */
+    private void createPurposePrerequisites(String eServiceName) {
+        interopJourney
+                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .createEService(command -> command.name(eServiceName), EServiceDescriptorState.PUBLISHED)
+                .withConsumer(Tenant.PAGO_PA, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
+                .createPurpose(PurposeVersionState.DRAFT);
+    }
+
+    /**
+     * Assigns the purpose's risk analysis to the reviewer using the requested producer
+     * and review mode, then submits it.
+     */
+    private void assignAndSubmitRiskAnalysis(
+            Tenant producer,
+            RiskAnalysisReviewMode reviewMode,
+            User reviewer
+    ) {
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .assignRiskAnalysisReviewers(reviewMode, List.of(reviewer.getUserId()))
+                .submitRiskAnalysis();
     }
 
     /**
