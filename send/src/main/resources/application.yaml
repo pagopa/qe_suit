@@ -32,11 +32,17 @@ logging:
     it.frontend.e2e.framework: DEBUG
 
 # ============================================================================
+# WebAPI Configuration (host condiviso da BFF e client mandate)
+# ============================================================================
+webapi:
+  base-url: https://webapi.dev.notifichedigitali.it
+
+# ============================================================================
 # BFF API Configuration (notifiche legali via API)
 # ============================================================================
 bff:
   api:
-    base-url: https://webapi.dev.notifichedigitali.it
+    base-url: ${webapi.base-url}/bff
     # REPLACE_ME: sempre sovrascritto dal profilo attivo (test/dev/uat), valore reale solo in locale
     bearer-token: REPLACE_ME
 
