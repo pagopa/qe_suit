@@ -15,6 +15,14 @@ import java.util.Set;
 
 public interface AgreementGateway extends Plugin<Channel> {
 
+    void viewConsumerAgreementDetails(Agreement agreement);
+
+    void viewProducerAgreementDetails(Agreement agreement);
+
+    void verifyConsumerAgreementDownloadAvailability(Agreement agreement);
+
+    void verifyProducerAgreementDownloadAvailability(Agreement agreement);
+
     void ensureActiveAgreement(EService eService, EServiceDescriptor descriptor);
 
     Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation);
