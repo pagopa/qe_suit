@@ -17,6 +17,8 @@ public interface EServiceGateway extends Plugin<Channel> {
 
     void shouldFailToUpdateDraftEServiceDescription(String description, EServiceUpdateFailureReason reason);
 
+    void shouldFailToUpdateDraftEServiceName(String name, EServiceUpdateFailureReason reason);
+
     void shouldFailToCreateEService(EServiceCreationCommand command, EServiceCreationFailureReason reason);
 
     EService createEService(EServiceCreationCommand command);
