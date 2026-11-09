@@ -60,6 +60,10 @@ public class EServiceUseCase {
         eServiceGateway.shouldFailToUpdateDraftEServiceDescription(description, reason);
     }
 
+    public void shouldFailToUpdateDraftEServiceName(String name, EServiceUpdateFailureReason reason) {
+        eServiceGateway.shouldFailToUpdateDraftEServiceName(name, reason);
+    }
+
     public void shouldFailToCreateEService(Consumer<EServiceCreationCommand> config, EServiceCreationFailureReason reason) {
         EServiceCreationCommand command = requestFactory.defaultCreationEServiceCommand();
         config.accept(command);
