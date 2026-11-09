@@ -96,11 +96,17 @@ token:
     albino63: ${pn.external.session-token.albino63:REPLACE_ME}
 
 # ============================================================================
+# WebAPI Configuration (host condiviso da BFF e client mandate)
+# ============================================================================
+webapi:
+  base-url: https://webapi.uat.notifichedigitali.it
+
+# ============================================================================
 # BFF API Configuration (notifiche legali via API)
 # ============================================================================
 bff:
   api:
-    base-url: https://webapi.uat.notifichedigitali.it
+    base-url: ${webapi.base-url}/bff
     bearer-token: ${pn.external.bearer-token.tokenBffApiUat:REPLACE_ME}
 
 # ============================================================================

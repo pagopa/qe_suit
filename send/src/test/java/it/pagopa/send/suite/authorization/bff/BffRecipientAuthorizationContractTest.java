@@ -192,7 +192,7 @@ public class BffRecipientAuthorizationContractTest {
                         .channelTypePath("PEC"),
                 () -> apiClient.addresses().deleteAddressV1()
                         .addressTypePath("LEGAL")
-                        .senderIdPath("default")
+                        .senderIdPath(UNKNOWN_ID)
                         .channelTypePath("PEC")
         };
     }

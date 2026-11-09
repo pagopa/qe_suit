@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.infrastructure;
 
+import it.pagopa.utils.RandomUtils;
 import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
@@ -15,5 +16,10 @@ public class SharedMapper {
             return null;
         }
         return OffsetDateTime.parse(dateStr).toInstant();
+    }
+
+    @Named("randomizedString")
+    public String randomizedString(String str) {
+        return RandomUtils.randomAlphanumericName(str);
     }
 }

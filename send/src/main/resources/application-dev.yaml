@@ -95,11 +95,17 @@ token:
     albino63: ${pn.external.session-token.albino63:REPLACE_ME}
 
 # ============================================================================
+# WebAPI Configuration (host condiviso da BFF e client mandate)
+# ============================================================================
+webapi:
+  base-url: https://webapi.dev.notifichedigitali.it
+
+# ============================================================================
 # BFF API Configuration (notifiche legali via API)
 # ============================================================================
 bff:
   api:
-    base-url: https://webapi.dev.notifichedigitali.it
+    base-url: ${webapi.base-url}/bff
     bearer-token: ${pn.external.bearer-token.tokenBffApiDev:REPLACE_ME}
 
 # ============================================================================

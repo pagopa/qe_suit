@@ -1,6 +1,11 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.channel.CurrentChannel;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.journey.application.TenantJourney;
@@ -17,6 +22,27 @@ public class TenantJourneyImpl implements TenantJourney<TenantJourneyImpl> {
 
     private final TenantUseCase tenantUseCase;
     private final EntityStore entityStore;
+    private final CurrentUserSession session;
+    private final CurrentChannel<Channel> channel;
+
+    @Override
+    public TenantJourneyImpl ensureProducerDelegationEnabled(Tenant tenant) {
+        User originalUser = session.getUser();
+        Tenant originalTenant = session.getTenant();
+        Channel originalChannel = channel.getCurrentChannel();
+        try {
+            channel.setCurrentChannel(Channel.BFF);
+            session.set(User.getTenantAdmin(tenant), tenant);
+            tenantUseCase.ensureProducerDelegationEnabled(TenantRef.of(tenant.getOrganizationId()));
+            return this;
+        } finally {
+            try {
+                session.set(originalUser, originalTenant);
+            } finally {
+                channel.setCurrentChannel(originalChannel);
+            }
+        }
+    }
 
     @Override
     public TenantJourneyImpl assignCertifiedAttribute(TenantRef tenant) {
@@ -35,6 +61,12 @@ public class TenantJourneyImpl implements TenantJourney<TenantJourneyImpl> {
             throw new IllegalArgumentException("No method to retrieve attribute n. " + nthAttribute);
         }
         tenantUseCase.assignCertifiedAttribute(tenant, attribute);
+        return this;
+    }
+
+    @Override
+    public TenantJourneyImpl assignCertifiedAttribute(TenantRef tenant, AttributeRef attributeRef) {
+        tenantUseCase.assignCertifiedAttribute(tenant, attributeRef);
         return this;
     }
 
