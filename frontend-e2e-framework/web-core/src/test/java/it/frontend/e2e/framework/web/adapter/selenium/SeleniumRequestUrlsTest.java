@@ -60,7 +60,9 @@ class SeleniumRequestUrlsTest {
         TimeoutException error = assertThrows(TimeoutException.class,
                 () -> new SeleniumApiAdapter(driver, 0).clickAndGetRequestUrls(selector));
 
-        assertTrue(error.getMessage().contains("No HTTP API request observed"));
+        String message = error.getMessage();
+        assertNotNull(message);
+        assertTrue(message.contains("No HTTP API request observed"));
         verify(js).executeScript(contains("state.observer.disconnect"), any());
         verify(button, times(1)).click();
     }

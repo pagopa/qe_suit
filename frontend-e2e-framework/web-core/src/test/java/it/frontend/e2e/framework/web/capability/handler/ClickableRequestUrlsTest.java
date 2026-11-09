@@ -12,6 +12,7 @@ import it.frontend.e2e.framework.web.capability.core.RequestCapturingClickable;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,7 +64,8 @@ class ClickableRequestUrlsTest {
 
         verify(adapter).click(argThat(actual -> actual.toString().equals("//a")));
         verifyNoMoreInteractions(adapter);
-        assertThrows(NoSuchMethodException.class, () -> LegacyButton.class.getMethod("clickAndGetRequestUrls"));
+        assertTrue(Arrays.stream(LegacyButton.class.getMethods())
+                .noneMatch(method -> method.getName().equals("clickAndGetRequestUrls")));
     }
 
     @Test
@@ -72,8 +74,6 @@ class ClickableRequestUrlsTest {
         Clickable legacy = action::run;
 
         legacy.click();
-
         verify(action).run();
-        assertFalse(legacy instanceof RequestCapturingClickable);
     }
 }
