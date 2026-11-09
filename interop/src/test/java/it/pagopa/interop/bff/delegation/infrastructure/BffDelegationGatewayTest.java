@@ -66,7 +66,7 @@ class BffDelegationGatewayTest {
     }
 
     @Test
-    void doesNotRetryDefinitiveProducerDelegationWriteFailures() {
+    void doesNotRetryDefinitiveProducerDelegationWriteFailuresWithExplicitDelegator() {
         ApiClient apiClient = mock(ApiClient.class);
         ProducerDelegationsApi producerApi = mock(ProducerDelegationsApi.class);
         ProducerDelegationsApi.CreateProducerDelegationOper create =
@@ -95,6 +95,7 @@ class BffDelegationGatewayTest {
         );
 
         assertThatThrownBy(() -> gateway.createProducerDelegation(
+                TenantRef.of(Tenant.COMUNE_DI_MILANO.getOrganizationId()),
                 TenantRef.of(Tenant.COMUNE_DI_POZZALLO.getOrganizationId()),
                 EServiceRef.of(UUID.randomUUID())
         ))
@@ -102,6 +103,42 @@ class BffDelegationGatewayTest {
                 .hasMessageContaining("HTTP 400");
 
         verify(create, times(1)).execute(any());
+    }
+
+    @Test
+    void timesOutWhenProducerDelegationCreationWithoutExplicitDelegatorNeverSucceeds() {
+        ApiClient apiClient = mock(ApiClient.class);
+        ProducerDelegationsApi producerApi = mock(ProducerDelegationsApi.class);
+        var create = mock(ProducerDelegationsApi.CreateProducerDelegationOper.class);
+        when(apiClient.producerDelegations()).thenReturn(producerApi);
+        when(producerApi.createProducerDelegation()).thenReturn(create);
+        when(create.body(any(DelegationSeed.class))).thenReturn(create);
+        when(create.execute(any())).thenAnswer(invocation -> {
+            Function<io.restassured.response.Response, io.restassured.response.Response> handler =
+                    invocation.getArgument(0);
+            return handler.apply(new ResponseBuilder()
+                    .setStatusCode(400)
+                    .setContentType(ContentType.JSON)
+                    .setBody("{\"title\":\"bad request\"}")
+                    .build());
+        });
+        var store = new CucumberEntityStore();
+        var mapper = mock(BffDelegationMapper.class);
+        var gateway = new BffDelegationGateway(
+                new BffDelegationRestClient(
+                        new TestChainFactory(mock(LastApiResponseStore.class), store), apiClient),
+                mapper, new BffDelegationRequestFactory());
+
+        assertThatThrownBy(() -> gateway.createProducerDelegation(
+                TenantRef.of(Tenant.COMUNE_DI_POZZALLO.getOrganizationId()),
+                EServiceRef.of(UUID.randomUUID())
+        ))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Polling in timeout")
+                .hasCauseInstanceOf(org.awaitility.core.ConditionTimeoutException.class);
+
+        verify(create, atLeast(2)).execute(any());
+        verifyNoInteractions(mapper);
     }
 
     private static String delegationBody(UUID id) {

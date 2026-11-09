@@ -116,7 +116,7 @@ class BffAgreementLifecycleTransportTest {
     }
 
     @Test
-    void failsArchiveWithoutRetryingOrReadingWhenMutationIsRejected() {
+    void timesOutWithoutReadingAgreementWhenArchiveNeverSucceeds() {
         ApiClient apiClient = mock(ApiClient.class);
         AgreementsApi api = mock(AgreementsApi.class);
         var archive = mock(AgreementsApi.ArchiveAgreementOper.class);
@@ -133,10 +133,11 @@ class BffAgreementLifecycleTransportTest {
 
         assertThatThrownBy(() -> gateway.archiveAgreement(
                 Agreement.builder().id(id).state(AgreementState.ACTIVE).build()))
-                .isInstanceOf(AssertionError.class)
-                .hasMessageContaining("204").hasMessageContaining("403");
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Polling in timeout")
+                .hasCauseInstanceOf(org.awaitility.core.ConditionTimeoutException.class);
 
-        verify(archive, times(1)).execute(any());
+        verify(archive, atLeast(2)).execute(any());
         verify(api, never()).getAgreementById();
     }
 

@@ -10,7 +10,6 @@ import it.pagopa.infrastructure.context.InMemoryLastApiResponseStore;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.bff.eservice.application.BffSearchEServiceCatalogCommand;
 import it.pagopa.interop.common.eservice.application.EServiceCatalogUseCase;
-import it.pagopa.interop.common.eservice.domain.EServiceCatalogRequesterDelegationRole;
 import it.pagopa.interop.common.eservice.domain.EServiceCatalogSortBy;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.tenant.domain.TenantCategory;
@@ -35,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BffEServiceCatalogTransportTest {
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    void serializesEveryFilterOnInitialAndSubsequentRequestsWithoutFilteringResponses(boolean enabled)
+    void serializesEverySupportedFilterOnInitialAndSubsequentRequestsWithoutFilteringResponses(boolean enabled)
             throws IOException {
         ObjectMapper json = new ObjectMapper();
         List<JsonNode> bodies = new CopyOnWriteArrayList<>();
@@ -86,7 +85,6 @@ class BffEServiceCatalogTransportTest {
                     .asyncExchange(enabled)
                     .mode(EServiceMode.DELIVER)
                     .onlySignalHubEnabled(enabled)
-                    .requesterDelegationRoles(List.of(EServiceCatalogRequesterDelegationRole.DELEGATE))
                     .templateId(templateId)
                     .producersIds(List.of(producerId));
 
@@ -106,7 +104,6 @@ class BffEServiceCatalogTransportTest {
                       "onlyTemplateInstances": %s, "hasLinkedPurposeTemplates": %s,
                       "producerCategories": ["COMUNI"], "asyncExchange": %s,
                       "mode": "DELIVER", "onlySignalHubEnabled": %s,
-                      "requesterDelegationRoles": ["DELEGATE"],
                       "templateId": "%s", "producersIds": ["%s"]
                     }
                     """.formatted(enabled, enabled, enabled, enabled, enabled, enabled, enabled,
