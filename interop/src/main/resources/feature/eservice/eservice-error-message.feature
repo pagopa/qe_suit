@@ -56,8 +56,8 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_4] - Modifica della bozza con un link nei dati generali
     Given i seguenti e-service in bozza:
-      | alias                   | erogatore        |
-      | e-service da modificare | Comune di Milano |
+      | erogatore        |
+      | Comune di Milano |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre la modifica dei dati generali in bozza dell'"e-service da modificare"
@@ -96,12 +96,10 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | it     |
       | en     |
 
-  Scenario Outline: [ESERVICE_ERROR_MESSAGE_7] - Creazione di un e-service con un link nei dati generali
+  Scenario Outline: [ESERVICE_ERROR_MESSAGE_7] - Creazione di un e-service con un link nel nome
     Given un utente autenticato del Comune di Milano con ruolo admin
-    And un nome univoco disponibile per un nuovo e-service e non in conflitto con un template
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
-    And l'utente apre la creazione di un e-service
-    And l'utente tenta di creare l'e-service con il nome univoco predisposto, un link nella descrizione e gli altri dati validi
+    And l'utente tenta di creare un e-service con un link nel nome e gli altri dati validi
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES" in lingua "<lingua>"
 
     Examples:
