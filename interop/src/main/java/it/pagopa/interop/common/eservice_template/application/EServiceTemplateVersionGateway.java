@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.eservice_template.application;
 
+import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
@@ -18,6 +19,13 @@ public interface EServiceTemplateVersionGateway extends Plugin<Channel> {
     EServiceTemplateVersion publishEServiceTemplateVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef);
 
     EServiceTemplateVersion uploadInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath);
+
+    void shouldFailToUploadInterface(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String fixturePath,
+            SoapInterfaceUploadFailureReason reason
+    );
 
     EServiceTemplateVersion updateDraftVersion(
             EServiceTemplateRef templateRef,
