@@ -138,23 +138,6 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
         interfaceGateway.shouldFailToUploadInterface(eServiceRef, descriptorRef, interfaceResourcePath, reason);
     }
 
-    private void setDefaultAsyncPropertiesIfNeeded(
-            EServiceRef serviceRef,
-            EServiceDescriptorRef descriptorRef,
-            BffUpdateEServiceDescriptorCommand command
-    ) {
-        if (command.getBffPayload().getAsyncExchangeProperties() != null) return;
-        EService service = entityStore.getById(serviceRef.id(), EService.class).orElseThrow();
-        if (!service.getAsyncExchange()) return;
-        linkOpenApiCallbackInterface(serviceRef, descriptorRef, "assets/origin-interface.yaml", null);
-        var properties = new it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties()
-                .responseTime(60).resourceAvailableTime(60).maxResultSet(1).confirmation(false).bulk(true);
-        command.getBffPayload().setAsyncExchangeProperties(properties);
-    }
-
-    @Override
-    public EServiceDescriptor linkOpenApiCallbackInterface(
-            EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String path, String name
     @Override
     public EServiceDescriptor linkOpenApiCallbackInterface(
             EServiceRef serviceRef,
