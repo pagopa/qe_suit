@@ -7,6 +7,7 @@ import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,14 @@ public class EServiceSteps {
     private final EServiceDescriptorUseCase descriptorUseCase;
     private final InteropJourney interopJourney;
     private final EServiceUseCase eServiceUseCase;
+
+    @Given("un e-service SOAP in bozza creato dall'erogatore")
+    public void createDraftSoapEService() {
+        interopJourney.createEService(
+                cmd -> cmd.technology(EServiceTechnology.SOAP),
+                EServiceDescriptorState.DRAFT
+        );
+    }
 
     @Given("la versione {int} dell'{currentEService} è in fase di archiviazione con un periodo di preavviso di {gracePeriodDays} giorni")
     public void prepareArchivingDescriptor(int versionNumber, EService eService, GracePeriodDays gracePeriodDays) {
