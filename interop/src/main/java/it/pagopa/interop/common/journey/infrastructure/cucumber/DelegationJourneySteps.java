@@ -30,9 +30,8 @@ public class DelegationJourneySteps {
                 .build());
     }
 
-    @Given("l'{currentEService} \u00e8 delegato in erogazione da/dal {tenant} a/al {tenant} con una delega in stato {delegationState}")
-    public void createProducerDelegation(
-            EService eService, Tenant delegator, Tenant delegate, DelegationState delegationState) {
+    @Given("l'{currentEService} (è )delegato in erogazione da/dal {tenant} a/al {tenant} con una delega in stato {delegationState}")
+    public void createProducerDelegation(EService eService, Tenant delegator, Tenant delegate, DelegationState delegationState) {
         interopJourney.createProducerDelegation(ProducerDelegationCreationCommand.builder()
                 .delegator(delegator)
                 .delegate(delegate)

@@ -2,6 +2,7 @@ package it.pagopa.interop.common.agreement.application;
 
 import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
+import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
@@ -10,7 +11,11 @@ import it.pagopa.interop.common.kernel.domain.Delegation;
 import jakarta.annotation.Nullable;
 import org.springframework.plugin.core.Plugin;
 
+import java.util.Set;
+
 public interface AgreementGateway extends Plugin<Channel> {
+
+    void ensureActiveAgreement(EService eService, EServiceDescriptor descriptor);
 
     Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation);
 
@@ -29,4 +34,10 @@ public interface AgreementGateway extends Plugin<Channel> {
     Agreement submitAgreement(Agreement agreement);
 
     Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation);
+
+    Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation);
+
+    Agreement archiveAgreement(Agreement agreement);
+
+    Agreement awaitState(Agreement agreement, Set<AgreementState> expectedStates);
 }

@@ -47,7 +47,14 @@ public class WebProducerEServiceAttributesContractTest {
         EService eService = interopJourney
                 .withProducer(TENANT, UserRole.ADMIN)
                 .createCertifiedAttribute()
-                .createEServiceWithCertifiedAttribute(EServiceDescriptorState.PUBLISHED)
+                .createEService(EServiceDescriptorState.DRAFT)
+                .updateDescriptorWithContextAttributes(
+                        config -> config
+                                .dailyCallsPerConsumer(10)
+                                .dailyCallsTotal(10),
+                        10,
+                        EServiceDescriptorState.PUBLISHED
+                )
                 .get(EService.class);
 
         return webContractValidator

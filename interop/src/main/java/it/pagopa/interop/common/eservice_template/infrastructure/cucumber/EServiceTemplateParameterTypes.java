@@ -10,12 +10,6 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.function.Function;
-
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class EServiceTemplateParameterTypes {
     private final EntityStore entityStore;
@@ -45,7 +39,7 @@ public class EServiceTemplateParameterTypes {
     public EServiceDescriptor eServiceDescriptor(String reference) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         if (reference.chars().noneMatch(Character::isDigit)) return eService.getLatestDescriptor();
-        return eService.getDescriptor(versionNumber(reference));
+        return eService.getDescriptorOrThrow(versionNumber(reference));
     }
 
     private static int versionNumber(String reference) {

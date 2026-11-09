@@ -8,6 +8,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -158,8 +159,9 @@ public class WebEServiceContractTest {
         EService eService = interopJourney
                 .withProducer(tenant, UserRole.ADMIN)
                 .createEService(cmd -> cmd.technology(EServiceTechnology.REST))
-                .updateDescriptor(cmd -> {}, EServiceDescriptorState.DRAFT)
-                .linkOpenApiInterface()
+                .updateDescriptor(cmd -> cmd.apiInterface(ApiInterface.builder()
+                        .name("interface").path("assets/origin-interface.yaml").build()),
+                        EServiceDescriptorState.DRAFT)
                 .get(EService.class);
 
         return webContractValidator

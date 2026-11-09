@@ -88,24 +88,24 @@ public class BffUpdateEServiceTemplateVersionCommand implements UpdateEServiceTe
             return new ArrayList<>();
         }
 
-        int maxGroup = attributes.stream()
-                .mapToInt(Attribute::getGroup)
-                .max()
-                .orElse(-1);
+        int maxGroup = 0;
+        for (Attribute attribute : attributes) {
+            Integer group = attribute.getGroup();
+            if (group == null || group < 1) {
+                throw new IllegalArgumentException("Required attribute groups must start at 1");
+            }
+            maxGroup = Math.max(maxGroup, group);
+        }
 
-        List<List<EServiceTemplateVersionAttributeSeed>> attributeRequirements = new ArrayList<>(maxGroup + 1);
-        for (int i = 0; i <= maxGroup; i++) {
+        List<List<EServiceTemplateVersionAttributeSeed>> attributeRequirements = new ArrayList<>(maxGroup);
+        for (int i = 0; i < maxGroup; i++) {
             attributeRequirements.add(new ArrayList<>());
         }
 
         for (Attribute attribute : attributes) {
-            int group = attribute.getGroup();
-            if (group >= 0 && group < attributeRequirements.size()) {
-                attributeRequirements.get(group).add(toAttributeSeed(attribute));
-            }
+            attributeRequirements.get(attribute.getGroup() - 1).add(toAttributeSeed(attribute));
         }
 
-        attributeRequirements.removeIf(List::isEmpty);
         return attributeRequirements;
     }
 
