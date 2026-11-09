@@ -128,13 +128,13 @@ public interface BffLegalNotificationMapper {
     }
 
     /**
-     * Un destinatario di notifica è per costruzione PF o PG, mai PA.
+     * Un destinatario di notifica è per costruzione PF o PG, mai PA o PT.
      */
     default NotificationRecipientV24.RecipientTypeEnum toRecipientType(UserType type) {
         return switch (type) {
             case PF -> NotificationRecipientV24.RecipientTypeEnum.PF;
             case PG -> NotificationRecipientV24.RecipientTypeEnum.PG;
-            case PA -> throw new IllegalStateException(type + " non può essere destinatario di una notifica");
+            case PA, PT -> throw new IllegalStateException(type + " non può essere destinatario di una notifica");
         };
     }
 

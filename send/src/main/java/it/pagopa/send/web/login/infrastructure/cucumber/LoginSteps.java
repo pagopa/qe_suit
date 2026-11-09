@@ -2,10 +2,12 @@ package it.pagopa.send.web.login.infrastructure.cucumber;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.web.infrastructure.page.ConfigureAddressSendPage;
 import it.pagopa.send.web.login.infrastructure.LoginService;
+import it.pagopa.send.web.login.infrastructure.page.component.PortalLogout;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,6 +20,12 @@ public class LoginSteps {
     @Given("la PA {user} effettua l'accesso a SelfCare con autenticazione SPID")
     public void spidAuthPa(User tenant) {
         loginService.loginAsTenant(tenant);
+    }
+
+    @Given("il PT {user} effettua l'accesso a SelfCare con autenticazione SPID")
+    public void spidAuthPt(User partner) {
+        // il PT entra da SEND come una PA: dopo la scelta dell'ente il portale mittente lo reindirizza al BackOffice PT
+        loginService.loginAsTenant(partner);
     }
 
     @Given("{recipientType} {user} effettua l'accesso a SelfCare con autenticazione SPID")
@@ -44,5 +52,10 @@ public class LoginSteps {
         } catch (AssertionError e) {
             // Se la pagina non è caricata, significa che non è presente, quindi si può procedere
         }
+    }
+
+    @When("l'utente esce dal portale con il pulsante Esci")
+    public void logout() {
+        uiGateway.bind(PortalLogout.class).logout();
     }
 }
