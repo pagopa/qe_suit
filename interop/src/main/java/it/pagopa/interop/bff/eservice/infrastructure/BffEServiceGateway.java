@@ -111,6 +111,11 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void shouldFailToUpdateDraftEServiceName(String name, EServiceUpdateFailureReason reason) {
+        throw new UnsupportedOperationException("Attempting draft EService name update is not supported on the BFF channel");
+    }
+
+    @Override
     public void shouldFailToCreateEService(EServiceCreationCommand command, EServiceCreationFailureReason reason) {
         throw new UnsupportedOperationException("Attempting duplicate EService creation is not supported on the BFF channel");
     }
