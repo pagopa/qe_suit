@@ -49,6 +49,6 @@ public class PropertiesUserProvider implements UserProvider {
                 .toList();
         return new ConfiguredUser(type, entry.username(), entry.password(), entry.taxId(), entry.organization(),
                 entry.organizationId(), entry.uid(), entry.denomination(), entry.familyName(),
-                entry.personalTaxId(), roles, entry.ipaCode(), entry.hasGroups(), entry.email());
+                entry.personalTaxId(), roles, entry.ipaCode(), entry.hasGroups(), entry.email(), entry.sessionTokenKey());
     }
 }
