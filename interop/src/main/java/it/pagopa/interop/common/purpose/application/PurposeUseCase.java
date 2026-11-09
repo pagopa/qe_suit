@@ -45,4 +45,13 @@ public class PurposeUseCase {
     public Purpose suspendPurpose(Purpose purpose, PurposeVersion purposeVersion, @Nullable DelegationRef delegationRef) {
         return purposeGateway.suspendPurpose(purpose.getRef(), purposeVersion.getRef(), delegationRef);
     }
+
+    public Purpose tryCreatePurpose(EService eService) {
+        PurposeCreateCommand command = purposeCommandFactory.validFullPopulatedCreateCommand(eService.getRef());
+        return purposeGateway.tryCreatePurpose(command);
+    }
+
+    public Purpose tryCreatePurposeFromTemplate(PurposeTemplate purposeTemplate, EService eService) {
+        return purposeGateway.tryCreatePurposeFromTemplate(purposeTemplate.getRef(), eService.getRef());
+    }
 }
