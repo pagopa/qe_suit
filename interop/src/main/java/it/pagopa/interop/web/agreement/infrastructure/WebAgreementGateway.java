@@ -4,6 +4,7 @@ import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.interop.common.agreement.application.AgreementGateway;
 import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
+import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
@@ -19,9 +20,10 @@ import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
-import java.util.function.Supplier;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import java.util.function.Supplier;
+import java.util.Set;
+
 
 @Service
 @RequiredArgsConstructor
@@ -61,6 +63,11 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     }
 
     @Override
+    public void ensureActiveAgreement(EService eService, EServiceDescriptor descriptor) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support ensureActiveAgreement operation");
+    }
+
+    @Override
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support createAgreement operation");
     }
@@ -92,6 +99,21 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
         producerAgreementDetailPage.activeButton().click();
         producerAgreementDetailPage.confirmButton().click();
         return agreement;
+    }
+
+    @Override
+    public Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support suspendAgreement operation");
+    }
+
+    @Override
+    public Agreement archiveAgreement(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support archiveAgreement operation");
+    }
+
+    @Override
+    public Agreement awaitState(Agreement agreement, Set<AgreementState> expectedStates) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support awaitState operation");
     }
 
     @Override

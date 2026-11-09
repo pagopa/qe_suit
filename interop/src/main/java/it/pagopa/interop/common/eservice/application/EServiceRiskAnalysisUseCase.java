@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.eservice.application;
 
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
@@ -20,6 +21,14 @@ public class EServiceRiskAnalysisUseCase {
     private final RiskAnalysisGateway riskAnalysisGateway;
     private final EServiceRiskAnalysisGateway eServiceRiskAnalysisGateway;
     private final RiskAnalysisDataFactory riskAnalysisDataFactory;
+
+    public void ensureForPublication(EService eService) {
+        if (eService.getMode() != EServiceMode.RECEIVE) return;
+        if (getRiskAnalysis(eService) != null) return;
+
+        Tenant producer = Tenant.fromOrganizationId(java.util.UUID.fromString(eService.getProducerId()));
+        addLatestRiskAnalysis(producer, eService, true);
+    }
 
     public EServiceRiskAnalysis addLatestRiskAnalysis(Tenant tenant, EService eService, boolean completed) {
         RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(tenant);

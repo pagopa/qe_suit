@@ -11,6 +11,8 @@ import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 public class AgreementUseCase {
@@ -30,6 +32,10 @@ public class AgreementUseCase {
 
     public void verifyProducerAgreementDownloadAvailability(Agreement agreement) {
         agreementGateway.verifyProducerAgreementDownloadAvailability(agreement);
+    }
+
+    public void ensureActiveAgreement(EService eService, EServiceDescriptor descriptor) {
+        agreementGateway.ensureActiveAgreement(eService, descriptor);
     }
 
     public Agreement createAgreement(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
@@ -80,5 +86,17 @@ public class AgreementUseCase {
 
     public Agreement submitAgreement(Agreement agreement) {
         return agreementGateway.submitAgreement(agreement);
+    }
+
+    public Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation) {
+        return agreementGateway.suspendAgreement(agreement, delegation);
+    }
+
+    public Agreement archiveAgreement(Agreement agreement) {
+        return agreementGateway.archiveAgreement(agreement);
+    }
+
+    public Agreement awaitState(Agreement agreement, Set<AgreementState> expectedStates) {
+        return agreementGateway.awaitState(agreement, expectedStates);
     }
 }

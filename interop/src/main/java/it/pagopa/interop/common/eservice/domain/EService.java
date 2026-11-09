@@ -1,7 +1,6 @@
 package it.pagopa.interop.common.eservice.domain;
 
 import it.pagopa.domain.Identifiable;
-import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import lombok.Builder;
 import lombok.NonNull;
@@ -40,22 +39,19 @@ public class EService implements Identifiable {
                 .orElse(null);
     }
 
-    public EService replaceDocument(UUID descriptorId, UUID documentId, Document updatedDocument) {
-        return this.toBuilder()
-                .descriptors(
-                        descriptors.stream()
-                                .map(descriptor ->
-                                        descriptor.getId().equals(descriptorId)
-                                                ? descriptor.replaceDocument(documentId, updatedDocument)
-                                                : descriptor
-                                )
-                                .toList()
-                )
-                .build();
+    public Optional<EServiceDescriptor> findDescriptor(int version) {
+        return descriptors.stream()
+                .filter(descriptor -> Integer.parseInt(descriptor.getVersion()) == version)
+                .findFirst();
     }
 
     public EServiceDescriptor getLastDraftDescriptor() {
         return getUniqueDescriptorByState(EServiceDescriptorState.DRAFT);
+    }
+
+    public Optional<EServiceDescriptor> findDraftDescriptor() {
+        return descriptorsByState(EServiceDescriptorState.DRAFT)
+                .max(Comparator.comparingInt(descriptor -> Integer.parseInt(descriptor.getVersion())));
     }
 
     public EServiceDescriptor getLastDeprecatedDescriptor() {
@@ -85,7 +81,7 @@ public class EService implements Identifiable {
                 .orElseThrow(() -> new NoSuchElementException("Nessun descriptor trovato per EService " + id));
     }
 
-    public EServiceDescriptor getDescriptor(int versionNumber) {
+    public EServiceDescriptor getDescriptorOrThrow(int versionNumber) {
         return descriptors.stream()
                 .filter(descriptor -> Integer.parseInt(descriptor.getVersion()) == versionNumber)
                 .findFirst()
@@ -94,7 +90,7 @@ public class EService implements Identifiable {
                 ));
     }
 
-    public void addDescriptor(@NonNull EServiceDescriptor descriptor) {
+    public void upsertDescriptor(@NonNull EServiceDescriptor descriptor) {
         Objects.requireNonNull(descriptor.getId(), "descriptor.id non può essere null");
 
         for (int i = 0; i < descriptors.size(); i++) {
