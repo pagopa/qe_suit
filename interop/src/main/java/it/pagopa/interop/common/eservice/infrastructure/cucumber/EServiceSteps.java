@@ -6,6 +6,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.*;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +35,14 @@ public class EServiceSteps {
         eServiceUseCase.shouldFailToCreateEService(
                 command -> command.name(randomAlphanumericName("eservice", 15) + " https://example.com"),
                 EServiceCreationFailureReason.HYPERLINK_DETECTED
+        );
+    }
+
+    @When("l'utente tenta di creare un e-service con il nome del {eServiceTemplate} e gli altri dati validi")
+    public void attemptToCreateEServiceWithTemplateName(EServiceTemplate template) {
+        eServiceUseCase.shouldFailToCreateEService(
+                command -> command.name(template.getName()),
+                EServiceCreationFailureReason.TEMPLATE_NAME_CONFLICT
         );
     }
 
