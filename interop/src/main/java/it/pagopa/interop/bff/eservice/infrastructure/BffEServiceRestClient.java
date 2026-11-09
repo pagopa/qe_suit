@@ -37,18 +37,14 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedResource> updateDraftDescriptorTemplateInstance(
-            @Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceDescriptorTemplateInstanceSeed payload
-    ) {
+    public TestChain<CreatedResource> updateDraftDescriptorTemplateInstance(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceDescriptorTemplateInstanceSeed payload) {
         return execute(
                 () -> eservicesApi.updateDraftDescriptorTemplateInstance().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).body(payload).execute(Function.identity()),
                 CreatedResource.class
         );
     }
 
-    public TestChain<CreatedResource> updateTemplateInstanceDescriptor(
-            @Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceTemplateInstanceDescriptorQuotas payload
-    ) {
+    public TestChain<CreatedResource> updateTemplateInstanceDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceTemplateInstanceDescriptorQuotas payload) {
         return execute(
                 () -> eservicesApi.updateTemplateInstanceDescriptor().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).body(payload).execute(Function.identity()),
                 CreatedResource.class
@@ -57,8 +53,7 @@ public class BffEServiceRestClient extends RestClient {
 
     public TestChain<CreatedResource> addDescriptor(@Nonnull UUID eserviceId) {
         return execute(
-                () -> eservicesApi.createDescriptor().eServiceIdPath(eserviceId)
-                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json")).execute(Function.identity()),
+                () -> eservicesApi.createDescriptor().eServiceIdPath(eserviceId).reqSpec(reqSpec -> reqSpec.setContentType("application/json")).execute(Function.identity()),
                 CreatedResource.class
         );
     }
@@ -89,6 +84,17 @@ public class BffEServiceRestClient extends RestClient {
         return execute(() -> eservicesApi.scheduleArchiveEservice().eServiceIdPath(eserviceId).body(payload).execute(Function.identity()), Void.class);
     }
 
+    public TestChain<Void> suspendDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+        return execute(
+                () -> eservicesApi.suspendDescriptor()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<Void> deleteEService(@Nonnull UUID eserviceId) {
         return execute(() -> eservicesApi.deleteEService().eServiceIdPath(eserviceId).execute(Function.identity()), Void.class);
     }
@@ -100,9 +106,7 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceSoap(
-            @Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull Map<String, Object> payload
-    ) {
+    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceSoap(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull Map<String, Object> payload) {
         return execute(
                 () -> eservicesApi.addEServiceTemplateInstanceInterfaceSoap().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId)
                         .reqSpec(builder -> builder.setContentType("application/json").setBody(payload)).execute(Function.identity()),
@@ -110,9 +114,7 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceRest(
-            @Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull Map<String, Object> payload
-    ) {
+    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceRest(@Nonnull UUID eserviceId,@Nonnull UUID descriptorId, @Nonnull Map<String, Object> payload) {
         return execute(
                 () -> eservicesApi.addEServiceTemplateInstanceInterfaceRest().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId)
                         .reqSpec(builder -> builder.setContentType("application/json").setBody(payload)).execute(Function.identity()),
