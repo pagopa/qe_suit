@@ -69,24 +69,19 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     @Override
     public EServiceJourneyImpl addDescriptor(EServiceDescriptorState state) {
-        EService eService = entityStore.getLastOrThrow(EService.class);
-        EServiceDescriptor eServiceDescriptor = eServiceDescriptorUseCase.addDescriptor(eService);
-        EService updatedEService = entityStore.getLastOrThrow(EService.class);
-        return processLifecycle(updatedEService, eServiceDescriptor, state);
+        return addDescriptor(entityStore.getLastOrThrow(EService.class), state);
     }
 
     @Override
     public EServiceJourneyImpl addDescriptor(EService eService, EServiceDescriptorState state) {
         EServiceDescriptor eServiceDescriptor = eServiceDescriptorUseCase.addDescriptor(eService);
-        EService updatedEService = entityStore.getLastOrThrow(EService.class);
-        return processLifecycle(updatedEService, eServiceDescriptor, state);
+        return processLifecycle(entityStore.getLastOrThrow(EService.class), eServiceDescriptor, state);
     }
 
     @Override
     public EServiceJourneyImpl updateDescriptor(UpdateEServiceDescriptorCommand command, EServiceDescriptorState state) {
         EService eService = entityStore.getLastOrThrow(EService.class);
-        EServiceDescriptor eServiceDescriptor = eService.getLastDraftDescriptor();
-        EServiceDescriptor updatedDescriptor = eServiceDescriptorUseCase.updateDescriptor(eService, eServiceDescriptor, command);
+        EServiceDescriptor updatedDescriptor = eServiceDescriptorUseCase.updateDescriptor(eService, eService.getLastDraftDescriptor(), command);
         eService.addDescriptor(updatedDescriptor);
         return processLifecycle(eService, updatedDescriptor, state, command);
     }
@@ -94,8 +89,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     @Override
     public EServiceJourneyImpl addRiskAnalysis() {
         EService eService = entityStore.getLastOrThrow(EService.class);
-        EServiceRiskAnalysis riskAnalysis = eServiceRiskAnalysisUseCase.addLatestRiskAnalysis(currentUserSession.getTenant(), eService, true);
-        entityStore.upsert(riskAnalysis);
+        entityStore.upsert(eServiceRiskAnalysisUseCase.addLatestRiskAnalysis(currentUserSession.getTenant(), eService, true));
         return this;
     }
 
@@ -121,16 +115,14 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     @Override
     public EServiceJourneyImpl archiveEService(GracePeriodDays gracePeriodDays) {
-        EService eService = entityStore.getLastOrThrow(EService.class);
-        eServiceUseCase.archiveEService(eService, gracePeriodDays);
+        eServiceUseCase.archiveEService(entityStore.getLastOrThrow(EService.class), gracePeriodDays);
         return this;
     }
 
     @Override
     public EServiceJourneyImpl archiveFirstEServiceDescriptor(GracePeriodDays gracePeriodDays) {
         EService eService = entityStore.getLastOrThrow(EService.class);
-        EServiceDescriptor descriptor = eService.getLastDeprecatedDescriptor();
-        eServiceDescriptorUseCase.archiveDescriptor(eService, descriptor, gracePeriodDays);
+        eServiceDescriptorUseCase.archiveDescriptor(eService, eService.getLastDeprecatedDescriptor(), gracePeriodDays);
         return this;
     }
 
@@ -141,6 +133,18 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
             eService.getDescriptors().forEach(descriptor -> eServiceDescriptorUseCase.getDescriptor(eService, descriptor));
             return eServiceUseCase.getEService(eService);
         }, predicate);
+        return this;
+    }
+
+    @Override
+    public EServiceJourneyImpl shouldFailToImportSOAPEService(String eserviceName, String wsdlResourcePath, SoapInterfaceUploadFailureReason reason) {
+        eServiceUseCase.shouldFailToImportSOAPEService(eserviceName, wsdlResourcePath, reason);
+        return this;
+    }
+
+    @Override
+    public EServiceJourneyImpl assertEServiceNotPresentInProducerCatalog(String eserviceName) {
+        eServiceUseCase.assertEServiceNotPresentInProducerCatalog(eserviceName);
         return this;
     }
 
@@ -158,21 +162,17 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     private EServiceJourneyImpl publishPipeline(EService eService, EServiceDescriptor eServiceDescriptor, UpdateEServiceDescriptorCommand command) {
-        EServiceDescriptor updatedDescriptor;
-        if (command != null) {
-            updatedDescriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor, command);
-        } else {
-            updatedDescriptor = eServiceDescriptorUseCase.prepareDescriptorForPublication(
-                    eService, eServiceDescriptor,
-                    cmd -> cmd.dailyCallsTotal(eServiceDescriptor.getDailyCallsTotal())
-                            .dailyCallsPerConsumer(eServiceDescriptor.getDailyCallsPerConsumer())
-                            .attributes(Attributes.builder()
-                                    .certified(eServiceDescriptor.getAttributes().getCertified())
-                                    .declared(eServiceDescriptor.getAttributes().getDeclared())
-                                    .verified(eServiceDescriptor.getAttributes().getVerified())
-                                    .build())
-            );
-        }
+        EServiceDescriptor updatedDescriptor = (command != null)
+                ? eServiceDescriptorUseCase.prepareDescriptorForPublication(eService, eServiceDescriptor, command)
+                : eServiceDescriptorUseCase.prepareDescriptorForPublication(
+                        eService, eServiceDescriptor,
+                        cmd -> cmd.dailyCallsTotal(eServiceDescriptor.getDailyCallsTotal())
+                                .dailyCallsPerConsumer(eServiceDescriptor.getDailyCallsPerConsumer())
+                                .attributes(Attributes.builder()
+                                        .certified(eServiceDescriptor.getAttributes().getCertified())
+                                        .declared(eServiceDescriptor.getAttributes().getDeclared())
+                                        .verified(eServiceDescriptor.getAttributes().getVerified()).build())
+                );
         eServiceDescriptorUseCase.linkOpenApiInterface(eService, updatedDescriptor, "assets/origin-interface.yaml", null);
         eServiceDescriptorUseCase.publishDescriptor(eService, eServiceDescriptor);
         return this;
@@ -191,7 +191,6 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
             }
         }
         return attributes.toBuilder().clearCertified().clearDeclared().clearVerified()
-                .certified(certified).declared(declared).verified(verified)
-                .build();
+                .certified(certified).declared(declared).verified(verified).build();
     }
 }
