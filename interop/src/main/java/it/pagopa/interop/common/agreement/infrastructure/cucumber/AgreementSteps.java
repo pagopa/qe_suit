@@ -20,7 +20,7 @@ public class AgreementSteps {
     private final CurrentUserSession currentUserSession;
     private final EntityStore entityStore;
 
-    @When("l'erogatore accede ai dettagli della richiesta di fruizione inoltrata/ricevuta")
+    @When("l'erogatore accede ai dettagli della richiesta di fruizione ricevuta")
     public void viewProducerAgreementDetails() {
         Agreement agreement = entityStore.getLastOrThrow(Agreement.class);
         Tenant tenant = Tenant.fromOrganizationId(agreement.getProducerId());
@@ -28,7 +28,7 @@ public class AgreementSteps {
         agreementUseCase.viewProducerAgreementDetails(agreement);
     }
 
-    @When("il fruitore accede ai dettagli della richiesta di fruizione inoltrata/ricevuta")
+    @When("il fruitore accede ai dettagli della richiesta di fruizione inoltrata")
     public void viewConsumerAgreementDetails() {
         Agreement agreement = entityStore.getLastOrThrow(Agreement.class);
         Tenant tenant = Tenant.fromOrganizationId(agreement.getConsumerId());
