@@ -6,6 +6,7 @@ import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
@@ -91,6 +92,16 @@ public class BffEServiceGateway implements EServiceGateway {
     @Override
     public void shouldFailToRequestEServiceArchiving(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason) {
         throw new UnsupportedOperationException("Verification of delegated EService archiving request rejection is not supported on the BFF channel");
+    }
+
+    @Override
+    public void openEServiceCreation() {
+        throw new UnsupportedOperationException("Opening EService creation is not supported on the BFF channel");
+    }
+
+    @Override
+    public void shouldFailToCreateEService(EServiceCreationCommand command, EServiceCreationFailureReason reason) {
+        throw new UnsupportedOperationException("Attempting duplicate EService creation is not supported on the BFF channel");
     }
 
     @Override
