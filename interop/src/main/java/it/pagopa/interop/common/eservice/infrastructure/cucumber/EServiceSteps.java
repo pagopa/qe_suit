@@ -15,6 +15,18 @@ public class EServiceSteps {
     private final InteropJourney interopJourney;
     private final EServiceUseCase eServiceUseCase;
 
+    @When("l'utente apre la pagina di creazione di un e-service")
+    public void openEServiceCreation() {
+        eServiceUseCase.openEServiceCreation();
+    }
+
+    @When("l'utente tenta di creare un e-service con il nome dell'{currentEService} e gli altri dati validi")
+    public void attemptToCreateEServiceWithSameName(EService existingEService) {
+        eServiceUseCase.shouldFailToCreateEService(
+                command -> command.name(existingEService.getName()), EServiceCreationFailureReason.DUPLICATE_NAME
+        );
+    }
+
     @Given("la versione {int} dell'{currentEService} (è )in fase di archiviazione con un periodo di preavviso di {gracePeriodDays} giorni")
     public void prepareArchivingDescriptor(int versionNumber, EService eService, GracePeriodDays gracePeriodDays) {
         descriptorUseCase.archiveDescriptor(
