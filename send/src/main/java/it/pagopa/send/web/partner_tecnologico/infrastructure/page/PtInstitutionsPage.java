@@ -53,8 +53,8 @@ public interface PtInstitutionsPage extends Page {
     @XPath("//*[@data-testid=\"searchButton\"]")
     Button searchButton();
 
-    // enti deleganti: nome, codice fiscale e stato della delega
-    @XPath("//*[@data-testid=\"institutionsTable\"]")
+    // enti deleganti: nome, codice fiscale e stato della delega. Solo a caricamento concluso, prima le righe sono scheletri vuoti
+    @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"institutionsTableDesktop\"]")
     Table institutionsTable();
 
     PtHeader header();
