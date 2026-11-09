@@ -8,8 +8,8 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_1] - Eliminazione di una bozza da parte del delegato
     Given i seguenti e-service in bozza:
-      | alias     | erogatore        |
-      | e-service | Comune di Milano |
+      | erogatore        |
+      | Comune di Milano |
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
