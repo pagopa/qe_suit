@@ -133,8 +133,7 @@ public class BffEServiceDescriptorInterfaceGateway {
         var rawResponse = restClient.addDocument(
                         serviceRef.id(), descriptorRef.id(), DocumentKind.INTERFACE.name(), fileName, document
                 )
-                .withPolling(PollingStrategy.UNTIL_ERROR)
-//                .withoutPolling()
+                .withoutPolling()
                 .assertStatusCode(400)
                 .getRaw();
         BffSoapInterfaceProblemValidator.assertSoapInterfaceProblem(rawResponse, reason);
