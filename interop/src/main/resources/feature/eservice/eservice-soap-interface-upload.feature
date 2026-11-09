@@ -18,3 +18,15 @@ Feature: Validazione del file WSDL nel caricamento dell'interfaccia di un e-serv
       | missing-soap-address.wsdl   | assenza di soap:address           |
       | not-parsable.wsdl           | file SOAP non parsabile           |
       | missing-soap-operation.wsdl | assenza di soap:operation         |
+
+  Scenario Outline: [ESERVICE_SOAP_IMPORT_1] Rifiuto dell'importazione di un e-service SOAP con WSDL non valido
+    When l'erogatore tenta di importare un e-service SOAP con interfaccia "<fixture>" ottenendo un rifiuto per "<motivo>"
+    Then l'e-service importato non è presente tra gli e-service dell'erogatore
+
+    Examples:
+      | fixture                     | motivo                            |
+      | missing-soap-address.wsdl   | assenza di soap:address           |
+      | not-parsable.wsdl           | file SOAP non parsabile           |
+      | missing-soap-operation.wsdl | assenza di soap:operation         |
+
+

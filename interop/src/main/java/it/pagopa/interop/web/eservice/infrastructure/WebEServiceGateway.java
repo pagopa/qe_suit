@@ -6,6 +6,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.web.eservice.application.WebEServiceCreationCommand;
@@ -87,6 +88,20 @@ public class WebEServiceGateway implements EServiceGateway {
         dialog.getRequestArchivingButton().click();
 
         assertArchivingRejection(webCommonGateway, expectedMessage, reason);
+    }
+
+    @Override
+    public void shouldFailToImportSOAPEService(
+            String eserviceName,
+            String wsdlResourcePath,
+            SoapInterfaceUploadFailureReason reason
+    ) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void assertEServiceNotPresentInProducerCatalog(String eserviceName) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private void openEServiceArchivingDialog(EServiceRef eServiceRef) {
