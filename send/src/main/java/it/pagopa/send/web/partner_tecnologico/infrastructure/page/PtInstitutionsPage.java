@@ -53,6 +53,20 @@ public interface PtInstitutionsPage extends Page {
     @XPath("//*[@data-testid=\"searchButton\"]")
     Button searchButton();
 
+    @XPath("//*[@data-testid=\"institutionsSearch\"]//*[contains(@class, 'MuiFormHelperText-root')]")
+    Readable<String> searchError();
+
+    // titolo mostrato al posto della tabella quando la ricerca non trova enti
+    @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[contains(@class, 'MuiTypography-subtitle2')]")
+    Readable<String> noResultsTitle();
+
+    // prima colonna della tabella, a caricamento concluso
+    @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"institutionsTableDesktop\"]//tbody//tr/td[1]")
+    Readable<String> institutionNames();
+
+    @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"customPagination\"]")
+    Readable<String> pagination();
+
     // enti deleganti: nome, codice fiscale e stato della delega. Solo a caricamento concluso, prima le righe sono scheletri vuoti
     @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"institutionsTableDesktop\"]")
     Table institutionsTable();
