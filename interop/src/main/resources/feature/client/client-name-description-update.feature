@@ -55,3 +55,21 @@ Feature: Aggiornamento dei metadati del Client senza alterarne identità e assoc
       | solo nome        |
       | solo descrizione |
       | entrambi         |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario Outline: [CLIENT_NAME_DESCRIPTION_UPDATE_M2M_API_REJECTED_1] Rifiuto della modifica dei metadati di un Client API via M2M v3
+    Given un client API creato da PagoPA in cui è presente un admin e una coppia di chiavi crittografiche
+    And un M2M_ADMIN appartenente all'erogatore PagoPA
+    And vengono acquisite la configurazione iniziale, le chiavi e le associazioni del Client
+    When il chiamante M2M richiede la modifica dei metadati del Client applicando "<campi modificati>"
+    Then la piattaforma rifiuta la modifica dei metadati del Client
+    And il chiamante M2M rilegge i dati del Client
+    And nome e descrizione del Client riletti restano invariati rispetto alla configurazione iniziale
+    And l'amministratore verifica chiavi e associazioni confrontandole con i valori iniziali
+
+    Examples:
+      | campi modificati |
+      | solo nome        |
+      | solo descrizione |
+      | entrambi         |
