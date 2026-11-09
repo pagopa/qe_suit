@@ -7,7 +7,9 @@ Feature: Messaggi di errore nelle analisi del rischio degli e-service in erogazi
   Per scegliere un nome diverso e completare la configurazione dell'analisi del rischio.
 
   Scenario Outline: [ESERVICE_RISK_ANALYSIS_ERROR_MESSAGE_1] - Aggiunta di una finalità con nome già presente nell'e-service inverso
-    Given un e-service in erogazione inversa in bozza creato dal Comune di Milano
+    Given i seguenti e-service in bozza:
+      | erogatore        | modalità  |
+      | Comune di Milano | ricezione |
     And una finalità con analisi del rischio valida nell'e-service e identificata come "finalità esistente"
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
@@ -21,7 +23,9 @@ Feature: Messaggi di errore nelle analisi del rischio degli e-service in erogazi
       | en     |
 
   Scenario Outline: [ESERVICE_RISK_ANALYSIS_ERROR_MESSAGE_2] - Modifica di una finalità con nome già presente nell'e-service inverso
-    Given un e-service in erogazione inversa in bozza creato dal Comune di Milano
+    Given i seguenti e-service in bozza:
+      | erogatore        | modalità  |
+      | Comune di Milano | ricezione |
     And due finalità con analisi del rischio valide e nomi diversi nell'e-service, identificate come "finalità esistente" e "finalità da modificare"
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"

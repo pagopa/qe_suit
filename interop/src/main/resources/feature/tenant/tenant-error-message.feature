@@ -7,17 +7,19 @@ Feature: Messaggi di errore nella gestione dell'ente e dei suoi attributi
   Per comprendere il problema e sapere come proseguire.
 
   Scenario Outline: [TENANT_ERROR_MESSAGE_1] - Assegnazione di un attributo certificato già posseduto dall'ente
-    Given un admin del Comune di Milano crea un attributo certificato
-    And l'attributo certificato creato è identificato come "certificato da assegnare"
-    And PagoPA non possiede l'attributo "certificato da assegnare"
+    Given i seguenti attributi certificati creati da un admin del Comune di Milano:
+      | alias             |
+      | CERT-da-assegnare |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
-    And l'utente apre l'assegnazione a PagoPA dell'attributo "certificato da assegnare"
-    Given l'attributo "certificato da assegnare" viene assegnato a PagoPA da un'altra sessione del Comune di Milano
-    When l'utente tenta di confermare l'assegnazione dell'attributo "certificato da assegnare" a PagoPA senza aggiornare la pagina
+    And l'utente apre l'assegnazione a PagoPA dell'attributo "CERT-da-assegnare"
+    Given i seguenti attributi certificati assegnati da un admin del Comune di Milano a PagoPA:
+      | alias             |
+      | CERT-da-assegnare |
+    When l'utente tenta di confermare l'assegnazione dell'attributo "CERT-da-assegnare" a PagoPA senza aggiornare la pagina
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED" in lingua "<lingua>" con i valori delle fixture:
-      | placeholder   | valore                                                    |
-      | attributeName | nome dell'attributo "certificato da assegnare"              |
+      | placeholder   | valore                                   |
+      | attributeName | nome dell'attributo "CERT-da-assegnare"    |
 
     Examples:
       | lingua |
@@ -25,17 +27,18 @@ Feature: Messaggi di errore nella gestione dell'ente e dei suoi attributi
       | en     |
 
   Scenario Outline: [TENANT_ERROR_MESSAGE_2] - Assegnazione di un attributo certificato discreto già posseduto dall'ente
-    Given un admin del Comune di Milano crea un attributo certificato discreto identificato come "discreto da assegnare"
-    And PagoPA non possiede l'attributo "discreto da assegnare"
-    And un valore numerico valido per l'attributo "discreto da assegnare"
+    Given i seguenti attributi discreti creati da un admin del Comune di Milano:
+      | alias             |
+      | DISC-da-assegnare |
+    And un valore numerico valido per l'attributo "DISC-da-assegnare"
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
-    And l'utente apre l'assegnazione a PagoPA dell'attributo "discreto da assegnare" e inserisce il valore numerico predisposto
-    Given l'attributo "discreto da assegnare" viene assegnato a PagoPA con il valore numerico predisposto da un'altra sessione del Comune di Milano
-    When l'utente tenta di confermare l'assegnazione dell'attributo "discreto da assegnare" a PagoPA senza aggiornare la pagina
+    And l'utente apre l'assegnazione a PagoPA dell'attributo "DISC-da-assegnare" e inserisce il valore numerico predisposto
+    Given l'attributo "DISC-da-assegnare" viene assegnato a PagoPA con il valore numerico predisposto da un'altra sessione del Comune di Milano
+    When l'utente tenta di confermare l'assegnazione dell'attributo "DISC-da-assegnare" a PagoPA senza aggiornare la pagina
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED_DISCRETE" in lingua "<lingua>" con i valori delle fixture:
-      | placeholder   | valore                                      |
-      | attributeName | nome dell'attributo "discreto da assegnare"  |
+      | placeholder   | valore                                   |
+      | attributeName | nome dell'attributo "DISC-da-assegnare"    |
 
     Examples:
       | lingua |

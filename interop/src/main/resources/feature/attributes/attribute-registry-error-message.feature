@@ -33,7 +33,9 @@ Feature: Messaggi di errore nella creazione degli attributi
       | en     |
 
   Scenario Outline: [ATTRIBUTE_REGISTRY_ERROR_MESSAGE_3] - Creazione di un attributo certificato discreto con un nome già esistente
-    Given un admin del Comune di Milano crea un attributo certificato discreto
+    Given i seguenti attributi discreti creati da un admin del Comune di Milano:
+      | alias          |
+      | DISC-esistente |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre la creazione di un attributo certificato discreto
@@ -46,7 +48,9 @@ Feature: Messaggi di errore nella creazione degli attributi
       | en     |
 
   Scenario Outline: [ATTRIBUTE_REGISTRY_ERROR_MESSAGE_4] - Creazione di un attributo dichiarato con un nome già esistente
-    Given un admin del Comune di Milano crea un attributo dichiarato
+    Given i seguenti attributi dichiarati creati da un admin del Comune di Milano:
+      | alias          |
+      | DECL-esistente |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre la creazione di un attributo dichiarato
@@ -72,7 +76,9 @@ Feature: Messaggi di errore nella creazione degli attributi
       | en     |
 
   Scenario Outline: [ATTRIBUTE_REGISTRY_ERROR_MESSAGE_6] - Creazione di un attributo verificato con un nome già esistente
-    Given un admin del Comune di Milano crea un attributo verificato
+    Given i seguenti attributi verificati creati da un admin del Comune di Milano:
+      | alias         |
+      | VER-esistente |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre la creazione di un attributo verificato

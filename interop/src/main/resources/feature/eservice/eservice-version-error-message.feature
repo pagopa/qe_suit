@@ -7,7 +7,10 @@ Feature: Messaggi di errore nella gestione delle versioni degli e-service
   Per comprendere il problema e correggere i dati o aggiornare la pagina.
 
   Scenario Outline: [ESERVICE_VERSION_ERROR_MESSAGE_1] - Eliminazione della bozza di versione dopo la revoca della delega
-    Given un e-service del Comune di Milano con una versione pubblicata e una nuova versione in bozza
+    Given i seguenti e-service pubblicati:
+      | alias     | erogatore        |
+      | e-service | Comune di Milano |
+    And la versione 2 dell'e-service "e-service" del Comune di Milano in bozza
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
@@ -34,8 +37,7 @@ Feature: Messaggi di errore nella gestione delle versioni degli e-service
       | en     |
 
   Scenario Outline: [ESERVICE_VERSION_ERROR_MESSAGE_3] - Creazione di una versione dopo la revoca della delega
-    Given un e-service pubblicato dal Comune di Milano senza nuove versioni in bozza e con dati validi per creare una nuova versione
-    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre il dettaglio della versione pubblicata per crearne una nuova
@@ -49,7 +51,10 @@ Feature: Messaggi di errore nella gestione delle versioni degli e-service
       | en     |
 
   Scenario Outline: [ESERVICE_VERSION_ERROR_MESSAGE_4] - Riattivazione di una versione dopo la revoca della delega
-    Given un e-service del Comune di Milano con una versione sospesa e riattivabile
+    Given i seguenti e-service pubblicati:
+      | alias     | erogatore        |
+      | e-service | Comune di Milano |
+    And la versione 1 dell'e-service "e-service" del Comune di Milano sospesa
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
@@ -79,7 +84,12 @@ Feature: Messaggi di errore nella gestione delle versioni degli e-service
       | en     |
 
   Scenario Outline: [ESERVICE_VERSION_ERROR_MESSAGE_6] - Modifica dei requisiti di accesso dopo la revoca della delega
-    Given un e-service del Comune di Milano con una versione in bozza e attributi validi disponibili per i requisiti di accesso
+    Given i seguenti e-service in bozza:
+      | erogatore        |
+      | Comune di Milano |
+    And i seguenti attributi verificati creati da un admin del Comune di Milano:
+      | alias           |
+      | VER-disponibile |
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
@@ -109,7 +119,11 @@ Feature: Messaggi di errore nella gestione delle versioni degli e-service
       | en     |
 
   Scenario Outline: [ESERVICE_VERSION_ERROR_MESSAGE_8] - Rifiuto della pubblicazione con un link nella motivazione
-    Given un e-service del Comune di Milano delegato in erogazione al Comune di Pozzallo con una versione in attesa di approvazione della pubblicazione
+    Given i seguenti e-service in bozza:
+      | alias     | erogatore        |
+      | e-service | Comune di Milano |
+    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    And la versione 1 dell'e-service "e-service" predisposta dal delegato Comune di Pozzallo in attesa di approvazione
     And un admin appartenente all'erogatore Comune di Milano
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre la valutazione della richiesta di pubblicazione della versione

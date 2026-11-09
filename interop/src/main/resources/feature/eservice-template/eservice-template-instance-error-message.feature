@@ -149,7 +149,12 @@ Feature: Messaggi di errore nella gestione degli e-service istanziati da templat
       | en     |
 
   Scenario Outline: [ESERVICE_TEMPLATE_INSTANCE_ERROR_MESSAGE_10] - Modifica della versione pubblicata dopo la revoca della delega
-    Given un'istanza REST di un template pubblicato, creata dal Comune di Milano con una versione pubblicata e identificata come "istanza da modificare"
+    Given i seguenti template e-service pubblicati:
+      | alias               | erogatore        | nome                | tecnologia |
+      | template di origine | Comune di Milano | Template di origine | REST       |
+    And le seguenti istanze di template e-service pubblicate:
+      | alias                 | template            | suffisso   |
+      | istanza da modificare | template di origine | modificare |
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
@@ -164,7 +169,13 @@ Feature: Messaggi di errore nella gestione degli e-service istanziati da templat
       | en     |
 
   Scenario Outline: [ESERVICE_TEMPLATE_INSTANCE_ERROR_MESSAGE_11] - Aggiornamento della sola parola identificativa con un valore duplicato
-    Given due istanze REST pubblicate dello stesso template, create dal Comune di Milano con parole identificative diverse e identificate come "istanza esistente" e "istanza da modificare"
+    Given i seguenti template e-service pubblicati:
+      | alias               | erogatore        | nome                | tecnologia |
+      | template di origine | Comune di Milano | Template di origine | REST       |
+    And le seguenti istanze di template e-service pubblicate:
+      | alias                 | template            | suffisso   |
+      | istanza esistente     | template di origine | esistente  |
+      | istanza da modificare | template di origine | modificare |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre l'aggiornamento della sola parola identificativa dell'"istanza da modificare"
@@ -179,7 +190,12 @@ Feature: Messaggi di errore nella gestione degli e-service istanziati da templat
       | en     |
 
   Scenario Outline: [ESERVICE_TEMPLATE_INSTANCE_ERROR_MESSAGE_12] - Aggiornamento della sola parola identificativa con un link
-    Given un'istanza REST di un template pubblicato, creata dal Comune di Milano con una versione pubblicata e identificata come "istanza da modificare"
+    Given i seguenti template e-service pubblicati:
+      | alias               | erogatore        | nome                | tecnologia |
+      | template di origine | Comune di Milano | Template di origine | REST       |
+    And le seguenti istanze di template e-service pubblicate:
+      | alias                 | template            | suffisso   |
+      | istanza da modificare | template di origine | modificare |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre l'aggiornamento della sola parola identificativa dell'"istanza da modificare"
@@ -192,7 +208,12 @@ Feature: Messaggi di errore nella gestione degli e-service istanziati da templat
       | en     |
 
   Scenario Outline: [ESERVICE_TEMPLATE_INSTANCE_ERROR_MESSAGE_13] - Aggiornamento della parola identificativa dopo la revoca della delega
-    Given un'istanza REST di un template pubblicato, creata dal Comune di Milano con una versione pubblicata e identificata come "istanza da modificare"
+    Given i seguenti template e-service pubblicati:
+      | alias               | erogatore        | nome                | tecnologia |
+      | template di origine | Comune di Milano | Template di origine | REST       |
+    And le seguenti istanze di template e-service pubblicate:
+      | alias                 | template            | suffisso   |
+      | istanza da modificare | template di origine | modificare |
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"

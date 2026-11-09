@@ -7,7 +7,9 @@ Feature: Messaggi di errore nella gestione delle deleghe in fruizione e in eroga
   Per comprendere il problema e sapere come proseguire.
 
   Scenario Outline: [DELEGATION_ERROR_MESSAGE_1] - Revoca di una delega in fruizione non più attiva
-    Given un e-service pubblicato dal Comune di Milano che consente la delega in fruizione
+    Given i seguenti e-service pubblicati:
+      | erogatore        |
+      | Comune di Milano |
     And una delega in fruizione per l'e-service da PagoPA al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente al fruitore PagoPA
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
@@ -37,7 +39,9 @@ Feature: Messaggi di errore nella gestione delle deleghe in fruizione e in eroga
       | en     |
 
   Scenario Outline: [DELEGATION_ERROR_MESSAGE_3] - Proposta di delega in fruizione a un ente non pubblico
-    Given un e-service pubblicato dal Comune di Milano che consente la delega in fruizione
+    Given i seguenti e-service pubblicati:
+      | erogatore        |
+      | Comune di Milano |
     And Sogecap non è una Pubblica Amministrazione
     And PagoPA non ha deleghe in fruizione in corso o attive per l'e-service
     And un admin appartenente al fruitore PagoPA
@@ -52,7 +56,9 @@ Feature: Messaggi di errore nella gestione delle deleghe in fruizione e in eroga
       | en     |
 
   Scenario Outline: [DELEGATION_ERROR_MESSAGE_4] - Approvazione di una delega in fruizione non più in attesa
-    Given un e-service pubblicato dal Comune di Milano che consente la delega in fruizione
+    Given i seguenti e-service pubblicati:
+      | erogatore        |
+      | Comune di Milano |
     And una delega in fruizione per l'e-service da PagoPA al Comune di Pozzallo in stato WAITING_FOR_APPROVAL
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
@@ -67,7 +73,9 @@ Feature: Messaggi di errore nella gestione delle deleghe in fruizione e in eroga
       | en     |
 
   Scenario Outline: [DELEGATION_ERROR_MESSAGE_5] - Rifiuto di una delega in fruizione con un link nella motivazione
-    Given un e-service pubblicato dal Comune di Milano che consente la delega in fruizione
+    Given i seguenti e-service pubblicati:
+      | erogatore        |
+      | Comune di Milano |
     And una delega in fruizione per l'e-service da PagoPA al Comune di Pozzallo in stato WAITING_FOR_APPROVAL
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
