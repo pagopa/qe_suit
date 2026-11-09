@@ -9,6 +9,8 @@ import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import lombok.RequiredArgsConstructor;
 
+import static it.pagopa.utils.RandomUtils.randomAlphanumericName;
+
 @RequiredArgsConstructor
 public class EServiceSteps {
     private final EServiceDescriptorUseCase descriptorUseCase;
@@ -24,6 +26,14 @@ public class EServiceSteps {
     public void attemptToCreateEServiceWithSameName(EService existingEService) {
         eServiceUseCase.shouldFailToCreateEService(
                 command -> command.name(existingEService.getName()), EServiceCreationFailureReason.DUPLICATE_NAME
+        );
+    }
+
+    @When("l'utente tenta di creare un e-service con un link nel nome e gli altri dati validi")
+    public void attemptToCreateEServiceWithLinkInName() {
+        eServiceUseCase.shouldFailToCreateEService(
+                command -> command.name(randomAlphanumericName("eservice", 15) + " https://example.com"),
+                EServiceCreationFailureReason.HYPERLINK_DETECTED
         );
     }
 
