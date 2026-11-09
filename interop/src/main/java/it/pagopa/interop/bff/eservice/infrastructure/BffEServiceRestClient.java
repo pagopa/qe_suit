@@ -31,30 +31,21 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedEServiceDescriptor> createEServiceInstanceFromTemplate(
-            @Nonnull UUID templateId, @Nonnull InstanceEServiceSeed payload
-    ) {
+    public TestChain<CreatedEServiceDescriptor> createEServiceInstanceFromTemplate(@Nonnull UUID templateId, @Nonnull InstanceEServiceSeed payload) {
         return execute(
-                () -> eservicesApi.createEServiceInstanceFromTemplate()
-                        .templateIdPath(templateId)
-                        .body(payload)
-                        .execute(Function.identity()),
+                () -> eservicesApi.createEServiceInstanceFromTemplate().templateIdPath(templateId).body(payload).execute(Function.identity()),
                 CreatedEServiceDescriptor.class
         );
     }
 
-    public TestChain<CreatedResource> updateDraftDescriptorTemplateInstance(
-            @Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceDescriptorTemplateInstanceSeed payload
-    ) {
+    public TestChain<CreatedResource> updateDraftDescriptorTemplateInstance(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceDescriptorTemplateInstanceSeed payload) {
         return execute(
                 () -> eservicesApi.updateDraftDescriptorTemplateInstance().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).body(payload).execute(Function.identity()),
                 CreatedResource.class
         );
     }
 
-    public TestChain<CreatedResource> updateTemplateInstanceDescriptor(
-            @Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceTemplateInstanceDescriptorQuotas payload
-    ) {
+    public TestChain<CreatedResource> updateTemplateInstanceDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UpdateEServiceTemplateInstanceDescriptorQuotas payload) {
         return execute(
                 () -> eservicesApi.updateTemplateInstanceDescriptor().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).body(payload).execute(Function.identity()),
                 CreatedResource.class
@@ -63,11 +54,7 @@ public class BffEServiceRestClient extends RestClient {
 
     public TestChain<CreatedResource> addDescriptor(@Nonnull UUID eserviceId) {
         return execute(
-                () -> eservicesApi
-                        .createDescriptor()
-                        .eServiceIdPath(eserviceId)
-                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
-                        .execute(Function.identity()),
+                () -> eservicesApi.createDescriptor().eServiceIdPath(eserviceId).reqSpec(reqSpec -> reqSpec.setContentType("application/json")).execute(Function.identity()),
                 CreatedResource.class
         );
     }
@@ -88,10 +75,7 @@ public class BffEServiceRestClient extends RestClient {
 
     public TestChain<Void> addRiskAnalysis(@Nonnull UUID eserviceId, @Nonnull EServiceRiskAnalysisSeed payload) {
         return execute(
-                () -> eservicesApi.addRiskAnalysisToEService()
-                        .eServiceIdPath(eserviceId)
-                        .body(payload)
-                        .execute(Function.identity()),
+                () -> eservicesApi.addRiskAnalysisToEService().eServiceIdPath(eserviceId).body(payload).execute(Function.identity()),
                 Void.class
         );
     }
@@ -108,6 +92,17 @@ public class BffEServiceRestClient extends RestClient {
                 () -> eservicesApi.scheduleArchiveEservice()
                         .eServiceIdPath(eserviceId)
                         .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Void> suspendDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+        return execute(
+                () -> eservicesApi.suspendDescriptor()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
                         .execute(Function.identity()),
                 Void.class
         );
@@ -133,9 +128,7 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceSoap(
-            @Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull Map<String, Object> payload
-    ) {
+    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceSoap(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull Map<String, Object> payload) {
         return execute(
                 () -> eservicesApi.addEServiceTemplateInstanceInterfaceSoap()
                         .eServiceIdPath(eserviceId)
@@ -149,9 +142,7 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
-    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceRest(
-            @Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull Map<String, Object> payload
-    ) {
+    public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceRest(@Nonnull UUID eserviceId,@Nonnull UUID descriptorId, @Nonnull Map<String, Object> payload) {
         return execute(
                 () -> eservicesApi.addEServiceTemplateInstanceInterfaceRest()
                         .eServiceIdPath(eserviceId)
@@ -165,12 +156,12 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
-    public TestChain<byte[]> getEServiceDocumentById(
-            @Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UUID documentId
-    ) {
+    public TestChain<byte[]> getEServiceDocumentById(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UUID documentId) {
         return execute(
-                () -> eservicesApi.getEServiceDocumentById().eServiceIdPath(eserviceId)
-                        .descriptorIdPath(descriptorId).documentIdPath(documentId)
+                () -> eservicesApi.getEServiceDocumentById()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .documentIdPath(documentId)
                         .execute(Function.identity()),
                 byte[].class
         );
@@ -178,7 +169,9 @@ public class BffEServiceRestClient extends RestClient {
 
     public TestChain<Void> publishDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
         return execute(
-                () -> eservicesApi.publishDescriptor().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId)
+                () -> eservicesApi.publishDescriptor()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
                         .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
                         .execute(Function.identity()),
                 Void.class
@@ -187,10 +180,17 @@ public class BffEServiceRestClient extends RestClient {
 
     public TestChain<CreatedResource> addDocument(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull String documentKind, @Nonnull String documentName, @Nonnull File document) {
         return execute(
-                () -> eservicesApi.createEServiceDocument().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId)
-                        .kindForm(documentKind).prettyNameForm(documentName)
+                () -> eservicesApi.createEServiceDocument()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .kindForm(documentKind)
+                        .prettyNameForm(documentName)
                         .reqSpec(reqSpec ->
-                                reqSpec.addMultiPart("doc", document, "application/octet-stream")
+                                reqSpec.addMultiPart(
+                                        "doc",
+                                        document,
+                                        "application/octet-stream"
+                                )
                         )
                         .execute(Function.identity()),
                 CreatedResource.class

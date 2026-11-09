@@ -4,21 +4,32 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.agreement.application.AgreementUseCase;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
+import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class AgreementSteps {
     private final AgreementUseCase agreementUseCase;
     private final CurrentUserSession currentUserSession;
+    private final InteropJourney interopJourney;
 
     @Given("associa un Agreement in stato DRAFT all'{currentEService}")
     public void createAgreement(EService eService) {
         agreementUseCase.createAgreement(eService, eService.getLastDraftDescriptor());
+    }
+
+    @Given("{eServiceByAlias} del/di {tenant} sottoscritto da/dal {tenant} con (una )richiesta di fruizione (in ){agreementState}")
+    public void createAgreement(EService eService, Tenant producer, Tenant consumer, AgreementState targetState) {
+        interopJourney
+                .withConsumer(consumer, UserRole.ADMIN)
+                .linkAgreement(eService, targetState);
     }
 
     @When("il sistema impedisce a/al {tenant} di inoltrare una richiesta di fruizione per la {currentArchivedEServiceDescriptor} dell'{currentEService}")

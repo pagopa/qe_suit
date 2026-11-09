@@ -12,6 +12,10 @@ public class TenantUseCase {
 
     private final TenantGateway tenantGateway;
 
+    public void ensureProducerDelegationEnabled(TenantRef tenantRef) {
+        tenantGateway.ensureProducerDelegationEnabled(java.util.Objects.requireNonNull(tenantRef));
+    }
+
     public void enableProducerDelegationAvailability(TenantRef tenantRef) {
         tenantGateway.enableProducerDelegationAvailability(tenantRef);
     }
