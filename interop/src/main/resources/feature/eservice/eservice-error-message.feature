@@ -84,11 +84,12 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_6] - Creazione di un e-service con nome in conflitto con un template
-    Given un template e-service identificato come "template esistente" il cui nome non è utilizzato da e-service del Comune di Milano
-    And un utente autenticato del Comune di Milano con ruolo admin
+    Given un utente autenticato del Comune di Milano con ruolo admin
+    And un template e-service preparato con la seguente configurazione:
+      | tecnologia | stato     | interfaccia               |
+      | REST       | PUBLISHED | openapi3-riferimenti.yaml |
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
-    And l'utente apre la creazione di un e-service
-    And l'utente tenta di creare un e-service con il nome del "template esistente" e gli altri dati validi
+    And l'utente tenta di creare un e-service con il nome del template preparato e gli altri dati validi
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "CATALOG_ESERVICE_TEMPLATE_NAME_CONFLICT__POST_ESERVICES" in lingua "<lingua>"
 
     Examples:
