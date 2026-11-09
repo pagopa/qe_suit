@@ -24,9 +24,8 @@ Feature: Gestione delle finalità inoltrate
     Then la finalità risulta approvata dall'erogatore e in stato ACTIVE
 
   Scenario: [REJECT_PURPOSE_1] Rifiuto di una finalità in stato di attesa da parte di un erogatore
-    Given una finalità in stato di attesa creata dal Comune di Pozzallo e associata a un e-service del Comune di Milano
-    When un admin appartenente all'erogatore Comune di Milano rifiuta la finalità in attesa
-    Then la finalità risulta rifiutata dall'erogatore e in stato REJECTED
+    Given un EService creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato WAITING_FOR_APPROVAL associate da PagoPA
+    Then Comune di Milano rifiuta la finalità che va in stato REJECTED
 
   Scenario: [REJECT_PURPOSE_2] Rifiuto di una finalità in stato di attesa da parte di un erogatore delegato
     Given una delega attiva dal Comune di Pozzallo al Comune di Milano per la gestione delle finalità
