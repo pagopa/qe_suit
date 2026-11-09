@@ -72,7 +72,7 @@ public class LoginService {
     }
 
     private String sessionTokenFor(User user) {
-        return tokenProvider.requireToken(user.getUsername());
+        return tokenProvider.requireToken(user.getSessionTokenKey());
     }
 
     private void forceSession(String sessionPayload, Page landingPage) {
