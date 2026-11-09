@@ -73,6 +73,11 @@ public class M2MPurposeGateway implements PurposeGateway {
     }
 
     @Override
+    public Purpose rejectPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, String rejectionReason) {
+        throw new UnsupportedOperationException("Purpose rejection is not supported on M2M v3");
+    }
+
+    @Override
     public Purpose askForApprovalPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef) {
         it.pagopa.interop.generated.openapi.clients.m2m.v3.model.DelegationRef delegation =
                 new it.pagopa.interop.generated.openapi.clients.m2m.v3.model.DelegationRef();

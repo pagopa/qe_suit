@@ -42,6 +42,10 @@ public class PurposeUseCase {
         return purposeGateway.activatePurpose(purpose.getRef(), purposeVersion.getRef(), delegationRef);
     }
 
+    public Purpose rejectPurpose(Purpose purpose, PurposeVersion purposeVersion, String rejectionReason) {
+        return purposeGateway.rejectPurpose(purpose.getRef(), purposeVersion.getRef(), rejectionReason);
+    }
+
     public Purpose askForApprovalPurpose(Purpose purpose, PurposeVersion purposeVersion, @Nullable DelegationRef delegationRef) {
         return purposeGateway.askForApprovalPurpose(purpose.getRef(), purposeVersion.getRef(), delegationRef);
     }

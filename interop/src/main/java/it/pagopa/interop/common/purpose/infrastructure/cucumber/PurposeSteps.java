@@ -13,6 +13,8 @@ import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import lombok.RequiredArgsConstructor;
 
+import java.util.function.BiFunction;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RequiredArgsConstructor
@@ -25,20 +27,37 @@ public class PurposeSteps {
 
     @Then("{tenant} approva la finalità che va in stato {purposeState}")
     public void approvePurpose(Tenant tenant, PurposeVersionState expectedState) {
+        processWaitingPurpose(tenant, expectedState,
+                (purpose, version) -> purposeUseCase.activatePurpose(
+                        purpose, version, null
+                )
+        );
+    }
+
+    @Then("{tenant} rifiuta la finalità che va in stato {purposeState}")
+    public void rejectPurpose(Tenant tenant, PurposeVersionState expectedState) {
+        processWaitingPurpose(tenant, expectedState,
+                (purpose, version) -> purposeUseCase.rejectPurpose(
+                        purpose, version, "Rifiutata nell'ambito del test"
+                )
+        );
+    }
+
+    private void processWaitingPurpose(Tenant tenant, PurposeVersionState expectedState, BiFunction<Purpose, PurposeVersion, Purpose> operation) {
         currentUserSession.set(User.getTenantAdmin(tenant), tenant);
         currentM2MSession.set(tenant, M2MRole.M2M_ADMIN);
 
         Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
-        PurposeVersion versionToApprove = purpose.getLastWaitingForApprovalVersion();
-        if (versionToApprove == null) {
+        PurposeVersion waitingVersion = purpose.getLastWaitingForApprovalVersion();
+        if (waitingVersion == null) {
             throw new IllegalStateException("No purpose version waiting for approval was found for purpose " + purpose.getId());
         }
 
-        Purpose updatedPurpose = purposeUseCase.activatePurpose(purpose, versionToApprove, null);
-        PurposeVersionState actualState = updatedPurpose.findVersionById(versionToApprove.getId())
+        Purpose updatedPurpose = operation.apply(purpose, waitingVersion);
+        PurposeVersionState actualState = updatedPurpose.findVersionById(waitingVersion.getId())
                 .map(PurposeVersion::getPurposeVersionState)
                 .orElseThrow(() -> new IllegalStateException(
-                        "Approved purpose version was not returned for purpose " + purpose.getId()
+                        "Processed purpose version was not returned for purpose " + purpose.getId()
                 ));
 
         assertThat(actualState).isEqualTo(expectedState);

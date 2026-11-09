@@ -64,6 +64,17 @@ public class BffPurposeRestClient extends RestClient {
         );
     }
 
+    public TestChain<Void> rejectPurposeVersion(@Nonnull UUID purposeId, @Nonnull UUID versionId, @Nonnull RejectPurposeVersionPayload payload) {
+        return execute(
+                () -> purposesApi.rejectPurposeVersion()
+                        .purposeIdPath(purposeId)
+                        .versionIdPath(versionId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<PurposeVersionResource> suspendPurposeVersion(@Nonnull UUID purposeId, @Nonnull UUID versionId, DelegationRef delegationRef) {
         return execute(
                 () -> purposesApi.suspendPurposeVersion()
