@@ -20,6 +20,12 @@ public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<
     }
 
     @Override
+    public List<String> clickAndGetRequestUrls(XPathSelector selector) {
+        logger.logDebug("Click and collect request URLs by selector: " + selector);
+        return webAdapter.clickAndGetRequestUrls(selector);
+    }
+
+    @Override
     public Optional<String> getCookieValue(String name) {
         logger.logDebug("Get cookie value by name: " + name);
         return webAdapter.getCookieValue(name);
