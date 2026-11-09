@@ -18,8 +18,8 @@ public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
 
-    public Purpose createPurpose(Consumer<PurposeCreateCommand> commandConfig) {
-        PurposeCreateCommand defaultCommand = purposeCommandFactory.emptyCreateCommand();
+    public Purpose createPurpose(EService eService, Consumer<PurposeCreateCommand> commandConfig) {
+        PurposeCreateCommand defaultCommand = purposeCommandFactory.validFullPopulatedCreateCommand(eService.getRef());
         commandConfig.accept(defaultCommand);
 
         return purposeGateway.createPurpose(defaultCommand);
