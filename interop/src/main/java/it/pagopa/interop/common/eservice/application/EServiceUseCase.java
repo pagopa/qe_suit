@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice.application;
 
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
@@ -49,6 +50,14 @@ public class EServiceUseCase {
 
     public void openEServiceCreation() {
         eServiceGateway.openEServiceCreation();
+    }
+
+    public void openDraftEServiceGeneralData(EService eService) {
+        eServiceGateway.openDraftEServiceGeneralData(eService);
+    }
+
+    public void shouldFailToUpdateDraftEServiceDescription(String description, EServiceUpdateFailureReason reason) {
+        eServiceGateway.shouldFailToUpdateDraftEServiceDescription(description, reason);
     }
 
     public void shouldFailToCreateEService(Consumer<EServiceCreationCommand> config, EServiceCreationFailureReason reason) {
