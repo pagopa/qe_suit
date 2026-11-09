@@ -5,6 +5,7 @@ import it.pagopa.infrastructure.suit.component.Snackbar;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -36,8 +37,7 @@ public class WebEServiceGateway implements EServiceGateway {
         if (!(command instanceof WebEServiceCreationCommand creationCommand))
             throw new IllegalArgumentException("Invalid command type");
 
-        eServiceCreatePage.navigateTo();
-        eServiceCreatePage.assertLoaded();
+        openEServiceCreation();
 
         generalDataGateway.fillEServiceGeneralData(creationCommand.getWebEServiceGeneralData());
 
@@ -86,6 +86,24 @@ public class WebEServiceGateway implements EServiceGateway {
         dialog.getRequestArchivingButton().click();
 
         assertArchivingRejection(expectedMessage, reason);
+    }
+
+    @Override
+    public void openEServiceCreation() {
+        eServiceCreatePage.navigateTo();
+        eServiceCreatePage.assertLoaded();
+    }
+
+    @Override
+    public void shouldFailToCreateEService(EServiceCreationCommand command, EServiceCreationFailureReason reason) {
+        if (!(command instanceof WebEServiceCreationCommand creationCommand)) {
+            throw new IllegalArgumentException("Invalid command type");
+        }
+        openEServiceCreation();
+        generalDataGateway.fillEServiceGeneralData(creationCommand.getWebEServiceGeneralData());
+        assertThat(snackbar.getErrorMessage())
+                .as("EService creation rejection: %s", reason)
+                .isNotBlank();
     }
 
     private void openEServiceArchivingDialog(EServiceRef eServiceRef) {
