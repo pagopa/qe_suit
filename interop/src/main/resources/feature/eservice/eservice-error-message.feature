@@ -1,4 +1,5 @@
 @eservice-error-messages
+@work-item:QA-18434
 @channel:Given=BFF,When=WEB,Then=WEB
 Feature: Messaggi di errore nei dati generali e nella configurazione degli e-service
 
