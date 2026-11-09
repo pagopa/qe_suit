@@ -60,7 +60,7 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | Comune di Milano |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
-    And l'utente apre la modifica dei dati generali in bozza dell'"e-service da modificare"
+    And l'utente apre la modifica dei dati generali in bozza dell'e-service creato
     And l'utente tenta di salvare un link nella descrizione dell'e-service lasciando validi gli altri dati
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "CATALOG_HYPERLINK_DETECTION_ERROR__PATCH_ESERVICES_E_SERVICE_ID" in lingua "<lingua>"
 
@@ -89,7 +89,7 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | tecnologia | stato     | interfaccia               |
       | REST       | PUBLISHED | openapi3-riferimenti.yaml |
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
-    And l'utente tenta di creare un e-service con il nome del template preparato e gli altri dati validi
+    When l'utente tenta di creare un e-service con il nome del template preparato e gli altri dati validi
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "CATALOG_ESERVICE_TEMPLATE_NAME_CONFLICT__POST_ESERVICES" in lingua "<lingua>"
 
     Examples:
