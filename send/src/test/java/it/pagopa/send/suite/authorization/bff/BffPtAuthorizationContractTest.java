@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Endpoint negati al <strong>Partner Tecnologico</strong>: con la sessione del PT {@code PT_1} le API riservate
- * all'ente mittente e ai destinatari rispondono 403.
+ * Autorizzazioni del <strong>Partner Tecnologico</strong>: con la sessione del PT {@code PT_1} le API riservate
+ * all'ente mittente e ai destinatari rispondono 403, mentre l'API degli enti deleganti è richiamabile solo dal PT.
  * <p>
  * Le chiamate compaiono nei test come {@code api#1}, {@code api#2} nell'ordine in cui sono elencate; metodo e URI
  * effettivi sono nei log e nel messaggio di fallimento.
@@ -34,6 +34,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class BffPtAuthorizationContractTest {
 
+    private static final int OK = 200;
     private static final int FORBIDDEN = 403;
 
     private final ApiClient apiClient;
@@ -54,6 +55,28 @@ public class BffPtAuthorizationContractTest {
                         () -> apiClient.notificationReceived().searchReceivedNotificationsV1() // API PG/PF
                 )
                 .expectedStatus(FORBIDDEN)
+                .tests();
+    }
+
+    /**
+     * API degli enti deleganti del PT, 403 atteso per PA, PG e PF.
+     */
+    @TestFactory
+    Stream<DynamicTest> partnerApisAreForbiddenToOtherUsers() {
+        return validator.as(List.of(UserAlias.COMUNE_1, UserAlias.IMPRESA_1, UserAlias.USER_1))
+                .apiCalls(() -> apiClient.ptInstitutions().getPtInstitutionsV1())
+                .expectedStatus(FORBIDDEN)
+                .tests();
+    }
+
+    /**
+     * API degli enti deleganti del PT, 200 atteso per il PT {@code PT_1}.
+     */
+    @TestFactory
+    Stream<DynamicTest> partnerApisAreAllowedToPartner() {
+        return validator.as(List.of(UserAlias.PT_1))
+                .apiCalls(() -> apiClient.ptInstitutions().getPtInstitutionsV1())
+                .expectedStatus(OK)
                 .tests();
     }
 }

@@ -344,7 +344,8 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/refs/tags/v1.22.1-RC.1/docs/openapi/aws/api-bff-WEB-aws.yaml</inputSpec>
+                            <!-- TODO [QA-19073]: tornare a un tag di pn-bff appena ne esce uno con getPtInstitutionsV1 -->
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/3fa61014eb0b196e6999f38c3addfba0621afefc/docs/openapi/aws/api-bff-WEB-aws.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>rest-assured</library>
                             <generateApiTests>false</generateApiTests>
