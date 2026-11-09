@@ -9,6 +9,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.infrastructure.suit.component.TextField;
+import it.pagopa.send.web.infrastructure.page.component.ErrorSnackbar;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import org.assertj.core.api.Assertions;
 
@@ -34,6 +35,7 @@ public interface CampaignDetailPage extends Page {
     Button filterButton();
     Table communications();
     Optional<OneTrustBanner> oneTrustBanner();
+    Optional<ErrorSnackbar> errorSnackbar();
 
     @Override
     default void assertLoaded() {
@@ -41,6 +43,8 @@ public interface CampaignDetailPage extends Page {
         header().readAndAssert((h) -> {
             Assertions.assertThat(h).isNotNull();
         });
+        // il messaggio d'errore del portale copre "Filtra" e aggiunge i suoi testi alle label
+        errorSnackbar().ifPresent(ErrorSnackbar::closeIfShown);
     }
 
     default void searchCommunication(Map<String, String> searchParams) {
