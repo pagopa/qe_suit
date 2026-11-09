@@ -24,13 +24,13 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_2] - Modifica della bozza con nome di un e-service già esistente
     Given i seguenti e-service in bozza:
-      | alias                   | erogatore        | nome                    |
-      | e-service esistente     | Comune di Milano | E-service esistente     |
-      | e-service da modificare | Comune di Milano | E-service da modificare |
+      | alias                   | erogatore        |
+      | e-service esistente     | Comune di Milano |
+      | e-service da modificare | Comune di Milano |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
-    And l'utente apre la modifica dei dati generali in bozza dell'"e-service da modificare"
-    And l'utente tenta di salvare il nome dell'"e-service esistente" per l'"e-service da modificare" lasciando validi gli altri dati
+    And l'utente apre la modifica dei dati generali in bozza per l'e-service "e-service da modificare"
+    And l'utente tenta di salvare nella bozza il nome di un altro e-service: l'e-service "e-service esistente"
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__PATCH_ESERVICES_E_SERVICE_ID" in lingua "<lingua>"
 
     Examples:
