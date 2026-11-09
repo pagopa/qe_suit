@@ -10,6 +10,6 @@ Feature: Recupero dell'interfaccia del template e-service con M2M
     And un template e-service preparato con la seguente configurazione:
       | tecnologia | stato     | interfaccia               |
       | REST       | PUBLISHED | openapi3-riferimenti.yaml |
-    When un M2M_ADMIN appartenente all'erogatore Comune di Milano
-    And l'erogatore recupera l'interfaccia del template
+    And un M2M_ADMIN appartenente all'erogatore Comune di Milano
+    When l'erogatore recupera l'interfaccia del template
     Then l'interfaccia del template è rimasta invariata
