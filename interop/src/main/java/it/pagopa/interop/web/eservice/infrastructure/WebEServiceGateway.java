@@ -111,6 +111,11 @@ public class WebEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void shouldFailToUpdateDraftEServiceName(String name, EServiceUpdateFailureReason reason) {
+        eServiceDraftEditPage.generalDataForm().setEServiceName(name).saveDraft();
+    }
+
+    @Override
     public void shouldFailToCreateEService(EServiceCreationCommand command, EServiceCreationFailureReason reason) {
         if (!(command instanceof WebEServiceCreationCommand creationCommand)) {
             throw new IllegalArgumentException("Invalid command type");
