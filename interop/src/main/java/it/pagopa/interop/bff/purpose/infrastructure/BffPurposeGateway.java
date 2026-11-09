@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.purpose.infrastructure;
 
+import it.pagopa.infrastructure.template.action.PollingAction;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -12,6 +13,7 @@ import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
@@ -97,6 +99,38 @@ public class BffPurposeGateway implements PurposeGateway {
     @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
+    }
+
+    @Override
+    public Purpose tryCreatePurpose(PurposeCreateCommand createCommand) {
+        if (!(createCommand instanceof BffPurposeCreateCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of BffPurposeCreateCommand");
+
+        PurposeSeed bffCreationPayload = bffCommand.getBffCreationPayload();
+        var response = restClient.createPurpose(bffCreationPayload)
+                .withoutPolling();
+
+        return getPurpose(response);
+    }
+
+    @Override
+    public Purpose tryCreatePurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef) {
+        var response = restClient.createPurposeFromTemplate(purposeTemplateRef.id(), commandFactory.creationFromTemplateRequest(eServiceRef))
+                .withoutPolling();
+
+        return getPurpose(response);
+    }
+
+    private Purpose getPurpose(
+        PollingAction<CreatedResource> response) {
+        if (!response.getRaw().isSuccess()) {
+            return null;
+        }
+
+        return response
+            .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
+            .updateContext()
+            .get();
     }
 
     private static it.pagopa.interop.generated.openapi.clients.bff.model.@NonNull DelegationRef getDelegation(@org.jspecify.annotations.Nullable DelegationRef delegationRef) {

@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.purpose_template.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.template.action.PollingAction;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
@@ -15,6 +16,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -154,6 +156,42 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
                 () -> fetchAllLinkedResources(purposeTemplate),
                 pt -> pt.getLinkedResourceIds().contains(resourceId)
         );
+    }
+
+    @Override
+    public PurposeTemplate tryLinkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef) {
+        LinkableResourceRequest payload = new LinkableResourceRequest()
+                .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE)
+                .eserviceId(eServiceRef.id());
+
+        var response = restClient.linkResource(purposeTemplate.getId(), payload)
+                .withoutPolling();
+
+        return getPurposeTemplate(purposeTemplate, response);
+    }
+
+    @Override
+    public PurposeTemplate tryLinkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplateRef eServiceTemplateRef) {
+        LinkableResourceRequest payload = new LinkableResourceRequest()
+                .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE_TEMPLATE)
+                .eserviceTemplateId(eServiceTemplateRef.id());
+
+        var response = restClient.linkResource(purposeTemplate.getId(), payload)
+                .withoutPolling();
+
+        return getPurposeTemplate(purposeTemplate, response);
+    }
+
+    private @Nullable PurposeTemplate getPurposeTemplate(PurposeTemplate purposeTemplate,
+        PollingAction<LinkedResource> response) {
+        if (!response.getRaw().isSuccess()) {
+            return null;
+        }
+
+        return response
+            .map(linked -> getPurposeTemplate(purposeTemplate.getId()))
+            .updateContext()
+            .get();
     }
 
     private PurposeTemplate fetchAllLinkedResources(PurposeTemplate fallbackTemplate) {

@@ -26,6 +26,26 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
 
     PurposeTemplate linkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef);
 
+    /**
+     * Tenta di associare un e-service a un template di finalità senza polling.
+     *
+     * @param purposeTemplate il template di finalità a cui associare l'e-service
+     * @param eServiceRef il riferimento all'e-service da associare
+     * @return il {@link PurposeTemplate} aggiornato nel contesto se la chiamata ha esito positivo;
+     *         {@code null} se la chiamata fallisce (esito non di successo)
+     */
+    PurposeTemplate tryLinkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef);
+
+    /**
+     * Tenta di associare un template di e-service a un template di finalità senza polling.
+     *
+     * @param purposeTemplate il template di finalità a cui associare il template di e-service
+     * @param eServiceTemplateRef il riferimento al template di e-service da associare
+     * @return il {@link PurposeTemplate} aggiornato nel contesto se la chiamata ha esito positivo;
+     *         {@code null} se la chiamata fallisce (esito non di successo)
+     */
+    PurposeTemplate tryLinkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplateRef eServiceTemplateRef);
+
     PurposeTemplate linkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplateRef templateRef);
 
 }
