@@ -31,11 +31,14 @@ public record UsersProperties(Map<UserAlias, UserEntry> users) {
      * Dati di un'utenza: {@code taxId} è il codice fiscale dell'ente o dell'impresa (della persona per una PF),
      * {@code personalTaxId} quello della persona che accede. Per gli enti, {@code groupsApiKey} e
      * {@code deliveryApiKey} sono le api-key (header {@code x-api-key}) delle chiamate B2B sui gruppi e sulle notifiche.
+     * {@code sessionTokenKey} è opzionale: la chiave del session token quando lo username non basta a distinguerlo
+     * (stesso utente SPID su un altro ente); se manca vale lo username.
      */
     public record UserEntry(String username, String password, String taxId, String organization,
                             String organizationId, String uid, String denomination, String familyName,
                             String personalTaxId, List<RoleEntry> roles, String ipaCode, boolean hasGroups,
-                            String email, String groupsApiKey, String deliveryApiKey) {
+                            String email, String groupsApiKey, String deliveryApiKey,
+                            String sessionTokenKey) {
     }
 
     public record RoleEntry(String partyRole, String role) {
