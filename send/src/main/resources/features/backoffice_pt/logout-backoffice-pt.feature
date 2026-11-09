@@ -25,3 +25,14 @@ Feature: Logout dal BackOffice dei Partner Tecnologici
     And la pagina Notifications è caricata con successo
     When l'utente esce dal portale con il pulsante Esci
     Then la pagina PgLoginPage è caricata con successo
+
+  @backofficePt
+  Scenario: [BACKOFFICE_PT_LOGOUT_4] Dopo il logout il PT ritrova il filtro degli enti vuoto
+    Given il PT PT_1 effettua l'accesso a SelfCare con autenticazione SPID
+    And la pagina PtInstitutions è caricata con successo
+    When il PT cerca gli enti per "ente"
+    And l'utente esce dal portale con il pulsante Esci
+    And la pagina LoginPage è caricata con successo
+    And il PT PT_1 effettua l'accesso a SelfCare con autenticazione SPID
+    Then la pagina PtInstitutions è caricata con successo
+    And il filtro degli enti è vuoto

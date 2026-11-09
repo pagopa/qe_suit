@@ -22,6 +22,7 @@ import java.util.Optional;
  * È usata da più test:
  * <ul>
  *     <li>{@code accesso-backoffice-pt.feature}: atterraggio del PT dopo il login da Area Riservata;</li>
+ *     <li>{@code logout-backoffice-pt.feature}: filtro degli enti vuoto al nuovo accesso dopo il logout;</li>
  *     <li>{@code WebPtHeaderFooterContractTest}: link dell'header e del footer del portale;</li>
  *     <li>{@code WebInstitutionsPtContractTest}: testi e stato iniziale della pagina.</li>
  * </ul>
@@ -61,6 +62,11 @@ public interface PtInstitutionsPage extends Page {
     PtFooter footer();
 
     Optional<OneTrustBanner> oneTrustBanner();
+
+    default void searchInstitutions(String text) {
+        searchInput().fill(text);
+        searchButton().click();
+    }
 
     @Override
     default void assertLoaded() {
