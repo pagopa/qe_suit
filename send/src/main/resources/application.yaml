@@ -32,11 +32,17 @@ logging:
     it.frontend.e2e.framework: DEBUG
 
 # ============================================================================
+# WebAPI Configuration (host condiviso da BFF e client mandate)
+# ============================================================================
+webapi:
+  base-url: https://webapi.dev.notifichedigitali.it
+
+# ============================================================================
 # BFF API Configuration (notifiche legali via API)
 # ============================================================================
 bff:
   api:
-    base-url: https://webapi.dev.notifichedigitali.it
+    base-url: ${webapi.base-url}/bff
     # REPLACE_ME: sempre sovrascritto dal profilo attivo (test/dev/uat), valore reale solo in locale
     bearer-token: REPLACE_ME
 
@@ -74,4 +80,19 @@ combo:
       flow-io-fail-analog: ${COMBO_IUN_MESSAMORA_PF:YZNV-TDYU-MGUL-202609-P-A}
       flow-io-ok-analog: ${COMBO_IUN_MESSAMORA_PF_ANALOG:MRGH-DEJL-VYEA-202609-M-A}
 
-
+# ============================================================================
+# Contract Report
+# ============================================================================
+# Letto da ContractReportGenerator alla chiusura della sessione JUnit, quando la suite lanciata
+# e' annotata @GenerateContractReport (vedi BffRoleAuthorizationTest). Output in
+# target/contract-test/report.html. Il canale si risolve per prefisso del nome della classe: le
+# Web*ContractTest, non mappate, restano fuori dal report.
+#
+# target-type TEST_FACTORY e non OPENAPI perche' ogni factory prova piu' endpoint, quindi il nome
+# del metodo non e' un operationId. Per questo target-type non serve lo spec OpenAPI.
+contract-report:
+  channels:
+    bff:
+      label: BFF
+      class-prefix: Bff
+      target-type: TEST_FACTORY

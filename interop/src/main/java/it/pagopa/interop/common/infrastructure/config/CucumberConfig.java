@@ -9,6 +9,7 @@ import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.infrastructure.context.*;
 import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngine;
 import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngineConfig;
+import it.pagopa.interop.common.attribute.infrastructure.cucumber.CertifiedAttributeFixtures;
 import it.pagopa.interop.common.infrastructure.context.CucumberCurrentUserSession;
 import it.pagopa.interop.common.infrastructure.cucumber.channel.InteropChannelEngineConfigs;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
@@ -55,6 +56,12 @@ public class CucumberConfig {
     @Primary
     EntityStore entityStore() {
         return new CucumberEntityStore();
+    }
+
+    @Bean
+    @ScenarioScope
+    CertifiedAttributeFixtures certifiedAttributeFixtures() {
+        return new CertifiedAttributeFixtures();
     }
 
     @Bean

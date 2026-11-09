@@ -20,7 +20,7 @@ public class PurposeTemplateUseCase {
 
     /**
      * Crea (con l'identità corrente come creatore) un purpose template DRAFT per il tenant target,
-     * con risk analysis completata.
+     * con risposte di riferimento e configurazione per distinguere suggerimenti e valori fissi.
      */
     public PurposeTemplate createPurposeTemplate(Tenant targetTenant) {
         RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(targetTenant);
@@ -29,15 +29,22 @@ public class PurposeTemplateUseCase {
                 .answers(riskAnalysisDataFactory.getTemplateForTenant(targetTenant, true))
                 .build();
 
-        return purposeTemplateGateway.createPurposeTemplate(targetTenant, form);
+        return purposeTemplateGateway.createPurposeTemplate(targetTenant, form, latestConfig);
     }
 
     public PurposeTemplate publishPurposeTemplate(PurposeTemplate purposeTemplate) {
         return purposeTemplateGateway.publishPurposeTemplate(purposeTemplate);
     }
 
+    public PurposeTemplate suspendPurposeTemplate(PurposeTemplate purposeTemplate) {
+        return purposeTemplateGateway.suspendPurposeTemplate(purposeTemplate);
+    }
+
     public PurposeTemplate linkEService(PurposeTemplate purposeTemplate, EService eService) {
+        var templateRef = eService.getLatestDescriptor().getTemplateRef();
+        if (templateRef != null) {
+            return purposeTemplateGateway.linkEServiceTemplate(purposeTemplate, templateRef);
+        }
         return purposeTemplateGateway.linkEService(purposeTemplate, eService.getRef());
     }
 }
-

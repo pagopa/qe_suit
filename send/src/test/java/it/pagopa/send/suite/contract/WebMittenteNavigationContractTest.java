@@ -8,7 +8,6 @@ import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.send.web.infrastructure.page.component.TableCell;
 import it.pagopa.send.web.mittente.infrastructure.page.APIKeyPage;
 import it.pagopa.send.web.mittente.infrastructure.page.NewAPIKeyPage;
 import it.pagopa.send.web.mittente.infrastructure.page.PlatformStatusPage;
@@ -26,7 +25,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -118,22 +116,9 @@ public class WebMittenteNavigationContractTest {
                         page ->
                         {
                             log.info("Controllo presenza della colonna...");
-                            boolean checkGroupsPresence = false;
-                            List<TableCell> headerCells =page
-                                    .notifications()
-                                    .header()
-                                    .cells();
-
-                            log.info("Headers presenti in tabella: {}", headerCells.stream().map(x -> x.read()).collect(Collectors.joining(", ")));
-                            for (TableCell elem : headerCells){
-                                if(elem.read().equals("Gruppi")) {
-                                    log.info("Trovato elemento nella lista!");
-                                    checkGroupsPresence = true;
-                                    break;
-                                }
-                            }
-
-                            Assertions.assertTrue(checkGroupsPresence);
+                            List<String> headers = page.notificationsTable().getColumnHeaders();
+                            log.info("Headers presenti in tabella: {}", String.join(", ", headers));
+                            Assertions.assertTrue(headers.contains("Gruppi"));
                         }
                 )));
     }

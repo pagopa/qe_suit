@@ -9,8 +9,8 @@ import it.pagopa.infrastructure.suit.component.Chip;
 /**
  * Contratto condiviso tra le varianti attore per la sezione di stato della notifica.
  * Gli @XPath qui sono placeholder: questa interfaccia non viene mai bindata direttamente,
- * ogni attore li ridefinisce con quelli reali nella propria interfaccia annidata, così il
- * chiamante può leggere lo stato senza conoscere l'attore corrente.
+ * ogni attore li ridefinisce con quelli reali nella propria interfaccia (annidata nella Page
+ * o in un file a parte), così il chiamante può leggere lo stato senza conoscere l'attore corrente.
  */
 public interface NotificationStatusSection extends Component {
 

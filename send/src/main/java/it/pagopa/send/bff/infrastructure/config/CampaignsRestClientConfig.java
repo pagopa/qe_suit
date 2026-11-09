@@ -15,7 +15,7 @@ public class CampaignsRestClientConfig {
 
     @Bean
     public SenderInformalNotificationsApi senderInformalNotificationsApi(
-            @Value("${bff.api.base-url}") String baseUrl,
+            @Value("${webapi.base-url}") String baseUrl,
             @Value("${bff.api.bearer-token:}") String fallbackBearerToken,
             ObjectProvider<CurrentUserSession> currentUserSessionProvider,
             DynamicUserTokenProvider tokenProvider

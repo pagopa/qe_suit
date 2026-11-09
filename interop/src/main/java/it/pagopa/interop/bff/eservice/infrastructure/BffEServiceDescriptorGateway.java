@@ -6,10 +6,7 @@ import it.pagopa.interop.bff.eservice.application.BffUpdateEServiceDescriptorCom
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
 import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.*;
-import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.interop.common.kernel.domain.DocumentKind;
-import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
-import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +24,7 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     private final BffEServiceDescriptorMapper mapper;
     private final BffEServiceDescriptorInterfaceGateway interfaceGateway;
     private final BffEServiceDescriptorArchiveGateway archiveGateway;
+    private final BffEServiceDescriptorUpdateGateway updateGateway;
 
     @Override
     public EServiceDescriptor getEServiceDescriptor(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
@@ -39,6 +37,18 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
                 .updateContext()
                 .map(service -> service.findDescriptor(descriptorRef.id()))
                 .get();
+    }
+
+    @Override
+    public EServiceDescriptor awaitDescriptorState(
+            EServiceRef serviceRef,
+            EServiceDescriptorRef descriptorRef,
+            EServiceDescriptorState expectedState
+    ) {
+        return PollingUtils.pollUntil(
+                () -> getEServiceDescriptor(serviceRef, descriptorRef),
+                descriptor -> descriptor.getState() == expectedState
+        );
     }
 
     @Override
@@ -62,6 +72,33 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
+    public EServiceDescriptor publishDescriptorAwaitingApproval(
+            EServiceRef serviceRef, EServiceDescriptorRef descriptorRef
+    ) {
+        restClient.publishDescriptor(serviceRef.id(), descriptorRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getEServiceDescriptor(serviceRef, descriptorRef))
+                .get();
+        return awaitDescriptorState(serviceRef, descriptorRef, EServiceDescriptorState.WAITING_FOR_APPROVAL);
+    }
+
+    @Override
+    public EServiceDescriptor suspendDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        EServiceDescriptorState expectedState = EServiceDescriptorTransitions.suspensionTarget(
+                getEServiceDescriptor(eServiceRef, descriptorRef).getState()
+        );
+        restClient.suspendDescriptor(eServiceRef.id(), descriptorRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getEServiceDescriptor(eServiceRef, descriptorRef))
+                .get();
+
+        return PollingUtils.pollUntil(
+                () -> getEServiceDescriptor(eServiceRef, descriptorRef),
+                descriptor -> descriptor.getState() == expectedState
+        );
+    }
+
+    @Override
     public EServiceDescriptor updateDescriptor(
             EServiceRef serviceRef,
             EServiceDescriptorRef descriptorRef,
@@ -70,78 +107,53 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
         if (!(command instanceof BffUpdateEServiceDescriptorCommand bffCommand)) {
             throw new IllegalArgumentException("Command must be an instance of BffUpdateEServiceDescriptorCommand");
         }
-        setDefaultAsyncPropertiesIfNeeded(serviceRef, descriptorRef, bffCommand);
-        restClient.updateDescriptor(serviceRef.id(), descriptorRef.id(), bffCommand.getBffPayload())
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(ignored -> getEServiceDescriptor(serviceRef, descriptorRef))
-                .get();
-        return PollingUtils.pollUntil(
+        updateGateway.update(serviceRef, descriptorRef, bffCommand);
+        EServiceDescriptor updated = PollingUtils.pollUntil(
                 () -> getEServiceDescriptor(serviceRef, descriptorRef),
                 descriptor -> descriptor.getDailyCallsPerConsumer().intValue()
                         == bffCommand.getBffPayload().getDailyCallsPerConsumer().intValue()
                         && descriptor.getDailyCallsTotal().intValue()
                         == bffCommand.getBffPayload().getDailyCallsTotal().intValue()
+                        && BffEServiceDescriptorAttributeValidator.matches(
+                        bffCommand.getBffPayload().getAttributes(), descriptor.getAttributes())
         );
-    }
-
-    private void setDefaultAsyncPropertiesIfNeeded(
-            EServiceRef serviceRef,
-            EServiceDescriptorRef descriptorRef,
-            BffUpdateEServiceDescriptorCommand command
-    ) {
-        if (command.getBffPayload().getAsyncExchangeProperties() != null) return;
-        EService service = entityStore.getById(serviceRef.id(), EService.class).orElseThrow();
-        if (!service.getAsyncExchange()) return;
-        linkOpenApiCallbackInterface(serviceRef, descriptorRef, "assets/origin-interface.yaml");
-        it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties properties =
-                new it.pagopa.interop.generated.openapi.clients.bff.model.AsyncExchangeProperties()
-                        .responseTime(60)
-                        .resourceAvailableTime(60)
-                        .maxResultSet(1)
-                        .confirmation(false)
-                        .bulk(true);
-        command.getBffPayload().setAsyncExchangeProperties(properties);
+        if (command.getApiInterface() != null) {
+            return linkOpenApiInterface(serviceRef, descriptorRef, command.getApiInterface());
+        }
+        return updated;
     }
 
     @Override
-    public EServiceDescriptor linkOpenApiInterface(
-            EServiceRef serviceRef,
-            EServiceDescriptorRef descriptorRef,
-            String path
-    ) {
-        return linkDocument(serviceRef, descriptorRef, path, DocumentKind.INTERFACE);
+    public EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, ApiInterface apiInterface) {
+        return linkDocument(eServiceRef, descriptorRef, apiInterface.getPath(), DocumentKind.INTERFACE, apiInterface.getName());
     }
 
     @Override
     public EServiceDescriptor linkOpenApiCallbackInterface(
             EServiceRef serviceRef,
             EServiceDescriptorRef descriptorRef,
-            String path
+            ApiInterface apiInterface
     ) {
-        return linkDocument(serviceRef, descriptorRef, path, DocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE);
+        return linkDocument(serviceRef, descriptorRef, apiInterface.getPath(), DocumentKind.ASYNC_EXCHANGE_CALLBACK_INTERFACE, apiInterface.getName());
     }
 
     private EServiceDescriptor linkDocument(
             EServiceRef serviceRef,
             EServiceDescriptorRef descriptorRef,
             String path,
-            DocumentKind kind
+            DocumentKind kind,
+            String name
     ) {
-        return interfaceGateway.linkDocument(serviceRef, descriptorRef, path, kind);
+        return interfaceGateway.linkDocument(serviceRef, descriptorRef, path, kind, name);
     }
 
     @Override
-    public void archiveDescriptor(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef,
-                                  GracePeriodDays gracePeriodDays) {
+    public void archiveDescriptor(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays) {
         archiveGateway.archive(serviceRef, descriptorRef, gracePeriodDays);
     }
 
     @Override
-    public EServiceDescriptor configureTemplateInstanceSOAPInterface(
-            EServiceRef serviceRef,
-            EServiceDescriptorRef descriptorRef,
-            List<SoapAddressConfiguration> addresses
-    ) {
+    public EServiceDescriptor configureTemplateInstanceSOAPInterface(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, List<SoapAddressConfiguration> addresses) {
         return interfaceGateway.configureSOAP(serviceRef, descriptorRef, addresses);
     }
 
@@ -164,18 +176,12 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
-    public Optional<EServiceDescriptorInterface> readInterfaceSnapshot(
-            EServiceRef serviceRef,
-            EServiceDescriptorRef descriptorRef
-    ) {
+    public Optional<EServiceDescriptorInterface> readInterfaceSnapshot(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
         return interfaceGateway.readSnapshot(serviceRef, descriptorRef);
     }
 
     @Override
-    public Optional<EServiceDescriptorInterface> readInterfaceSnapshotAfterDelay(
-            EServiceRef serviceRef,
-            EServiceDescriptorRef descriptorRef
-    ) {
+    public Optional<EServiceDescriptorInterface> readInterfaceSnapshotAfterDelay(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
         return interfaceGateway.readSnapshotAfterDelay(serviceRef, descriptorRef);
     }
 
