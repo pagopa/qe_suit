@@ -18,6 +18,22 @@ import java.util.Set;
 public class AgreementUseCase {
     private final AgreementGateway agreementGateway;
 
+    public void viewConsumerAgreementDetails(Agreement agreement) {
+        agreementGateway.viewConsumerAgreementDetails(agreement);
+    }
+
+    public void viewProducerAgreementDetails(Agreement agreement) {
+        agreementGateway.viewProducerAgreementDetails(agreement);
+    }
+
+    public void verifyConsumerAgreementDownloadAvailability(Agreement agreement) {
+        agreementGateway.verifyConsumerAgreementDownloadAvailability(agreement);
+    }
+
+    public void verifyProducerAgreementDownloadAvailability(Agreement agreement) {
+        agreementGateway.verifyProducerAgreementDownloadAvailability(agreement);
+    }
+
     public void ensureActiveAgreement(EService eService, EServiceDescriptor descriptor) {
         agreementGateway.ensureActiveAgreement(eService, descriptor);
     }
