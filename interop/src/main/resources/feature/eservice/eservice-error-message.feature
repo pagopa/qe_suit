@@ -70,12 +70,11 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_5] - Creazione di un e-service con nome duplicato
     Given i seguenti e-service in bozza:
-      | alias               | erogatore        |
-      | e-service esistente | Comune di Milano |
+      | erogatore        |
+      | Comune di Milano |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
-    And l'utente apre la creazione di un e-service
-    And l'utente tenta di creare un e-service con il nome dell'"e-service esistente" e gli altri dati validi
+    And l'utente tenta di creare un e-service con il nome dell'e-service creato e gli altri dati validi
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_ESERVICES" in lingua "<lingua>"
 
     Examples:
