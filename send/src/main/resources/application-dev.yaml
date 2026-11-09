@@ -102,6 +102,7 @@ token:
     grossini: ${pn.external.session-token.grossini:REPLACE_ME}
     albino63: ${pn.external.session-token.albino63:REPLACE_ME}
     grossini-pt: ${pn.external.session-token.grossini-pt:REPLACE_ME}
+    msisti: ${pn.external.session-token.msisti:REPLACE_ME}
 
 # ============================================================================
 # WebAPI Configuration (host condiviso da BFF e client mandate)

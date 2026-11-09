@@ -70,11 +70,11 @@ public class BffPtAuthorizationContractTest {
     }
 
     /**
-     * API degli enti deleganti del PT, 200 atteso per il PT {@code PT_1}.
+     * API degli enti deleganti del PT, 200 atteso per i PT {@code PT_1} (amministratore) e {@code PT_2} (operatore).
      */
     @TestFactory
     Stream<DynamicTest> partnerApisAreAllowedToPartner() {
-        return validator.as(List.of(UserAlias.PT_1))
+        return validator.as(List.of(UserAlias.PT_1, UserAlias.PT_2))
                 .apiCalls(() -> apiClient.ptInstitutions().getPtInstitutionsV1())
                 .expectedStatus(OK)
                 .tests();
