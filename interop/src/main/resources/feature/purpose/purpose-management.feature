@@ -5,7 +5,7 @@ Feature: Gestione delle finalità inoltrate
 
   Scenario: [APPROVE_PURPOSE_1] Approvazione di una finalità in stato di attesa da parte di un erogatore
     Given un EService creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato WAITING_FOR_APPROVAL associate da PagoPA
-    Then Comune di Milano approva la finalità e va in stato ACTIVE
+    Then Comune di Milano approva la finalità che va in stato ACTIVE
 
   Scenario: [APPROVE_PURPOSE_2] Approvazione di una finalità in stato di attesa da parte di un erogatore delegato
     Given una delega attiva dal Comune di Pozzallo al Comune di Milano per la gestione delle finalità
