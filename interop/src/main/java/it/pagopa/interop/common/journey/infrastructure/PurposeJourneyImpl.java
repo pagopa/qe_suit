@@ -21,7 +21,20 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
     @Override
     public PurposeJourneyImpl createPurpose(PurposeVersionState state) {
         EService lastEService = entityStore.getLastOrThrow(EService.class);
-        Purpose draftPurpose = purposeUseCase.createPurpose(lastEService);
+        Purpose draftPurpose;
+
+        // Se si richiede la finalità in attesa di approvazione, le chiamate giornaliere per fruitore
+        // saranno impostate con un limite maggiore di quello base dell'ultimo descrittore e-service
+        if (state.equals(PurposeVersionState.WAITING_FOR_APPROVAL)) {
+            draftPurpose = purposeUseCase.createPurpose(lastEService,
+                    command -> command.eserviceId(lastEService.getId()).dailyCalls(
+                            lastEService.getLatestDescriptor().getDailyCallsPerConsumer() + 1
+                    )
+            );
+        } else {
+            draftPurpose = purposeUseCase.createPurpose(lastEService);
+        }
+
         return processLifecycle(draftPurpose, state);
     }
 
@@ -48,6 +61,8 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
             case DRAFT -> {
                 // Nothing to do, the purpose is already in DRAFT state
             }
+
+            case WAITING_FOR_APPROVAL -> purposeUseCase.askForApprovalPurpose(purpose, purpose.getLastDraftVersion(), null);
 
             case ACTIVE -> activatePipeline(purpose);
 
