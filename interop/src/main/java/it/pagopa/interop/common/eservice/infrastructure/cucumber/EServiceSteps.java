@@ -23,6 +23,19 @@ public class EServiceSteps {
         eServiceUseCase.openEServiceCreation();
     }
 
+    @When("l'utente apre la modifica dei dati generali in bozza dell'{currentEService}")
+    public void openDraftEServiceGeneralData(EService eService) {
+        eServiceUseCase.openDraftEServiceGeneralData(eService);
+    }
+
+    @When("l'utente tenta di salvare un link nella descrizione dell'e-service lasciando validi gli altri dati")
+    public void attemptToUpdateDraftEServiceDescriptionWithLink() {
+        eServiceUseCase.shouldFailToUpdateDraftEServiceDescription(
+                "Descrizione di test con https://example.com",
+                EServiceUpdateFailureReason.HYPERLINK_DETECTED
+        );
+    }
+
     @When("l'utente tenta di creare un e-service con il nome dell'{currentEService} e gli altri dati validi")
     public void attemptToCreateEServiceWithSameName(EService existingEService) {
         eServiceUseCase.shouldFailToCreateEService(
