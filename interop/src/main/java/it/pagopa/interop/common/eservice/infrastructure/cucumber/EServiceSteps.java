@@ -28,6 +28,18 @@ public class EServiceSteps {
         eServiceUseCase.openDraftEServiceGeneralData(eService);
     }
 
+    @When("l'utente apre la modifica dei dati generali in bozza per {eServiceByAlias}")
+    public void openDraftEServiceGeneralDataByAlias(EService eService) {
+        eServiceUseCase.openDraftEServiceGeneralData(eService);
+    }
+
+    @When("l'utente tenta di salvare nella bozza il nome di un altro e-service: {eServiceByAlias}")
+    public void attemptToUpdateDraftEServiceWithDuplicateName(EService existingEService) {
+        eServiceUseCase.shouldFailToUpdateDraftEServiceName(
+                existingEService.getName(), EServiceUpdateFailureReason.DUPLICATE_NAME
+        );
+    }
+
     @When("l'utente tenta di salvare un link nella descrizione dell'e-service lasciando validi gli altri dati")
     public void attemptToUpdateDraftEServiceDescriptionWithLink() {
         eServiceUseCase.shouldFailToUpdateDraftEServiceDescription(
