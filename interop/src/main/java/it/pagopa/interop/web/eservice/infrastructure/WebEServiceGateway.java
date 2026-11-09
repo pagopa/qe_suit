@@ -5,6 +5,7 @@ import it.pagopa.infrastructure.suit.component.Snackbar;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
@@ -12,6 +13,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.web.eservice.application.WebEServiceCreationCommand;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDraftEditPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.EServiceArchivingDialog;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class WebEServiceGateway implements EServiceGateway {
     private final WebEServiceGeneralDataGateway generalDataGateway;
     private final ProducerEServiceDetailPage producerEServiceDetailPage;
     private final Snackbar snackbar;
+    private final EServiceDraftEditPage eServiceDraftEditPage;
 
 
     @Override
@@ -92,6 +95,19 @@ public class WebEServiceGateway implements EServiceGateway {
     public void openEServiceCreation() {
         eServiceCreatePage.navigateTo();
         eServiceCreatePage.assertLoaded();
+    }
+
+    @Override
+    public void openDraftEServiceGeneralData(EService eService) {
+        eServiceDraftEditPage.navigateTo(
+                eService.getId().toString(), eService.getLastDraftDescriptor().getId().toString()
+        );
+        eServiceDraftEditPage.assertLoaded();
+    }
+
+    @Override
+    public void shouldFailToUpdateDraftEServiceDescription(String description, EServiceUpdateFailureReason reason) {
+        eServiceDraftEditPage.generalDataForm().setEServiceDescription(description).saveDraft();
     }
 
     @Override
