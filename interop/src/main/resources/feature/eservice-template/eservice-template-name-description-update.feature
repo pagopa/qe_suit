@@ -44,7 +44,7 @@ Feature: La modifica dei metadati non deve creare o modificare versioni funziona
       | una versione pubblicata e una nuova bozza | solo target                |
       | una versione pubblicata e una nuova bozza | tutti i campi modificabili |
 
-
+  @work-item:QA-19036
   Scenario Outline: [ESERVICE_TEMPLATE_METADATA_PROPAGATION_1] Propagare i metadati alle istanze senza alterare etichette e descrittori
     Given un admin appartenente all'erogatore Comune di Milano
     And un template e-service preparato con la seguente configurazione:
@@ -63,7 +63,7 @@ Feature: La modifica dei metadati non deve creare o modificare versioni funziona
       | solo target                |
       | nome e descrizione insieme |
 
-  @channel:Given=BFF,When=BFF,Then=BFF
+  @work-item:QA-19036
   Scenario Outline: [ESERVICE_TEMPLATE_NAME_COLLISION_1] Rifiutare la rinomina del template che genera una collisione
     Given un admin appartenente all'erogatore Comune di Milano
     And un template e-service preparato con la seguente configurazione:
