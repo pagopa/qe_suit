@@ -7,7 +7,9 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
   Per comprendere il problema e correggere i dati o aggiornare la pagina.
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_1] - Eliminazione di una bozza da parte del delegato
-    Given un e-service in bozza creato dal Comune di Milano
+    Given i seguenti e-service in bozza:
+      | alias     | erogatore        |
+      | e-service | Comune di Milano |
     And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
@@ -20,7 +22,10 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_2] - Modifica della bozza con nome di un e-service già esistente
-    Given due e-service in bozza del Comune di Milano con nomi diversi, identificati come "e-service esistente" e "e-service da modificare"
+    Given i seguenti e-service in bozza:
+      | alias                   | erogatore        | nome                    |
+      | e-service esistente     | Comune di Milano | E-service esistente     |
+      | e-service da modificare | Comune di Milano | E-service da modificare |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre la modifica dei dati generali in bozza dell'"e-service da modificare"
@@ -33,7 +38,9 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_3] - Modifica della bozza con nome in conflitto con un template
-    Given un e-service in bozza creato dal Comune di Milano e identificato come "e-service da modificare"
+    Given i seguenti e-service in bozza:
+      | alias                   | erogatore        |
+      | e-service da modificare | Comune di Milano |
     And un template e-service con nome diverso identificato come "template esistente" il cui nome non è utilizzato da altri e-service del Comune di Milano
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
@@ -47,7 +54,9 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_4] - Modifica della bozza con un link nei dati generali
-    Given un e-service in bozza creato dal Comune di Milano e identificato come "e-service da modificare"
+    Given i seguenti e-service in bozza:
+      | alias                   | erogatore        |
+      | e-service da modificare | Comune di Milano |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre la modifica dei dati generali in bozza dell'"e-service da modificare"
@@ -60,7 +69,9 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_5] - Creazione di un e-service con nome duplicato
-    Given un e-service in bozza creato dal Comune di Milano e identificato come "e-service esistente"
+    Given i seguenti e-service in bozza:
+      | alias               | erogatore        |
+      | e-service esistente | Comune di Milano |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre la creazione di un e-service
@@ -142,8 +153,10 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_11] - Aggiornamento del solo nome con un nome duplicato
-    Given un e-service pubblicato dal Comune di Milano e identificato come "e-service da modificare"
-    And un altro e-service del Comune di Milano con nome diverso e identificato come "e-service esistente"
+    Given i seguenti e-service pubblicati:
+      | alias                   | erogatore        | nome                    |
+      | e-service esistente     | Comune di Milano | E-service esistente     |
+      | e-service da modificare | Comune di Milano | E-service da modificare |
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre l'aggiornamento del solo nome dell'"e-service da modificare"
@@ -156,7 +169,9 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_12] - Aggiornamento del solo nome con un nome in conflitto con un template
-    Given un e-service pubblicato dal Comune di Milano e identificato come "e-service da modificare"
+    Given i seguenti e-service pubblicati:
+      | alias                   | erogatore        |
+      | e-service da modificare | Comune di Milano |
     And un template e-service con nome diverso identificato come "template esistente" il cui nome non è utilizzato da altri e-service del Comune di Milano
     And un utente autenticato del Comune di Milano con ruolo admin
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
