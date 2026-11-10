@@ -9,9 +9,8 @@ Feature: Messaggi di errore nella gestione dei template e-service
   Background:
     Given un admin appartenente all'erogatore Comune di Milano
     And un template e-service preparato con la seguente configurazione:
-      | tecnologia | stato | interfaccia               |
-      | REST       | DRAFT | openapi3-riferimenti.yaml |
-    And il template e-service preparato è identificato come "template principale"
+      | alias               | tecnologia | stato | interfaccia               |
+      | template principale | REST       | DRAFT | openapi3-riferimenti.yaml |
 
   Scenario Outline: [ESERVICE_TEMPLATE_ERROR_MESSAGE_1] - Download di un documento non più disponibile
     Given un documento valido allegato alla versione in bozza del template "template principale" e identificato come "documento da scaricare"
