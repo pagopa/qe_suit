@@ -5,6 +5,7 @@ import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.delegation.application.DelegationUseCase;
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand;
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationSetupCommand;
+import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -68,6 +69,7 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
                     TenantRef.of(command.delegate().getOrganizationId()),
                     command.eService()
             );
+            entityStore.upsert(Delegation.builder().id(delegation.getId()).build());
             delegationUseCase.waitForProducerDelegationState(
                     delegation.getRef(), ProducerDelegationState.WAITING_FOR_APPROVAL
             );
