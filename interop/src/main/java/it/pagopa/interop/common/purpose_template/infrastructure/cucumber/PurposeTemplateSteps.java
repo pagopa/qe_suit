@@ -60,19 +60,21 @@ public class PurposeTemplateSteps {
 
     @Then("l'associazione dell'e-service al template di finalità è negata")
     public void assertEServiceLinkDenied() {
-        ApiResponse lastResponse = lastApiResponseStore.getLastResponse();
-        Assertions.assertThat(lastResponse).isNotNull();
-        Assertions.assertThat(lastResponse.isSuccess())
-                .as("L'associazione dell'e-service al template di finalità doveva essere rifiutata")
-                .isFalse();
+        String assertionDescription = "L'associazione dell'e-service al template di finalità doveva essere rifiutata";
+        assertLinkDenied(assertionDescription);
     }
 
     @Then("l'associazione del template e-service al template di finalità è negata")
     public void assertEServiceTemplateLinkDenied() {
+        String assertionDescription = "L'associazione del template e-service al template di finalità doveva essere rifiutata";
+        assertLinkDenied(assertionDescription);
+    }
+
+    private void assertLinkDenied(String assertionDescription) {
         ApiResponse lastResponse = lastApiResponseStore.getLastResponse();
         Assertions.assertThat(lastResponse).isNotNull();
         Assertions.assertThat(lastResponse.isSuccess())
-                .as("L'associazione del template e-service al template di finalità doveva essere rifiutata")
+                .as(assertionDescription)
                 .isFalse();
     }
 }
