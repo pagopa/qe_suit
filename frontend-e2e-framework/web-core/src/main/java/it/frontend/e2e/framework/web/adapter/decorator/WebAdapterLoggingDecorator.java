@@ -78,4 +78,10 @@ public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<
         logger.logDebug("Closing Browser");
         webAdapter.close();
     }
+
+    @Override
+    public List<String> clickAndGetRequestUrls(XPathSelector selector) {
+        logger.logDebug("Click and collect request URLs by selector: " + selector);
+        return webAdapter.clickAndGetRequestUrls(selector);
+    }
 }
