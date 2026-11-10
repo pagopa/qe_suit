@@ -1,3 +1,7 @@
+# TODO: implementare il routing esplicito di But nella configurazione @channel.
+# Configurazione prevista: Given=BFF,When=WEB,Then=WEB,But=BFF.
+# But esegue la revoca via BFF tra apertura e azione WEB; il successivo When torna a WEB.
+# Finche il supporto non e implementato, But non garantisce il cambio di canale: non eseguire questi flussi.
 @eservice-error-messages
 @work-item:QA-18434
 @channel:Given=BFF,When=WEB,Then=WEB
@@ -109,12 +113,11 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_8] - Modifica delle preferenze di fruizione tramite delega dopo la revoca
-    Given un e-service pubblicato dal Comune di Milano con approvazione manuale delle richieste di fruizione
-    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre la modifica delle preferenze di fruizione tramite delega e prepara una variazione valida senza salvarla
-    Given la delega in erogazione viene revocata dal Comune di Milano
+    But la delega in erogazione viene revocata dal Comune di Milano
     When l'utente tenta di salvare le preferenze di fruizione tramite delega senza aggiornare la pagina
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DELEGATION_FLAGS_UPDATE" in lingua "<lingua>"
 
@@ -137,12 +140,11 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_10] - Aggiornamento della descrizione dopo la revoca della delega
-    Given un e-service pubblicato dal Comune di Milano con approvazione manuale delle richieste di fruizione
-    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre l'aggiornamento della sola descrizione dell'e-service e prepara una modifica valida senza salvarla
-    Given la delega in erogazione viene revocata dal Comune di Milano
+    But la delega in erogazione viene revocata dal Comune di Milano
     When l'utente tenta di salvare la descrizione dell'e-service senza aggiornare la pagina
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTION_UPDATE" in lingua "<lingua>"
 
@@ -197,12 +199,11 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_14] - Aggiornamento del nome dopo la revoca della delega
-    Given un e-service pubblicato dal Comune di Milano con approvazione manuale delle richieste di fruizione
-    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre l'aggiornamento del solo nome dell'e-service e prepara un nome univoco valido senza salvarlo
-    Given la delega in erogazione viene revocata dal Comune di Milano
+    But la delega in erogazione viene revocata dal Comune di Milano
     When l'utente tenta di salvare il nuovo nome dell'e-service senza aggiornare la pagina
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_NAME_UPDATE" in lingua "<lingua>"
 
@@ -212,12 +213,11 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_15] - Modifica dell'indicazione sui dati personali dopo la revoca della delega
-    Given un e-service pubblicato dal Comune di Milano con approvazione manuale delle richieste di fruizione
-    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre la modifica dell'indicazione sul trattamento dei dati personali e prepara una variazione valida senza salvarla
-    Given la delega in erogazione viene revocata dal Comune di Milano
+    But la delega in erogazione viene revocata dal Comune di Milano
     When l'utente tenta di salvare l'indicazione sul trattamento dei dati personali senza aggiornare la pagina
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_PERSONAL_DATA_FLAG" in lingua "<lingua>"
 
@@ -227,12 +227,11 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_16] - Modifica dell'adesione a Signal Hub dopo la revoca della delega
-    Given un e-service pubblicato dal Comune di Milano con approvazione manuale delle richieste di fruizione
-    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre la modifica dell'adesione a Signal Hub e prepara una variazione valida senza salvarla
-    Given la delega in erogazione viene revocata dal Comune di Milano
+    But la delega in erogazione viene revocata dal Comune di Milano
     When l'utente tenta di salvare l'adesione a Signal Hub senza aggiornare la pagina
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_SIGNALHUB_UPDATE" in lingua "<lingua>"
 
@@ -242,12 +241,11 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_17] - Consultazione di un e-service non più gestito in delega
-    Given un e-service pubblicato dal Comune di Milano con approvazione manuale delle richieste di fruizione
-    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre l'elenco dei propri e-service e individua l'e-service gestito in delega
-    Given la delega in erogazione viene revocata dal Comune di Milano
+    But la delega in erogazione viene revocata dal Comune di Milano
     When l'utente tenta di aprire il dettaglio dell'e-service dall'elenco senza aggiornarlo
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID" in lingua "<lingua>"
 
@@ -257,12 +255,11 @@ Feature: Messaggi di errore nei dati generali e nella configurazione degli e-ser
       | en     |
 
   Scenario Outline: [ESERVICE_ERROR_MESSAGE_18] - Consultazione di una versione non più gestita in delega
-    Given un e-service pubblicato dal Comune di Milano con approvazione manuale delle richieste di fruizione
-    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     When l'utente seleziona e verifica la lingua dell'interfaccia "<lingua>"
     And l'utente apre il dettaglio dell'e-service gestito in delega e individua la versione pubblicata
-    Given la delega in erogazione viene revocata dal Comune di Milano
+    But la delega in erogazione viene revocata dal Comune di Milano
     When l'utente tenta di aprire il dettaglio della versione pubblicata senza aggiornare la pagina
     Then viene mostrata la snackbar di errore con il testo esatto del messaggio di catalogo "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID" in lingua "<lingua>"
 
