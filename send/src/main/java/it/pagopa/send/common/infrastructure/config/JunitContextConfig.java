@@ -86,6 +86,11 @@ public class JunitContextConfig {
         return new LegalNotificationCreationRequest();
     }
 
+    @Bean
+    it.pagopa.send.common.informal_notification.domain.InformalNotificationCreationRequest informalNotificationCreationRequest() {
+        return new it.pagopa.send.common.informal_notification.domain.InformalNotificationCreationRequest();
+    }
+
     /**
      * Equivalente non scoped di {@code NotificationContext} (di norma {@code @ScenarioScope}),
      * usato dalle implementazioni di {@code LegalNotificationGateway} fuori da uno scenario

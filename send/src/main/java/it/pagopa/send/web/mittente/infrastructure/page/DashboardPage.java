@@ -9,6 +9,7 @@ import it.pagopa.infrastructure.suit.component.TextField;
 import it.pagopa.send.web.infrastructure.page.component.Footer;
 import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
+import it.pagopa.send.web.mittente.infrastructure.page.component.MittentiSidebar;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import it.pagopa.send.web.notification_search.infrastructure.suit.NotificationSearchPage;
 import it.pagopa.utils.async.PollingUtils;
@@ -55,6 +56,8 @@ public interface DashboardPage extends NotificationSearchPage {
 
     @XPath("//*[@id=\"endDate\"]")
     TextField endDateSearchInput();
+
+    MittentiSidebar sidebar();
 
     /**
      * Filtro esclusivo del portale mittenti: assente lato PF.

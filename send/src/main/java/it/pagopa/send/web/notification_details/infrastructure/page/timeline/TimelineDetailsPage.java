@@ -15,7 +15,7 @@ public interface TimelineDetailsPage extends Page {
 
     @Override
     default void assertLoaded() {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         timeline().assertLoaded();
     }
 }
