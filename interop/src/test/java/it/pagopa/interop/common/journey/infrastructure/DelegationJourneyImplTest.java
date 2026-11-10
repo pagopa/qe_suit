@@ -56,6 +56,45 @@ class DelegationJourneyImplTest {
     }
 
     @Test
+    void revokesExistingDelegationAsDelegatorWithoutChangingChannel() {
+        journey.revokeProducerDelegationAsDelegator(created.getRef(), delegator);
+
+        InOrder order = inOrder(session, useCase);
+        order.verify(session).set(User.getTenantAdmin(delegator), delegator);
+        order.verify(useCase).revokeProducerDelegation(created.getRef());
+        order.verify(useCase).waitForProducerDelegationState(created.getRef(), ProducerDelegationState.REVOKED);
+        order.verify(session).set(originalUser, originalTenant);
+        verifyNoInteractions(entityStore, channel);
+        verifyNoMoreInteractions(useCase);
+    }
+
+    @Test
+    void restoresContextWhenRevocationFails() {
+        RuntimeException failure = new RuntimeException("revoke failed");
+        doThrow(failure).when(useCase).revokeProducerDelegation(created.getRef());
+
+        assertThatThrownBy(() -> journey.revokeProducerDelegationAsDelegator(created.getRef(), delegator))
+                .isSameAs(failure);
+
+        verify(useCase, never()).waitForProducerDelegationState(any(), any());
+        verify(session).set(originalUser, originalTenant);
+        verifyNoInteractions(channel);
+    }
+
+    @Test
+    void restoresContextWhenWaitingForRevocationFails() {
+        RuntimeException failure = new RuntimeException("state not reached");
+        when(useCase.waitForProducerDelegationState(created.getRef(), ProducerDelegationState.REVOKED))
+                .thenThrow(failure);
+
+        assertThatThrownBy(() -> journey.revokeProducerDelegationAsDelegator(created.getRef(), delegator))
+                .isSameAs(failure);
+
+        verify(session).set(originalUser, originalTenant);
+        verifyNoInteractions(channel);
+    }
+
+    @Test
     void leavesWaitingDelegationPendingAndRestoresOriginalContext() {
         journey.setUpProducerDelegation(command(ProducerDelegationState.WAITING_FOR_APPROVAL));
 
