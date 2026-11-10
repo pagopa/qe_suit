@@ -25,7 +25,7 @@ public class SelfCareSessionPayloadFactory {
     private final ObjectMapper objectMapper;
 
     /**
-     * Sessione dell'utente: la parte comune ({@link #basePayload}) più i campi del suo tipo di utenza, ente (PA)
+     *  Sessione dell'utente: la parte comune ({@link #basePayload}) più i campi del suo tipo di utenza, ente (PA)
      * oppure persona fisica o giuridica (PF/PG).
      */
     public String build(User user, String sessionToken) {
@@ -88,6 +88,9 @@ public class SelfCareSessionPayloadFactory {
         payload.put("name", user.getName());
         payload.put("fiscal_number", user.getFiscalNumber());
         payload.put("uid", user.getUid());
+        if (!payload.containsKey("desired_exp") && payload.containsKey("exp")) {
+            payload.put("desired_exp", payload.get("exp"));
+        }
         return payload;
     }
 
@@ -112,6 +115,9 @@ public class SelfCareSessionPayloadFactory {
      * alla radice dell'oggetto sessionStorage esattamente come li valida il portale.
      */
     private Map<String, Object> extractClaims(String sessionToken) {
+        if (sessionToken == null || sessionToken.isBlank()) {
+            throw new IllegalStateException("Nessun sessionToken fornito o configurato (il token potrebbe essere mancante, vuoto o scaduto)");
+        }
         String[] segments = sessionToken.split("\\.");
         if (segments.length < 2) {
             throw new IllegalArgumentException("sessionToken non è un JWT valido: " + sessionToken);
