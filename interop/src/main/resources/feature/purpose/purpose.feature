@@ -14,6 +14,7 @@ Feature: Associazione finalità a e-service in ricezione
     allora il sistema nega la creazione della finalità
 
     Given un e-service in modalità di ricezione creato e pubblicato da Comune di Milano
+    And una richiesta di fruizione attiva verso l'e-service da parte di PagoPA
     When PagoPA tenta di creare una finalità associando l'e-service in modalità di ricezione
     Then la creazione della finalità è negata
 
