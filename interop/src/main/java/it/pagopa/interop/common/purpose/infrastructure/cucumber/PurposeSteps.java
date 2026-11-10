@@ -34,6 +34,16 @@ public class PurposeSteps {
         );
     }
 
+    @Then("{tenant} delegato all'erogazione approva la finalità che va in stato {purposeState}")
+    public void approvePurposeWithDelegation(Tenant tenant, PurposeVersionState expectedState) {
+        DelegationRef delegationRef = entityStore.getLastOrThrow(Delegation.class).getRef();
+        processWaitingPurpose(tenant, expectedState,
+                (purpose, version) -> purposeUseCase.activatePurpose(
+                        purpose, version, delegationRef
+                )
+        );
+    }
+
     @Then("{tenant} rifiuta la finalità che va in stato {purposeState}")
     public void rejectPurpose(Tenant tenant, PurposeVersionState expectedState) {
         processWaitingPurpose(tenant, expectedState,
