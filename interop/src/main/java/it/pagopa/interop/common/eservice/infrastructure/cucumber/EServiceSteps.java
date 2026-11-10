@@ -7,6 +7,8 @@ import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -14,6 +16,13 @@ public class EServiceSteps {
     private final EServiceDescriptorUseCase descriptorUseCase;
     private final InteropJourney interopJourney;
     private final EServiceUseCase eServiceUseCase;
+
+    @Given("un e-service in modalità di {eServiceMode} creato e pubblicato da/dal {tenant}")
+    public void createAndPublishEServiceWithMode(EServiceMode mode, Tenant producer) {
+        interopJourney
+                .withProducer(producer, UserRole.ADMIN)
+                .createEService(command -> command.mode(mode), EServiceDescriptorState.PUBLISHED);
+    }
 
     @Given("la versione {int} dell'{currentEService} (è )in fase di archiviazione con un periodo di preavviso di {gracePeriodDays} giorni")
     public void prepareArchivingDescriptor(int versionNumber, EService eService, GracePeriodDays gracePeriodDays) {

@@ -5,7 +5,11 @@ import io.cucumber.java.DataTableType;
 import io.cucumber.datatable.DataTable;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplatePreparationConfiguration;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import lombok.RequiredArgsConstructor;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapper;
@@ -28,6 +32,14 @@ public class EServiceTemplateSteps {
         var command = requestFactory.defaultCreationEServiceTemplateCommand();
         configurationMapper.apply(configuration, command);
         journey.createEServiceTemplate(command, configuration.getState());
+    }
+
+    @Given("un template e-service in modalità di {eServiceMode} creato e pubblicato da {tenant}")
+    public void prepareTemplateWithMode(EServiceMode mode, Tenant producer) {
+        journey.withProducer(producer, UserRole.ADMIN);
+        var command = requestFactory.defaultCreationEServiceTemplateCommand();
+        command.mode(mode);
+        journey.createEServiceTemplate(command, EServiceTemplateVersionState.PUBLISHED);
     }
 
     @DataTableType
