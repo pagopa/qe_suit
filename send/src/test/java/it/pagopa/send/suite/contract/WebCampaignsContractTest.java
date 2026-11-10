@@ -2,10 +2,12 @@ package it.pagopa.send.suite.contract;
 
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.common.user.domain.UserAlias;
+import it.frontend.e2e.framework.core.capability.core.Gettable.FindPolicy;
 import it.frontend.e2e.framework.core.capability.core.Readable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.campaigns.application.CampaignsGateway;
+import it.pagopa.send.common.campaigns.application.CampaignsUseCase;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.generated.openapi.clients.sender.informal.bff.model.CampaignSummary;
@@ -16,7 +18,6 @@ import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.Execution;
@@ -37,6 +38,7 @@ import java.util.stream.Stream;
 public class WebCampaignsContractTest {
     private final UserProvider userProvider;
     private final WebBrowserContractValidator webContractValidator;
+    private final CampaignsUseCase campaignsUseCase;
 
     @TestFactory
     Stream<DynamicTest> shouldShowCampaignsItemInSidebar() {
@@ -55,18 +57,21 @@ public class WebCampaignsContractTest {
                 )));
     }
 
-    @Disabled("Serve un ente senza campagne: Comune_1 ne ha. Da riattivare quando ci sarà un'utenza adatta")
     @TestFactory
     Stream<DynamicTest> shouldShowEmptyCampaignsList() {
         return webContractValidator
                 .as(userProvider.resolve(UserAlias.COMUNE_1))
                 .on(CampaignsPage.class)
                 .tests(Stream.of(new WebScenario<>(
-                        "Lista di campagne non popolata",
+                        "Lo stato di lista vuota compare solo se l'ente non ha campagne",
                         page -> {
                         },
                         page -> {
-                            Assertions.assertThat(page.emptyStateLabel().read()).isNotNull();
+                            // il BFF va chiamato qui, dopo che il validator ha impostato l'utente in sessione
+                            boolean noCampaigns = campaignsUseCase.getCampaigns().isEmpty();
+                            Assertions.assertThat(page.emptyState().exists(FindPolicy.PRESENT))
+                                    .as("Stato di lista vuota presente se e solo se il BFF non restituisce campagne")
+                                    .isEqualTo(noCampaigns);
                         }
                 )));
     }
@@ -98,6 +103,7 @@ public class WebCampaignsContractTest {
                         page -> {
                             for (CampagneElement elem : page.box().elements()){
                                 Assertions.assertThat(elem.apriCampagna().isDisabled()).as("Il bottone è disabilitato").isFalse();
+                                Assertions.assertThat(elem.apriCampagna().read()).as("Testo del bottone della campagna").isEqualTo("Apri");
                                 Assertions.assertThat(elem.fields().size()).as("Non sono presenti le 4 labels previste").isEqualTo(4);
                                 boolean contieneCodiceId = elem.fields().stream()
                                         .map(Readable::read).anyMatch("Codice ID"::equals);
