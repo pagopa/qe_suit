@@ -1,11 +1,11 @@
 @purpose-template
 @channel:Given=BFF,When=BFF,Then=BFF
-# PST: https://pagopa.atlassian.net/wiki/x/IQDwzQ
 Feature: Associazione finalità e template finalità a e-service in ricezione
   Come ente fruitore
   Voglio che il sistema impedisca l'associazione di un e-service o e-service template in modalità di ricezione ad una finalità o a un template di finalità
   Affinché siano rispettati i vincoli di compatibilità tra la modalità del servizio e la finalità.
 
+  # PST: https://pagopa.atlassian.net/wiki/x/IQDwzQ
   # CASO DI TEST 1.1: Verificare che un e-service in modalità di ricezione non possa essere associato a un template di finalità
   @work-item:QA-17458
   Scenario: [PURPOSE_TEMPLATE_RECEIVE_ESERVICE_1.1] Impossibilità di associare un e-service in modalità di ricezione ad un template di finalità
@@ -19,6 +19,7 @@ Feature: Associazione finalità e template finalità a e-service in ricezione
     When PagoPA tenta di associare al proprio template di finalità l'e-service in modalità di ricezione
     Then l'associazione dell'e-service al template di finalità è negata
 
+  # PST: https://pagopa.atlassian.net/wiki/x/IQDwzQ
   # CASO DI TEST 1.2: Verificare che un e-service template in modalità di ricezione non possa essere associato a un template di finalità
   @work-item:QA-17458
   Scenario: [PURPOSE_TEMPLATE_RECEIVE_ESERVICE_1.2] Impossibilità di associare un e-service template in modalità di ricezione ad un template di finalità
@@ -32,6 +33,7 @@ Feature: Associazione finalità e template finalità a e-service in ricezione
     When PagoPA tenta di associare al proprio template di finalità il template e-service in modalità di ricezione
     Then l'associazione del template e-service al template di finalità è negata
 
+  # PST: https://pagopa.atlassian.net/wiki/x/IQDwzQ
   # CASO DI TEST 1.3: Verificare che un e-service in modalità di ricezione non possa essere associato a una finalità creata a partire da un template
   @work-item:QA-17458
   Scenario: [PURPOSE_TEMPLATE_RECEIVE_ESERVICE_1.3] Impossibilità di associare un e-service in modalità di ricezione a una finalità creata da template
