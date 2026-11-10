@@ -4,9 +4,15 @@ import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.interop.bff.eservice_template.infrastructure.BffEServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
+import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice_template.application.*;
+import it.pagopa.interop.common.eservice_template.application.command.PrepareEServiceTemplateForPublishingCommand;
 import it.pagopa.interop.common.eservice_template.domain.*;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
+import it.pagopa.interop.common.kernel.domain.Tenant;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -21,7 +27,10 @@ class EServiceTemplateJourneyTest {
     private final EServiceTemplateUseCase templates = mock(EServiceTemplateUseCase.class);
     private final EServiceTemplateVersionGateway gateway = mock(EServiceTemplateVersionGateway.class);
     private final BffEServiceTemplateRequestFactory factory = new BffEServiceTemplateRequestFactory();
-    private final EServiceTemplateVersionUseCase versions = new EServiceTemplateVersionUseCase(gateway, factory);
+    private final EServiceRiskAnalysisUseCase riskAnalysisUseCase = mock(EServiceRiskAnalysisUseCase.class);
+    private final CurrentUserSession currentUserSession = mock(CurrentUserSession.class);
+    private final EServiceTemplateVersionUseCase versions = new EServiceTemplateVersionUseCase(
+            gateway, factory, templates, riskAnalysisUseCase, currentUserSession);
     private final InMemoryEntityStore store = new InMemoryEntityStore();
     private final EServiceTemplateJourneyImpl journey = new EServiceTemplateJourneyImpl(
             templates, versions, mock(EServiceTemplateInstanceUseCase.class),
@@ -70,13 +79,15 @@ class EServiceTemplateJourneyTest {
     @Test
     void defaultsSelectExistingSoapFixtureAndDoNotOverwriteAlreadyUploadedInterface() {
         when(gateway.getEServiceTemplateVersion(template.getRef(), draft.getRef())).thenReturn(draft);
-        versions.prepareVersionForPublishing(template, draft);
+        versions.prepareVersionForPublishing(new PrepareEServiceTemplateForPublishingCommand(template, draft));
         verify(gateway).uploadInterface(template.getRef(), draft.getRef(),
                 "assets/eservice-template/soap11-due-indirizzi.wsdl");
         clearInvocations(gateway);
         var uploaded = draft.toBuilder().interfaceDocument(new EServiceTemplateInterface(
                 UUID.randomUUID(), template.getRef(), draft.getRef(), "original", "application/xml", new byte[]{1})).build();
-        assertThat(versions.prepareVersionForPublishing(template, uploaded, "another-fixture")).isSameAs(uploaded);
+        assertThat(versions.prepareVersionForPublishing(
+                new PrepareEServiceTemplateForPublishingCommand(template, uploaded, "another-fixture")))
+                .isSameAs(uploaded);
         verifyNoInteractions(gateway);
     }
 
@@ -86,5 +97,30 @@ class EServiceTemplateJourneyTest {
         var refreshed = template.toBuilder().name("refreshed").build();
         store.upsert(refreshed);
         assertThat(store.getByAliasOrThrow("TPL-1", EServiceTemplate.class)).isSameAs(refreshed);
+    }
+
+    @Test
+    void receiveModeUploadsRiskAnalysisUsingSessionDefaultsOrCommandOverrides() {
+        var uploaded = draft.toBuilder().interfaceDocument(new EServiceTemplateInterface(
+                UUID.randomUUID(), template.getRef(), draft.getRef(), "original", "application/xml", new byte[]{1})).build();
+        var receiveTemplate = template.toBuilder().mode(EServiceMode.RECEIVE).version(uploaded).build();
+        var defaultRiskAnalysis = EServiceRiskAnalysis.builder().id(UUID.randomUUID()).name("default-ra").build();
+        when(currentUserSession.getTenant()).thenReturn(Tenant.COMUNE_DI_MILANO);
+        when(riskAnalysisUseCase.buildRiskAnalysis(Tenant.COMUNE_DI_MILANO, true)).thenReturn(defaultRiskAnalysis);
+        when(gateway.getEServiceTemplateVersion(receiveTemplate.getRef(), uploaded.getRef())).thenReturn(uploaded);
+
+        versions.prepareVersionForPublishing(
+                new PrepareEServiceTemplateForPublishingCommand(receiveTemplate, uploaded));
+
+        verify(templates).uploadRiskAnalysis(receiveTemplate, Tenant.COMUNE_DI_MILANO.getTenantType(), defaultRiskAnalysis);
+
+        clearInvocations(templates, riskAnalysisUseCase, currentUserSession);
+        var customRiskAnalysis = EServiceRiskAnalysis.builder().id(UUID.randomUUID()).name("custom-ra").build();
+
+        versions.prepareVersionForPublishing(new PrepareEServiceTemplateForPublishingCommand(
+                receiveTemplate, uploaded, null, Tenant.SOGECAP, customRiskAnalysis));
+
+        verify(templates).uploadRiskAnalysis(receiveTemplate, Tenant.SOGECAP.getTenantType(), customRiskAnalysis);
+        verifyNoInteractions(currentUserSession, riskAnalysisUseCase);
     }
 }
