@@ -179,6 +179,7 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
         }
         String observationKey = "__suitRequests_" + UUID.randomUUID();
         RuntimeException failure = null;
+        WebElement element = findWebElement(selector, defaultWaitTimeoutSeconds, Gettable.FindPolicy.CLICKABLE);
         try {
             js.executeScript("""
                     if (typeof PerformanceObserver !== 'function' ||
@@ -201,7 +202,6 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
                     window[arguments[0]] = state;
                     state.observer.observe({ type: 'resource' });
                     """, observationKey);
-            WebElement element = findWebElement(selector, defaultWaitTimeoutSeconds, Gettable.FindPolicy.CLICKABLE);
             element.click();
             return new WebDriverWait(driver, Duration.ofSeconds(defaultWaitTimeoutSeconds))
                     .withMessage("No HTTP API request observed or collection did not become quiet within "

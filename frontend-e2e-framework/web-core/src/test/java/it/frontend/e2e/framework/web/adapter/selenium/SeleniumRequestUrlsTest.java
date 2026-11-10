@@ -108,15 +108,15 @@ class SeleniumRequestUrlsTest {
     }
 
     @Test
-    void doesNotClickIfElementIsNotClickableAndCleansUp() {
+    void doesNotInstallObserverOrClickIfElementIsNotClickable() {
         when(button.isEnabled()).thenReturn(false);
 
         assertThrows(TimeoutException.class,
-                () -> new SeleniumApiAdapter(driver, 0).clickAndGetRequestUrls(selector));
+                () -> new SeleniumApiAdapter(driver, 0)
+                        .clickAndGetRequestUrls(selector));
 
         verify(button, never()).click();
-        verify(js).executeScript(contains("state.observer.disconnect"), any());
-        verify(js, never()).executeScript(contains("return state.urls.length"), any());
+        verify(js, never()).executeScript(anyString(), any());
     }
 
     @Test
