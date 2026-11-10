@@ -3,6 +3,8 @@ package it.pagopa.interop.common.eservice_template.infrastructure.cucumber;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.DataTableType;
 import io.cucumber.datatable.DataTable;
+import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplatePreparationConfiguration;
 import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
@@ -22,12 +24,16 @@ public class EServiceTemplateSteps {
     private final EServiceTemplateRequestFactory requestFactory;
     private final ObjectMapper objectMapper;
     private final EServiceTemplateConfigurationMapper configurationMapper;
+    private final EntityStore entities;
 
     @Given("un template e-service preparato con la seguente configurazione:")
     public void prepareTemplate(EServiceTemplatePreparationConfiguration configuration) {
         var command = requestFactory.defaultCreationEServiceTemplateCommand();
         configurationMapper.apply(configuration, command);
         journey.createEServiceTemplate(command, configuration.getState());
+        if (configuration.getAlias() != null && !configuration.getAlias().isBlank()) {
+            entities.upsert(configuration.getAlias(), entities.getLastOrThrow(EServiceTemplate.class));
+        }
     }
 
     @DataTableType
