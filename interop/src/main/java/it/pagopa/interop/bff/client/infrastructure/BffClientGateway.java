@@ -72,7 +72,7 @@ public class BffClientGateway implements ClientGateway {
 
                     return client;
                 })
-                .updateContext()
+                .updateContext(bffCommand.getAlias())
                 .get();
 
         if(bffCommand.getAdmin() != null)

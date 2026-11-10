@@ -32,16 +32,45 @@ public class ClientJourneySteps {
                 .linkPurposeToClient(purpose);
     }
 
-    @Given("un client API creato da/dal {tenant} in cui è presente un (utente ){userRole} e una coppia di chiavi crittografiche")
-    public void setupApiClient(Tenant consumer, UserRole userRole) {
+    @Given("un client {string} CONSUMER creato da/dal {tenant}, associato alla {currentPurpose}, in cui è presente un (utente ){userRole} e una coppia di chiavi crittografiche")
+    public void setupConsumerClient(String alias, Tenant consumer, Purpose purpose, UserRole userRole) {
         interopJourney
                 .withConsumer(consumer, UserRole.ADMIN)
                 .createClient(clientConfig ->
                         clientConfig
                                 .name(RandomUtils.randomAlphanumericName("client"))
-                                .kind(ClientKind.API)
+                                .kind(ClientKind.CONSUMER)
                                 .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
                                 .keys(List.of(ClientKeyCreationCommand::randomClientKey))
+                                .alias(alias)
+                )
+                .linkPurposeToClient(purpose);
+    }
+
+    @Given("un client {clientType} creato da/dal {tenant} in cui è presente un (utente ){userRole} e una coppia di chiavi crittografiche")
+    public void setupClient(ClientKind kind, Tenant consumer, UserRole userRole) {
+        interopJourney
+                .withConsumer(consumer, UserRole.ADMIN)
+                .createClient(clientConfig ->
+                        clientConfig
+                                .name(RandomUtils.randomAlphanumericName("client"))
+                                .kind(kind)
+                                .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
+                                .keys(List.of(ClientKeyCreationCommand::randomClientKey))
+                );
+    }
+
+    @Given("un client {string} {clientType} creato da/dal {tenant} in cui è presente un (utente ){userRole} e una coppia di chiavi crittografiche")
+    public void setupClient(String alias, ClientKind kind, Tenant consumer, UserRole userRole) {
+        interopJourney
+                .withConsumer(consumer, UserRole.ADMIN)
+                .createClient(clientConfig ->
+                        clientConfig
+                                .name(RandomUtils.randomAlphanumericName("client"))
+                                .kind(kind)
+                                .users(UserRef.of(User.getTenantUser(consumer, userRole), consumer))
+                                .keys(List.of(ClientKeyCreationCommand::randomClientKey))
+                                .alias(alias)
                 );
     }
 }

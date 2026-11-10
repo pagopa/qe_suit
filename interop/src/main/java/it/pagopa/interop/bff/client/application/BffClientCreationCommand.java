@@ -9,6 +9,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class BffClientCreationCommand implements ClientCreationCommand {
     @NotNull
     private ClientSeed clientSeed = new ClientSeed();
     private UserRef admin;
+    private String alias;
     private final List<UserRef> users = new ArrayList<>();
     private final List<BffClientKeyCreationCommand> keysCommands = new ArrayList<>();
 
@@ -38,6 +40,12 @@ public class BffClientCreationCommand implements ClientCreationCommand {
     @Override
     public ClientCreationCommand name(String name) {
         clientSeed.name(name);
+        return this;
+    }
+
+    @Override
+    public ClientCreationCommand alias(@Nullable String alias) {
+        this.alias = alias;
         return this;
     }
 
