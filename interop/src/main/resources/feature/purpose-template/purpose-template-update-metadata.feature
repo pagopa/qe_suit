@@ -1,9 +1,9 @@
-@PIN-11320
 Feature: Modifica dei metadati dei template finalità
   Come creatore di un template finalità
   Voglio modificarne titolo descrizione e destinatari
   Per mantenere invariato lo stato del template e le finalità già derivate.
 
+  @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [PURPOSE_TEMPLATE_METADATA_1] - Aggiornamento dei metadati nei diversi stati del template
   Dato un template finalità nello stato previsto,
@@ -25,6 +25,7 @@ Feature: Modifica dei metadati dei template finalità
       | SUSPENDED | destinatari | Testo dei destinatari aggiornato      |
       | ARCHIVED  | titolo      | Template finalità aggiornato          |
 
+  @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [PURPOSE_TEMPLATE_METADATA_2] - Modifica congiunta senza completare l’analisi del rischio
   Dato un template finalità in bozza con analisi del rischio incompleta,
@@ -40,6 +41,7 @@ Feature: Modifica dei metadati dei template finalità
     Then il template finalità "TP-1" presenta i metadati richiesti
     And il template finalità "TP-1" conserva stato, analisi del rischio e configurazione operativa
 
+  @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [PURPOSE_TEMPLATE_METADATA_3] - Le finalità esistenti non ereditano gli aggiornamenti del template
   Dato un template finalità con finalità derivate già esistenti,
@@ -58,3 +60,48 @@ Feature: Modifica dei metadati dei template finalità
     Then il template finalità "TP-1" presenta i metadati richiesti
     And le finalità "P-1" e "P-2" conservano metadati, identificativi, versioni e stati
 
+  @work-item:QA-19036
+  @channel:Given=BFF,When=WEB,Then=WEB
+  Scenario: [PURPOSE_TEMPLATE_METADATA_WEB_1] - Form precompilato e conferma dopo il salvataggio
+  Dato un template finalità modificabile con metadati già valorizzati,
+  quando l’utente apre il form modifica e salva nuovi valori,
+  allora il sistema mostra la conferma e il form riaperto presenta i nuovi metadati.
+
+    Given un template finalità "TP-1" creato dal Comune di Milano con le seguenti finalità derivate:
+      | alias | stato  |
+      | P-1   | DRAFT  |
+    When un admin del Comune di Milano apre la modifica dei metadati della risorsa "TP-1"
+    Then il form della risorsa "TP-1" mostra i metadati correnti e i campi previsti
+    When un admin del Comune di Milano modifica e salva i metadati della risorsa "TP-1"
+    Then il sistema conferma il salvataggio e chiude il form
+    And il dettaglio e il form riaperto della risorsa "TP-1" presentano i metadati aggiornati
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=WEB,Then=WEB
+  Scenario: [PURPOSE_TEMPLATE_METADATA_WEB_2] - Conservazione degli input in presenza di un errore di validazione
+  Dato un form di modifica aperto e compilato,
+  quando l’utente tenta di salvare un valore non valido,
+  allora il form resta aperto con i testi inseriti e indica il campo errato.
+
+    Given un template finalità "TP-1" creato dal Comune di Milano con le seguenti finalità derivate:
+      | alias | stato  |
+      | P-1   | DRAFT  |
+    When il form di modifica dei metadati di una risorsa "TP-1" del Comune di Milano aperto
+    And un admin del Comune di Milano inserisce metadati non validi nel form della risorsa "TP-1" e richiede il salvataggio
+    Then il form della risorsa "TP-1" rimane aperto con i testi inseriti
+    And il campo non valido mostra il messaggio di errore previsto
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=WEB,Then=WEB
+  Scenario: [PURPOSE_TEMPLATE_METADATA_WEB_3] - Conservazione degli input in presenza di un conflitto di scrittura
+  Dato un form di modifica aperto su metadati che sono stati modificati nel frattempo,
+  quando l’utente prova a salvare i propri valori,
+  allora il form conserva gli input e segnala che il salvataggio non è avvenuto.
+
+    Given un template finalità "TP-1" creato dal Comune di Milano con le seguenti finalità derivate:
+      | alias | stato  |
+      | P-1   | DRAFT  |
+    When il form di modifica dei metadati della risorsa "TP-1" del Comune di Milano aperto con una modifica concorrente
+    And un admin del Comune di Milano richiede il salvataggio dei metadati nel form della risorsa "TP-1"
+    Then il form della risorsa "TP-1" rimane aperto con i testi inseriti
+    And il sistema segnala il mancato salvataggio della risorsa "TP-1"
