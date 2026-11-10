@@ -1,7 +1,7 @@
 @client-name-description-update
 Feature: Aggiornamento dei metadati del Client senza alterarne identità e associazioni
 
-  @work-item:QA-19036
+  @work-item:QA-19036 @old
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [CLIENT_NAME_DESCRIPTION_UPDATE_BFF_CONSUMER_1] Modifica dei metadati di un Client Consumer via BFF
     Given un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente un admin e una coppia di chiavi crittografiche
@@ -20,7 +20,7 @@ Feature: Aggiornamento dei metadati del Client senza alterarne identità e assoc
       | solo descrizione |
       | entrambi         |
 
-  @work-item:QA-19036
+  @work-item:QA-19036 @old
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [CLIENT_NAME_DESCRIPTION_UPDATE_BFF_API_1] Modifica dei metadati di un Client API via BFF
     Given un client API creato da PagoPA in cui è presente un admin e una coppia di chiavi crittografiche
@@ -37,7 +37,7 @@ Feature: Aggiornamento dei metadati del Client senza alterarne identità e assoc
       | solo descrizione |
       | entrambi         |
 
-  @work-item:QA-19036
+  @work-item:QA-19036 @old
   @channel:Given=BFF,When=M2M,Then=M2M
   Scenario Outline: [CLIENT_NAME_DESCRIPTION_UPDATE_M2M_CONSUMER_1] Modifica dei metadati di un Client Consumer via M2M v3
     Given un client CONSUMER creato da PagoPA, associato alla finalità, in cui è presente un admin e una coppia di chiavi crittografiche
@@ -56,7 +56,7 @@ Feature: Aggiornamento dei metadati del Client senza alterarne identità e assoc
       | solo descrizione |
       | entrambi         |
 
-  @work-item:QA-19036
+  @work-item:QA-19036 @old
   @channel:Given=BFF,When=M2M,Then=M2M
   Scenario Outline: [CLIENT_NAME_DESCRIPTION_UPDATE_M2M_API_REJECTED_1] Rifiuto della modifica dei metadati di un Client API via M2M v3
     Given un client API creato da PagoPA in cui è presente un admin e una coppia di chiavi crittografiche

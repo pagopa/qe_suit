@@ -2,7 +2,7 @@
 @channel:Given=BFF,When=BFF,Then=WEB
 Feature: Abilitazione dell'aggiornamento di nome e descrizione senza modificare lo stato della risorsa o delle sue versioni e senza riattivare risorse archiviate
 
-  @work-item:QA-19036
+  @work-item:QA-19036 @old
   Scenario Outline: [ESERVICE_NAME_DESCRIPTION_UPDATE_1] L'aggiornamento di nome e descrizione dell'e-service nei vari stati.
   L'aggiornamento va a buon fine quando ad essere modificati sono il nome e la descrizione.
 

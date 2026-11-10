@@ -2,7 +2,7 @@
 @channel:Given=BFF,When=BFF,Then=BFF
 Feature: Aggiornamento parziale dei metadati di un Template Finalità
 
-  @work-item:QA-19036
+  @work-item:QA-19036 @old
   Scenario Outline: [PURPOSE_TEMPLATE_METADATA_UPDATE_1] Aggiornare i metadati senza alterare stato e configurazioni
     Given il creatore dispone di un Template Finalità nello stato <stato>
     When il creatore modifica i metadati applicando la variazione su "<campi modificati>"
