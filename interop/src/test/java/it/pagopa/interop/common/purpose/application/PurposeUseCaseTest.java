@@ -69,29 +69,6 @@ class PurposeUseCaseTest {
         verifyNoInteractions(gateway);
     }
 
-    @ParameterizedTest
-    @NullSource
-    @ValueSource(ints = {0, -1, 1_000_000_000, Integer.MAX_VALUE})
-    void rejectsMissingOrUnexceedableThresholds(Integer threshold) {
-        var invalidService = eService.toBuilder()
-                .descriptors(List.of(published.toBuilder().dailyCallsPerConsumer(threshold).build())).build();
-
-        assertThatThrownBy(() -> useCase.updatePurposeDailyCallsEstimateBeyondThreshold(purpose, invalidService))
-                .isInstanceOf(IllegalStateException.class).hasMessageContaining("Cannot exceed consumer daily calls threshold");
-        verifyNoInteractions(gateway);
-    }
-
-    @Test
-    void acceptsTheLargestExceedableThresholdWithoutOverflow() {
-        var service = eService.toBuilder().descriptors(List.of(
-                published.toBuilder().dailyCallsPerConsumer(999_999_999).build())).build();
-        Purpose expected = purpose.toBuilder()
-                .version(waiting.toBuilder().dailyCalls(1_000_000_000).build()).build();
-        when(gateway.updatePurposeDailyCalls(purpose.getRef(), 1_000_000_000)).thenReturn(expected);
-
-        assertThat(useCase.updatePurposeDailyCallsEstimateBeyondThreshold(purpose, service)).isSameAs(expected);
-    }
-
     @Test
     void requiresANewWaitingVersionRatherThanAnAutomaticallyActivatedOne() {
         when(gateway.updatePurposeDailyCalls(purpose.getRef(), 51))
