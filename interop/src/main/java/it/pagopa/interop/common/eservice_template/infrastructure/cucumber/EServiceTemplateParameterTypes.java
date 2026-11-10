@@ -19,6 +19,11 @@ public class EServiceTemplateParameterTypes {
         return entityStore.getLastOrThrow(EServiceTemplate.class);
     }
 
+    @ParameterType("template \"([^\"]+)\"")
+    public EServiceTemplate eServiceTemplateByAlias(String alias) {
+        return entityStore.getByAliasOrThrow(alias, EServiceTemplate.class);
+    }
+
     @ParameterType("numero di URL non corrispondente|URL non ammesso")
     public EServiceTemplateSOAPInterfaceFailureReason soapInterfaceFailureReason(String reason) {
         return switch (reason) {
