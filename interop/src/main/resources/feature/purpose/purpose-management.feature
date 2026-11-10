@@ -30,9 +30,13 @@ Feature: Gestione delle finalità inoltrate
     Then Comune di Milano approva la finalità che va in stato ACTIVE
 
   Scenario: [APPROVE_PURPOSE_4] Approvazione di una finalità in stato di attesa creata da template da parte di un erogatore
-    Given una finalità in stato di attesa creata dal Comune di Pozzallo da un template e associata a un e-service del Comune di Milano
-    When un admin appartenente all'erogatore Comune di Milano approva la finalità in attesa
-    Then la finalità risulta approvata dall'erogatore e in stato ACTIVE
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome           |
+      | ES-1  | Comune di Milano | E-service test |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
+    And un template finalità creato dal Comune di Milano e pubblicato
+    And l'e-service con una finalità creata dal template in stato WAITING_FOR_APPROVAL associata dal Comune di Pozzallo
+    Then Comune di Milano approva la finalità che va in stato ACTIVE
 
   Scenario: [REJECT_PURPOSE_1] Rifiuto di una finalità in stato di attesa da parte di un erogatore
     Given un EService creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato WAITING_FOR_APPROVAL associate da PagoPA
@@ -61,6 +65,10 @@ Feature: Gestione delle finalità inoltrate
     Then Comune di Milano rifiuta la finalità che va in stato REJECTED
 
   Scenario: [REJECT_PURPOSE_4] Rifiuto di una finalità in stato di attesa creata da template da parte di un erogatore
-    Given una finalità in stato di attesa creata dal Comune di Pozzallo da un template e associata a un e-service del Comune di Milano
-    When un admin appartenente all'erogatore Comune di Milano rifiuta la finalità in attesa
-    Then la finalità risulta rifiutata dall'erogatore e in stato REJECTED
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome           |
+      | ES-1  | Comune di Milano | E-service test |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
+    And un template finalità creato dal Comune di Milano e pubblicato
+    And l'e-service con una finalità creata dal template in stato WAITING_FOR_APPROVAL associata dal Comune di Pozzallo
+    Then Comune di Milano rifiuta la finalità che va in stato REJECTED
