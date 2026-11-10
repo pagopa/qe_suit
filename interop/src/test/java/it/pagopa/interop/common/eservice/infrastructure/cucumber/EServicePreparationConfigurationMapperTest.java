@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
@@ -89,7 +90,8 @@ class EServicePreparationConfigurationMapperTest {
         var journey = mock(InteropJourney.class, RETURNS_SELF);
         var factory = mock(EServiceRequestFactory.class);
         when(factory.defaultCreationEServiceCommand()).thenReturn(command);
-        var steps = new EServiceCreationJourneySteps(journey, factory, mapper);
+        var useCase = mock(EServiceDescriptorUseCase.class);
+        var steps = new EServiceCreationJourneySteps(journey, useCase, factory, mapper);
         var configuration = new EServicePreparationConfiguration();
         configuration.setProducer(Tenant.COMUNE_DI_MILANO);
         configuration.setAlias("ES-1");

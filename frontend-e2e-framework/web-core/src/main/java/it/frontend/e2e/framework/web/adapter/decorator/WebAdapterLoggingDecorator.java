@@ -20,12 +20,6 @@ public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<
     }
 
     @Override
-    public List<String> clickAndGetRequestUrls(XPathSelector selector) {
-        logger.logDebug("Click and collect request URLs by selector: " + selector);
-        return webAdapter.clickAndGetRequestUrls(selector);
-    }
-
-    @Override
     public Optional<String> getCookieValue(String name) {
         logger.logDebug("Get cookie value by name: " + name);
         return webAdapter.getCookieValue(name);
@@ -71,6 +65,12 @@ public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<
     public void setSessionStorageItem(String key, String value) {
         logger.logDebug("Set sessionStorage item: " + key + " = " + value);
         webAdapter.setSessionStorageItem(key, value);
+    }
+
+    @Override
+    public void refresh() {
+        logger.logDebug("Refreshing browser page");
+        webAdapter.refresh();
     }
 
     @Override

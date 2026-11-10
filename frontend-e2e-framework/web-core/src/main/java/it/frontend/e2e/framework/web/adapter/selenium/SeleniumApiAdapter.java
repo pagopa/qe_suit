@@ -385,6 +385,11 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
     }
 
     @Override
+    public void refresh() {
+        driver.navigate().refresh();
+    }
+
+    @Override
     public void navigateToAndAssert(Url locator, AssertionAction<Url> assertion) {
         navigateTo(locator);
         Url current = getLocation();
