@@ -34,6 +34,18 @@ public interface CampaignDetailPage extends Page {
     @XPath("//*[@id=\"confirm-button\"]")
     Button filterButton();
     Table communications();
+    @XPath("//*[@data-testid='breadcrumb-root-button']")
+    Readable<String> breadcrumbRoot();
+    @XPath("//*[@aria-current='page']")
+    Readable<String> breadcrumbCurrent();
+    @XPath("//*[@data-testid='emptyState']//p[contains(@class, 'MuiTypography-body2')]")
+    Readable<String> emptyStateDescription();
+    @XPath("//h2[contains(@class, 'MuiTypography-h6')]")
+    Readable<String> communicationsTitle();
+    @XPath("//*[@data-testid='campaignsList']//label")
+    List<Readable<String>> filterLabels();
+    @XPath("//*[@data-testid='cancelButton']")
+    Button cancelFilterButton();
     Optional<OneTrustBanner> oneTrustBanner();
     Optional<ErrorSnackbar> errorSnackbar();
 
