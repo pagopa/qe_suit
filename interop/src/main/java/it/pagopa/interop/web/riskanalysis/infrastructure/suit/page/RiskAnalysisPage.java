@@ -3,12 +3,18 @@ package it.pagopa.interop.web.riskanalysis.infrastructure.suit.page;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.web.domain.Page;
+import it.frontend.e2e.framework.core.capability.core.Gettable.FindPolicy;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.TextField;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.infrastructure.suit.component.Tabs;
+import it.pagopa.infrastructure.suit.component.Pagination;
+import it.pagopa.infrastructure.suit.component.TableCell;
 import it.pagopa.utils.async.PollingUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Page object for the risk-analysis workspace and its unauthorized-access view.
@@ -41,6 +47,46 @@ public interface RiskAnalysisPage extends Page {
 
     @XPath("//table")
     Table riskAnalysisTable();
+
+    @XPath("//nav[contains(@class, 'MuiPagination-root')]")
+    Pagination pagination();
+
+    /**
+     * Reads cell snapshots across every page of the active tab, leaving the table on its last page.
+     */
+    default List<List<String>> readAllRows() {
+        List<List<String>> rows = readCurrentRows();
+        if (pagination().get(FindPolicy.PRESENT).isEmpty()) {
+            return rows;
+        }
+
+        while (pagination().hasPrevious()) {
+            pagination().goBack();
+            rows = awaitChangedRows(rows);
+        }
+
+        List<List<String>> allRows = new ArrayList<>(rows);
+        while (pagination().hasNext()) {
+            pagination().goNext();
+            rows = awaitChangedRows(rows);
+            allRows.addAll(rows);
+        }
+        return List.copyOf(allRows);
+    }
+
+    private List<List<String>> readCurrentRows() {
+        return riskAnalysisTable().tBody().rows().stream()
+                .map(row -> row.cells().stream().map(TableCell::read).toList())
+                .toList();
+    }
+
+    private List<List<String>> awaitChangedRows(List<List<String>> previousRows) {
+        return PollingUtils.pollUntil(
+                this::readCurrentRows,
+                rows -> !rows.isEmpty() && !rows.equals(previousRows),
+                "Risk analysis table did not update after changing page"
+        );
+    }
 
     /** Returns the assignment date in the first table row. */
     @XPath("//table/tbody/tr[1]/td[1]")

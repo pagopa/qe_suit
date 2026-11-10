@@ -35,4 +35,8 @@ public interface PurposeGateway extends Plugin<Channel> {
     );
 
     void submitRiskAnalysis(PurposeRef purposeRef);
+
+    void signRiskAnalysis(PurposeRef purposeRef, int metadataVersionToSign);
+
+    void rejectRiskAnalysis(PurposeRef purposeRef, String rejectionReason);
 }

@@ -14,6 +14,8 @@ import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisAssignmentSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisRejectionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisSignSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
@@ -117,6 +119,26 @@ public class BffPurposeGateway implements PurposeGateway {
     @Override
     public void submitRiskAnalysis(PurposeRef purposeRef) {
         restClient.submitRiskAnalysis(purposeRef.id(), commandFactory.riskAnalysisSubmissionRequest())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    @Override
+    public void signRiskAnalysis(PurposeRef purposeRef, int metadataVersionToSign) {
+        RiskAnalysisSignSeed signRequest = new RiskAnalysisSignSeed()
+                .metadataVersionToSign(metadataVersionToSign);
+
+        restClient.signRiskAnalysis(purposeRef.id(), signRequest)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    @Override
+    public void rejectRiskAnalysis(PurposeRef purposeRef, String rejectionReason) {
+        RiskAnalysisRejectionSeed rejectionRequest = new RiskAnalysisRejectionSeed()
+                .rejectionReason(rejectionReason);
+
+        restClient.rejectRiskAnalysis(purposeRef.id(), rejectionRequest)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
     }

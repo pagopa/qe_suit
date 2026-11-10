@@ -61,6 +61,20 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
         return this;
     }
 
+    @Override
+    public PurposeJourneyImpl signRiskAnalysis(int metadataVersionToSign) {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purposeUseCase.signRiskAnalysis(purpose, metadataVersionToSign);
+        return this;
+    }
+
+    @Override
+    public PurposeJourneyImpl rejectRiskAnalysis(String rejectionReason) {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purposeUseCase.rejectRiskAnalysis(purpose, rejectionReason);
+        return this;
+    }
+
     private PurposeJourneyImpl processLifecycle(Purpose purpose, PurposeVersionState targetState) {
        switch (targetState) {
             case DRAFT -> {

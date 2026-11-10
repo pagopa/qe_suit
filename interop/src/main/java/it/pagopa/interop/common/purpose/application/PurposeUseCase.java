@@ -60,4 +60,12 @@ public class PurposeUseCase {
     public void submitRiskAnalysis(Purpose purpose) {
         purposeGateway.submitRiskAnalysis(purpose.getRef());
     }
+
+    public void signRiskAnalysis(Purpose purpose, int metadataVersionToSign) {
+        purposeGateway.signRiskAnalysis(purpose.getRef(), metadataVersionToSign);
+    }
+
+    public void rejectRiskAnalysis(Purpose purpose, String rejectionReason) {
+        purposeGateway.rejectRiskAnalysis(purpose.getRef(), rejectionReason);
+    }
 }

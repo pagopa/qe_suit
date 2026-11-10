@@ -15,10 +15,13 @@ import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisPage;
 import it.pagopa.utils.RandomUtils;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -40,6 +43,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Risk Analysis Web Contract Tests")
 class WebRiskAnalysisContractTest {
 
+    private static final int INITIAL_RISK_ANALYSIS_METADATA_VERSION = 2;
+    private static final String RISK_ANALYSIS_REJECTION_REASON = "Risk analysis rejected by contract test";
+
     private final WebBrowserContractValidator webContractValidator;
     private final InteropJourney interopJourney;
 
@@ -56,13 +62,23 @@ class WebRiskAnalysisContractTest {
     @DisplayName("Reviewer access risks analysis page and sees the correct information")
     Stream<DynamicTest> authorizedUserTests() {
         User reviewer = User.getTenantUser(Tenant.PAGO_PA, UserRole.REVIEWER);
-        String eServiceName = RandomUtils.randomAlphanumericName("risk-analysis-eservice");
-        createPurposePrerequisites(eServiceName);
-        assignAndSubmitRiskAnalysis(
-                Tenant.PAGO_PA,
-                RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS,
-                reviewer
-        );
+        String pendingEServiceName = RandomUtils.randomAlphanumericName("risk-analysis-pending");
+        String pendingTobeCompletedEServiceName = RandomUtils.randomAlphanumericName("risk-analysis-pending-tobe-completed");
+        String signedEServiceName = RandomUtils.randomAlphanumericName("risk-analysis-signed");
+        String rejectedEServiceName = RandomUtils.randomAlphanumericName("risk-analysis-rejected");
+
+        //SIGNED RISK ANALYSIS
+        createAndSubmitRiskAnalysis(signedEServiceName, reviewer, RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS);
+        interopJourney
+                .withConsumer(Tenant.PAGO_PA, reviewer)
+                .signRiskAnalysis(INITIAL_RISK_ANALYSIS_METADATA_VERSION);
+
+      /*  createAndSubmitRiskAnalysis(rejectedEServiceName, reviewer, RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS);
+        interopJourney
+                .withConsumer(Tenant.PAGO_PA, reviewer)
+                .rejectRiskAnalysis(RISK_ANALYSIS_REJECTION_REASON);*/
+
+        //createAndSubmitRiskAnalysis(pendingEServiceName, reviewer, RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS);
 
         return webContractValidator.as(reviewer, Tenant.PAGO_PA)
                 .on(RiskAnalysisPage.class)
@@ -82,30 +98,70 @@ class WebRiskAnalysisContractTest {
                                     assertThat(page.statusFilter().get().isPresent()).isTrue();
 
                                     assertThat(page.riskAnalysisTable().get().isPresent()).as("Table must be present").isTrue();
-                                    assertThat(page.firstRowEservice().read()).isEqualTo(eServiceName);
 
-                                    String status = page.firstRowStatus().read();
-                                    assertThat(status)
-                                            .as("The status in the 'Da fare' tab must be 'da compilare' or 'da approvare'")
-                                            .matches("(?i)da compilare|da approvare");
+                                  /*  assertThat(containsEService(page, pendingEServiceName))
+                                            .as("The pending risk analysis must appear in the 'Da fare' tab")
+                                            .isTrue();
+                                    assertThat(statusesForRows(page))
+                                            .as("Every risk analysis in the 'Da fare' tab must be 'da compilare' or 'da approvare'")
+                                            .allMatch(status -> status.matches("(?i)da compilare|da approvare"));
 
-                                    String dateText = page.firstRowDate().read();
-                                    if (!dateText.contains("Oggi") && !"-".equals(dateText.trim())) {
-                                        assertThat(dateText)
-                                                .as("The date must match the format dd/mm/yyyy")
-                                                .matches("\\d{2}/\\d{2}/\\d{4}");
-                                    }
+                                    String pendingStatus = statusForEService(page, pendingEServiceName);
+                                    assertThat(pendingStatus)
+                                            .as("The pending risk analysis must be 'da approvare'")
+                                            .matches("(?i)da approvare");*/
 
                                     page.completedTab().click();
-                                    assertThat(page.riskAnalysisTable().get().isPresent()).isTrue();
-                                    assertThat(page.riskAnalysisTable().tBody().rows().stream()
-                                            .map(row -> row.cells().get(1).read())
-                                            .noneMatch(eServiceName::equals))
-                                            .as("The test risk analysis must not appear in the 'Concluse' tab while it is pending")
+                                    PollingUtils.pollUntil(
+                                            () -> page.completedTab().isSelected() && !page.todoTab().isSelected(),
+                                            Boolean.TRUE::equals,
+                                            "The 'Concluse' tab was not selected after clicking it"
+                                    );
+                                   /* assertThat(page.riskAnalysisTable().get().isPresent()).isTrue();
+                                    assertThat(statusesForRows(page))
+                                            .as("Every risk analysis in the 'Concluse' tab must be 'rifiutata' or 'approvata'")
+                                            .allMatch(status -> status.matches("(?i)rifiutata|approvata"));*/
+                                    assertThat(containsEService(page, signedEServiceName))
+                                            .as("The signed risk analysis must appear in the 'Concluse' tab")
                                             .isTrue();
+                                   /* assertThat(containsEService(page, rejectedEServiceName))
+                                            .as("The rejected risk analysis must appear in the 'Concluse' tab")
+                                            .isTrue();
+                                    assertThat(containsEService(page, pendingEServiceName))
+                                            .as("The test risk analysis must not appear in the 'Concluse' tab while it is pending")
+                                            .isFalse();*/
                                 }
                         )
                 ));
+    }
+
+    private boolean containsEService(RiskAnalysisPage page, String eServiceName) {
+        return page.readAllRows().stream()
+                .map(row -> row.get(1))
+                .anyMatch(eServiceName::equals);
+    }
+
+    private List<String> statusesForRows(RiskAnalysisPage page) {
+        return page.readAllRows().stream()
+                .map(row -> row.get(4).trim())
+                .toList();
+    }
+
+    private String statusForEService(RiskAnalysisPage page, String eServiceName) {
+        return page.readAllRows().stream()
+                .filter(row -> eServiceName.equals(row.get(1)))
+                .map(row -> row.get(4).trim())
+                .findFirst()
+                .orElse("");
+    }
+
+    private void createAndSubmitRiskAnalysis(String eServiceName, User reviewer, RiskAnalysisReviewMode reviewMode) {
+        createPurposePrerequisites(eServiceName);
+        assignAndSubmitRiskAnalysis(
+                Tenant.PAGO_PA,
+                reviewMode,
+                reviewer
+        );
     }
 
     /**

@@ -21,4 +21,8 @@ public interface PurposeJourney<SELF extends PurposeJourney<SELF>> extends Journ
     SELF assignRiskAnalysisReviewers(RiskAnalysisReviewMode reviewMode, List<UUID> reviewerIds);
 
     SELF submitRiskAnalysis();
+
+    SELF signRiskAnalysis(int metadataVersionToSign);
+
+    SELF rejectRiskAnalysis(String rejectionReason);
 }
