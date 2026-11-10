@@ -49,10 +49,12 @@ public class PurposeTemplateUseCase {
         return purposeTemplateGateway.linkEService(purposeTemplate, eService.getRef());
     }
 
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
     public PurposeTemplate tryLinkEService(PurposeTemplate purposeTemplate, EService eService) {
         return purposeTemplateGateway.tryLinkEService(purposeTemplate, eService.getRef());
     }
 
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
     public PurposeTemplate tryLinkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplate eServiceTemplate) {
         return purposeTemplateGateway.tryLinkEServiceTemplate(purposeTemplate, eServiceTemplate.getRef());
     }

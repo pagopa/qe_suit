@@ -26,6 +26,7 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
 
     PurposeTemplate linkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef);
 
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
     /**
      * Tenta di associare un e-service a un template di finalità senza polling.
      *
@@ -36,6 +37,7 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
      */
     PurposeTemplate tryLinkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef);
 
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
     /**
      * Tenta di associare un template di e-service a un template di finalità senza polling.
      *

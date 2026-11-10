@@ -24,6 +24,7 @@ public interface PurposeGateway extends Plugin<Channel> {
 
     Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
 
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
     /**
      * Tenta la creazione di una finalità senza polling.
      *
@@ -33,6 +34,7 @@ public interface PurposeGateway extends Plugin<Channel> {
      */
     Purpose tryCreatePurpose(PurposeCreateCommand createCommand);
 
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
     /**
      * Tenta la creazione di una finalità a partire da un template di finalità senza polling.
      *

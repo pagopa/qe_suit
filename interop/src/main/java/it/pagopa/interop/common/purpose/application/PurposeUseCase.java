@@ -46,11 +46,13 @@ public class PurposeUseCase {
         return purposeGateway.suspendPurpose(purpose.getRef(), purposeVersion.getRef(), delegationRef);
     }
 
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
     public Purpose tryCreatePurpose(EService eService) {
         PurposeCreateCommand command = purposeCommandFactory.validFullPopulatedCreateCommand(eService.getRef());
         return purposeGateway.tryCreatePurpose(command);
     }
 
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
     public Purpose tryCreatePurposeFromTemplate(PurposeTemplate purposeTemplate, EService eService) {
         return purposeGateway.tryCreatePurposeFromTemplate(purposeTemplate.getRef(), eService.getRef());
     }
