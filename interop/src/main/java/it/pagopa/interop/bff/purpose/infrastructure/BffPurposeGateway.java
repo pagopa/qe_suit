@@ -14,6 +14,7 @@ import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
@@ -35,6 +36,19 @@ public class BffPurposeGateway implements PurposeGateway {
                 .map(mapper::toPurpose)
                 .updateContext()
                 .get();
+    }
+
+    @Override
+    public Purpose updatePurposeDailyCalls(PurposeRef purposeRef, int dailyCalls) {
+        var response = restClient.createPurposeVersion(purposeRef.id(), new PurposeVersionSeed().dailyCalls(dailyCalls))
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+        var createdVersion = response.get();
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(createdVersion.getVersionId())
+                        .map(version -> Integer.valueOf(dailyCalls).equals(version.getDailyCalls()))
+                        .orElse(false)
+        );
     }
 
     @Override

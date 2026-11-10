@@ -14,6 +14,8 @@ import org.springframework.plugin.core.Plugin;
 public interface PurposeGateway extends Plugin<Channel> {
     Purpose getPurpose(PurposeRef purposeRef);
 
+    Purpose updatePurposeDailyCalls(PurposeRef purposeRef, int dailyCalls);
+
     Purpose createPurpose(PurposeCreateCommand createCommand);
 
     Purpose createReversePurpose(EServiceRef eServiceRef, EServiceRiskAnalysisRef riskAnalysisRef);

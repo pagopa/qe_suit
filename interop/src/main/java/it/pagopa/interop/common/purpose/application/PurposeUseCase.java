@@ -5,6 +5,7 @@ import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
+import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +13,42 @@ import org.springframework.stereotype.Service;
 
 import java.util.function.Consumer;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Service
 @RequiredArgsConstructor
 public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
+
+    /**
+     * Exceeds the published descriptor's consumer threshold by one, preserving the active version
+     * and verifying that the new version is waiting for approval.
+     */
+    public Purpose updatePurposeDailyCallsEstimateBeyondThreshold(Purpose purpose, EService eService) {
+        PurposeVersion activeVersion = purpose.getLastActiveVersion();
+        if (activeVersion == null) {
+            throw new IllegalStateException("No active version found for purpose " + purpose.getId());
+        }
+        if (purpose.getLastWaitingForApprovalVersion() != null) {
+            throw new IllegalStateException("Purpose already has a version waiting for approval: " + purpose.getId());
+        }
+        if (!eService.getId().equals(purpose.getEserviceId())) {
+            throw new IllegalArgumentException("E-service does not belong to purpose " + purpose.getId());
+        }
+        Integer threshold = eService.getActiveDescriptor().getDailyCallsPerConsumer();
+        int dailyCalls = threshold + 1;
+        Purpose updatedPurpose = purposeGateway.updatePurposeDailyCalls(purpose.getRef(), dailyCalls);
+        PurposeVersion waitingVersion = updatedPurpose.getLastWaitingForApprovalVersion();
+        assertThat(waitingVersion).as("New version waiting for approval for purpose %s", purpose.getId()).isNotNull();
+        assertThat(purpose.findVersionById(waitingVersion.getId())).as("The waiting version must be new").isEmpty();
+        assertThat(waitingVersion.getDailyCalls()).isEqualTo(dailyCalls);
+        PurposeVersion preservedActiveVersion = updatedPurpose.findVersionById(activeVersion.getId())
+                .orElseThrow(() -> new IllegalStateException("Previous active purpose version was not returned"));
+        assertThat(preservedActiveVersion.getPurposeVersionState()).isEqualTo(PurposeVersionState.ACTIVE);
+        assertThat(preservedActiveVersion.getDailyCalls()).isEqualTo(activeVersion.getDailyCalls());
+        return updatedPurpose;
+    }
 
     public Purpose createPurpose(EService eService, Consumer<PurposeCreateCommand> commandConfig) {
         PurposeCreateCommand defaultCommand = purposeCommandFactory.validFullPopulatedCreateCommand(eService.getRef());

@@ -36,6 +36,16 @@ public class BffPurposeRestClient extends RestClient {
         );
     }
 
+    public TestChain<PurposeVersionResource> createPurposeVersion(@Nonnull UUID purposeId, @Nonnull PurposeVersionSeed payload) {
+        return execute(
+                () -> purposesApi.createPurposeVersion()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                PurposeVersionResource.class
+        );
+    }
+
     public TestChain<CreatedResource> createReversePurpose(@Nonnull PurposeEServiceSeed payload) {
         return execute(
                 () -> purposesApi.createPurposeForReceiveEservice().body(payload).execute(Function.identity()),

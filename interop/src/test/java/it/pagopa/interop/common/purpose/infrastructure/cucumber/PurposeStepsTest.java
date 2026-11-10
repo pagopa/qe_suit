@@ -1,6 +1,8 @@
 package it.pagopa.interop.common.purpose.infrastructure.cucumber;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -14,20 +16,47 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
 import java.util.UUID;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class PurposeStepsTest {
     private final EntityStore entities = mock(EntityStore.class);
+    private final InteropJourney interopJourney = mock(InteropJourney.class);
     private final PurposeUseCase useCase = mock(PurposeUseCase.class);
     private final CurrentUserSession userSession = mock(CurrentUserSession.class);
     private final CurrentM2MSession m2mSession = mock(CurrentM2MSession.class);
-    private final PurposeSteps steps = new PurposeSteps(entities, useCase, userSession, m2mSession);
+    private final PurposeSteps steps = new PurposeSteps(entities, interopJourney, useCase, userSession, m2mSession);
     private final PurposeVersion waiting = PurposeVersion.builder()
             .id(UUID.randomUUID()).createdAt(Instant.EPOCH)
             .purposeVersionState(PurposeVersionState.WAITING_FOR_APPROVAL).build();
     private final Purpose purpose = Purpose.builder().id(UUID.randomUUID()).version(waiting).build();
+
+    @Test
+    void updatesDailyCallsAsThePurposeConsumerUsingItsOwnEService() {
+        var eService = EService.builder().id(UUID.randomUUID()).build();
+        var activePurpose = result(PurposeVersionState.ACTIVE).toBuilder()
+                .eserviceId(eService.getId()).consumerId(Tenant.COMUNE_DI_COMUN_NUOVO.getOrganizationId()).build();
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(activePurpose);
+        when(entities.getById(eService.getId(), EService.class)).thenReturn(Optional.of(eService));
+
+        steps.updatePurposeDailyCallsEstimateBeyondThreshold();
+
+        verify(userSession).set(User.getTenantAdmin(Tenant.COMUNE_DI_COMUN_NUOVO), Tenant.COMUNE_DI_COMUN_NUOVO);
+        verify(m2mSession).set(Tenant.COMUNE_DI_COMUN_NUOVO, M2MRole.M2M_ADMIN);
+        verify(useCase).updatePurposeDailyCallsEstimateBeyondThreshold(activePurpose, eService);
+    }
+
+    @Test
+    void failsBeforeUpdatingWhenThePurposeEServiceIsMissing() {
+        var activePurpose = result(PurposeVersionState.ACTIVE).toBuilder().eserviceId(UUID.randomUUID()).build();
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(activePurpose);
+
+        assertThatThrownBy(steps::updatePurposeDailyCallsEstimateBeyondThreshold)
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("E-service not found");
+        verifyNoInteractions(useCase, userSession, m2mSession);
+    }
 
     @Test
     void approvesWaitingVersionAsRequestedTenant() {

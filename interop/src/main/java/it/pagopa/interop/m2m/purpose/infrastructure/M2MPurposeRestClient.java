@@ -8,6 +8,8 @@ import it.pagopa.interop.generated.openapi.clients.m2m.v3.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeSeed;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersion;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersionSeed;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
@@ -49,6 +51,16 @@ public class M2MPurposeRestClient extends RestClient {
                         .body(delegationRef)
                         .execute(Function.identity()),
                 Purpose.class
+        );
+    }
+
+    public TestChain<PurposeVersion> createPurposeVersion(@Nonnull UUID purposeId, @Nonnull PurposeVersionSeed payload) {
+        return execute(
+                () -> purposesApi.createPurposeVersion()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                PurposeVersion.class
         );
     }
 }
