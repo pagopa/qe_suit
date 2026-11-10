@@ -1,3 +1,4 @@
+@private-catalog
 @eservice-interface
 @channel:Given=BFF,When=BFF,Then=BFF
 Feature: Validazione del file WSDL nel caricamento dell'interfaccia di un e-service SOAP
