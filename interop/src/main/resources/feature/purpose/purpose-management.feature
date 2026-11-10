@@ -1,5 +1,4 @@
 @purpose-management
-@producer-delegation-settings
 @channel:Given=BFF,When=BFF,Then=BFF
 @channel:Given=BFF,When=M2M,Then=M2M
 Feature: Gestione delle finalità inoltrate
@@ -8,6 +7,7 @@ Feature: Gestione delle finalità inoltrate
     Given un EService creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato WAITING_FOR_APPROVAL associate da PagoPA
     Then Comune di Milano approva la finalità che va in stato ACTIVE
 
+  @producer-delegation-settings
   Scenario: [APPROVE_PURPOSE_2] Approvazione di una finalità in stato di attesa da parte di un erogatore delegato
     Given i seguenti enti abilitati a ricevere deleghe di erogazione:
       | ente               |
@@ -42,6 +42,7 @@ Feature: Gestione delle finalità inoltrate
     Given un EService creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato WAITING_FOR_APPROVAL associate da PagoPA
     Then Comune di Milano rifiuta la finalità che va in stato REJECTED
 
+  @producer-delegation-settings
   Scenario: [REJECT_PURPOSE_2] Rifiuto di una finalità in stato di attesa da parte di un erogatore delegato
     Given i seguenti enti abilitati a ricevere deleghe di erogazione:
       | ente               |
