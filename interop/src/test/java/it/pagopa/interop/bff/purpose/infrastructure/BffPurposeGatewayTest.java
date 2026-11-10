@@ -6,11 +6,14 @@ import io.restassured.response.Response;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
+import it.pagopa.interop.common.kernel.domain.PurposeTemplateRef;
+import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeFromTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,8 +30,11 @@ class BffPurposeGatewayTest {
     private final ApiClient apiClient = mock(ApiClient.class);
     private final PurposesApi api = mock(PurposesApi.class);
     private final PurposesApi.CreatePurposeVersionOper create = mock(PurposesApi.CreatePurposeVersionOper.class);
+    private final PurposesApi.CreatePurposeFromTemplateOper createFromTemplate =
+            mock(PurposesApi.CreatePurposeFromTemplateOper.class);
     private final PurposesApi.GetPurposeOper read = mock(PurposesApi.GetPurposeOper.class);
     private final BffPurposeMapper mapper = mock(BffPurposeMapper.class);
+    private final BffPurposeCommandFactory commandFactory = mock(BffPurposeCommandFactory.class);
     private final UUID newVersionId = UUID.randomUUID();
     private final PurposeVersion active = PurposeVersion.builder().id(UUID.randomUUID())
             .createdAt(Instant.EPOCH).purposeVersionState(PurposeVersionState.ACTIVE).dailyCalls(10).build();
@@ -43,11 +49,13 @@ class BffPurposeGatewayTest {
         when(api.createPurposeVersion()).thenReturn(create);
         when(create.purposeIdPath(original.getId())).thenReturn(create);
         when(create.body(any())).thenReturn(create);
+        when(api.createPurposeFromTemplate()).thenReturn(createFromTemplate);
+        when(createFromTemplate.body(any())).thenReturn(createFromTemplate);
         when(api.getPurpose()).thenReturn(read);
         when(read.purposeIdPath(original.getId())).thenReturn(read);
         gateway = new BffPurposeGateway(
                 new BffPurposeRestClient(new TestChainFactory(mock(LastApiResponseStore.class), store), apiClient),
-                mapper, mock(BffPurposeCommandFactory.class));
+                mapper, commandFactory);
         store.upsert("purpose", original);
     }
 
@@ -74,6 +82,38 @@ class BffPurposeGatewayTest {
         verify(read, times(2)).execute(any());
         assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(updated);
         assertThat(updated.getLastActiveVersion()).isSameAs(active);
+    }
+
+    @Test
+    void createsPurposeFromTemplateWithTheConfiguredCommandAndRefreshesContext() {
+        PurposeTemplateRef templateRef = PurposeTemplateRef.of(UUID.randomUUID());
+        PurposeCreateCommand command = mock(PurposeCreateCommand.class);
+        PurposeFromTemplateSeed payload = new PurposeFromTemplateSeed()
+                .title("purpose title")
+                .dailyCalls(51)
+                .eserviceId(UUID.randomUUID())
+                .consumerId(UUID.randomUUID());
+
+        when(createFromTemplate.purposeTemplateIdPath(templateRef.id())).thenReturn(createFromTemplate);
+        when(commandFactory.creationFromTemplateRequest(command, templateRef)).thenReturn(payload);
+        when(createFromTemplate.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(201, "{\"id\":\"" + original.getId() + "\"}"));
+        });
+        when(read.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(200, "{}"));
+        });
+        when(mapper.toPurpose(any())).thenReturn(original);
+
+        assertThat(gateway.createPurposeFromTemplate(templateRef, command)).isSameAs(original);
+
+        verify(commandFactory).creationFromTemplateRequest(command, templateRef);
+        verify(createFromTemplate).purposeTemplateIdPath(templateRef.id());
+        verify(createFromTemplate).body(payload);
+        verify(createFromTemplate).execute(any());
+        verify(read).execute(any());
+        assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(original);
     }
 
     private Response response(int status, String body) {

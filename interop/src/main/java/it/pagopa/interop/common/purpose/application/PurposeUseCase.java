@@ -66,6 +66,13 @@ public class PurposeUseCase {
         return purposeGateway.createReversePurpose(eService.getRef(), riskAnalysis.getRef());
     }
 
+    public Purpose createPurposeFromTemplate(PurposeTemplate purposeTemplate, EService eService, Consumer<PurposeCreateCommand> commandConfig) {
+        PurposeCreateCommand defaultCommand = purposeCommandFactory.validFullPopulatedCreateCommand(eService.getRef());
+        commandConfig.accept(defaultCommand);
+
+        return purposeGateway.createPurposeFromTemplate(purposeTemplate.getRef(), defaultCommand);
+    }
+
     public Purpose createPurposeFromTemplate(PurposeTemplate purposeTemplate, EService eService) {
         return purposeGateway.createPurposeFromTemplate(purposeTemplate.getRef(), eService.getRef());
     }

@@ -16,6 +16,7 @@ import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import lombok.RequiredArgsConstructor;
@@ -34,10 +35,20 @@ public class PurposeSteps {
     private final CurrentM2MSession currentM2MSession;
 
     @Given("l'e-service con una finalità in stato {purposeState} associata da/dal {tenant}")
-    public void createEServiceAndLinkAgreementAndPurpose(PurposeVersionState purposeState, Tenant consumer) {
+    public void createPurposeForEService(PurposeVersionState purposeState, Tenant consumer) {
         interopJourney
                 .withConsumer(consumer, UserRole.ADMIN)
                 .createPurpose(purposeState);
+    }
+
+    @Given("l'e-service con una finalità creata dal template in stato {purposeState} associata da/dal {tenant}")
+    public void createPurposeFromTemplateForEService(PurposeVersionState purposeState, Tenant consumer) {
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        EService eService = entityStore.getLastOrThrow(EService.class);
+
+        interopJourney
+                .withConsumer(consumer, UserRole.ADMIN)
+                .createPurposeFromTemplateAndLinkToEService(purposeTemplate, eService, purposeState);
     }
 
     @When("il fruitore aggiorna la stima di chiamate giornaliere oltre la sua soglia per la finalità")

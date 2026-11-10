@@ -75,7 +75,22 @@ public class BffPurposeGateway implements PurposeGateway {
 
     @Override
     public Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef) {
-        return restClient.createPurposeFromTemplate(purposeTemplateRef.id(), commandFactory.creationFromTemplateRequest(eServiceRef))
+        return restClient.createPurposeFromTemplate(
+                        purposeTemplateRef.id(),
+                        commandFactory.creationFromTemplateRequest(eServiceRef, purposeTemplateRef)
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, PurposeCreateCommand createCommand) {
+        return restClient.createPurposeFromTemplate(
+                        purposeTemplateRef.id(),
+                        commandFactory.creationFromTemplateRequest(createCommand, purposeTemplateRef)
+                )
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
                 .updateContext()
