@@ -3,6 +3,7 @@ package it.pagopa.interop.common.journey.infrastructure.cucumber;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand;
 import it.pagopa.interop.common.delegation.domain.DelegationState;
+import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.journey.application.InteropJourney;
@@ -14,6 +15,11 @@ import lombok.RequiredArgsConstructor;
 public class DelegationJourneySteps {
 
     private final InteropJourney interopJourney;
+
+    @Given("{currentProducerDelegation} viene revocata da/dal {tenant}")
+    public void revokeProducerDelegation(Delegation delegation, Tenant delegator) {
+        interopJourney.revokeProducerDelegationAsDelegator(delegation.getRef(), delegator);
+    }
 
     @Given("un e-service pubblicato da/dal {tenant} con una delega in erogazione a/al {tenant} in stato {delegationState}")
     public void createPublishedEServiceWithProducerDelegation(
