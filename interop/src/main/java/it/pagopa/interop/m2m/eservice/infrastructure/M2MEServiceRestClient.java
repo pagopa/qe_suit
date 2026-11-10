@@ -7,6 +7,8 @@ import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.api.EservicesApi;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.Document;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceDescriptor;
+import it.pagopa.interop.m2m.eservice_template.infrastructure.FileDownloadMultipart;
+import it.pagopa.interop.m2m.eservice_template.infrastructure.FileDownloadMultipartUtils;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
@@ -53,6 +55,21 @@ public class M2MEServiceRestClient extends RestClient {
                         .descriptorIdPath(descriptorId)
                         .execute(Function.identity()),
                 EServiceDescriptor.class
+        );
+    }
+
+    public TestChain<FileDownloadMultipart> downloadEServiceDescriptorInterface(
+            @Nonnull UUID eserviceId,
+            @Nonnull UUID descriptorId
+    ) {
+        return execute(
+                () -> eservicesApi
+                        .downloadEServiceDescriptorInterface()
+                        .eserviceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .execute(Function.identity()),
+                FileDownloadMultipart.class,
+                response -> FileDownloadMultipartUtils.from(response.asByteArray())
         );
     }
 }

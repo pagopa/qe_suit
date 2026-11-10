@@ -1,7 +1,9 @@
 package it.pagopa.interop.m2m.eservice.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.response.RawResponse;
+import it.pagopa.infrastructure.template.action.PollingAction;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
@@ -9,9 +11,11 @@ import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescr
 import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.Problem;
+import it.pagopa.interop.m2m.eservice_template.infrastructure.FileDownloadMultipart;
 import it.pagopa.utils.FileUtils;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
@@ -19,11 +23,13 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -42,7 +48,8 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
                     EServiceDescriptor existingDescriptor = existingEService
                             .map(service -> service.findDescriptor(descriptorRef.id()))
                             .orElse(null);
-                    EServiceDescriptor mapped = toDomainDescriptor(descriptor, existingDescriptor);
+                    EServiceDescriptorInterface remoteInterface = fetchRemoteInterface(eServiceRef, descriptorRef);
+                    EServiceDescriptor mapped = toDomainDescriptor(descriptor, existingDescriptor, remoteInterface);
                     existingEService.ifPresent(service -> {
                         List<EServiceDescriptor> descriptors = service.getDescriptors() != null
                                 ? new ArrayList<>(service.getDescriptors())
@@ -154,9 +161,46 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
         return channel == Channel.M2M_V3;
     }
 
+    private EServiceDescriptorInterface fetchRemoteInterface(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef
+    ) {
+        PollingAction<FileDownloadMultipart> action = restClient
+                .downloadEServiceDescriptorInterface(eServiceRef.id(), descriptorRef.id())
+                .withoutPolling();
+        RawResponse rawResponse = action.getRaw();
+        if (!(rawResponse instanceof ApiResponse apiResponse)) {
+            throw new IllegalStateException("Response is not ApiResponse");
+        }
+        int statusCode = apiResponse.getStatusCode();
+        if (statusCode == 404) {
+            return null;
+        }
+        if (statusCode == 200) {
+            FileDownloadMultipart multipart = Objects.requireNonNull(
+                    action.get(),
+                    "Expected non-null multipart body when status code is 200"
+            );
+            Document metadata = Document.builder()
+                    .id(multipart.getId())
+                    .name(multipart.getFilename())
+                    .contentType(multipart.getContentType())
+                    .prettyName(multipart.getPrettyName())
+                    .build();
+            byte[] contentBytes = multipart.getFile() != null
+                    ? multipart.getFile().getBytes(StandardCharsets.UTF_8)
+                    : null;
+            return new EServiceDescriptorInterface(metadata, eServiceRef, descriptorRef, contentBytes);
+        }
+        throw new AssertionError(
+                "Unexpected status code when downloading descriptor interface: " + statusCode
+        );
+    }
+
     private static EServiceDescriptor toDomainDescriptor(
             it.pagopa.interop.generated.openapi.clients.m2m.v3.model.EServiceDescriptor source,
-            EServiceDescriptor existing
+            EServiceDescriptor existing,
+            EServiceDescriptorInterface remoteInterface
     ) {
         var builder = existing != null ? existing.toBuilder() : EServiceDescriptor.builder();
         return builder.id(source.getId())
@@ -175,7 +219,7 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
                 .audience(source.getAudience())
                 .clearServerUrls()
                 .serverUrls(source.getServerUrls())
-                .interfaceDocument(existing != null ? existing.getInterfaceDocument() : null)
+                .interfaceDocument(remoteInterface)
                 .build();
     }
 
@@ -213,4 +257,3 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
         });
     }
 }
-
