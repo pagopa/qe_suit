@@ -36,7 +36,7 @@ public interface CampaignDetailPage extends Page {
     Table communications();
     @XPath("//*[@data-testid='breadcrumb-root-button']")
     Readable<String> breadcrumbRoot();
-    @XPath("//*[@aria-current='page']")
+    @XPath("//*[@data-testid='breadcrumb-root-button']/ancestor::ol/li[last()]")
     Readable<String> breadcrumbCurrent();
     @XPath("//*[@data-testid='emptyState']//p[contains(@class, 'MuiTypography-body2')]")
     Readable<String> emptyStateDescription();

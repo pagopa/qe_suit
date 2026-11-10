@@ -89,56 +89,54 @@ public class WebCampaignDetailsContractTest {
     }
 
     @TestFactory
-    Stream<DynamicTest> shouldFindCommunicationBySearch() {
+    Stream<DynamicTest> shouldShowAndSearchCommunications() {
         String campaignId="BonarieAllChannels";
         String iun = sendJourney.getInformalNotification(sendDefaultInformalNotification(campaignId),60).getIun();
         //questo step lo utilizzo per vedere se la campagna esiste o meno
         campaignId = campaignsUseCase.getCampaignByID(campaignId).getCampaignId();
         String recipientTaxId = userProvider.resolve(UserAlias.USER_1).getTaxId();
+        // ogni scenario riapre la pagina: il primo vede lo stato iniziale, il secondo cerca la comunicazione appena creata
         return webContractValidator
                 .as(userProvider.resolve(UserAlias.COMUNE_1))
                 .on(CampaignDetailPage.class,campaignId)
-                .tests(Stream.of(new WebScenario<>(
-                        "Verifica pagina dettaglio campagna con ricerca",
-                        page -> {
-                            page.iunSearchInput().fill(iun);
-                            page.recipientId().fill(recipientTaxId);
-                            page.filterButton().click();
-                        },
-                        page -> {
-                            var rows = page.communications().tBody().rows();
-                            Assertions.assertThat(rows.size()).as("Le comunicazioni trovate sono diverse da 1").isEqualTo(1);
-                            Assertions.assertThat(rows.get(0).cells().get(0).read()).as("Valore campo recipientId non congruo").isEqualTo(recipientTaxId);
-                            Assertions.assertThat(rows.get(0).cells().get(1).read()).as("Valore campo iun non congruo").isEqualTo(iun);
-                        }
-                )));
+                .tests(Stream.of(communicationsSectionInitialState(), searchByIunAndTaxId(iun, recipientTaxId)));
     }
 
-    @TestFactory
-    Stream<DynamicTest> shouldShowCommunicationsSectionInitialState() {
-        // la comunicazione creata garantisce la tabella per qualunque utente e ambiente
-        String campaignId = "BonarieAllChannels";
-        sendJourney.getInformalNotification(sendDefaultInformalNotification(campaignId), 60);
-        return webContractValidator
-                .as(userProvider.resolve(UserAlias.COMUNE_1))
-                .on(CampaignDetailPage.class, campaignId)
-                .tests(Stream.of(new WebScenario<>(
-                        "Sezione comunicazioni all'apertura: titolo, filtri, pulsanti e intestazioni",
-                        page -> {},
-                        page -> {
-                            Assertions.assertThat(page.communicationsTitle().read()).as("Titolo sezione").isEqualTo("Elenco delle comunicazioni");
-                            Assertions.assertThat(page.filterLabels().stream().map(Readable::read).toList()).as("Label dei filtri")
-                                    .containsExactly("Codice fiscale", "Codice IUN", "Stato", "Esito");
-                            Assertions.assertThat(page.filterButton().read()).as("Testo pulsante filtra").isEqualTo("Filtra");
-                            Assertions.assertThat(page.filterButton().isDisabled()).as("Filtra disabilitato all'apertura").isTrue();
-                            Assertions.assertThat(page.cancelFilterButton().read()).as("Testo pulsante rimuovi filtri").isEqualTo("Rimuovi filtri");
-                            Assertions.assertThat(page.cancelFilterButton().isDisabled()).as("Rimuovi filtri disabilitato all'apertura").isTrue();
-                            Assertions.assertThat(page.communications().getColumnHeaders()).as("Intestazioni tabella")
-                                    .containsExactly("Codice fiscale", "Codice IUN", "Stato", "Esito", "");
-                            page.communications().tBody().rows().forEach(row ->
-                                    Assertions.assertThat(row.cells().get(4).read()).as("Pulsante della riga").isEqualTo("Apri"));
-                        }
-                )));
+    private WebScenario<CampaignDetailPage> communicationsSectionInitialState() {
+        return new WebScenario<>(
+                "Sezione comunicazioni all'apertura: titolo, filtri, pulsanti e intestazioni",
+                page -> {},
+                page -> {
+                    Assertions.assertThat(page.communicationsTitle().read()).as("Titolo sezione").isEqualTo("Elenco delle comunicazioni");
+                    Assertions.assertThat(page.filterLabels().stream().map(Readable::read).toList()).as("Label dei filtri")
+                            .containsExactly("Codice fiscale", "Codice IUN", "Stato", "Esito");
+                    Assertions.assertThat(page.filterButton().read()).as("Testo pulsante filtra").isEqualTo("Filtra");
+                    Assertions.assertThat(page.filterButton().isDisabled()).as("Filtra disabilitato all'apertura").isTrue();
+                    Assertions.assertThat(page.cancelFilterButton().read()).as("Testo pulsante rimuovi filtri").isEqualTo("Rimuovi filtri");
+                    Assertions.assertThat(page.cancelFilterButton().isDisabled()).as("Rimuovi filtri disabilitato all'apertura").isTrue();
+                    Assertions.assertThat(page.communications().getColumnHeaders()).as("Intestazioni tabella")
+                            .containsExactly("Codice fiscale", "Codice IUN", "Stato", "Esito", "");
+                    page.communications().tBody().rows().forEach(row ->
+                            Assertions.assertThat(row.cells().get(4).read()).as("Pulsante della riga").isEqualTo("Apri"));
+                }
+        );
+    }
+
+    private WebScenario<CampaignDetailPage> searchByIunAndTaxId(String iun, String recipientTaxId) {
+        return new WebScenario<>(
+                "Verifica pagina dettaglio campagna con ricerca",
+                page -> {
+                    page.iunSearchInput().fill(iun);
+                    page.recipientId().fill(recipientTaxId);
+                    page.filterButton().click();
+                },
+                page -> {
+                    var rows = page.communications().tBody().rows();
+                    Assertions.assertThat(rows.size()).as("Le comunicazioni trovate sono diverse da 1").isEqualTo(1);
+                    Assertions.assertThat(rows.get(0).cells().get(0).read()).as("Valore campo recipientId non congruo").isEqualTo(recipientTaxId);
+                    Assertions.assertThat(rows.get(0).cells().get(1).read()).as("Valore campo iun non congruo").isEqualTo(iun);
+                }
+        );
     }
 
     private String sendDefaultInformalNotification(String campaignId) {
