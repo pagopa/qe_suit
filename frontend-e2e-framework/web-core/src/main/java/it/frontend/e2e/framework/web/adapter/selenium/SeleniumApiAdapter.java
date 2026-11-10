@@ -201,7 +201,8 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
                     window[arguments[0]] = state;
                     state.observer.observe({ type: 'resource' });
                     """, observationKey);
-            click(selector);
+            WebElement element = findWebElement(selector, defaultWaitTimeoutSeconds, Gettable.FindPolicy.CLICKABLE);
+            element.click();
             return new WebDriverWait(driver, Duration.ofSeconds(defaultWaitTimeoutSeconds))
                     .withMessage("No HTTP API request observed or collection did not become quiet within "
                             + defaultWaitTimeoutSeconds + " seconds after click: " + selector)

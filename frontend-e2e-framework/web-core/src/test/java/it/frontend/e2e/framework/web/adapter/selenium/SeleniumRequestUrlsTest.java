@@ -3,14 +3,19 @@ package it.frontend.e2e.framework.web.adapter.selenium;
 import it.frontend.e2e.framework.core.model.selector.XPathSelector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.JavascriptException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -67,27 +72,51 @@ class SeleniumRequestUrlsTest {
         verify(button, times(1)).click();
     }
 
-    @Test
-    void preservesClickFailureAndCleansUpWithoutRetryingObservation() {
-        IllegalStateException error = new IllegalStateException("click failed");
-        doThrow(error).when(button).click();
+    @ParameterizedTest
+    @MethodSource("clickFailures")
+    void preservesClickFailureAndCleansUpWithoutRetryingClickOrObservation(RuntimeException error) {
+        doThrow(error).doNothing().when(button).click();
 
-        assertSame(error, assertThrows(IllegalStateException.class,
+        assertSame(error, assertThrows(RuntimeException.class,
                 () -> new SeleniumApiAdapter(driver, 1).clickAndGetRequestUrls(selector)));
+        verify(button, times(1)).click();
         verify(js).executeScript(contains("state.observer.disconnect"), any());
         verify(js, never()).executeScript(contains("return state.urls.length"), any());
     }
 
-    @Test
-    void preservesOriginalFailureIfCleanupAlsoFails() {
-        IllegalStateException error = new IllegalStateException("click failed");
+    @ParameterizedTest
+    @MethodSource("clickFailures")
+    void preservesOriginalFailureIfCleanupAlsoFails(RuntimeException error) {
         JavascriptException cleanup = new JavascriptException("cleanup failed");
-        doThrow(error).when(button).click();
+        doThrow(error).doNothing().when(button).click();
         when(js.executeScript(contains("state.observer.disconnect"), any())).thenThrow(cleanup);
 
-        assertSame(error, assertThrows(IllegalStateException.class,
+        assertSame(error, assertThrows(RuntimeException.class,
                 () -> new SeleniumApiAdapter(driver, 1).clickAndGetRequestUrls(selector)));
         assertArrayEquals(new Throwable[]{cleanup}, error.getSuppressed());
+        verify(button, times(1)).click();
+        verify(js).executeScript(contains("state.observer.disconnect"), any());
+        verify(js, never()).executeScript(contains("return state.urls.length"), any());
+    }
+
+    static Stream<RuntimeException> clickFailures() {
+        return Stream.of(
+                new IllegalStateException("click failed"),
+                new StaleElementReferenceException("element became stale during click"),
+                new ElementClickInterceptedException("click intercepted"),
+                new TimeoutException("click timed out"));
+    }
+
+    @Test
+    void doesNotClickIfElementIsNotClickableAndCleansUp() {
+        when(button.isEnabled()).thenReturn(false);
+
+        assertThrows(TimeoutException.class,
+                () -> new SeleniumApiAdapter(driver, 0).clickAndGetRequestUrls(selector));
+
+        verify(button, never()).click();
+        verify(js).executeScript(contains("state.observer.disconnect"), any());
+        verify(js, never()).executeScript(contains("return state.urls.length"), any());
     }
 
     @Test
