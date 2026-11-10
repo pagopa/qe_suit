@@ -29,4 +29,16 @@ Feature: Validazione del file WSDL nel caricamento dell'interfaccia di un e-serv
       | not-parsable.wsdl           | file SOAP non parsabile           |
       | missing-soap-operation.wsdl | assenza di soap:operation         |
 
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario Outline: [M2M_ESERVICE_SOAP_INTERFACE_UPLOAD_1] Rifiuto del caricamento di un WSDL non valido sul descrittore in bozza tramite M2M
+    Given un admin appartenente all'erogatore Comune di Milano
+    And un e-service SOAP in bozza creato dall'erogatore
+    When un M2M_ADMIN appartenente all'erogatore Comune di Milano
+    And l'erogatore tenta di caricare l'interfaccia SOAP "<fixture>" sul descrittore dell'e-service ottenendo un rifiuto per "<motivo>"
+    Then non è disponibile un'interfaccia valida per il descrittore dell'e-service
 
+    Examples:
+      | fixture                     | motivo                            |
+      | missing-soap-address.wsdl   | assenza di soap:address           |
+      | not-parsable.wsdl           | file SOAP non parsabile           |
+      | missing-soap-operation.wsdl | assenza di soap:operation         |
