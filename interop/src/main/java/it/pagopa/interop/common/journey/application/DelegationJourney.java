@@ -5,6 +5,7 @@ import it.pagopa.interop.common.delegation.application.command.ProducerDelegatio
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
+import it.pagopa.interop.common.kernel.domain.Tenant;
 
 public interface DelegationJourney<SELF extends DelegationJourney<SELF>> extends JourneyModule {
 
@@ -19,4 +20,6 @@ public interface DelegationJourney<SELF extends DelegationJourney<SELF>> extends
     SELF approveConsumerDelegation(DelegationRef delegationRef);
 
     SELF setUpProducerDelegation(ProducerDelegationSetupCommand command);
+
+    SELF revokeProducerDelegationAsDelegator(DelegationRef delegationRef, Tenant delegator);
 }
