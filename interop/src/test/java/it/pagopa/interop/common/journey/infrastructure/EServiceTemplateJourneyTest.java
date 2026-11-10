@@ -85,10 +85,12 @@ class EServiceTemplateJourneyTest {
         clearInvocations(gateway);
         var uploaded = draft.toBuilder().interfaceDocument(new EServiceTemplateInterface(
                 UUID.randomUUID(), template.getRef(), draft.getRef(), "original", "application/xml", new byte[]{1})).build();
+        when(gateway.getEServiceTemplateVersion(template.getRef(), uploaded.getRef())).thenReturn(uploaded);
         assertThat(versions.prepareVersionForPublishing(
                 new PrepareEServiceTemplateForPublishingCommand(template, uploaded, "another-fixture")))
                 .isSameAs(uploaded);
-        verifyNoInteractions(gateway);
+        verify(gateway).getEServiceTemplateVersion(template.getRef(), uploaded.getRef());
+        verifyNoMoreInteractions(gateway);
     }
 
     @Test
