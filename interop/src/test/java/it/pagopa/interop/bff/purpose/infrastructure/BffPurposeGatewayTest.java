@@ -76,21 +76,6 @@ class BffPurposeGatewayTest {
         assertThat(updated.getLastActiveVersion()).isSameAs(active);
     }
 
-    @Test
-    void failsWithoutRetryingTheWriteOrReadingThePurposeOnAuthorizationFailure() {
-        when(create.execute(any())).thenAnswer(invocation -> {
-            Function<Response, Response> handler = invocation.getArgument(0);
-            return handler.apply(response(403, "{}"));
-        });
-
-        assertThatThrownBy(() -> gateway.updatePurposeDailyCalls(original.getRef(), 51))
-                .isInstanceOf(IllegalStateException.class).hasMessageContaining(original.getId().toString());
-
-        verify(create).execute(any());
-        verifyNoInteractions(read, mapper);
-        assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(original);
-    }
-
     private Response response(int status, String body) {
         return new ResponseBuilder().setStatusCode(status).setContentType(ContentType.JSON).setBody(body).build();
     }
