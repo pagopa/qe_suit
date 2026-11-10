@@ -69,7 +69,7 @@ public class WebCampaignsContractTest {
                         page -> {
                             // il BFF va chiamato qui, dopo che il validator ha impostato l'utente in sessione
                             boolean noCampaigns = campaignsUseCase.getCampaigns().isEmpty();
-                            Assertions.assertThat(page.emptyState().exists(FindPolicy.PRESENT))
+                            Assertions.assertThat(page.emptyState().get(FindPolicy.PRESENT).isPresent())
                                     .as("Stato di lista vuota presente se e solo se il BFF non restituisce campagne")
                                     .isEqualTo(noCampaigns);
                         }
