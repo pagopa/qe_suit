@@ -1,5 +1,7 @@
 package it.pagopa.send.suite.contract;
 
+import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
@@ -13,12 +15,14 @@ import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.send.web.mittente.infrastructure.page.MittenteComboTimelinePage;
 import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Stream;
 
 /**
@@ -37,6 +41,33 @@ import java.util.stream.Stream;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebComboTimelineContractTest {
+
+    private static final String TITLE = "Stato della comunicazione";
+    private static final String ACCEPTED = "Pronta per l'invio";
+    // titolo -> descrizione di ogni elemento della timeline ("Invio in corso" non ha descrizione)
+    private static final Map<String, String> ITEM_DESCRIPTIONS = Map.of(
+            ACCEPTED, "La comunicazione ha superato le verifiche di conformità. Inizierà a breve il processo d'invio.",
+            "Invio in corso", "",
+            "Invio terminato", "La comunicazione è stata inviata sui canali scelti.",
+            "Invio fallito", "Non è stato possibile inviare la comunicazione sui canali scelti.",
+            "Letta", "La persona destinataria ha letto la comunicazione.",
+            "Consegnata", "La persona destinataria ha ricevuto la comunicazione.");
+    private static final Set<String> CHANNELS = Set.of("IO", "PEC", "Email", "SMS", "Servizio postale", "SEND");
+    // coppie "tag|testo" degli eventi per canale; il numero di raccomandata è normalizzato in {{code}}
+    private static final Set<String> CHANNEL_EVENTS = Set.of("|Depositata sulla piattaforma SEND.",
+            "|Invio su IO riuscito.", "|Invio via PEC riuscito.", "|Invio via email riuscito.", "|Invio via SMS riuscito.",
+            "|Impossibile effettuare l'invio su IO.", "|Impossibile effettuare l'invio via PEC.",
+            "|Impossibile effettuare l'invio via email.", "|Impossibile effettuare l'invio via SMS.",
+            "|Invio via posta ordinaria riuscito.", "|Invio via raccomandata semplice n. {{code}} riuscito.",
+            "|Impossibile effettuare l'invio via posta ordinaria.", "|Impossibile effettuare l'invio via raccomandata semplice.",
+            "|Impossibile risalire all'account della persona destinataria.", "|Impossibile risalire all'indirizzo PEC della persona destinataria.",
+            "|Impossibile risalire all'indirizzo email della persona destinataria.", "|Impossibile risalire al numero di telefono della persona destinataria.",
+            "CONSEGNATA|Consegna su IO riuscita.", "CONSEGNATA|Consegna via PEC riuscita.", "CONSEGNATA|Consegna via email riuscita.",
+            "CONSEGNATA|Consegna via SMS riuscita.", "CONSEGNATA|Consegna via posta ordinaria riuscita.",
+            "CONSEGNATA|Consegna via raccomandata semplice n. {{code}} riuscita.",
+            "LETTA|La persona destinataria ha letto la comunicazione su IO.",
+            "LETTA|La persona destinataria ha letto la comunicazione sulla piattaforma SEND.");
+    private static final String EVENT_DATE = "\\d{2} [A-Z]{3}, \\d{2}:\\d{2}";
 
     private final UserProvider userProvider;
     private final SendJourney sendJourney;
@@ -76,10 +107,10 @@ public class WebComboTimelineContractTest {
 
         return webContractValidator.as(userProvider.resolve(UserAlias.COMUNE_1))
                 .on(MittenteComboTimelinePage.class, campaignId, iun)
-                .tests(scenarios());
+                .tests(scenarios(campaignId, iun));
     }
 
-    private Stream<WebScenario<MittenteComboTimelinePage>> scenarios() {
+    private Stream<WebScenario<MittenteComboTimelinePage>> scenarios(String campaignId, String iun) {
         return Stream.of(
                 new WebScenario<>(
                         "Controllo caricamento atomico componenti pagina Timeline Combo",
@@ -87,61 +118,61 @@ public class WebComboTimelineContractTest {
                         page -> page.assertLoaded()
                 ),
                 new WebScenario<>(
-                        "Controllo caricamento items timeline",
-                        page -> {},
-                        page -> page.timeline().assertLoaded()
-                ),
-                new WebScenario<>(
-                        "Controllo visualizzazione responsive card eventi e gestione wrapping testi",
+                        "Controllo caricamento items timeline e titolo della pagina",
                         page -> {},
                         page -> {
-                            page.timeline().items().forEach(item ->
-                                    item.title().readAndAssert(org.junit.jupiter.api.Assertions::assertNotNull));
-
-                            var eventsWithTimestamp = page.timeline().itemsWithTimestamp();
-                            org.assertj.core.api.Assertions.assertThat(eventsWithTimestamp)
-                                    .as("La timeline deve contenere eventi tracciati con data/ora")
-                                    .isNotEmpty();
-                            eventsWithTimestamp.forEach(item ->
-                                    item.timestamp().readAndAssert(ts ->
-                                            org.assertj.core.api.Assertions.assertThat(ts)
-                                                    .as("Il timestamp dell'evento non deve essere vuoto")
-                                                    .isNotBlank()));
+                            page.timeline().assertLoaded();
+                            Assertions.assertThat(page.title().read()).as("Titolo pagina").isEqualTo(TITLE);
                         }
+                ),
+                new WebScenario<>(
+                        "Controllo card degli stati: titolo, descrizione e data",
+                        page -> {},
+                        page -> page.timeline().items().forEach(item -> {
+                            String title = item.title().read();
+                            Assertions.assertThat(ITEM_DESCRIPTIONS).as("Titolo '%s' tra quelli del frontend", title).containsKey(title);
+                            String date = textOrEmpty(item.descriptionDate());
+                            String description = textOrEmpty(item.description()).replace(date, "").trim();
+                            Assertions.assertThat(description).as("Descrizione di '%s'", title).isEqualTo(ITEM_DESCRIPTIONS.get(title));
+                            Assertions.assertThat(date.isEmpty()).as("Data presente solo su '%s' (card '%s')", ACCEPTED, title).isNotEqualTo(ACCEPTED.equals(title));
+                        })
                 ),
                 new WebScenario<>(
                         "Controllo log ed eventi di dettaglio per canale nella timeline",
                         page -> {},
-                        page -> {
-                            var items = page.timeline().items();
-                            org.assertj.core.api.Assertions.assertThat(items)
-                                    .as("La timeline deve contenere gli eventi di tracciamento dei canali")
-                                    .isNotEmpty();
-                            items.forEach(item -> {
-                                item.assertLoaded();
-                                item.content().readAndAssert(c ->
-                                        org.assertj.core.api.Assertions.assertThat(c).as("Contenuto log canale non nullo").isNotBlank());
+                        page -> page.timeline().items().forEach(item -> item.channelStepsOrEmpty().forEach(step -> {
+                            String channel = step.name().read();
+                            Assertions.assertThat(channel).as("Nome canale").isIn(CHANNELS);
+                            Assertions.assertThat(step.events()).as("Eventi del canale %s", channel).isNotEmpty();
+                            step.events().forEach(event -> {
+                                String tagAndText = textOrEmpty(event.tag()) + "|"
+                                        + event.text().read().replaceAll("n\\. \\S+ ", "n. {{code}} ");
+                                Assertions.assertThat(tagAndText).as("Tag e testo evento del canale %s", channel).isIn(CHANNEL_EVENTS);
+                                Assertions.assertThat(event.date().read()).as("Data evento del canale %s", channel).matches(EVENT_DATE);
                             });
-                        }
+                        }))
                 ),
                 new WebScenario<>(
                         "Controllo esito finale e box informativo apicale nella timeline",
                         page -> {},
                         page -> {
                             var items = page.timeline().items();
-                            org.assertj.core.api.Assertions.assertThat(items)
-                                    .as("La timeline deve contenere almeno un evento per l'esito finale")
-                                    .isNotEmpty();
-                            var topItem = items.get(0);
-                            topItem.title().readAndAssert(title ->
-                                    org.assertj.core.api.Assertions.assertThat(title).as("Titolo evento apicale non nullo").isNotBlank());
-                            String fullText = topItem.read();
-                            org.assertj.core.api.Assertions.assertThat(fullText)
-                                    .as("Testo esito finale nel box timeline non nullo")
-                                    .isNotBlank();
+                            Assertions.assertThat(items.get(0).title().read()).as("Elemento in cima: esito o ultimo stato")
+                                    .isIn(ITEM_DESCRIPTIONS.keySet());
+                            Assertions.assertThat(items.get(items.size() - 1).title().read()).as("Primo stato in fondo").isEqualTo(ACCEPTED);
                         }
+                ),
+                new WebScenario<>(
+                        "Breadcrumb: Campagne > campagna > IUN > Stato della comunicazione",
+                        page -> {},
+                        page -> Assertions.assertThat(page.breadcrumbItems().stream().map(Readable::read).toList())
+                                .containsExactly("Campagne", campaignId, iun, TITLE)
                 )
         );
     }
-}
 
+    // testo dell'elemento, vuoto se non c'è: exists() legge il DOM senza attendere il timeout
+    private static String textOrEmpty(Label element) {
+        return element.exists() ? element.read() : "";
+    }
+}
