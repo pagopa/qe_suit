@@ -192,7 +192,7 @@ Feature: Modifica dei metadati degli e-service
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [METADATA_UNIQUENESS_1_ESERVICE] - Rifiuto della rinomina in conflitto per un e-service
+  Scenario: [ESERVICE_METADATA_UNIQUENESS_1] - Rifiuto della rinomina in conflitto per un e-service
   Dato due risorse nello stesso ambito di unicità con nomi distinti,
   quando l’attore rinomina una risorsa usando il nome dell’altra e una descrizione valida,
   allora la modifica è respinta integralmente lasciando intatte entrambe le risorse.
@@ -202,5 +202,20 @@ Feature: Modifica dei metadati degli e-service
       | ES-1  | Comune di Milano | E-service Nome 1 |
       | ES-2  | Comune di Milano | E-service Nome 2 |
     When un admin del Comune di Milano richiede di assegnare alla risorsa "ES-1" il nome di "ES-2" e una nuova descrizione
+    Then la modifica della risorsa "ES-1" viene rifiutata
+    And le risorse "ES-1" e "ES-2" conservano tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_METADATA_UNIQUENESS_2] - Unicità non aggirabile con differenze di maiuscole e minuscole per un e-service
+  Dato due risorse nello stesso ambito di unicità,
+  quando l’attore richiede un nome che coincide con quello dell’altra salvo le maiuscole,
+  allora la rinomina viene rifiutata senza applicare anche la descrizione valida.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome             |
+      | ES-1  | Comune di Milano | E-service Nome 1 |
+      | ES-2  | Comune di Milano | E-service Nome 2 |
+    When un admin del Comune di Milano richiede per "ES-1" il nome di "ES-2" cambiandone soltanto le maiuscole e una nuova descrizione
     Then la modifica della risorsa "ES-1" viene rifiutata
     And le risorse "ES-1" e "ES-2" conservano tutti i dati iniziali

@@ -194,7 +194,19 @@ Feature: Modifica dei metadati dei template finalità
   quando l’attore rinomina una risorsa usando il nome dell’altra e una descrizione valida,
   allora la modifica è respinta integralmente lasciando intatte entrambe le risorse.
 
-    Given due risorse "TP-1" e "TP-2" di tipo template finalità nel medesimo ambito di unicità
+    Given due template finalità "TP-1" e "TP-2" nel medesimo ambito di unicità
     When un admin del Comune di Milano richiede di assegnare alla risorsa "TP-1" il nome di "TP-2" e una nuova descrizione
+    Then la modifica della risorsa "TP-1" viene rifiutata
+    And le risorse "TP-1" e "TP-2" conservano tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PURPOSE_TEMPLATE_METADATA_UNIQUENESS_2] - Unicità non aggirabile con differenze di maiuscole e minuscole per un template finalità
+  Dato due risorse nello stesso ambito di unicità,
+  quando l’attore richiede un nome che coincide con quello dell’altra salvo le maiuscole,
+  allora la rinomina viene rifiutata senza applicare anche la descrizione valida.
+
+    Given due template finalità "TP-1" e "TP-2" nel medesimo ambito di unicità
+    When un admin del Comune di Milano richiede per "TP-1" il nome di "TP-2" cambiandone soltanto le maiuscole e una nuova descrizione
     Then la modifica della risorsa "TP-1" viene rifiutata
     And le risorse "TP-1" e "TP-2" conservano tutti i dati iniziali
