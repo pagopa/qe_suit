@@ -188,10 +188,10 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
             if (answer.getEditable() == null) {
                 throw new IllegalArgumentException("Missing template risk analysis editability for: " + question);
             }
-            if (Boolean.TRUE.equals(answer.getEditable())) {
-                answers.put(question, List.of(RandomUtils.randomAlphanumericName("random-text")));
-            } else if (answer.getSuggestedValues() != null && !answer.getSuggestedValues().isEmpty()) {
+            if (answer.getSuggestedValues() != null && !answer.getSuggestedValues().isEmpty()) {
                 answers.put(question, List.of(answer.getSuggestedValues().get(0)));
+            } else if (answer.getEditable()) {
+                answers.put(question, List.of(RandomUtils.randomAlphanumericName("random-text")));
             }
         });
         return new RiskAnalysisFormSeed().version(templateForm.getVersion()).answers(answers);
