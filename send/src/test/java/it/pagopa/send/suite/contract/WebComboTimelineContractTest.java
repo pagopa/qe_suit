@@ -67,7 +67,8 @@ public class WebComboTimelineContractTest {
             "CONSEGNATA|Consegna via raccomandata semplice n. {{code}} riuscita.",
             "LETTA|La persona destinataria ha letto la comunicazione su IO.",
             "LETTA|La persona destinataria ha letto la comunicazione sulla piattaforma SEND.");
-    private static final String EVENT_DATE = "\\d{2} [A-Z]{3}, \\d{2}:\\d{2}";
+    // data dell'evento, es. "11 NOV, 09:45": stesso pattern della timeline PF
+    private static final String EVENT_DATE = "(?i)\\d{1,2} [a-z]{3}, \\d{2}:\\d{2}";
 
     private final UserProvider userProvider;
     private final SendJourney sendJourney;
