@@ -1,66 +1,154 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
 @lingua:it,en
-Feature: Messaggi per la gestione dei template finalità
+Feature: Messaggi di errore durante la gestione dei template finalità e delle annotazioni
 
-  # POST /purposeTemplates/:purposeTemplateId/unsuspend · invalidAssociatedEServiceForPublicationError
-  Scenario: [ERROR_138] L’operatore autorizzato riattiva il template finalità — un template finalità pronto per l’operazione con un e-service suggerito sospeso
-    Given un template finalità pronto per l’operazione con un e-service suggerito sospeso
-    When l’operatore autorizzato riattiva il template finalità
+  Come creatore di template finalità
+  Voglio sapere perché una modifica, la pubblicazione, la riattivazione o la gestione degli allegati sono state rifiutate
+  Per verificare gli e-service suggeriti, scegliere nomi distinti o correggere le annotazioni.
+
+  Background:
+    Given un admin appartenente al fruitore PagoPA
+
+  Scenario: [ERROR_138] - Impossibilità di riattivare un template con un e-service suggerito sospeso
+  Dato un template finalità sospeso con un e-service suggerito non più disponibile per la fruizione
+  Quando il creatore tenta di riattivare il template
+  Allora il sistema rifiuta la riattivazione e segnala che l'e-service suggerito non è valido.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" collegato a un template di finalità pubblicato
+    # Binding di setup mancante; riusare suspendPurposeTemplate prima di sospendere l'e-service.
+    And il template finalità sospeso
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano sospesa
+    And un admin appartenente al fruitore PagoPA
+    # Operazione BFF e binding negativo mancanti per la riattivazione del template.
+    When l'operatore tenta di riattivare il template finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_ASSOCIATED_ESERVICE_FOR_PUBLICATION_ERROR__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_UNSUSPEND"
 
-  # POST /purposeTemplates/:purposeTemplateId/publish · invalidAssociatedEServiceForPublicationError
-  Scenario: [ERROR_139] L’operatore autorizzato pubblica il template finalità — un template finalità pronto per l’operazione con un e-service suggerito sospeso
-    Given un template finalità pronto per l’operazione con un e-service suggerito sospeso
-    When l’operatore autorizzato pubblica il template finalità
+  Scenario: [ERROR_139] - Impossibilità di pubblicare un template con un e-service suggerito sospeso
+  Dato un template finalità in bozza con un e-service suggerito non più disponibile per la fruizione
+  Quando il creatore tenta di pubblicare il template
+  Allora il sistema rifiuta la pubblicazione e segnala che l'e-service suggerito non è valido.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" collegato a un template di finalità in bozza
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano sospesa
+    And un admin appartenente al fruitore PagoPA
+    # Binding BFF negativo mancante; riusare publishPurposeTemplate senza attendere il successo.
+    When l'operatore tenta di pubblicare il template finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_ASSOCIATED_ESERVICE_FOR_PUBLICATION_ERROR__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PUBLISH"
 
-  # POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation/documents · conflictDocumentPrettyNameDuplicate
-  Scenario: [ERROR_140] L'operatore allega il file "allegato-b.pdf" all'annotazione del template finalità con il nome "Allegato A" — un documento già allegato nell’annotazione del template finalità
-    Given un’annotazione del template finalità in bozza con il documento "Allegato A" caricato dalla fixture "allegato-a.pdf"
+  Scenario: [ERROR_140] - Rifiuto di un allegato all'annotazione con un nome già in uso
+  Dato un template finalità in bozza con una risposta annotata e un documento allegato
+  Quando il creatore tenta di allegare un PDF diverso con lo stesso nome
+  Allora il sistema rifiuta il caricamento e segnala che il nome dell'allegato è già in uso.
+
+    # Binding di setup comune mancante; riusare createPurposeTemplate e predisporre una risposta annotata.
+    Given un template finalità in bozza con una risposta annotata
+    # Operazione BFF e binding di setup comuni mancanti per gli allegati alle annotazioni.
+    And i seguenti documenti PDF allegati all'annotazione del template finalità:
+      | nome       | fixture        |
+      | Allegato A | allegato-a.pdf |
+    # Operazione BFF e binding negativo comuni mancanti per gli allegati alle annotazioni.
     When l'operatore allega il file "allegato-b.pdf" all'annotazione del template finalità con il nome "Allegato A"
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_CONFLICT_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS_ANSWER_ID_ANNOTATION_DOCUMENTS"
 
-  # POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation/documents · conflictDuplicatedDocument
-  Scenario: [ERROR_141] L'operatore allega il file "allegato-a.pdf" all'annotazione del template finalità con il nome "Allegato B" — un file già allegato nell’annotazione del template finalità
-    Given un’annotazione del template finalità in bozza con il documento "Allegato A" caricato dalla fixture "allegato-a.pdf"
+  Scenario: [ERROR_141] - Rifiuto di un allegato all'annotazione con contenuto già presente
+  Dato un template finalità in bozza con una risposta annotata e un documento allegato
+  Quando il creatore tenta di allegare lo stesso PDF con un nome diverso
+  Allora il sistema rifiuta il caricamento e segnala che il contenuto è già presente.
+
+    # Binding di setup comune mancante; riusare createPurposeTemplate e predisporre una risposta annotata.
+    Given un template finalità in bozza con una risposta annotata
+    # Operazione BFF e binding di setup comuni mancanti per gli allegati alle annotazioni.
+    And i seguenti documenti PDF allegati all'annotazione del template finalità:
+      | nome       | fixture        |
+      | Allegato A | allegato-a.pdf |
+    # Operazione BFF e binding negativo comuni mancanti per gli allegati alle annotazioni.
     When l'operatore allega il file "allegato-a.pdf" all'annotazione del template finalità con il nome "Allegato B"
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_CONFLICT_DUPLICATED_DOCUMENT"
 
-  # POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers · hyperlinkDetectionError
-  Scenario: [ERROR_142] L’operatore autorizzato aggiunge una risposta con annotazione all’analisi del rischio del template finalità con un collegamento nella annotazione — il template finalità in bozza con analisi del rischio e domanda predisposta per le annotazioni
-    Given il template finalità in bozza con analisi del rischio e domanda predisposta per le annotazioni
-    When l’operatore autorizzato aggiunge una risposta con annotazione all’analisi del rischio del template finalità con un collegamento nella annotazione
+  Scenario: [ERROR_142] - Rifiuto dell'aggiunta di una risposta con un link nell'annotazione
+  Dato un template finalità in bozza con una domanda che consente le annotazioni
+  Quando il creatore tenta di aggiungere una risposta valida con un collegamento nell'annotazione
+  Allora il sistema rifiuta l'aggiunta e invita il creatore a rimuovere il collegamento.
+
+    # Binding di setup mancante; riusare createPurposeTemplate con una domanda ancora da rispondere.
+    Given un template finalità in bozza con una domanda predisposta per le annotazioni
+    # Operazione BFF e binding negativo mancanti per l'aggiunta della risposta annotata.
+    When l'operatore tenta di aggiungere una risposta al template finalità con l'annotazione "Motivazione https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS"
 
-  # PUT /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation · hyperlinkDetectionError
-  Scenario: [ERROR_143] L’operatore autorizzato aggiorna l’annotazione della risposta del template finalità con un collegamento nella annotazione — il template finalità in bozza con analisi del rischio e domanda predisposta per le annotazioni
-    Given il template finalità in bozza con analisi del rischio e domanda predisposta per le annotazioni
-    When l’operatore autorizzato aggiorna l’annotazione della risposta del template finalità con un collegamento nella annotazione
+  Scenario: [ERROR_143] - Rifiuto della modifica di un'annotazione con un link
+  Dato un template finalità in bozza con una risposta annotata
+  Quando il creatore tenta di inserire un collegamento nell'annotazione esistente
+  Allora il sistema rifiuta la modifica e invita il creatore a rimuovere il collegamento.
+
+    # Binding di setup comune mancante; riusare createPurposeTemplate e predisporre una risposta annotata.
+    Given un template finalità in bozza con una risposta annotata
+    # Operazione BFF e binding negativo mancanti per la modifica dell'annotazione.
+    When l'operatore tenta di aggiornare l'annotazione del template finalità con il testo "Motivazione https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_HYPERLINK_DETECTION_ERROR__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS_ANSWER_ID_ANNOTATION"
 
-  # POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation/documents/:documentId/update · conflictDocumentPrettyNameDuplicate
-  Scenario: [ERROR_144] L’operatore autorizzato rinomina l’allegato dell’annotazione del template finalità usando il nome dell’altro documento — due documenti distinti già allegati nell’annotazione del template finalità
-    Given due documenti distinti già allegati nell’annotazione del template finalità
-    When l’operatore autorizzato rinomina l’allegato dell’annotazione del template finalità usando il nome dell’altro documento
+  Scenario: [ERROR_144] - Impossibilità di rinominare un allegato con il nome di un altro documento
+  Dato un template finalità in bozza con due documenti distinti allegati alla stessa annotazione
+  Quando il creatore tenta di assegnare al secondo documento il nome del primo
+  Allora il sistema rifiuta la rinomina e segnala che il nome è già in uso.
+
+    # Binding di setup comune mancante; riusare createPurposeTemplate e predisporre una risposta annotata.
+    Given un template finalità in bozza con una risposta annotata
+    # Operazione BFF e binding di setup comuni mancanti per gli allegati alle annotazioni.
+    And i seguenti documenti PDF allegati all'annotazione del template finalità:
+      | nome       | fixture        |
+      | Allegato A | allegato-a.pdf |
+      | Allegato B | allegato-b.pdf |
+    # Operazione BFF e binding negativo mancanti per la rinomina dell'allegato.
+    When l'operatore tenta di rinominare l'allegato "Allegato B" dell'annotazione del template finalità in "Allegato A"
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_CONFLICT_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_RISK_ANALYSIS_ANSWERS_ANSWER_ID_ANNOTATION_DOCUMENTS_DOCUMENT_ID_UPDATE"
 
-  # GET /purposeTemplates/:purposeTemplateId/riskAnalysisDocument/signed · unauthorizedError
-  Scenario: [ERROR_145] L’operatore di sicurezza scarica il documento firmato di analisi del rischio del template finalità — un documento disponibile e un operatore di sicurezza dell’ente abilitato alla consultazione della risorsa
-    Given un documento disponibile e un operatore di sicurezza dell’ente abilitato alla consultazione della risorsa
-    When l’operatore di sicurezza scarica il documento firmato di analisi del rischio del template finalità
+  Scenario: [ERROR_145] - Impossibilità per un operatore di sicurezza di scaricare l'analisi del rischio firmata
+  Dato un template finalità con il documento firmato disponibile e un operatore di sicurezza dell'ente creatore
+  Quando l'operatore tenta di scaricare il documento firmato
+  Allora il sistema rifiuta il download e segnala che il ruolo non è autorizzato.
+
+    # Binding di setup mancante; riusare createPurposeTemplate e publishPurposeTemplate.
+    Given un template finalità pubblicato dal fruitore PagoPA
+    # Setup e binding mancanti; verificare la disponibilità reale del documento prima del cambio di ruolo.
+    And il documento firmato di analisi del rischio del template finalità disponibile
+    And un security appartenente al fruitore PagoPA
+    # Operazione BFF e binding negativo mancanti per il download con l'utente corrente.
+    When l'utente tenta di scaricare il documento firmato di analisi del rischio del template finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_UNAUTHORIZED_ERROR"
 
-  # PATCH /purposeTemplates/:purposeTemplateId · purposeTemplateTitleConflict
-  # Per una modifica usare un oggetto distinto. Per la duplicazione della finalità controllare il nome derivato dal clone. Nessuna rotta PATCH nel commit analizzato. Verificare il branch di rilascio e l’eventuale sostituzione funzionale. Non rimappare questo ID su un altro endpoint.
-  Scenario: [ERROR_146] L’operatore autorizzato modifica il template finalità con il nome già in uso — un template finalità omonimo nello stesso ambito
-    Given un template finalità omonimo nello stesso ambito
-    When l’operatore autorizzato modifica il template finalità con il nome già in uso
+  Scenario: [ERROR_146] - Rifiuto della modifica di un template con il nome di un altro template finalità
+  Dati due template finalità in bozza dello stesso creatore con nomi diversi
+  Quando il creatore tenta di assegnare al secondo il nome del primo
+  Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
+
+    # Binding di setup comune mancante; riusare createPurposeTemplate e registrare gli alias senza cambiare i nomi.
+    Given i seguenti template finalità in bozza creati da PagoPA con nomi distinti:
+      | alias |
+      | TF-1  |
+      | TF-2  |
+    # Operazione BFF e binding negativo mancanti; il client attuale espone PUT, non PATCH.
+    # Verificare il contratto di rilascio e non rimappare questo ID su un'altra operazione.
+    When l'operatore tenta di modificare i dati del template finalità "TF-2" con il nome del template "TF-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_PURPOSE_TEMPLATE_TITLE_CONFLICT__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"
 
-  # PATCH /purposeTemplates/:purposeTemplateId · hyperlinkDetectionError
-  # Usare https://example.org nel campo indicato e valori validi per gli altri campi. Il body deve superare la validazione dello schema. Nessuna rotta PATCH nel commit analizzato. Verificare il branch di rilascio e l’eventuale sostituzione funzionale. Non rimappare questo ID su un altro endpoint.
-  Scenario: [ERROR_147] L’operatore autorizzato modifica il template finalità con un collegamento nel nome — la finalità o il template in bozza con gli altri dati validi
-    Given la finalità o il template in bozza con gli altri dati validi
-    When l’operatore autorizzato modifica il template finalità con un collegamento nel nome
+  Scenario: [ERROR_147] - Rifiuto della modifica di un template finalità con un link nel nome
+  Dato un template finalità in bozza
+  Quando il creatore tenta di inserire un collegamento nel nome lasciando validi gli altri dati
+  Allora il sistema rifiuta la modifica e invita il creatore a rimuovere il collegamento.
+
+    # Binding di setup comune mancante; riusare createPurposeTemplate e registrare l'alias.
+    Given i seguenti template finalità in bozza creati da PagoPA con nomi distinti:
+      | alias |
+      | TF-1  |
+    # Operazione BFF e binding negativo mancanti; il client attuale espone PUT, non PATCH.
+    # Verificare il contratto di rilascio e non rimappare questo ID su un'altra operazione.
+    When l'operatore tenta di modificare i dati del template finalità "TF-1" con il nome "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_HYPERLINK_DETECTION_ERROR__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"
