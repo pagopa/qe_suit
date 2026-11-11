@@ -28,7 +28,7 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
         if (state.equals(PurposeVersionState.WAITING_FOR_APPROVAL)) {
             draftPurpose = purposeUseCase.createPurpose(lastEService,
                     command -> command.eserviceId(lastEService.getId()).dailyCalls(
-                            lastEService.getLatestDescriptor().getDailyCallsPerConsumer() + 1
+                            lastEService.getActiveDescriptor().getDailyCallsPerConsumer() + 1
                     )
             );
         } else {
