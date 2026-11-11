@@ -316,6 +316,48 @@ class BffEServiceTemplateMapperTest {
                 .isEqualTo(EServiceTemplateVersionState.DRAFT);
     }
 
+    @Test
+    void preservingVersions_refreshes_risk_analyses_from_template_details() {
+        UUID templateId = UUID.randomUUID();
+        UUID riskAnalysisId = UUID.randomUUID();
+
+        EServiceTemplate existing = EServiceTemplate.builder()
+                .id(templateId)
+                .versions(List.of())
+                .riskAnalyses(List.of())
+                .build();
+
+        EServiceTemplateDetails source = new EServiceTemplateDetails()
+                .id(templateId)
+                .name("template")
+                .technology(
+                        it.pagopa.interop.generated.openapi.clients.bff.model
+                                .EServiceTechnology.REST
+                )
+                .mode(
+                        it.pagopa.interop.generated.openapi.clients.bff.model
+                                .EServiceMode.RECEIVE
+                )
+                .riskAnalysis(List.of(
+                        new EServiceTemplateRiskAnalysis()
+                                .id(riskAnalysisId)
+                                .name("ra-1")
+                                .riskAnalysisForm(
+                                        new RiskAnalysisForm()
+                                                .version("3.0")
+                                                .putAnswersItem("purpose", List.of("INSTITUTIONAL"))
+                                )
+                ));
+
+        EServiceTemplate mapped =
+                assembler.toEServiceTemplatePreservingVersions(source, existing);
+
+        assertThat(mapped.getRiskAnalyses()).hasSize(1);
+        assertThat(mapped.getRiskAnalyses().get(0).getId()).isEqualTo(riskAnalysisId);
+        assertThat(mapped.getRiskAnalyses().get(0).getName()).isEqualTo("ra-1");
+        assertThat(mapped.getRiskAnalyses().get(0).getRiskAnalysisForm().getVersion()).isEqualTo("3.0");
+    }
+
     private static EServiceTemplateVersionDetails templateVersionDetails(
             UUID templateId,
             UUID versionId,

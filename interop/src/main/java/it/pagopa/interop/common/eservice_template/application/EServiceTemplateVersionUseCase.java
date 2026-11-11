@@ -1,10 +1,16 @@
 package it.pagopa.interop.common.eservice_template.application;
 
+import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.eservice_template.application.command.PrepareEServiceTemplateForPublishingCommand;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
+import it.pagopa.interop.common.kernel.domain.Tenant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +27,11 @@ public class EServiceTemplateVersionUseCase {
 
     private final EServiceTemplateVersionGateway eServiceTemplateVersionGateway;
     private final EServiceTemplateRequestFactory requestFactory;
+
+    private final EServiceTemplateUseCase eServiceTemplateUseCase;
+    private final EServiceRiskAnalysisUseCase eServiceRiskAnalysisUseCase;
+
+    private final CurrentUserSession currentUserSession;
 
     public void retireVersions(EServiceTemplate template) {
         for (var version : template.getVersions()) {
@@ -53,25 +64,36 @@ public class EServiceTemplateVersionUseCase {
         return eServiceTemplateVersionGateway.publishEServiceTemplateVersion(eServiceTemplate.getRef(), version.getRef());
     }
 
-    public EServiceTemplateVersion prepareVersionForPublishing(EServiceTemplate eServiceTemplate, EServiceTemplateVersion version) {
-        return prepareVersionForPublishing(eServiceTemplate, version, null);
-    }
+    public EServiceTemplateVersion prepareVersionForPublishing(
+        PrepareEServiceTemplateForPublishingCommand command) {
+        EServiceTemplate eServiceTemplate = command.eServiceTemplate();
+        EServiceTemplateVersion version = command.version();
+        String interfacePath = command.interfacePath();
 
-    public EServiceTemplateVersion prepareVersionForPublishing(EServiceTemplate eServiceTemplate, EServiceTemplateVersion version, String interfacePath) {
         if (version.getState() == EServiceTemplateVersionState.PUBLISHED) return version;
 
         if (version.getState() != EServiceTemplateVersionState.DRAFT)
             throw new IllegalStateException("Cannot prepare a template version for publishing that is in state " + version.getState());
 
-        if (version.getInterfaceDocument() == null)
-            return uploadInterface(
-                    eServiceTemplate, version,
-                    interfacePath == null
-                            ? (eServiceTemplate.getTechnology() == REST ? STANDARD_OPEN_API_PATH : STANDARD_WSDL_PATH)
-                            : interfacePath
-            );
-
-        return version;
+        if (version.getInterfaceDocument() == null) {
+            String fixturePath = interfacePath == null
+                ? (eServiceTemplate.getTechnology() == REST ? STANDARD_OPEN_API_PATH
+                : STANDARD_WSDL_PATH)
+                : interfacePath;
+            eServiceTemplateVersionGateway.uploadInterface(eServiceTemplate.getRef(), version.getRef(), fixturePath);
+        }
+        if (eServiceTemplate.getRiskAnalyses().isEmpty() && EServiceMode.RECEIVE.equals(
+            eServiceTemplate.getMode()
+        )) {
+            Tenant tenant = command.tenant() == null
+                    ? currentUserSession.getTenant()
+                    : command.tenant();
+            EServiceRiskAnalysis eServiceRiskAnalysis = command.eServiceRiskAnalysis() == null
+                    ? eServiceRiskAnalysisUseCase.buildRiskAnalysis(tenant, true)
+                    : command.eServiceRiskAnalysis();
+            eServiceTemplateUseCase.uploadRiskAnalysis(eServiceTemplate, tenant.getTenantType(), eServiceRiskAnalysis);
+        }
+        return eServiceTemplateVersionGateway.getEServiceTemplateVersion(eServiceTemplate.getRef(), version.getRef());
     }
 
     public EServiceTemplateVersion updateDraftVersion(EServiceTemplate eServiceTemplate, EServiceTemplateVersion version, UpdateEServiceTemplateVersionCommand command) {

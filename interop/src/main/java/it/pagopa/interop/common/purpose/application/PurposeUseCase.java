@@ -18,6 +18,10 @@ public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
 
+    public void shouldFailLinkToReceiveEService() {
+        purposeGateway.shouldFailLinkToReceiveEService();
+    }
+
     public Purpose createPurpose(Consumer<PurposeCreateCommand> commandConfig) {
         PurposeCreateCommand defaultCommand = purposeCommandFactory.emptyCreateCommand();
         commandConfig.accept(defaultCommand);
@@ -44,5 +48,16 @@ public class PurposeUseCase {
 
     public Purpose suspendPurpose(Purpose purpose, PurposeVersion purposeVersion, @Nullable DelegationRef delegationRef) {
         return purposeGateway.suspendPurpose(purpose.getRef(), purposeVersion.getRef(), delegationRef);
+    }
+
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
+    public Purpose tryCreatePurpose(EService eService) {
+        PurposeCreateCommand command = purposeCommandFactory.validFullPopulatedCreateCommand(eService.getRef());
+        return purposeGateway.tryCreatePurpose(command);
+    }
+
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
+    public Purpose tryCreatePurposeFromTemplate(PurposeTemplate purposeTemplate, EService eService) {
+        return purposeGateway.tryCreatePurposeFromTemplate(purposeTemplate.getRef(), eService.getRef());
     }
 }

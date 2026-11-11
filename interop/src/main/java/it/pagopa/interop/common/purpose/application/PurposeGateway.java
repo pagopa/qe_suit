@@ -12,6 +12,12 @@ import jakarta.annotation.Nullable;
 import org.springframework.plugin.core.Plugin;
 
 public interface PurposeGateway extends Plugin<Channel> {
+    /**
+     * Verifica il rifiuto dell'ultimo tentativo di associare un e-service in ricezione.
+     * Il tentativo deve corrispondere all'ultima chiamata effettuata in piattaforma.
+     */
+    void shouldFailLinkToReceiveEService();
+
     Purpose getPurpose(PurposeRef purposeRef);
 
     Purpose createPurpose(PurposeCreateCommand createCommand);
@@ -23,4 +29,25 @@ public interface PurposeGateway extends Plugin<Channel> {
     Purpose activatePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
 
     Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
+
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
+    /**
+     * Tenta la creazione di una finalità senza polling.
+     *
+     * @param createCommand il comando contenente i dati per la creazione della finalità
+     * @return la {@link Purpose} creata e aggiornata nel contesto se la chiamata ha esito positivo;
+     *         {@code null} se la chiamata fallisce (esito non di successo)
+     */
+    Purpose tryCreatePurpose(PurposeCreateCommand createCommand);
+
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
+    /**
+     * Tenta la creazione di una finalità a partire da un template di finalità senza polling.
+     *
+     * @param purposeTemplateRef il riferimento al template di finalità
+     * @param eServiceRef il riferimento all'e-service da associare
+     * @return la {@link Purpose} creata e aggiornata nel contesto se la chiamata ha esito positivo;
+     *         {@code null} se la chiamata fallisce (esito non di successo)
+     */
+    Purpose tryCreatePurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef);
 }

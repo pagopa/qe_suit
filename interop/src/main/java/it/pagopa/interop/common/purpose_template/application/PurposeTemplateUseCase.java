@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.purpose_template.application;
 
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
@@ -17,6 +18,10 @@ public class PurposeTemplateUseCase {
     private final PurposeTemplateGateway purposeTemplateGateway;
     private final RiskAnalysisGateway riskAnalysisGateway;
     private final RiskAnalysisDataFactory riskAnalysisDataFactory;
+
+    public void shouldFailLinkToReceiveEService() {
+        purposeTemplateGateway.shouldFailLinkToReceiveEService();
+    }
 
     /**
      * Crea (con l'identità corrente come creatore) un purpose template DRAFT per il tenant target,
@@ -46,5 +51,15 @@ public class PurposeTemplateUseCase {
             return purposeTemplateGateway.linkEServiceTemplate(purposeTemplate, templateRef);
         }
         return purposeTemplateGateway.linkEService(purposeTemplate, eService.getRef());
+    }
+
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
+    public PurposeTemplate tryLinkEService(PurposeTemplate purposeTemplate, EService eService) {
+        return purposeTemplateGateway.tryLinkEService(purposeTemplate, eService.getRef());
+    }
+
+    // Proposta di refactor: https://pagopa.atlassian.net/browse/QA-19158
+    public PurposeTemplate tryLinkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplate eServiceTemplate) {
+        return purposeTemplateGateway.tryLinkEServiceTemplate(purposeTemplate, eServiceTemplate.getRef());
     }
 }
