@@ -18,6 +18,10 @@ public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
 
+    public void shouldFailLinkToReceiveEService() {
+        purposeGateway.shouldFailLinkToReceiveEService();
+    }
+
     public Purpose createPurpose(Consumer<PurposeCreateCommand> commandConfig) {
         PurposeCreateCommand defaultCommand = purposeCommandFactory.emptyCreateCommand();
         commandConfig.accept(defaultCommand);

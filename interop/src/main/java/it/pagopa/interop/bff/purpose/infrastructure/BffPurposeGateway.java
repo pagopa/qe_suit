@@ -1,5 +1,7 @@
 package it.pagopa.interop.bff.purpose.infrastructure;
 
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.PollingAction;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
@@ -18,6 +20,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.Assertions;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +30,18 @@ public class BffPurposeGateway implements PurposeGateway {
     private final BffPurposeRestClient restClient;
     private final BffPurposeMapper mapper;
     private final BffPurposeCommandFactory commandFactory;
+    private final LastApiResponseStore lastApiResponseStore;
+
+    @Override
+    public void shouldFailLinkToReceiveEService() {
+        ApiResponse lastResponse = lastApiResponseStore.getLastResponse();
+        Assertions.assertThat(lastResponse)
+                .as("Risposta al tentativo di creare una finalità con e-service in ricezione")
+                .isNotNull();
+        Assertions.assertThat(lastResponse.getStatusCode())
+                .as("La creazione della finalità con e-service in ricezione deve essere rifiutata con HTTP 409")
+                .isEqualTo(409);
+    }
 
     @Override
     public Purpose getPurpose(PurposeRef purposeRef) {

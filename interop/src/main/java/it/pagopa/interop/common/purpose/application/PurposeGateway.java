@@ -12,6 +12,12 @@ import jakarta.annotation.Nullable;
 import org.springframework.plugin.core.Plugin;
 
 public interface PurposeGateway extends Plugin<Channel> {
+    /**
+     * Verifica il rifiuto dell'ultimo tentativo di associare un e-service in ricezione.
+     * Il tentativo deve corrispondere all'ultima chiamata effettuata in piattaforma.
+     */
+    void shouldFailLinkToReceiveEService();
+
     Purpose getPurpose(PurposeRef purposeRef);
 
     Purpose createPurpose(PurposeCreateCommand createCommand);

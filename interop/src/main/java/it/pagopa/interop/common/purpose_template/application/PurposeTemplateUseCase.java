@@ -19,6 +19,10 @@ public class PurposeTemplateUseCase {
     private final RiskAnalysisGateway riskAnalysisGateway;
     private final RiskAnalysisDataFactory riskAnalysisDataFactory;
 
+    public void shouldFailLinkToReceiveEService() {
+        purposeTemplateGateway.shouldFailLinkToReceiveEService();
+    }
+
     /**
      * Crea (con l'identità corrente come creatore) un purpose template DRAFT per il tenant target,
      * con risposte di riferimento e configurazione per distinguere suggerimenti e valori fissi.
@@ -59,4 +63,3 @@ public class PurposeTemplateUseCase {
         return purposeTemplateGateway.tryLinkEServiceTemplate(purposeTemplate, eServiceTemplate.getRef());
     }
 }
-

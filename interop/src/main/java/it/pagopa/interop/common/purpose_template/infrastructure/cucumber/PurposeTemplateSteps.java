@@ -4,8 +4,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.application.context.LastApiResponseStore;
-import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.journey.application.InteropJourney;
@@ -17,7 +15,6 @@ import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseC
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import lombok.RequiredArgsConstructor;
-import org.assertj.core.api.Assertions;
 
 @RequiredArgsConstructor
 public class PurposeTemplateSteps {
@@ -26,7 +23,6 @@ public class PurposeTemplateSteps {
     private final InteropJourney interopJourney;
     private final CurrentUserSession currentUserSession;
     private final EntityStore entityStore;
-    private final LastApiResponseStore lastApiResponseStore;
 
     @Given("un template di finalità avviato in creazione da {tenant}")
     public void startPurposeTemplateCreation(Tenant tenant) {
@@ -60,22 +56,11 @@ public class PurposeTemplateSteps {
 
     @Then("l'associazione dell'e-service al template di finalità è negata")
     public void assertEServiceLinkDenied() {
-        String assertionDescription = "L'associazione dell'e-service al template di finalità doveva essere rifiutata";
-        assertLinkDenied(assertionDescription);
+        purposeTemplateUseCase.shouldFailLinkToReceiveEService();
     }
 
     @Then("l'associazione del template e-service al template di finalità è negata")
     public void assertEServiceTemplateLinkDenied() {
-        String assertionDescription = "L'associazione del template e-service al template di finalità doveva essere rifiutata";
-        assertLinkDenied(assertionDescription);
-    }
-
-    private void assertLinkDenied(String assertionDescription) {
-        ApiResponse lastResponse = lastApiResponseStore.getLastResponse();
-        Assertions.assertThat(lastResponse).isNotNull();
-        Assertions.assertThat(lastResponse.isSuccess())
-                .as(assertionDescription)
-                .isFalse();
+        purposeTemplateUseCase.shouldFailLinkToReceiveEService();
     }
 }
-

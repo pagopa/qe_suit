@@ -1,6 +1,8 @@
 package it.pagopa.interop.bff.purpose_template.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.PollingAction;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -16,6 +18,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.Assertions;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +37,18 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
     private final BffPurposeTemplateMapper mapper;
     private final BffPurposeTemplateRequestFactory requestFactory;
     private final EntityStore entityStore;
+    private final LastApiResponseStore lastApiResponseStore;
+
+    @Override
+    public void shouldFailLinkToReceiveEService() {
+        ApiResponse lastResponse = lastApiResponseStore.getLastResponse();
+        Assertions.assertThat(lastResponse)
+                .as("Risposta al tentativo di associare un e-service o template e-service in ricezione al template di finalità")
+                .isNotNull();
+        Assertions.assertThat(lastResponse.getStatusCode())
+                .as("L'associazione di un e-service o template e-service in ricezione deve essere rifiutata con HTTP 409")
+                .isEqualTo(409);
+    }
 
     @Override
     public PurposeTemplate getPurposeTemplate(UUID purposeTemplateId) {

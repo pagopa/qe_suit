@@ -13,6 +13,12 @@ import java.util.UUID;
 
 public interface PurposeTemplateGateway extends Plugin<Channel> {
 
+    /**
+     * Verifica il rifiuto dell'ultimo tentativo di associare un e-service o template e-service in ricezione.
+     * Il tentativo deve corrispondere all'ultima chiamata effettuata in piattaforma.
+     */
+    void shouldFailLinkToReceiveEService();
+
     PurposeTemplate getPurposeTemplate(UUID purposeTemplateId);
 
     PurposeTemplate createPurposeTemplate(

@@ -3,6 +3,7 @@ package it.pagopa.interop.bff.purpose_template.infrastructure;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
@@ -34,9 +35,10 @@ import static org.mockito.Mockito.*;
 
 class BffPurposeTemplateGatewayTest {
     private final BffPurposeTemplateRestClient rest = mock(BffPurposeTemplateRestClient.class);
+    private final LastApiResponseStore lastApiResponseStore = mock(LastApiResponseStore.class);
     private final BffPurposeTemplateGateway gateway = new BffPurposeTemplateGateway(
             rest, mock(BffPurposeTemplateMapper.class), mock(BffPurposeTemplateRequestFactory.class),
-            mock(EntityStore.class));
+            mock(EntityStore.class), lastApiResponseStore);
     private final RiskAnalysisFormConfig config = RiskAnalysisFormConfig.builder().version("2.1")
             .questions(List.of(question("institutionalPurpose", "FREETEXT"),
                     question("purpose", "SINGLE"), question("legalBasis", "MULTI"),
@@ -51,7 +53,8 @@ class BffPurposeTemplateGatewayTest {
     void linksAndAwaitsTheSelectedResourceKind(boolean template) {
         var mapper = mock(BffPurposeTemplateMapper.class);
         var store = mock(EntityStore.class);
-        var adapter = new BffPurposeTemplateGateway(rest, mapper, mock(BffPurposeTemplateRequestFactory.class), store);
+        var adapter = new BffPurposeTemplateGateway(rest, mapper, mock(BffPurposeTemplateRequestFactory.class),
+                store, lastApiResponseStore);
         var purpose = PurposeTemplate.builder().id(UUID.randomUUID()).build();
         var resourceId = UUID.randomUUID();
         var updated = purpose.toBuilder().resourceId(resourceId).build();
@@ -86,7 +89,8 @@ class BffPurposeTemplateGatewayTest {
         var mapper = mock(BffPurposeTemplateMapper.class);
         var store = new InMemoryEntityStore();
         var chains = new TestChainFactory(mock(LastApiResponseStore.class), store);
-        var adapter = new BffPurposeTemplateGateway(rest, mapper, mock(BffPurposeTemplateRequestFactory.class), store);
+        var adapter = new BffPurposeTemplateGateway(rest, mapper, mock(BffPurposeTemplateRequestFactory.class),
+                store, lastApiResponseStore);
         var purpose = PurposeTemplate.builder().id(UUID.randomUUID()).build();
         store.upsert("PT-1", purpose);
         var resourceId = UUID.randomUUID();
@@ -172,6 +176,36 @@ class BffPurposeTemplateGatewayTest {
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("versions must match");
 
         verifyNoInteractions(rest);
+    }
+
+    @Test
+    void acceptsReceiveEServiceLinkRejectionWithConflictStatus() {
+        ApiResponse response = mock(ApiResponse.class);
+        when(response.getStatusCode()).thenReturn(409);
+        when(lastApiResponseStore.getLastResponse()).thenReturn(response);
+
+        assertThatCode(gateway::shouldFailLinkToReceiveEService).doesNotThrowAnyException();
+
+        verifyNoInteractions(rest);
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {200, 201, 204, 302, 400, 401, 403, 404, 422, 500, 503})
+    void rejectsUnexpectedReceiveEServiceLinkStatus(int status) {
+        ApiResponse response = mock(ApiResponse.class);
+        when(response.getStatusCode()).thenReturn(status);
+        when(lastApiResponseStore.getLastResponse()).thenReturn(response);
+
+        assertThatThrownBy(gateway::shouldFailLinkToReceiveEService)
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("409");
+    }
+
+    @Test
+    void rejectsMissingReceiveEServiceLinkResponse() {
+        assertThatThrownBy(gateway::shouldFailLinkToReceiveEService)
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("Risposta");
     }
 
     private static RiskAnalysisFormConfig.Question question(String id, String type) {
