@@ -625,8 +625,9 @@ Feature: Messaggi di errore durante la gestione degli e-service
   Quando l'erogatore tenta di configurare l'interfaccia REST dell'istanza
   Allora il sistema rifiuta la configurazione e indica le versioni OpenAPI ammesse.
 
-    # Prerequisito da verificare: la pubblicazione del template può già rifiutare la specifica.
-    # Serve una fixture isolata se il normale ciclo di pubblicazione impedisce questo stato.
+    # Stato non ottenibile dal normale setup BFF: il caricamento dell'interfaccia del template rifiuta già la versione OpenAPI.
+    # Richiede un dato preesistente isolato con template pubblicato e interfaccia non supportata.
+    # Non simulare il prerequisito cambiando solo la richiesta REST dell'istanza: essa contiene dati di configurazione, non un file.
     Given un'istanza REST in bozza derivata da un template con una versione OpenAPI non supportata
     # Binding BFF negativo mancante; riusare addEServiceTemplateInstanceInterfaceRest.
     When l'erogatore tenta di configurare l'interfaccia REST della versione 1 dell'e-service con dati validi

@@ -3,7 +3,7 @@
 @lingua:it,en
 Feature: Messaggi di errore durante il download del documento firmato e il caricamento degli allegati di fruizione
 
-  Come fruitore
+  Come erogatore o fruitore
   Voglio sapere perché il download del documento firmato o il caricamento di un allegato sono stati rifiutati
   Per capire se il documento è disponibile o se devo correggere il file da allegare.
 
@@ -14,15 +14,18 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
     And un admin appartenente al fruitore PagoPA
 
   Scenario: [ERROR_168] - Impossibilità di scaricare un documento firmato non ancora disponibile
-  Data una richiesta di fruizione di PagoPA attiva il cui documento firmato non è ancora disponibile
-  Quando il fruitore tenta di scaricare il documento firmato della richiesta
+  Data una richiesta di fruizione di PagoPA attiva con un contratto generato e il documento firmato non ancora disponibile
+  Quando l'erogatore tenta di scaricare il documento firmato della richiesta
   Allora il sistema rifiuta il download e segnala che il documento firmato non è ancora disponibile.
 
     Given l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Setup deterministico e binding mancanti per il generatore documentale; non affidarsi a ritardi di generazione.
+    # contractException richiede ACTIVE/SUSPENDED/ARCHIVED e signedContract assente.
+    # Predisporre separatamente contratto presente e documento firmato assente, senza affidarsi a ritardi di generazione.
+    And il contratto della richiesta di fruizione è disponibile
     And il documento firmato della richiesta di fruizione non è ancora disponibile
+    And un admin appartenente all'erogatore Comune di Milano
     # Operazione BFF e binding mancanti per il download del documento firmato; evitare retry nel tentativo.
-    When il fruitore tenta di scaricare il documento firmato della richiesta di fruizione
+    When l'erogatore tenta di scaricare il documento firmato della richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "BFF_CONTRACT_EXCEPTION"
 
   Scenario: [ERROR_197] - Rifiuto di un allegato PDF con contenuto non valido

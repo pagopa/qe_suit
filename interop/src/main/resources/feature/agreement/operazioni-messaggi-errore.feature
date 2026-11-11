@@ -10,14 +10,22 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
   Background:
     Given un admin appartenente all'erogatore Comune di Milano
 
-  Scenario: [ERROR_148] - Impossibilità di inviare una richiesta senza soddisfare gli attributi richiesti
-  Dato un e-service pubblicato con attributi di accesso richiesti e una richiesta di PagoPA in bozza
-  Quando il fruitore tenta di inviare la richiesta senza soddisfare tutti gli attributi richiesti
+  Scenario: [ERROR_148] - Impossibilità di inviare una richiesta senza un attributo dichiarato necessario
+  Dato un e-service pubblicato con un attributo dichiarato richiesto e non posseduto da PagoPA e una richiesta in bozza
+  Quando il fruitore tenta di inviare la richiesta senza possedere l'attributo dichiarato
   Allora il sistema rifiuta l'invio e segnala che i requisiti per la fruizione non sono soddisfatti.
 
-    # Binding di setup con alias mancante; riusare configureRequiredAttributes prima della pubblicazione.
-    # Gli attributi mancanti devono consentire la creazione della bozza: il rifiuto va verificato all'invio.
-    Given un e-service "ES-1" pubblicato dal Comune di Milano con attributi di accesso richiesti e non soddisfatti da PagoPA
+    # Un certificato mancante bloccherebbe già la creazione; un verificato mancante consentirebbe l'invio in PENDING.
+    Given i seguenti attributi dichiarati creati da un admin del Comune di Milano:
+      | alias  |
+      | DECL-1 |
+    And i seguenti e-service in bozza:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
+      | tipo       | gruppo | attributo |
+      | dichiarato | 1      | DECL-1    |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
     And un admin appartenente al fruitore PagoPA
     # Binding BFF negativo mancante; riusare submit senza attendere il successo.
@@ -35,19 +43,23 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When l'erogatore tenta di approvare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE"
 
-  Scenario: [ERROR_150] - Impossibilità di approvare una richiesta dopo la perdita di un attributo necessario
-  Dato un e-service con approvazione manuale e una richiesta di PagoPA ancora in attesa dopo la perdita di un attributo richiesto
+  Scenario: [ERROR_150] - Impossibilità di approvare una richiesta senza verificare un attributo necessario
+  Dato un e-service con un attributo verificato richiesto e non posseduto da PagoPA e una richiesta in attesa di approvazione
   Quando l'erogatore tenta di approvare la richiesta
-  Allora il sistema rifiuta l'attivazione e segnala che il fruitore non soddisfa più i requisiti.
+  Allora il sistema rifiuta l'attivazione e segnala che il fruitore non soddisfa i requisiti.
 
-    # Binding di setup mancante; riusare configureRequiredAttributes con approvazione manuale.
-    Given un e-service pubblicato dal Comune di Milano con approvazione manuale e attributi di accesso richiesti
-    # Binding di setup mancante per il possesso degli attributi richiesti.
-    And PagoPA soddisfa tutti gli attributi richiesti dall'e-service
-    # Binding mancante per lo stato PENDING; riusare linkAgreement.
-    And una richiesta di fruizione in stato PENDING per l'e-service, creata da PagoPA
-    # Binding di setup mancante per la perdita dell'attributo; preservare la richiesta in stato PENDING.
-    And PagoPA non soddisfa più uno degli attributi richiesti dall'e-service
+    # La mancanza del verificato mantiene PENDING; perdere un dichiarato o certificato può cambiare lo stato della richiesta.
+    Given i seguenti attributi verificati creati da un admin del Comune di Milano:
+      | alias |
+      | VER-1 |
+    And i seguenti e-service in bozza:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
+      | tipo       | gruppo | attributo |
+      | verificato | 1      | VER-1     |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione in attesa di approvazione
     # Binding di verifica mancante; riusare getAgreement.
     And la richiesta di fruizione è ancora in stato PENDING
     And un admin appartenente all'erogatore Comune di Milano
@@ -263,7 +275,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS"
 
   Scenario: [ERROR_165] - Impossibilità di duplicare una richiesta dopo la perdita di un attributo certificato
-  Data una richiesta di fruizione duplicabile di PagoPA e un attributo certificato richiesto non più posseduto dal fruitore
+  Data una richiesta di fruizione rifiutata di PagoPA e un attributo certificato richiesto non più posseduto dal fruitore
   Quando il fruitore tenta di duplicare la richiesta
   Allora il sistema rifiuta la duplicazione e segnala che manca l'attributo certificato necessario.
 
@@ -276,12 +288,15 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
       | tipo        | gruppo | attributo |
       | certificato | 1      | CERT-1    |
+    # Binding di configurazione mancante; riusare updateDescriptor prima della pubblicazione.
+    And la versione 1 dell'e-service "ES-1" configurata per l'approvazione manuale delle richieste di fruizione
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And i seguenti attributi certificati assegnati da un admin del Comune di Milano a PagoPA:
       | alias  |
       | CERT-1 |
-    # Binding e setup dello stato duplicabile mancanti; riusare creazione e invio.
-    And una richiesta di fruizione duplicabile per l'e-service, creata da PagoPA
+    # cloneAgreement ammette solo REJECTED; il setup deve inviare la bozza e farla rifiutare dall'erogatore.
+    # Non devono esistere altre richieste in corso per PagoPA e lo stesso e-service.
+    And una richiesta di fruizione rifiutata per l'e-service, creata da PagoPA
     # Binding di revoca mancante; riusare BffTenantRestClient.revokeCertifiedAttribute con l'attributo CERT-1.
     And l'attributo certificato "CERT-1" revocato a PagoPA
     And un admin appartenente al fruitore PagoPA
@@ -290,15 +305,18 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE"
 
   Scenario: [ERROR_166] - Impossibilità di duplicare una richiesta quando ne esiste già un'altra in corso
-  Data una richiesta duplicabile di PagoPA e un'altra richiesta in corso o attiva per lo stesso e-service e lo stesso fruitore
+  Data una richiesta rifiutata di PagoPA e un'altra richiesta attiva per lo stesso e-service e lo stesso fruitore
   Quando il fruitore tenta di duplicare la prima richiesta
   Allora il sistema rifiuta la duplicazione e segnala che esiste già un'altra richiesta di fruizione.
 
-    Given i seguenti e-service pubblicati:
+    Given i seguenti e-service in bozza:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
-    # Binding e setup dello stato duplicabile mancanti; riusare creazione e invio e registrare l'alias.
-    And una richiesta di fruizione duplicabile per l'e-service "ES-1", creata da PagoPA e identificata come "RF-1"
+    # Binding di configurazione mancante; riusare updateDescriptor prima della pubblicazione.
+    And la versione 1 dell'e-service "ES-1" configurata per l'approvazione manuale delle richieste di fruizione
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    # cloneAgreement ammette solo REJECTED; inviare la prima bozza, rifiutarla e registrare l'alias.
+    And una richiesta di fruizione rifiutata per l'e-service "ES-1", creata da PagoPA e identificata come "RF-1"
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti; usare la richiesta duplicabile, non l'ultima richiesta creata.

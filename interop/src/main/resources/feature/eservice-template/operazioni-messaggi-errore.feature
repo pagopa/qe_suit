@@ -126,6 +126,10 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
   Quando il creatore tenta di rinominare il template facendo coincidere il nome derivato dell'istanza con quello dell'e-service
   Allora il sistema rifiuta la modifica e segnala il conflitto sul nome dell'istanza.
 
+    # Non riproducibile sul branch PIN-10967_AIskill_and_markdown (a8095d9) con questo mapping:
+    # PATCH aggiorna solo template interamente in bozza, dai quali non si possono creare istanze.
+    # instanceNameConflict viene controllato dalla rinomina di un template pubblicato (name/update).
+    # ID e mapping JSON mantenuti su indicazione dell'utente; non sostituire l'operazione sotto test.
     Given i seguenti template e-service pubblicati:
       | alias | erogatore        | nome                | tecnologia |
       | T-1   | Comune di Milano | Template di origine | REST       |

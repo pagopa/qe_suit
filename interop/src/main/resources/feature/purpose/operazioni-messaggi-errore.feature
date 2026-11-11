@@ -138,7 +138,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il valutatore tenta di firmarla nuovamente
   Allora il sistema rifiuta la firma e segnala che l'analisi è già stata approvata.
 
-    # Setup e binding parametrico mancanti per il workflow valutatore; confermare il codice nel catalogo di rilascio.
+    # Il Markdown del branch a8095d9 documenta reviewerWorkflowNotInSignableState, non riskAnalysisAlreadyApproved.
+    # Mantenere il mapping atteso e verificare il codice sul contratto di rilascio; setup e binding valutatore mancanti.
     Given un'analisi del rischio della finalità in stato "approvata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
     # Operazione BFF e binding negativo comuni mancanti per la firma dell'analisi.
@@ -150,7 +151,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il valutatore tenta di firmarla
   Allora il sistema rifiuta la firma e segnala che l'analisi è già stata rifiutata.
 
-    # Setup e binding parametrico mancanti per il workflow valutatore; confermare il codice nel catalogo di rilascio.
+    # Il Markdown del branch a8095d9 documenta reviewerWorkflowNotInSignableState, non riskAnalysisAlreadyRejected.
+    # Mantenere il mapping atteso e verificare il codice sul contratto di rilascio; setup e binding valutatore mancanti.
     Given un'analisi del rischio della finalità in stato "rifiutata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
     # Operazione BFF e binding negativo comuni mancanti per la firma dell'analisi.
@@ -162,6 +164,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il valutatore tenta di firmare usando i dati della versione letta
   Allora il sistema rifiuta la firma e segnala che la versione non è più aggiornata.
 
+    # Richiede il workflow valutatore abilitato, una finalità non delegata per un e-service DELIVER e un'analisi firmabile.
+    # L'aggiornamento deve preservare assegnazione, modalità di valutazione e stato firmabile; cambia solo la revisione letta.
     # Setup e binding parametrico mancanti per il workflow valutatore.
     Given un'analisi del rischio della finalità in stato "in attesa di valutazione" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
@@ -178,7 +182,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il valutatore tenta di rifiutarla con una motivazione valida
   Allora il sistema rifiuta l'operazione e segnala che l'analisi è già stata approvata.
 
-    # Setup e binding parametrico mancanti per il workflow valutatore; confermare il codice nel catalogo di rilascio.
+    # Il Markdown del branch a8095d9 documenta reviewerWorkflowNotInSubmittedState, non riskAnalysisAlreadyApproved.
+    # Mantenere il mapping atteso; usare la modalità in cui l'admin compila e il valutatore firma.
     Given un'analisi del rischio della finalità in stato "approvata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
     # Operazione BFF e binding negativo parametrico mancanti per il rifiuto dell'analisi.
@@ -190,7 +195,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il valutatore tenta di rifiutarla nuovamente con una motivazione valida
   Allora il sistema rifiuta l'operazione e segnala che l'analisi è già stata rifiutata.
 
-    # Setup e binding parametrico mancanti per il workflow valutatore; confermare il codice nel catalogo di rilascio.
+    # Il Markdown del branch a8095d9 documenta reviewerWorkflowNotInSubmittedState, non riskAnalysisAlreadyRejected.
+    # Mantenere il mapping atteso; usare la modalità in cui l'admin compila e il valutatore firma.
     Given un'analisi del rischio della finalità in stato "rifiutata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
     # Operazione BFF e binding negativo parametrico mancanti per il rifiuto dell'analisi.
@@ -202,7 +208,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il valutatore tenta di salvare nuove risposte valide
   Allora il sistema rifiuta il salvataggio e segnala che l'analisi è già stata approvata.
 
-    # Setup e binding parametrico mancanti per il workflow valutatore; confermare il codice nel catalogo di rilascio.
+    # Il Markdown del branch a8095d9 documenta reviewerWorkflowNotEditable, non riskAnalysisAlreadyApproved.
+    # Mantenere il mapping atteso; usare la modalità in cui il valutatore compila e firma.
     Given un'analisi del rischio della finalità in stato "approvata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
     # Operazione BFF e binding negativo comuni mancanti per il salvataggio delle risposte.
@@ -214,7 +221,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il valutatore tenta di salvare nuove risposte valide
   Allora il sistema rifiuta il salvataggio e segnala che l'analisi è già stata rifiutata.
 
-    # Setup e binding parametrico mancanti per il workflow valutatore; confermare il codice nel catalogo di rilascio.
+    # Il Markdown del branch a8095d9 documenta reviewerWorkflowNotEditable, non riskAnalysisAlreadyRejected.
+    # Mantenere il mapping atteso; usare la modalità in cui il valutatore compila e firma.
     Given un'analisi del rischio della finalità in stato "rifiutata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
     # Operazione BFF e binding negativo comuni mancanti per il salvataggio delle risposte.
@@ -226,6 +234,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il valutatore tenta di rifiutarla inserendo un collegamento nella motivazione
   Allora il sistema rifiuta l'operazione e invita il valutatore a rimuovere il collegamento.
 
+    # Richiede il workflow abilitato, una finalità DELIVER non delegata e la modalità in cui l'admin compila e il valutatore firma.
+    # La richiesta deve essere già sottoposta al valutatore (SUBMITTED), altrimenti prevale un errore di stato o modalità.
     # Setup e binding parametrico mancanti per il workflow valutatore.
     Given un'analisi del rischio della finalità in stato "in attesa di valutazione" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
