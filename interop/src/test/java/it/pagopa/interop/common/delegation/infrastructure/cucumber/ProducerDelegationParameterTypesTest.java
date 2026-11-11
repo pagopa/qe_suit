@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.ParameterType;
 import io.cucumber.cucumberexpressions.ExpressionFactory;
 import io.cucumber.cucumberexpressions.ParameterTypeRegistry;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.infrastructure.cucumber.parameter_type.CommonParameterTypes;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -15,13 +16,15 @@ import java.util.Locale;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 class ProducerDelegationParameterTypesTest {
 
+    private final ProducerDelegationParameterTypes parameterTypes =
+            new ProducerDelegationParameterTypes(mock(EntityStore.class));
+
     @Test
     void mapsEverySupportedItalianState() {
-        var parameterTypes = new ProducerDelegationParameterTypes();
-
         assertThat(parameterTypes.producerDelegationState("attiva"))
                 .isEqualTo(ProducerDelegationState.ACTIVE);
         assertThat(parameterTypes.producerDelegationState("in attesa di accettazione"))
@@ -61,7 +64,7 @@ class ProducerDelegationParameterTypesTest {
         var stateMethod = ProducerDelegationParameterTypes.class.getMethod("producerDelegationState", String.class);
         registry.defineParameterType(new io.cucumber.cucumberexpressions.ParameterType<>(
                 "producerDelegationState", stateMethod.getAnnotation(ParameterType.class).value(),
-                ProducerDelegationState.class, new ProducerDelegationParameterTypes()::producerDelegationState));
+                ProducerDelegationState.class, parameterTypes::producerDelegationState));
         var factory = new ExpressionFactory(registry);
         var expressions = Arrays.stream(ProducerDelegationSteps.class.getMethod(
                         "setUpProducerDelegation", String.class, Tenant.class, Tenant.class, ProducerDelegationState.class
