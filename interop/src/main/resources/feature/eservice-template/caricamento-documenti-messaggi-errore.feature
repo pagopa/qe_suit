@@ -10,6 +10,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
   Background:
     Given un admin appartenente all'erogatore Comune di Milano
 
+  @work-item:QA-18430
   Scenario: [ERROR_175] - Impossibilità di allegare un documento a una versione eliminata
   Dato un template e-service con una versione pubblicata e una versione successiva in bozza poi eliminata
   Quando l'erogatore tenta di allegare un documento alla bozza eliminata
@@ -22,6 +23,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     When l'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione del template con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND"
 
+  @work-item:QA-18430
   Scenario: [ERROR_188] - Rifiuto di un PDF caricato come interfaccia REST
   Dato un template e-service REST con una versione in bozza senza interfaccia
   Quando l'erogatore tenta di caricare un PDF come interfaccia della versione
@@ -33,6 +35,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     When l'erogatore carica il file "allegato-a.pdf" come "interfaccia" sulla versione del template con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_ESERVICE_INTERFACE_FILE_DETECTED"
 
+  @work-item:QA-18430
   Scenario: [ERROR_189] - Rifiuto di un'interfaccia con una versione OpenAPI non supportata
   Dato un template e-service REST con una versione in bozza senza interfaccia
   Quando l'erogatore tenta di caricare una specifica che dichiara una versione OpenAPI non supportata
@@ -44,6 +47,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     When l'erogatore carica il file "openapi-versione-non-supportata.yaml" come "interfaccia" sulla versione del template con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_OPENAPI_VERSION_NOT_RECOGNIZED"
 
+  @work-item:QA-18430
   Scenario: [ERROR_190] - Rifiuto di un documento il cui formato non è verificabile
   Dato un template e-service con una versione in bozza disponibile per il caricamento di documenti
   Quando l'erogatore tenta di allegare un file il cui formato non può essere determinato
@@ -55,6 +59,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     When l'erogatore carica il file "formato-non-rilevabile.bin" come "documento" sulla versione del template con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_CONTENT_TYPE_DETECTED"
 
+  @work-item:QA-18430
   Scenario: [ERROR_191] - Rifiuto di un'interfaccia SOAP senza indirizzo del servizio
   Dato un template e-service SOAP con una versione in bozza senza interfaccia
   Quando l'erogatore tenta di caricare un WSDL ben formato ma privo dell'indirizzo del servizio
@@ -66,6 +71,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     When l'erogatore carica il file "soap-senza-indirizzo.wsdl" come "interfaccia" sulla versione del template con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INTERFACE_EXTRACTING_SOAP_FIELD_VALUE_ERROR"
 
+  @work-item:QA-18430
   Scenario: [ERROR_192] - Rifiuto di un'interfaccia REST con un URL del server non valido
   Dato un template e-service REST con una versione in bozza senza interfaccia
   Quando l'erogatore tenta di caricare una specifica OpenAPI con un URL del server non valido
@@ -77,6 +83,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     When l'erogatore carica il file "openapi-server-non-valido.yaml" come "interfaccia" sulla versione del template con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_SERVER_URL"
 
+  @work-item:QA-18430
   Scenario: [ERROR_193] - Rifiuto di un documento che supera la dimensione massima
   Dato un template e-service con una versione in bozza disponibile per il caricamento di documenti
   Quando l'erogatore tenta di allegare un PDF valido che supera la dimensione massima consentita
@@ -89,6 +96,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     When l'erogatore carica il file "pdf-oltre-limite.pdf" come "documento" sulla versione del template con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_CONTENT_TOO_LARGE_ERROR"
 
+  @work-item:QA-18430
   Scenario: [ERROR_194] - Rifiuto di un documento PDF con contenuto non valido
   Dato un template e-service con una versione in bozza disponibile per il caricamento di documenti
   Quando l'erogatore tenta di allegare un file identificato come PDF il cui contenuto non è valido
