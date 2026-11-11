@@ -1,140 +1,241 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
 @lingua:it,en
-Feature: Messaggi per client, portachiavi e chiavi pubbliche
+Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e delle chiavi pubbliche
 
-  # POST /clients/:clientId/keys · notAllowedPrivateKeyException
-  Scenario: [ERROR_100] L'erogatore aggiunge al client la chiave di test "chiave-privata-effimera-pem" con il nome "Chiave di test" — una chiave privata effimera di test in PEM, generata per lo scenario
+  Come amministratore o operatore di sicurezza
+  Voglio sapere perché la creazione, la modifica o la registrazione di una chiave sono state rifiutate
+  Per correggere il formato, usare una chiave ammessa o verificare i permessi sul contenitore.
+
+  # Le fixture crittografiche sono dati di test dello scenario; le chiavi private devono essere effimere.
+  Background:
+    Given un admin appartenente all'erogatore Comune di Milano
+
+  Scenario: [ERROR_100] - Rifiuto della registrazione di una chiave privata nel client
+  Dato un client abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare una chiave privata effimera di test al posto di una chiave pubblica
+  Allora il sistema rifiuta la registrazione e segnala che le chiavi private non sono ammesse.
+
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When l'erogatore aggiunge al client la chiave di test "chiave-privata-effimera-pem" con il nome "Chiave di test"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "chiave-privata-effimera-pem" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_PRIVATE_KEY_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS"
 
-  # POST /clients/:clientId/keys · notAllowedCertificateException
-  Scenario: [ERROR_101] L'erogatore aggiunge al client la chiave di test "certificato-x509" con il nome "Chiave di test" — un certificato X.509 PEM di test contenente una chiave pubblica
+  Scenario: [ERROR_101] - Rifiuto della registrazione di un certificato X.509 nel client
+  Dato un client abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare un certificato X.509 PEM di test contenente una chiave pubblica
+  Allora il sistema rifiuta la registrazione e segnala che i certificati non sono ammessi.
+
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When l'erogatore aggiunge al client la chiave di test "certificato-x509" con il nome "Chiave di test"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "certificato-x509" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_CERTIFICATE_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS"
 
-  # POST /clients/:clientId/keys · notAllowedMultipleKeysException
-  Scenario: [ERROR_102] L'erogatore aggiunge al client la chiave di test "due-chiavi-pubbliche-pem" con il nome "Chiave di test" — due blocchi di chiave pubblica PEM di test concatenati
+  Scenario: [ERROR_102] - Rifiuto della registrazione di più chiavi pubbliche insieme nel client
+  Dato un client abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare due chiavi pubbliche PEM di test concatenate
+  Allora il sistema rifiuta la registrazione e segnala che occorre inviare una sola chiave.
+
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When l'erogatore aggiunge al client la chiave di test "due-chiavi-pubbliche-pem" con il nome "Chiave di test"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "due-chiavi-pubbliche-pem" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_MULTIPLE_KEYS_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS"
 
-  # POST /clients/:clientId/keys · invalidPublicKey
-  Scenario: [ERROR_103] L'erogatore aggiunge al client la chiave di test "pem-incompleto" con il nome "Chiave di test" — un contenitore di chiavi valido e una chiave pubblica PEM di test incompleta
+  Scenario: [ERROR_103] - Rifiuto di una chiave pubblica incompleta nel client
+  Dato un client abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare una chiave pubblica PEM di test incompleta
+  Allora il sistema rifiuta la registrazione e segnala che la chiave pubblica non è valida.
+
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When l'erogatore aggiunge al client la chiave di test "pem-incompleto" con il nome "Chiave di test"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "pem-incompleto" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_PUBLIC_KEY__POST_CLIENTS_CLIENT_ID_KEYS"
 
-  # POST /clients/:clientId/keys · notAnRSAKey
-  Scenario: [ERROR_104] L'erogatore aggiunge al client la chiave di test "ec-pubblica" con il nome "Chiave di test" — una chiave pubblica EC valida di test in PEM
+  Scenario: [ERROR_104] - Rifiuto di una chiave pubblica non RSA nel client
+  Dato un client abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare una chiave pubblica EC valida di test
+  Allora il sistema rifiuta la registrazione e segnala che è richiesta una chiave RSA.
+
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When l'erogatore aggiunge al client la chiave di test "ec-pubblica" con il nome "Chiave di test"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "ec-pubblica" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_AN_RSAKEY__POST_CLIENTS_CLIENT_ID_KEYS"
 
-  # POST /clients/:clientId/keys · invalidKeyLength
-  Scenario: [ERROR_105] L'erogatore aggiunge al client la chiave di test "rsa-pubblica-1024-bit" con il nome "Chiave di test" — un contenitore di chiavi valido e una chiave pubblica RSA PEM di test da 1024 bit
+  Scenario: [ERROR_105] - Rifiuto di una chiave RSA con lunghezza insufficiente nel client
+  Dato un client abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare una chiave pubblica RSA di test da 1024 bit
+  Allora il sistema rifiuta la registrazione e segnala che la lunghezza della chiave non è ammessa.
+
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When l'erogatore aggiunge al client la chiave di test "rsa-pubblica-1024-bit" con il nome "Chiave di test"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-1024-bit" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_KEY_LENGTH__POST_CLIENTS_CLIENT_ID_KEYS"
 
-  # POST /clients/:clientId/keys · keyAlreadyExists
-  # Riutilizzare la chiave pubblica già associata dal Given. Le fixture PEM devono essere dati di test.
-  Scenario: [ERROR_106] L'erogatore aggiunge al client la chiave di test "rsa-pubblica-già-registrata" con il nome "Chiave di test" — una chiave pubblica di test già registrata e il contenitore abilitato
+  Scenario: [ERROR_106] - Impossibilità di registrare nuovamente una chiave già presente nel client
+  Dato un client con una chiave pubblica di test già registrata
+  Quando l'erogatore tenta di aggiungere nuovamente la stessa chiave
+  Allora il sistema rifiuta la registrazione e segnala che la chiave è già presente.
+
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When l'erogatore aggiunge al client la chiave di test "rsa-pubblica-già-registrata" con il nome "Chiave di test"
+    # La fixture identifica la chiave effettiva registrata dal Given, non una nuova chiave RSA.
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-già-registrata" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_KEY_ALREADY_EXISTS"
 
-  # DELETE /clients/:clientId/keys/:keyId · userNotAllowedToDeleteClientKey
-  Scenario: [ERROR_107] L’operatore di sicurezza che non ha aggiunto la chiave elimina la chiave del client — un client e una chiave aggiunta da un altro operatore di sicurezza dello stesso ente
-    Given un client e una chiave aggiunta da un altro operatore di sicurezza dello stesso ente
-    When l’operatore di sicurezza che non ha aggiunto la chiave elimina la chiave del client
+  Scenario: [ERROR_107] - Impossibilità di eliminare una chiave del client registrata da un altro operatore
+  Dato un client con una chiave registrata da un operatore di sicurezza
+  Quando un altro operatore di sicurezza dello stesso ente tenta di eliminare la chiave
+  Allora il sistema rifiuta l'eliminazione e segnala che l'operatore non è autorizzato.
+
+    # Binding di setup mancante; riusare createClient e addKey con due utenti distinti associati al client.
+    Given un client con una chiave registrata da un operatore di sicurezza e un altro operatore di sicurezza dello stesso ente associato al client
+    # Binding di identità mancante; il secondo operatore non deve essere sostituito dall'admin nel When.
+    And il secondo operatore di sicurezza selezionato come utente corrente
+    # Operazione BFF e binding negativo mancanti per l'eliminazione della chiave del client.
+    When l'utente tenta di eliminare la chiave registrata dall'altro operatore nel client
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_USER_NOT_ALLOWED_TO_DELETE_CLIENT_KEY"
 
-  # POST /producerKeychains/:producerKeychainId/keys · notAllowedPrivateKeyException
-  Scenario: [ERROR_108] L'erogatore aggiunge al portachiavi la chiave di test "chiave-privata-effimera-pem" con il nome "Chiave di test" — una chiave privata effimera di test in PEM, generata per lo scenario
-    Given un portachiavi di erogazione predisposto per le chiavi
+  Scenario: [ERROR_108] - Rifiuto della registrazione di una chiave privata nel portachiavi
+  Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare una chiave privata effimera di test al posto di una chiave pubblica
+  Allora il sistema rifiuta la registrazione e segnala che le chiavi private non sono ammesse.
+
+    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
+    Given un portachiavi erogatore creato dal Comune di Milano
     And un admin appartenente all'erogatore Comune di Milano
-    When l'erogatore aggiunge al portachiavi la chiave di test "chiave-privata-effimera-pem" con il nome "Chiave di test"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "chiave-privata-effimera-pem" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_PRIVATE_KEY_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
-  # POST /producerKeychains/:producerKeychainId/keys · notAllowedCertificateException
-  Scenario: [ERROR_109] L'erogatore aggiunge al portachiavi la chiave di test "certificato-x509" con il nome "Chiave di test" — un certificato X.509 PEM di test contenente una chiave pubblica
-    Given un portachiavi di erogazione predisposto per le chiavi
+  Scenario: [ERROR_109] - Rifiuto della registrazione di un certificato X.509 nel portachiavi
+  Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare un certificato X.509 PEM di test contenente una chiave pubblica
+  Allora il sistema rifiuta la registrazione e segnala che i certificati non sono ammessi.
+
+    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
+    Given un portachiavi erogatore creato dal Comune di Milano
     And un admin appartenente all'erogatore Comune di Milano
-    When l'erogatore aggiunge al portachiavi la chiave di test "certificato-x509" con il nome "Chiave di test"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "certificato-x509" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_CERTIFICATE_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
-  # POST /producerKeychains/:producerKeychainId/keys · notAllowedMultipleKeysException
-  Scenario: [ERROR_110] L'erogatore aggiunge al portachiavi la chiave di test "due-chiavi-pubbliche-pem" con il nome "Chiave di test" — due blocchi di chiave pubblica PEM di test concatenati
-    Given un portachiavi di erogazione predisposto per le chiavi
+  Scenario: [ERROR_110] - Rifiuto della registrazione di più chiavi pubbliche insieme nel portachiavi
+  Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare due chiavi pubbliche PEM di test concatenate
+  Allora il sistema rifiuta la registrazione e segnala che occorre inviare una sola chiave.
+
+    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
+    Given un portachiavi erogatore creato dal Comune di Milano
     And un admin appartenente all'erogatore Comune di Milano
-    When l'erogatore aggiunge al portachiavi la chiave di test "due-chiavi-pubbliche-pem" con il nome "Chiave di test"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "due-chiavi-pubbliche-pem" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_MULTIPLE_KEYS_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
-  # POST /producerKeychains/:producerKeychainId/keys · invalidPublicKey
-  Scenario: [ERROR_111] L'erogatore aggiunge al portachiavi la chiave di test "pem-incompleto" con il nome "Chiave di test" — un contenitore di chiavi valido e una chiave pubblica PEM di test incompleta
-    Given un portachiavi di erogazione predisposto per le chiavi
+  Scenario: [ERROR_111] - Rifiuto di una chiave pubblica incompleta nel portachiavi
+  Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare una chiave pubblica PEM di test incompleta
+  Allora il sistema rifiuta la registrazione e segnala che la chiave pubblica non è valida.
+
+    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
+    Given un portachiavi erogatore creato dal Comune di Milano
     And un admin appartenente all'erogatore Comune di Milano
-    When l'erogatore aggiunge al portachiavi la chiave di test "pem-incompleto" con il nome "Chiave di test"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "pem-incompleto" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_PUBLIC_KEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
-  # POST /producerKeychains/:producerKeychainId/keys · notAnRSAKey
-  Scenario: [ERROR_112] L'erogatore aggiunge al portachiavi la chiave di test "ec-pubblica" con il nome "Chiave di test" — una chiave pubblica EC valida di test in PEM
-    Given un portachiavi di erogazione predisposto per le chiavi
+  Scenario: [ERROR_112] - Rifiuto di una chiave pubblica non RSA nel portachiavi
+  Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare una chiave pubblica EC valida di test
+  Allora il sistema rifiuta la registrazione e segnala che è richiesta una chiave RSA.
+
+    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
+    Given un portachiavi erogatore creato dal Comune di Milano
     And un admin appartenente all'erogatore Comune di Milano
-    When l'erogatore aggiunge al portachiavi la chiave di test "ec-pubblica" con il nome "Chiave di test"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "ec-pubblica" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_AN_RSAKEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
-  # POST /producerKeychains/:producerKeychainId/keys · invalidKeyLength
-  Scenario: [ERROR_113] L'erogatore aggiunge al portachiavi la chiave di test "rsa-pubblica-1024-bit" con il nome "Chiave di test" — un contenitore di chiavi valido e una chiave pubblica RSA PEM di test da 1024 bit
-    Given un portachiavi di erogazione predisposto per le chiavi
+  Scenario: [ERROR_113] - Rifiuto di una chiave RSA con lunghezza insufficiente nel portachiavi
+  Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare una chiave pubblica RSA di test da 1024 bit
+  Allora il sistema rifiuta la registrazione e segnala che la lunghezza della chiave non è ammessa.
+
+    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
+    Given un portachiavi erogatore creato dal Comune di Milano
     And un admin appartenente all'erogatore Comune di Milano
-    When l'erogatore aggiunge al portachiavi la chiave di test "rsa-pubblica-1024-bit" con il nome "Chiave di test"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-1024-bit" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_KEY_LENGTH__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
-  # POST /clientsConsumer · hyperlinkDetectionError
-  Scenario: [ERROR_114] L’operatore autorizzato crea un client di fruizione con un collegamento nel nome — l’operatore abilitato alla creazione con dati altrimenti validi
-    Given l’operatore abilitato alla creazione con dati altrimenti validi
-    When l’operatore autorizzato crea un client di fruizione con un collegamento nel nome
+  Scenario: [ERROR_114] - Rifiuto della creazione di un client di fruizione con un link nel nome
+  Dato un amministratore abilitato alla creazione dei client
+  Quando tenta di creare un client di fruizione con un collegamento nel nome e gli altri dati validi
+  Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento.
+
+    # Binding negativo parametrico mancante; riusare createConsumerClient o createApiClient in base al tipo.
+    When l'utente tenta di creare un client "CONSUMER" con il nome "Client https://example.org"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_CONSUMER"
 
-  # POST /clientsApi · hyperlinkDetectionError
-  Scenario: [ERROR_115] L’operatore autorizzato crea un client API con un collegamento nel nome — l’operatore abilitato alla creazione con dati altrimenti validi
-    Given l’operatore abilitato alla creazione con dati altrimenti validi
-    When l’operatore autorizzato crea un client API con un collegamento nel nome
+  Scenario: [ERROR_115] - Rifiuto della creazione di un client API con un link nel nome
+  Dato un amministratore abilitato alla creazione dei client
+  Quando tenta di creare un client API con un collegamento nel nome e gli altri dati validi
+  Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento.
+
+    # Binding negativo parametrico mancante; riusare createConsumerClient o createApiClient in base al tipo.
+    When l'utente tenta di creare un client "API" con il nome "Client https://example.org"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_API"
 
-  # POST /clients/:clientId/keys · hyperlinkDetectionError
-  Scenario: [ERROR_116] L'erogatore aggiunge al client la chiave di test "rsa-pubblica-valida" con il nome "Chiave https://example.org" — il contenitore delle chiavi predisposto e una chiave pubblica RSA valida e inedita
+  Scenario: [ERROR_116] - Rifiuto di una chiave del client con un link nel nome
+  Dato un client abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare una chiave pubblica RSA valida e inedita con un collegamento nel nome
+  Allora il sistema rifiuta la registrazione e invita l'erogatore a rimuovere il collegamento.
+
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When l'erogatore aggiunge al client la chiave di test "rsa-pubblica-valida" con il nome "Chiave https://example.org"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-valida" al "client" con il nome "Chiave https://example.org"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_CLIENT_ID_KEYS"
 
-  # POST /producerKeychains · hyperlinkDetectionError
-  Scenario: [ERROR_117] L’operatore autorizzato crea un portachiavi di erogazione con un collegamento nel nome — l’operatore abilitato alla creazione con dati altrimenti validi
-    Given l’operatore abilitato alla creazione con dati altrimenti validi
-    When l’operatore autorizzato crea un portachiavi di erogazione con un collegamento nel nome
+  Scenario: [ERROR_117] - Rifiuto della creazione di un portachiavi con un link nel nome
+  Dato un amministratore abilitato alla creazione dei portachiavi di erogazione
+  Quando tenta di creare un portachiavi con un collegamento nel nome e gli altri dati validi
+  Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento.
+
+    # Binding BFF negativo mancante; riusare createProducerKeychain senza attendere il successo.
+    When l'utente tenta di creare un portachiavi di erogazione con il nome "Portachiavi https://example.org"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCER_KEYCHAINS"
 
-  # POST /producerKeychains/:producerKeychainId/keys · hyperlinkDetectionError
-  Scenario: [ERROR_118] L'erogatore aggiunge al portachiavi la chiave di test "rsa-pubblica-valida" con il nome "Chiave https://example.org" — il contenitore delle chiavi predisposto e una chiave pubblica RSA valida e inedita
-    Given un portachiavi di erogazione predisposto per le chiavi
+  Scenario: [ERROR_118] - Rifiuto di una chiave del portachiavi con un link nel nome
+  Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
+  Quando l'erogatore tenta di registrare una chiave pubblica RSA valida e inedita con un collegamento nel nome
+  Allora il sistema rifiuta la registrazione e invita l'erogatore a rimuovere il collegamento.
+
+    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
+    Given un portachiavi erogatore creato dal Comune di Milano
     And un admin appartenente all'erogatore Comune di Milano
-    When l'erogatore aggiunge al portachiavi la chiave di test "rsa-pubblica-valida" con il nome "Chiave https://example.org"
+    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
+    When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-valida" al "portachiavi" con il nome "Chiave https://example.org"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
 
-  # PATCH /clients/:clientId · hyperlinkDetectionError
-  # Usare https://example.org nel campo indicato e valori validi per gli altri campi. Il body deve superare la validazione dello schema. Nessuna rotta PATCH nel commit analizzato. Verificare il branch di rilascio e l’eventuale sostituzione funzionale. Non rimappare questo ID su un altro endpoint.
-  Scenario: [ERROR_119] L’operatore autorizzato modifica i dati del client con un collegamento nel nome — l’operatore abilitato con la risorsa e i dati predisposti per la modifica
-    Given l’operatore abilitato con la risorsa e i dati predisposti per la modifica
-    When l’operatore autorizzato modifica i dati del client con un collegamento nel nome
+  Scenario: [ERROR_119] - Rifiuto della modifica di un client con un link nel nome
+  Dato un client esistente e un amministratore abilitato alla sua gestione
+  Quando l'amministratore tenta di inserire un collegamento nel nome lasciando validi gli altri dati
+  Allora il sistema rifiuta la modifica e invita l'amministratore a rimuovere il collegamento.
+
+    Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
+    # Operazione BFF e binding negativo parametrico mancanti; verificare il contratto PATCH di rilascio.
+    # Non rimappare questo ID su un'altra operazione.
+    When l'utente tenta di modificare i dati del "client" con il nome "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__PATCH_CLIENTS_CLIENT_ID"
 
-  # PATCH /producerKeychains/:producerKeychainId · hyperlinkDetectionError
-  # Usare https://example.org nel campo indicato e valori validi per gli altri campi. Il body deve superare la validazione dello schema. Nessuna rotta PATCH nel commit analizzato. Verificare il branch di rilascio e l’eventuale sostituzione funzionale. Non rimappare questo ID su un altro endpoint.
-  Scenario: [ERROR_120] L’operatore autorizzato modifica i dati del portachiavi con un collegamento nel nome — l’operatore abilitato con la risorsa e i dati predisposti per la modifica
-    Given l’operatore abilitato con la risorsa e i dati predisposti per la modifica
-    When l’operatore autorizzato modifica i dati del portachiavi con un collegamento nel nome
+  Scenario: [ERROR_120] - Rifiuto della modifica di un portachiavi con un link nel nome
+  Dato un portachiavi di erogazione esistente e un amministratore abilitato alla sua gestione
+  Quando l'amministratore tenta di inserire un collegamento nel nome lasciando validi gli altri dati
+  Allora il sistema rifiuta la modifica e invita l'amministratore a rimuovere il collegamento.
+
+    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
+    Given un portachiavi erogatore creato dal Comune di Milano
+    And un admin appartenente all'erogatore Comune di Milano
+    # Operazione BFF e binding negativo parametrico mancanti; verificare il contratto PATCH di rilascio.
+    # Non rimappare questo ID su un'altra operazione.
+    When l'utente tenta di modificare i dati del "portachiavi" con il nome "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__PATCH_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID"
