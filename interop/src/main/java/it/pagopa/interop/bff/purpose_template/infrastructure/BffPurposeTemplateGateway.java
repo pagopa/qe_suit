@@ -131,18 +131,12 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
 
     @Override
     public PurposeTemplate linkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef) {
-        LinkableResourceRequest payload = new LinkableResourceRequest()
-                .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE)
-                .eserviceId(eServiceRef.id());
-        return linkResource(purposeTemplate, payload, eServiceRef.id(), false);
+        return linkResource(purposeTemplate, linkEServicePayload(eServiceRef), eServiceRef.id(), false);
     }
 
     @Override
     public PurposeTemplate linkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplateRef templateRef) {
-        var payload = new LinkableResourceRequest()
-                .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE_TEMPLATE)
-                .eserviceTemplateId(templateRef.id());
-        return linkResource(purposeTemplate, payload, templateRef.id(), true);
+        return linkResource(purposeTemplate, linkEServiceTemplatePayload(templateRef), templateRef.id(), true);
     }
 
     private PurposeTemplate linkResource(
@@ -152,46 +146,54 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
                 .assertThat(linked -> resourceId.equals(template ? linked.getEserviceTemplateId() : linked.getEserviceId()))
                 .get();
 
+        return awaitLinkedResource(purposeTemplate, resourceId);
+    }
+
+    @Override
+    public PurposeTemplate tryLinkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef) {
+        return tryLinkResource(purposeTemplate, linkEServicePayload(eServiceRef), eServiceRef.id());
+    }
+
+    @Override
+    public PurposeTemplate tryLinkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplateRef eServiceTemplateRef) {
+        return tryLinkResource(purposeTemplate, linkEServiceTemplatePayload(eServiceTemplateRef), eServiceTemplateRef.id());
+    }
+
+    private @Nullable PurposeTemplate tryLinkResource(
+            PurposeTemplate purposeTemplate,
+            LinkableResourceRequest payload,
+            UUID resourceId
+    ) {
+        PollingAction<LinkedResource> response = restClient.linkResource(purposeTemplate.getId(), payload)
+                .withoutPolling();
+
+        if (!response.getRaw().isSuccess()) {
+            return null;
+        }
+
+        return response
+                .map(linked -> awaitLinkedResource(purposeTemplate, resourceId))
+                .updateContext()
+                .get();
+    }
+
+    private PurposeTemplate awaitLinkedResource(PurposeTemplate purposeTemplate, UUID resourceId) {
         return PollingUtils.pollUntil(
                 () -> fetchAllLinkedResources(purposeTemplate),
                 pt -> pt.getLinkedResourceIds().contains(resourceId)
         );
     }
 
-    @Override
-    public PurposeTemplate tryLinkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef) {
-        LinkableResourceRequest payload = new LinkableResourceRequest()
+    private static LinkableResourceRequest linkEServicePayload(EServiceRef eServiceRef) {
+        return new LinkableResourceRequest()
                 .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE)
                 .eserviceId(eServiceRef.id());
-
-        var response = restClient.linkResource(purposeTemplate.getId(), payload)
-                .withoutPolling();
-
-        return getPurposeTemplate(purposeTemplate, response);
     }
 
-    @Override
-    public PurposeTemplate tryLinkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplateRef eServiceTemplateRef) {
-        LinkableResourceRequest payload = new LinkableResourceRequest()
+    private static LinkableResourceRequest linkEServiceTemplatePayload(EServiceTemplateRef templateRef) {
+        return new LinkableResourceRequest()
                 .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE_TEMPLATE)
-                .eserviceTemplateId(eServiceTemplateRef.id());
-
-        var response = restClient.linkResource(purposeTemplate.getId(), payload)
-                .withoutPolling();
-
-        return getPurposeTemplate(purposeTemplate, response);
-    }
-
-    private @Nullable PurposeTemplate getPurposeTemplate(PurposeTemplate purposeTemplate,
-        PollingAction<LinkedResource> response) {
-        if (!response.getRaw().isSuccess()) {
-            return null;
-        }
-
-        return response
-            .map(linked -> getPurposeTemplate(purposeTemplate.getId()))
-            .updateContext()
-            .get();
+                .eserviceTemplateId(templateRef.id());
     }
 
     private PurposeTemplate fetchAllLinkedResources(PurposeTemplate fallbackTemplate) {
