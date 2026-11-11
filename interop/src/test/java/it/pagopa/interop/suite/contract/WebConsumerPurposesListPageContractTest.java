@@ -129,15 +129,28 @@ public class WebConsumerPurposesListPageContractTest {
                                         rowCounter.getAndIncrement();
                                     });
 
-                                    if(page.rowsPerPageSelector().getSelectedSize() >= rowCounter.get())
-                                        softly.assertThat(page.pagination().exists())
-                                                .as("Pagination should not be present when the number of rows is less than the selected page size")
-                                                .isFalse();
-                                    else
-                                        softly.assertThat(page.pagination().exists())
-                                                .as("Pagination should be present when the number of rows is greater than to the selected page size")
-                                                .isTrue();
+                                    int initialSize = page.rowsPerPageSelector().getSelectedSize();
+                                    softly.assertThat(initialSize)
+                                            .as("Rows per page should be initialized to 10")
+                                            .isEqualTo(10);
+                                    List<Integer> sizeValues = page.rowsPerPageSelector().getSizeValues();
+                                    softly.assertThat(sizeValues.size())
+                                            .as("Rows per page selector should have more than one option")
+                                            .isGreaterThan(1);
 
+                                    int initialRowCount = page.purposesTable().tBody().rows().size();
+                                    page.rowsPerPageSelector().setSize(sizeValues.get(1));
+                                    int updatedRowCount = page.purposesTable().tBody().rows().size();
+                                    page.rowsPerPageSelector().setSize(initialSize);
+                                    if (updatedRowCount > initialRowCount) {
+                                        softly.assertThat(page.pagination().exists())
+                                                .as("Pagination should be displayed when more rows than the first page are available")
+                                                .isTrue();
+                                    } else {
+                                        softly.assertThat(page.pagination().exists())
+                                                .as("Pagination should not be required when all %s rows fit into a single page of %s elements", updatedRowCount, initialRowCount)
+                                                .isFalse();
+                                    }
                                 }
                         )));
     }

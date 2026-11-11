@@ -80,73 +80,85 @@ public class WebConsumerAgreementsListPageContractTest {
                         page -> {
                         },
                         page -> assertSoftly(softly -> {
-                                    softly.assertThat(page.pageDescription().read())
-                                            .as("Page description")
-                                            .isEqualTo("Le richieste di fruizione inoltrate verranno raccolte in questa area.");
-                                    softly.assertThat(page.eServiceFilterInput().read())
-                                            .as("E-Service filter initial value")
-                                            .isEmpty();
-                                    softly.assertThat(page.eServiceFilterInput().getLabelText())
-                                            .as("E-Service filter label")
-                                            .isEqualTo("Cerca per e-service");
-                                    softly.assertThat(page.providerFilterInput().read())
-                                            .as("Producer filter initial value")
-                                            .isEmpty();
-                                    softly.assertThat(page.providerFilterInput().getLabelText())
-                                            .as("Producer filter label")
-                                            .isEqualTo("Cerca per erogatore");
-                                    softly.assertThat(page.statusFilterInput().read())
-                                            .as("Status filter initial value")
-                                            .isEmpty();
-                                    softly.assertThat(page.statusFilterInput().getLabelText())
-                                            .as("Status filter label")
-                                            .isEqualTo("Stato della richiesta");
+                            softly.assertThat(page.pageDescription().read())
+                                    .as("Page description")
+                                    .isEqualTo("Le richieste di fruizione inoltrate verranno raccolte in questa area.");
+                            softly.assertThat(page.eServiceFilterInput().read())
+                                    .as("E-Service filter initial value")
+                                    .isEmpty();
+                            softly.assertThat(page.eServiceFilterInput().getLabelText())
+                                    .as("E-Service filter label")
+                                    .isEqualTo("Cerca per e-service");
+                            softly.assertThat(page.providerFilterInput().read())
+                                    .as("Producer filter initial value")
+                                    .isEmpty();
+                            softly.assertThat(page.providerFilterInput().getLabelText())
+                                    .as("Producer filter label")
+                                    .isEqualTo("Cerca per erogatore");
+                            softly.assertThat(page.statusFilterInput().read())
+                                    .as("Status filter initial value")
+                                    .isEmpty();
+                            softly.assertThat(page.statusFilterInput().getLabelText())
+                                    .as("Status filter label")
+                                    .isEqualTo("Stato della richiesta");
 
-                                    softly.assertThat(page.agreementsTable().exists()).isTrue();
-                                    TableRow header = page.agreementsTable().tHead().rows().get(0);
+                            softly.assertThat(page.agreementsTable().exists()).isTrue();
+                            TableRow header = page.agreementsTable().tHead().rows().get(0);
 
-                                    softly.assertThat(header.cells().get(0).read())
-                                            .as("E-Service column")
-                                            .isEqualTo("E-service");
+                            softly.assertThat(header.cells().get(0).read())
+                                    .as("E-Service column")
+                                    .isEqualTo("E-service");
 
-                                    softly.assertThat(header.cells().get(1).read())
-                                            .as("Erogatore column")
-                                            .isEqualTo("Erogatore");
+                            softly.assertThat(header.cells().get(1).read())
+                                    .as("Erogatore column")
+                                    .isEqualTo("Erogatore");
 
-                                    softly.assertThat(header.cells().get(2).read())
-                                            .as("Status column")
-                                            .isEqualTo("Stato richiesta");
+                            softly.assertThat(header.cells().get(2).read())
+                                    .as("Status column")
+                                    .isEqualTo("Stato richiesta");
 
-                                    List<TableRow> rows = page.agreementsTable().tBody().rows();
-                                    AtomicInteger rowCounter = new AtomicInteger(1);
-                                    rows.forEach(row -> {
-                                        softly.assertThat(row.cells().get(0).read())
-                                                .as("E-Service cell value at row %s", rowCounter)
-                                                .isNotBlank();
+                            List<TableRow> rows = page.agreementsTable().tBody().rows();
+                            AtomicInteger rowCounter = new AtomicInteger(1);
+                            rows.forEach(row -> {
+                                softly.assertThat(row.cells().get(0).read())
+                                        .as("E-Service cell value at row %s", rowCounter)
+                                        .isNotBlank();
 
-                                        softly.assertThat(row.cells().get(1).read())
-                                                .as("Provider cell value at row %s", rowCounter)
-                                                .isNotBlank();
+                                softly.assertThat(row.cells().get(1).read())
+                                        .as("Provider cell value at row %s", rowCounter)
+                                        .isNotBlank();
 
-                                        softly.assertThat(row.cells().get(2).read())
-                                                .as("Status cell value at row %s", rowCounter)
-                                                .isNotBlank();
+                                softly.assertThat(row.cells().get(2).read())
+                                        .as("Status cell value at row %s", rowCounter)
+                                        .isNotBlank();
 
-                                        softly.assertThat(row.cells().get(3).read())
-                                                .as("Cell with detail button at row %s", rowCounter)
-                                                .isNotBlank();
+                                softly.assertThat(row.cells().get(3).read())
+                                        .as("Cell with detail button at row %s", rowCounter)
+                                        .isNotBlank();
                                 rowCounter.getAndIncrement();
                             });
-                            softly.assertThat(page.rowsPerPageSelector().exists()).isTrue();
+                            int initialSize = page.rowsPerPageSelector().getSelectedSize();
+                            softly.assertThat(initialSize)
+                                    .as("Rows per page should be initialized to 10")
+                                    .isEqualTo(10);
+                            List<Integer> sizeValues = page.rowsPerPageSelector().getSizeValues();
+                            softly.assertThat(sizeValues.size())
+                                    .as("Rows per page selector should have more than one option")
+                                    .isGreaterThan(1);
 
-                            if(page.rowsPerPageSelector().getSelectedSize() >= rowCounter.get())
+                            int initialRowCount = page.agreementsTable().tBody().rows().size();
+                            page.rowsPerPageSelector().setSize(sizeValues.get(1));
+                            int updatedRowCount = page.agreementsTable().tBody().rows().size();
+                            page.rowsPerPageSelector().setSize(initialSize);
+                            if (updatedRowCount > initialRowCount) {
                                 softly.assertThat(page.pagination().exists())
-                                        .as("Pagination should not be present when the number of rows is less than the selected page size")
-                                        .isFalse();
-                            else
-                                softly.assertThat(page.pagination().exists())
-                                        .as("Pagination should be present when the number of rows is greater than to the selected page size")
+                                        .as("Pagination should be displayed when more rows than the first page are available")
                                         .isTrue();
+                            } else {
+                                softly.assertThat(page.pagination().exists())
+                                        .as("Pagination should not be required when all %s rows fit into a single page of %s elements", updatedRowCount, initialRowCount)
+                                        .isFalse();
+                            }
                         })
                 )
         );
