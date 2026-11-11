@@ -1,122 +1,170 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
 @lingua:it,en
-Feature: Messaggi per file, esportazione e consultazione degli e-service
+Feature: Messaggi di errore durante la consultazione, il trasferimento e il caricamento di file degli e-service
 
-  # GET /producers/eservices/:eserviceId · invalidEserviceRequester
-  Scenario: [ERROR_169] L’amministratore dell’ente delegato consulta i dettagli dell’e-service in erogazione — un e-service precedentemente gestito in delega e la delega revocata
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore |
-      | ES-1 | Comune di Milano |
-    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
+  Come erogatore o delegato
+  Voglio sapere perché la consultazione, l'importazione, l'esportazione o il caricamento di un file sono stati rifiutati
+  Per verificare la delega, scegliere una versione disponibile o correggere il file.
+
+  Background:
+    Given un admin appartenente all'erogatore Comune di Milano
+
+  @producer-delegation-settings
+  Scenario: [ERROR_169] - Impossibilità di consultare un e-service dopo la revoca della delega
+  Dato un e-service del Comune di Milano precedentemente delegato al Comune di Pozzallo e una delega revocata
+  Quando l'amministratore del delegato tenta di consultare i dettagli dell'e-service in erogazione
+  Allora il sistema rifiuta la consultazione e segnala che l'ente non è autorizzato.
+
+    Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
+    And la delega in erogazione viene revocata dal Comune di Milano
     And un admin appartenente al delegato Comune di Pozzallo
-    When l’amministratore dell’ente delegato consulta i dettagli dell’e-service in erogazione
+    # Binding BFF negativo mancante; riusare readEService senza attendere il successo.
+    When l'utente tenta di consultare i dettagli dell'e-service in erogazione
     Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID"
 
-  # GET /producers/eservices/:eserviceId/descriptors/:descriptorId · invalidEserviceRequester
-  Scenario: [ERROR_170] L’amministratore dell’ente delegato consulta i dettagli della versione in erogazione — un e-service precedentemente gestito in delega e la delega revocata
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore |
-      | ES-1 | Comune di Milano |
-    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
+  @producer-delegation-settings
+  Scenario: [ERROR_170] - Impossibilità di consultare una versione dopo la revoca della delega
+  Dato un e-service del Comune di Milano precedentemente delegato al Comune di Pozzallo e una delega revocata
+  Quando l'amministratore del delegato tenta di consultare i dettagli della versione in erogazione
+  Allora il sistema rifiuta la consultazione e segnala che l'ente non è autorizzato.
+
+    Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
+    And la delega in erogazione viene revocata dal Comune di Milano
     And un admin appartenente al delegato Comune di Pozzallo
-    When l’amministratore dell’ente delegato consulta i dettagli della versione in erogazione
+    # Binding BFF negativo mancante; riusare readDescriptor senza attendere il successo.
+    When l'utente tenta di consultare i dettagli della versione 1 dell'e-service in erogazione
     Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID"
 
-  # GET /export/eservices/:eserviceId/descriptors/:descriptorId · invalidEserviceRequester
-  Scenario: [ERROR_171] L'utente esporta la versione dell'e-service — un e-service con delega in erogazione attiva e una versione predisposta per l’esportazione
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore |
-      | ES-1 | Comune di Milano |
-    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
+  @producer-delegation-settings
+  Scenario: [ERROR_171] - Impossibilità per il delegato di esportare una versione dell'e-service
+  Dato un e-service del Comune di Milano con una versione pubblicata e una delega attiva al Comune di Pozzallo
+  Quando l'amministratore del delegato tenta di esportare la versione
+  Allora il sistema rifiuta l'esportazione e segnala che l'ente non è autorizzato.
+
+    Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
-    When l'utente esporta la versione dell'e-service
+    # Operazione BFF e binding negativo comuni mancanti per l'esportazione della versione.
+    When l'utente tenta di esportare la versione 1 dell'e-service
     Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_EXPORT_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID"
 
-  # POST /eservices/:eServiceId/descriptors/:descriptorId/documents · eserviceDescriptorNotFound
-  Scenario: [ERROR_172] L'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test" — un e-service esistente e l’identificativo di una versione in bozza eliminata
-    Given i seguenti e-service in bozza:
-      | alias | erogatore |
-      | ES-1 | Comune di Milano |
-    And un admin appartenente all'erogatore Comune di Milano
-    And la versione in bozza non è più disponibile
+  Scenario: [ERROR_172] - Impossibilità di allegare un documento a una versione eliminata
+  Dato un e-service con una versione pubblicata e una versione successiva in bozza poi eliminata
+  Quando l'erogatore tenta di allegare un documento alla bozza eliminata
+  Allora il sistema rifiuta il caricamento e segnala che la versione non è più disponibile.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    # Setup e binding mancanti; riusare addDescriptor, eliminare solo la bozza e conservarne il riferimento.
+    # Manca l'eliminazione BFF della versione; deleteEService eliminerebbe l'intero e-service.
+    And la versione successiva dell'e-service creata in bozza e poi eliminata
+    # Binding BFF comune mancante per il caricamento; riusare addDocument sulla versione eliminata.
     When l'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_DESCRIPTOR_NOT_FOUND"
 
-  # POST /import/eservices · invalidZipStructure
-  Scenario: [ERROR_173] L’operatore autorizzato importa un e-service da archivio ZIP — un archivio ZIP valido privo del file configuration.json richiesto
-    Given un archivio ZIP valido privo del file configuration.json richiesto
-    When l’operatore autorizzato importa un e-service da archivio ZIP
+  Scenario: [ERROR_173] - Rifiuto dell'importazione di un archivio senza la configurazione dell'e-service
+  Dato un amministratore abilitato all'importazione degli e-service
+  Quando tenta di importare un archivio ZIP valido ma privo della configurazione richiesta
+  Allora il sistema rifiuta l'importazione e segnala che l'archivio non contiene la struttura necessaria.
+
+    # Fixture da predisporre: ZIP leggibile, privo di configuration.json e con gli altri contenuti validi.
+    # Operazione BFF e binding mancanti per l'importazione da file.
+    When l'erogatore tenta di importare un e-service dal file "zip-senza-configurazione.zip"
     Then il messaggio di errore corrisponde al caso "BFF_INVALID_ZIP_STRUCTURE"
 
-  # GET /export/eservices/:eserviceId/descriptors/:descriptorId · delegatedEserviceNotExportable
-  Scenario: [ERROR_174] L'utente esporta la versione dell'e-service — una versione dell’e-service con delega in erogazione attiva o pendente
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore |
-      | ES-1 | Comune di Milano |
-    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
+  @producer-delegation-settings
+  Scenario: [ERROR_174] - Impossibilità per l'erogatore di esportare un e-service con delega attiva
+  Dato un e-service del Comune di Milano con una versione pubblicata e una delega attiva al Comune di Pozzallo
+  Quando l'erogatore tenta di esportare la versione
+  Allora il sistema rifiuta l'esportazione e segnala che l'e-service delegato non è esportabile.
+
+    Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente all'erogatore Comune di Milano
-    When l'utente esporta la versione dell'e-service
+    # Operazione BFF e binding negativo comuni mancanti per l'esportazione della versione.
+    When l'utente tenta di esportare la versione 1 dell'e-service
     Then il messaggio di errore corrisponde al caso "BFF_DELEGATED_ESERVICE_NOT_EXPORTABLE"
 
-  # POST /eservices/:eServiceId/descriptors/:descriptorId/documents · invalidEserviceInterfaceFileDetected
-  Scenario: [ERROR_181] L'erogatore carica il file "allegato-a.pdf" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test" — una versione in bozza e un file valido come documento ma incompatibile con la tecnologia dell’interfaccia
+  Scenario: [ERROR_181] - Rifiuto di un PDF caricato come interfaccia REST
+  Dato un e-service REST con una versione in bozza senza interfaccia
+  Quando l'erogatore tenta di caricare un PDF come interfaccia della versione
+  Allora il sistema rifiuta il caricamento e segnala che il file non è valido come interfaccia.
+
     Given i seguenti e-service in bozza:
-      | alias | erogatore |
-      | ES-1 | Comune di Milano |
-    And un admin appartenente all'erogatore Comune di Milano
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "allegato-a.pdf" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_ESERVICE_INTERFACE_FILE_DETECTED"
 
-  # POST /eservices/:eServiceId/descriptors/:descriptorId/documents · openapiVersionNotRecognized
-  Scenario: [ERROR_182] L'erogatore carica il file "openapi-versione-non-supportata.yaml" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test" — una versione in bozza e una specifica JSON o YAML con versione OpenAPI non supportata
+  Scenario: [ERROR_182] - Rifiuto di un'interfaccia con una versione OpenAPI non supportata
+  Dato un e-service REST con una versione in bozza senza interfaccia
+  Quando l'erogatore tenta di caricare una specifica che dichiara una versione OpenAPI non supportata
+  Allora il sistema rifiuta il caricamento e indica le versioni OpenAPI ammesse.
+
     Given i seguenti e-service in bozza:
-      | alias | erogatore |
-      | ES-1 | Comune di Milano |
-    And un admin appartenente all'erogatore Comune di Milano
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "openapi-versione-non-supportata.yaml" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "CATALOG_OPENAPI_VERSION_NOT_RECOGNIZED__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS"
 
-  # POST /eservices/:eServiceId/descriptors/:descriptorId/documents · invalidContentTypeDetected
-  Scenario: [ERROR_183] L'erogatore carica il file "formato-non-rilevabile.bin" come "documento" sulla versione dell'e-service con il nome "Allegato di test" — la risorsa predisposta per il caricamento e un file il cui tipo non è determinabile
+  Scenario: [ERROR_183] - Rifiuto di un documento il cui formato non è verificabile
+  Dato un e-service con una versione in bozza disponibile per il caricamento di documenti
+  Quando l'erogatore tenta di allegare un file il cui formato non può essere determinato
+  Allora il sistema rifiuta il caricamento e segnala che non è stato possibile verificare il formato.
+
     Given i seguenti e-service in bozza:
-      | alias | erogatore |
-      | ES-1 | Comune di Milano |
-    And un admin appartenente all'erogatore Comune di Milano
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "formato-non-rilevabile.bin" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_CONTENT_TYPE_DETECTED"
 
-  # POST /eservices/:eServiceId/descriptors/:descriptorId/documents · interfaceExtractingSoapFieldValueError
-  Scenario: [ERROR_184] L'erogatore carica il file "soap-senza-indirizzo.wsdl" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test" — una versione SOAP in bozza e un WSDL ben formato ma privo dell’indirizzo del servizio o della definizione delle operazioni
-    Given un admin appartenente all'erogatore Comune di Milano
-    And una versione in bozza senza interfaccia di un e-service con tecnologia "SOAP"
+  Scenario: [ERROR_184] - Rifiuto di un'interfaccia SOAP senza indirizzo del servizio
+  Dato un e-service SOAP con una versione in bozza senza interfaccia
+  Quando l'erogatore tenta di caricare un WSDL ben formato ma privo dell'indirizzo del servizio
+  Allora il sistema rifiuta il caricamento e invita l'erogatore a completare il WSDL.
+
+    # Binding di setup parametrico mancante; riusare createEService con EServiceCreationCommand.technology.
+    Given una versione in bozza senza interfaccia di un e-service con tecnologia "SOAP"
+    # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "soap-senza-indirizzo.wsdl" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "CATALOG_INTERFACE_EXTRACTING_SOAP_FIELD_VALUE_ERROR"
 
-  # POST /eservices/:eServiceId/descriptors/:descriptorId/documents · invalidServerUrl
-  Scenario: [ERROR_185] L'erogatore carica il file "openapi-server-non-valido.yaml" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test" — una versione in bozza e una specifica valida salvo l’URL del server
+  Scenario: [ERROR_185] - Rifiuto di un'interfaccia REST con un URL del server non valido
+  Dato un e-service REST con una versione in bozza senza interfaccia
+  Quando l'erogatore tenta di caricare una specifica OpenAPI con un URL del server non valido
+  Allora il sistema rifiuta il caricamento e invita l'erogatore a correggere l'URL.
+
     Given i seguenti e-service in bozza:
-      | alias | erogatore |
-      | ES-1 | Comune di Milano |
-    And un admin appartenente all'erogatore Comune di Milano
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "openapi-server-non-valido.yaml" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_SERVER_URL"
 
-  # POST /eservices/:eServiceId/descriptors/:descriptorId/documents · contentTooLargeError
-  # Dimensionare la fixture oltre il limite applicativo configurato e sotto il limite del proxy.
-  Scenario: [ERROR_186] L'erogatore carica il file "pdf-oltre-limite.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test" — una versione in bozza e un documento con MIME ammesso e dimensione superiore al limite applicativo
+  Scenario: [ERROR_186] - Rifiuto di un documento che supera la dimensione massima
+  Dato un e-service con una versione in bozza disponibile per il caricamento di documenti
+  Quando l'erogatore tenta di allegare un PDF valido che supera la dimensione massima consentita
+  Allora il sistema rifiuta il caricamento e indica il limite di dimensione per i documenti.
+
     Given i seguenti e-service in bozza:
-      | alias | erogatore |
-      | ES-1 | Comune di Milano |
-    And un admin appartenente all'erogatore Comune di Milano
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    # Dimensionare la fixture oltre il limite applicativo configurato e sotto il limite del proxy.
+    # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "pdf-oltre-limite.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "CATALOG_CONTENT_TOO_LARGE_ERROR"
 
-  # POST /eservices/:eServiceId/descriptors/:descriptorId/documents · invalidFileUploadError
-  Scenario: [ERROR_187] L'erogatore carica il file "pdf-con-contenuto-non-valido.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test" — una risorsa in bozza e un file con MIME ammesso ma con contenuto incompatibile con il formato dichiarato
+  Scenario: [ERROR_187] - Rifiuto di un documento PDF con contenuto non valido
+  Dato un e-service con una versione in bozza disponibile per il caricamento di documenti
+  Quando l'erogatore tenta di allegare un file identificato come PDF il cui contenuto non è valido
+  Allora il sistema rifiuta il caricamento e invita l'erogatore a controllare il file.
+
     Given i seguenti e-service in bozza:
-      | alias | erogatore |
-      | ES-1 | Comune di Milano |
-    And un admin appartenente all'erogatore Comune di Milano
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "pdf-con-contenuto-non-valido.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_FILE_UPLOAD_ERROR"
