@@ -59,8 +59,9 @@ public class WebCampaignsContractTest {
 
     @TestFactory
     Stream<DynamicTest> shouldShowEmptyCampaignsList() {
+        // COMUNE_2 non ha campagne su dev e test, dove il ramo con lista vuota viene verificato davvero
         return webContractValidator
-                .as(userProvider.resolve(UserAlias.COMUNE_1))
+                .as(userProvider.resolve(UserAlias.COMUNE_2))
                 .on(CampaignsPage.class)
                 .tests(Stream.of(new WebScenario<>(
                         "Lo stato di lista vuota compare solo se l'ente non ha campagne",
