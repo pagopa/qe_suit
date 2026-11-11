@@ -280,13 +280,13 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And i seguenti attributi certificati assegnati da un admin del Comune di Milano a PagoPA:
       | alias  |
       | CERT-1 |
-    # Binding e setup dello stato duplicabile mancanti; riusare creazione e invio e registrare l'alias.
-    And una richiesta di fruizione duplicabile per l'e-service "ES-1", creata da PagoPA e identificata come "RF-1"
+    # Binding e setup dello stato duplicabile mancanti; riusare creazione e invio.
+    And una richiesta di fruizione duplicabile per l'e-service, creata da PagoPA
     # Binding di revoca mancante; riusare BffTenantRestClient.revokeCertifiedAttribute con l'attributo CERT-1.
     And l'attributo certificato "CERT-1" revocato a PagoPA
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti per la duplicazione della richiesta.
-    When il fruitore tenta di duplicare la richiesta di fruizione "RF-1"
+    When il fruitore tenta di duplicare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE"
 
   Scenario: [ERROR_166] - Impossibilità di duplicare una richiesta quando ne esiste già un'altra in corso

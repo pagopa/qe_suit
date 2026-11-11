@@ -28,11 +28,11 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
   Allora il sistema rifiuta l'aggiunta e segnala che il nome dell'analisi è già in uso.
 
     # Binding di setup mancante; riusare createEServiceTemplate con modalità RECEIVE.
-    Given un template e-service in ricezione identificato come "T-1" con una versione in bozza
+    Given un template e-service in ricezione con una versione in bozza
     # Operazione BFF e binding di setup mancanti per le analisi del rischio del template.
-    And un'analisi del rischio completa associata al template "T-1" e identificata come "AR-1"
+    And un'analisi del rischio completa associata al template
     # Operazione BFF e binding negativo mancanti; non usare addRiskAnalysis dell'e-service.
-    When l'erogatore tenta di aggiungere al template "T-1" un'analisi del rischio con il nome dell'analisi "AR-1"
+    When l'erogatore tenta di aggiungere al template un'analisi del rischio con il nome dell'analisi esistente
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_RISK_ANALYSIS_NAME_DUPLICATE"
 
   Scenario: [ERROR_126] - Impossibilità di rinominare un template con il nome di un altro template

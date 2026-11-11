@@ -21,12 +21,10 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
-    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
-      | alias |
-      | F-1   |
+    # Binding di setup mancante; riusare createPurpose.
+    And una finalità in bozza creata da PagoPA per l'e-service
     # Binding negativo parametrico mancante; riusare createPurpose o createReversePurpose secondo la modalità.
-    When il fruitore tenta di creare una finalità per l'e-service "ES-1" con il nome della finalità "F-1"
+    When il fruitore tenta di creare una finalità per l'e-service con il nome della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES"
 
   Scenario: [ERROR_019] - Impossibilità di creare una finalità omonima per un e-service in ricezione
@@ -41,12 +39,10 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     And un'analisi del rischio completa associata all'e-service
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup comune mancante; riusare createReversePurpose con l'analisi dell'erogatore.
-    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
-      | alias |
-      | F-1   |
+    # Binding di setup mancante; riusare createReversePurpose con l'analisi dell'erogatore.
+    And una finalità in bozza creata da PagoPA per l'e-service
     # Binding negativo parametrico mancante; riusare createPurpose o createReversePurpose secondo la modalità.
-    When il fruitore tenta di creare una finalità per l'e-service "ES-1" con il nome della finalità "F-1"
+    When il fruitore tenta di creare una finalità per l'e-service con il nome della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_REVERSE_PURPOSES"
 
   Scenario: [ERROR_020] - Impossibilità di rinominare una finalità con il nome di un'altra dello stesso fruitore
@@ -76,12 +72,10 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
-    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
-      | alias |
-      | F-1   |
+    # Binding di setup mancante; riusare createPurpose.
+    And una finalità in bozza creata da PagoPA per l'e-service
     # Operazione BFF e binding negativo mancanti; riusare updateRequest per gli altri dati validi.
-    When il fruitore tenta di modificare la finalità "F-1" con il nome "Valore https://example.org"
+    When il fruitore tenta di modificare la finalità con il nome "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID"
 
   Scenario: [ERROR_022] - Impossibilità di duplicare una finalità quando il nome derivato è già in uso
@@ -113,12 +107,10 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     And l'e-service "ES-1" collegato a un template di finalità pubblicato
-    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
-    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
-      | alias |
-      | F-1   |
-    # Binding BFF negativo mancante; riusare createPurposeFromTemplate con il nome effettivo di F-1.
-    When il fruitore tenta di creare una finalità dal template finalità per l'e-service "ES-1" con il nome della finalità "F-1"
+    # Binding di setup mancante; riusare createPurpose.
+    And una finalità in bozza creata da PagoPA per l'e-service
+    # Binding BFF negativo mancante; riusare createPurposeFromTemplate con il nome effettivo della finalità.
+    When il fruitore tenta di creare una finalità dal template finalità per l'e-service con il nome della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES"
 
   Scenario: [ERROR_024] - Impossibilità di rinominare una finalità da template con il nome di un'altra finalità
@@ -269,13 +261,11 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
-    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
-      | alias |
-      | F-1   |
+    # Binding di setup mancante; riusare createPurpose.
+    And una finalità in bozza creata da PagoPA per l'e-service
     # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
     # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
-    When il fruitore tenta di aggiornare parzialmente la finalità "F-1" con il nome "Finalità https://example.org"
+    When il fruitore tenta di aggiornare parzialmente la finalità con il nome "Finalità https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__PATCH_PURPOSES_PURPOSE_ID"
 
   Scenario: [ERROR_035] - Rifiuto dell'aggiornamento parziale di una finalità in ricezione con nome duplicato
@@ -312,11 +302,9 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     And un'analisi del rischio completa associata all'e-service
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup comune mancante; riusare createReversePurpose con l'analisi dell'erogatore.
-    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
-      | alias |
-      | F-1   |
+    # Binding di setup mancante; riusare createReversePurpose con l'analisi dell'erogatore.
+    And una finalità in bozza creata da PagoPA per l'e-service
     # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
     # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
-    When il fruitore tenta di aggiornare parzialmente la finalità "F-1" con il nome "Finalità https://example.org"
+    When il fruitore tenta di aggiornare parzialmente la finalità con il nome "Finalità https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__PATCH_REVERSE_PURPOSES_PURPOSE_ID"

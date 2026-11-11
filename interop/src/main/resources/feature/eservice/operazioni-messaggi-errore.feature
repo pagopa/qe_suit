@@ -61,9 +61,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | template | suffisso  |
       | ES-1  | T-1      | Duplicato |
     And l'erogatore istanzia un nuovo e-service dal template
-    # Binding mancante per l'alias; riusare l'EntityStore dell'istanza appena creata.
-    And l'e-service appena istanziato è identificato come "ES-2"
-    When l'erogatore tenta di aggiornare i dati dell'istanza "ES-2" con la parola identificativa "Duplicato"
+    When l'erogatore tenta di aggiornare i dati dell'e-service appena istanziato con la parola identificativa "Duplicato"
     Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID"
 
   Scenario: [ERROR_041] - Rifiuto dell'archiviazione dell'e-service con un preavviso inferiore a quello di una versione
@@ -219,11 +217,10 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        | nome                | tecnologia |
       | T-1   | Comune di Milano | Template di origine | REST       |
     And l'erogatore istanzia un nuovo e-service dal template
-    # Binding mancante per l'alias; riusare l'EntityStore dell'istanza appena creata.
-    And l'e-service appena istanziato è identificato come "ES-1"
-    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
+    And l'e-service appena istanziato delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    And la delega in erogazione viene revocata dal Comune di Milano
     And un admin appartenente al delegato Comune di Pozzallo
-    When l'erogatore tenta di aggiornare i dati dell'istanza "ES-1" con la parola identificativa "Disponibile"
+    When l'erogatore tenta di aggiornare i dati dell'e-service appena istanziato con la parola identificativa "Disponibile"
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID"
 
   Scenario: [ERROR_052] - Impossibilità di eliminare un e-service in bozza dopo la revoca della delega
@@ -384,12 +381,11 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        | nome                | tecnologia |
       | T-1   | Comune di Milano | Template di origine | REST       |
     And l'erogatore istanzia un nuovo e-service dal template
-    # Binding mancante per l'alias; riusare l'EntityStore dell'istanza appena creata.
-    And l'e-service appena istanziato è identificato come "ES-1"
-    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
+    And l'e-service appena istanziato delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    And la delega in erogazione viene revocata dal Comune di Milano
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante; riusare updateEServiceInstanceDescriptor per la bozza.
-    When l'erogatore tenta di modificare la configurazione della versione 1 dell'istanza "ES-1" con dati validi
+    When l'erogatore tenta di modificare la configurazione della versione 1 dell'e-service appena istanziato con dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID"
 
   Scenario: [ERROR_063] - Impossibilità di pubblicare una versione dopo la revoca della delega
@@ -540,10 +536,10 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | template | suffisso   |
       | ES-1  | T-1      | Aggiornare |
     # Binding mancante; riusare addVersion e il ciclo di pubblicazione del template.
-    And una nuova versione del template pubblicata e disponibile per l'aggiornamento dell'istanza "ES-1"
+    And una nuova versione del template pubblicata e disponibile per l'aggiornamento dell'e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
-    When l'erogatore tenta di aggiornare l'istanza "ES-1" alla nuova versione del template
+    When l'erogatore tenta di aggiornare l'e-service alla nuova versione del template
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_UPGRADE"
 
   Scenario: [ERROR_074] - Impossibilità di configurare l'interfaccia SOAP di un'istanza dopo la revoca della delega
@@ -666,9 +662,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        | nome                | tecnologia |
       | T-1   | Comune di Milano | Template di origine | REST       |
     And l'erogatore istanzia un nuovo e-service dal template
-    # Binding mancante per l'alias; riusare l'EntityStore dell'istanza appena creata.
-    And l'e-service appena istanziato è identificato come "ES-1"
-    When l'erogatore tenta di aggiornare i dati dell'istanza "ES-1" con la parola identificativa "https://a.it"
+    When l'erogatore tenta di aggiornare i dati dell'e-service appena istanziato con la parola identificativa "https://a.it"
     Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_ESERVICES_E_SERVICE_ID"
 
   Scenario: [ERROR_083] - Rifiuto del caricamento di un documento con un link nel nome
