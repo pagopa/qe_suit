@@ -1,129 +1,322 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
 @lingua:it,en
-Feature: Messaggi per finalità e analisi del rischio
+Feature: Messaggi di errore durante la gestione delle finalità e la valutazione delle analisi del rischio
 
-  # POST /purposes · duplicatedPurposeTitle
-  Scenario: [ERROR_018] L’operatore autorizzato crea la finalità con il nome già in uso — una finalità omonima dello stesso fruitore per lo stesso e-service
-    Given una finalità omonima dello stesso fruitore per lo stesso e-service
-    When l’operatore autorizzato crea la finalità con il nome già in uso
+  Come fruitore o valutatore
+  Voglio sapere perché una modifica della finalità o una valutazione dell'analisi del rischio sono state rifiutate
+  Per scegliere nomi distinti, correggere i dati o verificare lo stato e la versione dell'analisi.
+
+  Background:
+    Given un admin appartenente al fruitore PagoPA
+
+  # Per i nomi espliciti riusare i payload delle factory: BffPurposeCreateCommand.title non è implementato.
+
+  Scenario: [ERROR_018] - Impossibilità di creare una finalità con un nome già usato per lo stesso e-service
+  Data una finalità di PagoPA per un e-service già sottoscritto dal fruitore
+  Quando il fruitore tenta di creare un'altra finalità con lo stesso nome per lo stesso e-service
+  Allora il sistema rifiuta la creazione e segnala che il nome è già in uso.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
+    # Binding negativo parametrico mancante; riusare createPurpose o createReversePurpose secondo la modalità.
+    When il fruitore tenta di creare una finalità per l'e-service "ES-1" con il nome della finalità "F-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES"
 
-  # POST /reverse/purposes · duplicatedPurposeTitle
-  Scenario: [ERROR_019] L’operatore autorizzato crea la finalità per un e-service in modalità ricezione con il nome già in uso — una finalità omonima dello stesso fruitore per lo stesso e-service
-    Given una finalità omonima dello stesso fruitore per lo stesso e-service
-    When l’operatore autorizzato crea la finalità per un e-service in modalità ricezione con il nome già in uso
+  Scenario: [ERROR_019] - Impossibilità di creare una finalità omonima per un e-service in ricezione
+  Dato un e-service in ricezione sottoscritto da PagoPA con una finalità già creata
+  Quando il fruitore tenta di crearne un'altra con lo stesso nome per lo stesso e-service
+  Allora il sistema rifiuta la creazione e segnala che il nome è già in uso.
+
+    Given i seguenti e-service in bozza:
+      | alias | erogatore        | modalità |
+      | ES-1  | Comune di Milano | RECEIVE  |
+    # Binding di setup mancante; riusare addLatestRiskAnalysis per l'e-service in ricezione.
+    And un'analisi del rischio completa associata all'e-service
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    # Binding di setup comune mancante; riusare createReversePurpose con l'analisi dell'erogatore.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
+    # Binding negativo parametrico mancante; riusare createPurpose o createReversePurpose secondo la modalità.
+    When il fruitore tenta di creare una finalità per l'e-service "ES-1" con il nome della finalità "F-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_REVERSE_PURPOSES"
 
-  # POST /purposes/:purposeId · duplicatedPurposeTitle
-  # Associare il nome richiesto alla risorsa omonima predisposta oppure alla parola identificativa che genera il nome in conflitto.
-  Scenario: [ERROR_020] Il fruitore modifica la finalità impostando il nome "Catalogo duplicato" — una finalità omonima dello stesso fruitore per lo stesso e-service
-    Given una finalità omonima dello stesso fruitore per lo stesso e-service
-    When il fruitore modifica la finalità impostando il nome "Catalogo duplicato"
+  Scenario: [ERROR_020] - Impossibilità di rinominare una finalità con il nome di un'altra dello stesso fruitore
+  Date due finalità in bozza di PagoPA per lo stesso e-service con nomi diversi
+  Quando il fruitore tenta di assegnare alla seconda il nome della prima
+  Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
+      | F-2   |
+    # Operazione BFF e binding negativo mancanti; riusare updateRequest per gli altri dati validi.
+    When il fruitore tenta di modificare la finalità "F-2" con il nome della finalità "F-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID"
 
-  # POST /purposes/:purposeId · hyperlinkDetectionError
-  Scenario: [ERROR_021] Il fruitore modifica la finalità impostando il nome "Valore https://example.org" — la finalità o il template in bozza con gli altri dati validi
-    Given la finalità o il template in bozza con gli altri dati validi
-    When il fruitore modifica la finalità impostando il nome "Valore https://example.org"
+  Scenario: [ERROR_021] - Rifiuto della modifica di una finalità con un link nel nome
+  Data una finalità di PagoPA in bozza
+  Quando il fruitore tenta di inserire un collegamento nel nome lasciando validi gli altri dati
+  Allora il sistema rifiuta la modifica e invita il fruitore a rimuovere il collegamento.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
+    # Operazione BFF e binding negativo mancanti; riusare updateRequest per gli altri dati validi.
+    When il fruitore tenta di modificare la finalità "F-1" con il nome "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID"
 
-  # POST /purposes/:purposeId/clone · duplicatedPurposeTitle
-  Scenario: [ERROR_022] L’operatore autorizzato duplica la finalità — una finalità omonima dello stesso fruitore per lo stesso e-service
-    Given una finalità omonima dello stesso fruitore per lo stesso e-service
-    When l’operatore autorizzato duplica la finalità
+  Scenario: [ERROR_022] - Impossibilità di duplicare una finalità quando il nome derivato è già in uso
+  Data una finalità di PagoPA e un'altra finalità dello stesso fruitore per lo stesso e-service con il nome che deriverebbe dalla duplicazione
+  Quando il fruitore tenta di duplicare la prima finalità
+  Allora il sistema rifiuta la duplicazione e segnala che il nome è già in uso.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
+    # Setup e binding mancanti; verificare il nome derivato dal clone, senza assumere prefissi o suffissi.
+    And un'altra finalità di PagoPA per l'e-service "ES-1" con il nome che deriverebbe dalla duplicazione di "F-1"
+    # Operazione BFF e binding negativo mancanti; usare F-1, non l'ultima finalità creata.
+    When il fruitore tenta di duplicare la finalità "F-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID_CLONE"
 
-  # POST /purposeTemplates/:purposeTemplateId/purposes · duplicatedPurposeTitle
-  Scenario: [ERROR_023] L’operatore autorizzato crea la finalità a partire dal template con il nome già in uso — una finalità omonima dello stesso fruitore per lo stesso e-service
-    Given una finalità omonima dello stesso fruitore per lo stesso e-service
-    When l’operatore autorizzato crea la finalità a partire dal template con il nome già in uso
+  Scenario: [ERROR_023] - Impossibilità di creare una finalità da template con un nome già usato
+  Data una finalità di PagoPA e un template finalità pubblicato applicabile allo stesso e-service
+  Quando il fruitore tenta di creare una finalità da template con lo stesso nome della finalità esistente
+  Allora il sistema rifiuta la creazione e segnala che il nome è già in uso.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    And l'e-service "ES-1" collegato a un template di finalità pubblicato
+    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
+    # Binding BFF negativo mancante; riusare createPurposeFromTemplate con il nome effettivo di F-1.
+    When il fruitore tenta di creare una finalità dal template finalità per l'e-service "ES-1" con il nome della finalità "F-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES"
 
-  # PATCH /purposeTemplates/:purposeTemplateId/purposes/:purposeId · duplicatedPurposeTitle
-  Scenario: [ERROR_024] L’operatore autorizzato modifica la finalità creata da template con il nome già in uso — una finalità omonima dello stesso fruitore per lo stesso e-service
-    Given una finalità omonima dello stesso fruitore per lo stesso e-service
-    When l’operatore autorizzato modifica la finalità creata da template con il nome già in uso
+  Scenario: [ERROR_024] - Impossibilità di rinominare una finalità da template con il nome di un'altra finalità
+  Date due finalità distinte di PagoPA per lo stesso e-service, una delle quali creata da template
+  Quando il fruitore tenta di assegnare alla finalità da template il nome dell'altra
+  Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    And l'e-service "ES-1" collegato a un template di finalità pubblicato
+    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
+    # Binding di setup mancante; riusare createPurposeFromTemplate e registrare la finalità distinta.
+    And una finalità in bozza creata da PagoPA dal template finalità per l'e-service "ES-1" e identificata come "F-2"
+    # Operazione BFF e binding negativo mancanti; riusare patchFromTemplateRequest, non updateRequest.
+    When il fruitore tenta di modificare la finalità da template "F-2" con il nome della finalità "F-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES_PURPOSE_ID"
 
-  # POST /purposes/:purposeId/riskAnalysis/sign · riskAnalysisAlreadyApproved
-  # Conservare i dati letti prima della modifica. Per il mismatch usare la versione metadata precedente e una richiesta altrimenti valida. Il CSV contiene la riga, ma il simbolo non è presente nel catalogo generato; controllare i codici del workflow valutatore sul branch target.
-  Scenario: [ERROR_025] Il valutatore firma l’analisi del rischio — un’analisi del rischio già approvata
-    Given un’analisi del rischio già approvata
-    When il valutatore firma l’analisi del rischio
+  Scenario: [ERROR_025] - Impossibilità di firmare un'analisi del rischio già approvata
+  Data un'analisi del rischio già approvata e assegnata al valutatore di PagoPA
+  Quando il valutatore tenta di firmarla nuovamente
+  Allora il sistema rifiuta la firma e segnala che l'analisi è già stata approvata.
+
+    # Setup e binding parametrico mancanti per il workflow valutatore; confermare il codice nel catalogo di rilascio.
+    Given un'analisi del rischio della finalità in stato "approvata" assegnata al valutatore di PagoPA
+    And un reviewer appartenente al fruitore PagoPA
+    # Operazione BFF e binding negativo comuni mancanti per la firma dell'analisi.
+    When il valutatore tenta di firmare l'analisi del rischio della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_SIGN"
 
-  # POST /purposes/:purposeId/riskAnalysis/sign · riskAnalysisAlreadyRejected
-  # Conservare i dati letti prima della modifica. Per il mismatch usare la versione metadata precedente e una richiesta altrimenti valida. Il CSV contiene la riga, ma il simbolo non è presente nel catalogo generato; controllare i codici del workflow valutatore sul branch target.
-  Scenario: [ERROR_026] Il valutatore firma l’analisi del rischio — un’analisi del rischio già rifiutata
-    Given un’analisi del rischio già rifiutata
-    When il valutatore firma l’analisi del rischio
+  Scenario: [ERROR_026] - Impossibilità di firmare un'analisi del rischio già rifiutata
+  Data un'analisi del rischio già rifiutata e assegnata al valutatore di PagoPA
+  Quando il valutatore tenta di firmarla
+  Allora il sistema rifiuta la firma e segnala che l'analisi è già stata rifiutata.
+
+    # Setup e binding parametrico mancanti per il workflow valutatore; confermare il codice nel catalogo di rilascio.
+    Given un'analisi del rischio della finalità in stato "rifiutata" assegnata al valutatore di PagoPA
+    And un reviewer appartenente al fruitore PagoPA
+    # Operazione BFF e binding negativo comuni mancanti per la firma dell'analisi.
+    When il valutatore tenta di firmare l'analisi del rischio della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_SIGN"
 
-  # POST /purposes/:purposeId/riskAnalysis/sign · purposeMetadataVersionMismatch
-  Scenario: [ERROR_027] Il valutatore firma l’analisi del rischio — un’analisi del rischio aggiornata dopo che il valutatore ha letto la versione precedente
-    Given un’analisi del rischio aggiornata dopo che il valutatore ha letto la versione precedente
-    When il valutatore firma l’analisi del rischio
+  Scenario: [ERROR_027] - Impossibilità di firmare un'analisi del rischio aggiornata dopo la lettura
+  Data un'analisi del rischio modificata dopo che il valutatore ne ha letto una versione precedente
+  Quando il valutatore tenta di firmare usando i dati della versione letta
+  Allora il sistema rifiuta la firma e segnala che la versione non è più aggiornata.
+
+    # Setup e binding parametrico mancanti per il workflow valutatore.
+    Given un'analisi del rischio della finalità in stato "in attesa di valutazione" assegnata al valutatore di PagoPA
+    And un reviewer appartenente al fruitore PagoPA
+    # Binding di lettura mancante; conservare la versione metadata effettiva prima dell'aggiornamento.
+    And i dati dell'analisi del rischio letti dal valutatore
+    # Binding di setup mancante; aggiornare l'analisi senza sostituire i dati letti dal valutatore.
+    And l'analisi del rischio aggiornata dopo la lettura del valutatore
+    # Operazione BFF e binding negativo mancanti; usare la versione metadata precedente con gli altri dati validi.
+    When il valutatore tenta di firmare l'analisi del rischio con i dati letti prima dell'aggiornamento
     Then il messaggio di errore corrisponde al caso "PURPOSE_PURPOSE_METADATA_VERSION_MISMATCH"
 
-  # POST /purposes/:purposeId/riskAnalysis/reject · riskAnalysisAlreadyApproved
-  # Conservare i dati letti prima della modifica. Per il mismatch usare la versione metadata precedente e una richiesta altrimenti valida. Il CSV contiene la riga, ma il simbolo non è presente nel catalogo generato; controllare i codici del workflow valutatore sul branch target.
-  Scenario: [ERROR_028] Il valutatore rifiuta l’analisi del rischio con la motivazione "Informazioni insufficienti" — un’analisi del rischio già approvata
-    Given un’analisi del rischio già approvata
-    When il valutatore rifiuta l’analisi del rischio con la motivazione "Informazioni insufficienti"
+  Scenario: [ERROR_028] - Impossibilità di rifiutare un'analisi del rischio già approvata
+  Data un'analisi del rischio già approvata e assegnata al valutatore di PagoPA
+  Quando il valutatore tenta di rifiutarla con una motivazione valida
+  Allora il sistema rifiuta l'operazione e segnala che l'analisi è già stata approvata.
+
+    # Setup e binding parametrico mancanti per il workflow valutatore; confermare il codice nel catalogo di rilascio.
+    Given un'analisi del rischio della finalità in stato "approvata" assegnata al valutatore di PagoPA
+    And un reviewer appartenente al fruitore PagoPA
+    # Operazione BFF e binding negativo parametrico mancanti per il rifiuto dell'analisi.
+    When il valutatore tenta di rifiutare l'analisi del rischio della finalità con la motivazione "Informazioni insufficienti"
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT"
 
-  # POST /purposes/:purposeId/riskAnalysis/reject · riskAnalysisAlreadyRejected
-  # Conservare i dati letti prima della modifica. Per il mismatch usare la versione metadata precedente e una richiesta altrimenti valida. Il CSV contiene la riga, ma il simbolo non è presente nel catalogo generato; controllare i codici del workflow valutatore sul branch target.
-  Scenario: [ERROR_029] Il valutatore rifiuta l’analisi del rischio con la motivazione "Informazioni insufficienti" — un’analisi del rischio già rifiutata
-    Given un’analisi del rischio già rifiutata
-    When il valutatore rifiuta l’analisi del rischio con la motivazione "Informazioni insufficienti"
+  Scenario: [ERROR_029] - Impossibilità di rifiutare un'analisi del rischio già rifiutata
+  Data un'analisi del rischio già rifiutata e assegnata al valutatore di PagoPA
+  Quando il valutatore tenta di rifiutarla nuovamente con una motivazione valida
+  Allora il sistema rifiuta l'operazione e segnala che l'analisi è già stata rifiutata.
+
+    # Setup e binding parametrico mancanti per il workflow valutatore; confermare il codice nel catalogo di rilascio.
+    Given un'analisi del rischio della finalità in stato "rifiutata" assegnata al valutatore di PagoPA
+    And un reviewer appartenente al fruitore PagoPA
+    # Operazione BFF e binding negativo parametrico mancanti per il rifiuto dell'analisi.
+    When il valutatore tenta di rifiutare l'analisi del rischio della finalità con la motivazione "Informazioni insufficienti"
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT"
 
-  # PUT /purposes/:purposeId/riskAnalysis/form · riskAnalysisAlreadyApproved
-  # Conservare i dati letti prima della modifica. Per il mismatch usare la versione metadata precedente e una richiesta altrimenti valida. Il CSV contiene la riga, ma il simbolo non è presente nel catalogo generato; controllare i codici del workflow valutatore sul branch target.
-  Scenario: [ERROR_030] Il valutatore salva le risposte dell’analisi del rischio — un’analisi del rischio già approvata
-    Given un’analisi del rischio già approvata
-    When il valutatore salva le risposte dell’analisi del rischio
+  Scenario: [ERROR_030] - Impossibilità di modificare le risposte di un'analisi già approvata
+  Data un'analisi del rischio già approvata e assegnata al valutatore di PagoPA
+  Quando il valutatore tenta di salvare nuove risposte valide
+  Allora il sistema rifiuta il salvataggio e segnala che l'analisi è già stata approvata.
+
+    # Setup e binding parametrico mancanti per il workflow valutatore; confermare il codice nel catalogo di rilascio.
+    Given un'analisi del rischio della finalità in stato "approvata" assegnata al valutatore di PagoPA
+    And un reviewer appartenente al fruitore PagoPA
+    # Operazione BFF e binding negativo comuni mancanti per il salvataggio delle risposte.
+    When il valutatore tenta di salvare risposte valide nell'analisi del rischio della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__PUT_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_FORM"
 
-  # PUT /purposes/:purposeId/riskAnalysis/form · riskAnalysisAlreadyRejected
-  # Conservare i dati letti prima della modifica. Per il mismatch usare la versione metadata precedente e una richiesta altrimenti valida. Il CSV contiene la riga, ma il simbolo non è presente nel catalogo generato; controllare i codici del workflow valutatore sul branch target.
-  Scenario: [ERROR_031] Il valutatore salva le risposte dell’analisi del rischio — un’analisi del rischio già rifiutata
-    Given un’analisi del rischio già rifiutata
-    When il valutatore salva le risposte dell’analisi del rischio
+  Scenario: [ERROR_031] - Impossibilità di modificare le risposte di un'analisi già rifiutata
+  Data un'analisi del rischio già rifiutata e assegnata al valutatore di PagoPA
+  Quando il valutatore tenta di salvare nuove risposte valide
+  Allora il sistema rifiuta il salvataggio e segnala che l'analisi è già stata rifiutata.
+
+    # Setup e binding parametrico mancanti per il workflow valutatore; confermare il codice nel catalogo di rilascio.
+    Given un'analisi del rischio della finalità in stato "rifiutata" assegnata al valutatore di PagoPA
+    And un reviewer appartenente al fruitore PagoPA
+    # Operazione BFF e binding negativo comuni mancanti per il salvataggio delle risposte.
+    When il valutatore tenta di salvare risposte valide nell'analisi del rischio della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__PUT_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_FORM"
 
-  # POST /purposes/:purposeId/riskAnalysis/reject · hyperlinkDetectionError
-  Scenario: [ERROR_032] Il valutatore rifiuta l’analisi del rischio con la motivazione "Motivazione https://example.org" — la richiesta da valutare in attesa di approvazione e il valutatore autorizzato al rifiuto
-    Given la richiesta da valutare in attesa di approvazione e il valutatore autorizzato al rifiuto
-    When il valutatore rifiuta l’analisi del rischio con la motivazione "Motivazione https://example.org"
+  Scenario: [ERROR_032] - Rifiuto di una motivazione con un link nella valutazione dell'analisi del rischio
+  Data un'analisi del rischio in attesa di valutazione e assegnata al valutatore di PagoPA
+  Quando il valutatore tenta di rifiutarla inserendo un collegamento nella motivazione
+  Allora il sistema rifiuta l'operazione e invita il valutatore a rimuovere il collegamento.
+
+    # Setup e binding parametrico mancanti per il workflow valutatore.
+    Given un'analisi del rischio della finalità in stato "in attesa di valutazione" assegnata al valutatore di PagoPA
+    And un reviewer appartenente al fruitore PagoPA
+    # Operazione BFF e binding negativo parametrico mancanti per il rifiuto dell'analisi.
+    When il valutatore tenta di rifiutare l'analisi del rischio della finalità con la motivazione "Motivazione https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT"
 
-  # PATCH /purposes/:purposeId · duplicatedPurposeTitle
-  # Per una modifica usare un oggetto distinto. Per la duplicazione della finalità controllare il nome derivato dal clone. Nessuna rotta PATCH nel commit analizzato. Verificare il branch di rilascio e l’eventuale sostituzione funzionale. Non rimappare questo ID su un altro endpoint.
-  Scenario: [ERROR_033] Il fruitore aggiorna parzialmente la finalità impostando il nome "Finalità duplicata" — una finalità omonima dello stesso fruitore per lo stesso e-service
-    Given una finalità omonima dello stesso fruitore per lo stesso e-service
-    When il fruitore aggiorna parzialmente la finalità impostando il nome "Finalità duplicata"
+  Scenario: [ERROR_033] - Rifiuto dell'aggiornamento parziale di una finalità con il nome di un'altra
+  Date due finalità in bozza di PagoPA per lo stesso e-service con nomi diversi
+  Quando il fruitore tenta di aggiornare parzialmente la seconda usando il nome della prima
+  Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
+      | F-2   |
+    # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
+    # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
+    When il fruitore tenta di aggiornare parzialmente la finalità "F-2" con il nome della finalità "F-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_PURPOSES_PURPOSE_ID"
 
-  # PATCH /purposes/:purposeId · hyperlinkDetectionError
-  # Usare https://example.org nel campo indicato e valori validi per gli altri campi. Il body deve superare la validazione dello schema. Nessuna rotta PATCH nel commit analizzato. Verificare il branch di rilascio e l’eventuale sostituzione funzionale. Non rimappare questo ID su un altro endpoint.
-  Scenario: [ERROR_034] Il fruitore aggiorna parzialmente la finalità impostando il nome "Finalità https://example.org" — la finalità o il template in bozza con gli altri dati validi
-    Given la finalità o il template in bozza con gli altri dati validi
-    When il fruitore aggiorna parzialmente la finalità impostando il nome "Finalità https://example.org"
+  Scenario: [ERROR_034] - Rifiuto dell'aggiornamento parziale di una finalità con un link nel nome
+  Data una finalità di PagoPA in bozza
+  Quando il fruitore tenta di aggiornarla parzialmente inserendo un collegamento nel nome
+  Allora il sistema rifiuta la modifica e invita il fruitore a rimuovere il collegamento.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
+    # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
+    # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
+    When il fruitore tenta di aggiornare parzialmente la finalità "F-1" con il nome "Finalità https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__PATCH_PURPOSES_PURPOSE_ID"
 
-  # PATCH /reverse/purposes/:purposeId · duplicatedPurposeTitle
-  # Per una modifica usare un oggetto distinto. Per la duplicazione della finalità controllare il nome derivato dal clone. Nessuna rotta PATCH nel commit analizzato. Verificare il branch di rilascio e l’eventuale sostituzione funzionale. Non rimappare questo ID su un altro endpoint.
-  Scenario: [ERROR_035] Il fruitore aggiorna parzialmente la finalità per un e-service in modalità ricezione impostando il nome "Finalità duplicata" — una finalità omonima dello stesso fruitore per lo stesso e-service
-    Given una finalità omonima dello stesso fruitore per lo stesso e-service
-    When il fruitore aggiorna parzialmente la finalità per un e-service in modalità ricezione impostando il nome "Finalità duplicata"
+  Scenario: [ERROR_035] - Rifiuto dell'aggiornamento parziale di una finalità in ricezione con nome duplicato
+  Date due finalità in bozza di PagoPA per lo stesso e-service in ricezione con nomi diversi
+  Quando il fruitore tenta di aggiornare parzialmente la seconda usando il nome della prima
+  Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
+
+    Given i seguenti e-service in bozza:
+      | alias | erogatore        | modalità |
+      | ES-1  | Comune di Milano | RECEIVE  |
+    # Binding di setup mancante; riusare addLatestRiskAnalysis per l'e-service in ricezione.
+    And un'analisi del rischio completa associata all'e-service
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    # Binding di setup comune mancante; riusare createReversePurpose con l'analisi dell'erogatore.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
+      | F-2   |
+    # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
+    # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
+    When il fruitore tenta di aggiornare parzialmente la finalità "F-2" con il nome della finalità "F-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_REVERSE_PURPOSES_PURPOSE_ID"
 
-  # PATCH /reverse/purposes/:purposeId · hyperlinkDetectionError
-  # Usare https://example.org nel campo indicato e valori validi per gli altri campi. Il body deve superare la validazione dello schema. Nessuna rotta PATCH nel commit analizzato. Verificare il branch di rilascio e l’eventuale sostituzione funzionale. Non rimappare questo ID su un altro endpoint.
-  Scenario: [ERROR_036] Il fruitore aggiorna parzialmente la finalità per un e-service in modalità ricezione impostando il nome "Finalità https://example.org" — la finalità o il template in bozza con gli altri dati validi
-    Given la finalità o il template in bozza con gli altri dati validi
-    When il fruitore aggiorna parzialmente la finalità per un e-service in modalità ricezione impostando il nome "Finalità https://example.org"
+  Scenario: [ERROR_036] - Rifiuto dell'aggiornamento parziale di una finalità in ricezione con un link nel nome
+  Data una finalità di PagoPA in bozza per un e-service in ricezione
+  Quando il fruitore tenta di aggiornarla parzialmente inserendo un collegamento nel nome
+  Allora il sistema rifiuta la modifica e invita il fruitore a rimuovere il collegamento.
+
+    Given i seguenti e-service in bozza:
+      | alias | erogatore        | modalità |
+      | ES-1  | Comune di Milano | RECEIVE  |
+    # Binding di setup mancante; riusare addLatestRiskAnalysis per l'e-service in ricezione.
+    And un'analisi del rischio completa associata all'e-service
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    # Binding di setup comune mancante; riusare createReversePurpose con l'analisi dell'erogatore.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
+    # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
+    # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
+    When il fruitore tenta di aggiornare parzialmente la finalità "F-1" con il nome "Finalità https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__PATCH_REVERSE_PURPOSES_PURPOSE_ID"
