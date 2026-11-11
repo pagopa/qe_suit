@@ -161,3 +161,32 @@ Feature: Modifica dei metadati dei portachiavi erogatore
     When un admin del Comune di Milano richiede di assegnare al portachiavi "K-1" il nome di "K-2"
     Then la rinomina del portachiavi "K-1" viene accettata
     And il portachiavi "K-2" conserva tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [PRODUCER_KEYCHAIN_METADATA_VALIDATION_1] - Rispetto dei limiti di lunghezza dei metadati
+  Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
+  quando l’attore propone un testo alla lunghezza di confine,
+  allora il sistema accetta i valori ammessi e rifiuta gli altri senza modifiche parziali.
+
+    Given un portachiavi erogatore "K-1" del Comune di Milano
+    When un admin del Comune di Milano richiede un valore di <lunghezza> caratteri per il campo <campo> della risorsa "K-1"
+    Then la modifica della risorsa "K-1" ha esito <esito>
+    And in caso di rifiuto la risorsa "K-1" conserva tutti i dati iniziali
+
+    Examples:
+      | campo       | lunghezza | esito     |
+      | nome        | 60        | accettata |
+      | descrizione | 251       | rifiutata |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PRODUCER_KEYCHAIN_METADATA_VALIDATION_2] - Rifiuto di valori non ammessi nei metadati di un portachiavi
+  Dato una risorsa modificabile da un attore autorizzato,
+  quando l’attore richiede una modifica con un valore vietato,
+  allora il sistema rifiuta la richiesta e conserva i dati originari.
+
+    Given una portachiavi erogatore "K-1" del Comune di Milano modificabile nei metadati
+    When un admin del Comune di Milano richiede la modifica del campo descrizione della risorsa "K-1" con valore vuoto
+    Then la modifica della risorsa "K-1" viene rifiutata
+    And la risorsa "K-1" conserva tutti i dati iniziali

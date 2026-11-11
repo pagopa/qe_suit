@@ -234,3 +234,42 @@ Feature: Modifica dei metadati degli e-service
     When un admin del Comune di Milano richiede di assegnare alla risorsa "ES-1" il nome di "ES-2"
     Then la rinomina della risorsa "ES-1" viene accettata
     And la risorsa "ES-2" conserva tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [ESERVICE_METADATA_VALIDATION_1] - Rispetto dei limiti di lunghezza dei metadati
+  Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
+  quando l’attore propone un testo alla lunghezza di confine,
+  allora il sistema accetta i valori ammessi e rifiuta gli altri senza modifiche parziali.
+
+    Given i seguenti e-service in bozza:
+      | alias | erogatore        | nome             |
+      | ES-1  | Comune di Milano | E-service Nome 1 |
+    When un admin del Comune di Milano richiede un valore di <lunghezza> caratteri per il campo <campo> della risorsa "ES-1"
+    Then la modifica della risorsa "ES-1" ha esito <esito>
+    And in caso di rifiuto la risorsa "ES-1" conserva tutti i dati iniziali
+
+    Examples:
+      | campo       | lunghezza | esito     |
+      | nome        | 4         | rifiutata |
+      | nome        | 5         | accettata |
+      | nome        | 60        | accettata |
+      | nome        | 61        | rifiutata |
+      | descrizione | 9         | rifiutata |
+      | descrizione | 10        | accettata |
+      | descrizione | 400       | accettata |
+      | descrizione | 401       | rifiutata |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_METADATA_VALIDATION_2] - Rifiuto di valori non ammessi nei metadati di un e-service
+  Dato una risorsa modificabile da un attore autorizzato,
+  quando l’attore richiede una modifica con un valore vietato,
+  allora il sistema rifiuta la richiesta e conserva i dati originari.
+
+    Given i seguenti e-service in bozza:
+      | alias | erogatore        | nome             |
+      | ES-1  | Comune di Milano | E-service Nome 1 |
+    When un admin del Comune di Milano richiede la modifica del campo nome della risorsa "ES-1" con valore vuoto
+    Then la modifica della risorsa "ES-1" viene rifiutata
+    And la risorsa "ES-1" conserva tutti i dati iniziali

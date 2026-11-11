@@ -78,7 +78,7 @@ Feature: Modifica dei metadati delle finalità
   allora il form resta aperto con i testi inseriti e indica il campo errato.
 
     Given una finalità "P-1" <modalità> non derivata da template di PagoPA in stato ACTIVE
-    When il form di modifica dei metadati di una risorsa "P-1" del Comune di Milano aperto
+    When il form di modifica dei metadati di una finalità "P-1" del Comune di Milano aperto
     And un admin del Comune di Milano inserisce metadati non validi nel form della risorsa "R-1" e richiede il salvataggio
     Then il form della risorsa "R-1" rimane aperto con i testi inseriti
     And il campo non valido mostra il messaggio di errore previsto
@@ -193,3 +193,34 @@ Feature: Modifica dei metadati delle finalità
     When un admin del Comune di Milano richiede di assegnare alla risorsa "P-1" il nome di "P-2"
     Then la rinomina della risorsa "P-1" viene accettata
     And la risorsa "P-2" conserva tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [PURPOSE_METADATA_VALIDATION_1] - Rispetto dei limiti di lunghezza dei metadati
+  Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
+  quando l’attore propone un testo alla lunghezza di confine,
+  allora il sistema accetta i valori ammessi e rifiuta gli altri senza modifiche parziali.
+
+    Given una finalità "P-1" del Comune di Milano modificabile nei metadati
+    When un admin del Comune di Milano richiede un valore di <lunghezza> caratteri per il campo <campo> della risorsa "P-1"
+    Then la modifica della risorsa "P-1" ha esito <esito>
+    And in caso di rifiuto la risorsa "P-1" conserva tutti i dati iniziali
+
+    Examples:
+      | campo       | lunghezza | esito     |
+      | titolo      | 4         | rifiutata |
+      | titolo      | 60        | accettata |
+      | descrizione | 9         | rifiutata |
+      | descrizione | 250       | accettata |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PURPOSE_METADATA_VALIDATION_2] - Rifiuto di valori non ammessi nei metadati di una finalità
+  Dato una risorsa modificabile da un attore autorizzato,
+  quando l’attore richiede una modifica con un valore vietato,
+  allora il sistema rifiuta la richiesta e conserva i dati originari.
+
+    Given una finalità "P-1" del Comune di Milano modificabile nei metadati
+    When un admin del Comune di Milano richiede la modifica del campo descrizione della risorsa "P-1" con valore non impostato
+    Then la modifica della risorsa "P-1" viene rifiutata
+    And la risorsa "P-1" conserva tutti i dati iniziali

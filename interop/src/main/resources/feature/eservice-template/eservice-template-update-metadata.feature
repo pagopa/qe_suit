@@ -218,3 +218,38 @@ Feature: Modifica dei metadati dei template e-service
     When un admin del Comune di Milano richiede di assegnare alla risorsa "TE-1" il nome di "TE-2"
     Then la rinomina della risorsa "TE-1" viene accettata
     And la risorsa "TE-2" conserva tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_VALIDATION_1] - Rispetto dei limiti di lunghezza dei metadati
+  Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
+  quando l’attore propone un testo alla lunghezza di confine,
+  allora il sistema accetta i valori ammessi e rifiuta gli altri senza modifiche parziali.
+
+    Given i seguenti template e-service con versioni predisposte:
+      | alias | erogatore          | nome                  | tecnologia | versioni |
+      | TE-1  | Comune di Milano   | Template anagrafico   | REST       | bozza    |
+    When un admin del Comune di Milano richiede un valore di <lunghezza> caratteri per il campo <campo> della risorsa "TE-1"
+    Then la modifica della risorsa "TE-1" ha esito <esito>
+    And in caso di rifiuto la risorsa "TE-1" conserva tutti i dati iniziali
+
+    Examples:
+      | campo       | lunghezza | esito     |
+      | nome        | 45        | accettata |
+      | nome        | 46        | rifiutata |
+      | destinatari | 250       | accettata |
+      | destinatari | 251       | rifiutata |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [TEMPLATE_ESERVICE_METADATA_VALIDATION_2] - Rifiuto di valori non ammessi nei metadati di un template e-service
+  Dato una risorsa modificabile da un attore autorizzato,
+  quando l’attore richiede una modifica con un valore vietato,
+  allora il sistema rifiuta la richiesta e conserva i dati originari.
+
+    Given i seguenti template e-service con versioni predisposte:
+      | alias | erogatore          | nome                  | tecnologia | versioni |
+      | TE-1  | Comune di Milano   | Template anagrafico   | REST       | bozza    |
+    When un admin del Comune di Milano richiede la modifica del campo nome della risorsa "TE-1" con un valore vuoto
+    Then la modifica della risorsa "TE-1" viene rifiutata
+    And la risorsa "TE-1" conserva tutti i dati iniziali

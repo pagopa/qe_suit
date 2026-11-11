@@ -211,6 +211,7 @@ Feature: Modifica dei metadati dei template finalità
     Then la modifica della risorsa "TP-1" viene rifiutata
     And le risorse "TP-1" e "TP-2" conservano tutti i dati iniziali
 
+  @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [PURPOSE_TEMPLATE_METADATA_UNIQUENESS_3] - Omonimia consentita tra template finalità in ambiti distinti
   Dato due risorse in ambiti di unicità distinti,
@@ -221,3 +222,20 @@ Feature: Modifica dei metadati dei template finalità
     When un admin del Comune di Milano richiede di assegnare alla risorsa "TP-1" il nome di "TP-2"
     Then la rinomina della risorsa "TP-1" viene accettata
     And la risorsa "TP-2" conserva tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [PURPOSE_TEMPLATE_METADATA_VALIDATION_1] - Rispetto dei limiti di lunghezza dei metadati
+  Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
+  quando l’attore propone un testo alla lunghezza di confine,
+  allora il sistema accetta i valori ammessi e rifiuta gli altri senza modifiche parziali.
+
+    Given un template finalità "TP-1" del Comune di Milano modificabile nei metadati
+    When un admin del Comune di Milano richiede un valore di <lunghezza> caratteri per il campo <campo> della risorsa "TP-1"
+    Then la modifica della risorsa "TP-1" ha esito <esito>
+    And in caso di rifiuto la risorsa "TP-1" conserva tutti i dati iniziali
+
+    Examples:
+      | campo       | lunghezza | esito     |
+      | titolo      | 60        | accettata |
+      | descrizione | 251       | rifiutata |

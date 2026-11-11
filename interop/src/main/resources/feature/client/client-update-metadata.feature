@@ -366,3 +366,32 @@ Feature: Modifica dei metadati dei client
     When un admin del Comune di Milano richiede di assegnare al client "CL-1" il nome di "CL-2"
     Then la rinomina del client "CL-1" viene accettata
     And il client "CL-2" conserva tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [CLIENT_METADATA_VALIDATION_1] - Rispetto dei limiti di lunghezza dei metadati
+  Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
+  quando l’attore propone un testo alla lunghezza di confine,
+  allora il sistema accetta i valori ammessi e rifiuta gli altri senza modifiche parziali.
+
+    Given un client "CL-1" di tipo CONSUMER appartenente al Comune di Milano
+    When un admin del Comune di Milano richiede un valore di <lunghezza> caratteri per il campo <campo> della risorsa "CL-1"
+    Then la modifica della risorsa "CL-1" ha esito <esito>
+    And in caso di rifiuto la risorsa "CL-1" conserva tutti i dati iniziali
+
+    Examples:
+      | campo       | lunghezza | esito     |
+      | nome        | 61        | rifiutata |
+      | descrizione | 250       | accettata |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [CLIENT_METADATA_VALIDATION_2] - Rifiuto di valori non ammessi nei metadati di un client
+  Dato una risorsa modificabile da un attore autorizzato,
+  quando l’attore richiede una modifica con un valore vietato,
+  allora il sistema rifiuta la richiesta e conserva i dati originari.
+
+    Given un client "CL-1" di tipo CONSUMER del Comune di Milano modificabile nei metadati
+    When un admin del Comune di Milano richiede la modifica del campo nome della risorsa "CL-1" con valore vuoto
+    Then la modifica della risorsa "CL-1" viene rifiutata
+    And la risorsa "CL-1" conserva tutti i dati iniziali
