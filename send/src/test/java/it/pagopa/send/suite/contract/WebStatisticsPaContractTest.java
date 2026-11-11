@@ -154,7 +154,9 @@ public class WebStatisticsPaContractTest {
 
     // il BFF va chiamato nello scenario, dopo che il validator ha impostato l'utente in sessione
     private LocalDate lastDate(String organizationId) {
-        LocalDate lastDate = bffDashboardRestClient.getDashboardData(organizationId).withoutPolling().get().getLastDate();
+        var response = bffDashboardRestClient.getDashboardData(organizationId).withoutPolling().get();
+        Assertions.assertThat(response).as("Precondizione: il BFF restituisce le statistiche dell'ente").isNotNull();
+        LocalDate lastDate = response.getLastDate();
         Assertions.assertThat(lastDate).as("Precondizione: il BFF restituisce le statistiche dell'ente").isNotNull();
         return lastDate;
     }
