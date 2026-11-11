@@ -154,3 +154,22 @@ Feature: Modifica dei metadati dei template e-service
     When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "TE-1" confermando gli altri valori correnti
     Then la risorsa "TE-1" presenta il metadato aggiornato
     And la risorsa "TE-1" conserva stati, versioni, relazioni e metadati invariati
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_PROTECTION_5] - Impossibilità di sovrascrivere i metadati di un e-service derivato
+  Dato un e-service ottenuto da un template,
+  quando l’erogatore tenta di modificarne direttamente i metadati ereditati,
+  allora la modifica è respinta senza cambiare il template o la sua istanza.
+
+    Given un e-service "ES-1" derivato dal template e-service "TE-1" del Comune di Milano
+    When un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
+      | campo   | valore   |
+      | <campo> | <valore> |
+    Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata
+    And l'e-service "ES-1" e il template "TE-1" conservano i metadati iniziali
+
+    Examples:
+      | campo       | valore                                 |
+      | nome        | Nome aggiornato dell'istanza           |
+      | descrizione | Descrizione aggiornata dell'istanza    |

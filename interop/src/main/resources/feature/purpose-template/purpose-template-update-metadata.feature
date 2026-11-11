@@ -167,3 +167,22 @@ Feature: Modifica dei metadati dei template finalità
     When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "TP-1" confermando gli altri valori correnti
     Then la risorsa "TP-1" presenta il metadato aggiornato
     And la risorsa "TP-1" conserva stati, versioni, relazioni e metadati invariati
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [PURPOSE_TEMPLATE_METADATA_PROTECTION_5] - Impossibilità di modificare direttamente metadati di una finalità derivata
+  Dato una finalità derivata da un template,
+  quando il fruitore tenta di aggiornarne i metadati governati dal template,
+  allora la finalità e il template rimangono invariati.
+
+    Given una finalità "P-1" di PagoPA derivata dal template finalità "TP-1"
+    When un admin di PagoPA richiede la modifica dei metadati della finalità "P-1":
+      | campo   | valore   |
+      | <campo> | <valore> |
+    Then la modifica dei metadati della finalità "P-1" viene rifiutata
+    And la finalità "P-1" e il template finalità "TP-1" conservano i metadati iniziali
+
+    Examples:
+      | campo       | valore                               |
+      | titolo      | Nuovo titolo della finalità          |
+      | descrizione | Nuova descrizione della finalità     |
