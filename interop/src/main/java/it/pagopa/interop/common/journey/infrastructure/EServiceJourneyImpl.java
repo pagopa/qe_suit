@@ -5,6 +5,7 @@ import it.pagopa.interop.common.eservice.application.*;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.eservice.application.*;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
@@ -54,6 +55,18 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         return createEService(defaultCommand, targetState);
     }
 
+    @Override
+    public EServiceJourneyImpl updateEService(Consumer<EServiceUpdateCommand> commandConfig) {
+        EServiceUpdateCommand command = requestFactory.defaultUpdateEServiceCommand();
+        commandConfig.accept(command);
+        String alias = command.getAlias();
+        EService eService = alias != null
+                ? entityStore.getByAliasOrThrow(alias, EService.class)
+                : entityStore.getLastOrThrow(EService.class);
+        eServiceUseCase.updateEService(eService, command);
+        entityStore.upsert(eServiceUseCase.getEService(eService));
+        return this;
+    }
 
     @Override
     public EServiceJourneyImpl addRiskAnalysis() {

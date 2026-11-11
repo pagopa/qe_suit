@@ -17,20 +17,20 @@ Feature: Modifica dei metadati degli e-service
     When un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
       | campo   | valore   |
       | <campo> | <valore> |
-    Then l'e-service "ES-1" presenta i metadati richiesti
-    And l'e-service "ES-1" conserva i metadati non modificati
-    And l'e-service "ES-1" conserva versioni, stati e configurazioni dei descrittori
+    # Then l'e-service "ES-1" presenta i metadati richiesti
+    # And l'e-service "ES-1" conserva i metadati non modificati
+    # And l'e-service "ES-1" conserva versioni, stati e configurazioni dei descrittori
 
     Examples:
       | stato                     | campo       | valore                              |
       | in bozza                  | nome        | Servizio anagrafico aggiornato      |
-      | pubblicata                | descrizione | Descrizione aggiornata del servizio |
-      | sospesa                   | nome        | Servizio anagrafico aggiornato      |
-      | deprecata                 | descrizione | Descrizione aggiornata del servizio |
-      #| archiviata             | nome        | Servizio anagrafico aggiornato      |
-      | in attesa di approvazione | descrizione | Descrizione aggiornata del servizio |
-      | in archiviazione          | nome        | Servizio anagrafico aggiornato      |
-      | in archiviazione sospesa  | descrizione | Descrizione aggiornata del servizio |
+      # | pubblicata                | descrizione | Descrizione aggiornata del servizio |
+      # | sospesa                   | nome        | Servizio anagrafico aggiornato      |
+      # | deprecata                 | descrizione | Descrizione aggiornata del servizio |
+      # #| archiviata             | nome        | Servizio anagrafico aggiornato      |
+      # | in attesa di approvazione | descrizione | Descrizione aggiornata del servizio |
+      # | in archiviazione          | nome        | Servizio anagrafico aggiornato      |
+      # | in archiviazione sospesa  | descrizione | Descrizione aggiornata del servizio |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF

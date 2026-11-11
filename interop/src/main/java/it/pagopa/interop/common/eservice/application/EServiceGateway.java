@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.eservice.application;
 
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
@@ -10,6 +11,8 @@ import org.springframework.plugin.core.Plugin;
 
 public interface EServiceGateway extends Plugin<Channel> {
     EService createEService(EServiceCreationCommand command);
+
+    void updateEService(EServiceRef eServiceRef, EServiceUpdateCommand command);
 
     void deleteEService(EService eService);
 

@@ -3,8 +3,10 @@ package it.pagopa.interop.bff.eservice.infrastructure;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
+import it.pagopa.interop.bff.eservice.application.BffEServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
@@ -50,6 +52,16 @@ public class BffEServiceGateway implements EServiceGateway {
                 })
                 .updateContext(command.getAlias())
                 .get();
+    }
+
+    @Override
+    public void updateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+        if (!(command instanceof BffEServiceUpdateCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
+
+        restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();;
     }
 
     @Override
