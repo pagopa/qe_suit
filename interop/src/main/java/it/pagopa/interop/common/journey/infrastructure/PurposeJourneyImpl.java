@@ -52,15 +52,13 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
 
     @Override
     public PurposeJourneyImpl createPurposeFromTemplateAndLinkToEService(PurposeTemplate purposeTemplate, EService eService, PurposeVersionState state) {
-        EService lastEService = entityStore.getLastOrThrow(EService.class);
         Purpose draftPurpose;
-
         // Se si richiede la finalità in attesa di approvazione, le chiamate giornaliere per fruitore
         // saranno impostate con un limite maggiore di quello base dell'ultimo descrittore e-service
         if (state.equals(PurposeVersionState.WAITING_FOR_APPROVAL)) {
-            draftPurpose = purposeUseCase.createPurposeFromTemplate(purposeTemplate, lastEService,
-                    command -> command.eserviceId(lastEService.getId()).dailyCalls(
-                            lastEService.getLatestDescriptor().getDailyCallsPerConsumer() + 1
+            draftPurpose = purposeUseCase.createPurposeFromTemplate(purposeTemplate, eService,
+                    command -> command.eserviceId(eService.getId()).dailyCalls(
+                            eService.getLatestDescriptor().getDailyCallsPerConsumer() + 1
                     )
             );
         } else {
