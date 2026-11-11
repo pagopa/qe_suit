@@ -5,24 +5,6 @@ Feature: Protezione delle risorse durante la modifica dei metadati
   Per evitare aggiornamenti parziali e modifiche involontarie a dati operativi.
 
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [METADATA_PROTECTION_2] - Rifiuto atomico di campi operativi non modificabili
-  Dato una risorsa fuori bozza con configurazione operativa,
-  quando l’attore invia un metadato valido insieme a un campo operativo vietato,
-  allora il sistema rifiuta l’aggiornamento anche quando il campo operativo conserva il valore precedente.
-
-    Given una risorsa "R-1" di tipo <risorsa> del Comune di Milano fuori bozza
-    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "R-1" insieme a un campo operativo vietato <variazione>
-    Then la modifica della risorsa "R-1" viene rifiutata
-    And la risorsa "R-1" conserva metadati, stati, versioni e relazioni iniziali
-
-    Examples:
-      | risorsa            | variazione       |
-      | e-service          | con valore nuovo |
-      | e-service          | con valore invariato |
-      | template e-service | con valore nuovo |
-      | template finalità  | con valore invariato |
-
-  @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [METADATA_PROTECTION_3] - Ripetizione dei metadati correnti senza effetti operativi
   Dato una risorsa i cui metadati sono modificabili,
   quando l’attore ripete una modifica già applicata,

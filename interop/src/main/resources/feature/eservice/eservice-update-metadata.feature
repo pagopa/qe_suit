@@ -120,3 +120,22 @@ Feature: Modifica dei metadati degli e-service
     When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "ES-1" con un valore valido e uno non ammesso
     Then la modifica della risorsa "ES-1" viene rifiutata
     And la risorsa "ES-1" conserva metadati, stati, versioni e relazioni iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [ESERVICE_METADATA_PROTECTION_2] - Rifiuto atomico di campi operativi non modificabili
+  Dato una risorsa fuori bozza con configurazione operativa,
+  quando l’attore invia un metadato valido insieme a un campo operativo vietato,
+  allora il sistema rifiuta l’aggiornamento anche quando il campo operativo conserva il valore precedente.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                   |
+      | ES-1  | Comune di Milano | E-service Tempo Attivo |
+    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "ES-1" insieme a un campo operativo vietato <variazione>
+    Then la modifica della risorsa "ES-1" viene rifiutata
+    And la risorsa "ES-1" conserva metadati, stati, versioni e relazioni iniziali
+
+    Examples:
+      | variazione       |
+      | con valore nuovo |
+      | con valore invariato |

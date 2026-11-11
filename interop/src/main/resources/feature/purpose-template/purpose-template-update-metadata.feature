@@ -119,3 +119,22 @@ Feature: Modifica dei metadati dei template finalità
     When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "TP-1" con un valore valido e uno non ammesso
     Then la modifica della risorsa "TP-1" viene rifiutata
     And la risorsa "TP-1" conserva metadati, stati, versioni e relazioni iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [PURPOSE_TEMPLATE_METADATA_PROTECTION_2] - Rifiuto atomico di campi operativi non modificabili
+  Dato una risorsa fuori bozza con configurazione operativa,
+  quando l’attore invia un metadato valido insieme a un campo operativo vietato,
+  allora il sistema rifiuta l’aggiornamento anche quando il campo operativo conserva il valore precedente.
+
+    Given un template finalità "TP-1" creato dal Comune di Milano con le seguenti finalità derivate:
+      | alias | stato  |
+      | P-1   | ACTIVE  |
+    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "TP-1" insieme a un campo operativo vietato <variazione>
+    Then la modifica della risorsa "TP-1" viene rifiutata
+    And la risorsa "TP-1" conserva metadati, stati, versioni e relazioni iniziali
+
+    Examples:
+      | variazione           |
+      | con valore nuovo     |
+      | con valore invariato |

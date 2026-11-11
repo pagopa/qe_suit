@@ -106,3 +106,22 @@ Feature: Modifica dei metadati dei template e-service
     When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "TE-1" con un valore valido e uno non ammesso
     Then la modifica della risorsa "TE-1" viene rifiutata
     And la risorsa "TE-1" conserva metadati, stati, versioni e relazioni iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_PROTECTION_2] - Rifiuto atomico di campi operativi non modificabili
+  Dato una risorsa fuori bozza con configurazione operativa,
+  quando l’attore invia un metadato valido insieme a un campo operativo vietato,
+  allora il sistema rifiuta l’aggiornamento anche quando il campo operativo conserva il valore precedente.
+
+    Given i seguenti template e-service con versioni predisposte:
+      | alias | erogatore        | nome                  | tecnologia | versioni   |
+      | TE-1  | Comune di Milano | Template anagrafico   | REST       | pubblicata |
+    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "TE-1" insieme a un campo operativo vietato <variazione>
+    Then la modifica della risorsa "TE-1" viene rifiutata
+    And la risorsa "TE-1" conserva metadati, stati, versioni e relazioni iniziali
+
+    Examples:
+      | variazione           |
+      | con valore nuovo     |
+      | con valore invariato |

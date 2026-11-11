@@ -4,6 +4,7 @@ Feature: Propagazione dei metadati del template e-service alle istanze
   Voglio aggiornare i metadati ereditati dalle istanze
   Per mantenere coerenti le istanze preservando etichette e configurazioni proprie.
 
+  @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_TEMPLATE_PROPAGATION_1] - Propagazione dei metadati ereditati alle istanze
   Dato un template e-service pubblicato e istanziato da erogatori diversi con etichette distinte,
@@ -25,6 +26,7 @@ Feature: Propagazione dei metadati del template e-service alle istanze
     And le istanze "EI-1" e "EI-2" presentano i metadati ereditati dal template "TE-1"
     And le istanze "EI-1" e "EI-2" conservano etichette, descrittori e configurazioni proprie
 
+  @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_TEMPLATE_PROPAGATION_2] - Conservazione delle istanze quando cambiano soltanto i destinatari
   Dato un template e-service pubblicato con più istanze,
@@ -44,6 +46,7 @@ Feature: Propagazione dei metadati del template e-service alle istanze
     Then il template e-service "TE-1" presenta i metadati richiesti
     And le istanze "EI-1" e "EI-2" conservano nome, descrizione, etichette e configurazioni
 
+  @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_TEMPLATE_PROPAGATION_3] - Rifiuto atomico della rinomina in conflitto con un'istanza
   Dato un template e-service pubblicato con un'istanza etichettata e un e-service omonimo al nome che risulterebbe dalla rinomina,
@@ -67,6 +70,7 @@ Feature: Propagazione dei metadati del template e-service alle istanze
     And il template e-service "TE-1" conserva tutti i metadati iniziali
     And l'istanza "EI-1" conserva i propri metadati e configurazioni
 
+  @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_TEMPLATE_PROPAGATION_4] - Rifiuto della rinomina in conflitto con un altro template
   Dati due template e-service pubblicati con nomi distinti,
