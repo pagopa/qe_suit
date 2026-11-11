@@ -106,3 +106,17 @@ Feature: Modifica dei metadati degli e-service
     And un admin del Comune di Milano richiede il salvataggio dei metadati nel form della risorsa "ES-1"
     Then il form della risorsa "R-1" rimane aperto con i testi inseriti
     And il sistema segnala il mancato salvataggio della risorsa "ES-1"
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_METADATA_PROTECTION_1] - Rifiuto atomico di un metadato valido insieme a un valore non ammesso
+  Dato un e-service modificabile da un attore autorizzato,
+  quando l’attore invia una modifica con un metadato valido e un altro non valido,
+  allora il sistema rifiuta tutta la modifica e mantiene invariata la risorsa.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                   |
+      | ES-1  | Comune di Milano | E-service Tempo Attivo |
+    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "ES-1" con un valore valido e uno non ammesso
+    Then la modifica della risorsa "ES-1" viene rifiutata
+    And la risorsa "ES-1" conserva metadati, stati, versioni e relazioni iniziali

@@ -92,3 +92,17 @@ Feature: Modifica dei metadati dei template e-service
     And un admin del Comune di Milano richiede il salvataggio dei metadati nel form della risorsa "TE-1"
     Then il form della risorsa "TE-1" rimane aperto con i testi inseriti
     And il sistema segnala il mancato salvataggio della risorsa "TE-1"
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_METADATA_PROTECTION_1] - Rifiuto atomico di un metadato valido insieme a un valore non ammesso
+  Dato una risorsa modificabile da un attore autorizzato,
+  quando l’attore invia una modifica con un metadato valido e un altro non valido,
+  allora il sistema rifiuta tutta la modifica e mantiene invariata la risorsa.
+
+    Given i seguenti template e-service con versioni predisposte:
+      | alias | erogatore        | nome                  | tecnologia | versioni   |
+      | TE-1  | Comune di Milano | Template anagrafico   | REST       | pubblicata |
+    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "TE-1" con un valore valido e uno non ammesso
+    Then la modifica della risorsa "TE-1" viene rifiutata
+    And la risorsa "TE-1" conserva metadati, stati, versioni e relazioni iniziali

@@ -112,3 +112,15 @@ Feature: Modifica dei metadati dei portachiavi erogatore
     And un admin del Comune di Milano richiede il salvataggio dei metadati nel form della risorsa "K-1"
     Then il form della risorsa "K-1" rimane aperto con i testi inseriti
     And il sistema segnala il mancato salvataggio della risorsa "K-1"
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PRODUCER_KEYCHAIN_METADATA_PROTECTION_1] - Rifiuto atomico di un metadato valido insieme a un valore non ammesso
+  Dato una risorsa modificabile da un attore autorizzato,
+  quando l’attore invia una modifica con un metadato valido e un altro non valido,
+  allora il sistema rifiuta tutta la modifica e mantiene invariata la risorsa.
+
+    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
+    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "K-1" con un valore valido e uno non ammesso
+    Then la modifica della risorsa "K-1" viene rifiutata
+    And la risorsa "K-1" conserva metadati, stati, versioni e relazioni iniziali
