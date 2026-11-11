@@ -98,6 +98,11 @@ public class M2Mv3EServiceTemplateContractTest {
                         response -> response.then().statusCode(200),
                         List.of(InstanceEServiceSeed::getInstanceLabel)
                 )
+                .targets(
+                        FuzzScenario.REPLACED_WITH_XSS,
+                        response -> response.then().statusCode(400),        //"<script>alert(1)</script>" (25 chars > maxLength of 12 chars by specs)
+                        List.of(InstanceEServiceSeed::getInstanceLabel)
+                )
                 .tests();
     }
 
@@ -158,6 +163,11 @@ public class M2Mv3EServiceTemplateContractTest {
                         response -> response.then().statusCode(200),
                         List.of(EServiceInstanceLabelUpdateSeed::getInstanceLabel)
                 )
+                .targets(
+                        FuzzScenario.REPLACED_WITH_XSS,
+                        response -> response.then().statusCode(400),        //"<script>alert(1)</script>" (25 chars > maxLength of 12 chars by specs)
+                        List.of(EServiceInstanceLabelUpdateSeed::getInstanceLabel)
+                )
                 .tests();
     }
 
@@ -187,6 +197,11 @@ public class M2Mv3EServiceTemplateContractTest {
                 .targets(
                         FuzzScenario.REPLACED_WITH_BLANK_STRING,
                         response -> response.then().statusCode(200),
+                        List.of(UpdateEServiceTemplateInstanceSeed::getInstanceLabel)
+                )
+                .targets(
+                        FuzzScenario.REPLACED_WITH_XSS,
+                        response -> response.then().statusCode(400),        //"<script>alert(1)</script>" (25 chars > maxLength of 12 chars by specs)
                         List.of(UpdateEServiceTemplateInstanceSeed::getInstanceLabel)
                 )
                 .tests();
