@@ -186,3 +186,15 @@ Feature: Modifica dei metadati dei template finalità
       | campo       | valore                               |
       | titolo      | Nuovo titolo della finalità          |
       | descrizione | Nuova descrizione della finalità     |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PURPOSE_TEMPLATE_METADATA_UNIQUENESS_1] - Rifiuto della rinomina in conflitto per un template finalità
+  Dato due risorse nello stesso ambito di unicità con nomi distinti,
+  quando l’attore rinomina una risorsa usando il nome dell’altra e una descrizione valida,
+  allora la modifica è respinta integralmente lasciando intatte entrambe le risorse.
+
+    Given due risorse "TP-1" e "TP-2" di tipo template finalità nel medesimo ambito di unicità
+    When un admin del Comune di Milano richiede di assegnare alla risorsa "TP-1" il nome di "TP-2" e una nuova descrizione
+    Then la modifica della risorsa "TP-1" viene rifiutata
+    And le risorse "TP-1" e "TP-2" conservano tutti i dati iniziali

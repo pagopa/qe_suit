@@ -157,3 +157,15 @@ Feature: Modifica dei metadati delle finalità
       | modalità |
       | ordinaria |
       | inversa   |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [METADATA_UNIQUENESS_1_PURPOSE] - Rifiuto della rinomina in conflitto per una finalità
+  Dato due risorse nello stesso ambito di unicità con nomi distinti,
+  quando l’attore rinomina una risorsa usando il nome dell’altra e una descrizione valida,
+  allora la modifica è respinta integralmente lasciando intatte entrambe le risorse.
+
+    Given due finalità "P-1" e "P-2" di tipo finalità nel medesimo ambito di unicità
+    When un admin del Comune di Milano richiede di assegnare alla risorsa "P-1" il nome di "P-2" e una nuova descrizione
+    Then la modifica della risorsa "P-1" viene rifiutata
+    And le risorse "P-1" e "P-2" conservano tutti i dati iniziali

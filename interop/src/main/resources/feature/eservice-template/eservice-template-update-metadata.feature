@@ -173,3 +173,18 @@ Feature: Modifica dei metadati dei template e-service
       | campo       | valore                                 |
       | nome        | Nome aggiornato dell'istanza           |
       | descrizione | Descrizione aggiornata dell'istanza    |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_METADATA_UNIQUENESS_1] - Rifiuto della rinomina in conflitto per un template e-service
+  Dato due risorse nello stesso ambito di unicità con nomi distinti,
+  quando l’attore rinomina una risorsa usando il nome dell’altra e una descrizione valida,
+  allora la modifica è respinta integralmente lasciando intatte entrambe le risorse.
+
+    Given i seguenti template e-service con versioni predisposte:
+      | alias | erogatore        | nome                  | tecnologia | versioni |
+      | TE-1  | Comune di Milano | Template anagrafico   | REST       | bozza    |
+      | TE-2  | Comune di Milano | Template anagrafico   | REST       | bozza    |
+    When un admin del Comune di Milano richiede di assegnare alla risorsa "TE-1" il nome di "TE-2" e una nuova descrizione
+    Then la modifica della risorsa "TE-1" viene rifiutata
+    And le risorse "TE-1" e "TE-2" conservano tutti i dati iniziali
