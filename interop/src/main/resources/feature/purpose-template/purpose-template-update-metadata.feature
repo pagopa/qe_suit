@@ -138,3 +138,18 @@ Feature: Modifica dei metadati dei template finalità
       | variazione           |
       | con valore nuovo     |
       | con valore invariato |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PURPOSE_TEMPLATE_METADATA_PROTECTION_3] - Ripetizione dei metadati correnti senza effetti operativi
+  Dato una risorsa i cui metadati sono modificabili,
+  quando l’attore ripete una modifica già applicata,
+  allora la ripetizione ha successo senza modificare versioni stati o relazioni.
+
+    Given un template finalità "TP-1" creato dal Comune di Milano con le seguenti finalità derivate:
+      | alias | stato  |
+      | P-1   | DRAFT  |
+    When un admin del Comune di Milano aggiorna i metadati della risorsa "TP-1" con nuovi valori validi
+    And un admin del Comune di Milano ripete gli stessi valori per la risorsa "TP-1"
+    Then la ripetizione della modifica della risorsa "TP-1" viene accettata
+    And la risorsa "TP-1" conserva stati, versioni e relazioni

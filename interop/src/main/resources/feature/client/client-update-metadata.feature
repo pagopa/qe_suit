@@ -272,3 +272,31 @@ Feature: Modifica dei metadati dei client
     When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "CL-1" con un valore valido e uno non ammesso
     Then la modifica della risorsa "CL-1" viene rifiutata
     And la risorsa "CL-1" conserva metadati, stati, versioni e relazioni iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [CLIENT_CONSUMER_METADATA_PROTECTION_3] - Ripetizione dei metadati correnti senza effetti operativi
+  Dato una risorsa i cui metadati sono modificabili,
+  quando l’attore ripete una modifica già applicata,
+  allora la ripetizione ha successo senza modificare versioni stati o relazioni.
+
+    Given un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
+    And un client "CL-1" CONSUMER creato da PagoPA, associato alla finalità creata, in cui è presente un utente admin e una coppia di chiavi crittografiche
+    When un admin di PagoPA aggiorna i metadati della risorsa "CL-1" con nuovi valori validi
+    And un admin di PagoPA ripete gli stessi valori per la risorsa "CL-1"
+    Then la ripetizione della modifica della risorsa "CL-1" viene accettata
+    And la risorsa "CL-1" conserva stati, versioni e relazioni
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [CLIENT_API_METADATA_PROTECTION_3] - Ripetizione dei metadati correnti senza effetti operativi
+  Dato una risorsa i cui metadati sono modificabili,
+  quando l’attore ripete una modifica già applicata,
+  allora la ripetizione ha successo senza modificare versioni stati o relazioni.
+
+    Given un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
+    And un client "CL-1" API creato dal Comune di Milano, associato alla finalità creata, in cui è presente un utente admin e una coppia di chiavi crittografiche
+    When un admin del Comune di Milano aggiorna i metadati della risorsa "CL-1" con nuovi valori validi
+    And un admin del Comune di Milano ripete gli stessi valori per la risorsa "CL-1"
+    Then la ripetizione della modifica della risorsa "CL-1" viene accettata
+    And la risorsa "CL-1" conserva stati, versioni e relazioni

@@ -53,7 +53,7 @@ Feature: Modifica dei metadati delle finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=WEB,Then=WEB
-  Scenario: [PURPOSE_METADATA_WEB_1] - Form precompilato e conferma dopo il salvataggio
+  Scenario Outline: [PURPOSE_METADATA_WEB_1] - Form precompilato e conferma dopo il salvataggio
   Dato una finalità modificabile con metadati già valorizzati,
   quando l’utente apre il form modifica e salva nuovi valori,
   allora il sistema mostra la conferma e il form riaperto presenta i nuovi metadati.
@@ -65,9 +65,14 @@ Feature: Modifica dei metadati delle finalità
     Then il sistema conferma il salvataggio e chiude il form
     And il dettaglio e il form riaperto della risorsa "R-1" presentano i metadati aggiornati
 
+    Examples:
+      | modalità |
+      | ordinaria |
+      | inversa   |
+
   @work-item:QA-19036
   @channel:Given=BFF,When=WEB,Then=WEB
-  Scenario: [PURPOSE_METADATA_WEB_2] - Conservazione degli input in presenza di un errore di validazione
+  Scenario Outline: [PURPOSE_METADATA_WEB_2] - Conservazione degli input in presenza di un errore di validazione
   Dato un form di modifica aperto e compilato,
   quando l’utente tenta di salvare un valore non valido,
   allora il form resta aperto con i testi inseriti e indica il campo errato.
@@ -78,9 +83,14 @@ Feature: Modifica dei metadati delle finalità
     Then il form della risorsa "R-1" rimane aperto con i testi inseriti
     And il campo non valido mostra il messaggio di errore previsto
 
+    Examples:
+      | modalità |
+      | ordinaria |
+      | inversa   |
+
   @work-item:QA-19036
   @channel:Given=BFF,When=WEB,Then=WEB
-  Scenario: [PURPOSE_METADATA_WEB_3] - Conservazione degli input in presenza di un conflitto di scrittura
+  Scenario Outline: [PURPOSE_METADATA_WEB_3] - Conservazione degli input in presenza di un conflitto di scrittura
   Dato un form di modifica aperto su metadati che sono stati modificati nel frattempo,
   quando l’utente prova a salvare i propri valori,
   allora il form conserva gli input e segnala che il salvataggio non è avvenuto.
@@ -91,9 +101,14 @@ Feature: Modifica dei metadati delle finalità
     Then il form della risorsa "P-1" rimane aperto con i testi inseriti
     And il sistema segnala il mancato salvataggio della risorsa "P-1"
 
+    Examples:
+      | modalità |
+      | ordinaria |
+      | inversa   |
+
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PURPOSE_METADATA_PROTECTION_1] - Rifiuto atomico di un metadato valido insieme a un valore non ammesso
+  Scenario Outline: [PURPOSE_METADATA_PROTECTION_1] - Rifiuto atomico di un metadato valido insieme a un valore non ammesso
   Dato una risorsa modificabile da un attore autorizzato,
   quando l’attore invia una modifica con un metadato valido e un altro non valido,
   allora il sistema rifiuta tutta la modifica e mantiene invariata la risorsa.
@@ -102,3 +117,25 @@ Feature: Modifica dei metadati delle finalità
     When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "P-1" con un valore valido e uno non ammesso
     Then la modifica della risorsa "P-1" viene rifiutata
     And la risorsa "P-1" conserva metadati, stati, versioni e relazioni iniziali
+
+    Examples:
+      | modalità |
+      | ordinaria |
+      | inversa   |
+
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [PURPOSE_METADATA_PROTECTION_2] - Ripetizione dei metadati correnti senza effetti operativi
+  Dato una risorsa i cui metadati sono modificabili,
+  quando l’attore ripete una modifica già applicata,
+  allora la ripetizione ha successo senza modificare versioni stati o relazioni.
+
+    Given una finalità "P-1" <modalità> non derivata da template del Comune di Milano in stato ACTIVE
+    When un admin del Comune di Milano aggiorna i metadati della risorsa "P-1" con nuovi valori validi
+    And un admin del Comune di Milano ripete gli stessi valori per la risorsa "P-1"
+    Then la ripetizione della modifica della risorsa "P-1" viene accettata
+    And la risorsa "P-1" conserva stati, versioni e relazioni
+
+    Examples:
+      | modalità |
+      | ordinaria |
+      | inversa   |
