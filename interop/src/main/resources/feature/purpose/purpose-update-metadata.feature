@@ -181,3 +181,15 @@ Feature: Modifica dei metadati delle finalità
     When un admin del Comune di Milano richiede per "P-1" il nome di "P-2" cambiandone soltanto le maiuscole e una nuova descrizione
     Then la modifica della risorsa "P-1" viene rifiutata
     And le risorse "P-1" e "P-2" conservano tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PURPOSE_METADATA_UNIQUENESS_3] - Omonimia consentita tra finalità in ambiti distinti
+  Dato due risorse in ambiti di unicità distinti,
+  quando l’attore assegna alla prima il nome della seconda,
+  allora il sistema consente la rinomina e non modifica l’altra risorsa.
+
+    Given due risorse "P-1" e "P-2" di tipo finalità in ambiti di unicità distinti
+    When un admin del Comune di Milano richiede di assegnare alla risorsa "P-1" il nome di "P-2"
+    Then la rinomina della risorsa "P-1" viene accettata
+    And la risorsa "P-2" conserva tutti i dati iniziali

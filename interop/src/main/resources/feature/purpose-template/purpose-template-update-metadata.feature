@@ -210,3 +210,14 @@ Feature: Modifica dei metadati dei template finalità
     When un admin del Comune di Milano richiede per "TP-1" il nome di "TP-2" cambiandone soltanto le maiuscole e una nuova descrizione
     Then la modifica della risorsa "TP-1" viene rifiutata
     And le risorse "TP-1" e "TP-2" conservano tutti i dati iniziali
+
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PURPOSE_TEMPLATE_METADATA_UNIQUENESS_3] - Omonimia consentita tra template finalità in ambiti distinti
+  Dato due risorse in ambiti di unicità distinti,
+  quando l’attore assegna alla prima il nome della seconda,
+  allora il sistema consente la rinomina e non modifica l’altra risorsa.
+
+    Given due template finalità "TP-1" e "TP-2" in ambiti di unicità distinti
+    When un admin del Comune di Milano richiede di assegnare alla risorsa "TP-1" il nome di "TP-2"
+    Then la rinomina della risorsa "TP-1" viene accettata
+    And la risorsa "TP-2" conserva tutti i dati iniziali

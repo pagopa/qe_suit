@@ -149,3 +149,15 @@ Feature: Modifica dei metadati dei portachiavi erogatore
     When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "K-1" confermando gli altri valori correnti
     Then la risorsa "K-1" presenta il metadato aggiornato
     And la risorsa "K-1" conserva stati, versioni, relazioni e metadati invariati
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PRODUCER_KEYCHAIN_METADATA_UNIQUENESS_1] - I portachiavi possono avere lo stesso nome
+  Dato due portachiavi del medesimo ente,
+  quando l’amministratore assegna a un portachiavi il nome dell’altro,
+  allora la rinomina riesce senza introdurre un vincolo di unicità.
+
+    Given due portachiavi erogatore "K-1" e "K-2" del Comune di Milano
+    When un admin del Comune di Milano richiede di assegnare al portachiavi "K-1" il nome di "K-2"
+    Then la rinomina del portachiavi "K-1" viene accettata
+    And il portachiavi "K-2" conserva tutti i dati iniziali

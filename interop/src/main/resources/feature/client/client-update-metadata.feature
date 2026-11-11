@@ -354,3 +354,15 @@ Feature: Modifica dei metadati dei client
       | nome  | Client aggiornato  |
     Then la modifica dei metadati del client "CL-1" viene rifiutata
     And il client "CL-1" conserva tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [CLIENT_METADATA_UNIQUENESS_1] - I client possono avere lo stesso nome
+  Dato due client appartenenti al medesimo ente,
+  quando l’amministratore assegna a un client il nome dell’altro,
+  allora la rinomina riesce senza introdurre un vincolo di unicità.
+
+    Given due client "CL-1" e "CL-2" appartenenti al Comune di Milano
+    When un admin del Comune di Milano richiede di assegnare al client "CL-1" il nome di "CL-2"
+    Then la rinomina del client "CL-1" viene accettata
+    And il client "CL-2" conserva tutti i dati iniziali

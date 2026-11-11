@@ -203,3 +203,18 @@ Feature: Modifica dei metadati dei template e-service
     When un admin del Comune di Milano richiede per "TE-1" il nome di "TE-2" cambiandone soltanto le maiuscole e una nuova descrizione
     Then la modifica della risorsa "TE-1" viene rifiutata
     And le risorse "TE-1" e "TE-2" conservano tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_METADATA_UNIQUENESS_3] - Omonimia consentita tra template e-service in ambiti distinti
+  Dato due risorse in ambiti di unicità distinti,
+  quando l’attore assegna alla prima il nome della seconda,
+  allora il sistema consente la rinomina e non modifica l’altra risorsa.
+
+    Given i seguenti template e-service con versioni predisposte:
+      | alias | erogatore          | nome                  | tecnologia | versioni |
+      | TE-1  | Comune di Milano   | Template anagrafico   | REST       | bozza    |
+      | TE-2  | Comune di Pozzallo | Template anagrafico   | REST       | bozza    |
+    When un admin del Comune di Milano richiede di assegnare alla risorsa "TE-1" il nome di "TE-2"
+    Then la rinomina della risorsa "TE-1" viene accettata
+    And la risorsa "TE-2" conserva tutti i dati iniziali

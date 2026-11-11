@@ -219,3 +219,18 @@ Feature: Modifica dei metadati degli e-service
     When un admin del Comune di Milano richiede per "ES-1" il nome di "ES-2" cambiandone soltanto le maiuscole e una nuova descrizione
     Then la modifica della risorsa "ES-1" viene rifiutata
     And le risorse "ES-1" e "ES-2" conservano tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_METADATA_UNIQUENESS_3] - Omonimia consentita tra e-service in ambiti distinti
+  Dato due risorse in ambiti di unicità distinti,
+  quando l’attore assegna alla prima il nome della seconda,
+  allora il sistema consente la rinomina e non modifica l’altra risorsa.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome             |
+      | ES-1  | Comune di Milano | E-service Nome 1 |
+      | ES-2  | Comune di Pozzallo | E-service Nome 2 |
+    When un admin del Comune di Milano richiede di assegnare alla risorsa "ES-1" il nome di "ES-2"
+    Then la rinomina della risorsa "ES-1" viene accettata
+    And la risorsa "ES-2" conserva tutti i dati iniziali
