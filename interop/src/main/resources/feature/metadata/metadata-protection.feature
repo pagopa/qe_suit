@@ -4,51 +4,6 @@ Feature: Protezione delle risorse durante la modifica dei metadati
   Voglio modificare i metadati soltanto quando consentito
   Per evitare aggiornamenti parziali e modifiche involontarie a dati operativi.
 
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [METADATA_AUTHORIZATION_1] - Rifiuto della modifica da parte di un ruolo non autorizzato
-  Dato una risorsa appartenente a un ente determinato,
-  quando un utente dello stesso ente con ruolo escluso richiede l’aggiornamento,
-  allora il sistema impedisce la modifica e conserva i dati iniziali.
-
-    Given un client "CL-1" di tipo CONSUMER appartenente al Comune di Milano
-    When un security del Comune di Milano richiede la modifica dei metadati del client "CL-1":
-      | campo | valore             |
-      | nome  | Client aggiornato  |
-    Then la modifica dei metadati del client "CL-1" viene rifiutata
-    And il client "CL-1" conserva tutti i dati iniziali
-
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [METADATA_AUTHORIZATION_2] - Rifiuto della modifica da parte di un altro ente
-  Dato una risorsa appartenente a un ente,
-  quando un amministratore di un ente diverso prova a modificarla,
-  allora il sistema rifiuta l’operazione senza aggiornare la risorsa.
-
-    Given un client "CL-1" di tipo CONSUMER appartenente al Comune di Milano
-    When un admin di PagoPA richiede la modifica dei metadati del client "CL-1":
-      | campo | valore             |
-      | nome  | Client aggiornato  |
-    Then la modifica dei metadati del client "CL-1" viene rifiutata
-    And il client "CL-1" conserva tutti i dati iniziali
-
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [METADATA_AUTHORIZATION_3] - Rispetto della titolarità e delle deleghe sulle risorse delegabili
-  Dato una risorsa delegabile con delega nello stato previsto,
-  quando un ente delegato richiede la modifica dei metadati,
-  allora il sistema accetta soltanto le richieste compatibili con ruolo e delega.
-
-    Given un e-service "ES-1" del Comune di Milano delegato in erogazione a PagoPA con delega <stato>
-    When un admin di PagoPA richiede la modifica dei metadati dell'e-service "ES-1":
-      | campo | valore                             |
-      | nome  | Servizio anagrafico aggiornato     |
-    Then la modifica dell'e-service "ES-1" ha esito <esito>
-    And in caso di rifiuto l'e-service "ES-1" conserva tutti i dati iniziali
-
-    Examples:
-      | stato               | esito     |
-      | ACTIVE              | accettata |
-      | WAITING_FOR_APPROVAL| rifiutata |
-      | REJECTED            | rifiutata |
-      | REVOKED             | rifiutata |
 
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [METADATA_TEMPLATE_PROTECTION_1] - Impossibilità di sovrascrivere i metadati di un e-service derivato
@@ -85,4 +40,3 @@ Feature: Protezione delle risorse durante la modifica dei metadati
       | campo       | valore                               |
       | titolo      | Nuovo titolo della finalità          |
       | descrizione | Nuova descrizione della finalità     |
-

@@ -168,3 +168,24 @@ Feature: Modifica dei metadati degli e-service
     When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "ES-1" confermando gli altri valori correnti
     Then la risorsa "ES-1" presenta il metadato aggiornato
     And la risorsa "ES-1" conserva stati, versioni, relazioni e metadati invariati
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [ESERVICE_METADATA_AUTHORIZATION_1] - Rispetto della titolarità e delle deleghe sulle risorse delegabili
+  Dato una risorsa delegabile con delega nello stato previsto,
+  quando un ente delegato richiede la modifica dei metadati,
+  allora il sistema accetta soltanto le richieste compatibili con ruolo e delega.
+
+    Given un e-service "ES-1" del Comune di Milano delegato in erogazione a PagoPA con delega <stato>
+    When un admin di PagoPA richiede la modifica dei metadati dell'e-service "ES-1":
+      | campo | valore                             |
+      | nome  | Servizio anagrafico aggiornato     |
+    Then la modifica dell'e-service "ES-1" ha esito <esito>
+    And in caso di rifiuto l'e-service "ES-1" conserva tutti i dati iniziali
+
+    Examples:
+      | stato               | esito     |
+      | ACTIVE              | accettata |
+      | WAITING_FOR_APPROVAL| rifiutata |
+      | REJECTED            | rifiutata |
+      | REVOKED             | rifiutata |

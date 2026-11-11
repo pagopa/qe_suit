@@ -326,3 +326,31 @@ Feature: Modifica dei metadati dei client
     When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "CL-1" confermando gli altri valori correnti
     Then la risorsa "CL-1" presenta il metadato aggiornato
     And la risorsa "CL-1" conserva stati, versioni, relazioni e metadati invariati
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [CLIENT_CONSUMER_METADATA_AUTHORIZATION_1] - Rifiuto della modifica da parte di un ruolo non autorizzato
+  Dato una risorsa appartenente a un ente determinato,
+  quando un utente dello stesso ente con ruolo escluso richiede l’aggiornamento,
+  allora il sistema impedisce la modifica e conserva i dati iniziali.
+
+    Given un client "CL-1" di tipo CONSUMER appartenente al Comune di Milano
+    When un security del Comune di Milano richiede la modifica dei metadati del client "CL-1":
+      | campo | valore             |
+      | nome  | Client aggiornato  |
+    Then la modifica dei metadati del client "CL-1" viene rifiutata
+    And il client "CL-1" conserva tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [CLIENT_CONSUMER_METADATA_AUTHORIZATION_2] - Rifiuto della modifica da parte di un altro ente
+  Dato una risorsa appartenente a un ente,
+  quando un amministratore di un ente diverso prova a modificarla,
+  allora il sistema rifiuta l’operazione senza aggiornare la risorsa.
+
+    Given un client "CL-1" di tipo CONSUMER appartenente al Comune di Milano
+    When un admin di PagoPA richiede la modifica dei metadati del client "CL-1":
+      | campo | valore             |
+      | nome  | Client aggiornato  |
+    Then la modifica dei metadati del client "CL-1" viene rifiutata
+    And il client "CL-1" conserva tutti i dati iniziali
