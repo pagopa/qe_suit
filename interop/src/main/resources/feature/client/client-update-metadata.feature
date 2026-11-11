@@ -300,3 +300,29 @@ Feature: Modifica dei metadati dei client
     And un admin del Comune di Milano ripete gli stessi valori per la risorsa "CL-1"
     Then la ripetizione della modifica della risorsa "CL-1" viene accettata
     And la risorsa "CL-1" conserva stati, versioni e relazioni
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [CLIENT_CONSUMER_METADATA_PROTECTION_4] - Valori modificati e invariati nella stessa richiesta
+  Dato una risorsa con metadati già valorizzati,
+  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
+  allora il sistema applica solo il valore modificato senza alterare dati operativi.
+
+    Given un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
+    And un client "CL-1" CONSUMER creato da PagoPA, associato alla finalità creata, in cui è presente un utente admin e una coppia di chiavi crittografiche
+    When un admin di PagoPA richiede la modifica di un metadato della risorsa "CL-1" confermando gli altri valori correnti
+    Then la risorsa "CL-1" presenta il metadato aggiornato
+    And la risorsa "CL-1" conserva stati, versioni, relazioni e metadati invariati
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [CLIENT_API_METADATA_PROTECTION_4] - Valori modificati e invariati nella stessa richiesta
+  Dato una risorsa con metadati già valorizzati,
+  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
+  allora il sistema applica solo il valore modificato senza alterare dati operativi.
+
+    Given un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
+    And un client "CL-1" API creato da PagoPA, associato alla finalità creata, in cui è presente un utente admin e una coppia di chiavi crittografiche
+    When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "CL-1" confermando gli altri valori correnti
+    Then la risorsa "CL-1" presenta il metadato aggiornato
+    And la risorsa "CL-1" conserva stati, versioni, relazioni e metadati invariati

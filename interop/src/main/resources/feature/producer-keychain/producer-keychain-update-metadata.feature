@@ -137,3 +137,15 @@ Feature: Modifica dei metadati dei portachiavi erogatore
     And un admin del Comune di Milano ripete gli stessi valori per la risorsa "R-1"
     Then la ripetizione della modifica della risorsa "R-1" viene accettata
     And la risorsa "R-1" conserva stati, versioni e relazioni
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PRODUCER_KEYCHAIN_METADATA_PROTECTION_4] - Valori modificati e invariati nella stessa richiesta
+  Dato una risorsa con metadati già valorizzati,
+  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
+  allora il sistema applica solo il valore modificato senza alterare dati operativi.
+
+    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
+    When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "K-1" confermando gli altri valori correnti
+    Then la risorsa "K-1" presenta il metadato aggiornato
+    And la risorsa "K-1" conserva stati, versioni, relazioni e metadati invariati

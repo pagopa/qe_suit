@@ -154,3 +154,17 @@ Feature: Modifica dei metadati degli e-service
     And un admin del Comune di Milano ripete gli stessi valori per la risorsa "ES-1"
     Then la ripetizione della modifica della risorsa "ES-1" viene accettata
     And la risorsa "ES-1" conserva stati, versioni e relazioni
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_METADATA_PROTECTION_4] - Valori modificati e invariati nella stessa richiesta
+  Dato una risorsa con metadati già valorizzati,
+  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
+  allora il sistema applica solo il valore modificato senza alterare dati operativi.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                   |
+      | ES-1  | Comune di Milano | E-service Tempo Attivo |
+    When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "ES-1" confermando gli altri valori correnti
+    Then la risorsa "ES-1" presenta il metadato aggiornato
+    And la risorsa "ES-1" conserva stati, versioni, relazioni e metadati invariati

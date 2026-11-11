@@ -153,3 +153,17 @@ Feature: Modifica dei metadati dei template finalità
     And un admin del Comune di Milano ripete gli stessi valori per la risorsa "TP-1"
     Then la ripetizione della modifica della risorsa "TP-1" viene accettata
     And la risorsa "TP-1" conserva stati, versioni e relazioni
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PURPOSE_TEMPLATE_METADATA_PROTECTION_4] - Valori modificati e invariati nella stessa richiesta
+  Dato una risorsa con metadati già valorizzati,
+  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
+  allora il sistema applica solo il valore modificato senza alterare dati operativi.
+
+    Given un template finalità "TP-1" creato dal Comune di Milano con le seguenti finalità derivate:
+      | alias | stato  |
+      | P-1   | DRAFT  |
+    When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "TP-1" confermando gli altri valori correnti
+    Then la risorsa "TP-1" presenta il metadato aggiornato
+    And la risorsa "TP-1" conserva stati, versioni, relazioni e metadati invariati

@@ -123,6 +123,7 @@ Feature: Modifica dei metadati delle finalità
       | ordinaria |
       | inversa   |
 
+  @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [PURPOSE_METADATA_PROTECTION_2] - Ripetizione dei metadati correnti senza effetti operativi
   Dato una risorsa i cui metadati sono modificabili,
@@ -134,6 +135,23 @@ Feature: Modifica dei metadati delle finalità
     And un admin del Comune di Milano ripete gli stessi valori per la risorsa "P-1"
     Then la ripetizione della modifica della risorsa "P-1" viene accettata
     And la risorsa "P-1" conserva stati, versioni e relazioni
+
+    Examples:
+      | modalità |
+      | ordinaria |
+      | inversa   |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [PURPOSE_METADATA_PROTECTION_3] - Valori modificati e invariati nella stessa richiesta
+  Dato una risorsa con metadati già valorizzati,
+  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
+  allora il sistema applica solo il valore modificato senza alterare dati operativi.
+
+    Given una finalità "P-1" <modalità> non derivata da template del Comune di Milano in stato ACTIVE
+    When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "P-1" confermando gli altri valori correnti
+    Then la risorsa "P-1" presenta il metadato aggiornato
+    And la risorsa "P-1" conserva stati, versioni, relazioni e metadati invariati
 
     Examples:
       | modalità |

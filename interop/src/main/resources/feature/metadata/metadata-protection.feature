@@ -5,26 +5,6 @@ Feature: Protezione delle risorse durante la modifica dei metadati
   Per evitare aggiornamenti parziali e modifiche involontarie a dati operativi.
 
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [METADATA_PROTECTION_4] - Valori modificati e invariati nella stessa richiesta
-  Dato una risorsa con metadati già valorizzati,
-  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
-  allora il sistema applica solo il valore modificato senza alterare dati operativi.
-
-    Given una risorsa "R-1" di tipo <risorsa> del Comune di Milano modificabile nei metadati
-    When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "R-1" confermando gli altri valori correnti
-    Then la risorsa "R-1" presenta il metadato aggiornato
-    And la risorsa "R-1" conserva stati, versioni, relazioni e metadati invariati
-
-    Examples:
-      | risorsa            |
-      | e-service          |
-      | finalità           |
-      | template e-service |
-      | template finalità  |
-      | client             |
-      | portachiavi        |
-
-  @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [METADATA_AUTHORIZATION_1] - Rifiuto della modifica da parte di un ruolo non autorizzato
   Dato una risorsa appartenente a un ente determinato,
   quando un utente dello stesso ente con ruolo escluso richiede l’aggiornamento,

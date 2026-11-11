@@ -140,3 +140,17 @@ Feature: Modifica dei metadati dei template e-service
     And un admin del Comune di Milano ripete gli stessi valori per la risorsa "TE-1"
     Then la ripetizione della modifica della risorsa "TE-1" viene accettata
     And la risorsa "TE-1" conserva stati, versioni e relazioni
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_TEMPLATE_METADATA_PROTECTION_4] - Valori modificati e invariati nella stessa richiesta
+  Dato una risorsa con metadati già valorizzati,
+  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
+  allora il sistema applica solo il valore modificato senza alterare dati operativi.
+
+    Given i seguenti template e-service con versioni predisposte:
+      | alias | erogatore        | nome                  | tecnologia | versioni |
+      | TE-1  | Comune di Milano | Template anagrafico   | REST       | bozza    |
+    When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "TE-1" confermando gli altri valori correnti
+    Then la risorsa "TE-1" presenta il metadato aggiornato
+    And la risorsa "TE-1" conserva stati, versioni, relazioni e metadati invariati
