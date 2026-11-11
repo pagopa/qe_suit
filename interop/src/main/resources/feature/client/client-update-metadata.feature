@@ -395,3 +395,14 @@ Feature: Modifica dei metadati dei client
     When un admin del Comune di Milano richiede la modifica del campo nome della risorsa "CL-1" con valore vuoto
     Then la modifica della risorsa "CL-1" viene rifiutata
     And la risorsa "CL-1" conserva tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [CLIENT_METADATA_VALIDATION_3] - I campi omessi di un client non vengono sovrascritti
+  Dato una risorsa con nome e descrizione valorizzati,
+  quando l’attore invia la modifica del solo nome,
+  allora la descrizione rimane identica a quella iniziale.
+
+    Given un client "K-1" di tipo CONSUMER del Comune di Milano modificabile nei metadati
+    When un admin del Comune di Milano richiede la modifica del solo nome della risorsa "K-1"
+    Then la risorsa "R-1" presenta il nome aggiornato e conserva la descrizione iniziale

@@ -190,3 +190,14 @@ Feature: Modifica dei metadati dei portachiavi erogatore
     When un admin del Comune di Milano richiede la modifica del campo descrizione della risorsa "K-1" con valore vuoto
     Then la modifica della risorsa "K-1" viene rifiutata
     And la risorsa "K-1" conserva tutti i dati iniziali
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [PRODUCER_KEYCHAIN_METADATA_VALIDATION_3] - I campi omessi di un portachiavi non vengono sovrascritti
+  Dato una risorsa con nome e descrizione valorizzati,
+  quando l’attore invia la modifica del solo nome,
+  allora la descrizione rimane identica a quella iniziale.
+
+    Given una portachiavi erogatore "K-1" del Comune di Milano modificabile nei metadati
+    When un admin del Comune di Milano richiede la modifica del solo nome della risorsa "K-1"
+    Then la risorsa "K-1" presenta il nome aggiornato e conserva la descrizione iniziale
