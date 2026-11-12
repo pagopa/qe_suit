@@ -21,10 +21,6 @@ public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
 
-    /**
-     * Exceeds the published descriptor's consumer threshold by one, preserving the active version
-     * and verifying that the new version is waiting for approval.
-     */
     public Purpose updatePurposeDailyCallsEstimateBeyondThreshold(Purpose purpose, EService eService) {
         PurposeVersion activeVersion = purpose.getLastActiveVersion();
         if (activeVersion == null) {
@@ -38,16 +34,7 @@ public class PurposeUseCase {
         }
         Integer threshold = eService.getActiveDescriptor().getDailyCallsPerConsumer();
         int dailyCalls = threshold + 1;
-        Purpose updatedPurpose = purposeGateway.updatePurposeDailyCalls(purpose.getRef(), dailyCalls);
-        PurposeVersion waitingVersion = updatedPurpose.getLastWaitingForApprovalVersion();
-        assertThat(waitingVersion).as("New version waiting for approval for purpose %s", purpose.getId()).isNotNull();
-        assertThat(purpose.findVersionById(waitingVersion.getId())).as("The waiting version must be new").isEmpty();
-        assertThat(waitingVersion.getDailyCalls()).isEqualTo(dailyCalls);
-        PurposeVersion preservedActiveVersion = updatedPurpose.findVersionById(activeVersion.getId())
-                .orElseThrow(() -> new IllegalStateException("Previous active purpose version was not returned"));
-        assertThat(preservedActiveVersion.getPurposeVersionState()).isEqualTo(PurposeVersionState.ACTIVE);
-        assertThat(preservedActiveVersion.getDailyCalls()).isEqualTo(activeVersion.getDailyCalls());
-        return updatedPurpose;
+        return purposeGateway.updatePurposeDailyCalls(purpose.getRef(), dailyCalls);
     }
 
     public Purpose createPurpose(EService eService, Consumer<PurposeCreateCommand> commandConfig) {

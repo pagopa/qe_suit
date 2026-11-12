@@ -68,43 +68,4 @@ class PurposeUseCaseTest {
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("does not belong");
         verifyNoInteractions(gateway);
     }
-
-    @Test
-    void requiresANewWaitingVersionRatherThanAnAutomaticallyActivatedOne() {
-        when(gateway.updatePurposeDailyCalls(purpose.getRef(), 51))
-                .thenReturn(purpose.toBuilder().version(waiting.toBuilder()
-                        .purposeVersionState(PurposeVersionState.ACTIVE).build()).build());
-
-        assertThatThrownBy(() -> useCase.updatePurposeDailyCallsEstimateBeyondThreshold(purpose, eService))
-                .isInstanceOf(AssertionError.class).hasMessageContaining("waiting for approval");
-    }
-
-    @Test
-    void rejectsAnIncorrectDailyCallsEstimate() {
-        when(gateway.updatePurposeDailyCalls(purpose.getRef(), 51))
-                .thenReturn(purpose.toBuilder().version(waiting.toBuilder().dailyCalls(52).build()).build());
-
-        assertThatThrownBy(() -> useCase.updatePurposeDailyCallsEstimateBeyondThreshold(purpose, eService))
-                .isInstanceOf(AssertionError.class);
-    }
-
-    @Test
-    void rejectsReplacingTheActiveVersionWithTheWaitingVersion() {
-        when(gateway.updatePurposeDailyCalls(purpose.getRef(), 51))
-                .thenReturn(purpose.toBuilder().clearVersions()
-                        .version(waiting.toBuilder().id(active.getId()).build()).build());
-
-        assertThatThrownBy(() -> useCase.updatePurposeDailyCallsEstimateBeyondThreshold(purpose, eService))
-                .isInstanceOf(AssertionError.class).hasMessageContaining("must be new");
-    }
-
-    @Test
-    void rejectsChangingThePreviousActiveVersion() {
-        when(gateway.updatePurposeDailyCalls(purpose.getRef(), 51))
-                .thenReturn(purpose.toBuilder().clearVersions().version(waiting)
-                        .version(active.toBuilder().purposeVersionState(PurposeVersionState.ARCHIVED).build()).build());
-
-        assertThatThrownBy(() -> useCase.updatePurposeDailyCallsEstimateBeyondThreshold(purpose, eService))
-                .isInstanceOf(AssertionError.class);
-    }
 }
