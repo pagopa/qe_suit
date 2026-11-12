@@ -1,4 +1,4 @@
-@private-catalog
+@awaiting_for_qa
 @eservice-template-interface
 @channel:Given=BFF,When=BFF,Then=BFF
 Feature: Validazione del file WSDL nel caricamento dell'interfaccia di un template e-service SOAP
