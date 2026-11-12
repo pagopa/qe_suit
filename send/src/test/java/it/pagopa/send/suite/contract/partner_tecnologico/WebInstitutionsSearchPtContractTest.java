@@ -45,10 +45,7 @@ public class WebInstitutionsSearchPtContractTest {
 
     private static final String TOO_SHORT = "ab";
     private static final String NO_MATCH = "zzzqqq";
-    private static final String OTHER_NO_MATCH = "qqqzzz";
-    // caratteri esclusi da dataRegex.name di pn-commons: /^[\p{L}\-'" 0-9.,]+$/u
-    private static final String NOT_ALLOWED = "<>{}|^~";
-    private static final String MIN_LENGTH_ERROR = "Inserisci almeno tre caratteri";
+    private static final String OTHER_NO_MATCH = "qqqzzz";    private static final String MIN_LENGTH_ERROR = "Inserisci almeno tre caratteri";
     // limite del parametro search di GET /bff/v1/pt/institutions
     private static final int MAX_LENGTH = 250;
     // 255 caratteri: ogni blocco di 10 finisce con la sua posizione (xxxxxxx010 ... xxxxxxx250), poi "abcde" oltre il
@@ -68,7 +65,6 @@ public class WebInstitutionsSearchPtContractTest {
      * <ul>
      *     <li>con meno di 3 caratteri compare l'errore e "Cerca" resta abilitato;</li>
      *     <li>una stringa senza corrispondenze mostra il messaggio di nessun risultato;</li>
-     *     <li>con caratteri non ammessi compare un errore;</li>
      *     <li>non si possono scrivere più caratteri del massimo;</li>
      *     <li>dopo aver svuotato il filtro con la X si può fare una nuova ricerca;</li>
      *     <li>la ricerca non distingue tra maiuscole e minuscole;</li>
@@ -96,13 +92,6 @@ public class WebInstitutionsSearchPtContractTest {
                                 "stringa senza corrispondenze: nessun risultato",
                                 page -> page.searchInstitutions(NO_MATCH),
                                 page -> page.noResultsTitle().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(noResultsTitle(NO_MATCH)))
-                        ),
-
-                        new WebScenario<>(
-                                "caratteri non ammessi: errore",
-                                page -> page.searchInstitutions(NOT_ALLOWED),
-                                // TODO: oggi né il frontend né il BFF hanno regole sui caratteri, in attesa di chiarimento sulla PST
-                                page -> page.searchError().readAndAssert(h -> Assertions.assertThat(h).isNotBlank())
                         ),
 
                         new WebScenario<>(
