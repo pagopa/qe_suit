@@ -12,12 +12,19 @@ import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisAssignmentSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisRejectionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisSignSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -92,6 +99,61 @@ public class BffPurposeGateway implements PurposeGateway {
                                 .orElseThrow(() -> new IllegalStateException("Purpose version not found"))
                                 .getRef().equals(purposeVersionRef)
         );
+    }
+
+    @Override
+    public void assignRiskAnalysisReviewers(
+            PurposeRef purposeRef,
+            RiskAnalysisReviewMode reviewMode,
+            List<UUID> reviewerIds
+    ) {
+        RiskAnalysisAssignmentSeed assignment = new RiskAnalysisAssignmentSeed()
+                    .reviewMode(toBffReviewMode(reviewMode))
+                .reviewerIds(List.copyOf(reviewerIds));
+
+        restClient.assignRiskAnalysisReviewers(purposeRef.id(), assignment)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    @Override
+    public void submitRiskAnalysis(PurposeRef purposeRef) {
+        restClient.submitRiskAnalysis(purposeRef.id(), commandFactory.riskAnalysisSubmissionRequest())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    @Override
+    public void signRiskAnalysis(PurposeRef purposeRef, int metadataVersionToSign) {
+        RiskAnalysisSignSeed signRequest = new RiskAnalysisSignSeed()
+                .metadataVersionToSign(metadataVersionToSign);
+
+        restClient.signRiskAnalysis(purposeRef.id(), signRequest)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    @Override
+    public void rejectRiskAnalysis(PurposeRef purposeRef, String rejectionReason) {
+        RiskAnalysisRejectionSeed rejectionRequest = new RiskAnalysisRejectionSeed()
+                .rejectionReason(rejectionReason);
+
+        restClient.rejectRiskAnalysis(purposeRef.id(), rejectionRequest)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    private static it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode toBffReviewMode(
+            RiskAnalysisReviewMode reviewMode
+    ) {
+        return switch (reviewMode) {
+            case ADMIN_WRITES_ADMIN_SIGNS ->
+                    it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode.ADMIN_WRITES_ADMIN_SIGNS;
+            case ADMIN_WRITES_REVIEWER_SIGNS ->
+                    it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS;
+            case REVIEWER_WRITES_REVIEWER_SIGNS ->
+                    it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode.REVIEWER_WRITES_REVIEWER_SIGNS;
+        };
     }
 
     @Override

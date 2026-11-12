@@ -8,8 +8,12 @@ import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -41,6 +45,34 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
     public PurposeJourneyImpl createPurposeFromTemplateAndLinkToEService(PurposeTemplate purposeTemplate, EService eService, PurposeVersionState state) {
         Purpose draftPurpose = purposeUseCase.createPurposeFromTemplate(purposeTemplate, eService);
         return processLifecycle(draftPurpose, state);
+    }
+
+    @Override
+    public PurposeJourneyImpl assignRiskAnalysisReviewers(RiskAnalysisReviewMode reviewMode, List<UUID> reviewerIds) {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purposeUseCase.assignRiskAnalysisReviewers(purpose, reviewMode, reviewerIds);
+        return this;
+    }
+
+    @Override
+    public PurposeJourneyImpl submitRiskAnalysis() {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purposeUseCase.submitRiskAnalysis(purpose);
+        return this;
+    }
+
+    @Override
+    public PurposeJourneyImpl signRiskAnalysis(int metadataVersionToSign) {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purposeUseCase.signRiskAnalysis(purpose, metadataVersionToSign);
+        return this;
+    }
+
+    @Override
+    public PurposeJourneyImpl rejectRiskAnalysis(String rejectionReason) {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purposeUseCase.rejectRiskAnalysis(purpose, rejectionReason);
+        return this;
     }
 
     private PurposeJourneyImpl processLifecycle(Purpose purpose, PurposeVersionState targetState) {
