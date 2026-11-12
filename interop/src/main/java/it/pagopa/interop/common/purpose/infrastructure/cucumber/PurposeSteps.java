@@ -59,6 +59,8 @@ public class PurposeSteps {
                         "E-service not found for purpose " + purpose.getId()
                 ));
         Tenant consumer = Tenant.fromOrganizationId(purpose.getConsumerId());
+        // TODO fare riferimento al ticket tecnico QA-19317
+        // Serve una soluzione per evitare di impostare sia currentUserSession che currentM2MSession
         currentUserSession.set(User.getTenantAdmin(consumer), consumer);
         currentM2MSession.set(consumer, M2MRole.M2M_ADMIN);
         purposeUseCase.updatePurposeDailyCallsEstimateBeyondThreshold(purpose, eService);
