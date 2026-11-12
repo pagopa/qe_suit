@@ -81,6 +81,7 @@ public interface PtInstitutionsPage extends Page {
     Optional<OneTrustBanner> oneTrustBanner();
 
     default void searchInstitutions(String text) {
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         searchInput().fill(text);
         searchButton().click();
     }
