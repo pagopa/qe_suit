@@ -199,8 +199,7 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
     }
 
     private PatchUpdateEServiceSeed defaultPatchUpdateEServiceSeed() {
-        return Instancio.of(PatchUpdateEServiceSeed.class)
-                .create();
+        return new PatchUpdateEServiceSeed();
     }
 
     @Override

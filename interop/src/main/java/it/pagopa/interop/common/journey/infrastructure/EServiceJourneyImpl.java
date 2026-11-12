@@ -59,6 +59,11 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     public EServiceJourneyImpl updateEService(Consumer<EServiceUpdateCommand> commandConfig) {
         EServiceUpdateCommand command = requestFactory.defaultUpdateEServiceCommand();
         commandConfig.accept(command);
+        return updateEService(command);
+    }
+
+    @Override
+    public EServiceJourneyImpl updateEService(EServiceUpdateCommand command) {
         String alias = command.getAlias();
         EService eService = alias != null
                 ? entityStore.getByAliasOrThrow(alias, EService.class)
