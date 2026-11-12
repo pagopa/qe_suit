@@ -2,16 +2,12 @@ package it.pagopa.interop.suite.integration;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
-import it.pagopa.interop.common.agreement.domain.AgreementState;
-import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
-import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisPage;
 import it.pagopa.utils.RandomUtils;
@@ -52,6 +48,9 @@ class WebRiskAnalysisIntegrationTest {
     private final WebBrowserContractValidator webContractValidator;
 
     private final InteropJourney interopJourney;
+    private final Tenant consumer = Tenant.SOGECAP;
+    private final User reviewer = User.getTenantUser(consumer, UserRole.REVIEWER);
+    private final Tenant producer = Tenant.COMUNE_DI_MILANO;
 
     /**
      * Creates and submits a risk analysis assigned to a reviewer, then verifies
@@ -62,22 +61,19 @@ class WebRiskAnalysisIntegrationTest {
     @TestFactory
     @DisplayName("Reviewer views assigned RA")
     Stream<DynamicTest> authorizedUserTests() {
-        User reviewer = User.getTenantUser(Tenant.SOGECAP, UserRole.REVIEWER);
+        User reviewer = User.getTenantUser(consumer, UserRole.REVIEWER);
         String pendingEServiceName = RandomUtils.randomAlphanumericName("risk-analysis-pending");
         String pendingToBeCompletedEServiceName = RandomUtils.randomAlphanumericName("risk-analysis-pending-tobe-completed");
         String signedEServiceName = RandomUtils.randomAlphanumericName("risk-analysis-signed");
         String rejectedEServiceName = RandomUtils.randomAlphanumericName("risk-analysis-rejected");
 
-        createAndSubmitRiskAnalysis(
-                pendingToBeCompletedEServiceName,
-                reviewer,
-                RiskAnalysisReviewMode.REVIEWER_WRITES_REVIEWER_SIGNS
-        );
-        createAndSubmitRiskAnalysis(pendingEServiceName, reviewer, RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS);
-        createAndSignRiskAnalysis(signedEServiceName, reviewer);
-        createAndRejectRiskAnalysis(rejectedEServiceName, reviewer);
+        interopJourney.withConsumer(consumer, UserRole.ADMIN)
+                .setUpRiskAnalysisToCompile(pendingToBeCompletedEServiceName, producer, consumer, reviewer);
+        interopJourney.setUpRiskAnalysisToApprove(pendingEServiceName, producer, consumer, reviewer);
+        createAndSignRiskAnalysis(signedEServiceName);
+        createAndRejectRiskAnalysis(rejectedEServiceName);
 
-        return webContractValidator.as(reviewer, Tenant.SOGECAP)
+        return webContractValidator.as(reviewer, consumer)
                 .on(RiskAnalysisPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
@@ -160,7 +156,7 @@ class WebRiskAnalysisIntegrationTest {
     @TestFactory
     @DisplayName("Unauthorized user sees the error page")
     Stream<DynamicTest> unauthorizedUserTests() {
-        return webContractValidator.as(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO)
+        return webContractValidator.as(User.getTenantAdmin(producer),producer)
                 .on(RiskAnalysisPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
@@ -197,77 +193,25 @@ class WebRiskAnalysisIntegrationTest {
     }
 
     /**
-     * Creates the prerequisites for an e-service and submits its risk analysis
-     * using the specified review mode.
-     *
-     * @param eServiceName name assigned to the newly created e-service
-     * @param reviewer reviewer to whom the risk analysis is assigned
-     * @param reviewMode review mode used to assign the risk analysis
-     */
-    private void createAndSubmitRiskAnalysis(String eServiceName, User reviewer, RiskAnalysisReviewMode reviewMode) {
-        createPurposePrerequisites(eServiceName);
-        assignAndSubmitRiskAnalysis(
-                reviewMode,
-                reviewer
-        );
-    }
-
-    /**
-     * Creates the published e-service, active agreement, and draft purpose needed
-     * before assigning a risk analysis.
-     *
-     * @param eServiceName name assigned to the newly created e-service
-     */
-    private void createPurposePrerequisites(String eServiceName) {
-        interopJourney
-                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
-                .createEService(command -> command.name(eServiceName), EServiceDescriptorState.PUBLISHED)
-                .withConsumer(Tenant.SOGECAP, UserRole.ADMIN)
-                .linkAgreement(AgreementState.ACTIVE)
-                .createPurpose(PurposeVersionState.DRAFT);
-    }
-
-    /**
-     * Assigns the purpose's risk analysis to the reviewer using the requested producer
-     * and review mode. Submits the analysis unless the reviewer must complete it first.
-     *
-     * @param reviewMode mode used to assign the risk analysis
-     * @param reviewer   reviewer assigned to the risk analysis
-     */
-    private void assignAndSubmitRiskAnalysis(
-            RiskAnalysisReviewMode reviewMode,
-            User reviewer
-    ) {
-        interopJourney
-                .withProducer(Tenant.SOGECAP, UserRole.ADMIN)
-                .assignRiskAnalysisReviewers(reviewMode, List.of(reviewer.getUserId()));
-        if (reviewMode != RiskAnalysisReviewMode.REVIEWER_WRITES_REVIEWER_SIGNS) {
-            interopJourney.submitRiskAnalysis();
-        }
-    }
-
-    /**
      * Creates, submits, and signs a risk analysis as the reviewer.
      *
      * @param eServiceName name assigned to the e-service associated with the analysis
-     * @param reviewer reviewer who signs the analysis
      */
-    private void createAndSignRiskAnalysis(String eServiceName, User reviewer) {
-        createAndSubmitRiskAnalysis(eServiceName, reviewer, RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS);
+    private void createAndSignRiskAnalysis(String eServiceName) {
+        interopJourney.setUpRiskAnalysisToApprove(eServiceName, producer, consumer, reviewer);
         interopJourney
-                .withConsumer(Tenant.SOGECAP, reviewer).signRiskAnalysis(INITIAL_RISK_ANALYSIS_METADATA_VERSION);
+                .withConsumer(consumer, reviewer).signRiskAnalysis(INITIAL_RISK_ANALYSIS_METADATA_VERSION);
     }
 
     /**
      * Creates, submits, and rejects a risk analysis as the reviewer.
      *
      * @param eServiceName name assigned to the e-service associated with the analysis
-     * @param reviewer reviewer who rejects the analysis
      */
-    private void createAndRejectRiskAnalysis(String eServiceName, User reviewer) {
-        createAndSubmitRiskAnalysis(eServiceName, reviewer, RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS);
+    private void createAndRejectRiskAnalysis(String eServiceName) {
+        interopJourney.setUpRiskAnalysisToApprove(eServiceName, producer, consumer, reviewer);
         interopJourney
-                .withConsumer(Tenant.SOGECAP, reviewer).rejectRiskAnalysis(RISK_ANALYSIS_REJECTION_REASON);
+                .withConsumer(consumer, reviewer).rejectRiskAnalysis(RISK_ANALYSIS_REJECTION_REASON);
     }
 
     /**

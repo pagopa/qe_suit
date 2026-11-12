@@ -114,17 +114,6 @@ public interface RiskAnalysisPage extends Page {
     record RiskAnalysisRow(String eserviceName, String status) {}
 
     /**
-     * Reads all cell values from the rows on the currently selected tab and page.
-     *
-     * @return table rows, each represented by its cell values
-     */
-    default List<List<String>> readCurrentRows() {
-        return riskAnalysisTable().tBody().rows().stream()
-                .map(row -> row.cells().stream().map(TableCell::read).toList())
-                .toList();
-    }
-
-    /**
      * Reads the e-service name and status from each row on the currently selected
      * tab and page.
      *

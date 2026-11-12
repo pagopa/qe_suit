@@ -13,6 +13,7 @@ public interface InteropJourney extends
         ClientJourney<InteropJourney>,
         ProducerKeychainJourney<InteropJourney>,
         PurposeJourney<InteropJourney>,
+        RiskAnalysisSetupJourney<InteropJourney>,
         PurposeTemplateJourney<InteropJourney>,
         TenantJourney<InteropJourney>,
         ChannelJourney<InteropJourney>,
