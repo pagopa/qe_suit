@@ -52,6 +52,10 @@ public interface PtInstitutionsPage extends Page {
     @XPath("//*[@data-testid=\"searchButton\"]")
     Button searchButton();
 
+    // X che svuota il campo: compare solo se il campo ha il focus e non è vuoto
+    @XPath("//*[@data-testid=\"institutionsSearch\"]//button[not(@data-testid=\"searchButton\")]")
+    Button clearSearchButton();
+
     @XPath("//*[@data-testid=\"institutionsSearch\"]//*[contains(@class, 'MuiFormHelperText-root')]")
     Readable<String> searchError();
 
@@ -63,8 +67,9 @@ public interface PtInstitutionsPage extends Page {
     @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"institutionsTableDesktop\"]//tbody//tr/td[1]")
     Readable<String> institutionNames();
 
-    @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"customPagination\"]")
-    Readable<String> pagination();
+    // pulsanti di pagina del paginatore (numeri e frecce): ci sono solo se i risultati stanno su più pagine
+    @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"pageSelector\"]//button")
+    Readable<String> pageButtons();
 
     // enti deleganti: nome, codice fiscale e stato della delega. Solo a caricamento concluso, prima le righe sono scheletri vuoti
     @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"institutionsTableDesktop\"]")
