@@ -43,7 +43,6 @@ public interface PtInstitutionsPage extends Page {
     @XPath("//*[@data-testid=\"work-in-progress-alert\"]")
     Readable<String> workInProgressAlert();
 
-    // filtro e tabella seguono il sorgente di pn-pt-webapp (pn-frontend, PN-21981): non ancora rilasciati in dev
     @XPath("//*[@data-testid=\"institutionsSearch\"]//label")
     Readable<String> searchLabel();
 
@@ -56,6 +55,10 @@ public interface PtInstitutionsPage extends Page {
     // enti deleganti: nome, codice fiscale e stato della delega. Solo a caricamento concluso, prima le righe sono scheletri vuoti
     @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"institutionsTableDesktop\"]")
     Table institutionsTable();
+
+    // numero di righe per pagina, sotto la tabella
+    @XPath("//*[@data-testid=\"itemsPerPageSelector\"]//button")
+    Button rowsPerPage();
 
     PtHeader header();
 
