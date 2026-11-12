@@ -4,6 +4,7 @@ import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.interop.web.purpose_template.infrastructure.page.PurposeTemplateCatalogPage;
 import it.pagopa.interop.web.purpose_template.infrastructure.page.PurposeTemplateCreationPage;
+import it.pagopa.interop.web.purpose_template.infrastructure.suite.page.ConsumerMyPurposeTemplatePage;
 import it.pagopa.interop.web.purpose_template.infrastructure.suite.page.ConsumerPurposeTemplateCatalogPage;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,9 +27,16 @@ public class WebPurposeTemplateConfig {
         return webPresentationGateway.bind(PurposeTemplateCreationPage.class);
     }
 
+    @Bean
+    @ScenarioScope
     public ConsumerPurposeTemplateCatalogPage consumerPurposeTemplateCatalogPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(ConsumerPurposeTemplateCatalogPage.class);
     }
 
-}
+    @Bean
+    @ScenarioScope
+    public ConsumerMyPurposeTemplatePage consumerMyPurposeTemplatePage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(ConsumerMyPurposeTemplatePage.class);
+    }
 
+}
