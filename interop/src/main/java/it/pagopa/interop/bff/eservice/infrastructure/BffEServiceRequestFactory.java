@@ -57,6 +57,21 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 .create();
     }
 
+    public UpdateEServiceDescriptorTemplateInstanceSeed updateDraftTemplateInstanceDescriptorRequest() {
+        return Instancio.of(UpdateEServiceDescriptorTemplateInstanceSeed.class)
+                .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getAudience), List.of("QA"))
+                .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getAgreementApprovalPolicy), AgreementApprovalPolicy.AUTOMATIC)
+                .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getDailyCallsTotal), 1000)
+                .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getDailyCallsPerConsumer), 100)
+                .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getAttributes),
+                        new DescriptorAttributesSeed()
+                                .certified(List.of())
+                                .declared(List.of())
+                                .verified(List.of())
+                )
+                .create();
+    }
+
     public CatalogFilterPayload searchCatalogRequest() {
         CatalogFilterPayload payload = new CatalogFilterPayload();
         payload.setOffset(0);
@@ -165,18 +180,7 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 yield BffEServiceTemplateInstanceUpdateDescriptorCommand.from(publishedInstancePayload);
             }
             case DRAFT -> {
-                var draftInstancePayload = Instancio.of(UpdateEServiceDescriptorTemplateInstanceSeed.class)
-                        .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getAudience), List.of("QA"))
-                        .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getAgreementApprovalPolicy), AgreementApprovalPolicy.AUTOMATIC)
-                        .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getDailyCallsTotal), 1000)
-                        .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getDailyCallsPerConsumer), 100)
-                        .set(field(UpdateEServiceDescriptorTemplateInstanceSeed::getAttributes),
-                                new DescriptorAttributesSeed()
-                                        .certified(List.of())
-                                        .declared(List.of())
-                                        .verified(List.of())
-                        )
-                        .create();
+                var draftInstancePayload = updateDraftTemplateInstanceDescriptorRequest();
                 yield BffEServiceTemplateInstanceUpdateDescriptorCommand.from(draftInstancePayload);
             }
             default -> throw new IllegalArgumentException("Unsupported state: " + currentState);
