@@ -77,6 +77,15 @@ url:
 partner-tecnologico:
   enabled: true # pn-pt-webapp e sessione PT disponibili
 
+# API di test di Selfcare per creare le deleghe PA -> PT: le deleghe di tutti gli ambienti SEND stanno sul
+# Selfcare di uat, ognuno con il suo prodotto (prod-pn-dev)
+selfcare:
+  delegations-test:
+    base-url: https://api.uat.selfcare.pagopa.it/external/test/v1
+    product-id: prod-pn-dev
+    # subscription key APIM delle API di test di Selfcare (header Ocp-Apim-Subscription-Key), nei secrets
+    subscription-key: ${pn.external.selfcare-subscription-key:REPLACE_ME}
+
 # Selettori XPath da properties
 selettore:
   login:
