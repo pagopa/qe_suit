@@ -14,8 +14,8 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     And un admin appartenente all'erogatore Comune di Milano
 
   Scenario: [ERROR_004] - Impossibilità di proporre una delega in erogazione a un ente non pubblico
-  Dato un e-service pubblicato dal Comune di Milano
-  Quando l'erogatore tenta di conferire a Sogecap, che non è una Pubblica Amministrazione, una delega in erogazione per l'e-service
+  Dato un e-service pubblicato dall'erogatore
+  Quando l'erogatore tenta di conferire a un ente non pubblico una delega in erogazione per l'e-service
   Allora il sistema rifiuta la proposta e segnala che l'ente scelto non può ricevere la delega.
 
     # Binding BFF negativo mancante; riusare createProducerDelegation e verificare Tenant.getTenantType.
@@ -24,7 +24,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
 
   @producer-delegation-settings
   Scenario: [ERROR_005] - Impossibilità di approvare una delega in erogazione già attiva
-  Dato un e-service del Comune di Milano con una delega in erogazione al Comune di Pozzallo già approvata
+  Dato un e-service dell'erogatore con una delega in erogazione a un ente delegato già approvata
   Quando il delegato tenta di approvare nuovamente la delega
   Allora il sistema rifiuta l'approvazione e segnala che lo stato della delega non consente l'operazione.
 
@@ -39,7 +39,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
 
   @producer-delegation-settings
   Scenario: [ERROR_006] - Impossibilità di revocare una delega in erogazione già revocata
-  Dato un e-service del Comune di Milano con una delega in erogazione al Comune di Pozzallo già revocata
+  Dato un e-service dell'erogatore con una delega in erogazione a un ente delegato già revocata
   Quando il delegante tenta di revocare nuovamente la delega
   Allora il sistema rifiuta la revoca e segnala che lo stato della delega non consente l'operazione.
 
@@ -53,8 +53,8 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__DELETE_PRODUCERS_DELEGATIONS_DELEGATION_ID"
 
   Scenario: [ERROR_007] - Impossibilità di proporre una delega in fruizione a un ente non pubblico
-  Dato un e-service pubblicato dal Comune di Milano
-  Quando il fruitore PagoPA tenta di conferire a Sogecap, che non è una Pubblica Amministrazione, una delega in fruizione per l'e-service
+  Dato un e-service pubblicato dall'erogatore
+  Quando il fruitore tenta di conferire a un ente non pubblico una delega in fruizione per l'e-service
   Allora il sistema rifiuta la proposta e segnala che l'ente scelto non può ricevere la delega.
 
     Given un admin appartenente al fruitore PagoPA
@@ -63,7 +63,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     Then il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_CONSUMERS_DELEGATIONS"
 
   Scenario: [ERROR_008] - Impossibilità di approvare una delega in fruizione già attiva
-  Dato un e-service pubblicato dal Comune di Milano e una delega in fruizione da PagoPA al Comune di Pozzallo già approvata
+  Dato un e-service pubblicato dall'erogatore e una delega in fruizione dal fruitore a un ente delegato già approvata
   Quando il delegato tenta di approvare nuovamente la delega
   Allora il sistema rifiuta l'approvazione e segnala che lo stato della delega non consente l'operazione.
 
@@ -75,7 +75,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_CONSUMERS_DELEGATIONS_DELEGATION_ID_APPROVE"
 
   Scenario: [ERROR_009] - Impossibilità di revocare una delega in fruizione già revocata
-  Dato un e-service pubblicato dal Comune di Milano e una delega in fruizione da PagoPA al Comune di Pozzallo già revocata
+  Dato un e-service pubblicato dall'erogatore e una delega in fruizione dal fruitore a un ente delegato già revocata
   Quando il delegante tenta di revocare nuovamente la delega
   Allora il sistema rifiuta la revoca e segnala che lo stato della delega non consente l'operazione.
 
@@ -88,7 +88,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
 
   @producer-delegation-settings
   Scenario: [ERROR_010] - Rifiuto di una delega in erogazione con un link nella motivazione
-  Dato un e-service del Comune di Milano con una delega in erogazione al Comune di Pozzallo in attesa di accettazione
+  Dato un e-service dell'erogatore con una delega in erogazione a un ente delegato in attesa di accettazione
   Quando il delegato tenta di rifiutare la delega inserendo un collegamento nella motivazione
   Allora il sistema rifiuta l'operazione e invita il delegato a rimuovere il collegamento dalla motivazione.
 
@@ -102,7 +102,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     Then il messaggio di errore corrisponde al caso "DELEGATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_REJECT"
 
   Scenario: [ERROR_011] - Rifiuto di una delega in fruizione con un link nella motivazione
-  Dato un e-service pubblicato dal Comune di Milano e una delega in fruizione da PagoPA al Comune di Pozzallo in attesa di accettazione
+  Dato un e-service pubblicato dall'erogatore e una delega in fruizione dal fruitore a un ente delegato in attesa di accettazione
   Quando il delegato tenta di rifiutare la delega inserendo un collegamento nella motivazione
   Allora il sistema rifiuta l'operazione e invita il delegato a rimuovere il collegamento dalla motivazione.
 

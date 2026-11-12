@@ -14,7 +14,7 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
     And un admin appartenente al fruitore PagoPA
 
   Scenario: [ERROR_168] - Impossibilità di scaricare un documento firmato non ancora disponibile
-  Data una richiesta di fruizione di PagoPA attiva con un contratto generato e il documento firmato non ancora disponibile
+  Data una richiesta di fruizione del fruitore attiva con un contratto generato e il documento firmato non ancora disponibile
   Quando l'erogatore tenta di scaricare il documento firmato della richiesta
   Allora il sistema rifiuta il download e segnala che il documento firmato non è ancora disponibile.
 
@@ -29,7 +29,7 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
     Then il messaggio di errore corrisponde al caso "BFF_CONTRACT_EXCEPTION"
 
   Scenario: [ERROR_197] - Rifiuto di un allegato PDF con contenuto non valido
-  Data una richiesta di fruizione di PagoPA in bozza
+  Data una richiesta di fruizione del fruitore in bozza
   Quando il fruitore tenta di allegare un file identificato come PDF ma con contenuto incompatibile con il formato dichiarato
   Allora il sistema rifiuta il caricamento e invita il fruitore a correggere il file prima di riprovare.
 

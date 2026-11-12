@@ -12,7 +12,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
 
   @producer-delegation-settings
   Scenario: [ERROR_169] - Impossibilità di consultare un e-service dopo la revoca della delega
-  Dato un e-service del Comune di Milano precedentemente delegato al Comune di Pozzallo e una delega revocata
+  Dato un e-service dell'erogatore precedentemente delegato a un altro ente e una delega revocata
   Quando l'amministratore del delegato tenta di consultare i dettagli dell'e-service in erogazione
   Allora il sistema rifiuta la consultazione e segnala che l'ente non è autorizzato.
 
@@ -25,7 +25,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
 
   @producer-delegation-settings
   Scenario: [ERROR_170] - Impossibilità di consultare una versione dopo la revoca della delega
-  Dato un e-service del Comune di Milano precedentemente delegato al Comune di Pozzallo e una delega revocata
+  Dato un e-service dell'erogatore precedentemente delegato a un altro ente e una delega revocata
   Quando l'amministratore del delegato tenta di consultare i dettagli della versione in erogazione
   Allora il sistema rifiuta la consultazione e segnala che l'ente non è autorizzato.
 
@@ -38,7 +38,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
 
   @producer-delegation-settings
   Scenario: [ERROR_171] - Impossibilità per il delegato di esportare una versione dell'e-service
-  Dato un e-service del Comune di Milano con una versione pubblicata e una delega attiva al Comune di Pozzallo
+  Dato un e-service dell'erogatore con una versione pubblicata e una delega attiva a un ente delegato
   Quando l'amministratore del delegato tenta di esportare la versione
   Allora il sistema rifiuta l'esportazione e segnala che l'ente non è autorizzato.
 
@@ -75,7 +75,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
 
   @producer-delegation-settings
   Scenario: [ERROR_174] - Impossibilità per l'erogatore di esportare un e-service con delega attiva
-  Dato un e-service del Comune di Milano con una versione pubblicata e una delega attiva al Comune di Pozzallo
+  Dato un e-service dell'erogatore con una versione pubblicata e una delega attiva a un ente delegato
   Quando l'erogatore tenta di esportare la versione
   Allora il sistema rifiuta l'esportazione e segnala che l'e-service delegato non è esportabile.
 

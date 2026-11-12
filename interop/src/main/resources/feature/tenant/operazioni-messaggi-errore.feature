@@ -11,7 +11,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     Given un admin appartenente all'erogatore Comune di Milano
 
   Scenario: [ERROR_012] - Rifiuto dell'aggiornamento di una verifica con scadenza nel passato
-  Dato un attributo già verificato dal Comune di Milano per PagoPA
+  Dato un attributo già verificato dall'erogatore per il fruitore
   Quando l'erogatore tenta di aggiornarne la verifica con una scadenza precedente a oggi
   Allora il sistema rifiuta la modifica e segnala che la scadenza non può essere nel passato.
 
@@ -26,7 +26,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED_ATTRIBUTE_ID"
 
   Scenario: [ERROR_013] - Impossibilità di assegnare un attributo certificato già posseduto dall'ente
-  Dato un attributo certificato già assegnato a PagoPA dallo stesso certificatore
+  Dato un attributo certificato già assegnato all'ente dallo stesso certificatore
   Quando il certificatore tenta di assegnare nuovamente l'attributo
   Allora il sistema rifiuta l'assegnazione e segnala che l'attributo è già posseduto.
 
@@ -41,7 +41,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED"
 
   Scenario: [ERROR_014] - Impossibilità di assegnare un attributo certificato discreto già posseduto dall'ente
-  Dato un attributo certificato discreto già assegnato a PagoPA con un valore ammesso
+  Dato un attributo certificato discreto già assegnato all'ente con un valore ammesso
   Quando il certificatore tenta di assegnare nuovamente l'attributo
   Allora il sistema rifiuta l'assegnazione e segnala che l'attributo è già posseduto.
 
@@ -77,7 +77,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED"
 
   Scenario: [ERROR_016] - Impossibilità per un ente non pubblico di abilitarsi alle deleghe
-  Dato un amministratore di Sogecap, che non è una Pubblica Amministrazione
+  Dato un amministratore di un ente non pubblico
   Quando l'ente tenta di abilitarsi a ricevere deleghe
   Allora il sistema rifiuta la modifica e segnala che l'operazione non è consentita.
 

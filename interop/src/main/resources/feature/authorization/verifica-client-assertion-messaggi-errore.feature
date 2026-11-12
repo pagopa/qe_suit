@@ -8,8 +8,8 @@ Feature: Messaggi di errore durante la verifica della client assertion
   Per controllare che il client appartenga all'ente per cui sto operando.
 
   Scenario: [ERROR_180] - Impossibilità di verificare la client assertion di un client di un altro ente
-  Dato un client di fruizione del Comune di Milano associato a una finalità attiva e una client assertion valida per quella finalità
-  Quando un amministratore di PagoPA tenta di verificarla
+  Dato un client di fruizione di un ente associato a una finalità attiva e una client assertion valida per quella finalità
+  Quando un amministratore di un altro ente tenta di verificarla
   Allora il sistema rifiuta la verifica e segnala che l'ente non è autorizzato.
 
     Given un EService creato dal Comune di Pozzallo con una richiesta di fruizione e una finalità associate dal Comune di Milano

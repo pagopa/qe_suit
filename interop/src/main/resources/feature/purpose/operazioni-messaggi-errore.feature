@@ -13,7 +13,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   # Per i nomi espliciti riusare i payload delle factory: BffPurposeCreateCommand.title non è implementato.
 
   Scenario: [ERROR_018] - Impossibilità di creare una finalità con un nome già usato per lo stesso e-service
-  Data una finalità di PagoPA per un e-service già sottoscritto dal fruitore
+  Data una finalità del fruitore per un e-service già sottoscritto dal fruitore
   Quando il fruitore tenta di creare un'altra finalità con lo stesso nome per lo stesso e-service
   Allora il sistema rifiuta la creazione e segnala che il nome è già in uso.
 
@@ -30,7 +30,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES"
 
   Scenario: [ERROR_019] - Impossibilità di creare una finalità omonima per un e-service in ricezione
-  Dato un e-service in ricezione sottoscritto da PagoPA con una finalità già creata
+  Dato un e-service in ricezione sottoscritto dal fruitore con una finalità già creata
   Quando il fruitore tenta di crearne un'altra con lo stesso nome per lo stesso e-service
   Allora il sistema rifiuta la creazione e segnala che il nome è già in uso.
 
@@ -50,7 +50,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_REVERSE_PURPOSES"
 
   Scenario: [ERROR_020] - Impossibilità di rinominare una finalità con il nome di un'altra dello stesso fruitore
-  Date due finalità in bozza di PagoPA per lo stesso e-service con nomi diversi
+  Date due finalità in bozza del fruitore per lo stesso e-service con nomi diversi
   Quando il fruitore tenta di assegnare alla seconda il nome della prima
   Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
 
@@ -68,7 +68,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID"
 
   Scenario: [ERROR_021] - Rifiuto della modifica di una finalità con un link nel nome
-  Data una finalità di PagoPA in bozza
+  Data una finalità del fruitore in bozza
   Quando il fruitore tenta di inserire un collegamento nel nome lasciando validi gli altri dati
   Allora il sistema rifiuta la modifica e invita il fruitore a rimuovere il collegamento.
 
@@ -85,7 +85,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID"
 
   Scenario: [ERROR_022] - Impossibilità di duplicare una finalità quando il nome derivato è già in uso
-  Data una finalità di PagoPA e un'altra finalità dello stesso fruitore per lo stesso e-service con il nome che deriverebbe dalla duplicazione
+  Data una finalità del fruitore e un'altra finalità dello stesso fruitore per lo stesso e-service con il nome che deriverebbe dalla duplicazione
   Quando il fruitore tenta di duplicare la prima finalità
   Allora il sistema rifiuta la duplicazione e segnala che il nome è già in uso.
 
@@ -104,7 +104,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID_CLONE"
 
   Scenario: [ERROR_023] - Impossibilità di creare una finalità da template con un nome già usato
-  Data una finalità di PagoPA e un template finalità pubblicato applicabile allo stesso e-service
+  Data una finalità del fruitore e un template finalità pubblicato applicabile allo stesso e-service
   Quando il fruitore tenta di creare una finalità da template con lo stesso nome della finalità esistente
   Allora il sistema rifiuta la creazione e segnala che il nome è già in uso.
 
@@ -122,7 +122,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES"
 
   Scenario: [ERROR_024] - Impossibilità di rinominare una finalità da template con il nome di un'altra finalità
-  Date due finalità distinte di PagoPA per lo stesso e-service, una delle quali creata da template
+  Date due finalità distinte del fruitore per lo stesso e-service, una delle quali creata da template
   Quando il fruitore tenta di assegnare alla finalità da template il nome dell'altra
   Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
 
@@ -142,7 +142,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES_PURPOSE_ID"
 
   Scenario: [ERROR_025] - Impossibilità di firmare un'analisi del rischio già approvata
-  Data un'analisi del rischio già approvata e assegnata al valutatore di PagoPA
+  Data un'analisi del rischio già approvata e assegnata al valutatore del fruitore
   Quando il valutatore tenta di firmarla nuovamente
   Allora il sistema rifiuta la firma e segnala che l'analisi è già stata approvata.
 
@@ -155,7 +155,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_SIGN"
 
   Scenario: [ERROR_026] - Impossibilità di firmare un'analisi del rischio già rifiutata
-  Data un'analisi del rischio già rifiutata e assegnata al valutatore di PagoPA
+  Data un'analisi del rischio già rifiutata e assegnata al valutatore del fruitore
   Quando il valutatore tenta di firmarla
   Allora il sistema rifiuta la firma e segnala che l'analisi è già stata rifiutata.
 
@@ -186,7 +186,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_PURPOSE_METADATA_VERSION_MISMATCH"
 
   Scenario: [ERROR_028] - Impossibilità di rifiutare un'analisi del rischio già approvata
-  Data un'analisi del rischio già approvata e assegnata al valutatore di PagoPA
+  Data un'analisi del rischio già approvata e assegnata al valutatore del fruitore
   Quando il valutatore tenta di rifiutarla con una motivazione valida
   Allora il sistema rifiuta l'operazione e segnala che l'analisi è già stata approvata.
 
@@ -199,7 +199,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT"
 
   Scenario: [ERROR_029] - Impossibilità di rifiutare un'analisi del rischio già rifiutata
-  Data un'analisi del rischio già rifiutata e assegnata al valutatore di PagoPA
+  Data un'analisi del rischio già rifiutata e assegnata al valutatore del fruitore
   Quando il valutatore tenta di rifiutarla nuovamente con una motivazione valida
   Allora il sistema rifiuta l'operazione e segnala che l'analisi è già stata rifiutata.
 
@@ -212,7 +212,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT"
 
   Scenario: [ERROR_030] - Impossibilità di modificare le risposte di un'analisi già approvata
-  Data un'analisi del rischio già approvata e assegnata al valutatore di PagoPA
+  Data un'analisi del rischio già approvata e assegnata al valutatore del fruitore
   Quando il valutatore tenta di salvare nuove risposte valide
   Allora il sistema rifiuta il salvataggio e segnala che l'analisi è già stata approvata.
 
@@ -225,7 +225,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__PUT_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_FORM"
 
   Scenario: [ERROR_031] - Impossibilità di modificare le risposte di un'analisi già rifiutata
-  Data un'analisi del rischio già rifiutata e assegnata al valutatore di PagoPA
+  Data un'analisi del rischio già rifiutata e assegnata al valutatore del fruitore
   Quando il valutatore tenta di salvare nuove risposte valide
   Allora il sistema rifiuta il salvataggio e segnala che l'analisi è già stata rifiutata.
 
@@ -238,7 +238,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__PUT_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_FORM"
 
   Scenario: [ERROR_032] - Rifiuto di una motivazione con un link nella valutazione dell'analisi del rischio
-  Data un'analisi del rischio in attesa di valutazione e assegnata al valutatore di PagoPA
+  Data un'analisi del rischio in attesa di valutazione e assegnata al valutatore del fruitore
   Quando il valutatore tenta di rifiutarla inserendo un collegamento nella motivazione
   Allora il sistema rifiuta l'operazione e invita il valutatore a rimuovere il collegamento.
 
@@ -252,7 +252,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT"
 
   Scenario: [ERROR_033] - Rifiuto dell'aggiornamento parziale di una finalità con il nome di un'altra
-  Date due finalità in bozza di PagoPA per lo stesso e-service con nomi diversi
+  Date due finalità in bozza del fruitore per lo stesso e-service con nomi diversi
   Quando il fruitore tenta di aggiornare parzialmente la seconda usando il nome della prima
   Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
 
@@ -271,7 +271,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_PURPOSES_PURPOSE_ID"
 
   Scenario: [ERROR_034] - Rifiuto dell'aggiornamento parziale di una finalità con un link nel nome
-  Data una finalità di PagoPA in bozza
+  Data una finalità del fruitore in bozza
   Quando il fruitore tenta di aggiornarla parzialmente inserendo un collegamento nel nome
   Allora il sistema rifiuta la modifica e invita il fruitore a rimuovere il collegamento.
 
@@ -289,7 +289,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__PATCH_PURPOSES_PURPOSE_ID"
 
   Scenario: [ERROR_035] - Rifiuto dell'aggiornamento parziale di una finalità in ricezione con nome duplicato
-  Date due finalità in bozza di PagoPA per lo stesso e-service in ricezione con nomi diversi
+  Date due finalità in bozza del fruitore per lo stesso e-service in ricezione con nomi diversi
   Quando il fruitore tenta di aggiornare parzialmente la seconda usando il nome della prima
   Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
 
@@ -311,7 +311,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__PATCH_REVERSE_PURPOSES_PURPOSE_ID"
 
   Scenario: [ERROR_036] - Rifiuto dell'aggiornamento parziale di una finalità in ricezione con un link nel nome
-  Data una finalità di PagoPA in bozza per un e-service in ricezione
+  Data una finalità del fruitore in bozza per un e-service in ricezione
   Quando il fruitore tenta di aggiornarla parzialmente inserendo un collegamento nel nome
   Allora il sistema rifiuta la modifica e invita il fruitore a rimuovere il collegamento.
 

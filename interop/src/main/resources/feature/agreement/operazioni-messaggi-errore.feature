@@ -11,7 +11,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Given un admin appartenente all'erogatore Comune di Milano
 
   Scenario: [ERROR_148] - Impossibilità di inviare una richiesta senza un attributo dichiarato necessario
-  Dato un e-service pubblicato con un attributo dichiarato richiesto e non posseduto da PagoPA e una richiesta in bozza
+  Dato un e-service pubblicato con un attributo dichiarato richiesto e non posseduto dal fruitore e una richiesta in bozza
   Quando il fruitore tenta di inviare la richiesta senza possedere l'attributo dichiarato
   Allora il sistema rifiuta l'invio e segnala che i requisiti per la fruizione non sono soddisfatti.
 
@@ -33,7 +33,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_SUBMISSION_FAILED"
 
   Scenario: [ERROR_149] - Impossibilità di approvare una richiesta di fruizione già attiva
-  Dato un e-service pubblicato e una richiesta di fruizione di PagoPA già attiva
+  Dato un e-service pubblicato e una richiesta di fruizione del fruitore già attiva
   Quando l'erogatore tenta di approvare nuovamente la richiesta
   Allora il sistema rifiuta l'approvazione e segnala che lo stato della richiesta non consente l'operazione.
 
@@ -44,7 +44,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE"
 
   Scenario: [ERROR_150] - Impossibilità di approvare una richiesta senza verificare un attributo necessario
-  Dato un e-service con un attributo verificato richiesto e non posseduto da PagoPA e una richiesta in attesa di approvazione
+  Dato un e-service con un attributo verificato richiesto e non posseduto dal fruitore e una richiesta in attesa di approvazione
   Quando l'erogatore tenta di approvare la richiesta
   Allora il sistema rifiuta l'attivazione e segnala che il fruitore non soddisfa i requisiti.
 
@@ -68,7 +68,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ACTIVATION_FAILED"
 
   Scenario Outline: [ERROR_151] - Impossibilità di approvare una richiesta per una versione <stato versione>
-  Dato un e-service con approvazione manuale e una richiesta di PagoPA in attesa per una versione archiviata o in archiviazione
+  Dato un e-service con approvazione manuale e una richiesta del fruitore in attesa per una versione archiviata o in archiviazione
   Quando l'erogatore tenta di approvare la richiesta
   Allora il sistema rifiuta l'approvazione e segnala che lo stato della versione non consente l'operazione.
 
@@ -89,7 +89,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
       | archiviata       |
 
   Scenario: [ERROR_152] - Impossibilità di riattivare una richiesta di fruizione già attiva
-  Dato un e-service pubblicato e una richiesta di fruizione di PagoPA già attiva
+  Dato un e-service pubblicato e una richiesta di fruizione del fruitore già attiva
   Quando il fruitore tenta di riattivare la richiesta
   Allora il sistema rifiuta la riattivazione e segnala che la richiesta non è sospesa.
 
@@ -100,7 +100,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND"
 
   Scenario: [ERROR_153] - Impossibilità di riattivare una richiesta per una versione archiviata
-  Data una richiesta di fruizione di PagoPA sospesa e riferita a una versione archiviata
+  Data una richiesta di fruizione del fruitore sospesa e riferita a una versione archiviata
   Quando il fruitore tenta di riattivare la richiesta
   Allora il sistema rifiuta la riattivazione e segnala che la versione non è più disponibile per la fruizione.
 
@@ -118,7 +118,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND"
 
   Scenario: [ERROR_154] - Impossibilità di allegare un documento a una richiesta di fruizione attiva
-  Dato un e-service pubblicato e una richiesta di fruizione di PagoPA attiva
+  Dato un e-service pubblicato e una richiesta di fruizione del fruitore attiva
   Quando il fruitore tenta di allegare un documento alla richiesta
   Allora il sistema rifiuta il caricamento e segnala che i documenti non possono essere modificati fuori dalla bozza.
 
@@ -129,7 +129,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__POST_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS"
 
   Scenario: [ERROR_155] - Impossibilità di scaricare un documento già eliminato dalla richiesta
-  Data una richiesta di fruizione di PagoPA in bozza con un documento allegato e poi eliminato
+  Data una richiesta di fruizione del fruitore in bozza con un documento allegato e poi eliminato
   Quando il fruitore tenta di scaricare lo stesso documento
   Allora il sistema rifiuta il download e segnala che il documento non è più disponibile.
 
@@ -145,7 +145,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__GET_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID"
 
   Scenario: [ERROR_156] - Impossibilità di eliminare un documento già rimosso dalla richiesta
-  Data una richiesta di fruizione di PagoPA in bozza con un documento allegato e poi eliminato
+  Data una richiesta di fruizione del fruitore in bozza con un documento allegato e poi eliminato
   Quando il fruitore tenta di eliminare nuovamente lo stesso documento
   Allora il sistema rifiuta l'eliminazione e segnala che il documento non è più disponibile.
 
@@ -161,7 +161,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID"
 
   Scenario: [ERROR_157] - Impossibilità di eliminare un documento da una richiesta di fruizione attiva
-  Data una richiesta di fruizione di PagoPA con un documento allegato in bozza e poi attivata
+  Data una richiesta di fruizione del fruitore con un documento allegato in bozza e poi attivata
   Quando il fruitore tenta di eliminare il documento dalla richiesta attiva
   Allora il sistema rifiuta l'eliminazione e segnala che i documenti non possono essere modificati fuori dalla bozza.
 
@@ -179,7 +179,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID"
 
   Scenario: [ERROR_158] - Impossibilità di sospendere una richiesta di fruizione in bozza
-  Dato un e-service pubblicato e una richiesta di fruizione di PagoPA in bozza
+  Dato un e-service pubblicato e una richiesta di fruizione del fruitore in bozza
   Quando l'erogatore tenta di sospendere la richiesta
   Allora il sistema rifiuta la sospensione e segnala che lo stato della richiesta non consente l'operazione.
 
@@ -193,7 +193,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_SUSPEND"
 
   Scenario: [ERROR_159] - Impossibilità di rifiutare una richiesta di fruizione già attiva
-  Dato un e-service pubblicato e una richiesta di fruizione di PagoPA già attiva
+  Dato un e-service pubblicato e una richiesta di fruizione del fruitore già attiva
   Quando l'erogatore tenta di rifiutare la richiesta con una motivazione valida
   Allora il sistema rifiuta l'operazione e segnala che lo stato della richiesta non consente il rifiuto.
 
@@ -204,7 +204,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_REJECT"
 
   Scenario: [ERROR_160] - Impossibilità di archiviare una richiesta di fruizione in bozza
-  Dato un e-service pubblicato e una richiesta di fruizione di PagoPA in bozza
+  Dato un e-service pubblicato e una richiesta di fruizione del fruitore in bozza
   Quando il fruitore tenta di archiviare la richiesta
   Allora il sistema rifiuta l'archiviazione e segnala che lo stato della richiesta non consente l'operazione.
 
@@ -218,8 +218,8 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_ARCHIVE"
 
   Scenario: [ERROR_161] - Impossibilità di richiedere la fruizione di una versione deprecata
-  Dato un e-service con la prima versione deprecata dopo la fruizione di PagoPA e una seconda versione pubblicata
-  Quando il Comune di Pozzallo tenta di richiedere la fruizione della versione deprecata
+  Dato un e-service con la prima versione deprecata dopo la fruizione di un ente e una seconda versione pubblicata
+  Quando un altro ente tenta di richiedere la fruizione della versione deprecata
   Allora il sistema rifiuta la creazione e segnala che occorre scegliere la versione più recente.
 
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
@@ -228,7 +228,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
   Scenario: [ERROR_162] - Impossibilità di richiedere la fruizione della versione più recente sospesa
   Dato un e-service la cui versione più recente è sospesa
-  Quando PagoPA tenta di richiedere la fruizione di quella versione
+  Quando il fruitore tenta di richiedere la fruizione di quella versione
   Allora il sistema rifiuta la creazione e segnala che lo stato della versione non consente la fruizione.
 
     Given i seguenti e-service pubblicati:
@@ -241,7 +241,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS"
 
   Scenario: [ERROR_163] - Impossibilità di richiedere la fruizione senza un attributo certificato necessario
-  Dato un e-service pubblicato con un attributo certificato richiesto e non assegnato a PagoPA
+  Dato un e-service pubblicato con un attributo certificato richiesto e non assegnato al fruitore
   Quando il fruitore tenta di creare una richiesta di fruizione
   Allora il sistema rifiuta la creazione e segnala che manca l'attributo certificato necessario.
 
@@ -261,7 +261,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS"
 
   Scenario: [ERROR_164] - Impossibilità di creare un'altra richiesta quando la fruizione è già attiva
-  Dato un e-service pubblicato e una richiesta di fruizione di PagoPA già attiva
+  Dato un e-service pubblicato e una richiesta di fruizione del fruitore già attiva
   Quando il fruitore tenta di creare un'altra richiesta per lo stesso e-service
   Allora il sistema rifiuta la creazione e segnala che esiste già una richiesta di fruizione.
 
@@ -275,7 +275,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS"
 
   Scenario: [ERROR_165] - Impossibilità di duplicare una richiesta dopo la perdita di un attributo certificato
-  Data una richiesta di fruizione rifiutata di PagoPA e un attributo certificato richiesto non più posseduto dal fruitore
+  Data una richiesta di fruizione rifiutata del fruitore e un attributo certificato richiesto non più posseduto dal fruitore
   Quando il fruitore tenta di duplicare la richiesta
   Allora il sistema rifiuta la duplicazione e segnala che manca l'attributo certificato necessario.
 
@@ -304,7 +304,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE"
 
   Scenario: [ERROR_166] - Impossibilità di duplicare una richiesta quando ne esiste già un'altra in corso
-  Data una richiesta rifiutata di PagoPA e un'altra richiesta attiva per lo stesso e-service e lo stesso fruitore
+  Data una richiesta rifiutata del fruitore e un'altra richiesta attiva per lo stesso e-service e lo stesso fruitore
   Quando il fruitore tenta di duplicare la prima richiesta
   Allora il sistema rifiuta la duplicazione e segnala che esiste già un'altra richiesta di fruizione.
 
@@ -323,7 +323,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS_AGREEMENT_ID_CLONE"
 
   Scenario: [ERROR_167] - Impossibilità per un operatore di sicurezza di scaricare un allegato della richiesta
-  Data una richiesta di fruizione di PagoPA con un documento disponibile e un operatore di sicurezza dello stesso ente
+  Data una richiesta di fruizione del fruitore con un documento disponibile e un operatore di sicurezza dello stesso ente
   Quando l'operatore tenta di scaricare il documento
   Allora il sistema rifiuta il download e segnala che il ruolo non è autorizzato.
 

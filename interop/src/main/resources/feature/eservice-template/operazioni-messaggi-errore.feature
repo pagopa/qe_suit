@@ -11,7 +11,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     Given un admin appartenente all'erogatore Comune di Milano
 
   Scenario: [ERROR_121] - Impossibilità di creare un template con un nome già presente
-  Dato un template e-service del Comune di Milano già presente
+  Dato un template e-service dell'ente creatore già presente
   Quando l'erogatore tenta di creare un altro template con lo stesso nome
   Allora il sistema rifiuta la creazione e segnala che il nome è già in uso.
 
@@ -35,7 +35,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_RISK_ANALYSIS_NAME_DUPLICATE"
 
   Scenario: [ERROR_126] - Impossibilità di rinominare un template con il nome di un altro template
-  Dati due template e-service distinti del Comune di Milano con nomi diversi
+  Dati due template e-service distinti dello stesso ente creatore con nomi diversi
   Quando l'erogatore tenta di assegnare al secondo il nome del primo
   Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
 
@@ -105,7 +105,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_NAME_UPDATE"
 
   Scenario: [ERROR_135] - Rifiuto della modifica dei dati generali con il nome di un altro template
-  Dati due template e-service distinti del Comune di Milano con nomi diversi
+  Dati due template e-service distinti dello stesso ente creatore con nomi diversi
   Quando l'erogatore tenta di assegnare alla bozza il nome del template esistente modificandone i dati generali
   Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
 
