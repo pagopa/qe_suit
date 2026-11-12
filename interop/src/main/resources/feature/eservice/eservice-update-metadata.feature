@@ -117,9 +117,30 @@ Feature: Modifica dei metadati degli e-service
       # | archiviata                |
 
       # TODO Spostare in altri scenari
-      # | in attesa di approvazione |
       # | in archiviazione          |
       # | in archiviazione sospesa  |
+
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_METADATA_2b] - Modifica congiunta dei metadati con lo stato del descrittore in attesa di approvazione.
+  Dato un e-service non derivato da template con un descrittore nello stato previsto,
+  quando l'erogatore modifica contemporaneamente nome e descrizione,
+  allora il sistema salva entrambi i metadati senza alterare lo stato, le versioni e le configurazioni dei descrittori.
+
+    Given i seguenti enti abilitati a ricevere deleghe di erogazione:
+      | ente               |
+      | Comune di Pozzallo |
+    And i seguenti e-service in bozza:
+      | alias | erogatore        | nome                   |
+      | ES-1  | Comune di Milano | E-service Tempo Attivo |
+    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
+    And la versione 1 dell'e-service "ES-1" predisposta dal delegato Comune di Pozzallo in attesa di approvazione
+    When un admin del Comune di Pozzallo richiede la modifica dei metadati dell'e-service "ES-1":
+      | campo       | valore                              |
+      | nome        | Servizio anagrafico aggiornato      |
+      | descrizione | Descrizione aggiornata del servizio |
+    Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
   @work-item:QA-19036
   @channel:Given=BFF,When=WEB,Then=WEB
