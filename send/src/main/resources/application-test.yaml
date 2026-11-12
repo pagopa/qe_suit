@@ -77,6 +77,15 @@ url:
 partner-tecnologico:
   enabled: false # BackOffice PT non ancora rilasciato
 
+# API di test di Selfcare per creare le deleghe PA -> PT: le deleghe di tutti gli ambienti SEND stanno sul
+# Selfcare di uat, ognuno con il suo prodotto (prod-pn-test)
+selfcare:
+  delegations-test:
+    base-url: https://api.uat.selfcare.pagopa.it/external/test/v1
+    product-id: prod-pn-test
+    # subscription key APIM delle API di test di Selfcare (header Ocp-Apim-Subscription-Key), nei secrets
+    subscription-key: ${pn.external.selfcare-subscription-key:REPLACE_ME}
+
 # Selettori XPath da properties
 selettore:
   login:
@@ -102,6 +111,7 @@ token:
     grossini: ${pn.external.session-token.grossini:REPLACE_ME}
     albino63: ${pn.external.session-token.albino63:REPLACE_ME}
     grossini-pt: ${pn.external.session-token.grossini-pt:REPLACE_ME}
+    msisti: ${pn.external.session-token.msisti:REPLACE_ME}
 
 # ============================================================================
 # WebAPI Configuration (host condiviso da BFF e client mandate)

@@ -8,7 +8,7 @@ public enum UserAlias {
     USER_1, USER_2,         // PF
     IMPRESA_1, IMPRESA_2,   // PG
     COMUNE_1, COMUNE_2,     // PA
-    PT_1;                   // PT
+    PT_1, PT_2;             // PT
 
     /**
      * Alias a partire dalla chiave scritta nelle feature ({@code User_1} → {@link #USER_1}).
