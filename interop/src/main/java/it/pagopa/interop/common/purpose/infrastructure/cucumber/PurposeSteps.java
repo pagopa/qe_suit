@@ -93,6 +93,8 @@ public class PurposeSteps {
     }
 
     private void processWaitingPurpose(Tenant tenant, PurposeVersionState expectedState, BiFunction<Purpose, PurposeVersion, Purpose> operation) {
+        // TODO fare riferimento al ticket tecnico QA-19317
+        // Serve una soluzione per evitare di impostare sia currentUserSession che currentM2MSession
         currentUserSession.set(User.getTenantAdmin(tenant), tenant);
         currentM2MSession.set(tenant, M2MRole.M2M_ADMIN);
 
