@@ -12,6 +12,8 @@ public interface ComboStatusSection extends Component {
 
     @XPath(".//*[self::h2 or self::h6 or self::h5]")
     Readable<String> header();
+    @XPath(".//p[contains(@class, 'MuiTypography-body2')]")
+    Readable<String> description();
 
     @XPath(".//*[contains(@class, 'MuiChip-root')]")
     Chip statusChip();
