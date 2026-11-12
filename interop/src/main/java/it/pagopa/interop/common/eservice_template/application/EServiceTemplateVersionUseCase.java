@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.eservice_template.application;
 
+import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
@@ -88,6 +89,10 @@ public class EServiceTemplateVersionUseCase {
     public EServiceTemplateVersion uploadInterface(EServiceTemplate template, EServiceTemplateVersion version, String fixturePath) {
         eServiceTemplateVersionGateway.uploadInterface(template.getRef(), version.getRef(), fixturePath);
         return eServiceTemplateVersionGateway.getEServiceTemplateVersion(template.getRef(), version.getRef());
+    }
+
+    public void shouldFailToUploadInterface(EServiceTemplate template, EServiceTemplateVersion version, String fixturePath, SoapInterfaceUploadFailureReason reason) {
+        eServiceTemplateVersionGateway.shouldFailToUploadInterface(template.getRef(), version.getRef(), fixturePath, reason);
     }
 
     public EServiceTemplateVersion publishEServiceTemplateVersion(EServiceTemplate template, EServiceTemplateVersion version) {

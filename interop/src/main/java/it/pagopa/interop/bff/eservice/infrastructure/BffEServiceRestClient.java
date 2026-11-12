@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
+import io.restassured.RestAssured;
 import it.pagopa.infrastructure.template.RestClient;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
@@ -10,6 +11,7 @@ import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -25,10 +27,7 @@ public class BffEServiceRestClient extends RestClient {
     }
 
     public TestChain<CreatedEServiceDescriptor> createEService(@Nonnull EServiceSeed payload) {
-        return execute(
-                () -> eservicesApi.createEService().body(payload).execute(Function.identity()),
-                CreatedEServiceDescriptor.class
-        );
+        return execute(() -> eservicesApi.createEService().body(payload).execute(Function.identity()), CreatedEServiceDescriptor.class);
     }
 
     public TestChain<CreatedResource> updateEService(@Nonnull UUID eServiceId, @Nonnull PatchUpdateEServiceSeed payload) {
@@ -77,17 +76,11 @@ public class BffEServiceRestClient extends RestClient {
     }
 
     public TestChain<ProducerEServiceDetails> readEService(@Nonnull UUID eserviceId) {
-        return execute(
-                () -> eservicesApi.getProducerEServiceDetails().eserviceIdPath(eserviceId).execute(Function.identity()),
-                ProducerEServiceDetails.class
-        );
+        return execute(() -> eservicesApi.getProducerEServiceDetails().eserviceIdPath(eserviceId).execute(Function.identity()), ProducerEServiceDetails.class);
     }
 
     public TestChain<Void> addRiskAnalysis(@Nonnull UUID eserviceId, @Nonnull EServiceRiskAnalysisSeed payload) {
-        return execute(
-                () -> eservicesApi.addRiskAnalysisToEService().eServiceIdPath(eserviceId).body(payload).execute(Function.identity()),
-                Void.class
-        );
+        return execute(() -> eservicesApi.addRiskAnalysisToEService().eServiceIdPath(eserviceId).body(payload).execute(Function.identity()), Void.class);
     }
 
     public TestChain<ProducerEServiceDescriptor> readDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
@@ -98,13 +91,7 @@ public class BffEServiceRestClient extends RestClient {
     }
 
     public TestChain<Void> scheduleArchiveEservice(@Nonnull UUID eserviceId, @Nonnull EServiceArchivingSeed payload) {
-        return execute(
-                () -> eservicesApi.scheduleArchiveEservice()
-                        .eServiceIdPath(eserviceId)
-                        .body(payload)
-                        .execute(Function.identity()),
-                Void.class
-        );
+        return execute(() -> eservicesApi.scheduleArchiveEservice().eServiceIdPath(eserviceId).body(payload).execute(Function.identity()), Void.class);
     }
 
     public TestChain<Void> suspendDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
@@ -119,91 +106,76 @@ public class BffEServiceRestClient extends RestClient {
     }
 
     public TestChain<Void> deleteEService(@Nonnull UUID eserviceId) {
-        return execute(
-                () -> eservicesApi.deleteEService()
-                        .eServiceIdPath(eserviceId)
-                        .execute(Function.identity()),
-                Void.class
-        );
+        return execute(() -> eservicesApi.deleteEService().eServiceIdPath(eserviceId).execute(Function.identity()), Void.class);
     }
 
     public TestChain<Void> scheduleArchiveEserviceDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull GracePeriodDaysSeed payload) {
         return execute(
-                () -> eservicesApi.scheduleArchiveEserviceDescriptor()
-                        .eServiceIdPath(eserviceId)
-                        .descriptorIdPath(descriptorId)
-                        .body(payload)
-                        .execute(Function.identity()),
+                () -> eservicesApi.scheduleArchiveEserviceDescriptor().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).body(payload).execute(Function.identity()),
                 Void.class
         );
     }
 
     public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceSoap(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull Map<String, Object> payload) {
         return execute(
-                () -> eservicesApi.addEServiceTemplateInstanceInterfaceSoap()
-                        .eServiceIdPath(eserviceId)
-                        .descriptorIdPath(descriptorId)
-                        .reqSpec(builder -> {
-                            builder.setContentType("application/json");
-                            builder.setBody(payload);
-                        })
-                        .execute(Function.identity()),
+                () -> eservicesApi.addEServiceTemplateInstanceInterfaceSoap().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId)
+                        .reqSpec(builder -> builder.setContentType("application/json").setBody(payload)).execute(Function.identity()),
                 CreatedResource.class
         );
     }
 
     public TestChain<CreatedResource> addEServiceTemplateInstanceInterfaceRest(@Nonnull UUID eserviceId,@Nonnull UUID descriptorId, @Nonnull Map<String, Object> payload) {
         return execute(
-                () -> eservicesApi.addEServiceTemplateInstanceInterfaceRest()
-                        .eServiceIdPath(eserviceId)
-                        .descriptorIdPath(descriptorId)
-                        .reqSpec(builder -> {
-                            builder.setContentType("application/json");
-                            builder.setBody(payload);
-                        })
-                        .execute(Function.identity()),
+                () -> eservicesApi.addEServiceTemplateInstanceInterfaceRest().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId)
+                        .reqSpec(builder -> builder.setContentType("application/json").setBody(payload)).execute(Function.identity()),
                 CreatedResource.class
         );
     }
 
     public TestChain<byte[]> getEServiceDocumentById(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UUID documentId) {
         return execute(
-                () -> eservicesApi.getEServiceDocumentById()
-                        .eServiceIdPath(eserviceId)
-                        .descriptorIdPath(descriptorId)
-                        .documentIdPath(documentId)
-                        .execute(Function.identity()),
+                () -> eservicesApi.getEServiceDocumentById().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).documentIdPath(documentId).execute(Function.identity()),
                 byte[].class
         );
     }
 
     public TestChain<Void> publishDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
         return execute(
-                () -> eservicesApi.publishDescriptor()
-                        .eServiceIdPath(eserviceId)
-                        .descriptorIdPath(descriptorId)
-                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
-                        .execute(Function.identity()),
+                () -> eservicesApi.publishDescriptor().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json")).execute(Function.identity()),
                 Void.class
         );
     }
 
     public TestChain<CreatedResource> addDocument(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull String documentKind, @Nonnull String documentName, @Nonnull File document) {
         return execute(
-                () -> eservicesApi.createEServiceDocument()
-                        .eServiceIdPath(eserviceId)
-                        .descriptorIdPath(descriptorId)
-                        .kindForm(documentKind)
-                        .prettyNameForm(documentName)
-                        .reqSpec(reqSpec ->
-                                reqSpec.addMultiPart(
-                                        "doc",
-                                        document,
-                                        "application/octet-stream"
-                                )
-                        )
+                () -> eservicesApi.createEServiceDocument().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId)
+                        .kindForm(documentKind).prettyNameForm(documentName)
+                        .reqSpec(reqSpec -> reqSpec.addMultiPart("doc", document, "application/octet-stream"))
                         .execute(Function.identity()),
                 CreatedResource.class
+        );
+    }
+
+    public TestChain<PresignedUrl> getImportEservicePresignedUrl(@Nonnull String fileName) {
+        return execute(() -> eservicesApi.getImportEservicePresignedUrl().fileNameQuery(fileName).execute(Function.identity()), PresignedUrl.class);
+    }
+
+    public TestChain<Void> uploadToPresignedUrl(@Nonnull URI presignedUrl, @Nonnull byte[] zipContent) {
+        return execute(
+                () -> RestAssured.given().urlEncodingEnabled(false).contentType("application/octet-stream").body(zipContent).put(presignedUrl.toString()),
+                Void.class
+        );
+    }
+
+    public TestChain<CreatedEServiceDescriptor> importEService(@Nonnull FileResource payload) {
+        return execute(() -> eservicesApi.importEService().body(payload).execute(Function.identity()), CreatedEServiceDescriptor.class);
+    }
+
+    public TestChain<ProducerEServices> getProducerEServices(@Nonnull String queryName) {
+        return execute(
+                () -> eservicesApi.getProducerEServices().qQuery(queryName).offsetQuery(0).limitQuery(10).execute(Function.identity()),
+                ProducerEServices.class
         );
     }
 }
