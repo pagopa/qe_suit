@@ -21,6 +21,13 @@ public class EServiceTemplatePublicationSteps {
     private final EServiceTemplateConfigurationMapper mapper;
     private final EntityStore entities;
 
+    @Given("una nuova versione del template pubblicata e disponibile per l'aggiornamento dell'e-service")
+    public void publishNextTemplateVersion() {
+        var template = entities.getLastOrThrow(EServiceTemplate.class);
+        journey.withProducer(Tenant.fromOrganizationId(template.getCreatorId()), UserRole.ADMIN)
+                .addVersion(template, EServiceTemplateVersionState.PUBLISHED);
+    }
+
     @Given("i seguenti template (di )e-service pubblicati:")
     public void publishTemplates(List<EServiceTemplatePublicationConfiguration> configurations) {
         for (var configuration : configurations) {
