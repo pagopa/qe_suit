@@ -4,6 +4,8 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.send.common.journey.application.SendJourney;
+import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
@@ -24,7 +26,7 @@ import java.util.stream.Stream;
 
 /**
  * Contract test della ricerca nella pagina "I tuoi enti" del BackOffice dei Partner Tecnologici, aperta con la sessione
- * del PT {@code PT_1}, che deve avere almeno un ente delegante.
+ * del PT {@code PT_1}. Se il PT non ha enti deleganti, prima si crea la delega di {@code COMUNE_1}.
  * <p>
  * Testi e selettori vengono dal sorgente di pn-pt-webapp (PN-21981).
  */
@@ -46,6 +48,7 @@ public class WebInstitutionsSearchPtContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
     private final UserProvider userProvider;
+    private final SendJourney sendJourney;
 
     /**
      * Ricerca degli enti:
@@ -59,7 +62,10 @@ public class WebInstitutionsSearchPtContractTest {
      */
     @TestFactory
     Stream<DynamicTest> shouldSearchInstitutions() {
-        return webContractValidator.as(userProvider.resolve(UserAlias.PT_1))
+        User partner = userProvider.resolve(UserAlias.PT_1);
+        // prima di aprire la pagina: se il PT non ha enti deleganti si crea la delega di COMUNE_1
+        sendJourney.withPtDelegation(userProvider.resolve(UserAlias.COMUNE_1), partner);
+        return webContractValidator.as(partner)
                 .on(PtInstitutionsPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
