@@ -70,7 +70,6 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
                 ? entityStore.getByAliasOrThrow(alias, EService.class)
                 : entityStore.getLastOrThrow(EService.class);
         eServiceUseCase.updateEService(eService, command);
-        entityStore.upsert(eServiceUseCase.getEService(eService));
         return this;
     }
 

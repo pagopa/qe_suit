@@ -22,6 +22,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PresignedUrl;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
 import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.RandomUtils;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -81,7 +83,13 @@ public class BffEServiceGateway implements EServiceGateway {
 
         restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .get();;
+                .get();
+
+        PollingUtils.pollUntil(
+                () -> getEService(eServiceRef),
+                eService -> matchesUpdate(eService, bffCommand),
+                "I metadati aggiornati dell'e-service " + eServiceRef.id() + " non sono diventati visibili"
+        );
     }
 
     @Override
@@ -194,5 +202,28 @@ public class BffEServiceGateway implements EServiceGateway {
     @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
+    }
+
+    private static boolean matchesUpdate(EService actual, BffEServiceUpdateCommand command) {
+        var requested = command.getBffUpdatePayload();
+        return isApplied(actual.getName(), requested.getName())
+                && isApplied(actual.getDescription(), requested.getDescription())
+                && isApplied(
+                        actual.getTechnology() == null ? null : actual.getTechnology().getValue(),
+                        requested.getTechnology() == null ? null : requested.getTechnology().getValue()
+                )
+                && isApplied(
+                        actual.getMode() == null ? null : actual.getMode().getValue(),
+                        requested.getMode() == null ? null : requested.getMode().getValue()
+                )
+                && isApplied(actual.getIsSignalHubEnabled(), requested.getIsSignalHubEnabled())
+                && isApplied(actual.getIsConsumerDelegable(), requested.getIsConsumerDelegable())
+                && isApplied(actual.getIsClientAccessDelegable(), requested.getIsClientAccessDelegable())
+                && isApplied(actual.getPersonalData(), requested.getPersonalData())
+                && isApplied(actual.getAsyncExchange(), requested.getAsyncExchange());
+    }
+
+    private static <T> boolean isApplied(T actual, T requested) {
+        return requested == null || Objects.equals(actual, requested);
     }
 }
