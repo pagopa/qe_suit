@@ -535,36 +535,6 @@
       }
     },
     {
-      "id": "BFF_PRIVACY_NOTICE_NOT_FOUND__GET_USER_CONSENT_CONSENT_TYPE",
-      "process": "BFF Process",
-      "error": "privacyNoticeNotFound",
-      "bffEndpoint": "GET /user/consent/:consentType",
-      "copy": {
-        "it": "Non puoi accedere a PDND Interoperabilità perché non riusciamo a verificare se hai accettato i Termini e condizioni d’uso e preso visione dell’Informativa Privacy.",
-        "en": "You can't access PDND Interoperability because we can't check whether you've accepted the Terms and Conditions of Use and read the Privacy Policy."
-      }
-    },
-    {
-      "id": "BFF_PRIVACY_NOTICE_NOT_FOUND_IN_CONFIGURATION",
-      "process": "BFF Process",
-      "error": "privacyNoticeNotFoundInConfiguration",
-      "bffEndpoint": "GET /user/consent/:consentType",
-      "copy": {
-        "it": "Non puoi accedere a PDND Interoperabilità perché non riusciamo a verificare se hai accettato i Termini e condizioni d’uso e preso visione dell’Informativa Privacy.",
-        "en": "You can't access PDND Interoperability because we can't check whether you've accepted the Terms and Conditions of Use and read the Privacy Policy."
-      }
-    },
-    {
-      "id": "BFF_USER_NOT_FOUND",
-      "process": "BFF Process",
-      "error": "userNotFound",
-      "bffEndpoint": "GET /users/:userId",
-      "copy": {
-        "it": "Non puoi visualizzare i dettagli di questo membro perché non risulta più tra gli utenti attivi del tuo ente. Aggiorna la pagina.",
-        "en": "You can't view this member's details because they are no longer listed as an active user for your party. Refresh the page."
-      }
-    },
-    {
       "id": "AGREEMENT_INVALID_FILE_UPLOAD_ERROR",
       "process": "BFF Process",
       "error": "invalidFileUploadError",
@@ -774,17 +744,6 @@
         "en": "You can't verify this client assertion because the client it refers to belongs to another party. If you have access to that party, switch to that profile; otherwise, use a client assertion from a client belonging to your party."
       }
     },
-    {
-      "id": "BFF_PRIVACY_NOTICE_NOT_FOUND__POST_USER_CONSENT_CONSENT_TYPE",
-      "process": "BFF Process",
-      "error": "privacyNoticeNotFound",
-      "bffEndpoint": "POST /user/consent/:consentType",
-      "copy": {
-        "it": "Non puoi accedere a PDND Interoperabilità perché non riusciamo a verificare se hai accettato i Termini e condizioni d’uso e preso visione dell’Informativa Privacy.",
-        "en": "You can't access PDND Interoperability because we can't check whether you've accepted the Terms and Conditions of Use and read the Privacy Policy."
-      }
-    },
-
     {
       "id": "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID",
       "process": "Catalog Process",
