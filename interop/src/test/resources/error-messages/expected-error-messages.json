@@ -1908,6 +1908,106 @@
         "it": "Non puoi aggiornare la disponibilità alle deleghe perché il tuo ente non è una Pubblica Amministrazione e quindi non è abilitato a usarle.",
         "en": "You can't update your delegation availability because your party is not a Public Administration and therefore isn't eligible to use delegations."
       }
+    },
+    {
+      "id": "BFF_BAD_REQUEST__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES_PURPOSE_ID",
+      "process": "BFF Process",
+      "error": "Bad Request",
+      "bffEndpoint": "PATCH /purposeTemplates/:purposeTemplateId/purposes/:purposeId",
+      "copy": {
+        "it": "La stima delle chiamate API al giorno non può superare 1.000.000.000. Modifica il numero e riprova.",
+        "en": "The estimated number of API calls per day can't exceed 1,000,000,000. Change the value and try again."
+      }
+    },
+    {
+      "id": "BFF_BAD_REQUEST__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID",
+      "process": "BFF Process",
+      "error": "Bad Request",
+      "bffEndpoint": "PUT /purposeTemplates/:purposeTemplateId",
+      "copy": {
+        "it": "Il numero di chiamate API al giorno che suggerisci al fruitore non può superare 1.000.000.000. Modifica il numero e riprova.",
+        "en": "The number of API calls per day you suggest to the consumer can't exceed 1,000,000,000. Change the number and try again."
+      }
+    },
+    {
+      "id": "DELEGATION_INCORRECT_STATE__POST_CONSUMER_DELEGATIONS_DELEGATION_ID_REJECT",
+      "process": "Delegation Process",
+      "error": "incorrectState",
+      "bffEndpoint": "POST /consumer/delegations/:delegationId/reject",
+      "copy": {
+        "it": "Non puoi rifiutare la delega perché non è più in attesa di approvazione. Aggiorna la pagina.",
+        "en": "You can't reject the delegation because it's no longer waiting for approval. Refresh the page."
+      }
+    },
+    {
+      "id": "DELEGATION_INCORRECT_STATE__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_REJECT",
+      "process": "Delegation Process",
+      "error": "incorrectState",
+      "bffEndpoint": "POST /producers/delegations/:delegationId/reject",
+      "copy": {
+        "it": "Non puoi rifiutare la delega perché non è più in attesa di approvazione. Aggiorna la pagina.",
+        "en": "You can't reject the delegation because it's no longer waiting for approval. Refresh the page."
+      }
+    },
+    {
+      "id": "CATALOG_RISK_ANALYSIS_VALIDATION_FAILED__POST_ESERVICES_E_SERVICE_ID_RISK_ANALYSIS",
+      "process": "Catalog Process",
+      "error": "riskAnalysisValidationFailed",
+      "bffEndpoint": "POST /eservices/:eServiceId/riskAnalysis",
+      "copy": {
+        "it": "Non puoi inserire un link in una risposta dell’analisi del rischio. Rimuovi il link e riprova.",
+        "en": "You can't include a link in a risk analysis answer. Remove the link and try again."
+      }
+    },
+    {
+      "id": "AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES",
+      "process": "Authorization Process",
+      "error": "tenantNotAllowedOnEservice",
+      "bffEndpoint": "POST /producerKeychains/:producerKeychainId/eservices",
+      "copy": {
+        "it": "Non puoi associare un portachiavi a questo e-service perché lo gestisci in delega. Può associarlo solo l'ente delegante.",
+        "en": "You can't associate a keychain with this e-service because you manage it as a delegate. Only the delegating party can associate it."
+      }
+    },
+    {
+      "id": "AUTHORIZATION_ESERVICE_IN_ARCHIVED_STATE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES",
+      "process": "Authorization Process",
+      "error": "eserviceInArchivedState",
+      "bffEndpoint": "POST /producerKeychains/:producerKeychainId/eservices",
+      "copy": {
+        "it": "Non puoi associare un portachiavi a questo e-service perché è archiviato.",
+        "en": "You can't associate a keychain with this e-service because it is archived."
+      }
+    },
+    {
+      "id": "AUTHORIZATION_NO_ACTIVE_OR_SUSPENDED_PURPOSE_VERSION_FOUND__POST_CLIENTS_CLIENT_ID_PURPOSES",
+      "process": "Authorization Process",
+      "error": "noActiveOrSuspendedPurposeVersionFound",
+      "bffEndpoint": "POST /clients/:clientId/purposes",
+      "copy": {
+        "it": "Non puoi associare il client a questa finalità perché non è attiva.",
+        "en": "You can't associate the client with this purpose because it isn't active."
+      }
+    },
+    {
+      "id": "PURPOSE_TEMPLATE_ASSOCIATION_ESERVICES_FOR_PURPOSE_TEMPLATE_FAILED__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_LINK_RESOURCE",
+      "process": "Purpose Template Process",
+      "error": "associationEServicesForPurposeTemplateFailed",
+      "bffEndpoint": "POST /purposeTemplates/:purposeTemplateId/linkResource",
+      "copy": {
+        "it": "Non puoi aggiungere questo e-service tra quelli suggeriti perché è stato creato da un template e-service.",
+        "en": "You can't add this e-service to the suggested e-services because it was created from an e-service template."
+      }
+    },
+    {
+      "id": "PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID",
+      "process": "Purpose Template Process",
+      "error": "riskAnalysisValidationFailed",
+      "bffEndpoint": "PUT /purposeTemplates/:purposeTemplateId",
+      "copy": {
+        "it": "Non puoi inserire un link in una risposta dell’analisi del rischio. Rimuovi il link e riprova.",
+        "en": "You can't include a link in a risk analysis answer. Remove the link and try again."
+      }
     }
   ],
   "sharedTexts": [

@@ -13,6 +13,34 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
       | ES-1  | Comune di Milano |
     And un admin appartenente all'erogatore Comune di Milano
 
+  Scenario: [ERROR_200] - Impossibilità di rifiutare una delega in fruizione già attiva
+  Data una delega in fruizione già approvata dal delegato
+  Quando il delegato tenta di rifiutarla con una motivazione valida
+  Allora il sistema rifiuta l'operazione e segnala che la delega non è più in attesa di approvazione.
+
+    # Binding di setup mancante, condiviso con ERROR_008; riusare createConsumerDelegation e approveConsumerDelegation.
+    Given una delega in fruizione per l'e-service da PagoPA al Comune di Pozzallo in stato ACTIVE
+    And un admin appartenente al delegato Comune di Pozzallo
+    # Operazione BFF e binding negativi mancanti, condivisi con ERROR_011.
+    # Il catalogo indica /consumer al singolare: verificare il contratto prima dell'implementazione.
+    When l'utente tenta di rifiutare la delega in fruizione con la motivazione "Delega non necessaria"
+    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_CONSUMER_DELEGATIONS_DELEGATION_ID_REJECT"
+
+  @producer-delegation-settings
+  Scenario: [ERROR_201] - Impossibilità di rifiutare una delega in erogazione già attiva
+  Data una delega in erogazione già approvata dal delegato
+  Quando il delegato tenta di rifiutarla con una motivazione valida
+  Allora il sistema rifiuta l'operazione e segnala che la delega non è più in attesa di approvazione.
+
+    Given i seguenti enti abilitati a ricevere deleghe di erogazione:
+      | ente               |
+      | Comune di Pozzallo |
+    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
+    And un admin appartenente al delegato Comune di Pozzallo
+    # Binding negativo mancante, condiviso con ERROR_010; riusare rejectProducerDelegation.
+    When l'utente tenta di rifiutare la delega in erogazione con la motivazione "Delega non necessaria"
+    Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_REJECT"
+
   Scenario: [ERROR_004] - Impossibilità di proporre una delega in erogazione a un ente non pubblico
   Dato un e-service pubblicato dall'erogatore
   Quando l'erogatore tenta di conferire a un ente non pubblico una delega in erogazione per l'e-service

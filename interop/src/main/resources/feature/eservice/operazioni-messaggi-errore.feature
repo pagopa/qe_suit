@@ -10,6 +10,19 @@ Feature: Messaggi di errore durante la gestione degli e-service
   Background:
     Given un admin appartenente all'erogatore Comune di Milano
 
+  Scenario: [ERROR_202] - Rifiuto dell'aggiunta di un'analisi del rischio con un link in una risposta
+  Dato un e-service in ricezione con una versione in bozza
+  Quando l'erogatore tenta di aggiungere un'analisi del rischio con un collegamento in una risposta a testo libero e gli altri dati validi
+  Allora il sistema rifiuta l'aggiunta e invita l'erogatore a rimuovere il collegamento dalla risposta.
+
+    Given i seguenti e-service in bozza:
+      | alias | erogatore        | modalità |
+      | ES-1  | Comune di Milano | RECEIVE  |
+    # Binding negativo mancante; riusare la costruzione del questionario valido di addLatestRiskAnalysis.
+    # Alterare soltanto una risposta a testo libero, mantenendo valido anche il nome dell'analisi.
+    When l'erogatore tenta di aggiungere all'e-service un'analisi del rischio con la risposta a testo libero "Motivazione https://example.org"
+    Then il messaggio di errore corrisponde al caso "CATALOG_RISK_ANALYSIS_VALIDATION_FAILED__POST_ESERVICES_E_SERVICE_ID_RISK_ANALYSIS"
+
   Scenario: [ERROR_037] - Rifiuto della creazione di un e-service con un nome già usato dall'erogatore
   Dato un e-service in bozza appartenente all'erogatore
   Quando l'erogatore tenta di crearne un altro con lo stesso nome

@@ -10,6 +10,54 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
   Background:
     Given un admin appartenente al fruitore PagoPA
 
+  Scenario: [ERROR_199] - Rifiuto di una stima suggerita dal template superiore a un miliardo di chiamate API al giorno
+  Dato un template finalità in bozza con dati validi
+  Quando il creatore tenta di suggerire al fruitore 1.000.000.001 chiamate API al giorno
+  Allora il sistema rifiuta la modifica e invita il creatore a ridurre il suggerimento entro il limite di 1.000.000.000.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" collegato a un template di finalità in bozza
+    And un admin appartenente al fruitore PagoPA
+    # Operazione BFF e binding negativo mancanti per la modifica del template; mantenere validi gli altri dati.
+    When l'operatore tenta di modificare il template finalità suggerendo 1000000001 chiamate API al giorno
+    Then il messaggio di errore corrisponde al caso "BFF_BAD_REQUEST__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"
+
+  Scenario: [ERROR_206] - Impossibilità di suggerire in un template finalità un e-service creato da template
+  Dati un template finalità in bozza e un e-service pubblicato creato da un template e-service
+  Quando il creatore tenta di aggiungere l'istanza agli e-service suggeriti del template finalità
+  Allora il sistema rifiuta l'associazione e segnala che l'e-service deriva da un template.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" collegato a un template di finalità in bozza
+    And i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                | tecnologia |
+      | T-1   | Comune di Milano | Template di origine | REST       |
+    And le seguenti istanze di template e-service pubblicate:
+      | alias | template | suffisso  |
+      | ES-2  | T-1      | Suggerito |
+    And un admin appartenente al fruitore PagoPA
+    # Binding negativo mancante; riusare linkResource con ES-2, non con il template di origine T-1.
+    When l'operatore tenta di aggiungere l'e-service "ES-2" agli e-service suggeriti del template finalità
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_ASSOCIATION_ESERVICES_FOR_PURPOSE_TEMPLATE_FAILED__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_LINK_RESOURCE"
+
+  Scenario: [ERROR_207] - Rifiuto della modifica di un template finalità con un link in una risposta dell'analisi del rischio
+  Dato un template finalità in bozza con un'analisi del rischio valida
+  Quando il creatore tenta di inserire un collegamento in una risposta a testo libero lasciando valide le altre risposte
+  Allora il sistema rifiuta il salvataggio e invita il creatore a rimuovere il collegamento dalla risposta.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" collegato a un template di finalità in bozza
+    And un admin appartenente al fruitore PagoPA
+    # Operazione BFF e binding negativo mancanti; modificare una risposta del questionario, non un'annotazione.
+    When l'operatore tenta di modificare il template finalità inserendo "Motivazione https://example.org" in una risposta a testo libero dell'analisi del rischio
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_RISK_ANALYSIS_VALIDATION_FAILED__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID"
+
   Scenario: [ERROR_138] - Impossibilità di riattivare un template con un e-service suggerito sospeso
   Dato un template finalità sospeso con un e-service suggerito non più disponibile per la fruizione
   Quando il creatore tenta di riattivare il template

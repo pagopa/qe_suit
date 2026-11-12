@@ -12,6 +12,23 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
 
   # Per i nomi espliciti riusare i payload delle factory: BffPurposeCreateCommand.title non è implementato.
 
+  Scenario: [ERROR_198] - Rifiuto della modifica di una finalità da template con oltre un miliardo di chiamate API al giorno
+  Data una finalità in bozza creata da un template pubblicato per un e-service sottoscritto dal fruitore
+  Quando il fruitore tenta di impostare una stima di 1.000.000.001 chiamate API al giorno lasciando validi gli altri dati
+  Allora il sistema rifiuta la modifica e invita il fruitore a ridurre la stima entro il limite di 1.000.000.000.
+
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    And l'e-service "ES-1" collegato a un template di finalità pubblicato
+    # Binding di setup mancante, condiviso con ERROR_024; riusare createPurposeFromTemplate.
+    And una finalità in bozza creata da PagoPA dal template finalità per l'e-service "ES-1" e identificata come "F-1"
+    And un admin appartenente al fruitore PagoPA
+    # Operazione BFF e binding negativo mancanti; riusare patchFromTemplateRequest modificando solo la stima.
+    When il fruitore tenta di modificare la finalità da template "F-1" con una stima di 1000000001 chiamate API al giorno
+    Then il messaggio di errore corrisponde al caso "BFF_BAD_REQUEST__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES_PURPOSE_ID"
+
   Scenario: [ERROR_018] - Impossibilità di creare una finalità con un nome già usato per lo stesso e-service
   Data una finalità del fruitore per un e-service già sottoscritto dal fruitore
   Quando il fruitore tenta di creare un'altra finalità con lo stesso nome per lo stesso e-service
