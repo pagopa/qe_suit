@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.eservice_template.application;
 
+import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
@@ -11,6 +12,10 @@ import org.springframework.plugin.core.Plugin;
 import java.util.Optional;
 
 public interface EServiceTemplateVersionGateway extends Plugin<Channel> {
+    void deleteDraftVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef);
+
+    void suspendVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef);
+
     EServiceTemplateVersion getEServiceTemplateVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef);
 
     EServiceTemplateVersion addVersion(EServiceTemplateRef templateRef);
@@ -18,6 +23,13 @@ public interface EServiceTemplateVersionGateway extends Plugin<Channel> {
     EServiceTemplateVersion publishEServiceTemplateVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef);
 
     EServiceTemplateVersion uploadInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath);
+
+    void shouldFailToUploadInterface(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String fixturePath,
+            SoapInterfaceUploadFailureReason reason
+    );
 
     EServiceTemplateVersion updateDraftVersion(
             EServiceTemplateRef templateRef,
@@ -29,4 +41,3 @@ public interface EServiceTemplateVersionGateway extends Plugin<Channel> {
 
     Optional<EServiceTemplateInterface> readCurrentInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef);
 }
-

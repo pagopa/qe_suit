@@ -1,20 +1,20 @@
 package it.pagopa.interop.web.eservice.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.suit.component.Snackbar;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.web.eservice.application.WebEServiceCreationCommand;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.EServiceArchivingDialog;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePage;
-import it.pagopa.interop.web.infrastructure.WebCommonGateway;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,11 +26,11 @@ public class WebEServiceGateway implements EServiceGateway {
     private static final String DEFAULT_ARCHIVING_REASON = "Archiviazione per sostituzione dell'e-service.";
 
     private final EServiceCreatePage eServiceCreatePage;
+    private final EntityStore entityStore;
     private final WebEServiceGeneralDataGateway generalDataGateway;
     private final ProducerEServiceDetailPage producerEServiceDetailPage;
-    private final EntityStore entityStore;
-    // The shared snackbar reader is only registered in the Cucumber profile.
-    private final ObjectProvider<WebCommonGateway> webCommonGatewayProvider;
+    private final Snackbar snackbar;
+
 
     @Override
     public EService createEService(EServiceCreationCommand command) {
@@ -42,7 +42,9 @@ public class WebEServiceGateway implements EServiceGateway {
 
         generalDataGateway.fillEServiceGeneralData(creationCommand.getWebEServiceGeneralData());
 
-        return generalDataGateway.readEServiceGeneralData();
+        EService draftEService = generalDataGateway.readEServiceGeneralData();
+        entityStore.upsert(command.getAlias(), draftEService);
+        return draftEService;
     }
 
     @Override
@@ -66,27 +68,39 @@ public class WebEServiceGateway implements EServiceGateway {
     @Override
     public void shouldFailToArchiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason) {
         String expectedMessage = expectedArchivingFailureMessage(reason);
-        WebCommonGateway webCommonGateway = webCommonGatewayProvider.getObject();
 
         openEServiceArchivingDialog(eServiceRef);
         EServiceArchivingDialog dialog = producerEServiceDetailPage.getArchivingDialog();
         fillArchivingDialog(dialog, gracePeriodDays);
         dialog.getArchiveButton().click();
 
-        assertArchivingRejection(webCommonGateway, expectedMessage, reason);
+        assertArchivingRejection(expectedMessage, reason);
     }
 
     @Override
     public void shouldFailToRequestEServiceArchiving(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason) {
         String expectedMessage = expectedArchivingFailureMessage(reason);
-        WebCommonGateway webCommonGateway = webCommonGatewayProvider.getObject();
 
         openEServiceArchivingDialog(eServiceRef);
         EServiceArchivingDialog dialog = producerEServiceDetailPage.getArchivingRequestDialog();
         fillArchivingDialog(dialog, gracePeriodDays);
         dialog.getRequestArchivingButton().click();
 
-        assertArchivingRejection(webCommonGateway, expectedMessage, reason);
+        assertArchivingRejection(expectedMessage, reason);
+    }
+
+    @Override
+    public void shouldFailToImportSOAPEService(
+            String eserviceName,
+            String wsdlResourcePath,
+            SoapInterfaceUploadFailureReason reason
+    ) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void assertEServiceNotPresentInProducerCatalog(String eserviceName) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     private void openEServiceArchivingDialog(EServiceRef eServiceRef) {
@@ -109,12 +123,12 @@ public class WebEServiceGateway implements EServiceGateway {
     private String expectedArchivingFailureMessage(EServiceArchivingFailureReason reason) {
         return switch (reason) {
             case ARCHIVING_BEFORE_DESCRIPTOR ->
-                    "Non puoi archiviare l\u2019e-service prima di una versione gi\u00e0 in fase di archiviazione. Seleziona una durata pi\u00f9 lunga.";
+                    "Non puoi archiviare l’e-service prima di una versione già in fase di archiviazione. Seleziona una durata più lunga.";
         };
     }
 
-    private void assertArchivingRejection(WebCommonGateway webCommonGateway, String expectedMessage, EServiceArchivingFailureReason reason) {
-        assertThat(webCommonGateway.getSnackbarErrorMessage())
+    private void assertArchivingRejection(String expectedMessage, EServiceArchivingFailureReason reason) {
+        assertThat(snackbar.getErrorMessage())
                 .as("EService archiving rejection: %s", reason)
                 .isEqualTo(expectedMessage);
     }

@@ -30,6 +30,7 @@ import java.util.function.Predicate;
 @Component
 @RequiredArgsConstructor
 public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<EServiceTemplateJourneyImpl> {
+
     private final EServiceTemplateUseCase eServiceTemplateUseCase;
     private final EServiceTemplateVersionUseCase eServiceTemplateVersionUseCase;
     private final EServiceTemplateInstanceUseCase eServiceTemplateInstanceUseCase;
@@ -111,6 +112,7 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
                     return eServiceTemplateUseCase.getEServiceTemplate(refreshedTemplate);
                 }, predicate
         );
+
         return this;
     }
 
@@ -141,7 +143,7 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
             case DRAFT -> {}
             case PUBLISHED -> {
                 EServiceDescriptor publishedDescriptor = eServiceDescriptorUseCase.publishDescriptor(updatedEService, updatedDescriptor);
-                updatedEService.addDescriptor(publishedDescriptor);
+                updatedEService.upsertDescriptor(publishedDescriptor);
                 entityStore.upsert(updatedEService);
             }
             default -> throw new UnsupportedOperationException(String.format("La transizione allo stato %s non è ancora supportata nel Journey.", state));
@@ -150,7 +152,6 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     }
 
     private EServiceTemplateJourneyImpl processLifecycle(EServiceTemplate template, EServiceTemplateVersion version, EServiceTemplateVersionState targetState, EServiceTemplateCreationCommand configuration) {
-        entityStore.upsert(template);
         return switch (targetState) {
             case DRAFT -> this;
             case PUBLISHED -> publishPipeline(template, version, configuration);
@@ -163,7 +164,7 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     }
 
     private EServiceTemplateJourneyImpl publishPipeline(EServiceTemplate eServiceTemplate, EServiceTemplateVersion eServiceTemplateVersion, EServiceTemplateCreationCommand configuration) {
-        var enrichedVersion = eServiceTemplateVersionUseCase.prepareVersionForPublishing(eServiceTemplate, eServiceTemplateVersion);
+        var enrichedVersion = eServiceTemplateVersionUseCase.prepareVersionForPublishing(eServiceTemplate, eServiceTemplateVersion, configuration.getInterfaceDocumentPath());
         var publishedVersion = eServiceTemplateVersionUseCase.publishVersion(eServiceTemplate, enrichedVersion);
         eServiceTemplateVersionUseCase.downloadInterface(eServiceTemplate, publishedVersion);
         return this;

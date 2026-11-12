@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.eservice_template.application;
 
+import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInterface;
@@ -16,11 +17,22 @@ import static it.pagopa.interop.common.eservice.domain.EServiceTechnology.REST;
 @Service
 @RequiredArgsConstructor
 public class EServiceTemplateVersionUseCase {
-    private final static String STANDARD_WSDL_PATH = "assets/eseervice-template/soap11-due-indirizzi.wsdl";
+    private final static String STANDARD_WSDL_PATH = "assets/eservice-template/soap11-due-indirizzi.wsdl";
     private final static String STANDARD_OPEN_API_PATH = "assets/origin-interface.yaml";
 
     private final EServiceTemplateVersionGateway eServiceTemplateVersionGateway;
     private final EServiceTemplateRequestFactory requestFactory;
+
+    public void retireVersions(EServiceTemplate template) {
+        for (var version : template.getVersions()) {
+            switch (version.getState()) {
+                case DRAFT -> eServiceTemplateVersionGateway.deleteDraftVersion(template.getRef(), version.getRef());
+                case PUBLISHED -> eServiceTemplateVersionGateway.suspendVersion(template.getRef(), version.getRef());
+                case SUSPENDED, ARCHIVED, DEPRECATED -> { }
+                default -> throw new IllegalStateException("Cannot retire template version in state " + version.getState());
+            }
+        }
+    }
 
     public EServiceTemplateVersion getVersion(EServiceTemplate eServiceTemplate, EServiceTemplateVersion version) {
         return eServiceTemplateVersionGateway.getEServiceTemplateVersion(eServiceTemplate.getRef(), version.getRef());
@@ -43,6 +55,10 @@ public class EServiceTemplateVersionUseCase {
     }
 
     public EServiceTemplateVersion prepareVersionForPublishing(EServiceTemplate eServiceTemplate, EServiceTemplateVersion version) {
+        return prepareVersionForPublishing(eServiceTemplate, version, null);
+    }
+
+    public EServiceTemplateVersion prepareVersionForPublishing(EServiceTemplate eServiceTemplate, EServiceTemplateVersion version, String interfacePath) {
         if (version.getState() == EServiceTemplateVersionState.PUBLISHED) return version;
 
         if (version.getState() != EServiceTemplateVersionState.DRAFT)
@@ -51,7 +67,9 @@ public class EServiceTemplateVersionUseCase {
         if (version.getInterfaceDocument() == null)
             return uploadInterface(
                     eServiceTemplate, version,
-                    eServiceTemplate.getTechnology() == REST ? STANDARD_OPEN_API_PATH : STANDARD_WSDL_PATH
+                    interfacePath == null
+                            ? (eServiceTemplate.getTechnology() == REST ? STANDARD_OPEN_API_PATH : STANDARD_WSDL_PATH)
+                            : interfacePath
             );
 
         return version;
@@ -71,6 +89,10 @@ public class EServiceTemplateVersionUseCase {
     public EServiceTemplateVersion uploadInterface(EServiceTemplate template, EServiceTemplateVersion version, String fixturePath) {
         eServiceTemplateVersionGateway.uploadInterface(template.getRef(), version.getRef(), fixturePath);
         return eServiceTemplateVersionGateway.getEServiceTemplateVersion(template.getRef(), version.getRef());
+    }
+
+    public void shouldFailToUploadInterface(EServiceTemplate template, EServiceTemplateVersion version, String fixturePath, SoapInterfaceUploadFailureReason reason) {
+        eServiceTemplateVersionGateway.shouldFailToUploadInterface(template.getRef(), version.getRef(), fixturePath, reason);
     }
 
     public EServiceTemplateVersion publishEServiceTemplateVersion(EServiceTemplate template, EServiceTemplateVersion version) {
