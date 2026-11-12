@@ -8,6 +8,8 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplatePreparationConfiguration;
 import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import lombok.RequiredArgsConstructor;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapper;
@@ -25,6 +27,12 @@ public class EServiceTemplateSteps {
     private final ObjectMapper objectMapper;
     private final EServiceTemplateConfigurationMapper configurationMapper;
     private final EntityStore entities;
+
+    @Given("un template e-service in ricezione con una versione in bozza")
+    public void createReceiveDraftTemplate() {
+        journey.createEServiceTemplate(command -> command.mode(EServiceMode.RECEIVE),
+                EServiceTemplateVersionState.DRAFT);
+    }
 
     @Given("un template e-service preparato con la seguente configurazione:")
     public void prepareTemplate(EServiceTemplatePreparationConfiguration configuration) {
