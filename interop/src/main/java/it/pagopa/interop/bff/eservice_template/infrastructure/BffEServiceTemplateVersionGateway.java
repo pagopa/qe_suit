@@ -2,7 +2,9 @@ package it.pagopa.interop.bff.eservice_template.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.bff.eservice.infrastructure.BffSoapInterfaceProblemValidator;
 import it.pagopa.interop.bff.eservice_template.application.BffUpdateEServiceTemplateVersionCommand;
+import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateVersionGateway;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
@@ -104,6 +106,24 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
                         .orElse(false),
                 "EService template interface was not visible after upload"
         );
+    }
+
+    @Override
+    public void shouldFailToUploadInterface(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String fixturePath,
+            SoapInterfaceUploadFailureReason reason
+    ) {
+        File document = FileUtils.loadClasspathResourceAsTempFile(fixturePath);
+        String prettyName = Path.of(fixturePath).getFileName().toString();
+        var rawResponse = restClient.createEServiceTemplateDocument(
+                        templateRef.id(), versionRef.versionId(), DocumentKind.INTERFACE.name(), prettyName, document
+                )
+                .withoutPolling()
+                .assertStatusCode(400)
+                .getRaw();
+        BffSoapInterfaceProblemValidator.assertSoapInterfaceProblem(rawResponse, reason);
     }
 
     @Override
