@@ -27,7 +27,6 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
   Quando l'erogatore tenta di aggiungere un'altra analisi con lo stesso nome allo stesso template
   Allora il sistema rifiuta l'aggiunta e segnala che il nome dell'analisi è già in uso.
 
-    # Binding di setup mancante; riusare createEServiceTemplate con modalità RECEIVE.
     Given un template e-service in ricezione con una versione in bozza
     # Operazione BFF e binding di setup mancanti per le analisi del rischio del template.
     And un'analisi del rischio completa associata al template

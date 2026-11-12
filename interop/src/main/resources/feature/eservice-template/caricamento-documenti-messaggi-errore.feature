@@ -65,10 +65,8 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
   Quando l'erogatore tenta di caricare un WSDL ben formato ma privo dell'indirizzo del servizio
   Allora il sistema rifiuta il caricamento e invita l'erogatore a completare il WSDL prima di riprovare.
 
-    Given un template e-service preparato con la seguente configurazione:
-      | tecnologia | stato | interfaccia              |
-      | SOAP       | DRAFT | soap11-un-indirizzo.wsdl |
-    When l'erogatore carica il file "soap-senza-indirizzo.wsdl" come "interfaccia" sulla versione del template con il nome "Allegato di test"
+    Given un template e-service SOAP in bozza creato dall'erogatore
+    When l'erogatore tenta di caricare l'interfaccia SOAP "missing-soap-address.wsdl" sulla versione del template ottenendo un rifiuto per "assenza di soap:address"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INTERFACE_EXTRACTING_SOAP_FIELD_VALUE_ERROR"
 
   @work-item:QA-18430

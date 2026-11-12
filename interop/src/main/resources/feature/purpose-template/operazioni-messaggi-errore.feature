@@ -19,7 +19,6 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" collegato a un template di finalità pubblicato
-    # Binding di setup mancante; riusare suspendPurposeTemplate prima di sospendere l'e-service.
     And il template finalità sospeso
     And la versione 1 dell'e-service "ES-1" del Comune di Milano sospesa
     And un admin appartenente al fruitore PagoPA

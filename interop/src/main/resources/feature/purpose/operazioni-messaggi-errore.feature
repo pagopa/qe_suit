@@ -21,8 +21,10 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup mancante; riusare createPurpose.
-    And una finalità in bozza creata da PagoPA per l'e-service
+    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
     # Binding negativo parametrico mancante; riusare createPurpose o createReversePurpose secondo la modalità.
     When il fruitore tenta di creare una finalità per l'e-service con il nome della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES"
@@ -39,8 +41,10 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     And un'analisi del rischio completa associata all'e-service
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup mancante; riusare createReversePurpose con l'analisi dell'erogatore.
-    And una finalità in bozza creata da PagoPA per l'e-service
+    # Binding di setup comune mancante; riusare createReversePurpose con l'analisi dell'erogatore.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
     # Binding negativo parametrico mancante; riusare createPurpose o createReversePurpose secondo la modalità.
     When il fruitore tenta di creare una finalità per l'e-service con il nome della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_REVERSE_PURPOSES"
@@ -72,8 +76,10 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup mancante; riusare createPurpose.
-    And una finalità in bozza creata da PagoPA per l'e-service
+    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
     # Operazione BFF e binding negativo mancanti; riusare updateRequest per gli altri dati validi.
     When il fruitore tenta di modificare la finalità con il nome "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID"
@@ -107,8 +113,10 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     And l'e-service "ES-1" collegato a un template di finalità pubblicato
-    # Binding di setup mancante; riusare createPurpose.
-    And una finalità in bozza creata da PagoPA per l'e-service
+    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
     # Binding BFF negativo mancante; riusare createPurposeFromTemplate con il nome effettivo della finalità.
     When il fruitore tenta di creare una finalità dal template finalità per l'e-service con il nome della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES"
@@ -271,8 +279,10 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup mancante; riusare createPurpose.
-    And una finalità in bozza creata da PagoPA per l'e-service
+    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
     # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
     # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
     When il fruitore tenta di aggiornare parzialmente la finalità con il nome "Finalità https://example.org"
@@ -312,8 +322,10 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     And un'analisi del rischio completa associata all'e-service
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup mancante; riusare createReversePurpose con l'analisi dell'erogatore.
-    And una finalità in bozza creata da PagoPA per l'e-service
+    # Binding di setup comune mancante; riusare createReversePurpose con l'analisi dell'erogatore.
+    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
+      | alias |
+      | F-1   |
     # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
     # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
     When il fruitore tenta di aggiornare parzialmente la finalità con il nome "Finalità https://example.org"

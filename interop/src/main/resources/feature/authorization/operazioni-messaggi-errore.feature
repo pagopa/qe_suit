@@ -100,9 +100,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Quando l'erogatore tenta di registrare una chiave privata effimera di test al posto di una chiave pubblica
   Allora il sistema rifiuta la registrazione e segnala che le chiavi private non sono ammesse.
 
-    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
     Given un portachiavi erogatore creato dal Comune di Milano
-    And un admin appartenente all'erogatore Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "chiave-privata-effimera-pem" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_PRIVATE_KEY_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
@@ -112,9 +110,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Quando l'erogatore tenta di registrare un certificato X.509 PEM di test contenente una chiave pubblica
   Allora il sistema rifiuta la registrazione e segnala che i certificati non sono ammessi.
 
-    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
     Given un portachiavi erogatore creato dal Comune di Milano
-    And un admin appartenente all'erogatore Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "certificato-x509" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_CERTIFICATE_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
@@ -124,9 +120,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Quando l'erogatore tenta di registrare due chiavi pubbliche PEM di test concatenate
   Allora il sistema rifiuta la registrazione e segnala che occorre inviare una sola chiave.
 
-    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
     Given un portachiavi erogatore creato dal Comune di Milano
-    And un admin appartenente all'erogatore Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "due-chiavi-pubbliche-pem" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_MULTIPLE_KEYS_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
@@ -136,9 +130,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Quando l'erogatore tenta di registrare una chiave pubblica PEM di test incompleta
   Allora il sistema rifiuta la registrazione e segnala che la chiave pubblica non è valida.
 
-    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
     Given un portachiavi erogatore creato dal Comune di Milano
-    And un admin appartenente all'erogatore Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "pem-incompleto" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_PUBLIC_KEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
@@ -148,9 +140,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Quando l'erogatore tenta di registrare una chiave pubblica EC valida di test
   Allora il sistema rifiuta la registrazione e segnala che è richiesta una chiave RSA.
 
-    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
     Given un portachiavi erogatore creato dal Comune di Milano
-    And un admin appartenente all'erogatore Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "ec-pubblica" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_AN_RSAKEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
@@ -160,9 +150,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Quando l'erogatore tenta di registrare una chiave pubblica RSA di test da 1024 bit
   Allora il sistema rifiuta la registrazione e segnala che la lunghezza della chiave non è ammessa.
 
-    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
     Given un portachiavi erogatore creato dal Comune di Milano
-    And un admin appartenente all'erogatore Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-1024-bit" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_KEY_LENGTH__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
@@ -209,9 +197,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Quando l'erogatore tenta di registrare una chiave pubblica RSA valida e inedita con un collegamento nel nome
   Allora il sistema rifiuta la registrazione e invita l'erogatore a rimuovere il collegamento.
 
-    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
     Given un portachiavi erogatore creato dal Comune di Milano
-    And un admin appartenente all'erogatore Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-valida" al "portachiavi" con il nome "Chiave https://example.org"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
@@ -232,9 +218,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Quando l'amministratore tenta di inserire un collegamento nel nome lasciando validi gli altri dati
   Allora il sistema rifiuta la modifica e invita l'amministratore a rimuovere il collegamento.
 
-    # Binding di setup comune mancante; riusare createProducerKeychain con l'utente autorizzato alle chiavi.
     Given un portachiavi erogatore creato dal Comune di Milano
-    And un admin appartenente all'erogatore Comune di Milano
     # Operazione BFF e binding negativo parametrico mancanti; verificare il contratto PATCH di rilascio.
     # Non rimappare questo ID su un'altra operazione.
     When l'utente tenta di modificare i dati del "portachiavi" con il nome "Valore https://example.org"

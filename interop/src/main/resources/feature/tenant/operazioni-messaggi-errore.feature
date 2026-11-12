@@ -56,15 +56,22 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED_DISCRETE"
 
   Scenario: [ERROR_015] - Rifiuto di una nuova verifica con scadenza nel passato
-  Dato un attributo richiesto per la fruizione di PagoPA e ancora da verificare
+  Dato un attributo richiesto per la fruizione, ancora da verificare
   Quando l'erogatore tenta di verificarlo con una scadenza precedente a oggi
   Allora il sistema rifiuta la verifica e segnala che la scadenza non può essere nel passato.
 
     Given i seguenti attributi verificati creati da un admin del Comune di Milano:
       | alias |
       | VER-1 |
-    # Binding di setup mancante per la richiesta di fruizione che richiede l'attributo senza verificarlo.
-    And l'attributo "VER-1" richiesto per una richiesta di fruizione di PagoPA e ancora da verificare
+    And i seguenti e-service in bozza:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
+      | tipo       | gruppo | attributo |
+      | verificato | 1      | VER-1     |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione in attesa di approvazione
+    And un admin appartenente all'erogatore Comune di Milano
     # Binding BFF negativo mancante; riusare verifyVerifiedAttribute con scadenza ieri e gli altri dati validi.
     When l'erogatore tenta di verificare l'attributo "VER-1" di PagoPA con scadenza ieri
     Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED"

@@ -391,7 +391,6 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given i seguenti e-service in bozza:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
-    # Binding mancante; riusare prepareEServiceDescriptorForPublication.
     And la versione 1 dell'e-service predisposta per la pubblicazione
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
@@ -530,7 +529,6 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And le seguenti istanze di template e-service pubblicate:
       | alias | template | suffisso   |
       | ES-1  | T-1      | Aggiornare |
-    # Binding mancante; riusare addVersion e il ciclo di pubblicazione del template.
     And una nuova versione del template pubblicata e disponibile per l'aggiornamento dell'e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo

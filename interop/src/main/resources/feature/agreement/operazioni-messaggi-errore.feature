@@ -297,7 +297,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     # cloneAgreement ammette solo REJECTED; il setup deve inviare la bozza e farla rifiutare dall'erogatore.
     # Non devono esistere altre richieste in corso per PagoPA e lo stesso e-service.
     And una richiesta di fruizione rifiutata per l'e-service, creata da PagoPA
-    # Binding di revoca mancante; riusare BffTenantRestClient.revokeCertifiedAttribute con l'attributo CERT-1.
     And l'attributo certificato "CERT-1" revocato a PagoPA
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti per la duplicazione della richiesta.

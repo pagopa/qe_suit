@@ -126,10 +126,8 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
   Quando l'erogatore tenta di caricare un WSDL ben formato ma privo dell'indirizzo del servizio
   Allora il sistema rifiuta il caricamento e invita l'erogatore a completare il WSDL.
 
-    # Binding di setup parametrico mancante; riusare createEService con EServiceCreationCommand.technology.
-    Given una versione in bozza senza interfaccia di un e-service con tecnologia "SOAP"
-    # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
-    When l'erogatore carica il file "soap-senza-indirizzo.wsdl" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test"
+    Given un e-service SOAP in bozza creato dall'erogatore
+    When l'erogatore tenta di caricare l'interfaccia SOAP "missing-soap-address.wsdl" sul descrittore dell'e-service ottenendo un rifiuto per "assenza di soap:address"
     Then il messaggio di errore corrisponde al caso "CATALOG_INTERFACE_EXTRACTING_SOAP_FIELD_VALUE_ERROR"
 
   Scenario: [ERROR_185] - Rifiuto di un'interfaccia REST con un URL del server non valido
