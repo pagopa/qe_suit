@@ -2,6 +2,8 @@ package it.pagopa.interop.suite.contract;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.restassured.RestAssured;
+import io.restassured.filter.Filter;
 import io.restassured.response.Response;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.TestBootApp;
@@ -31,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -51,6 +54,31 @@ public class BffEServiceContractTest {
     private final BffEServiceRequestFactory requestFactory;
     private final CurrentUserSession currentUserSession;
     private final ObjectMapper objectMapper;
+
+    private static final int CONFLICT_MAX_RETRIES = 3;
+    private static final long CONFLICT_RETRY_MIN_DELAY_MS = 1000;
+    private static final long CONFLICT_RETRY_MAX_DELAY_MS = 4000;
+
+    // Aggiornamenti ravvicinati della stessa bozza possono restituire 409: si ritenta prima di accettare il fallimento.
+    static final Filter RETRY_ON_CONFLICT = (requestSpec, responseSpec, ctx) -> {
+        String method = requestSpec.getMethod();
+        String path = requestSpec.getUserDefinedPath();
+        Response response = ctx.next(requestSpec, responseSpec);
+        for (int attempt = 0; attempt < CONFLICT_MAX_RETRIES && response.statusCode() == 409; attempt++) {
+            try {
+                Thread.sleep(ThreadLocalRandom.current().nextLong(CONFLICT_RETRY_MIN_DELAY_MS, CONFLICT_RETRY_MAX_DELAY_MS + 1));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                throw new IllegalStateException("Interrupted while retrying a draft descriptor update", e);
+            }
+            // ctx.next() consuma la catena: ogni retry ne richiede una nuova, senza questo filtro.
+            response = RestAssured.given()
+                    .spec(requestSpec)
+                    .noFiltersOfType(BffEServiceContractTest.RETRY_ON_CONFLICT.getClass())
+                    .request(method, path);
+        }
+        return response;
+    };
 
     private static final List<String> ATTRIBUTE_GROUPS = List.of("certified", "declared", "verified");
 
@@ -163,25 +191,29 @@ public class BffEServiceContractTest {
 
     @TestFactory
     Stream<DynamicTest> updateDraftDescriptorTemplateInstance() {
+        Supplier<EService> draftInstance = new LazyReference<>(this::createDraftEServiceTemplateInstance);
+
         Stream<DynamicTest> fuzzTests = httpContractValidator
                 .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
-                .apiCall(() -> apiClient.eservices().updateDraftDescriptorTemplateInstance())
+                .apiCall(() -> {
+                    var operation = apiClient.eservices().updateDraftDescriptorTemplateInstance();
+                    operation.reqSpec(reqSpec -> reqSpec.addFilter(RETRY_ON_CONFLICT));
+                    return operation;
+                })
                 .pathParams(() -> {
-                    EService draftInstance = createDraftEServiceTemplateInstance();
+                    EService instance = draftInstance.get();
                     return Map.of(
-                            "eServiceId", draftInstance.getId(),
-                            "descriptorId", draftInstance.getLatestDescriptor().getId()
+                            "eServiceId", instance.getId(),
+                            "descriptorId", instance.getLatestDescriptor().getId()
                     );
                 })
                 .payload(requestFactory::updateDraftTemplateInstanceDescriptorRequest)
                 .tests();
 
-        return Stream.concat(fuzzTests, draftInstanceAttributesTests());
+        return Stream.concat(fuzzTests, draftInstanceAttributesTests(draftInstance));
     }
 
-    private Stream<DynamicTest> draftInstanceAttributesTests() {
-        Supplier<EService> draftInstance = new LazyReference<>(this::createDraftEServiceTemplateInstance);
-
+    private Stream<DynamicTest> draftInstanceAttributesTests(Supplier<EService> draftInstance) {
         return ATTRIBUTE_GROUPS.stream().flatMap(group -> Stream.of(
                 dynamicTest(
                         "[attributes] " + group + " empty list",
@@ -215,7 +247,7 @@ public class BffEServiceContractTest {
         return apiClient.eservices().updateDraftDescriptorTemplateInstance()
                 .eServiceIdPath(draftInstance.getId())
                 .descriptorIdPath(draftInstance.getLatestDescriptor().getId())
-                .reqSpec(reqSpec -> reqSpec.setContentType("application/json").setBody(payload))
+                .reqSpec(reqSpec -> reqSpec.setContentType("application/json").setBody(payload).addFilter(RETRY_ON_CONFLICT))
                 .execute(Function.identity());
     }
 
