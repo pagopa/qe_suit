@@ -2,14 +2,12 @@ package it.pagopa.interop.suite.contract;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.net.httpserver.HttpServer;
-import io.restassured.RestAssured;
-import io.restassured.filter.Filter;
 import io.restassured.response.Response;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
+import it.pagopa.interop.bff.infrastructure.config.BffRestApiClientConfig;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
@@ -23,25 +21,17 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogFilterPayload;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -49,7 +39,6 @@ import java.util.stream.Stream;
 import static it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig.DEFAULT_SUCCESS_STATUS_CODE;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
@@ -63,31 +52,6 @@ public class BffEServiceContractTest {
     private final BffEServiceRequestFactory requestFactory;
     private final CurrentUserSession currentUserSession;
     private final ObjectMapper objectMapper;
-
-    private static final int CONFLICT_MAX_RETRIES = 3;
-    private static final long CONFLICT_RETRY_MIN_DELAY_MS = 1000;
-    private static final long CONFLICT_RETRY_MAX_DELAY_MS = 4000;
-
-    // Aggiornamenti ravvicinati della stessa bozza possono restituire 409: si ritenta prima di accettare il fallimento.
-    private static final Filter RETRY_ON_CONFLICT = (requestSpec, responseSpec, ctx) -> {
-        String method = requestSpec.getMethod();
-        String path = requestSpec.getUserDefinedPath();
-        Response response = ctx.next(requestSpec, responseSpec);
-        for (int attempt = 0; attempt < CONFLICT_MAX_RETRIES && response.statusCode() == 409; attempt++) {
-            try {
-                Thread.sleep(ThreadLocalRandom.current().nextLong(CONFLICT_RETRY_MIN_DELAY_MS, CONFLICT_RETRY_MAX_DELAY_MS + 1));
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                throw new IllegalStateException("Interrupted while retrying a draft descriptor update", e);
-            }
-            // ctx.next() consuma la catena: ogni retry ne richiede una nuova, senza questo filtro.
-            response = RestAssured.given()
-                    .spec(requestSpec)
-                    .noFiltersOfType(BffEServiceContractTest.RETRY_ON_CONFLICT.getClass())
-                    .request(method, path);
-        }
-        return response;
-    };
 
     private static final List<String> ATTRIBUTE_GROUPS = List.of("certified", "declared", "verified");
 
@@ -206,7 +170,7 @@ public class BffEServiceContractTest {
                 .as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
                 .apiCall(() -> {
                     var operation = apiClient.eservices().updateDraftDescriptorTemplateInstance();
-                    operation.reqSpec(reqSpec -> reqSpec.addFilter(RETRY_ON_CONFLICT));
+                    operation.reqSpec(reqSpec -> reqSpec.addFilter(BffRestApiClientConfig.RETRY_ON_CONFLICT));
                     return operation;
                 })
                 .pathParams(() -> {
@@ -256,7 +220,7 @@ public class BffEServiceContractTest {
         return apiClient.eservices().updateDraftDescriptorTemplateInstance()
                 .eServiceIdPath(draftInstance.getId())
                 .descriptorIdPath(draftInstance.getLatestDescriptor().getId())
-                .reqSpec(reqSpec -> reqSpec.setContentType("application/json").setBody(payload).addFilter(RETRY_ON_CONFLICT))
+                .reqSpec(reqSpec -> reqSpec.setContentType("application/json").setBody(payload).addFilter(BffRestApiClientConfig.RETRY_ON_CONFLICT))
                 .execute(Function.identity());
     }
 
@@ -275,79 +239,6 @@ public class BffEServiceContractTest {
                 .get(EService.class);
 
         return createdEService.getId();
-    }
-
-    public static class ConflictRetryTest {
-        private HttpServer server;
-        private final List<String> requests = new CopyOnWriteArrayList<>();
-        private final AtomicInteger attempts = new AtomicInteger();
-
-        @AfterEach
-        void stopServer() {
-            if (server != null) {
-                server.stop(0);
-            }
-        }
-
-        @Test
-        void retriesConflictsWithTheSameRequest() throws IOException {
-            startServer(2, 200);
-
-            sendRequest().then().statusCode(200);
-
-            assertEquals(3, attempts.get());
-            assertEquals(List.of(expectedRequest(), expectedRequest(), expectedRequest()), requests);
-        }
-
-        @Test
-        void returnsConflictAfterThreeRetries() throws IOException {
-            startServer(Integer.MAX_VALUE, 200);
-
-            sendRequest().then().statusCode(409);
-
-            assertEquals(4, attempts.get());
-        }
-
-        @Test
-        void doesNotRetryOtherErrors() throws IOException {
-            startServer(0, 400);
-
-            sendRequest().then().statusCode(400);
-
-            assertEquals(1, attempts.get());
-        }
-
-        private void startServer(int conflicts, int finalStatus) throws IOException {
-            server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
-            server.createContext("/", exchange -> {
-                String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-                requests.add(exchange.getRequestMethod() + " " + exchange.getRequestURI()
-                        + " " + exchange.getRequestHeaders().getFirst("Authorization") + " " + body);
-                int status = attempts.incrementAndGet() <= conflicts ? 409 : finalStatus;
-                exchange.sendResponseHeaders(status, -1);
-                exchange.close();
-            });
-            server.start();
-        }
-
-        private Response sendRequest() {
-            return RestAssured.given()
-                    .baseUri("http://127.0.0.1")
-                    .port(server.getAddress().getPort())
-                    .header("Authorization", "******")
-                    .contentType("application/json")
-                    .pathParam("eServiceId", "service")
-                    .pathParam("descriptorId", "draft")
-                    .queryParam("test", "value")
-                    .body("{\"attributes\":{\"certified\":[]}}")
-                    .filter(RETRY_ON_CONFLICT)
-                    .put("/eservices/{eServiceId}/descriptors/{descriptorId}");
-        }
-
-        private String expectedRequest() {
-            return "PUT /eservices/service/descriptors/draft?test=value"
-                    + " ****** {\"attributes\":{\"certified\":[]}}";
-        }
     }
 
     private static final class LazyReference<T> implements Supplier<T> {
