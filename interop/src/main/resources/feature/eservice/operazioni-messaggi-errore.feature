@@ -205,6 +205,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di modificare la sola parola identificativa dell'istanza "ES-2" in "Duplicato"
     Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_051] - Impossibilità di modificare i dati di un'istanza dopo la revoca della delega
   Data un'istanza in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificarne la parola identificativa insieme ai dati generali
@@ -220,6 +221,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di aggiornare i dati dell'e-service appena istanziato con la parola identificativa "Disponibile"
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_052] - Impossibilità di eliminare un e-service in bozza dopo la revoca della delega
   Dato un e-service in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di eliminare l'e-service
@@ -234,6 +236,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di eliminare l'e-service in bozza
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_053] - Impossibilità per un ente diverso dal delegato di richiedere l'archiviazione dell'e-service
   Dato un e-service pubblicato con una delega in erogazione attiva verso un altro ente
   Quando un amministratore che non appartiene al delegato richiede l'archiviazione dell'intero e-service
@@ -248,6 +251,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When il delegato richiede al delegante l'archiviazione dell'e-service con un periodo di preavviso di 60 giorni e una motivazione valida
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_SUBMIT_DELEGATED_ARCHIVING"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_054] - Impossibilità per un ente diverso dal delegato di annullare l'archiviazione dell'e-service
   Dato un e-service delegato con una richiesta di archiviazione dell'intero e-service in attesa di valutazione
   Quando un amministratore che non appartiene al delegato tenta di annullare la richiesta
@@ -264,6 +268,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When il delegato tenta di annullare la richiesta di archiviazione dell'intero e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_SUBMIT_DELEGATED_ARCHIVING"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_055] - Impossibilità per un ente diverso dal delegato di richiedere l'archiviazione di una versione
   Dato un e-service pubblicato con una delega in erogazione attiva verso un altro ente
   Quando un amministratore che non appartiene al delegato richiede l'archiviazione della versione
@@ -278,6 +283,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When il delegato richiede al delegante l'archiviazione della versione 1 dell'e-service con 60 giorni di preavviso e una motivazione valida
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_SUBMIT_DELEGATED_ARCHIVING"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_056] - Impossibilità per un ente diverso dal delegato di annullare l'archiviazione di una versione
   Dato un e-service delegato con una richiesta di archiviazione della versione in attesa di valutazione
   Quando un amministratore che non appartiene al delegato tenta di annullare la richiesta
@@ -294,6 +300,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When il delegato tenta di annullare la richiesta di archiviazione della versione 1 dell'e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_SUBMIT_DELEGATED_ARCHIVING"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_057] - Impossibilità di allegare un documento dopo la revoca della delega
   Dato un e-service con una versione in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di allegare un documento alla versione
@@ -308,6 +315,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato A"
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_058] - Impossibilità di eliminare un documento dopo la revoca della delega
   Dato un e-service con una versione in bozza e un documento allegato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di eliminare il documento
@@ -324,6 +332,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di eliminare il documento "Allegato A" della versione dell'e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_059] - Impossibilità di rinominare un documento dopo la revoca della delega
   Dato un e-service con una versione in bozza e un documento allegato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di rinominare il documento
@@ -340,6 +349,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore rinomina il documento "Allegato A" della versione dell'e-service in "Allegato B"
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_060] - Impossibilità di creare una versione dopo la revoca della delega
   Dato un e-service pubblicato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di creare una nuova versione
@@ -354,6 +364,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di creare una nuova versione dell'e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_061] - Impossibilità di eliminare una versione in bozza dopo la revoca della delega
   Dato un e-service con una versione in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di eliminare la versione
@@ -367,6 +378,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di eliminare la versione 1 dell'e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__DELETE_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_062] - Impossibilità di modificare la versione in bozza di un'istanza dopo la revoca della delega
   Data un'istanza di template con una versione in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare la configurazione della versione
@@ -383,6 +395,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di modificare la configurazione della versione 1 dell'e-service appena istanziato con dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_063] - Impossibilità di pubblicare una versione dopo la revoca della delega
   Dato un e-service con una versione in bozza pronta per la pubblicazione e una delega in erogazione revocata
   Quando l'ex delegato tenta di pubblicare la versione
@@ -398,6 +411,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di pubblicare la versione 1 dell'e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_PUBLISH"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_064] - Impossibilità di sospendere una versione dopo la revoca della delega
   Dato un e-service con una versione pubblicata la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di sospendere la versione
@@ -412,6 +426,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di sospendere la versione 1 dell'e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_SUSPEND"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_065] - Impossibilità di riattivare una versione dopo la revoca della delega
   Dato un e-service con una versione sospesa la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di riattivare la versione
@@ -426,6 +441,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di riattivare la versione 1 dell'e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_ACTIVATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_066] - Impossibilità di modificare la configurazione di una versione dopo la revoca della delega
   Dato un e-service con una versione in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare la configurazione della versione
@@ -440,6 +456,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di modificare la configurazione della versione 1 dell'e-service con dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_067] - Impossibilità di modificare l'approvazione delle fruizioni dopo la revoca della delega
   Dato un e-service con una versione pubblicata la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare la modalità di approvazione delle richieste di fruizione
@@ -453,6 +470,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di modificare la modalità di approvazione delle richieste di fruizione della versione 1 dell'e-service con dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_AGREEMENT_APPROVAL_POLICY_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_068] - Impossibilità di modificare la descrizione di un e-service dopo la revoca della delega
   Dato un e-service pubblicato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare la descrizione dell'e-service
@@ -466,6 +484,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di modificare la descrizione dell'e-service in "Descrizione aggiornata"
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTION_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_069] - Impossibilità di modificare le impostazioni di delega dopo la revoca della delega
   Dato un e-service pubblicato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare le impostazioni di delega dell'e-service
@@ -479,6 +498,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di modificare le impostazioni di delega dell'e-service con dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DELEGATION_FLAGS_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_070] - Impossibilità di modificare il nome di un e-service dopo la revoca della delega
   Dato un e-service pubblicato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di assegnare all'e-service un nome disponibile
@@ -492,6 +512,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di modificare il nome dell'e-service con un nome disponibile
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_NAME_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_071] - Impossibilità di modificare l'adesione a Signal Hub dopo la revoca della delega
   Dato un e-service pubblicato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare l'adesione dell'e-service a Signal Hub
@@ -505,6 +526,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di modificare l'adesione dell'e-service a Signal Hub con dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_SIGNALHUB_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_072] - Impossibilità di modificare gli attributi richiesti dopo la revoca della delega
   Dato un e-service con una versione pubblicata la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare gli attributi richiesti dalla versione
@@ -518,6 +540,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di modificare gli attributi richiesti dalla versione 1 dell'e-service con dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_ATTRIBUTES_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_073] - Impossibilità di aggiornare un'istanza al nuovo template dopo la revoca della delega
   Data un'istanza pubblicata con una nuova versione del template disponibile e una delega in erogazione revocata
   Quando l'ex delegato tenta di aggiornare l'istanza alla nuova versione del template
@@ -535,6 +558,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di aggiornare l'e-service alla nuova versione del template
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_UPGRADE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_074] - Impossibilità di configurare l'interfaccia SOAP di un'istanza dopo la revoca della delega
   Data un'istanza SOAP in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di configurare l'interfaccia con indirizzi validi
@@ -551,6 +575,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di configurare l'interfaccia SOAP della versione 1 dell'e-service con indirizzi validi
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_INTERFACE_SOAP"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_075] - Impossibilità di configurare l'interfaccia REST di un'istanza dopo la revoca della delega
   Data un'istanza REST in bozza la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di configurare l'interfaccia con dati validi
@@ -567,6 +592,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di configurare l'interfaccia REST della versione 1 dell'e-service con dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_INTERFACE_REST"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_076] - Impossibilità di aggiornare la versione pubblicata di un'istanza dopo la revoca della delega
   Data un'istanza di template pubblicata la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare i dati aggiornabili della versione
@@ -584,6 +610,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di modificare la configurazione della versione 1 dell'istanza "ES-1" con dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_077] - Impossibilità di modificare l'indicazione sui dati personali dopo la revoca della delega
   Dato un e-service pubblicato la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di modificare l'indicazione sul trattamento dei dati personali
@@ -597,6 +624,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di modificare l'indicazione sul trattamento dei dati personali dell'e-service con dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_PERSONAL_DATA_FLAG"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_078] - Impossibilità di aggiornare la sola parola identificativa dopo la revoca della delega
   Data un'istanza pubblicata la cui delega in erogazione è stata revocata
   Quando l'ex delegato tenta di assegnarle una parola identificativa disponibile
@@ -613,6 +641,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di modificare la sola parola identificativa dell'istanza "ES-1" in "Disponibile"
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_079] - Rifiuto della configurazione REST di un'istanza con una versione OpenAPI non supportata
   Data un'istanza in bozza derivata da un template con una versione OpenAPI non supportata
   Quando l'erogatore tenta di configurare l'interfaccia REST dell'istanza
@@ -748,6 +777,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di modificare la sola parola identificativa dell'istanza "ES-1" in "https://a.it"
     Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_090] - Rifiuto dell'aggiornamento parziale con il nome di un altro e-service dell'erogatore
   Dati due e-service in bozza appartenenti allo stesso erogatore
   Quando l'erogatore tenta di aggiornare parzialmente un e-service usando il nome dell'altro
@@ -760,6 +790,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     When l'erogatore tenta di aggiornare parzialmente i dati dell'e-service "ES-2" con il nome dell'e-service "ES-1"
     Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__PATCH_ESERVICES_E_SERVICE_ID"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_091] - Rifiuto dell'aggiornamento parziale di un e-service con il nome di un template
   Dati un template pubblicato e un e-service in bozza
   Quando l'erogatore tenta di aggiornare parzialmente l'e-service usando il nome del template

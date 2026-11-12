@@ -123,6 +123,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     When l'utente tenta di scaricare il documento firmato di analisi del rischio del template finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_UNAUTHORIZED_ERROR"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_146] - Rifiuto della modifica di un template con il nome di un altro template finalità
   Dati due template finalità in bozza dello stesso creatore con nomi diversi
   Quando il creatore tenta di assegnare al secondo il nome del primo

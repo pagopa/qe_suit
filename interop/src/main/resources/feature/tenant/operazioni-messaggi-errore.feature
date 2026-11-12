@@ -40,6 +40,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     When il certificatore tenta di assegnare nuovamente l'attributo "CERT-1" all'ente PagoPA
     Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_014] - Impossibilità di assegnare un attributo certificato discreto già posseduto dall'ente
   Dato un attributo certificato discreto già assegnato all'ente con un valore ammesso
   Quando il certificatore tenta di assegnare nuovamente l'attributo
@@ -76,6 +77,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     When l'erogatore tenta di verificare l'attributo "VER-1" di PagoPA con scadenza ieri
     Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_016] - Impossibilità per un ente non pubblico di abilitarsi alle deleghe
   Dato un amministratore di un ente non pubblico
   Quando l'ente tenta di abilitarsi a ricevere deleghe

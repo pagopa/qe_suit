@@ -59,6 +59,7 @@ Feature: Messaggi di errore per i documenti dei template e-service
     When l'erogatore tenta di rinominare il documento "Allegato B" della versione del template in "Allegato A"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_VERSIONS_E_SERVICE_TEMPLATE_VERSION_ID_DOCUMENTS_DOCUMENT_ID_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_127] - Impossibilità di scaricare un documento assente dalla versione del template
   Dato un template e-service pubblicato
   Quando l'erogatore tenta di scaricare un documento che non appartiene alla versione

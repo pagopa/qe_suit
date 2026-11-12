@@ -167,6 +167,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     When il valutatore tenta di firmare l'analisi del rischio della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_SIGN"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_027] - Impossibilità di firmare un'analisi del rischio aggiornata dopo la lettura
   Data un'analisi del rischio modificata dopo che il valutatore ne ha letto una versione precedente
   Quando il valutatore tenta di firmare usando i dati della versione letta
@@ -251,6 +252,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     When il valutatore tenta di rifiutare l'analisi del rischio della finalità con la motivazione "Motivazione https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_033] - Rifiuto dell'aggiornamento parziale di una finalità con il nome di un'altra
   Date due finalità in bozza del fruitore per lo stesso e-service con nomi diversi
   Quando il fruitore tenta di aggiornare parzialmente la seconda usando il nome della prima

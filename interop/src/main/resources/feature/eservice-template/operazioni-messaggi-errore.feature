@@ -104,6 +104,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     When l'erogatore tenta di aggiornare il campo "nome" del template "T-1" con il valore "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_NAME_UPDATE"
 
+  # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_135] - Rifiuto della modifica dei dati generali con il nome di un altro template
   Dati due template e-service distinti dello stesso ente creatore con nomi diversi
   Quando l'erogatore tenta di assegnare alla bozza il nome del template esistente modificandone i dati generali
