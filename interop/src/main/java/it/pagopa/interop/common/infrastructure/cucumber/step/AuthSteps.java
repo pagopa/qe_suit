@@ -22,6 +22,11 @@ public class AuthSteps {
     @Given("un utente autenticato con ruolo {userRole} di un tenant di tipo {tenantKind}")
     public void setAuth(UserRole userRole, TenantKind tenantKind) {
         Tenant tenant = Tenant.fromTenantType(tenantKind);
+        setAuth(userRole, tenant);
+    }
+
+    @Given("un utente autenticato con ruolo {userRole} del tenant {tenant}")
+    public void setAuth(UserRole userRole, Tenant tenant) {
         User user = User.getTenantUser(tenant, userRole);
         currentUserSession.set(user, tenant);
     }
