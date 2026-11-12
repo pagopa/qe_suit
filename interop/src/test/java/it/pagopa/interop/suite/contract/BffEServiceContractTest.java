@@ -2,6 +2,7 @@ package it.pagopa.interop.suite.contract;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.net.httpserver.HttpServer;
 import io.restassured.RestAssured;
 import io.restassured.filter.Filter;
 import io.restassured.response.Response;
@@ -22,18 +23,25 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogFilterPayload;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -41,6 +49,7 @@ import java.util.stream.Stream;
 import static it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig.DEFAULT_SUCCESS_STATUS_CODE;
 import static org.hamcrest.Matchers.containsStringIgnoringCase;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
@@ -60,7 +69,7 @@ public class BffEServiceContractTest {
     private static final long CONFLICT_RETRY_MAX_DELAY_MS = 4000;
 
     // Aggiornamenti ravvicinati della stessa bozza possono restituire 409: si ritenta prima di accettare il fallimento.
-    static final Filter RETRY_ON_CONFLICT = (requestSpec, responseSpec, ctx) -> {
+    private static final Filter RETRY_ON_CONFLICT = (requestSpec, responseSpec, ctx) -> {
         String method = requestSpec.getMethod();
         String path = requestSpec.getUserDefinedPath();
         Response response = ctx.next(requestSpec, responseSpec);
@@ -266,6 +275,79 @@ public class BffEServiceContractTest {
                 .get(EService.class);
 
         return createdEService.getId();
+    }
+
+    public static class ConflictRetryTest {
+        private HttpServer server;
+        private final List<String> requests = new CopyOnWriteArrayList<>();
+        private final AtomicInteger attempts = new AtomicInteger();
+
+        @AfterEach
+        void stopServer() {
+            if (server != null) {
+                server.stop(0);
+            }
+        }
+
+        @Test
+        void retriesConflictsWithTheSameRequest() throws IOException {
+            startServer(2, 200);
+
+            sendRequest().then().statusCode(200);
+
+            assertEquals(3, attempts.get());
+            assertEquals(List.of(expectedRequest(), expectedRequest(), expectedRequest()), requests);
+        }
+
+        @Test
+        void returnsConflictAfterThreeRetries() throws IOException {
+            startServer(Integer.MAX_VALUE, 200);
+
+            sendRequest().then().statusCode(409);
+
+            assertEquals(4, attempts.get());
+        }
+
+        @Test
+        void doesNotRetryOtherErrors() throws IOException {
+            startServer(0, 400);
+
+            sendRequest().then().statusCode(400);
+
+            assertEquals(1, attempts.get());
+        }
+
+        private void startServer(int conflicts, int finalStatus) throws IOException {
+            server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+            server.createContext("/", exchange -> {
+                String body = new String(exchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+                requests.add(exchange.getRequestMethod() + " " + exchange.getRequestURI()
+                        + " " + exchange.getRequestHeaders().getFirst("Authorization") + " " + body);
+                int status = attempts.incrementAndGet() <= conflicts ? 409 : finalStatus;
+                exchange.sendResponseHeaders(status, -1);
+                exchange.close();
+            });
+            server.start();
+        }
+
+        private Response sendRequest() {
+            return RestAssured.given()
+                    .baseUri("http://127.0.0.1")
+                    .port(server.getAddress().getPort())
+                    .header("Authorization", "******")
+                    .contentType("application/json")
+                    .pathParam("eServiceId", "service")
+                    .pathParam("descriptorId", "draft")
+                    .queryParam("test", "value")
+                    .body("{\"attributes\":{\"certified\":[]}}")
+                    .filter(RETRY_ON_CONFLICT)
+                    .put("/eservices/{eServiceId}/descriptors/{descriptorId}");
+        }
+
+        private String expectedRequest() {
+            return "PUT /eservices/service/descriptors/draft?test=value"
+                    + " ****** {\"attributes\":{\"certified\":[]}}";
+        }
     }
 
     private static final class LazyReference<T> implements Supplier<T> {
