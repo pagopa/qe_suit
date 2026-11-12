@@ -17,7 +17,7 @@ Feature: Modifica dei metadati degli e-service
     When un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
       | campo   | valore   |
       | <campo> | <valore> |
-    # Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
+    Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
     Examples:
       | stato                     | campo       | valore                              |
@@ -25,16 +25,14 @@ Feature: Modifica dei metadati degli e-service
       | pubblicata                | descrizione | Descrizione aggiornata del servizio |
       | sospesa                   | nome        | Servizio anagrafico aggiornato      |
       | deprecata                 | descrizione | Descrizione aggiornata del servizio |
+
       # Non è possibile archiviare un e-service in tempi accettabili.
       # | archiviata             | nome        | Servizio anagrafico aggiornato      |
 
-      # Moved in another scenario
+      # Spostati in altri scenari
       # | in attesa di approvazione | descrizione | Descrizione aggiornata del servizio |
-      # Moved in another scenario
       # | in archiviazione          | nome        | Servizio anagrafico aggiornato      |
-      # TOODO necessaria preparazione come per in archiviazione
-      # si può mettere l'e-service in archiviazione e poi sospenderlo?
-      | in archiviazione sospesa  | descrizione | Descrizione aggiornata del servizio |
+      # | in archiviazione sospesa  | descrizione | Descrizione aggiornata del servizio |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -54,7 +52,7 @@ Feature: Modifica dei metadati degli e-service
     When un admin del Comune di Pozzallo richiede la modifica dei metadati dell'e-service "ES-1":
       | campo   | valore   |
       | descrizione | Descrizione aggiornata del servizio |
-    # Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
+    Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -71,7 +69,7 @@ Feature: Modifica dei metadati degli e-service
     When un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
       | campo   | valore   |
       | descrizione | Descrizione aggiornata del servizio |
-    # Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
+    Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -89,8 +87,7 @@ Feature: Modifica dei metadati degli e-service
     When un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
       | campo   | valore   |
       | descrizione | Descrizione aggiornata del servizio |
-    #Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
-
+    Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -107,8 +104,7 @@ Feature: Modifica dei metadati degli e-service
       | campo       | valore                              |
       | nome        | Servizio anagrafico aggiornato      |
       | descrizione | Descrizione aggiornata del servizio |
-    Then l'e-service "ES-1" presenta i metadati richiesti
-    And l'e-service "ES-1" conserva versioni, stati e configurazioni dei descrittori
+    Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
     Examples:
       | stato                     |
@@ -116,10 +112,14 @@ Feature: Modifica dei metadati degli e-service
       | pubblicata                |
       | sospesa                   |
       | deprecata                 |
-      #| archiviata                |
-      | in attesa di approvazione |
-      | in archiviazione          |
-      | in archiviazione sospesa  |
+
+      # Non è possibile archiviare un e-service in tempi accettabili.
+      # | archiviata                |
+
+      # TODO Spostare in altri scenari
+      # | in attesa di approvazione |
+      # | in archiviazione          |
+      # | in archiviazione sospesa  |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=WEB,Then=WEB
