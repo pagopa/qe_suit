@@ -8,6 +8,7 @@ import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 
 import static it.pagopa.utils.RandomUtils.randomAlphanumericName;
@@ -17,6 +18,26 @@ public class EServiceSteps {
     private final EServiceDescriptorUseCase descriptorUseCase;
     private final InteropJourney interopJourney;
     private final EServiceUseCase eServiceUseCase;
+    private String lastImportedEServiceName;
+
+    @Given("un e-service SOAP in bozza creato dall'erogatore")
+    public void createDraftSoapEService() {
+        interopJourney.createEService(
+                cmd -> cmd.technology(EServiceTechnology.SOAP),
+                EServiceDescriptorState.DRAFT
+        );
+    }
+
+    @When("l'erogatore tenta di importare un e-service SOAP con interfaccia {string} ottenendo un rifiuto per \"{soapInterfaceUploadFailureReason}\"")
+    public void rejectSoapEServiceImport(String fixture, SoapInterfaceUploadFailureReason reason) {
+        lastImportedEServiceName = RandomUtils.randomAlphanumericName("import-eservice", 20);
+        interopJourney.shouldFailToImportSOAPEService(lastImportedEServiceName, "assets/wsdl/" + fixture, reason);
+    }
+
+    @Then("l'e-service importato non è presente tra gli e-service dell'erogatore")
+    public void assertImportedEServiceNotPresentInProducerCatalog() {
+        interopJourney.assertEServiceNotPresentInProducerCatalog(lastImportedEServiceName);
+    }
 
     @When("l'utente apre la pagina di creazione di un e-service")
     public void openEServiceCreation() {

@@ -3,10 +3,12 @@ package it.pagopa.interop.common.eservice_template.infrastructure.cucumber;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.DataTableType;
 import io.cucumber.datatable.DataTable;
+import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplatePreparationConfiguration;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
@@ -32,6 +34,14 @@ public class EServiceTemplateSteps {
     public void createReceiveDraftTemplate() {
         journey.createEServiceTemplate(command -> command.mode(EServiceMode.RECEIVE),
                 EServiceTemplateVersionState.DRAFT);
+    }
+
+    @Given("un template e-service SOAP in bozza creato dall'erogatore")
+    public void createDraftSoapEServiceTemplate() {
+        journey.createEServiceTemplate(
+                cmd -> cmd.technology(EServiceTechnology.SOAP),
+                EServiceTemplateVersionState.DRAFT
+        );
     }
 
     @Given("un template e-service preparato con la seguente configurazione:")

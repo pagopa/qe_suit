@@ -6,6 +6,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,18 @@ public class EServiceUseCase {
 
     public void shouldFailToRequestEServiceArchiving(EService eService, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason) {
         eServiceGateway.shouldFailToRequestEServiceArchiving(eService.getRef(), gracePeriodDays, reason);
+    }
+
+    public void shouldFailToImportSOAPEService(
+            String eserviceName,
+            String wsdlResourcePath,
+            SoapInterfaceUploadFailureReason reason
+    ) {
+        eServiceGateway.shouldFailToImportSOAPEService(eserviceName, wsdlResourcePath, reason);
+    }
+
+    public void assertEServiceNotPresentInProducerCatalog(String eserviceName) {
+        eServiceGateway.assertEServiceNotPresentInProducerCatalog(eserviceName);
     }
 
     public void openEServiceCreation() {

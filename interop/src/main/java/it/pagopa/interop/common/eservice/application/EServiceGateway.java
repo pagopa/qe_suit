@@ -6,6 +6,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import org.springframework.plugin.core.Plugin;
@@ -32,4 +33,12 @@ public interface EServiceGateway extends Plugin<Channel> {
     void shouldFailToArchiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason);
 
     void shouldFailToRequestEServiceArchiving(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason);
+
+    void shouldFailToImportSOAPEService(
+            String eserviceName,
+            String wsdlResourcePath,
+            SoapInterfaceUploadFailureReason reason
+    );
+
+    void assertEServiceNotPresentInProducerCatalog(String eserviceName);
 }

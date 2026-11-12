@@ -129,6 +129,16 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
+    public void shouldFailToUploadInterface(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef,
+            String interfaceResourcePath,
+            SoapInterfaceUploadFailureReason reason
+    ) {
+        interfaceGateway.shouldFailToUploadInterface(eServiceRef, descriptorRef, interfaceResourcePath, reason);
+    }
+
+    @Override
     public EServiceDescriptor linkOpenApiCallbackInterface(
             EServiceRef serviceRef,
             EServiceDescriptorRef descriptorRef,
@@ -138,11 +148,7 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     private EServiceDescriptor linkDocument(
-            EServiceRef serviceRef,
-            EServiceDescriptorRef descriptorRef,
-            String path,
-            DocumentKind kind,
-            String name
+            EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String path, DocumentKind kind, String name
     ) {
         return interfaceGateway.linkDocument(serviceRef, descriptorRef, path, kind, name);
     }

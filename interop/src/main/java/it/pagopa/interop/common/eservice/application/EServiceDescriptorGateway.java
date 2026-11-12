@@ -34,6 +34,13 @@ public interface EServiceDescriptorGateway extends Plugin<Channel> {
 
     EServiceDescriptor linkOpenApiInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, ApiInterface apiInterface);
 
+    void shouldFailToUploadInterface(
+            EServiceRef eServiceRef,
+            EServiceDescriptorRef descriptorRef,
+            String interfaceResourcePath,
+            SoapInterfaceUploadFailureReason reason
+    );
+
     EServiceDescriptor linkOpenApiCallbackInterface(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, ApiInterface apiInterface);
 
     void archiveDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays);

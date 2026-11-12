@@ -51,15 +51,15 @@ users:
   Comune_1:
     username: grossini
     password: ${pn.external.password.grossini:}
-    organization: "Provincia di Como"
-    tax-id: "80004650133"
-    organization-id: 3531633e-3218-4b2f-9431-8e790112ef0a
+    organization: "Comune di Sappada"
+    tax-id: "00207190257"
+    organization-id: 56ed074c-13b6-4d61-ba49-221953e6b60f
     uid: e9e4a9c7-9586-4b92-a7dd-ee1a0e77d398
     denomination: giuseppe
     family-name: rossini
     personal-tax-id: RSSGPP80B02G273H
-    email: email@libero.it
-    ipa-code: p_CO
+    email: giuseppe@rossini.test.it
+    ipa-code: c_i421
     has-groups: true
     # api-key delle chiamate B2B (header x-api-key): gruppi della PA e notifiche
     groups-api-key: ${pn.external.groups-api-key.grossini:}
@@ -70,16 +70,16 @@ users:
   Comune_2:
     username: albino63
     password: ${pn.external.password.albino63:}
-    organization: "Comune di Marcellina"
-    tax-id: "86002050580"
-    organization-id: 3aa0ea3b-89d0-4477-9ad8-2d7dbb5c7b22
+    organization: "Comune di Verona"
+    tax-id: "00215150236"
+    organization-id: a95dace4-4a47-4149-a814-0e669113ce40
     uid: 2134d92b-5d1b-49b5-9a6e-4283f4879bbf
     denomination: Bacchisio
     family-name: Barone
     personal-tax-id: BRNBCH91L49H822E
-    email: b.barone@test.email.it
-    ipa-code: c_e924
-    has-groups: false
+    email: rsanna@gmail.com
+    ipa-code: c_l781
+    has-groups: true
     # api-key delle chiamate B2B (header x-api-key): gruppi della PA e notifiche
     groups-api-key: ${pn.external.groups-api-key.albino63:}
     delivery-api-key: ${pn.external.delivery-api-key.albino63:}
