@@ -85,6 +85,20 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.linkOpenApiInterface(eService.getRef(), descriptor.getRef(), apiInterface);
     }
 
+    public void shouldFailToUploadInterface(
+            EService eService,
+            EServiceDescriptor descriptor,
+            String interfaceResourcePath,
+            SoapInterfaceUploadFailureReason reason
+    ) {
+        eServiceDescriptorGateway.shouldFailToUploadInterface(
+                eService.getRef(),
+                descriptor.getRef(),
+                interfaceResourcePath,
+                reason
+        );
+    }
+
     public EServiceDescriptor archiveDescriptor(EService eService, EServiceDescriptor descriptor, GracePeriodDays gracePeriodDays) {
         eServiceDescriptorGateway.archiveDescriptor(eService.getRef(), descriptor.getRef(), gracePeriodDays);
         return descriptor;
