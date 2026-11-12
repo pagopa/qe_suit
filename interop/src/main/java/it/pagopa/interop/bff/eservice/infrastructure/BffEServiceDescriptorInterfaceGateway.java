@@ -117,7 +117,13 @@ public class BffEServiceDescriptorInterfaceGateway {
         DelayUtils.waitForSeconds(1);
         return restClient.addDocument(serviceRef.id(), descriptorRef.id(), kind.name(), fileName, document)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(ignored -> readAndUpdate(serviceRef, descriptorRef))
+                .map(created -> kind == DocumentKind.DOCUMENT
+                        ? PollingUtils.pollUntil(
+                                () -> readAndUpdate(serviceRef, descriptorRef),
+                                descriptor -> descriptor.getDocs().stream()
+                                        .anyMatch(doc -> doc.getId().equals(created.getId()))
+                        )
+                        : readAndUpdate(serviceRef, descriptorRef))
                 .get();
     }
 

@@ -97,12 +97,11 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given i seguenti e-service in bozza:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
-    # Binding mancante per gli allegati PDF; riusare BffEServiceRestClient.addDocument.
-    And i seguenti documenti PDF allegati alla versione dell'e-service:
-      | nome       | fixture        |
-      | Allegato A | allegato-a.pdf |
+    And i seguenti documenti allegati alla versione dell'e-service:
+      | nome       | fixture                      |
+      | Allegato A | assets/origin-interface.yaml |
     # Binding BFF mancante per il caricamento; riusare addDocument e gestire il rifiuto.
-    When l'erogatore carica il file "allegato-b.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato A"
+    When l'erogatore carica il file "assets/eservice-template/openapi3-riferimenti.json" come "documento" sulla versione dell'e-service con il nome "Allegato A"
     Then il messaggio di errore corrisponde al caso "CATALOG_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS"
 
   Scenario: [ERROR_044] - Rifiuto del caricamento di un file già allegato alla versione
@@ -113,12 +112,11 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given i seguenti e-service in bozza:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
-    # Binding mancante per gli allegati PDF; riusare BffEServiceRestClient.addDocument.
-    And i seguenti documenti PDF allegati alla versione dell'e-service:
-      | nome       | fixture        |
-      | Allegato A | allegato-a.pdf |
+    And i seguenti documenti allegati alla versione dell'e-service:
+      | nome       | fixture                      |
+      | Allegato A | assets/origin-interface.yaml |
     # Binding BFF mancante per il caricamento; riusare addDocument e gestire il rifiuto.
-    When l'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato B"
+    When l'erogatore carica il file "assets/origin-interface.yaml" come "documento" sulla versione dell'e-service con il nome "Allegato B"
     Then il messaggio di errore corrisponde al caso "CATALOG_CHECKSUM_DUPLICATE"
 
   Scenario: [ERROR_045] - Rifiuto della rinomina di un documento con un nome già usato nella versione
@@ -129,11 +127,10 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given i seguenti e-service in bozza:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
-    # Binding mancante per gli allegati PDF; riusare BffEServiceRestClient.addDocument.
-    And i seguenti documenti PDF allegati alla versione dell'e-service:
-      | nome       | fixture        |
-      | Allegato A | allegato-a.pdf |
-      | Allegato B | allegato-b.pdf |
+    And i seguenti documenti allegati alla versione dell'e-service:
+      | nome       | fixture                                          |
+      | Allegato A | assets/origin-interface.yaml                     |
+      | Allegato B | assets/eservice-template/openapi3-riferimenti.json |
     When l'erogatore rinomina il documento "Allegato B" della versione dell'e-service in "Allegato A"
     Then il messaggio di errore corrisponde al caso "CATALOG_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE"
 
@@ -319,10 +316,9 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given i seguenti e-service in bozza:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
-    # Binding mancante per gli allegati PDF; riusare BffEServiceRestClient.addDocument.
-    And i seguenti documenti PDF allegati alla versione dell'e-service:
-      | nome       | fixture        |
-      | Allegato A | allegato-a.pdf |
+    And i seguenti documenti allegati alla versione dell'e-service:
+      | nome       | fixture                      |
+      | Allegato A | assets/origin-interface.yaml |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore tenta di eliminare il documento "Allegato A" della versione dell'e-service
@@ -336,10 +332,9 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given i seguenti e-service in bozza:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
-    # Binding mancante per gli allegati PDF; riusare BffEServiceRestClient.addDocument.
-    And i seguenti documenti PDF allegati alla versione dell'e-service:
-      | nome       | fixture        |
-      | Allegato A | allegato-a.pdf |
+    And i seguenti documenti allegati alla versione dell'e-service:
+      | nome       | fixture                      |
+      | Allegato A | assets/origin-interface.yaml |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
     When l'erogatore rinomina il documento "Allegato A" della versione dell'e-service in "Allegato B"
@@ -675,7 +670,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     # Binding BFF mancante per il caricamento; riusare addDocument e gestire il rifiuto.
-    When l'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione dell'e-service con il nome "Documento https://example.org"
+    When l'erogatore carica il file "assets/origin-interface.yaml" come "documento" sulla versione dell'e-service con il nome "Documento https://example.org"
     Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS"
 
   Scenario: [ERROR_084] - Rifiuto della rinomina di un documento con un link nel nome
@@ -686,10 +681,9 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given i seguenti e-service in bozza:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
-    # Binding mancante per gli allegati PDF; riusare BffEServiceRestClient.addDocument.
-    And i seguenti documenti PDF allegati alla versione dell'e-service:
-      | nome       | fixture        |
-      | Allegato A | allegato-a.pdf |
+    And i seguenti documenti allegati alla versione dell'e-service:
+      | nome       | fixture                      |
+      | Allegato A | assets/origin-interface.yaml |
     When l'erogatore rinomina il documento "Allegato A" della versione dell'e-service in "Documento https://example.org"
     Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE"
 
