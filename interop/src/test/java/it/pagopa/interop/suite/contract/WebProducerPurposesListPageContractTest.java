@@ -9,12 +9,14 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerPurposesListPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
@@ -118,18 +120,24 @@ public class WebProducerPurposesListPageContractTest {
                                         rowCounter.getAndIncrement();
                                     });
 
-                                    int initialSize = page.rowsPerPageSelector().getSelectedSize();
-                                    softly.assertThat(initialSize)
-                                            .as("Rows per page should be initialized to 10")
-                                            .isEqualTo(10);
                                     List<Integer> sizeValues = page.rowsPerPageSelector().getSizeValues();
                                     softly.assertThat(sizeValues.size())
                                             .as("Rows per page selector should have more than one option")
                                             .isGreaterThan(1);
+                                    int initialSize = page.rowsPerPageSelector().getSelectedSize();
+                                    softly.assertThat(initialSize)
+                                            .as("Rows per page should be initialized to the lowest value")
+                                            .isEqualTo(sizeValues.get(0));
 
                                     int initialRowCount = page.purposesTable().tBody().rows().size();
                                     page.rowsPerPageSelector().setSize(sizeValues.get(1));
-                                    int updatedRowCount = page.purposesTable().tBody().rows().size();
+                                    int updatedRowCount = PollingUtils.pollUntil(
+                                            () -> page.purposesTable().tBody().rows().size(),
+                                            updated -> updated >= initialRowCount,
+                                            Duration.ofSeconds(20),
+                                            Duration.ofSeconds(1),
+                                            "Records affected by new pagination size have not been rendered yet"
+                                    );
                                     page.rowsPerPageSelector().setSize(initialSize);
                                     if (updatedRowCount > initialRowCount) {
                                         softly.assertThat(page.pagination().exists())
