@@ -12,8 +12,11 @@ import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.purpose.domain.PurposeCreationFailureReason;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +37,19 @@ public class BffPurposeGateway implements PurposeGateway {
                 .map(mapper::toPurpose)
                 .updateContext()
                 .get();
+    }
+
+    @Override
+    public Purpose updatePurposeDailyCalls(PurposeRef purposeRef, int dailyCalls) {
+        var response = restClient.createPurposeVersion(purposeRef.id(), new PurposeVersionSeed().dailyCalls(dailyCalls))
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+        var createdVersion = response.get();
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(createdVersion.getVersionId())
+                        .map(version -> Integer.valueOf(dailyCalls).equals(version.getDailyCalls()))
+                        .orElse(false)
+        );
     }
 
     @Override
@@ -73,7 +89,22 @@ public class BffPurposeGateway implements PurposeGateway {
 
     @Override
     public Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef) {
-        return restClient.createPurposeFromTemplate(purposeTemplateRef.id(), commandFactory.creationFromTemplateRequest(eServiceRef))
+        return restClient.createPurposeFromTemplate(
+                        purposeTemplateRef.id(),
+                        commandFactory.creationFromTemplateRequest(eServiceRef, purposeTemplateRef)
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, PurposeCreateCommand createCommand) {
+        return restClient.createPurposeFromTemplate(
+                        purposeTemplateRef.id(),
+                        commandFactory.creationFromTemplateRequest(createCommand, purposeTemplateRef)
+                )
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
                 .updateContext()
@@ -90,6 +121,33 @@ public class BffPurposeGateway implements PurposeGateway {
         return PollingUtils.pollUntil(
                 () -> getPurpose(purposeRef),
                 purpose -> purpose.getLastActiveVersion() != null && purpose.getLastActiveVersion().getRef().equals(purposeVersionRef)
+        );
+    }
+
+    @Override
+    public Purpose rejectPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, String rejectionReason) {
+        restClient.rejectPurposeVersion(
+                purposeRef.id(), purposeVersionRef.id(), new RejectPurposeVersionPayload().rejectionReason(rejectionReason)
+                ).withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(purposeVersionRef.id())
+                        .map(version -> version.getPurposeVersionState() == PurposeVersionState.REJECTED)
+                        .orElse(false)
+        );
+    }
+
+    @Override
+    public Purpose askForApprovalPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef) {
+        it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef delegation = getDelegation(delegationRef);
+
+        restClient.activatePurposeVersion(purposeRef.id(), purposeVersionRef.id(), delegation)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.getLastWaitingForApprovalVersion() != null && purpose.getLastWaitingForApprovalVersion().getRef().equals(purposeVersionRef)
         );
     }
 

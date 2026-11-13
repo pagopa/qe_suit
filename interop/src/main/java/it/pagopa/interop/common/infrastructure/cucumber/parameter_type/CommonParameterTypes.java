@@ -51,7 +51,7 @@ public class CommonParameterTypes {
         return ClientKind.valueOf(type.toUpperCase());
     }
 
-    @ParameterType("DRAFT|ACTIVE|SUSPENDED")
+    @ParameterType("DRAFT|WAITING_FOR_APPROVAL|ACTIVE|SUSPENDED|ARCHIVED|REJECTED")
     public PurposeVersionState purposeState(String name) {
         return PurposeVersionState.valueOf(name.toUpperCase());
     }

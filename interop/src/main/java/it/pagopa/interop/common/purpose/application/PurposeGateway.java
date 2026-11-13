@@ -15,6 +15,8 @@ import org.springframework.plugin.core.Plugin;
 public interface PurposeGateway extends Plugin<Channel> {
     Purpose getPurpose(PurposeRef purposeRef);
 
+    Purpose updatePurposeDailyCalls(PurposeRef purposeRef, int dailyCalls);
+
     Purpose createPurpose(PurposeCreateCommand createCommand);
 
     void shouldFailToCreatePurpose(PurposeCreateCommand createCommand, PurposeCreationFailureReason reason);
@@ -23,7 +25,13 @@ public interface PurposeGateway extends Plugin<Channel> {
 
     Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef);
 
+    Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, PurposeCreateCommand createCommand);
+
     Purpose activatePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
+
+    Purpose rejectPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, String rejectionReason);
+
+    Purpose askForApprovalPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
 
     Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
 }

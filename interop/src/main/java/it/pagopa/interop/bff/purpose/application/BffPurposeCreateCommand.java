@@ -43,12 +43,14 @@ public class BffPurposeCreateCommand implements PurposeCreateCommand {
 
     @Override
     public PurposeCreateCommand dailyCalls(Integer dailyCalls) {
-        return null;
+        bffCreationPayload.setDailyCalls(dailyCalls);
+        return this;
     }
 
     @Override
     public PurposeCreateCommand eserviceId(UUID eserviceId) {
-        return null;
+        bffCreationPayload.setEserviceId(eserviceId);
+        return this;
     }
 
     @Override
@@ -59,5 +61,47 @@ public class BffPurposeCreateCommand implements PurposeCreateCommand {
     @Override
     public PurposeCreateCommand riskAnalysisForm(RiskAnalysisForm riskAnalysisForm) {
         return null;
+    }
+
+    @Override
+    public UUID eserviceId() {
+        return bffCreationPayload.getEserviceId();
+    }
+
+    @Override
+    public String title() {
+        return bffCreationPayload.getTitle();
+    }
+
+    @Override
+    public String description() {
+        return bffCreationPayload.getDescription();
+    }
+
+    @Override
+    public Boolean isFreeOfCharge() {
+        return bffCreationPayload.getIsFreeOfCharge();
+    }
+
+    @Override
+    public String freeOfChargeReason() {
+        return bffCreationPayload.getFreeOfChargeReason();
+    }
+
+    @Override
+    public Integer dailyCalls() {
+        return bffCreationPayload.getDailyCalls();
+    }
+
+    @Override
+    public RiskAnalysisForm riskAnalysisForm() {
+        var form = bffCreationPayload.getRiskAnalysisForm();
+        if (form == null) {
+            return null;
+        }
+        return RiskAnalysisForm.builder()
+                .version(form.getVersion())
+                .answers(form.getAnswers())
+                .build();
     }
 }
