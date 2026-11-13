@@ -5,21 +5,21 @@ Feature: Modifica dei metadati dei client
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [CLIENT_UPDATE_METADATA_1] - Admin aggiorna metadati client preservando dati non modificati, associazioni e operatività
+  Scenario Outline: [CLIENT_UPDATE_METADATA_1] - L'amministratore aggiorna i metadati del client che preserva i dati non modificati, le associazioni e l'operatività
   Un amministratore aggiorna i metadati di un client (solo nome, solo descrizione, nome e descrizione).
   I dati modificati vengono aggiornati, quelli non modificati vengono preservati,
   le associazioni di chiavi e finalità al client vengono preservate.
   Il client permette di generare voucher garantendo la corretta operatività.
 
-    Given un client "CL-1" <tipoClient> creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
+    Given un client "CL-1" <tipoClient> creato dal Comune di Pozzallo in cui è presente un utente admin e una coppia di chiavi crittografiche
     And un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate dal Comune di Pozzallo
-    And il client "CL-1" associato alla finalità
-    When un admin del Comune di Milano richiede la modifica dei metadati del client "CL-1":
+    And un admin del Comune di Pozzallo ha associato la finalità al client "CL-1"
+    And vengono appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    When un admin del Comune di Pozzallo richiede la modifica dei metadati del client "CL-1":
       | campo | valore     |
       | nome  | nuovo nome |
-    Then il client "CL-1" presenta i metadati richiesti
-    And il client "CL-1" conserva i metadati non modificati
-    And il client "CL-1" conserva identificativo, tipologia, proprietario, chiavi e associazioni
+    Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
     Examples:
       | tipoClient |
