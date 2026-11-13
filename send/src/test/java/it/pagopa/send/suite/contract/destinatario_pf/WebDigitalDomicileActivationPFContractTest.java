@@ -7,6 +7,7 @@ import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DigitalDomicileActivationPFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.component.DigitalDomicileEmailSection;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
@@ -141,7 +142,7 @@ public class WebDigitalDomicileActivationPFContractTest {
                                 "passo email: titolo, descrizione, continua e indietro",
                                 page -> page.continueButton().click(),
                                 page -> {
-                                    DigitalDomicileActivationPFPage.EmailSection section = page.emailSection();
+                                    DigitalDomicileEmailSection section = page.emailSection();
                                     section.title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(EMAIL_STEP_TITLE));
                                     section.description().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(EMAIL_STEP_DESCRIPTION));
                                     section.continueButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(CONTINUE));
