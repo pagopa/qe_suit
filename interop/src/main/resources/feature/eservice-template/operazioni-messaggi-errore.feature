@@ -18,8 +18,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     Given i seguenti template e-service pubblicati:
       | alias | erogatore        | nome               | tecnologia |
       | T-1   | Comune di Milano | Catalogo duplicato | REST       |
-    # Binding BFF negativo mancante; riusare createEServiceTemplate con il nome effettivo di T-1.
-    When l'erogatore tenta di creare un template e-service con il nome del template "T-1"
+    When l'erogatore tenta di creare un template e-service duplicando il nome del template "T-1"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__POST_ESERVICES_TEMPLATES" in lingua "it"
 
   Scenario: [ERROR_125] - Impossibilità di aggiungere un'analisi del rischio con un nome già usato nel template
@@ -30,7 +29,6 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     Given un template e-service in ricezione con una versione in bozza
     # Operazione BFF e binding di setup mancanti per le analisi del rischio del template.
     And un'analisi del rischio completa associata al template
-    # Operazione BFF e binding negativo mancanti; non usare addRiskAnalysis dell'e-service.
     When l'erogatore tenta di aggiungere al template un'analisi del rischio con il nome dell'analisi esistente
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_RISK_ANALYSIS_NAME_DUPLICATE" in lingua "it"
 
