@@ -12,14 +12,14 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
   @work-item:QA-18430
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
   Scenario: [ERROR_175] - Impossibilità di allegare un documento a una versione eliminata
-  Dato un template e-service con una versione pubblicata e una versione successiva in bozza poi eliminata
+  Dato un template e-service con una versione in bozza poi eliminata
   Quando l'erogatore tenta di allegare un documento alla bozza eliminata
   Allora il sistema rifiuta il caricamento e segnala che la bozza non è più disponibile.
 
     Given un template e-service preparato con la seguente configurazione:
       | tecnologia | stato     | interfaccia               |
-      | REST       | PUBLISHED | openapi3-riferimenti.json |
-    And la bozza di e-service template creata in bozza viene eliminata
+      | REST       | DRAFT     | openapi3-riferimenti.json |
+    And la bozza di e-service template creata viene eliminata
     When l'erogatore allega un file di documentazione all'e-service template in bozza
     Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_TEMPLATE_VERSION_NOT_FOUND" in lingua "it"
 

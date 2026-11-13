@@ -23,6 +23,11 @@ public class EServiceTemplateVersionUseCase {
     private final EServiceTemplateVersionGateway eServiceTemplateVersionGateway;
     private final EServiceTemplateRequestFactory requestFactory;
 
+    public void deleteDraftVersion(EServiceTemplate template) {
+        EServiceTemplateVersion draft = template.getLastDraftVersion();
+        eServiceTemplateVersionGateway.deleteDraftVersion(template.getRef(), draft.getRef());
+    }
+
     public void retireVersions(EServiceTemplate template) {
         for (var version : template.getVersions()) {
             switch (version.getState()) {

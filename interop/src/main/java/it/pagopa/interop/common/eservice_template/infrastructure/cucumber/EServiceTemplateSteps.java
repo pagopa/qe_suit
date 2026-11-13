@@ -33,6 +33,11 @@ public class EServiceTemplateSteps {
     private final EntityStore entities;
     private final EServiceTemplateVersionUseCase templateVersionUseCase;
 
+    @Given("la bozza di {eServiceTemplate} creata viene eliminata")
+    public void deleteDraftVersion(EServiceTemplate template) {
+        templateVersionUseCase.deleteDraftVersion(template);
+    }
+
     @When("l'erogatore allega un file di documentazione all'{eServiceTemplate}")
     public void requestDocumentationUpload(EServiceTemplate template) {
         templateVersionUseCase.requestDocumentationUpload(template);
