@@ -820,7 +820,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
-    And la versione 1 dell'e-service "ES-1" predisposta dal delegato Comune di Pozzallo WAITING_FOR_APPROVAL
+    And la versione 1 dell'e-service "ES-1" predisposta dal delegato Comune di Pozzallo in attesa di approvazione
     And un admin appartenente all'erogatore Comune di Milano
     # Binding BFF negativo mancante; riusare rejectDescriptor senza attendere un rifiuto riuscito.
     When l'erogatore tenta di rifiutare la pubblicazione della versione 1 dell'e-service con motivazione "Rifiuto con https://example.org"
