@@ -12,7 +12,6 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
 import it.pagopa.utils.async.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
-import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -89,11 +88,16 @@ public class BffAgreementGateway implements AgreementGateway {
 
     @Override
     public Agreement submitAgreement(Agreement agreement) {
-        return restClient.submit(agreement.getId(), new AgreementSubmissionPayload().consumerNotes("consumerNotes"))
+        return restClient.submit(agreement.getId(), agreementRequestFactory.submissionRequest())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(mapper::toAgreement)
                 .updateContext()
                 .get();
+    }
+
+    @Override
+    public void attemptAgreementSubmission(Agreement agreement) {
+        restClient.submit(agreement.getId(), agreementRequestFactory.submissionRequest()).withoutPolling();
     }
 
     @Override

@@ -92,6 +92,10 @@ public class AgreementUseCase {
         return agreementGateway.submitAgreement(agreement);
     }
 
+    public void attemptAgreementSubmission(Agreement agreement) {
+        agreementGateway.attemptAgreementSubmission(agreement);
+    }
+
     public Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation) {
         return agreementGateway.suspendAgreement(agreement, delegation);
     }

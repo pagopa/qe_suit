@@ -41,6 +41,8 @@ public interface AgreementGateway extends Plugin<Channel> {
 
     Agreement submitAgreement(Agreement agreement);
 
+    void attemptAgreementSubmission(Agreement agreement);
+
     Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation);
 
     void attemptAgreementActivation(Agreement agreement);
