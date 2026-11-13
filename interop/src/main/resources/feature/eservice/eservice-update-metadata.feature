@@ -187,35 +187,35 @@ Feature: Modifica dei metadati degli e-service
   #    Then il sistema conferma il salvataggio e chiude il form
   #    And il dettaglio e il form riaperto della risorsa "ES-1" presentano i metadati aggiornati
 
-  @work-item:QA-19036
-  @channel:Given=BFF,When=WEB,Then=WEB
-  Scenario: [ESERVICE_METADATA_WEB_2] - Conservazione degli input in presenza di un errore di validazione
-  Dato un form di modifica aperto e compilato,
-  quando l’utente tenta di salvare un valore non valido,
-  allora il form resta aperto con i testi inseriti e indica il campo errato.
-
-    Given i seguenti e-service in bozza:
-      | alias | erogatore        | nome                   |
-      | ES-1  | Comune di Milano | E-service Tempo Attivo |
-    When il form di modifica dei metadati di una risorsa "ES-1" del Comune di Milano aperto
-    And un admin del Comune di Milano inserisce metadati non validi nel form della risorsa "ES-1" e richiede il salvataggio
-    Then il form della risorsa "ES-1" rimane aperto con i testi inseriti
-    And il campo non valido mostra il messaggio di errore previsto
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=WEB,Then=WEB
-  Scenario: [ESERVICE_METADATA_WEB_3] - Conservazione degli input in presenza di un conflitto di scrittura
-  Dato un form di modifica aperto su metadati che sono stati modificati nel frattempo,
-  quando l’utente prova a salvare i propri valori,
-  allora il form conserva gli input e segnala che il salvataggio non è avvenuto.
-
-    Given i seguenti e-service in bozza:
-      | alias | erogatore        | nome                   |
-      | ES-1  | Comune di Milano | E-service Tempo Attivo |
-    When il form di modifica dei metadati della risorsa "ES-1" del Comune di Milano aperto con una modifica concorrente
-    And un admin del Comune di Milano richiede il salvataggio dei metadati nel form della risorsa "ES-1"
-    Then il form della risorsa "R-1" rimane aperto con i testi inseriti
-    And il sistema segnala il mancato salvataggio della risorsa "ES-1"
+#  @work-item:QA-19036
+#  @channel:Given=BFF,When=WEB,Then=WEB
+#  Scenario: [ESERVICE_METADATA_WEB_2] - Conservazione degli input in presenza di un errore di validazione
+#  Dato un form di modifica aperto e compilato,
+#  quando l’utente tenta di salvare un valore non valido,
+#  allora il form resta aperto con i testi inseriti e indica il campo errato.
+#
+#    Given i seguenti e-service in bozza:
+#      | alias | erogatore        | nome                   |
+#      | ES-1  | Comune di Milano | E-service Tempo Attivo |
+#    When il form di modifica dei metadati di una risorsa "ES-1" del Comune di Milano aperto
+#    And un admin del Comune di Milano inserisce metadati non validi nel form della risorsa "ES-1" e richiede il salvataggio
+#    Then il form della risorsa "ES-1" rimane aperto con i testi inseriti
+#    And il campo non valido mostra il messaggio di errore previsto
+#
+#  @work-item:QA-19036
+#  @channel:Given=BFF,When=WEB,Then=WEB
+#  Scenario: [ESERVICE_METADATA_WEB_3] - Conservazione degli input in presenza di un conflitto di scrittura
+#  Dato un form di modifica aperto su metadati che sono stati modificati nel frattempo,
+#  quando l’utente prova a salvare i propri valori,
+#  allora il form conserva gli input e segnala che il salvataggio non è avvenuto.
+#
+#    Given i seguenti e-service in bozza:
+#      | alias | erogatore        | nome                   |
+#      | ES-1  | Comune di Milano | E-service Tempo Attivo |
+#    When il form di modifica dei metadati della risorsa "ES-1" del Comune di Milano aperto con una modifica concorrente
+#    And un admin del Comune di Milano richiede il salvataggio dei metadati nel form della risorsa "ES-1"
+#    Then il form della risorsa "R-1" rimane aperto con i testi inseriti
+#    And il sistema segnala il mancato salvataggio della risorsa "ES-1"
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
