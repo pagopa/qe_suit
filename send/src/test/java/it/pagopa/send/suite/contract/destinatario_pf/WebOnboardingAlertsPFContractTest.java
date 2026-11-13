@@ -21,10 +21,10 @@ import org.springframework.test.context.TestConstructor;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.DOWNLOAD_IO_APP;
-import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.IO_ALREADY_INSTALLED;
-import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.IO_DESCRIPTION;
-import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.IO_TITLE;
+import static it.pagopa.send.suite.contract.destinatario_pf.WebOnboardingIoPFContractTest.DOWNLOAD_IO_APP;
+import static it.pagopa.send.suite.contract.destinatario_pf.WebOnboardingIoPFContractTest.IO_ALREADY_INSTALLED;
+import static it.pagopa.send.suite.contract.destinatario_pf.WebOnboardingIoPFContractTest.IO_DESCRIPTION;
+import static it.pagopa.send.suite.contract.destinatario_pf.WebOnboardingIoPFContractTest.IO_TITLE;
 
 /**
  * Contract test del wizard di onboarding "Attivazione avvisi" del cittadino ({@code {baseUrl}/onboarding/avvisi}).
