@@ -3,7 +3,7 @@ package it.pagopa.interop.common.attribute.infrastructure.cucumber;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.AttributeKind;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
@@ -25,10 +25,10 @@ class CertifiedAttributeHooksTest {
         fixtures.registerCreated(attribute, issuer);
         fixtures.registerAssignment(issuer, consumer, attribute.getRef());
         var useCase = mock(TenantUseCase.class);
-        var session = mock(CurrentUserSession.class);
+        var session = mock(AuthSession.class);
         var channel = mock(CurrentChannel.class);
         User originalUser = User.getTenantAdmin(Tenant.PAGO_PA);
-        when(session.getUser()).thenReturn(originalUser);
+        when(session.getActor()).thenReturn(originalUser);
         when(session.getTenant()).thenReturn(Tenant.PAGO_PA);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
 

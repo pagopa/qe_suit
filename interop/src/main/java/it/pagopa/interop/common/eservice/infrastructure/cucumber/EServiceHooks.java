@@ -9,7 +9,7 @@ import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -25,7 +25,7 @@ public class EServiceHooks {
     private final EServiceUseCase eServiceUseCase;
     private final EServiceDescriptorApprovalUseCase descriptorUseCase;
     private final EServiceDescriptorUseCase descriptorReader;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
     private final CurrentChannel<Channel> currentChannel;
 
     /**
@@ -39,8 +39,8 @@ public class EServiceHooks {
             return;
         }
 
-        var previousUser = currentUserSession.getUser();
-        var previousTenant = currentUserSession.getTenant();
+        var previousUser = authSession.getActor();
+        var previousTenant = authSession.getTenant();
         var previousChannel = currentChannel.getCurrentChannel();
         var cleanupFailure = new IllegalStateException("Cleanup degli e-service non completato");
 
@@ -49,7 +49,7 @@ public class EServiceHooks {
             for (EService eservice : eservices) {
                 try {
                     Tenant producer = Tenant.fromOrganizationId(UUID.fromString(eservice.getProducerId()));
-                    currentUserSession.set(User.getTenantAdmin(producer), producer);
+                    authSession.set(User.getTenantAdmin(producer), producer);
                     var descriptors = eservice.getDescriptors().stream()
                             .map(descriptor -> descriptor.getState() == EServiceDescriptorState.WAITING_FOR_APPROVAL
                                     ? descriptorReader.getDescriptor(eservice, descriptor) : descriptor)
@@ -82,7 +82,7 @@ public class EServiceHooks {
                 }
             }
         } finally {
-            currentUserSession.set(previousUser, previousTenant);
+            authSession.set(previousUser, previousTenant);
             currentChannel.setCurrentChannel(previousChannel);
         }
 

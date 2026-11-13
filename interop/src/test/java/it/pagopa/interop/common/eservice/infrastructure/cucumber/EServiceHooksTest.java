@@ -9,8 +9,9 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.InteropActor;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import org.junit.jupiter.api.Test;
@@ -30,7 +31,7 @@ class EServiceHooksTest {
     private final EServiceUseCase services = mock(EServiceUseCase.class);
     private final EServiceDescriptorApprovalUseCase descriptors = mock(EServiceDescriptorApprovalUseCase.class);
     private final EServiceDescriptorUseCase reader = mock(EServiceDescriptorUseCase.class);
-    private final CurrentUserSession session = mock(CurrentUserSession.class);
+    private final AuthSession session = mock(AuthSession.class);
     @SuppressWarnings("unchecked")
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);
     private final EServiceHooks hooks = new EServiceHooks(store, services, descriptors, reader, session, channel);
@@ -40,7 +41,7 @@ class EServiceHooksTest {
         EService draft = eService(DRAFT);
         User previousUser = mock(User.class);
         when(store.getAll(EService.class)).thenReturn(List.of(draft));
-        when(session.getUser()).thenReturn(previousUser);
+        when(session.getActor()).thenReturn(previousUser);
         when(session.getTenant()).thenReturn(Tenant.AGID);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
 
@@ -72,7 +73,7 @@ class EServiceHooksTest {
         EService service = eService(ARCHIVING, ARCHIVING_SUSPENDED, ARCHIVED);
         User previousUser = mock(User.class);
         when(store.getAll(EService.class)).thenReturn(List.of(service));
-        when(session.getUser()).thenReturn(previousUser);
+        when(session.getActor()).thenReturn(previousUser);
         when(session.getTenant()).thenReturn(Tenant.AGID);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
 
@@ -202,7 +203,7 @@ class EServiceHooksTest {
 
         verify(services).deleteEService(draft);
         verifyNoMoreInteractions(services);
-        verify(session).set(null, null);
+        verify(session).set((InteropActor) null, null);
         verify(channel).setCurrentChannel(null);
     }
 
@@ -214,7 +215,7 @@ class EServiceHooksTest {
         AssertionError archiveFailure = new AssertionError("archive failed");
         when(store.getAll(EService.class)).thenReturn(List.of(draft, published));
         User previousUser = mock(User.class);
-        when(session.getUser()).thenReturn(previousUser);
+        when(session.getActor()).thenReturn(previousUser);
         when(session.getTenant()).thenReturn(Tenant.AGID);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
         doThrow(deleteFailure).when(services).deleteEService(draft);

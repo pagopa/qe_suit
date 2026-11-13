@@ -7,8 +7,7 @@ import it.pagopa.infrastructure.fuzzing.FuzzEngine;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
 import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,10 +45,9 @@ public class BffApiContractConfig {
     @Bean("bffInteropHttpContractValidator")
     InteropHttpContractValidator interopHttpContractValidator(
             @Qualifier("bffApiContract") HttpContractValidator bffApiContract,
-            CurrentUserSession currentUserSession,
-            CurrentM2MSession currentM2MSession
+            AuthSession authSession
     ) {
-        return new InteropHttpContractValidator(bffApiContract, currentUserSession, currentM2MSession);
+        return new InteropHttpContractValidator(bffApiContract, authSession);
     }
 
     @Bean("bffApiContractPolicy")

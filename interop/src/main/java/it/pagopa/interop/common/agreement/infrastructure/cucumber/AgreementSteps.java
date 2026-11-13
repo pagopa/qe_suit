@@ -11,7 +11,7 @@ import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.journey.application.InteropJourney;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AgreementSteps {
     private final AgreementUseCase agreementUseCase;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
     private final EntityStore entityStore;
     private final InteropJourney interopJourney;
 
@@ -28,7 +28,7 @@ public class AgreementSteps {
     public void viewProducerAgreementDetails() {
         Agreement agreement = entityStore.getLastOrThrow(Agreement.class);
         Tenant tenant = Tenant.fromOrganizationId(agreement.getProducerId());
-        currentUserSession.set(User.getTenantAdmin(tenant), tenant);
+        authSession.set(User.getTenantAdmin(tenant), tenant);
         agreementUseCase.viewProducerAgreementDetails(agreement);
     }
 
@@ -36,7 +36,7 @@ public class AgreementSteps {
     public void viewConsumerAgreementDetails() {
         Agreement agreement = entityStore.getLastOrThrow(Agreement.class);
         Tenant tenant = Tenant.fromOrganizationId(agreement.getConsumerId());
-        currentUserSession.set(User.getTenantAdmin(tenant), tenant);
+        authSession.set(User.getTenantAdmin(tenant), tenant);
         agreementUseCase.viewConsumerAgreementDetails(agreement);
     }
 
@@ -44,7 +44,7 @@ public class AgreementSteps {
     public void approveAgreement() {
         Agreement agreement = entityStore.getLastOrThrow(Agreement.class);
         Tenant producer = Tenant.fromOrganizationId(agreement.getProducerId());
-        currentUserSession.set(User.getTenantAdmin(producer), producer);
+        authSession.set(User.getTenantAdmin(producer), producer);
         viewProducerAgreementDetails();
         agreementUseCase.activateAgreement(agreement);
     }
@@ -76,7 +76,7 @@ public class AgreementSteps {
     @When("il sistema impedisce a/al {tenant} di inoltrare una richiesta di fruizione per la {currentArchivedEServiceDescriptor} dell'{currentEService}")
     @When("il sistema impedisce a/al {tenant} di inoltrare una richiesta di fruizione per la {currentDeprecatedEServiceDescriptor} dell'{currentEService}")
     public void createAgreement(Tenant consumer, EServiceDescriptor eServiceDescriptor, EService eService) {
-        currentUserSession.set(User.getTenantAdmin(consumer), consumer);
+        authSession.set(User.getTenantAdmin(consumer), consumer);
         AgreementCreationFailureReason reason = switch (eServiceDescriptor.getState()){
             case DRAFT,SUSPENDED,ARCHIVING_SUSPENDED, WAITING_FOR_APPROVAL -> AgreementCreationFailureReason.ESERVICE_INVALID_STATE;
             case DEPRECATED -> AgreementCreationFailureReason.DEPRECATED_VERSION;

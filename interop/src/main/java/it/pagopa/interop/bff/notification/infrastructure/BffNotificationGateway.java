@@ -1,7 +1,6 @@
 package it.pagopa.interop.bff.notification.infrastructure;
 
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.notification.application.NotificationGateway;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Notification;

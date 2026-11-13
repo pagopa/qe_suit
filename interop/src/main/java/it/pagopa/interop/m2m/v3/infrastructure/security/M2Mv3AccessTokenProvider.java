@@ -71,6 +71,7 @@ public class M2Mv3AccessTokenProvider {
                 );
 
         return new M2Mv3AccessTokenContext(
+                client,
                 accessToken,
                 dpopKeyPair,
                 expiresAt

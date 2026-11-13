@@ -8,7 +8,8 @@ import it.pagopa.application.TestKind;
 import it.pagopa.application.context.TestContext;
 import it.pagopa.infrastructure.http.restassured.HttpLoggingFilter;
 import it.pagopa.infrastructure.http.restassured.TestPolicyFilterResolver;
-import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import it.pagopa.kernel.security.DPoPProofService;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,14 +29,14 @@ public class M2Mv3AuthenticatedRequestFactory {
     private String basePath;
 
     private final ObjectProvider<TestContext> testKindProvider;
-    private final ObjectProvider<CurrentM2MSession> currentApiClientSessions;
+    private final ObjectProvider<AuthSession> currentApiClientSessions;
     private final TestPolicyFilterResolver testPolicyFilterResolver;
     private final M2Mv3AccessTokenProvider accessTokenProvider;
     private final DPoPProofService dPoPProofService;
 
     public M2Mv3AuthenticatedRequestFactory(
             ObjectProvider<TestContext> testKindProvider,
-            ObjectProvider<CurrentM2MSession> currentApiClientSessions,
+            ObjectProvider<AuthSession> currentApiClientSessions,
             @Qualifier("m2mV3TestPolicyFilterResolver") TestPolicyFilterResolver testPolicyFilterResolver,
             M2Mv3AccessTokenProvider accessTokenProvider,
             DPoPProofService dPoPProofService
@@ -58,13 +59,15 @@ public class M2Mv3AuthenticatedRequestFactory {
     private RequestSpecBuilder createInternal() throws NoSuchAlgorithmException, JsonProcessingException {
 
         TestContext testContext = testKindProvider.getObject();
-        CurrentM2MSession currentSession = currentApiClientSessions.getObject();
+        AuthSession currentSession = currentApiClientSessions.getObject();
 
         M2Mv3AccessTokenContext authContext =
                 accessTokenProvider.getOrCreate(
                         currentSession.getTenant(),
-                        currentSession.getRole()
+                        (M2MRole) currentSession.getRole()
                 );
+
+        currentSession.set(authContext.client(), currentSession.getTenant());
 
         RequestSpecBuilder builder =
                 new RequestSpecBuilder()

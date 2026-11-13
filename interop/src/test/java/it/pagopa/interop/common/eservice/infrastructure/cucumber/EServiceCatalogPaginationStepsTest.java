@@ -13,7 +13,7 @@ import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCat
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceCatalogExpectationMapper;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceCatalogPaginationExpectationMapper;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceCatalogSearchConfigurationMapper;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
@@ -34,7 +34,7 @@ class EServiceCatalogPaginationStepsTest {
     private final EntityStore store = mock(EntityStore.class, CALLS_REAL_METHODS);
     private final EServiceCatalogExpectationMapper expectations = Mappers.getMapper(EServiceCatalogExpectationMapper.class);
     private final EServiceCatalogSearchSteps searches = new EServiceCatalogSearchSteps(catalog, paginationUseCase, factory,
-            mock(CurrentUserSession.class), Mappers.getMapper(EServiceCatalogSearchConfigurationMapper.class), store);
+            mock(AuthSession.class), Mappers.getMapper(EServiceCatalogSearchConfigurationMapper.class), store);
     private final EServiceCatalogPaginationSteps paginationSteps = new EServiceCatalogPaginationSteps(
             searches, catalog, store, expectations, Mappers.getMapper(EServiceCatalogPaginationExpectationMapper.class));
     private final EServiceCatalogAssertionSteps assertions = new EServiceCatalogAssertionSteps(

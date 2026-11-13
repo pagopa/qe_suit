@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.delegation.application;
 
 import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.tenant.application.TenantUseCase;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ class DelegationUseCaseTest {
     void rejectsWhenRequestedDelegatorDoesNotOwnTheEService() {
         var gateway = mock(DelegationGateway.class);
         var tenantUseCase = mock(TenantUseCase.class);
-        var currentUserSession = mock(CurrentUserSession.class);
+        var currentUserSession = mock(AuthSession.class);
         var useCase = new DelegationUseCase(gateway, tenantUseCase, currentUserSession);
         EService eService = EService.builder()
                 .id(UUID.randomUUID())

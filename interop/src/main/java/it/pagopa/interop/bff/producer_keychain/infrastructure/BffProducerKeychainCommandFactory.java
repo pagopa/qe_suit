@@ -2,7 +2,7 @@ package it.pagopa.interop.bff.producer_keychain.infrastructure;
 
 import it.pagopa.interop.bff.producer_keychain.application.BffProducerKeyCreationCommand;
 import it.pagopa.interop.bff.producer_keychain.application.BffProducerKeychainCreationCommand;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.producer_keychain.application.ProducerKeychainFactory;
@@ -22,22 +22,12 @@ public class BffProducerKeychainCommandFactory implements ProducerKeychainFactor
 
     private static final UUID DEFAULT_USER_ID = User.S_MATTIA.getUserId();
 
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
 
     @Override
     public ProducerKeychainCreationCommand creationCommand() {
-        User user = getUser();
-        UUID userId = user != null ? user.getUserId() : DEFAULT_USER_ID;
+        UUID userId = authSession.getActor() != null ?authSession.getActor().getId() : DEFAULT_USER_ID;
         return creationCommand(List.of(userId));
-    }
-
-    private User getUser() {
-        try {
-            return currentUserSession.getUser();
-        } catch (IllegalStateException e) {
-            // Se utente non settato, restituisci null
-            return null;
-        }
     }
 
     @Override

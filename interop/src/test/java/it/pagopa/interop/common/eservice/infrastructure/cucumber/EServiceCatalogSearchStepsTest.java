@@ -10,8 +10,7 @@ import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCat
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceCatalogSearchConfigurationMapper;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogPropertyExpectation;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceCatalogExpectationMapper;
-import it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceCatalogAssertionSteps;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.*;
 class EServiceCatalogSearchStepsTest {
     private final EServiceCatalogUseCase catalog = mock(EServiceCatalogUseCase.class);
     private final EServiceCatalogPaginationUseCase pagination = mock(EServiceCatalogPaginationUseCase.class);
-    private final CurrentUserSession session = mock(CurrentUserSession.class);
+    private final AuthSession session = mock(AuthSession.class);
     private final EServiceRequestFactory factory = spy(new BffEServiceRequestFactory());
     private final it.pagopa.infrastructure.context.InMemoryEntityStore entityStore =
             new it.pagopa.infrastructure.context.InMemoryEntityStore();
