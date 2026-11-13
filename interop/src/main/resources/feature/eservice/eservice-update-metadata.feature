@@ -5,7 +5,7 @@ Feature: Modifica dei metadati degli e-service
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [ESERVICE_METADATA_1] - Modifica di un singolo metadato indipendente dallo stato del descrittore
+  Scenario Outline: [ESERVICE_METADATA_1a] - Modifica di un singolo metadato indipendente dallo stato del descrittore
   Dato un e-service non derivato da template con un descrittore nello stato previsto,
   quando l'erogatore ne modifica soltanto il nome o la descrizione,
   allora il sistema aggiorna il valore richiesto conservando gli altri metadati e lo stato dei descrittori.
@@ -28,11 +28,6 @@ Feature: Modifica dei metadati degli e-service
 
       # Non è possibile archiviare un e-service in tempi accettabili.
       # | archiviata             | nome        | Servizio anagrafico aggiornato      |
-
-      # Spostati in altri scenari
-      # | in attesa di approvazione | descrizione | Descrizione aggiornata del servizio |
-      # | in archiviazione          | nome        | Servizio anagrafico aggiornato      |
-      # | in archiviazione sospesa  | descrizione | Descrizione aggiornata del servizio |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -91,7 +86,7 @@ Feature: Modifica dei metadati degli e-service
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [ESERVICE_METADATA_2] - Modifica congiunta dei metadati indipendente dallo stato del descrittore
+  Scenario Outline: [ESERVICE_METADATA_2a] - Modifica congiunta dei metadati indipendente dallo stato del descrittore
   Dato un e-service non derivato da template con un descrittore nello stato previsto,
   quando l'erogatore modifica contemporaneamente nome e descrizione,
   allora il sistema salva entrambi i metadati senza alterare lo stato, le versioni e le configurazioni dei descrittori.
@@ -116,11 +111,6 @@ Feature: Modifica dei metadati degli e-service
       # Non è possibile archiviare un e-service in tempi accettabili.
       # | archiviata                |
 
-      # TODO Spostare in altri scenari
-      # | in archiviazione          |
-      # | in archiviazione sospesa  |
-
-
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_METADATA_2b] - Modifica congiunta dei metadati con lo stato del descrittore in attesa di approvazione.
@@ -141,6 +131,44 @@ Feature: Modifica dei metadati degli e-service
       | nome        | Servizio anagrafico aggiornato      |
       | descrizione | Descrizione aggiornata del servizio |
     Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_METADATA_2c] - Modifica congiunta dei metadati con lo stato del descrittore in archiviazione.
+  Dato un e-service non derivato da template con un descrittore nello stato previsto,
+  quando l'erogatore modifica contemporaneamente nome e descrizione,
+  allora il sistema salva entrambi i metadati senza alterare lo stato, le versioni e le configurazioni dei descrittori.
+
+    Given i seguenti e-service in bozza:
+      | alias | erogatore        | nome                   |
+      | ES-1  | Comune di Milano | E-service Tempo Attivo |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    And l'e-service "ES-1" del Comune di Milano interamente in archiviazione
+    When un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
+      | campo       | valore                              |
+      | nome        | Servizio anagrafico aggiornato      |
+      | descrizione | Descrizione aggiornata del servizio |
+    Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_METADATA_2d] - Modifica congiunta dei metadati con lo stato del descrittore in archiviazione sospesa.
+  Dato un e-service non derivato da template con un descrittore nello stato previsto,
+  quando l'erogatore modifica contemporaneamente nome e descrizione,
+  allora il sistema salva entrambi i metadati senza alterare lo stato, le versioni e le configurazioni dei descrittori.
+
+    Given i seguenti e-service in bozza:
+      | alias | erogatore        | nome                   |
+      | ES-1  | Comune di Milano | E-service Tempo Attivo |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    And l'e-service "ES-1" del Comune di Milano interamente in archiviazione
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano in archiviazione sospesa
+    When un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
+      | campo       | valore                              |
+      | nome        | Servizio anagrafico aggiornato      |
+      | descrizione | Descrizione aggiornata del servizio |
+    Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
+
 
   @work-item:QA-19036
   @channel:Given=BFF,When=WEB,Then=WEB
