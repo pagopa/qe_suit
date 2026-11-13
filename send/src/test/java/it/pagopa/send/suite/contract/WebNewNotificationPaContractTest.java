@@ -15,6 +15,7 @@ import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import it.pagopa.send.web.notification_creation.application.NotificationData;
 import it.pagopa.send.web.notification_creation.infrastructure.factory.WebNotificationFactory;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.ExitDialog;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
@@ -443,7 +444,7 @@ public class WebNewNotificationPaContractTest {
                                 "richiesta di conferma dell'uscita",
                                 page -> page.notificationsBreadcrumb().click(),
                                 page -> {
-                                    CreateNotificationPage.ExitDialog dialog = page.exitDialog();
+                                    ExitDialog dialog = page.exitDialog();
                                     dialog.title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(EXIT_TITLE));
                                     dialog.message().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(EXIT_MESSAGE));
                                     dialog.cancelButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(CANCEL));
