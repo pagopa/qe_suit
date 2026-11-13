@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice_template.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceUseCase;
@@ -20,6 +21,7 @@ public class EServiceTemplateInstanceSteps {
     private final EServiceTemplateInstanceUseCase instanceUseCase;
     private final EServiceDescriptorUseCase descriptorUseCase;
     private final InteropJourney interopJourney;
+    private final EntityStore entities;
 
     @Given("una istanza dell'e-service template in bozza creato dal {tenant} con un attributo certificato e una soglia personalizzata di {int}")
     public void createDraftTemplateInstanceWithCertifiedAttributeAndCustomThreshold(Tenant producer, int customThreshold) {
@@ -59,6 +61,18 @@ public class EServiceTemplateInstanceSteps {
         instanceUseCase.shouldFailToCreateEServiceInstance(template,
                 command -> command.instanceLabel("https://example.com"),
                 EServiceTemplateInstanceCreationFailureReason.HYPERLINK_DETECTED);
+    }
+
+    @When("l'erogatore tenta di istanziare il {eServiceTemplate} con la parola identificativa già usata in precedenza")
+    public void attemptToCreateTemplateInstanceWithDuplicateLabel(EServiceTemplate template) {
+        EService existingInstance = entities.getLastOrThrow(EService.class);
+        String label = existingInstance.getInstanceLabel();
+        if (label == null || label.isBlank()) {
+            throw new IllegalStateException("Existing template instance has no identifying word");
+        }
+        instanceUseCase.shouldFailToCreateEServiceInstance(template,
+                command -> command.instanceLabel(label),
+                EServiceTemplateInstanceCreationFailureReason.DUPLICATE_NAME);
     }
 
     @When("l'erogatore configura con successo l'interfaccia SOAP del {eServiceDescriptor} dell'{currentEService} con i seguenti indirizzi:")

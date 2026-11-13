@@ -118,6 +118,7 @@ public interface BffEServiceDescriptorMapper {
         }
 
         return updatedBase.toBuilder()
+                .instanceLabel(existingEService == null ? null : existingEService.getInstanceLabel())
                 .descriptors(new ArrayList<>(finalDescriptors))
                 .build();
     }

@@ -56,8 +56,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And le seguenti istanze di template e-service pubblicate:
       | alias | template | suffisso  |
       | ES-1  | T-1      | Duplicato |
-    # Binding BFF mancante con parola identificativa; riusare createEServiceInstance e gestire il rifiuto.
-    When l'erogatore tenta di istanziare il template con la parola identificativa "Duplicato"
+    When l'erogatore tenta di istanziare il template con la parola identificativa già usata in precedenza
     Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_TEMPLATE_ID_ESERVICES" in lingua "it" con i valori:
       | identifyingWord | Duplicato |
 

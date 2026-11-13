@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.eservice_template.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.eservice.application.BffEServiceTemplateInstanceUpdateDescriptorCommand;
 import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceDescriptorGateway;
@@ -28,6 +29,7 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
     private final BffEServiceRestClient restClient;
     private final BffEServiceGateway eServiceGateway;
     private final BffEServiceDescriptorGateway descriptorGateway;
+    private final EntityStore entityStore;
 
     @Override
     public EService createEServiceInstance(EServiceTemplate template, EServiceTemplateInstanceCreationCommand command) {
@@ -44,7 +46,11 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
         EServiceDescriptorRef descriptorRef = EServiceDescriptorRef.of(created.getDescriptorId());
 
         descriptorGateway.getEServiceDescriptor(serviceRef, descriptorRef);
-        return eServiceGateway.getEService(serviceRef);
+        EService instance = eServiceGateway.getEService(serviceRef).toBuilder()
+                .instanceLabel(bffCommand.getBffPayload().getInstanceLabel())
+                .build();
+        entityStore.upsert(instance);
+        return instance;
     }
 
     @Override
@@ -55,6 +61,7 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
         }
         int expectedStatus = switch (reason) {
             case HYPERLINK_DETECTED -> 400;
+            case DUPLICATE_NAME -> 409;
         };
         restClient.createEServiceInstanceFromTemplate(template.getId(), bffCommand.getBffPayload())
                 .withoutPolling()
