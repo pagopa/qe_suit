@@ -14,7 +14,7 @@ Feature: Modifica dei metadati dei client
     Given un client "CL-1" <tipoClient> creato dal Comune di Pozzallo in cui è presente un utente admin e una coppia di chiavi crittografiche
     And un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate dal Comune di Pozzallo
     And un admin del Comune di Pozzallo ha associato la finalità al client "CL-1"
-    And vengono appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    And appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
     When un admin del Comune di Pozzallo richiede la modifica dei metadati del client "CL-1":
       | campo | valore     |
       | nome  | nuovo nome |

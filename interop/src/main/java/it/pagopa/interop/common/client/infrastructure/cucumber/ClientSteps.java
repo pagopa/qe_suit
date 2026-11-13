@@ -43,9 +43,9 @@ public class ClientSteps {
         clientUseCase.generateVoucher(client, purpose);
     }
 
-    @Given("vengono appuntati i dati e le associazioni del client {string} allo stato attuale come riferimento")
+    @Given("appuntati i dati e le associazioni del client {string} allo stato attuale come riferimento")
     public void saveClientReference(String clientAlias) {
-        Client client = entityStore.getLastOrThrow(Client.class);
+        Client client = entityStore.getByAliasOrThrow(clientAlias, Client.class);
         clientReference = client.toBuilder()
                 .keys(new LinkedHashSet<>(client.getKeys()))
                 .purposes(List.copyOf(client.getPurposes()))
