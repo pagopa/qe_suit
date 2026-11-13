@@ -169,22 +169,23 @@ Feature: Modifica dei metadati degli e-service
       | descrizione | Descrizione aggiornata del servizio |
     Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=WEB,Then=WEB
-  Scenario: [ESERVICE_METADATA_WEB_1] - Form precompilato e conferma dopo il salvataggio
-  Dato un e-service modificabile con metadati già valorizzati,
-  quando l’utente apre il form modifica e salva nuovi valori,
-  allora il sistema mostra la conferma e il form riaperto presenta i nuovi metadati.
-
-    Given i seguenti e-service in bozza:
-      | alias | erogatore        | nome                   |
-      | ES-1  | Comune di Milano | E-service Tempo Attivo |
-    When un admin del Comune di Milano apre la modifica dei metadati della risorsa "ES-1"
-    Then il form della risorsa "ES-1" mostra i metadati correnti e i campi previsti
-    When un admin del Comune di Milano modifica e salva i metadati della risorsa "ES-1"
-    Then il sistema conferma il salvataggio e chiude il form
-    And il dettaglio e il form riaperto della risorsa "ES-1" presentano i metadati aggiornati
+  # TODO Questo scenario sarà scomposto in due integration test:
+  # - il primo verifica la mappatura della UI con i dati ricevuti da BFF
+  # - il secondo verifica i dati inviati all'endpoint BFF
+  #  @work-item:QA-19036
+  #  @channel:Given=BFF,When=WEB,Then=WEB
+  #  Scenario: [ESERVICE_METADATA_WEB_1] - Form precompilato e conferma dopo il salvataggio
+  #  Dato un e-service modificabile con metadati già valorizzati,
+  #  quando l’utente apre il form modifica e salva nuovi valori,
+  #  allora il sistema mostra la conferma e il form riaperto presenta i nuovi metadati.
+  #    Given i seguenti e-service in bozza:
+  #      | alias | erogatore        | nome                   |
+  #      | ES-1  | Comune di Milano | E-service Tempo Attivo |
+  #    When un admin del Comune di Milano apre la modifica dei metadati della risorsa "ES-1"
+  #    Then il form della risorsa "ES-1" mostra i metadati correnti e i campi previsti
+  #    When un admin del Comune di Milano modifica e salva i metadati della risorsa "ES-1"
+  #    Then il sistema conferma il salvataggio e chiude il form
+  #    And il dettaglio e il form riaperto della risorsa "ES-1" presentano i metadati aggiornati
 
   @work-item:QA-19036
   @channel:Given=BFF,When=WEB,Then=WEB
