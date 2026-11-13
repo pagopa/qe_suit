@@ -5,6 +5,7 @@ import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.domain.Component;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @XPath("//*[@id=\"rows-per-page-select\"]")
 public interface PageSize extends Component, Clickable {
@@ -13,10 +14,8 @@ public interface PageSize extends Component, Clickable {
     List<Button> sizes();
 
     default void setSize(int rowPerPage) {
-        // Clicca sul selettore stesso per aprire la tendina di Material-UI
-        this.click();
-
-        // Filtra la lista dei bottoni per trovare quello con il numero corretto
+        if (isNotExpanded())
+            this.click();
         sizes().stream()
                 .filter(btn -> btn.read().trim().equals(String.valueOf(rowPerPage)))
                 .findFirst()
@@ -27,8 +26,8 @@ public interface PageSize extends Component, Clickable {
     }
 
     default int getSelectedSize() {
-        this.click();
-
+        if (isNotExpanded())
+            this.click();
         return sizes().stream()
                 .filter(Button::isSelected)
                 .findFirst()
@@ -38,5 +37,23 @@ public interface PageSize extends Component, Clickable {
                 .orElseThrow(() -> new java.util.NoSuchElementException(
                         "Nessuna opzione selezionata trovata nel menu delle righe per pagina."
                 ));
+    }
+
+    default List<Integer> getSizeValues() {
+        if (isNotExpanded())
+            this.click();
+        return sizes().stream()
+                .map(Button::read)
+                .map(String::trim)
+                .map(Integer::valueOf)
+                .toList();
+    }
+
+    private boolean isNotExpanded() {
+        return !this.get()
+                .orElseThrow(() -> new NoSuchElementException("No optional found for PageSize element"))
+                .getAttributes()
+                .get("aria-expanded")
+                .equals("true");
     }
 }

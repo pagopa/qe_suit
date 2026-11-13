@@ -4,6 +4,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +29,16 @@ public class EServiceUseCase {
         return eServiceGateway.createEService(creationCommand);
     }
 
+    public void tryUpdateEService(EService eService, EServiceUpdateCommand command) {
+        eServiceGateway.tryUpdateEService(eService.getRef(), command);
+    }
+
     public void updateEService(EService eService, EServiceUpdateCommand command) {
         eServiceGateway.updateEService(eService.getRef(), command);
     }
 
-    public void shouldFailToUpdateEService(EService eService, EServiceUpdateCommand command) {
-        eServiceGateway.shouldFailToUpdateEService(eService.getRef(), command);
+    public void shouldFailToUpdateEService(EServiceUpdateFailureReason reason) {
+        eServiceGateway.shouldFailToUpdateEService(reason);
     }
 
     public void deleteEService(EService eService) {

@@ -1,7 +1,5 @@
 package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
-import io.cucumber.datatable.DataTable;
-import io.cucumber.java.DataTableType;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
@@ -11,12 +9,12 @@ import it.pagopa.interop.common.eservice.application.command.EServiceUpdateComma
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceMetadataUpdateConfiguration;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceMetadataUpdateConfigurationMapper;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
@@ -49,8 +47,8 @@ public class EServiceMetadataUpdatesSteps {
                 .updateEService(updateCommand);
     }
 
-    @When("un {userRole} di/del {tenant} richiede la modifica dei metadati dell'e-service {string} ma viene rifiutata:")
-    public void shouldFailToUpdateMetadata(UserRole role, Tenant producer, String alias, List<EServiceMetadataUpdateConfiguration> configurations) {
+    @When("un {userRole} di/del {tenant} tenta la modifica dei metadati dell'e-service {string}:")
+    public void tryUpdateMetadata(UserRole role, Tenant producer, String alias, List<EServiceMetadataUpdateConfiguration> configurations) {
         EService currentEService = entityStore.getByAliasOrThrow(alias, EService.class);
         initialEService = currentEService.toBuilder()
                 .descriptors(new ArrayList<>(currentEService.getDescriptors()))
@@ -59,7 +57,12 @@ public class EServiceMetadataUpdatesSteps {
         requestedMetadata = configurationMapper.apply(configurations, updateCommand);
         interopJourney
                 .withProducer(producer, role)
-                .shouldFailToUpdateEService(updateCommand);
+                .tryUpdateEService(updateCommand);
+    }
+
+    @When("la modifica dei metadati dell'e-service {string} viene rifiutata per {eServiceUpdateFailureReason}")
+    public void shouldFailToUpdateMetadata(String alias, EServiceUpdateFailureReason reason) {
+        interopJourney.shouldFailToUpdateEService(reason);
     }
 
     @Then("l'e-service {string} presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori")
@@ -86,60 +89,6 @@ public class EServiceMetadataUpdatesSteps {
         assertThat(actualEService)
                 .as("E-service %s dopo la modifica dei metadati", alias)
                 .isEqualTo(expectedEService);
-    }
-
-    @DataTableType
-    public EServiceUpdateCommand eServiceUpdateCommand(DataTable dataTable) {
-        EServiceUpdateCommand command = requestFactory.defaultUpdateEServiceCommand();
-        requestedMetadata.clear();
-        dataTable.cells().stream().skip(1).forEach(update -> {
-            String field = update.get(0);
-            String value = update.get(1);
-
-            switch (field) {
-                case "nome" -> {
-                    String requestedName = RandomUtils.randomAlphanumericName(value, 10);
-                    requestedMetadata.put(field, requestedName);
-                    command.name(requestedName);
-                }
-                case "descrizione" -> {
-                    requestedMetadata.put(field, value);
-                    command.description(value);
-                }
-                case "technology" -> {
-                    requestedMetadata.put(field, value);
-                    command.technology(EServiceTechnology.valueOf(value));
-                }
-                case "mode" -> {
-                    requestedMetadata.put(field, value);
-                    command.mode(EServiceMode.valueOf(value));
-                }
-                case "signalHubEnabled" -> {
-                    requestedMetadata.put(field, value);
-                    command.isSignalHubEnabled(Boolean.parseBoolean(value));
-                }
-                case "consumerDelegable" -> {
-                    requestedMetadata.put(field, value);
-                    command.isConsumerDelegable(Boolean.parseBoolean(value));
-                }
-                case "clientAccessDelegable" -> {
-                    requestedMetadata.put(field, value);
-                    command.isClientAccessDelegable(Boolean.parseBoolean(value));
-                }
-                case "handlePersonalData" -> {
-                    requestedMetadata.put(field, value);
-                    command.handlePersonalData(Boolean.parseBoolean(value));
-                }
-                case "asyncExchange" -> {
-                    requestedMetadata.put(field, value);
-                    command.asyncExchange(Boolean.parseBoolean(value));
-                }
-                default -> throw new IllegalArgumentException(
-                        "Campo metadato e-service non supportato: " + field
-                );
-            }
-        });
-        return command;
     }
 
     private Boolean requestedBoolean(String field, Boolean initialValue) {

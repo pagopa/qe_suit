@@ -4,6 +4,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 
@@ -44,7 +45,9 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
 
     SELF updateEService(EServiceUpdateCommand command);
 
-    SELF shouldFailToUpdateEService(EServiceUpdateCommand command);
+    SELF tryUpdateEService(EServiceUpdateCommand command);
+
+    SELF shouldFailToUpdateEService(EServiceUpdateFailureReason reason);
 
     SELF addRiskAnalysis();
 

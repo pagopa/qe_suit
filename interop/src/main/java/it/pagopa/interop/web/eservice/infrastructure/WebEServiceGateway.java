@@ -7,6 +7,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -49,12 +50,17 @@ public class WebEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void tryUpdateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
     public void updateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void shouldFailToUpdateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+    public void shouldFailToUpdateEService(EServiceUpdateFailureReason reason) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
