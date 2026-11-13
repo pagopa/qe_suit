@@ -32,7 +32,6 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
       | Comune di Pozzallo |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
     And un admin appartenente al delegato Comune di Pozzallo
-    # Binding negativo mancante, condiviso con ERROR_010; riusare rejectProducerDelegation.
     When l'utente tenta di rifiutare la delega in erogazione
     Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_REJECT" in lingua "it"
 

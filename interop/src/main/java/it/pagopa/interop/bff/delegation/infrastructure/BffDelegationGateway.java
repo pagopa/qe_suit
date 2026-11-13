@@ -124,6 +124,12 @@ public class BffDelegationGateway implements DelegationGateway {
     }
 
     @Override
+    public void attemptProducerDelegationRejection(DelegationRef delegationRef) {
+        restClient.rejectProducerDelegation(delegationRef.id(), requestFactory.rejectionRequest())
+                .withoutPolling();
+    }
+
+    @Override
     public void revokeProducerDelegation(DelegationRef delegationRef) {
         restClient.revokeProducerDelegation(delegationRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS);

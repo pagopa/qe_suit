@@ -1,6 +1,9 @@
 package it.pagopa.interop.common.delegation.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
+import it.pagopa.interop.common.delegation.application.DelegationUseCase;
+import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -11,6 +14,12 @@ public class ProducerDelegationSteps {
 
     private final ProducerDelegationSetupMapper mapper;
     private final InteropJourney interopJourney;
+    private final DelegationUseCase delegationUseCase;
+
+    @When("l'utente tenta di rifiutare {currentProducerDelegation}")
+    public void attemptProducerDelegationRejection(Delegation delegation) {
+        delegationUseCase.attemptProducerDelegationRejection(delegation.getRef());
+    }
 
     @Given("l'e-service {string} delegato in erogazione dal {tenant} al {tenant} con delega {producerDelegationState}")
     @Given("l'e-service {string} delegato in erogazione da {tenant} al {tenant} con delega {producerDelegationState}")

@@ -114,6 +114,10 @@ public class DelegationUseCase {
         delegationGateway.rejectProducerDelegation(delegationRef);
     }
 
+    public void attemptProducerDelegationRejection(DelegationRef delegationRef) {
+        delegationGateway.attemptProducerDelegationRejection(delegationRef);
+    }
+
     public void revokeProducerDelegation(DelegationRef delegationRef) {
         delegationGateway.revokeProducerDelegation(delegationRef);
     }
