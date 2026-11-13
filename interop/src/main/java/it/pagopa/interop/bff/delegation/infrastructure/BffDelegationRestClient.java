@@ -93,6 +93,19 @@ public class BffDelegationRestClient extends RestClient {
         );
     }
 
+    public TestChain<Void> rejectConsumerDelegation(
+            @Nonnull UUID delegationId,
+            @Nonnull RejectDelegationPayload payload
+    ) {
+        return execute(
+                () -> consumerDelegationsApi.rejectConsumerDelegation()
+                        .delegationIdPath(delegationId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<Void> revokeProducerDelegation(@Nonnull UUID delegationId) {
         return execute(
                 () -> producerDelegationsApi.revokeProducerDelegation()

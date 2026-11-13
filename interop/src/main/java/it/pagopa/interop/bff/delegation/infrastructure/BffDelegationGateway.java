@@ -72,6 +72,12 @@ public class BffDelegationGateway implements DelegationGateway {
     }
 
     @Override
+    public void attemptConsumerDelegationRejection(DelegationRef delegationRef) {
+        restClient.rejectConsumerDelegation(delegationRef.id(), requestFactory.rejectionRequest())
+                .withoutPolling();
+    }
+
+    @Override
     public Delegation waitForConsumerDelegationState(
             DelegationRef delegationRef,
             DelegationState expectedState

@@ -27,6 +27,8 @@ public interface DelegationGateway extends Plugin<Channel> {
 
     void approveConsumerDelegation(DelegationRef delegationRef);
 
+    void attemptConsumerDelegationRejection(DelegationRef delegationRef);
+
     Delegation waitForConsumerDelegationState(DelegationRef delegationRef, DelegationState expectedState);
 
     void revokeConsumerDelegation(DelegationRef delegationRef);
