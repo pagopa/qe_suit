@@ -5,24 +5,26 @@ Feature: Modifica dei metadati dei client
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [CLIENT_METADATA_1] - Modifica di un singolo metadato di un client Consumer
-  Dato un client Consumer appartenente all'ente amministrato,
-  quando l'amministratore ne modifica soltanto il nome o la descrizione,
-  allora il sistema salva il nuovo valore, conserva quello omesso
-  e mantiene invariati identità, chiavi e associazioni del client.
+  Scenario Outline: [CLIENT_UPDATE_METADATA_1] - Admin aggiorna metadati client preservando dati non modificati, associazioni e operatività
+  Un amministratore aggiorna i metadati di un client (solo nome, solo descrizione, nome e descrizione).
+  I dati modificati vengono aggiornati, quelli non modificati vengono preservati,
+  le associazioni di chiavi e finalità al client vengono preservate.
+  Il client permette di generare voucher garantendo la corretta operatività.
 
-    Given un client "CL-1" CONSUMER creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
+    Given un client "CL-1" <tipoClient> creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
+    And un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate dal Comune di Pozzallo
+    And il client "CL-1" associato alla finalità
     When un admin del Comune di Milano richiede la modifica dei metadati del client "CL-1":
-      | campo   | valore   |
-      | <campo> | <valore> |
+      | campo | valore     |
+      | nome  | nuovo nome |
     Then il client "CL-1" presenta i metadati richiesti
     And il client "CL-1" conserva i metadati non modificati
     And il client "CL-1" conserva identificativo, tipologia, proprietario, chiavi e associazioni
 
     Examples:
-      | campo       | valore                            |
-      | nome        | Client aggiornato                 |
-      | descrizione | Descrizione aggiornata del client |
+      | tipoClient |
+      | CONSUMER   |
+      | API        |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=M2M,Then=BFF
