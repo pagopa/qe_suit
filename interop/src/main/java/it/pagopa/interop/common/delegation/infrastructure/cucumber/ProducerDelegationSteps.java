@@ -18,6 +18,11 @@ public class ProducerDelegationSteps {
     private final InteropJourney interopJourney;
     private final DelegationUseCase delegationUseCase;
 
+    @When("l'utente tenta di revocare {currentProducerDelegation}")
+    public void attemptProducerDelegationRevocation(Delegation delegation) {
+        delegationUseCase.attemptProducerDelegationRevocation(delegation.getRef());
+    }
+
     @When("il {tenant} tenta di proporre la delega in erogazione a {tenant} per l'{currentEService}")
     public void attemptProducerDelegationCreation(Tenant delegator, Tenant delegate, EService eService) {
         delegationUseCase.attemptProducerDelegationCreation(

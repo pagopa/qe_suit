@@ -115,6 +115,10 @@ public class DelegationUseCase {
         delegationGateway.revokeConsumerDelegation(delegationRef);
     }
 
+    public void attemptConsumerDelegationRevocation(DelegationRef delegationRef) {
+        delegationGateway.attemptConsumerDelegationRevocation(delegationRef);
+    }
+
     public Delegation waitForConsumerDelegationRevocation(DelegationRef delegationRef) {
         return delegationGateway.waitForConsumerDelegationRevocation(delegationRef);
     }
@@ -129,6 +133,10 @@ public class DelegationUseCase {
 
     public void revokeProducerDelegation(DelegationRef delegationRef) {
         delegationGateway.revokeProducerDelegation(delegationRef);
+    }
+
+    public void attemptProducerDelegationRevocation(DelegationRef delegationRef) {
+        delegationGateway.attemptProducerDelegationRevocation(delegationRef);
     }
 
     public ProducerDelegation getProducerDelegation(DelegationRef delegationRef) {

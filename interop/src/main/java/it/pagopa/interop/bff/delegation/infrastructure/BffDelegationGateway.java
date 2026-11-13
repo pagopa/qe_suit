@@ -31,8 +31,7 @@ public class BffDelegationGateway implements DelegationGateway {
         var response = restClient.createConsumerDelegation(delegateRef.id(), eServiceRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS);
         requireSuccessfulResponse(response.getRaw(), "creazione della delega di fruizione");
-        return response
-                .map(mapper::toDelegation)
+        return response.map(mapper::toDelegation)
                 .updateContext()
                 .get();
     }
@@ -42,8 +41,7 @@ public class BffDelegationGateway implements DelegationGateway {
         var response = restClient.createProducerDelegation(delegateRef.id(), eServiceRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS);
         requireSuccessfulResponse(response.getRaw(), "creazione della delega di erogazione");
-        return response
-                .map(mapper::toDelegation)
+        return response.map(mapper::toDelegation)
                 .updateContext()
                 .get();
     }
@@ -59,8 +57,7 @@ public class BffDelegationGateway implements DelegationGateway {
         var response = restClient.createProducerDelegation(delegateRef.id(), eServiceRef.id())
                 .withoutPolling();
         requireSuccessfulResponse(response.getRaw(), "creazione della delega di erogazione");
-        return response
-                .map(mapper::toProducerDelegation)
+        return response.map(mapper::toProducerDelegation)
                 .updateContext()
                 .get();
     }
@@ -91,17 +88,19 @@ public class BffDelegationGateway implements DelegationGateway {
     }
 
     @Override
+    public void attemptConsumerDelegationRevocation(DelegationRef delegationRef) {
+        restClient.revokeConsumerDelegation(delegationRef.id()).withoutPolling();
+    }
+
+    @Override
     public Delegation waitForConsumerDelegationRevocation(DelegationRef delegationRef) {
         return waitForConsumerDelegationState(delegationRef, "REVOKED");
     }
 
     private Delegation waitForConsumerDelegationState(DelegationRef delegationRef, String expectedState) {
         return restClient.getDelegation(delegationRef.id())
-                .withPolling(
-                        response -> hasExpectedState(response, expectedState),
-                        Duration.ofSeconds(45),
-                        Duration.ofSeconds(1)
-                )
+                .withPolling(response -> hasExpectedState(response, expectedState),
+                        Duration.ofSeconds(45), Duration.ofSeconds(1))
                 .map(mapper::toDelegation)
                 .updateContext()
                 .get();
@@ -134,9 +133,13 @@ public class BffDelegationGateway implements DelegationGateway {
     }
 
     @Override
+    public void attemptProducerDelegationRevocation(DelegationRef delegationRef) {
+        restClient.revokeProducerDelegation(delegationRef.id()).withoutPolling();
+    }
+
+    @Override
     public ProducerDelegation getProducerDelegation(DelegationRef delegationRef) {
-        return restClient
-                .getDelegation(delegationRef.id())
+        return restClient.getDelegation(delegationRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(mapper::toProducerDelegation)
                 .updateContext()
@@ -147,11 +150,8 @@ public class BffDelegationGateway implements DelegationGateway {
     public ProducerDelegation waitForProducerDelegationState(
             DelegationRef delegationRef, ProducerDelegationState expectedState) {
         return restClient.getDelegation(delegationRef.id())
-                .withPolling(
-                        response -> hasExpectedState(response, expectedState.name()),
-                        Duration.ofSeconds(45),
-                        Duration.ofSeconds(1)
-                )
+                .withPolling(response -> hasExpectedState(response, expectedState.name()),
+                        Duration.ofSeconds(45), Duration.ofSeconds(1))
                 .map(mapper::toProducerDelegation)
                 .updateContext()
                 .get();

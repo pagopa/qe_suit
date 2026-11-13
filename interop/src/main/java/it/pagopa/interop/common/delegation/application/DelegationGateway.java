@@ -35,6 +35,8 @@ public interface DelegationGateway extends Plugin<Channel> {
 
     void revokeConsumerDelegation(DelegationRef delegationRef);
 
+    void attemptConsumerDelegationRevocation(DelegationRef delegationRef);
+
     Delegation waitForConsumerDelegationRevocation(DelegationRef delegationRef);
 
     void rejectProducerDelegation(DelegationRef delegationRef);
@@ -42,6 +44,8 @@ public interface DelegationGateway extends Plugin<Channel> {
     void attemptProducerDelegationRejection(DelegationRef delegationRef);
 
     void revokeProducerDelegation(DelegationRef delegationRef);
+
+    void attemptProducerDelegationRevocation(DelegationRef delegationRef);
 
     ProducerDelegation getProducerDelegation(DelegationRef delegationRef);
 

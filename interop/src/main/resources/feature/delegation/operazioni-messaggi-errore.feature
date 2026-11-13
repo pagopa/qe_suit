@@ -67,7 +67,6 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
       | Comune di Pozzallo |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente all'erogatore Comune di Milano
-    # Binding BFF negativo mancante; riusare revokeProducerDelegation senza attendere il successo.
     When l'utente tenta di revocare la delega in erogazione
     Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__DELETE_PRODUCERS_DELEGATIONS_DELEGATION_ID" in lingua "it"
 
@@ -100,7 +99,6 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     Given l'e-service è delegato in fruizione da PagoPA al Comune di Pozzallo con una delega in stato ACTIVE
     And la delega in fruizione viene revocata da PagoPA
     And un admin appartenente al fruitore PagoPA
-    # Binding BFF negativo mancante; riusare revokeConsumerDelegation senza attendere il successo.
     When l'utente tenta di revocare la delega in fruizione
     Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__DELETE_CONSUMERS_DELEGATIONS_DELEGATION_ID" in lingua "it"
 
