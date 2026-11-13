@@ -120,10 +120,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     And l'e-service "ES-1" collegato a un template di finalità pubblicato
-    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
-    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
-      | alias |
-      | F-1   |
+    And l'e-service con una finalità in stato DRAFT associata da PagoPA
     # Binding BFF negativo mancante; riusare createPurposeFromTemplate con il nome effettivo della finalità.
     When il fruitore tenta di creare una finalità dal template finalità per l'e-service con il nome della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES" in lingua "it"

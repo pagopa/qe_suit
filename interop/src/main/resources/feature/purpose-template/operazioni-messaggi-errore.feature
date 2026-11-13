@@ -173,8 +173,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
   Quando l'operatore tenta di scaricare il documento firmato
   Allora il sistema rifiuta il download e segnala che il ruolo non è autorizzato.
 
-    # Binding di setup mancante; riusare createPurposeTemplate e publishPurposeTemplate.
-    Given un template finalità pubblicato dal fruitore PagoPA
+    Given un template finalità creato da PagoPA e pubblicato
     # Setup e binding mancanti; verificare la disponibilità reale del documento prima del cambio di ruolo.
     And il documento firmato di analisi del rischio del template finalità disponibile
     And un security appartenente al fruitore PagoPA
