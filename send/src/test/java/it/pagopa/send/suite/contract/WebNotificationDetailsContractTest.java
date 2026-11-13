@@ -20,15 +20,12 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.Map;
 import java.util.stream.Stream;
 
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,

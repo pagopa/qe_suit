@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -30,7 +28,6 @@ import java.util.stream.Stream;
  * Il contenuto delle sezioni "I tuoi delegati" e "Deleghe a tuo carico" dipende dalle deleghe dell'utente (sezione vuota
  * oppure tabella) e non viene verificato. Nessuno scenario crea, accetta o revoca deleghe.
  */
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,

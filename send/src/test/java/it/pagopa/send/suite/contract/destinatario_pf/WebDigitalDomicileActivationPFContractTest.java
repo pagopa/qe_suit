@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -33,7 +31,6 @@ import java.util.stream.Stream;
  * aggiungerli) e non viene verificato, come l'avviso sulla PEC del primo passo. Il riepilogo si raggiunge solo se
  * l'utente ha un'email di cortesia, quindi non viene verificato.
  */
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
