@@ -1,6 +1,5 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
-@lingua:it,en
 Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in fruizione
 
   Come amministratore di un ente delegante o delegato
@@ -20,12 +19,9 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
 
     Given l'e-service è delegato in fruizione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
-    # Operazione BFF e binding negativi mancanti, condivisi con ERROR_011.
-    # Il catalogo indica /consumer al singolare: verificare il contratto prima dell'implementazione.
-    When l'utente tenta di rifiutare la delega in fruizione con la motivazione "Delega non necessaria"
+    When l'utente tenta di rifiutare la delega in fruizione
     Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_CONSUMER_DELEGATIONS_DELEGATION_ID_REJECT" in lingua "it"
 
-  @producer-delegation-settings
   Scenario: [ERROR_201] - Impossibilità di rifiutare una delega in erogazione già attiva
   Data una delega in erogazione già approvata dal delegato
   Quando il delegato tenta di rifiutarla con una motivazione valida
@@ -37,7 +33,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding negativo mancante, condiviso con ERROR_010; riusare rejectProducerDelegation.
-    When l'utente tenta di rifiutare la delega in erogazione con la motivazione "Delega non necessaria"
+    When l'utente tenta di rifiutare la delega in erogazione
     Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_REJECT" in lingua "it"
 
   Scenario: [ERROR_004] - Impossibilità di proporre una delega in erogazione a un ente non pubblico
@@ -49,7 +45,6 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     When il Comune di Milano tenta di proporre la delega in erogazione a Sogecap per l'e-service
     Then il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_PRODUCERS_DELEGATIONS" in lingua "it"
 
-  @producer-delegation-settings
   Scenario: [ERROR_005] - Impossibilità di approvare una delega in erogazione già attiva
   Dato un e-service dell'erogatore con una delega in erogazione a un ente delegato già approvata
   Quando il delegato tenta di approvare nuovamente la delega
@@ -64,9 +59,8 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     When l'utente tenta di approvare la delega in erogazione
     Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_APPROVE" in lingua "it"
 
-  @producer-delegation-settings
   Scenario: [ERROR_006] - Impossibilità di revocare una delega in erogazione già revocata
-  Dato un e-service dell'erogatore con una delega in erogazione a un ente delegato già revocata
+  Dato un e-service con una delega in erogazione già revocata
   Quando il delegante tenta di revocare nuovamente la delega
   Allora il sistema rifiuta la revoca e segnala che lo stato della delega non consente l'operazione.
 
@@ -101,7 +95,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__POST_CONSUMERS_DELEGATIONS_DELEGATION_ID_APPROVE" in lingua "it"
 
   Scenario: [ERROR_009] - Impossibilità di revocare una delega in fruizione già revocata
-  Dato un e-service pubblicato dall'erogatore e una delega in fruizione dal fruitore a un ente delegato già revocata
+  Dato un e-service pubblicato e una delega in fruizione già revocata
   Quando il delegante tenta di revocare nuovamente la delega
   Allora il sistema rifiuta la revoca e segnala che lo stato della delega non consente l'operazione.
 
@@ -112,7 +106,6 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     When l'utente tenta di revocare la delega in fruizione
     Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__DELETE_CONSUMERS_DELEGATIONS_DELEGATION_ID" in lingua "it"
 
-  @producer-delegation-settings
   Scenario: [ERROR_010] - Rifiuto di una delega in erogazione con un link nella motivazione
   Dato un e-service dell'erogatore con una delega in erogazione a un ente delegato in attesa di accettazione
   Quando il delegato tenta di rifiutare la delega inserendo un collegamento nella motivazione
@@ -124,7 +117,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega in attesa di accettazione
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante; riusare rejectProducerDelegation con una motivazione parametrica.
-    When l'utente tenta di rifiutare la delega in erogazione con la motivazione "Consulta https://example.com per i dettagli"
+    When l'utente tenta di rifiutare la delega in erogazione inserendo un link all'interno della motivazione
     Then il messaggio di errore corrisponde al caso "DELEGATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_REJECT" in lingua "it"
 
   Scenario: [ERROR_011] - Rifiuto di una delega in fruizione con un link nella motivazione
@@ -135,5 +128,5 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
     Given l'e-service è delegato in fruizione da PagoPA al Comune di Pozzallo con una delega in stato WAITING_FOR_APPROVAL
     And un admin appartenente al delegato Comune di Pozzallo
     # Operazione BFF e binding mancanti per il rifiuto in fruizione con motivazione.
-    When l'utente tenta di rifiutare la delega in fruizione con la motivazione "Consulta https://example.com per i dettagli"
+    When l'utente tenta di rifiutare la delega in fruizione inserendo un link all'interno della motivazione
     Then il messaggio di errore corrisponde al caso "DELEGATION_HYPERLINK_DETECTION_ERROR__POST_CONSUMERS_DELEGATIONS_DELEGATION_ID_REJECT" in lingua "it"
