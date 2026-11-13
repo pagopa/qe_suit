@@ -109,6 +109,11 @@ public class BffAgreementGateway implements AgreementGateway {
     }
 
     @Override
+    public void attemptAgreementActivation(Agreement agreement) {
+        restClient.activate(agreement.getId(), null).withoutPolling();
+    }
+
+    @Override
     public Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation) {
         return restClient.suspend(
                         agreement.getId(), Optional.ofNullable(delegation).map(Delegation::getId).orElse(null)

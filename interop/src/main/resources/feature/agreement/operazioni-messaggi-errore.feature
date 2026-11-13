@@ -39,7 +39,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
     Given un EService creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un admin appartenente all'erogatore Comune di Milano
-    # Binding BFF negativo mancante; riusare activate senza l'accesso al dettaglio previsto dal binding positivo.
     When l'erogatore tenta di approvare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE" in lingua "it"
 
@@ -61,7 +60,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione in attesa di approvazione
     And un admin appartenente all'erogatore Comune di Milano
-    # Binding BFF negativo mancante; riusare activate senza l'accesso al dettaglio WEB.
     When l'erogatore tenta di approvare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ACTIVATION_FAILED" in lingua "it"
 
@@ -75,7 +73,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     # L'archiviazione definitiva richiede un setup dedicato: non equivale all'avvio dell'archiviazione.
     And la versione dell'e-service associata alla richiesta di fruizione <stato versione>
     And un admin appartenente all'erogatore Comune di Milano
-    # Binding BFF negativo mancante; riusare activate senza l'accesso al dettaglio WEB.
     When l'erogatore tenta di approvare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE" in lingua "it"
 
@@ -106,8 +103,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione sospesa
     # Il binding di lifecycle non supporta ARCHIVED; serve il setup dell'archiviazione definitiva.
     And la versione dell'e-service associata alla richiesta di fruizione archiviata
-    # Binding di verifica mancante; riusare getAgreement.
-    And la richiesta di fruizione è ancora in stato SUSPENDED
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti per il tentativo di riattivazione.
     When il fruitore tenta di riattivare la richiesta di fruizione

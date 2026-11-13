@@ -102,6 +102,11 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     }
 
     @Override
+    public void attemptAgreementActivation(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementActivation operation");
+    }
+
+    @Override
     public Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support suspendAgreement operation");
     }

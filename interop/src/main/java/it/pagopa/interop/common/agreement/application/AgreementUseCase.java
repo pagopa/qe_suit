@@ -84,6 +84,10 @@ public class AgreementUseCase {
         return activateAgreement(agreement, null);
     }
 
+    public void attemptAgreementActivation(Agreement agreement) {
+        agreementGateway.attemptAgreementActivation(agreement);
+    }
+
     public Agreement submitAgreement(Agreement agreement) {
         return agreementGateway.submitAgreement(agreement);
     }
