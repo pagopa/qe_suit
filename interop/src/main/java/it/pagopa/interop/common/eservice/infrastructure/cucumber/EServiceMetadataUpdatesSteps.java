@@ -42,12 +42,24 @@ public class EServiceMetadataUpdatesSteps {
         initialEService = currentEService.toBuilder()
                 .descriptors(new ArrayList<>(currentEService.getDescriptors()))
                 .build();
-        EServiceUpdateCommand updateCommand = requestFactory.defaultUpdateEServiceCommand();
-        updateCommand.alias(alias);
+        EServiceUpdateCommand updateCommand = requestFactory.defaultUpdateEServiceCommand().alias(alias);
         requestedMetadata = configurationMapper.apply(configurations, updateCommand);
         interopJourney
                 .withProducer(producer, role)
                 .updateEService(updateCommand);
+    }
+
+    @When("un {userRole} di/del {tenant} richiede la modifica dei metadati dell'e-service {string} ma viene rifiutata:")
+    public void shouldFailToUpdateMetadata(UserRole role, Tenant producer, String alias, List<EServiceMetadataUpdateConfiguration> configurations) {
+        EService currentEService = entityStore.getByAliasOrThrow(alias, EService.class);
+        initialEService = currentEService.toBuilder()
+                .descriptors(new ArrayList<>(currentEService.getDescriptors()))
+                .build();
+        EServiceUpdateCommand updateCommand = requestFactory.defaultUpdateEServiceCommand().alias(alias);
+        requestedMetadata = configurationMapper.apply(configurations, updateCommand);
+        interopJourney
+                .withProducer(producer, role)
+                .shouldFailToUpdateEService(updateCommand);
     }
 
     @Then("l'e-service {string} presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori")
