@@ -9,8 +9,8 @@ import it.pagopa.infrastructure.context.InMemoryBrowserContext;
 import it.pagopa.infrastructure.context.InMemoryCurrentChannel;
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.infrastructure.context.InMemoryTestContext;
-import it.pagopa.interop.common.infrastructure.context.InMemoryCurrentUserSession;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.infrastructure.context.InMemoryAuthSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.m2m.infrastructure.context.InMemoryCurrentM2MSession;
 import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
@@ -35,8 +35,8 @@ public class JunitContextConfig {
     }
 
     @Bean
-    CurrentUserSession currentUserSession() {
-        return new InMemoryCurrentUserSession();
+    AuthSession currentUserSession() {
+        return new InMemoryAuthSession();
     }
 
     @Bean

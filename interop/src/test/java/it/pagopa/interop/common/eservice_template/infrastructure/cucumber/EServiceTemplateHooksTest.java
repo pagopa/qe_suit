@@ -5,7 +5,7 @@ import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.interop.bff.eservice_template.infrastructure.BffEServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.application.*;
 import it.pagopa.interop.common.eservice_template.domain.*;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.*;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +21,7 @@ class EServiceTemplateHooksTest {
     private final EServiceTemplateVersionGateway gateway = mock(EServiceTemplateVersionGateway.class);
     private final EServiceTemplateVersionUseCase versions = new EServiceTemplateVersionUseCase(
             gateway, new BffEServiceTemplateRequestFactory());
-    private final CurrentUserSession session = mock(CurrentUserSession.class);
+    private final AuthSession session = mock(AuthSession.class);
     @SuppressWarnings("unchecked")
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);
     private final EServiceTemplateHooks hook = new EServiceTemplateHooks(entities, templates, versions, session, channel);
@@ -36,7 +36,7 @@ class EServiceTemplateHooksTest {
                 .version(draft).version(published).version(suspended).build();
         entities.upsert("TPL-1", template);
         when(templates.getEServiceTemplate(template)).thenReturn(template);
-        when(session.getUser()).thenReturn(User.getTenantAdmin(Tenant.PAGO_PA));
+        when(session.getActor()).thenReturn(User.getTenantAdmin(Tenant.PAGO_PA));
         when(session.getTenant()).thenReturn(Tenant.PAGO_PA);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
 

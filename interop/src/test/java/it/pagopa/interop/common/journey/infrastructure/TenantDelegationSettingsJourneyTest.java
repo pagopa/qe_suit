@@ -2,7 +2,7 @@ package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
@@ -22,7 +22,7 @@ class TenantDelegationSettingsJourneyTest {
             "SOGECAP,false", "SOGECAP,true"
     })
     void usesRecipientAdminAndBffAndRestoresCallerOnSuccessOrFailure(Tenant recipient, boolean fail) {
-        var session = mock(CurrentUserSession.class);
+        var session = mock(AuthSession.class);
         @SuppressWarnings("unchecked")
         CurrentChannel<Channel> channel = mock(CurrentChannel.class);
         var gateway = mock(TenantGateway.class);
@@ -31,7 +31,7 @@ class TenantDelegationSettingsJourneyTest {
         var originalTenant = Tenant.COMUNE_DI_MILANO;
         var originalUser = User.getTenantAdmin(originalTenant);
         when(session.getTenant()).thenReturn(originalTenant);
-        when(session.getUser()).thenReturn(originalUser);
+        when(session.getActor()).thenReturn(originalUser);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
         var ref = TenantRef.of(recipient.getOrganizationId());
         var failure = new IllegalStateException("configuration failed");

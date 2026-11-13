@@ -6,7 +6,7 @@ import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateUseCase;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateVersionUseCase;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -17,7 +17,7 @@ public class EServiceTemplateHooks {
     private final EntityStore entities;
     private final EServiceTemplateUseCase templates;
     private final EServiceTemplateVersionUseCase versions;
-    private final CurrentUserSession session;
+    private final AuthSession session;
     private final CurrentChannel<Channel> channel;
 
     // Published templates cannot be deleted/archived by BFF; suspension is the supported retirement operation.
@@ -25,7 +25,7 @@ public class EServiceTemplateHooks {
     public void cleanUpTemplates() {
         var created = entities.getAll(EServiceTemplate.class);
         if (created.isEmpty()) return;
-        var user = session.getUser();
+        var user = session.getActor();
         var tenant = session.getTenant();
         var previousChannel = channel.getCurrentChannel();
         var failure = new IllegalStateException("Cleanup dei template e-service non completato");

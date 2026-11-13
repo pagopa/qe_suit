@@ -10,9 +10,9 @@ import it.pagopa.infrastructure.context.*;
 import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngine;
 import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngineConfig;
 import it.pagopa.interop.common.attribute.infrastructure.cucumber.CertifiedAttributeFixtures;
-import it.pagopa.interop.common.infrastructure.context.CucumberCurrentUserSession;
+import it.pagopa.interop.common.infrastructure.context.CucumberAuthSession;
 import it.pagopa.interop.common.infrastructure.cucumber.channel.InteropChannelEngineConfigs;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,8 +40,8 @@ public class CucumberConfig {
     @Bean
     @ScenarioScope
     @Primary
-    CurrentUserSession currentUserSession() {
-        return new CucumberCurrentUserSession();
+    AuthSession currentUserSession() {
+        return new CucumberAuthSession();
     }
 
     @Bean

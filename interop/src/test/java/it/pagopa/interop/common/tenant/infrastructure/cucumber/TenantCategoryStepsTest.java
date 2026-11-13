@@ -2,7 +2,7 @@ package it.pagopa.interop.common.tenant.infrastructure.cucumber;
 
 import it.pagopa.interop.common.tenant.domain.TenantCategory;
 import it.pagopa.interop.common.infrastructure.cucumber.DataTableMapper;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -31,7 +31,7 @@ class TenantCategoryStepsTest {
     private final DataTableMapper transformer = new DataTableMapper(VALIDATORS.getValidator());
     private final TenantCategoryExpectationMapper mapper = Mappers.getMapper(TenantCategoryExpectationMapper.class);
     private final TenantCategoryUseCase useCase = mock(TenantCategoryUseCase.class);
-    private final CurrentUserSession session = mock(CurrentUserSession.class);
+    private final AuthSession session = mock(AuthSession.class);
     private final TenantCategorySteps steps = new TenantCategorySteps(mapper, useCase, session);
 
     @AfterEach

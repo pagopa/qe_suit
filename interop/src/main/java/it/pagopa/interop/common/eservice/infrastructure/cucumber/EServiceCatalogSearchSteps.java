@@ -10,7 +10,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceCatalog;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceCatalogSearchConfiguration;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceCatalogSearchConfigurationMapper;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class EServiceCatalogSearchSteps {
     private final EServiceCatalogUseCase catalog;
     private final EServiceCatalogPaginationUseCase pagination;
     private final EServiceRequestFactory requestFactory;
-    private final CurrentUserSession session;
+    private final AuthSession session;
     private final EServiceCatalogSearchConfigurationMapper configurationMapper;
     private final EntityStore entityStore;
     private SearchEServiceCatalogCommand searchCommand;

@@ -3,7 +3,7 @@ package it.pagopa.interop.common.infrastructure.contract;
 import it.pagopa.infrastructure.contract.http.HttpContractAuthentication;
 import it.pagopa.infrastructure.contract.http.HttpContractStages;
 import it.pagopa.infrastructure.contract.http.HttpContractValidator;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -27,11 +27,10 @@ class InteropHttpContractValidatorTest {
     @Test
     void asUserAndRoleReturnApiCallSelectionStageAndResolveRole() throws Exception {
         HttpContractValidator delegate = mock(HttpContractValidator.class);
-        CurrentUserSession currentUserSession = mock(CurrentUserSession.class);
-        CurrentM2MSession currentM2MSession = mock(CurrentM2MSession.class);
+        AuthSession authSession = mock(AuthSession.class);
         HttpContractStages.ApiCallStage apiCallStage = mock(HttpContractStages.ApiCallStage.class);
         when(delegate.apiCall(any(), any())).thenReturn(apiCallStage);
-        InteropHttpContractValidator validator = new InteropHttpContractValidator(delegate, currentUserSession, currentM2MSession);
+        InteropHttpContractValidator validator = new InteropHttpContractValidator(delegate, authSession);
 
         User expectedUser = User.getTenantUser(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
        
@@ -42,24 +41,23 @@ class InteropHttpContractValidatorTest {
         verify(delegate).apiCall(authCaptor.capture(), any());
         authCaptor.getValue().authenticate();
 
-        reset(delegate, currentUserSession, currentM2MSession);
+        reset(delegate, authSession);
 
         validator.as(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN).apiCall(() -> new Object());
         verify(delegate).apiCall(authCaptor.capture(), any());
         authCaptor.getValue().authenticate();
 
-        verify(currentUserSession).set(expectedUser, Tenant.COMUNE_DI_MILANO);
+        verify(authSession).set(expectedUser, Tenant.COMUNE_DI_MILANO);
         assertThrows(NoSuchMethodException.class, () -> InteropHttpContractValidator.class.getMethod("apiCall", Supplier.class));
     }
 
     @Test
     void asTenantAndM2MRoleReturnApiCallSelectionStageAndResolveRole() throws Exception {
         HttpContractValidator delegate = mock(HttpContractValidator.class);
-        CurrentUserSession currentUserSession = mock(CurrentUserSession.class);
-        CurrentM2MSession currentM2MSession = mock(CurrentM2MSession.class);
+        AuthSession authSession = mock(AuthSession.class);
         HttpContractStages.ApiCallStage apiCallStage = mock(HttpContractStages.ApiCallStage.class);
         when(delegate.apiCall(any(), any())).thenReturn(apiCallStage);
-        InteropHttpContractValidator validator = new InteropHttpContractValidator(delegate, currentUserSession, currentM2MSession);
+        InteropHttpContractValidator validator = new InteropHttpContractValidator(delegate, authSession);
 
         HttpContractStages.ApiCallSelectionStage userStage = validator.as(Tenant.COMUNE_DI_MILANO, M2MRole.M2M_ADMIN);
         assertNotNull(userStage.apiCall(() -> new Object()));
@@ -68,7 +66,7 @@ class InteropHttpContractValidatorTest {
         verify(delegate).apiCall(authCaptor.capture(), any());
         authCaptor.getValue().authenticate();
 
-        reset(delegate, currentUserSession, currentM2MSession);
+        reset(delegate, authSession);
 
         validator.as(Tenant.COMUNE_DI_MILANO, M2MRole.M2M_ADMIN).apiCall(() -> new Object());
         verify(delegate).apiCall(authCaptor.capture(), any());

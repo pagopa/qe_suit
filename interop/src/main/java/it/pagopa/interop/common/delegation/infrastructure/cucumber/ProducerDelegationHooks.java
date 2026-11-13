@@ -7,7 +7,7 @@ import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.delegation.application.DelegationUseCase;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -24,7 +24,7 @@ public class ProducerDelegationHooks {
 
     private final EntityStore entityStore;
     private final DelegationUseCase delegationUseCase;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
     private final CurrentChannel<Channel> currentChannel;
 
     private Set<UUID> preexistingDelegationIds;
@@ -48,8 +48,8 @@ public class ProducerDelegationHooks {
         if (delegations.isEmpty()) {
             return;
         }
-        var previousUser = currentUserSession.getUser();
-        var previousTenant = currentUserSession.getTenant();
+        var previousUser = authSession.getActor();
+        var previousTenant = authSession.getTenant();
         var previousChannel = currentChannel.getCurrentChannel();
         var cleanupFailure = new IllegalStateException("Cleanup delle deleghe di erogazione non completato");
         try {
@@ -63,7 +63,7 @@ public class ProducerDelegationHooks {
                 }
             }
         } finally {
-            currentUserSession.set(previousUser, previousTenant);
+            authSession.set(previousUser, previousTenant);
             currentChannel.setCurrentChannel(previousChannel);
         }
         if (cleanupFailure.getSuppressed().length > 0) {
@@ -96,6 +96,6 @@ public class ProducerDelegationHooks {
 
     private void actAs(UUID tenantId) {
         Tenant tenant = Tenant.fromOrganizationId(tenantId);
-        currentUserSession.set(User.getTenantAdmin(tenant), tenant);
+        authSession.set(User.getTenantAdmin(tenant), tenant);
     }
 }

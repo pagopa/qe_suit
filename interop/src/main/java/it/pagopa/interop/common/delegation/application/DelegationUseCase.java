@@ -5,7 +5,7 @@ import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
 import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -23,7 +23,7 @@ public class DelegationUseCase {
 
     private final DelegationGateway delegationGateway;
     private final TenantUseCase tenantUseCase;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
 
     public void approveProducerDelegation(DelegationRef delegationRef) {
         delegationGateway.approveProducerDelegation(delegationRef);
@@ -40,17 +40,17 @@ public class DelegationUseCase {
     public Delegation createProducerDelegation(@NonNull ProducerDelegationCreationCommand command) {
         Tenant delegate = command.getDelegate();
         TenantRef delegateRef = TenantRef.of(delegate.getOrganizationId());
-        currentUserSession.set(User.getTenantAdmin(delegate), delegate);
+        authSession.set(User.getTenantAdmin(delegate), delegate);
         tenantUseCase.enableProducerDelegationAvailability(delegateRef);
 
         Tenant delegator = command.getDelegator();
-        currentUserSession.set(User.getTenantAdmin(delegator), delegator);
+        authSession.set(User.getTenantAdmin(delegator), delegator);
         Delegation delegation = createProducerDelegation(delegateRef, command.getEServiceRef());
 
         return switch (command.getTargetState()) {
             case WAITING_FOR_APPROVAL -> delegation;
             case ACTIVE -> {
-                currentUserSession.set(User.getTenantAdmin(delegate), delegate);
+                authSession.set(User.getTenantAdmin(delegate), delegate);
                 approveProducerDelegation(delegation.getRef());
                 yield delegation;
             }

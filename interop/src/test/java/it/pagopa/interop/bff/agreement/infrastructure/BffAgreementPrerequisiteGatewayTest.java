@@ -10,7 +10,7 @@ import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
@@ -31,7 +31,7 @@ class BffAgreementPrerequisiteGatewayTest {
     private final EService service = EService.builder().id(UUID.randomUUID())
             .producerId(Tenant.COMUNE_DI_MILANO.getOrganizationId().toString()).build();
     private final AgreementGateway agreements = mock(AgreementGateway.class);
-    private final CurrentUserSession session = mock(CurrentUserSession.class);
+    private final AuthSession session = mock(AuthSession.class);
     private final AgreementsApi.GetProducerAgreementsOper operation =
             mock(AgreementsApi.GetProducerAgreementsOper.class);
 
@@ -170,7 +170,7 @@ class BffAgreementPrerequisiteGatewayTest {
         when(operation.offsetQuery(any())).thenReturn(operation);
         when(operation.limitQuery(any())).thenReturn(operation);
         when(session.getTenant()).thenReturn(Tenant.PAGO_PA);
-        when(session.getUser()).thenReturn(User.getTenantAdmin(Tenant.PAGO_PA));
+        when(session.getActor()).thenReturn(User.getTenantAdmin(Tenant.PAGO_PA));
         var rest = new BffAgreementRestClient(
                 new TestChainFactory(mock(LastApiResponseStore.class), mock(EntityStore.class)), apiClient);
         return new BffAgreementPrerequisiteGateway(rest, session);

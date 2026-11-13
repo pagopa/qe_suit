@@ -12,7 +12,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.journey.application.EServiceDescriptorJourney;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
     private final EServiceDescriptorLifecycleUseCase lifecycle;
     private final EntityStore entityStore;
     private final EServiceRequestFactory requestFactory;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
 
     @Override
     public EServiceDescriptorJourneyImpl addDescriptor(EServiceDescriptorState state) {
@@ -152,7 +152,7 @@ public class EServiceDescriptorJourneyImpl implements EServiceDescriptorJourney<
         if (state != EServiceDescriptorState.WAITING_FOR_APPROVAL) {
             return;
         }
-        Tenant actor = currentUserSession.getTenant();
+        Tenant actor = authSession.getTenant();
         if (actor == null || eService.getProducerId() == null
                 || actor.getOrganizationId().toString().equals(eService.getProducerId())) {
             throw new IllegalStateException(

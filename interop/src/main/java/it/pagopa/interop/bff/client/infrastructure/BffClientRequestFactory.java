@@ -5,8 +5,9 @@ import it.pagopa.interop.bff.client.application.BffClientKeyCreationCommand;
 import it.pagopa.interop.common.client.application.ClientRequestFactory;
 import it.pagopa.interop.common.client.application.command.ClientCreationCommand;
 import it.pagopa.interop.common.client.application.command.ClientKeyCreationCommand;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.InteropActor;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ClientSeed;
 import lombok.RequiredArgsConstructor;
@@ -24,14 +25,14 @@ import static org.instancio.Select.field;
 @RequiredArgsConstructor
 public class BffClientRequestFactory implements ClientRequestFactory {
 
-    private static final UUID DEFAULT_MEMBER_ID = User.S_MATTIA.getUserId();
+    private static final UUID DEFAULT_MEMBER_ID = User.S_MATTIA.getId();
 
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
 
     @Override
     public ClientCreationCommand creationRequest() {
-        User user = getUser();
-        UUID userId = user != null ? user.getUserId() : DEFAULT_MEMBER_ID;
+        InteropActor user = getUser();
+        UUID userId = user != null ? user.getId() : DEFAULT_MEMBER_ID;
 
         ClientSeed seed = Instancio.of(ClientSeed.class)
                 .set(field(ClientSeed::getName), randomAlphanumericName("client", 24))
@@ -54,9 +55,9 @@ public class BffClientRequestFactory implements ClientRequestFactory {
         return channel == Channel.BFF;
     }
 
-    private User getUser() {
+    private InteropActor getUser() {
         try {
-            return currentUserSession.getUser();
+            return authSession.getActor();
         } catch (IllegalStateException e) {
             // Se utente non settato, restituisci null
             return null;

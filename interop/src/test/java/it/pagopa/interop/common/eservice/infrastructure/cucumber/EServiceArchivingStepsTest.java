@@ -2,7 +2,7 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import it.pagopa.interop.common.eservice.application.EServiceArchivingUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ class EServiceArchivingStepsTest {
     @Test
     void selectsTheExplicitProducerAndDelegatesWholeServiceArchiving() {
         var archiving = mock(EServiceArchivingUseCase.class);
-        var session = mock(CurrentUserSession.class);
+        var session = mock(AuthSession.class);
         var service = EService.builder().id(UUID.randomUUID()).build();
         var steps = new EServiceArchivingSteps(archiving, session);
 

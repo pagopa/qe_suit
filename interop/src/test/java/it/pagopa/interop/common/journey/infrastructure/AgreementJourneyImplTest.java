@@ -8,7 +8,7 @@ import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 class AgreementJourneyImplTest {
     private final AgreementUseCase agreements = mock(AgreementUseCase.class);
     private final EntityStore entityStore = mock(EntityStore.class);
-    private final CurrentUserSession session = mock(CurrentUserSession.class);
+    private final AuthSession session = mock(AuthSession.class);
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);
     private final AgreementJourneyImpl journey =
             new AgreementJourneyImpl(agreements, entityStore, session, channel);
@@ -62,7 +62,7 @@ class AgreementJourneyImplTest {
         Agreement pending = agreement(PENDING);
         Agreement active = agreement(ACTIVE);
         stubSubmission(pending);
-        when(session.getUser()).thenReturn(User.getTenantAdmin(Tenant.PAGO_PA));
+        when(session.getActor()).thenReturn(User.getTenantAdmin(Tenant.PAGO_PA));
         when(session.getTenant()).thenReturn(Tenant.PAGO_PA);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
         when(agreements.activateAgreement(pending, null)).thenReturn(active);
@@ -132,7 +132,7 @@ class AgreementJourneyImplTest {
         RuntimeException activationFailure = new IllegalStateException("approval failed");
         RuntimeException userRestoreFailure = new IllegalStateException("user restore failed");
         stubSubmission(pending);
-        when(session.getUser()).thenReturn(User.getTenantAdmin(Tenant.PAGO_PA));
+        when(session.getActor()).thenReturn(User.getTenantAdmin(Tenant.PAGO_PA));
         when(session.getTenant()).thenReturn(Tenant.PAGO_PA);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
         when(agreements.activateAgreement(pending, null)).thenThrow(activationFailure);
@@ -151,7 +151,7 @@ class AgreementJourneyImplTest {
         Agreement active = agreement(ACTIVE);
         RuntimeException userRestoreFailure = new IllegalStateException("user restore failed");
         stubSubmission(pending);
-        when(session.getUser()).thenReturn(User.getTenantAdmin(Tenant.PAGO_PA));
+        when(session.getActor()).thenReturn(User.getTenantAdmin(Tenant.PAGO_PA));
         when(session.getTenant()).thenReturn(Tenant.PAGO_PA);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
         when(agreements.activateAgreement(pending, null)).thenReturn(active);

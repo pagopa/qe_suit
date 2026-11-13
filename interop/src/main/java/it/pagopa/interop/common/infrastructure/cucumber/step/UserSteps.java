@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.cucumber.step;
 
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -22,7 +22,7 @@ public class UserSteps {
     @Given("un {userRole} appartenente al fruitore {tenant}")
     @Given("un {userRole} appartenente al delegato {tenant}")
     public void setUser(UserRole userRole, Tenant tenant) {
-        currentUserSession.set(User.getTenantUser(tenant, userRole), tenant);
+        authSession.set(User.getTenantUser(tenant, userRole), tenant);
     }
 
     @Given("un {userM2MRole} appartenente all'erogatore {tenant}")

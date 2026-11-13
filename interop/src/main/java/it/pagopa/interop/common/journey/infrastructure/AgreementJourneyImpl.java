@@ -7,11 +7,8 @@ import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.AgreementJourney;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.interop.common.kernel.domain.Delegation;
-import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.*;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -23,7 +20,7 @@ import java.util.Set;
 public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyImpl> {
     private final AgreementUseCase agreementUseCase;
     private final EntityStore entityStore;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
     private final CurrentChannel<Channel> currentChannel;
 
     @Override
@@ -94,15 +91,15 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
     }
 
     private Agreement withProducerSession(Agreement agreement, java.util.function.Supplier<Agreement> action) {
-        User originalUser = currentUserSession.getUser();
-        Tenant originalTenant = currentUserSession.getTenant();
+        InteropActor originalActor = authSession.getActor();
+        Tenant originalTenant = authSession.getTenant();
         Channel originalChannel = currentChannel.getCurrentChannel();
         Throwable primaryFailure = null;
 
         try {
             Tenant producer = Tenant.fromOrganizationId(agreement.getProducerId());
             currentChannel.setCurrentChannel(Channel.BFF);
-            currentUserSession.set(User.getTenantAdmin(producer), producer);
+            authSession.set(User.getTenantAdmin(producer), producer);
             return action.get();
         } catch (RuntimeException | Error failure) {
             primaryFailure = failure;
@@ -110,7 +107,7 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
         } finally {
             Throwable restorationFailure = null;
             try {
-                currentUserSession.set(originalUser, originalTenant);
+                authSession.set(originalActor, originalTenant);
             } catch (RuntimeException | Error failure) {
                 restorationFailure = failure;
             }

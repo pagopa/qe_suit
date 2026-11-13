@@ -8,7 +8,8 @@ import it.pagopa.application.context.TestContext;
 import it.pagopa.infrastructure.http.restassured.HttpLoggingFilter;
 import it.pagopa.infrastructure.http.restassured.TestPolicyFilterResolver;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.User;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,7 @@ public class BffRequestSpecFactory {
 
     private final BearerAuthProvider bearerAuthProvider;
     private final ObjectProvider<TestContext> testKindProvider;
-    private final ObjectProvider<CurrentUserSession> currentUserSessionProvider;
+    private final ObjectProvider<AuthSession> currentUserSessionProvider;
     private final TestPolicyFilterResolver testPolicyFilterResolver;
 
     @Value("${interop.api.base-url.bff}")
@@ -31,7 +32,7 @@ public class BffRequestSpecFactory {
     public BffRequestSpecFactory(
             BearerAuthProvider bearerAuthProvider,
             ObjectProvider<TestContext> testKindProvider,
-            ObjectProvider<CurrentUserSession> currentUserSessionProvider,
+            ObjectProvider<AuthSession> currentUserSessionProvider,
             TestPolicyFilterResolver testPolicyFilterResolver
     ) {
         this.bearerAuthProvider = bearerAuthProvider;
@@ -42,11 +43,11 @@ public class BffRequestSpecFactory {
 
     public RequestSpecBuilder create() {
         TestContext testContext = testKindProvider.getObject();
-        CurrentUserSession currentUserSession = currentUserSessionProvider.getObject();
+        AuthSession authSession = currentUserSessionProvider.getObject();
 
         String token = bearerAuthProvider.getToken(
-                currentUserSession.getUser(),
-                currentUserSession.getTenant()
+                (User) authSession.getActor(),
+                authSession.getTenant()
         );
 
         RequestSpecBuilder builder = new RequestSpecBuilder()

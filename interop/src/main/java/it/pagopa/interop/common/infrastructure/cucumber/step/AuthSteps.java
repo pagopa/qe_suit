@@ -1,7 +1,7 @@
 package it.pagopa.interop.common.infrastructure.cucumber.step;
 
 import io.cucumber.java.en.Given;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -12,11 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 public class AuthSteps {
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
 
     @Given("un utente autenticato del/di {tenant} con ruolo {userRole}")
     public void setAuth(Tenant tenant, UserRole userRole) {
-        currentUserSession.set(User.getTenantUser(tenant, userRole), tenant);
+        authSession.set(User.getTenantUser(tenant, userRole), tenant);
     }
 
     @Given("un utente autenticato con ruolo {userRole} di un tenant di tipo {tenantKind}")
@@ -28,6 +28,6 @@ public class AuthSteps {
     @Given("un utente autenticato con ruolo {userRole} del tenant {tenant}")
     public void setAuth(UserRole userRole, Tenant tenant) {
         User user = User.getTenantUser(tenant, userRole);
-        currentUserSession.set(user, tenant);
+        authSession.set(user, tenant);
     }
 }

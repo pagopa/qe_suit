@@ -3,7 +3,7 @@ package it.pagopa.interop.common.infrastructure.contract;
 import it.pagopa.infrastructure.contract.http.HttpContractAuthentication;
 import it.pagopa.infrastructure.contract.http.HttpContractStages;
 import it.pagopa.infrastructure.contract.http.HttpContractValidator;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -14,24 +14,21 @@ import java.util.Objects;
 
 public class InteropHttpContractValidator {
     private final HttpContractValidator delegate;
-    private final CurrentUserSession currentUserSession;
-    private final CurrentM2MSession currentM2MSession;
+    private final AuthSession authSession;
 
     public InteropHttpContractValidator(
             HttpContractValidator delegate,
-            CurrentUserSession currentUserSession,
-            CurrentM2MSession currentM2MSession
+            AuthSession authSession
     ) {
         this.delegate = Objects.requireNonNull(delegate, "delegate must not be null");
-        this.currentUserSession = Objects.requireNonNull(currentUserSession, "currentUserSession must not be null");
-        this.currentM2MSession = Objects.requireNonNull(currentM2MSession, "currentM2MSession must not be null");
+        this.authSession = Objects.requireNonNull(authSession, "authSession must not be null");
     }
 
     public HttpContractStages.ApiCallSelectionStage as(Tenant tenant, User user) {
         Objects.requireNonNull(tenant, "tenant must not be null");
         Objects.requireNonNull(user, "user must not be null");
 
-        HttpContractAuthentication authentication = () -> currentUserSession.set(user, tenant);
+        HttpContractAuthentication authentication = () -> authSession.set(user, tenant);
         return operationSupplier -> delegate.apiCall(authentication, operationSupplier);
     }
 

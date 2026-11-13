@@ -3,7 +3,7 @@ package it.pagopa.interop.common.kernel.domain;
 import lombok.Getter;
 
 @Getter
-public enum UserRole {
+public enum UserRole implements InteropRole {
     ADMIN("admin"),
     API("api"),
     SECURITY("security"),

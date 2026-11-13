@@ -2,16 +2,11 @@ package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.journey.application.TenantJourney;
-import it.pagopa.interop.common.kernel.domain.AgreementRef;
-import it.pagopa.interop.common.kernel.domain.AttributeRef;
-import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.tenant.application.TenantUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -22,12 +17,12 @@ public class TenantJourneyImpl implements TenantJourney<TenantJourneyImpl> {
 
     private final TenantUseCase tenantUseCase;
     private final EntityStore entityStore;
-    private final CurrentUserSession session;
+    private final AuthSession session;
     private final CurrentChannel<Channel> channel;
 
     @Override
     public TenantJourneyImpl ensureProducerDelegationEnabled(Tenant tenant) {
-        User originalUser = session.getUser();
+        InteropActor originalActor = session.getActor();
         Tenant originalTenant = session.getTenant();
         Channel originalChannel = channel.getCurrentChannel();
         try {
@@ -37,7 +32,7 @@ public class TenantJourneyImpl implements TenantJourney<TenantJourneyImpl> {
             return this;
         } finally {
             try {
-                session.set(originalUser, originalTenant);
+                session.set(originalActor, originalTenant);
             } finally {
                 channel.setCurrentChannel(originalChannel);
             }
