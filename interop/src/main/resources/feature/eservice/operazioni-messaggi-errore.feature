@@ -16,8 +16,8 @@ Feature: Messaggi di errore durante la gestione degli e-service
   Allora il sistema rifiuta l'aggiunta e invita l'erogatore a rimuovere il collegamento dalla risposta.
 
     Given i seguenti e-service in bozza:
-      | alias | erogatore        | modalità |
-      | ES-1  | Comune di Milano | RECEIVE  |
+      | alias | erogatore        | modalità  |
+      | ES-1  | Comune di Milano | ricezione |
     # Binding negativo mancante; riusare la costruzione del questionario valido di addLatestRiskAnalysis.
     # Alterare soltanto una risposta a testo libero, mantenendo valido anche il nome dell'analisi.
     When l'erogatore tenta di aggiungere all'e-service un'analisi del rischio con la risposta a testo libero "Motivazione https://example.org"
@@ -158,15 +158,13 @@ Feature: Messaggi di errore durante la gestione degli e-service
 
   # Endpoint: POST /eservices/:eServiceId/riskAnalysis
   Scenario: [ERROR_046] - Rifiuto dell'aggiunta di un'analisi del rischio con un nome già usato
-  Dato un e-service in ricezione con un'analisi del rischio
+  Dato un e-service pubblicato in ricezione con un'analisi del rischio
   Quando l'erogatore tenta di aggiungere un'altra analisi con lo stesso nome
   Allora il sistema rifiuta l'aggiunta e segnala che il nome dell'analisi è già in uso.
 
-    Given i seguenti e-service in bozza:
-      | alias | erogatore        | modalità |
-      | ES-1  | Comune di Milano | RECEIVE  |
-    # Binding mancante; riusare addLatestRiskAnalysis per predisporre l'analisi.
-    And un'analisi del rischio completa associata all'e-service
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | modalità  |
+      | ES-1  | Comune di Milano | ricezione |
     # Binding BFF negativo mancante; riusare addRiskAnalysis con il nome dell'analisi esistente.
     When l'erogatore tenta di aggiungere all'e-service un'analisi del rischio con il nome di quella esistente
     Then il messaggio di errore corrisponde al caso "CATALOG_RISK_ANALYSIS_DUPLICATED__POST_ESERVICES_E_SERVICE_ID_RISK_ANALYSIS" in lingua "it"
@@ -178,8 +176,8 @@ Feature: Messaggi di errore durante la gestione degli e-service
   Allora il sistema rifiuta la modifica e segnala che il nome dell'analisi è già in uso.
 
     Given i seguenti e-service in bozza:
-      | alias | erogatore        | modalità |
-      | ES-1  | Comune di Milano | RECEIVE  |
+      | alias | erogatore        | modalità  |
+      | ES-1  | Comune di Milano | ricezione |
     # Binding mancante per più analisi con alias e nomi; riusare addRiskAnalysis.
     And le seguenti analisi del rischio complete associate all'e-service:
       | alias | nome      |

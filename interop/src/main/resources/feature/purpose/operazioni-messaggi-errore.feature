@@ -44,12 +44,9 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il fruitore tenta di crearne un'altra con lo stesso nome per lo stesso e-service
   Allora il sistema rifiuta la creazione e segnala che il nome è già in uso.
 
-    Given i seguenti e-service in bozza:
-      | alias | erogatore        | modalità |
-      | ES-1  | Comune di Milano | RECEIVE  |
-    # Binding di setup mancante; riusare addLatestRiskAnalysis per l'e-service in ricezione.
-    And un'analisi del rischio completa associata all'e-service
-    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | modalità  |
+      | ES-1  | Comune di Milano | ricezione |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     # Binding di setup comune mancante; riusare createReversePurpose con l'analisi dell'erogatore.
     And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
@@ -307,12 +304,9 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il fruitore tenta di aggiornare parzialmente la seconda usando il nome della prima
   Allora il sistema rifiuta la modifica e segnala che il nome è già in uso.
 
-    Given i seguenti e-service in bozza:
-      | alias | erogatore        | modalità |
-      | ES-1  | Comune di Milano | RECEIVE  |
-    # Binding di setup mancante; riusare addLatestRiskAnalysis per l'e-service in ricezione.
-    And un'analisi del rischio completa associata all'e-service
-    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | modalità  |
+      | ES-1  | Comune di Milano | ricezione |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     # Binding di setup comune mancante; riusare createReversePurpose con l'analisi dell'erogatore.
     And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
@@ -331,12 +325,9 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il fruitore tenta di aggiornarla parzialmente inserendo un collegamento nel nome
   Allora il sistema rifiuta la modifica e invita il fruitore a rimuovere il collegamento.
 
-    Given i seguenti e-service in bozza:
-      | alias | erogatore        | modalità |
-      | ES-1  | Comune di Milano | RECEIVE  |
-    # Binding di setup mancante; riusare addLatestRiskAnalysis per l'e-service in ricezione.
-    And un'analisi del rischio completa associata all'e-service
-    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | modalità  |
+      | ES-1  | Comune di Milano | ricezione |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     # Binding di setup comune mancante; riusare createReversePurpose con l'analisi dell'erogatore.
     And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
