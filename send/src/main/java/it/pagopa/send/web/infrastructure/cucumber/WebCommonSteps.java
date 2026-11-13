@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class CommonSteps {
+public class WebCommonSteps {
     private final WebPresentationGateway uiGateway;
     private final WebBrowserContext webBrowserContext;
 

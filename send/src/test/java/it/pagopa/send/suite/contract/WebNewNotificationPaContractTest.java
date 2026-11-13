@@ -13,8 +13,9 @@ import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
 import it.pagopa.send.web.notification_creation.application.NotificationData;
-import it.pagopa.send.web.notification_creation.infrastructure.factory.NotificationFactory;
+import it.pagopa.send.web.notification_creation.infrastructure.factory.WebNotificationFactory;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
+import it.pagopa.send.web.notification_creation.infrastructure.page.component.ExitDialog;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
@@ -189,7 +190,7 @@ public class WebNewNotificationPaContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
     private final UserProvider userProvider;
-    private final NotificationFactory notificationFactory;
+    private final WebNotificationFactory notificationFactory;
 
     /**
      * Intestazione della pagina: breadcrumb "Notifiche" > "Nuova notifica", titolo, sottotitolo con il link "scopri come
@@ -443,7 +444,7 @@ public class WebNewNotificationPaContractTest {
                                 "richiesta di conferma dell'uscita",
                                 page -> page.notificationsBreadcrumb().click(),
                                 page -> {
-                                    CreateNotificationPage.ExitDialog dialog = page.exitDialog();
+                                    ExitDialog dialog = page.exitDialog();
                                     dialog.title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(EXIT_TITLE));
                                     dialog.message().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(EXIT_MESSAGE));
                                     dialog.cancelButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(CANCEL));

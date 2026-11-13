@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -27,7 +25,6 @@ import java.util.stream.Stream;
  * paginazione compaiono solo se l'impresa ha ricevuto almeno una notifica, il banner per attivare il domicilio digitale
  * solo agli amministratori senza gruppo e senza domicilio: non vengono verificati.
  */
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,

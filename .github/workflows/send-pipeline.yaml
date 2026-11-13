@@ -19,7 +19,7 @@ on:
       javaTestSuite:
         description: 'Choose which Java test suite to run'
         required: false
-        default: NrtStandardSuite
+        default: NrtStandardSuiteTest
         type: string
       branchName:
         description: 'Provide the branch name for qe_suit to clone'
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-22.04
     env:
       ENVIRONMENT: ${{ github.event_name == 'schedule' && 'qa' || inputs.environment }}
-      JAVA_TEST_SUITE: ${{ github.event_name == 'schedule' && 'NrtStandardSuite' || inputs.javaTestSuite }}
+      JAVA_TEST_SUITE: ${{ github.event_name == 'schedule' && 'NrtStandardSuiteTest' || inputs.javaTestSuite }}
       BRANCH_NAME: ${{ github.event_name == 'schedule' && 'main' || inputs.branchName }}
 
     steps:

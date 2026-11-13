@@ -98,7 +98,6 @@ public interface BffLegalNotificationMapper {
                 .cancelledIun(source.getCancelledIun())
                 .amount(toDecimal(source.getAmount()))
                 .paymentExpirationDate(source.getPaymentExpirationDate());
-
         source.getRecipients().forEach(recipient -> request.addRecipientsItem(toRecipient(recipient)));
         return request;
     }
@@ -117,7 +116,6 @@ public interface BffLegalNotificationMapper {
         List<NotificationPaymentItem> paymentItems = recipient.payments().stream()
                 .map(this::toPaymentItem)
                 .toList();
-
         return new NotificationRecipientV24()
                 .recipientType(toRecipientType(recipient.type()))
                 .taxId(recipient.taxId())

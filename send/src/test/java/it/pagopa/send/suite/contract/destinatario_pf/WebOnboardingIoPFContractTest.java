@@ -12,17 +12,10 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
-
-import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.DOWNLOAD_IO_APP;
-import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.IO_ALREADY_INSTALLED;
-import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.IO_DESCRIPTION;
-import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpectedTexts.IO_TITLE;
 
 /**
  * Contract test della pagina di onboarding "Tutto, sull'app IO" del cittadino ({@code {baseUrl}/onboarding/io}).
@@ -36,7 +29,6 @@ import static it.pagopa.send.suite.contract.destinatario_pf.OnboardingIoExpected
  * la apre dall'indirizzo, così è verificata con qualunque utente. Nessuno scenario preme i pulsanti della sezione
  * dell'app IO.
  */
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
@@ -50,6 +42,13 @@ public class WebOnboardingIoPFContractTest {
 
     private static final String TITLE = "Tutto, sull'app IO";
     private static final String EXIT = "Esci";
+
+    // blocco "Attiva SEND sull'app IO", uguale in questa pagina e nel passo IO dei wizard di onboarding "Il meglio di
+    // SEND" e "Attivazione avvisi": lo usa anche WebOnboardingAlertsPFContractTest
+    static final String IO_TITLE = "Attiva SEND sull’app IO";
+    static final String IO_DESCRIPTION = "C’è una notifica SEND per te? Riceverai un avviso su IO e potrai consultarla direttamente in app!";
+    static final String DOWNLOAD_IO_APP = "Scarica l’app IO";
+    static final String IO_ALREADY_INSTALLED = "Ho già scaricato e installato l’app";
 
     private final WebBrowserContractValidator webContractValidator;
     private final UserProvider userProvider;

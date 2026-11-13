@@ -7,13 +7,12 @@ import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.web.destinatario_pf.infrastructure.page.DigitalDomicileActivationPFPage;
+import it.pagopa.send.web.destinatario_pf.infrastructure.page.component.DigitalDomicileEmailSection;
 import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -33,7 +32,6 @@ import java.util.stream.Stream;
  * aggiungerli) e non viene verificato, come l'avviso sulla PEC del primo passo. Il riepilogo si raggiunge solo se
  * l'utente ha un'email di cortesia, quindi non viene verificato.
  */
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
@@ -144,7 +142,7 @@ public class WebDigitalDomicileActivationPFContractTest {
                                 "passo email: titolo, descrizione, continua e indietro",
                                 page -> page.continueButton().click(),
                                 page -> {
-                                    DigitalDomicileActivationPFPage.EmailSection section = page.emailSection();
+                                    DigitalDomicileEmailSection section = page.emailSection();
                                     section.title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(EMAIL_STEP_TITLE));
                                     section.description().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(EMAIL_STEP_DESCRIPTION));
                                     section.continueButton().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(CONTINUE));
