@@ -49,6 +49,17 @@ public class EServiceMetadataUpdatesSteps {
         EService expectedEService = initialEService.toBuilder()
                 .name(requestedMetadata.getOrDefault("nome", initialEService.getName()))
                 .description(requestedMetadata.getOrDefault("descrizione", initialEService.getDescription()))
+                .technology(requestedMetadata.containsKey("technology")
+                        ? EServiceTechnology.valueOf(requestedMetadata.get("technology"))
+                        : initialEService.getTechnology())
+                .mode(requestedMetadata.containsKey("mode")
+                        ? EServiceMode.valueOf(requestedMetadata.get("mode"))
+                        : initialEService.getMode())
+                .isSignalHubEnabled(requestedBoolean("signalHubEnabled", initialEService.getIsSignalHubEnabled()))
+                .isConsumerDelegable(requestedBoolean("consumerDelegable", initialEService.getIsConsumerDelegable()))
+                .isClientAccessDelegable(requestedBoolean("clientAccessDelegable", initialEService.getIsClientAccessDelegable()))
+                .personalData(requestedBoolean("handlePersonalData", initialEService.getPersonalData()))
+                .asyncExchange(requestedBoolean("asyncExchange", initialEService.getAsyncExchange()))
                 .build();
 
         assertThat(actualEService)
@@ -74,18 +85,47 @@ public class EServiceMetadataUpdatesSteps {
                     requestedMetadata.put(field, value);
                     command.description(value);
                 }
-                case "technology" -> command.technology(EServiceTechnology.valueOf(value));
-                case "mode" -> command.mode(EServiceMode.valueOf(value));
-                case "signalHubEnabled" -> command.isSignalHubEnabled(Boolean.parseBoolean(value));
-                case "consumerDelegable" -> command.isConsumerDelegable(Boolean.parseBoolean(value));
-                case "clientAccessDelegable" -> command.isClientAccessDelegable(Boolean.parseBoolean(value));
-                case "handlePersonalData" -> command.handlePersonalData(Boolean.parseBoolean(value));
-                case "asyncExchange" -> command.asyncExchange(Boolean.parseBoolean(value));
+                case "technology" -> {
+                    EServiceTechnology technology = EServiceTechnology.valueOf(value);
+                    requestedMetadata.put(field, technology.name());
+                    command.technology(technology);
+                }
+                case "mode" -> {
+                    EServiceMode mode = EServiceMode.valueOf(value);
+                    requestedMetadata.put(field, mode.name());
+                    command.mode(mode);
+                }
+                case "signalHubEnabled" -> {
+                    requestedMetadata.put(field, value);
+                    command.isSignalHubEnabled(Boolean.parseBoolean(value));
+                }
+                case "consumerDelegable" -> {
+                    requestedMetadata.put(field, value);
+                    command.isConsumerDelegable(Boolean.parseBoolean(value));
+                }
+                case "clientAccessDelegable" -> {
+                    requestedMetadata.put(field, value);
+                    command.isClientAccessDelegable(Boolean.parseBoolean(value));
+                }
+                case "handlePersonalData" -> {
+                    requestedMetadata.put(field, value);
+                    command.handlePersonalData(Boolean.parseBoolean(value));
+                }
+                case "asyncExchange" -> {
+                    requestedMetadata.put(field, value);
+                    command.asyncExchange(Boolean.parseBoolean(value));
+                }
                 default -> throw new IllegalArgumentException(
                         "Campo metadato e-service non supportato: " + field
                 );
             }
         });
         return command;
+    }
+
+    private Boolean requestedBoolean(String field, Boolean initialValue) {
+        return requestedMetadata.containsKey(field)
+                ? Boolean.valueOf(requestedMetadata.get(field))
+                : initialValue;
     }
 }
