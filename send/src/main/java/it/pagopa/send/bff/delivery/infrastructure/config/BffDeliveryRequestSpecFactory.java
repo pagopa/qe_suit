@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DeliveryRequestSpecFactory {
+public class BffDeliveryRequestSpecFactory {
 
     private final ObjectProvider<CurrentUserSession> currentUserSessionProvider;
     private final UsersProperties usersProperties;
@@ -20,7 +20,7 @@ public class DeliveryRequestSpecFactory {
     @Value("${delivery.api.base-url}")
     private String basePath;
 
-    public DeliveryRequestSpecFactory(
+    public BffDeliveryRequestSpecFactory(
             ObjectProvider<CurrentUserSession> currentUserSessionProvider,
             UsersProperties usersProperties
     ) {

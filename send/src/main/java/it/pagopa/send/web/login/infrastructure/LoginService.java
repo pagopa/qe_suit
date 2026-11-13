@@ -33,7 +33,7 @@ public class LoginService {
     private final DashboardPage dashboardPage;
     private final NotificationPage notificationPage;
     private final NotificationPFPage notificationPFPage;
-    private final SelfCareSessionPayloadFactory sessionPayloadFactory;
+    private final WebSelfCareSessionPayloadFactory sessionPayloadFactory;
     private final DynamicUserTokenProvider tokenProvider;
 
     public void loginAsTenant(User tenant) {

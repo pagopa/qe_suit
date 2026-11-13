@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
-public class InformalNotificationRestClientConfig {
+public class BffInformalNotificationRestClientConfig {
 
     @Bean
     public NewInformalNotificationApi newInformalNotificationsApi(

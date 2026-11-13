@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class MittenteNotificationDetailsSteps {
+public class WebMittenteNotificationDetailsSteps {
     private final MittenteNotificationDetailsPage mittenteNotificationDetailsPage;
     private final NotificationStatusDetailsPage notificationStatusDetailsPage;
     private final WebBrowserContext webBrowserContext;

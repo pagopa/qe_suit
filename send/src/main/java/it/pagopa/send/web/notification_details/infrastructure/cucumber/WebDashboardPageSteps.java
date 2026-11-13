@@ -16,7 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class DashboardPageSteps {
+public class WebDashboardPageSteps {
 
     private static final DateTimeFormatter SEARCH_DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 

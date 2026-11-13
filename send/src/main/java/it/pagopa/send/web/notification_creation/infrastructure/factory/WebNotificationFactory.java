@@ -13,7 +13,7 @@ import java.net.URL;
 import java.util.Map;
 
 @Component
-public class NotificationFactory {
+public class WebNotificationFactory {
 
    private static final String NOTIFICATION_TEMPLATE_FILE = "notifications/simple_notification.yaml";
 

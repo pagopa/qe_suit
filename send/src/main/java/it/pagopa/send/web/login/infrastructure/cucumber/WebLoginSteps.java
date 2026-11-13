@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class LoginSteps {
+public class WebLoginSteps {
 
     private final WebPresentationGateway uiGateway;
     private final LoginService loginService;

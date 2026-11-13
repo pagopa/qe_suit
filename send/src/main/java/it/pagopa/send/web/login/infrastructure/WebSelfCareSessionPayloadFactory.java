@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Component
 @RequiredArgsConstructor
-public class SelfCareSessionPayloadFactory {
+public class WebSelfCareSessionPayloadFactory {
 
     private final ObjectMapper objectMapper;
 
