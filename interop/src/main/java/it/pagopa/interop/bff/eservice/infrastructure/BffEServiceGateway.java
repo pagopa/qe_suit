@@ -2,6 +2,8 @@ package it.pagopa.interop.bff.eservice.infrastructure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.response.ApiResponse;
+import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.bff.eservice.application.BffEServiceUpdateCommand;
@@ -54,6 +56,7 @@ public class BffEServiceGateway implements EServiceGateway {
     private final BffEServiceDescriptorGateway descriptorGateway;
     private final EntityStore entityStore;
     private final BffEServiceMapper mapper;
+    private RawResponse lastResponse;
 
     @Override
     public EService createEService(EServiceCreationCommand command) {
@@ -77,6 +80,15 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void tryUpdateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+        if (!(command instanceof BffEServiceUpdateCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
+        this.lastResponse = restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
+                .withoutPolling()
+                .getRaw();
+    }
+
+    @Override
     public void updateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
         if (!(command instanceof BffEServiceUpdateCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
@@ -93,14 +105,13 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
-    public void shouldFailToUpdateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
-        if (!(command instanceof BffEServiceUpdateCommand bffCommand))
-            throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
-
-        restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
-                .withoutPolling()
-                .assertStatusCode(409)
-                .get();
+    public void shouldFailToUpdateEService(EServiceUpdateFailureReason reason) {
+        var expected = switch (reason) {
+            case INVALID_DATA -> 400;
+            case OUT_OF_DRAFT_OPERATION_FIELD -> 409;
+        };
+        var actual = ((ApiResponse) this.lastResponse).getStatusCode();
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Override
