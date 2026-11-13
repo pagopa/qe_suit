@@ -228,7 +228,7 @@ Feature: Modifica dei metadati degli e-service
   # CASO DI TEST 7.1 - Rifiuto atomico delle richieste non ammesse
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_METADATA_PROTECTION_1] - Rifiuto della richiesta di modifica in presenza di metadati non ammessi
+  Scenario Outline: [ESERVICE_METADATA_PROTECTION_1] - Rifiuto della richiesta di modifica in presenza di metadati non ammessi
   Dato un e-service modificabile da un attore autorizzato,
   quando l'attore invia una modifica con un metadato valido e un altro non ammesso,
   allora il sistema rifiuta tutta la modifica e mantiene invariata la risorsa.
@@ -237,10 +237,16 @@ Feature: Modifica dei metadati degli e-service
       | alias | erogatore        | nome                   |
       | ES-1  | Comune di Milano | E-service Tempo Attivo |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
-    When un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1" ma viene rifiutata:
-      | campo      | valore                         |
-      | nome       | Servizio anagrafico aggiornato |
-      | technology | REST                           |
+    When un admin del Comune di Milano tenta la modifica dei metadati dell'e-service "ES-1":
+      | campo    | valore    |
+      | <campo1> | <valore1> |
+      | <campo2> | <valore2> |
+    Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per <errore>
+
+    Examples:
+      | campo1 | valore1                        | campo2      | valore2 | errore                       |
+      | nome   | Servizio anagrafico aggiornato | descrizione | desc    | INVALID_DATA                 |
+      | nome   | Servizio anagrafico aggiornato | technology  | REST    | OUT_OF_DRAFT_OPERATION_FIELD |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
