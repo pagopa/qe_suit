@@ -89,4 +89,14 @@ public class BffClientRestClient extends RestClient {
                 Client.class
         );
     }
+
+    public TestChain<Void> updateClient(UUID clientId, ClientUpdateSeed clientUpdateSeed) {
+        return execute(
+                () -> clientsApi.updateClient()
+                        .clientIdPath(clientId)
+                        .body(clientUpdateSeed)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
 }

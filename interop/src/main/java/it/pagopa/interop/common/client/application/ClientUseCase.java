@@ -24,4 +24,8 @@ public class ClientUseCase {
     public Client linkPurpose(Client client, Purpose purpose) {
         return clientGateway.addPurpose(client, purpose);
     }
+
+    public Client updateMetadata(Client client, String name, String description) {
+        return clientGateway.updateMetadata(client, name, description);
+    }
 }
