@@ -12,6 +12,7 @@ Feature: Messaggi di errore durante il caricamento degli allegati alle annotazio
     # Binding di setup comune mancante; riusare createPurposeTemplate e predisporre una risposta annotata.
     And un template finalità in bozza con una risposta annotata
 
+  # Endpoint: POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation/documents
   Scenario: [ERROR_195] - Rifiuto di un allegato all'annotazione in un formato diverso da PDF
   Dato un template finalità in bozza con una risposta annotata
   Quando il creatore tenta di allegare all'annotazione un file di testo
@@ -22,6 +23,7 @@ Feature: Messaggi di errore durante il caricamento degli allegati alle annotazio
     When l'operatore allega il file "allegato-non-pdf.txt" all'annotazione del template finalità con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_CONTENT_TYPE_DETECTED" in lingua "it"
 
+  # Endpoint: POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation/documents
   Scenario: [ERROR_196] - Rifiuto di un allegato PDF con firma binaria non valida
   Dato un template finalità in bozza con una risposta annotata
   Quando il creatore tenta di allegare un file dichiarato PDF ma con firma binaria non valida

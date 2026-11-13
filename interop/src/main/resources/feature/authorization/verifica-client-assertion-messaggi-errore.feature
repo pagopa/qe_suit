@@ -7,6 +7,7 @@ Feature: Messaggi di errore durante la verifica della client assertion
   Voglio sapere perché la verifica di una client assertion è stata rifiutata
   Per controllare che il client appartenga all'ente per cui sto operando.
 
+  # Endpoint: POST /tools/validateTokenGeneration
   Scenario: [ERROR_180] - Impossibilità di verificare la client assertion di un client di un altro ente
   Dato un client di fruizione di un ente associato a una finalità attiva e una client assertion valida per quella finalità
   Quando un amministratore di un altro ente tenta di verificarla

@@ -10,6 +10,7 @@ Feature: Messaggi di errore per i documenti dei template e-service
   Background:
     Given un admin appartenente all'erogatore Comune di Milano
 
+  # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
   Scenario: [ERROR_122] - Rifiuto del caricamento di un documento con un nome già in uso
   Dato un template e-service in bozza con un documento già allegato
   Quando l'erogatore tenta di allegare un PDF diverso con lo stesso nome
@@ -26,6 +27,7 @@ Feature: Messaggi di errore per i documenti dei template e-service
     When l'erogatore carica il file "allegato-b.pdf" come "documento" sulla versione del template con il nome "Allegato A"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_VERSIONS_E_SERVICE_TEMPLATE_VERSION_ID_DOCUMENTS"
 
+  # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
   Scenario: [ERROR_123] - Rifiuto del caricamento di un documento con contenuto già presente
   Dato un template e-service in bozza con un documento già allegato
   Quando l'erogatore tenta di allegare lo stesso PDF con un nome diverso
@@ -42,6 +44,7 @@ Feature: Messaggi di errore per i documenti dei template e-service
     When l'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione del template con il nome "Allegato B"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_CHECKSUM_DUPLICATE"
 
+  # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents/:documentId/update
   Scenario: [ERROR_124] - Impossibilità di rinominare un documento con il nome di un altro allegato
   Dato un template e-service in bozza con due documenti distinti
   Quando l'erogatore tenta di assegnare al secondo il nome del primo
@@ -60,6 +63,7 @@ Feature: Messaggi di errore per i documenti dei template e-service
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_VERSIONS_E_SERVICE_TEMPLATE_VERSION_ID_DOCUMENTS_DOCUMENT_ID_UPDATE"
 
   # NON REPLICABILE A FRONTEND
+  # Endpoint: GET /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents/:documentId
   Scenario: [ERROR_127] - Impossibilità di scaricare un documento assente dalla versione del template
   Dato un template e-service pubblicato
   Quando l'erogatore tenta di scaricare un documento che non appartiene alla versione
@@ -72,6 +76,7 @@ Feature: Messaggi di errore per i documenti dei template e-service
     When l'erogatore tenta di scaricare un documento assente dalla versione del template
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DOCUMENT_NOT_FOUND"
 
+  # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
   Scenario: [ERROR_130] - Rifiuto del caricamento di un documento con un link nel nome
   Dato un template e-service con una versione in bozza
   Quando l'erogatore tenta di allegare un PDF valido con un collegamento nel nome
@@ -84,6 +89,7 @@ Feature: Messaggi di errore per i documenti dei template e-service
     When l'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione del template con il nome "Documento https://example.org"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_VERSIONS_E_SERVICE_TEMPLATE_VERSION_ID_DOCUMENTS"
 
+  # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents/:documentId/update
   Scenario: [ERROR_131] - Rifiuto della rinomina di un documento con un link nel nome
   Dato un template e-service in bozza con un documento allegato
   Quando l'erogatore tenta di inserire un collegamento nel nome del documento

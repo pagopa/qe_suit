@@ -10,6 +10,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
   Background:
     Given un admin appartenente all'erogatore Comune di Milano
 
+  # Endpoint: POST /agreements/:agreementId/submit
   Scenario: [ERROR_148] - Impossibilità di inviare una richiesta senza un attributo dichiarato necessario
   Dato un e-service pubblicato con un attributo dichiarato richiesto e non posseduto dal fruitore e una richiesta in bozza
   Quando il fruitore tenta di inviare la richiesta senza possedere l'attributo dichiarato
@@ -31,6 +32,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When il fruitore tenta di inviare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_SUBMISSION_FAILED" in lingua "it"
 
+  # Endpoint: POST /agreements/:agreementId/approve
   Scenario: [ERROR_149] - Impossibilità di approvare una richiesta di fruizione già attiva
   Dato un e-service pubblicato e una richiesta di fruizione del fruitore già attiva
   Quando l'erogatore tenta di approvare nuovamente la richiesta
@@ -41,6 +43,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When l'erogatore tenta di approvare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE" in lingua "it"
 
+  # Endpoint: POST /agreements/:agreementId/approve
   Scenario: [ERROR_150] - Impossibilità di approvare una richiesta senza verificare un attributo necessario
   Dato un e-service con un attributo verificato richiesto e non posseduto dal fruitore e una richiesta in attesa di approvazione
   Quando l'erogatore tenta di approvare la richiesta
@@ -62,6 +65,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When l'erogatore tenta di approvare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ACTIVATION_FAILED" in lingua "it"
 
+  # Endpoint: POST /agreements/:agreementId/approve
   Scenario Outline: [ERROR_151] - Impossibilità di approvare una richiesta per una versione <stato versione>
   Dato un e-service con approvazione manuale e una richiesta del fruitore in attesa per una versione archiviata o in archiviazione
   Quando l'erogatore tenta di approvare la richiesta
@@ -80,6 +84,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
       | in archiviazione |
       | archiviata       |
 
+  # Endpoint: POST /agreements/:agreementId/unsuspend
   Scenario: [ERROR_152] - Impossibilità di riattivare una richiesta di fruizione già attiva
   Dato un e-service pubblicato e una richiesta di fruizione del fruitore già attiva
   Quando il fruitore tenta di riattivare la richiesta
@@ -91,6 +96,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When il fruitore tenta di riattivare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND" in lingua "it"
 
+  # Endpoint: POST /agreements/:agreementId/unsuspend
   Scenario: [ERROR_153] - Impossibilità di riattivare una richiesta per una versione archiviata
   Data una richiesta di fruizione del fruitore sospesa e riferita a una versione archiviata
   Quando il fruitore tenta di riattivare la richiesta
@@ -107,6 +113,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When il fruitore tenta di riattivare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND" in lingua "it"
 
+  # Endpoint: POST /agreements/:agreementId/consumer-documents
   Scenario: [ERROR_154] - Impossibilità di allegare un documento a una richiesta di fruizione attiva
   Dato un e-service pubblicato e una richiesta di fruizione del fruitore attiva
   Quando il fruitore tenta di allegare un documento alla richiesta
@@ -118,6 +125,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When il fruitore tenta di allegare alla richiesta di fruizione il file "allegato-a.pdf"
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__POST_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS" in lingua "it"
 
+  # Endpoint: GET /agreements/:agreementId/consumer-documents/:documentId
   Scenario: [ERROR_155] - Impossibilità di scaricare un documento già eliminato dalla richiesta
   Data una richiesta di fruizione del fruitore in bozza con un documento allegato e poi eliminato
   Quando il fruitore tenta di scaricare lo stesso documento
@@ -134,6 +142,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When l'utente tenta di scaricare il documento dalla richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__GET_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID" in lingua "it"
 
+  # Endpoint: DELETE /agreements/:agreementId/consumer-documents/:documentId
   Scenario: [ERROR_156] - Impossibilità di eliminare un documento già rimosso dalla richiesta
   Data una richiesta di fruizione del fruitore in bozza con un documento allegato e poi eliminato
   Quando il fruitore tenta di eliminare nuovamente lo stesso documento
@@ -150,6 +159,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When il fruitore tenta di eliminare il documento dalla richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID" in lingua "it"
 
+  # Endpoint: DELETE /agreements/:agreementId/consumer-documents/:documentId
   Scenario: [ERROR_157] - Impossibilità di eliminare un documento da una richiesta di fruizione attiva
   Data una richiesta di fruizione del fruitore con un documento allegato in bozza e poi attivata
   Quando il fruitore tenta di eliminare il documento dalla richiesta attiva
@@ -168,6 +178,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When il fruitore tenta di eliminare il documento dalla richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID" in lingua "it"
 
+  # Endpoint: POST /agreements/:agreementId/suspend
   Scenario: [ERROR_158] - Impossibilità di sospendere una richiesta di fruizione in bozza
   Dato un e-service pubblicato e una richiesta di fruizione del fruitore in bozza
   Quando l'erogatore tenta di sospendere la richiesta
@@ -182,6 +193,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When l'erogatore tenta di sospendere la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_SUSPEND" in lingua "it"
 
+  # Endpoint: POST /agreements/:agreementId/reject
   Scenario: [ERROR_159] - Impossibilità di rifiutare una richiesta di fruizione già attiva
   Dato un e-service pubblicato e una richiesta di fruizione del fruitore già attiva
   Quando l'erogatore tenta di rifiutare la richiesta con una motivazione valida
@@ -193,6 +205,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When l'erogatore tenta di rifiutare la richiesta di fruizione con una motivazione valida
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_REJECT" in lingua "it"
 
+  # Endpoint: POST /agreements/:agreementId/archive
   Scenario: [ERROR_160] - Impossibilità di archiviare una richiesta di fruizione in bozza
   Dato un e-service pubblicato e una richiesta di fruizione del fruitore in bozza
   Quando il fruitore tenta di archiviare la richiesta
@@ -207,6 +220,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When il fruitore tenta di archiviare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_ARCHIVE" in lingua "it"
 
+  # Endpoint: POST /agreements
   Scenario: [ERROR_161] - Impossibilità di richiedere la fruizione di una versione deprecata
   Dato un e-service con la prima versione deprecata dopo la fruizione di un ente e una seconda versione pubblicata
   Quando un altro ente tenta di richiedere la fruizione della versione deprecata
@@ -216,6 +230,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When il sistema impedisce al Comune di Pozzallo di inoltrare una richiesta di fruizione per la versione deprecata dell'EService
     Then il messaggio di errore corrisponde al caso "AGREEMENT_NOT_LATEST_ESERVICE_DESCRIPTOR" in lingua "it"
 
+  # Endpoint: POST /agreements
   Scenario: [ERROR_162] - Impossibilità di richiedere la fruizione della versione più recente sospesa
   Dato un e-service la cui versione più recente è sospesa
   Quando il fruitore tenta di richiedere la fruizione di quella versione
@@ -230,6 +245,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When il fruitore tenta di creare una richiesta di fruizione per la versione più recente dell'e-service "ES-1"
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS" in lingua "it"
 
+  # Endpoint: POST /agreements
   Scenario: [ERROR_163] - Impossibilità di richiedere la fruizione senza un attributo certificato necessario
   Dato un e-service pubblicato con un attributo certificato richiesto e non assegnato al fruitore
   Quando il fruitore tenta di creare una richiesta di fruizione
@@ -250,6 +266,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When il fruitore tenta di creare una richiesta di fruizione per la versione più recente dell'e-service "ES-1"
     Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS" in lingua "it"
 
+  # Endpoint: POST /agreements
   Scenario: [ERROR_164] - Impossibilità di creare un'altra richiesta quando la fruizione è già attiva
   Dato un e-service pubblicato e una richiesta di fruizione del fruitore già attiva
   Quando il fruitore tenta di creare un'altra richiesta per lo stesso e-service
@@ -264,6 +281,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When il fruitore tenta di creare una richiesta di fruizione per la versione più recente dell'e-service "ES-1"
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS" in lingua "it"
 
+  # Endpoint: POST /agreements/:agreementId/clone
   Scenario: [ERROR_165] - Impossibilità di duplicare una richiesta dopo la perdita di un attributo certificato
   Data una richiesta di fruizione rifiutata del fruitore e un attributo certificato richiesto non più posseduto dal fruitore
   Quando il fruitore tenta di duplicare la richiesta
@@ -293,6 +311,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When il fruitore tenta di duplicare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE" in lingua "it"
 
+  # Endpoint: POST /agreements/:agreementId/clone
   Scenario: [ERROR_166] - Impossibilità di duplicare una richiesta quando ne esiste già un'altra in corso
   Data una richiesta rifiutata del fruitore e un'altra richiesta attiva per lo stesso e-service e lo stesso fruitore
   Quando il fruitore tenta di duplicare la prima richiesta
@@ -312,6 +331,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     When il fruitore tenta di duplicare la richiesta di fruizione "RF-1"
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS_AGREEMENT_ID_CLONE" in lingua "it"
 
+  # Endpoint: GET /agreements/:agreementId/consumer-documents/:documentId
   Scenario: [ERROR_167] - Impossibilità per un operatore di sicurezza di scaricare un allegato della richiesta
   Data una richiesta di fruizione del fruitore con un documento disponibile e un operatore di sicurezza dello stesso ente
   Quando l'operatore tenta di scaricare il documento

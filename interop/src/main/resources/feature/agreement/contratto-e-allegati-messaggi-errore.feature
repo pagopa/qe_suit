@@ -13,6 +13,7 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
       | ES-1  | Comune di Milano |
     And un admin appartenente al fruitore PagoPA
 
+  # Endpoint: GET /agreements/:agreementId/signedContract
   Scenario: [ERROR_168] - Impossibilità di scaricare un documento firmato non ancora disponibile
   Data una richiesta di fruizione del fruitore attiva con un contratto generato e il documento firmato non ancora disponibile
   Quando l'erogatore tenta di scaricare il documento firmato della richiesta
@@ -28,6 +29,7 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
     When l'erogatore tenta di scaricare il documento firmato della richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "BFF_CONTRACT_EXCEPTION" in lingua "it"
 
+  # Endpoint: POST /agreements/:agreementId/consumer-documents
   Scenario: [ERROR_197] - Rifiuto di un allegato PDF con contenuto non valido
   Data una richiesta di fruizione del fruitore in bozza
   Quando il fruitore tenta di allegare un file identificato come PDF ma con contenuto incompatibile con il formato dichiarato

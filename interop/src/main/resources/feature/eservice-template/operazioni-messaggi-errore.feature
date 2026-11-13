@@ -9,6 +9,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
   Background:
     Given un admin appartenente all'erogatore Comune di Milano
 
+  # Endpoint: POST /eservices/templates
   Scenario: [ERROR_121] - Impossibilità di creare un template con un nome già presente
   Dato un template e-service dell'ente creatore già presente
   Quando l'erogatore tenta di creare un altro template con lo stesso nome
@@ -20,6 +21,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     When l'erogatore tenta di creare un template e-service duplicando il nome del template "T-1"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__POST_ESERVICES_TEMPLATES" in lingua "it"
 
+  # Endpoint: POST /eservices/templates/:eServiceTemplateId/riskAnalysis
   Scenario: [ERROR_125] - Impossibilità di aggiungere un'analisi del rischio con un nome già usato nel template
   Dato un template e-service in ricezione con un'analisi del rischio completa
   Quando l'erogatore tenta di aggiungere un'altra analisi con lo stesso nome allo stesso template
@@ -31,6 +33,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     When l'erogatore tenta di aggiungere al template un'analisi del rischio con il nome dell'analisi esistente
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_RISK_ANALYSIS_NAME_DUPLICATE" in lingua "it"
 
+  # Endpoint: POST /eservices/templates/:eServiceTemplateId/name/update
   Scenario: [ERROR_126] - Impossibilità di rinominare un template con il nome di un altro template
   Dati due template e-service distinti dello stesso ente creatore con nomi diversi
   Quando l'erogatore tenta di assegnare al secondo il nome del primo
@@ -44,6 +47,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     When l'erogatore tenta di rinominare il template "T-2" con il nome del template "T-1"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_NAME_UPDATE" in lingua "it"
 
+  # Endpoint: POST /eservices/templates
   Scenario: [ERROR_128] - Rifiuto della creazione di un template con un link nel nome
   Dato un amministratore abilitato alla creazione dei template e-service
   Quando l'erogatore tenta di creare un template con un collegamento nel nome e gli altri dati validi
@@ -53,6 +57,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     When l'erogatore tenta di creare un template e-service con il nome "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES" in lingua "it"
 
+  # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId
   Scenario: [ERROR_129] - Rifiuto della modifica di una versione in bozza con un link nella descrizione
   Dato un template e-service con una versione in bozza
   Quando l'erogatore tenta di inserire un collegamento nella descrizione della versione
@@ -65,6 +70,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     When l'erogatore tenta di modificare la descrizione della versione 1 del template "T-1" in "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_VERSIONS_E_SERVICE_TEMPLATE_VERSION_ID" in lingua "it"
 
+  # Endpoint: POST /eservices/templates/:eServiceTemplateId/intendedTarget/update
   Scenario: [ERROR_132] - Rifiuto di un link nel destinatario di un template pubblicato
   Dato un template e-service pubblicato
   Quando l'erogatore tenta di inserire un collegamento nel campo che descrive a chi è rivolto il template
@@ -77,6 +83,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     When l'erogatore tenta di aggiornare il campo "destinatario" del template "T-1" con il valore "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_INTENDED_TARGET_UPDATE" in lingua "it"
 
+  # Endpoint: POST /eservices/templates/:eServiceTemplateId/description/update
   Scenario: [ERROR_133] - Rifiuto di un link nella descrizione di un template pubblicato
   Dato un template e-service pubblicato
   Quando l'erogatore tenta di inserire un collegamento nella descrizione del template
@@ -89,6 +96,7 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     When l'erogatore tenta di aggiornare il campo "descrizione" del template "T-1" con il valore "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_DESCRIPTION_UPDATE" in lingua "it"
 
+  # Endpoint: POST /eservices/templates/:eServiceTemplateId/name/update
   Scenario: [ERROR_134] - Rifiuto di un link nel nome di un template pubblicato
   Dato un template e-service pubblicato
   Quando l'erogatore tenta di inserire un collegamento nel nome del template
@@ -102,6 +110,8 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_NAME_UPDATE" in lingua "it"
 
   # NON REPLICABILE A FRONTEND
+  # Endpoint: PATCH /eservices/templates/:eServiceTemplateId
+  # PRENDI STEP WHEN DA MODIFICA NOME
   Scenario: [ERROR_135] - Rifiuto della modifica dei dati generali con il nome di un altro template
   Dati due template e-service distinti dello stesso ente creatore con nomi diversi
   Quando l'erogatore tenta di assegnare alla bozza il nome del template esistente modificandone i dati generali
@@ -118,6 +128,8 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     When l'erogatore tenta di modificare i dati generali del template "T-2" con il nome del template "T-1"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__PATCH_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID" in lingua "it"
 
+  # Endpoint: PATCH /eservices/templates/:eServiceTemplateId
+  # PRENDI STEP WHEN DA MODIFICA NOME
   Scenario: [ERROR_136] - Rifiuto della modifica del nome che provocherebbe un conflitto con un e-service
   Dato un template pubblicato con un'istanza e un e-service distinto dello stesso erogatore dell'istanza
   Quando il creatore tenta di rinominare il template facendo coincidere il nome derivato dell'istanza con quello dell'e-service
@@ -141,6 +153,8 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     When l'erogatore tenta di modificare i dati generali del template "T-1" con il nuovo nome predisposto
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INSTANCE_NAME_CONFLICT__PATCH_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID" in lingua "it"
 
+  # Endpoint: PATCH /eservices/templates/:eServiceTemplateId
+  # PRENDI STEP WHEN DA MODIFICA NOME
   Scenario: [ERROR_137] - Rifiuto della modifica dei dati generali di un template con un link nel nome
   Dato un template e-service con una versione in bozza
   Quando l'erogatore tenta di modificarne i dati generali inserendo un collegamento nel nome e lasciando validi gli altri dati
