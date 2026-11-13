@@ -7,6 +7,7 @@ import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.kernel.security.DPoPProof;
 import lombok.RequiredArgsConstructor;
@@ -58,5 +59,10 @@ public class ScenarioParameterTypes {
     @ParameterType("richiesta di fruizione|agreement|richiesta di fruizione creata")
     public Agreement currentAgreement(String token) {
         return entityStore.getLastOrThrow(Agreement.class);
+    }
+
+    @ParameterType("OUT_OF_DRAFT_OPERATION_FIELD|INVALID_DATA")
+    public EServiceUpdateFailureReason eServiceUpdateFailureReason(String reason) {
+        return EServiceUpdateFailureReason.valueOf(reason);
     }
 }

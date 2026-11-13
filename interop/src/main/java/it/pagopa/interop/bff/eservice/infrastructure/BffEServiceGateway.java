@@ -2,11 +2,19 @@ package it.pagopa.interop.bff.eservice.infrastructure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.response.ApiResponse;
+import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
+import it.pagopa.interop.bff.eservice.application.BffEServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.*;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
@@ -16,6 +24,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.PresignedUrl;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
 import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.RandomUtils;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
 import org.springframework.stereotype.Service;
@@ -29,6 +38,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -46,6 +56,7 @@ public class BffEServiceGateway implements EServiceGateway {
     private final BffEServiceDescriptorGateway descriptorGateway;
     private final EntityStore entityStore;
     private final BffEServiceMapper mapper;
+    private RawResponse lastResponse;
 
     @Override
     public EService createEService(EServiceCreationCommand command) {
@@ -66,6 +77,41 @@ public class BffEServiceGateway implements EServiceGateway {
                 })
                 .updateContext(command.getAlias())
                 .get();
+    }
+
+    @Override
+    public void tryUpdateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+        if (!(command instanceof BffEServiceUpdateCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
+        this.lastResponse = restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
+                .withoutPolling()
+                .getRaw();
+    }
+
+    @Override
+    public void updateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+        if (!(command instanceof BffEServiceUpdateCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
+
+        restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        PollingUtils.pollUntil(
+                () -> getEService(eServiceRef),
+                eService -> matchesUpdate(eService, bffCommand),
+                "I metadati aggiornati dell'e-service " + eServiceRef.id() + " non sono diventati visibili"
+        );
+    }
+
+    @Override
+    public void shouldFailToUpdateEService(EServiceUpdateFailureReason reason) {
+        var expected = switch (reason) {
+            case INVALID_DATA -> 400;
+            case OUT_OF_DRAFT_OPERATION_FIELD -> 409;
+        };
+        var actual = ((ApiResponse) this.lastResponse).getStatusCode();
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Override
@@ -178,5 +224,28 @@ public class BffEServiceGateway implements EServiceGateway {
     @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
+    }
+
+    private static boolean matchesUpdate(EService actual, BffEServiceUpdateCommand command) {
+        var requested = command.getBffUpdatePayload();
+        return isApplied(actual.getName(), requested.getName())
+                && isApplied(actual.getDescription(), requested.getDescription())
+                && isApplied(
+                        actual.getTechnology() == null ? null : actual.getTechnology().getValue(),
+                        requested.getTechnology() == null ? null : requested.getTechnology().getValue()
+                )
+                && isApplied(
+                        actual.getMode() == null ? null : actual.getMode().getValue(),
+                        requested.getMode() == null ? null : requested.getMode().getValue()
+                )
+                && isApplied(actual.getIsSignalHubEnabled(), requested.getIsSignalHubEnabled())
+                && isApplied(actual.getIsConsumerDelegable(), requested.getIsConsumerDelegable())
+                && isApplied(actual.getIsClientAccessDelegable(), requested.getIsClientAccessDelegable())
+                && isApplied(actual.getPersonalData(), requested.getPersonalData())
+                && isApplied(actual.getAsyncExchange(), requested.getAsyncExchange());
+    }
+
+    private static <T> boolean isApplied(T actual, T requested) {
+        return requested == null || Objects.equals(actual, requested);
     }
 }

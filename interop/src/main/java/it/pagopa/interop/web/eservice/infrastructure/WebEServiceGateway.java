@@ -4,8 +4,10 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.suit.component.Snackbar;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -45,6 +47,21 @@ public class WebEServiceGateway implements EServiceGateway {
         EService draftEService = generalDataGateway.readEServiceGeneralData();
         entityStore.upsert(command.getAlias(), draftEService);
         return draftEService;
+    }
+
+    @Override
+    public void tryUpdateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void updateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void shouldFailToUpdateEService(EServiceUpdateFailureReason reason) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

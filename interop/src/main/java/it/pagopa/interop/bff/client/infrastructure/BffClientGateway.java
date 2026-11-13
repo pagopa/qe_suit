@@ -15,6 +15,7 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AddUsersToClientRequest;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ClientUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
@@ -72,7 +73,7 @@ public class BffClientGateway implements ClientGateway {
 
                     return client;
                 })
-                .updateContext()
+                .updateContext(bffCommand.getAlias())
                 .get();
 
         if(bffCommand.getAdmin() != null)
@@ -124,6 +125,19 @@ public class BffClientGateway implements ClientGateway {
         return restClient.linkPurpose(client.getId(), purposeSeed)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map((Void) -> getClient(ClientRef.of(client.getId())))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public Client updateMetadata(Client client, String name, String description) {
+        ClientUpdateSeed updateSeed = new ClientUpdateSeed()
+                .name(name)
+                .description(description);
+
+        return restClient.updateClient(client.getId(), updateSeed)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getClient(ClientRef.of(client.getId())))
                 .updateContext()
                 .get();
     }

@@ -6,15 +6,19 @@ import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
+import it.pagopa.interop.common.eservice.application.*;
+import it.pagopa.interop.common.eservice.application.*;
+import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -47,6 +51,39 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         var defaultCommand = requestFactory.defaultCreationEServiceCommand();
         commandConfig.accept(defaultCommand);
         return createEService(defaultCommand, targetState);
+    }
+
+    @Override
+    public EServiceJourneyImpl updateEService(Consumer<EServiceUpdateCommand> commandConfig) {
+        EServiceUpdateCommand command = requestFactory.defaultUpdateEServiceCommand();
+        commandConfig.accept(command);
+        return updateEService(command);
+    }
+
+    @Override
+    public EServiceJourneyImpl updateEService(EServiceUpdateCommand command) {
+        String alias = command.getAlias();
+        EService eService = alias != null
+                ? entityStore.getByAliasOrThrow(alias, EService.class)
+                : entityStore.getLastOrThrow(EService.class);
+        eServiceUseCase.updateEService(eService, command);
+        return this;
+    }
+
+    @Override
+    public EServiceJourneyImpl tryUpdateEService(EServiceUpdateCommand command) {
+        String alias = command.getAlias();
+        EService eService = alias != null
+                ? entityStore.getByAliasOrThrow(alias, EService.class)
+                : entityStore.getLastOrThrow(EService.class);
+        eServiceUseCase.tryUpdateEService(eService, command);
+        return this;
+    }
+
+    @Override
+    public EServiceJourneyImpl shouldFailToUpdateEService(EServiceUpdateFailureReason reason) {
+        eServiceUseCase.shouldFailToUpdateEService(reason);
+        return this;
     }
 
     @Override
