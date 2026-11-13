@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.client.domain;
 
 import it.pagopa.domain.Identifiable;
+import it.pagopa.interop.common.kernel.domain.InteropActor;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Value
 @Builder(toBuilder = true)
 @Jacksonized
-public class Client implements Identifiable {
+public class Client implements Identifiable, InteropActor {
     UUID id;
     UUID consumerId;
     String name;

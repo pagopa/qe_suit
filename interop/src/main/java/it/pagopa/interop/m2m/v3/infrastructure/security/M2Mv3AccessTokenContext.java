@@ -1,5 +1,6 @@
 package it.pagopa.interop.m2m.v3.infrastructure.security;
 
+import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.kernel.security.AccessToken;
 
 import java.security.KeyPair;
@@ -7,6 +8,7 @@ import java.time.Duration;
 import java.time.Instant;
 
 public record M2Mv3AccessTokenContext(
+        Client client,
         AccessToken accessToken,
         KeyPair dpopKeyPair,
         Instant expiresAt

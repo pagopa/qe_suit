@@ -11,6 +11,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.InteropActor;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import org.junit.jupiter.api.Test;
@@ -202,7 +203,7 @@ class EServiceHooksTest {
 
         verify(services).deleteEService(draft);
         verifyNoMoreInteractions(services);
-        verify(session).set(null, null);
+        verify(session).set((InteropActor) null, null);
         verify(channel).setCurrentChannel(null);
     }
 

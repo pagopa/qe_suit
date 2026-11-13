@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.InteropJourney;
@@ -14,7 +15,6 @@ import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
-import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import lombok.RequiredArgsConstructor;
 

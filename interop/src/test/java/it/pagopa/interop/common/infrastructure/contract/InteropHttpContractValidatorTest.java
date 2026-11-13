@@ -7,7 +7,6 @@ import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -72,7 +71,7 @@ class InteropHttpContractValidatorTest {
         verify(delegate).apiCall(authCaptor.capture(), any());
         authCaptor.getValue().authenticate();
 
-        verify(currentM2MSession).set(Tenant.COMUNE_DI_MILANO, M2MRole.M2M_ADMIN);
+        verify(authSession).set(M2MRole.M2M_ADMIN, Tenant.COMUNE_DI_MILANO);
         assertThrows(NoSuchMethodException.class, () -> InteropHttpContractValidator.class.getMethod("apiCall", Supplier.class));
     }
 }

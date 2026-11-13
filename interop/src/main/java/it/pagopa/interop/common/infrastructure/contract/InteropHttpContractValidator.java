@@ -7,7 +7,6 @@ import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 
 import java.util.Objects;
@@ -42,7 +41,7 @@ public class InteropHttpContractValidator {
         Objects.requireNonNull(tenant, "tenant must not be null");
         Objects.requireNonNull(m2MRole, "m2MRole must not be null");
 
-        HttpContractAuthentication authentication = () -> currentM2MSession.set(tenant, m2MRole);
+        HttpContractAuthentication authentication = () -> authSession.set(m2MRole, tenant);
         return operationSupplier -> delegate.apiCall(authentication, operationSupplier);
     }
 }

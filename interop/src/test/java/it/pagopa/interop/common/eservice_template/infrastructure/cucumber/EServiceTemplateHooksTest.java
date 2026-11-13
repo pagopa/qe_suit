@@ -70,7 +70,7 @@ class EServiceTemplateHooksTest {
 
         verify(gateway).suspendVersion(second.getRef(), second.getLatestVersion().getRef());
         verify(session).set(User.getTenantAdmin(Tenant.SOGECAP), Tenant.SOGECAP);
-        verify(session).set(null, null);
+        verify(session).set((InteropActor) null, null);
         verify(channel, times(2)).setCurrentChannel(Channel.BFF);
     }
 

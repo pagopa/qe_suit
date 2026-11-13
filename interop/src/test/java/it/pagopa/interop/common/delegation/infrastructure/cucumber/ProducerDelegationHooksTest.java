@@ -10,6 +10,7 @@ import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceHooks;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.InteropActor;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import org.junit.jupiter.api.BeforeEach;
@@ -147,7 +148,7 @@ class ProducerDelegationHooksTest {
         hooks.cleanUpProducerDelegations();
 
         verifyNoInteractions(useCase);
-        verify(session, never()).set(any(), any());
+        verify(session, never()).set((InteropActor) any(), any());
         verify(channel, never()).setCurrentChannel(any());
     }
 

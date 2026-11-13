@@ -12,6 +12,16 @@ public class CucumberAuthSession implements AuthSession {
     public void set(InteropActor actor, Tenant tenant) {
         this.currentActor = actor;
         this.currentTenant = tenant;
+        if(actor instanceof User user)
+            currentRole = user.getRole();
+    }
+
+    @Override
+    public void set(InteropRole role, Tenant tenant) {
+        this.currentRole = role;
+        this.currentTenant = tenant;
+        if(role instanceof UserRole userRole)
+            currentActor = User.getTenantUser(tenant, userRole);
     }
 
     @Override

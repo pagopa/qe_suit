@@ -6,11 +6,20 @@ import it.pagopa.interop.common.kernel.domain.*;
 public class InMemoryAuthSession implements AuthSession {
     private final ThreadLocal<InteropActor> currentActor = new ThreadLocal<>();
     private final ThreadLocal<Tenant> currentTenant = new ThreadLocal<>();
+    private final ThreadLocal<InteropRole> currentRole = new ThreadLocal<>();
 
     @Override
     public void set(InteropActor actor, Tenant tenant) {
         this.currentActor.set(actor);
         this.currentTenant.set(tenant);
+    }
+
+    @Override
+    public void set(InteropRole role, Tenant tenant) {
+        this.currentRole.set(role);
+        this.currentTenant.set(tenant);
+        if(role instanceof UserRole userRole)
+            currentActor.set(User.getTenantUser(tenant, userRole));
     }
 
     @Override
