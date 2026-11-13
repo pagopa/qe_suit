@@ -40,7 +40,6 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
   Quando l'erogatore tenta di conferire a un ente non pubblico una delega in erogazione per l'e-service
   Allora il sistema rifiuta la proposta e segnala che l'ente scelto non può ricevere la delega.
 
-    # Binding BFF negativo mancante; riusare createProducerDelegation e verificare Tenant.getTenantType.
     When il Comune di Milano tenta di proporre la delega in erogazione a Sogecap per l'e-service
     Then il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_PRODUCERS_DELEGATIONS" in lingua "it"
 

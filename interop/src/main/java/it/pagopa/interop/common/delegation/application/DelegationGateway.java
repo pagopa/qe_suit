@@ -19,6 +19,8 @@ public interface DelegationGateway extends Plugin<Channel> {
 
     Delegation createProducerDelegation(TenantRef delegateRef, EServiceRef eServiceRef);
 
+    void attemptProducerDelegationCreation(TenantRef delegateRef, EServiceRef eServiceRef);
+
     ProducerDelegation createProducerDelegation(
             TenantRef delegatorRef,
             TenantRef delegateRef,

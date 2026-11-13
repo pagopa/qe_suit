@@ -85,13 +85,22 @@ public class DelegationUseCase {
             TenantRef delegateRef,
             EService eService
     ) {
+        requireEServiceOwnership(delegatorRef, eService);
+        return delegationGateway.createProducerDelegation(delegatorRef, delegateRef, eService.getRef());
+    }
+
+    public void attemptProducerDelegationCreation(TenantRef delegatorRef, TenantRef delegateRef, EService eService) {
+        requireEServiceOwnership(delegatorRef, eService);
+        delegationGateway.attemptProducerDelegationCreation(delegateRef, eService.getRef());
+    }
+
+    private void requireEServiceOwnership(TenantRef delegatorRef, EService eService) {
         if (!delegatorRef.id().toString().equals(eService.getProducerId())) {
             throw new IllegalArgumentException(
                     "L'e-service " + eService.getId() + " appartiene al delegante "
                             + eService.getProducerId() + ", non a " + delegatorRef.id()
             );
         }
-        return delegationGateway.createProducerDelegation(delegatorRef, delegateRef, eService.getRef());
     }
 
     public void approveConsumerDelegation(DelegationRef delegationRef) {

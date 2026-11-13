@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 
-
 @Service
 @RequiredArgsConstructor
 public class BffDelegationGateway implements DelegationGateway {
@@ -50,11 +49,13 @@ public class BffDelegationGateway implements DelegationGateway {
     }
 
     @Override
+    public void attemptProducerDelegationCreation(TenantRef delegateRef, EServiceRef eServiceRef) {
+        restClient.createProducerDelegation(delegateRef.id(), eServiceRef.id()).withoutPolling();
+    }
+
+    @Override
     public ProducerDelegation createProducerDelegation(
-            @NonNull TenantRef delegatorRef,
-            @NonNull TenantRef delegateRef,
-            @NonNull EServiceRef eServiceRef
-    ) {
+            @NonNull TenantRef delegatorRef, @NonNull TenantRef delegateRef, @NonNull EServiceRef eServiceRef) {
         var response = restClient.createProducerDelegation(delegateRef.id(), eServiceRef.id())
                 .withoutPolling();
         requireSuccessfulResponse(response.getRaw(), "creazione della delega di erogazione");
@@ -78,10 +79,7 @@ public class BffDelegationGateway implements DelegationGateway {
     }
 
     @Override
-    public Delegation waitForConsumerDelegationState(
-            DelegationRef delegationRef,
-            DelegationState expectedState
-    ) {
+    public Delegation waitForConsumerDelegationState(DelegationRef delegationRef, DelegationState expectedState) {
         return waitForConsumerDelegationState(delegationRef, expectedState.name());
     }
 
@@ -147,9 +145,7 @@ public class BffDelegationGateway implements DelegationGateway {
 
     @Override
     public ProducerDelegation waitForProducerDelegationState(
-            DelegationRef delegationRef,
-            ProducerDelegationState expectedState
-    ) {
+            DelegationRef delegationRef, ProducerDelegationState expectedState) {
         return restClient.getDelegation(delegationRef.id())
                 .withPolling(
                         response -> hasExpectedState(response, expectedState.name()),
