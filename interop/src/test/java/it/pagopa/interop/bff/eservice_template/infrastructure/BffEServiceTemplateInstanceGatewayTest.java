@@ -63,10 +63,10 @@ class BffEServiceTemplateInstanceGatewayTest {
         var restClient = new BffEServiceRestClient(new TestChainFactory(responses, entities), client);
         var serviceGateway = mock(BffEServiceGateway.class);
         var descriptorGateway = mock(BffEServiceDescriptorGateway.class);
-        var gateway = new BffEServiceTemplateInstanceGateway(restClient, serviceGateway, descriptorGateway);
+        var gateway = new BffEServiceTemplateInstanceGateway(restClient, serviceGateway, descriptorGateway, entities);
         var instances = new EServiceTemplateInstanceUseCase(
                 gateway, new BffEServiceTemplateRequestFactory(), null, null);
-        var steps = new EServiceTemplateInstanceSteps(instances, null, null);
+        var steps = new EServiceTemplateInstanceSteps(instances, null, null, entities);
         var template = EServiceTemplate.builder().id(UUID.randomUUID()).build();
 
         if (status == 400) {
@@ -87,7 +87,7 @@ class BffEServiceTemplateInstanceGatewayTest {
     @Test
     void negativeCreationRejectsCommandsFromOtherChannelsBeforeTransport() {
         var restClient = mock(BffEServiceRestClient.class);
-        var gateway = new BffEServiceTemplateInstanceGateway(restClient, null, null);
+        var gateway = new BffEServiceTemplateInstanceGateway(restClient, null, null, mock(EntityStore.class));
 
         assertThatThrownBy(() -> gateway.shouldFailToCreateEServiceInstance(
                 EServiceTemplate.builder().id(UUID.randomUUID()).build(),
@@ -120,12 +120,16 @@ class BffEServiceTemplateInstanceGatewayTest {
         when(serviceGateway.getEService(EServiceRef.of(serviceId))).thenReturn(service);
         var restClient = new BffEServiceRestClient(new TestChainFactory(
                 mock(LastApiResponseStore.class), mock(EntityStore.class)), client);
-        var gateway = new BffEServiceTemplateInstanceGateway(restClient, serviceGateway, descriptorGateway);
+        var entities = mock(EntityStore.class);
+        var gateway = new BffEServiceTemplateInstanceGateway(restClient, serviceGateway, descriptorGateway, entities);
         var template = EServiceTemplate.builder().id(UUID.randomUUID()).build();
         var command = new BffEServiceTemplateInstanceCreationCommand();
         command.instanceLabel("eservice-1");
 
-        assertThat(gateway.createEServiceInstance(template, command)).isSameAs(service);
+        var created = gateway.createEServiceInstance(template, command);
+        assertThat(created.getId()).isEqualTo(service.getId());
+        assertThat(created.getInstanceLabel()).isEqualTo("eservice-1");
+        verify(entities).upsert(created);
 
         verify(operation).templateIdPath(template.getId());
         verify(operation).body(same(command.getBffPayload()));
