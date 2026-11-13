@@ -1,6 +1,5 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
-@lingua:it,en
 Feature: Messaggi di errore durante la creazione degli attributi nel registro
 
   Come amministratore di un ente abilitato alla creazione degli attributi
@@ -65,7 +64,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento dal nome.
 
     # Binding BFF negativo mancante; riusare createCertifiedAttribute con il nome indicato e gli altri dati validi.
-    When l'erogatore tenta di creare un attributo "certificato" con il nome "Attributo https://example.org"
+    When l'erogatore tenta di creare un attributo "certificato" con un link all'interno del nome
     Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_CERTIFIED_ATTRIBUTES" in lingua "it"
 
   Scenario: [ERROR_098] - Rifiuto di un attributo dichiarato con un link nel nome
@@ -74,7 +73,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento dal nome.
 
     # Binding BFF negativo mancante; riusare createDeclaredAttribute con il nome indicato e gli altri dati validi.
-    When l'erogatore tenta di creare un attributo "dichiarato" con il nome "Attributo https://example.org"
+    When l'erogatore tenta di creare un attributo "dichiarato" con un link all'interno del nome
     Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_DECLARED_ATTRIBUTES" in lingua "it"
 
   Scenario: [ERROR_099] - Rifiuto di un attributo verificato con un link nel nome
@@ -83,5 +82,5 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento dal nome.
 
     # Binding BFF negativo mancante; riusare createVerifiedAttribute con il nome indicato e gli altri dati validi.
-    When l'erogatore tenta di creare un attributo "verificato" con il nome "Attributo https://example.org"
+    When l'erogatore tenta di creare un attributo "verificato" con un link all'interno del nome
     Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_VERIFIED_ATTRIBUTES" in lingua "it"
