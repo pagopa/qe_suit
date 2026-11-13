@@ -64,6 +64,9 @@ public interface ProducerEServiceDetailPage extends Page {
     @XPath("(.//button[normalize-space()='Aggiungi attributi'])[1]")
     Button addAttributesButton();
 
+    @XPath(".//button[contains(normalize-space(.), 'analisi del rischio di questo e-service')]")
+    Button watchRiskAnalysisAssociatedButton();
+
     @XPath("//div[contains(@class, 'MuiDrawer-root')]//button[normalize-space()='Salva modifiche']")
     Button attributesDrawerSaveButton();
 
