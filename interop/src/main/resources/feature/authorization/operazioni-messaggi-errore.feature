@@ -28,7 +28,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding negativo mancante, condiviso con ERROR_204; riusare l'associazione BFF del portachiavi.
     When l'utente tenta di associare il portachiavi erogatore all'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES" in lingua "it"
 
   Scenario: [ERROR_204] - Impossibilità di associare un portachiavi a un e-service archiviato
   Dati un e-service interamente archiviato e un portachiavi appartenenti allo stesso erogatore
@@ -45,7 +45,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     And un admin appartenente all'erogatore Comune di Milano
     # Binding negativo mancante, condiviso con ERROR_203; riusare l'associazione BFF del portachiavi.
     When l'utente tenta di associare il portachiavi erogatore all'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_ESERVICE_IN_ARCHIVED_STATE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_ESERVICE_IN_ARCHIVED_STATE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES" in lingua "it"
 
   # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_205] - Impossibilità di associare un client a una finalità mai attivata
@@ -60,7 +60,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     And un admin appartenente al fruitore PagoPA
     # Binding negativo mancante; riusare linkPurpose senza attendere il successo.
     When il fruitore tenta di associare il client alla finalità creata
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NO_ACTIVE_OR_SUSPENDED_PURPOSE_VERSION_FOUND__POST_CLIENTS_CLIENT_ID_PURPOSES"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NO_ACTIVE_OR_SUSPENDED_PURPOSE_VERSION_FOUND__POST_CLIENTS_CLIENT_ID_PURPOSES" in lingua "it"
 
   Scenario: [ERROR_100] - Rifiuto della registrazione di una chiave privata nel client
   Dato un client abilitato alla gestione delle chiavi
@@ -70,7 +70,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "chiave-privata-effimera-pem" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_PRIVATE_KEY_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_PRIVATE_KEY_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_101] - Rifiuto della registrazione di un certificato X.509 nel client
   Dato un client abilitato alla gestione delle chiavi
@@ -80,7 +80,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "certificato-x509" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_CERTIFICATE_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_CERTIFICATE_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_102] - Rifiuto della registrazione di più chiavi pubbliche insieme nel client
   Dato un client abilitato alla gestione delle chiavi
@@ -90,7 +90,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "due-chiavi-pubbliche-pem" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_MULTIPLE_KEYS_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_MULTIPLE_KEYS_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_103] - Rifiuto di una chiave pubblica incompleta nel client
   Dato un client abilitato alla gestione delle chiavi
@@ -100,7 +100,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "pem-incompleto" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_PUBLIC_KEY__POST_CLIENTS_CLIENT_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_PUBLIC_KEY__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_104] - Rifiuto di una chiave pubblica non RSA nel client
   Dato un client abilitato alla gestione delle chiavi
@@ -110,7 +110,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "ec-pubblica" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_AN_RSAKEY__POST_CLIENTS_CLIENT_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_AN_RSAKEY__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_105] - Rifiuto di una chiave RSA con lunghezza insufficiente nel client
   Dato un client abilitato alla gestione delle chiavi
@@ -120,7 +120,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-1024-bit" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_KEY_LENGTH__POST_CLIENTS_CLIENT_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_KEY_LENGTH__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_106] - Impossibilità di registrare nuovamente una chiave già presente nel client
   Dato un client con una chiave pubblica di test già registrata
@@ -131,7 +131,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     # La fixture identifica la chiave effettiva registrata dal Given, non una nuova chiave RSA.
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-già-registrata" al "client" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_KEY_ALREADY_EXISTS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_KEY_ALREADY_EXISTS" in lingua "it"
 
   Scenario: [ERROR_107] - Impossibilità di eliminare una chiave del client registrata da un altro operatore
   Dato un client con una chiave registrata da un operatore di sicurezza
@@ -144,7 +144,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     And il secondo operatore di sicurezza selezionato come utente corrente
     # Operazione BFF e binding negativo mancanti per l'eliminazione della chiave del client.
     When l'utente tenta di eliminare la chiave registrata dall'altro operatore nel client
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_USER_NOT_ALLOWED_TO_DELETE_CLIENT_KEY"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_USER_NOT_ALLOWED_TO_DELETE_CLIENT_KEY" in lingua "it"
 
   Scenario: [ERROR_108] - Rifiuto della registrazione di una chiave privata nel portachiavi
   Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
@@ -154,7 +154,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un portachiavi erogatore creato dal Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "chiave-privata-effimera-pem" al "portachiavi" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_PRIVATE_KEY_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_PRIVATE_KEY_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_109] - Rifiuto della registrazione di un certificato X.509 nel portachiavi
   Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
@@ -164,7 +164,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un portachiavi erogatore creato dal Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "certificato-x509" al "portachiavi" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_CERTIFICATE_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_CERTIFICATE_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_110] - Rifiuto della registrazione di più chiavi pubbliche insieme nel portachiavi
   Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
@@ -174,7 +174,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un portachiavi erogatore creato dal Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "due-chiavi-pubbliche-pem" al "portachiavi" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_MULTIPLE_KEYS_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_MULTIPLE_KEYS_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_111] - Rifiuto di una chiave pubblica incompleta nel portachiavi
   Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
@@ -184,7 +184,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un portachiavi erogatore creato dal Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "pem-incompleto" al "portachiavi" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_PUBLIC_KEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_PUBLIC_KEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_112] - Rifiuto di una chiave pubblica non RSA nel portachiavi
   Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
@@ -194,7 +194,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un portachiavi erogatore creato dal Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "ec-pubblica" al "portachiavi" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_AN_RSAKEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_AN_RSAKEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_113] - Rifiuto di una chiave RSA con lunghezza insufficiente nel portachiavi
   Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
@@ -204,7 +204,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un portachiavi erogatore creato dal Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-1024-bit" al "portachiavi" con il nome "Chiave di test"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_KEY_LENGTH__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_KEY_LENGTH__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_114] - Rifiuto della creazione di un client di fruizione con un link nel nome
   Dato un amministratore abilitato alla creazione dei client
@@ -213,7 +213,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     # Binding negativo parametrico mancante; riusare createConsumerClient o createApiClient in base al tipo.
     When l'utente tenta di creare un client "CONSUMER" con il nome "Client https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_CONSUMER"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_CONSUMER" in lingua "it"
 
   Scenario: [ERROR_115] - Rifiuto della creazione di un client API con un link nel nome
   Dato un amministratore abilitato alla creazione dei client
@@ -222,7 +222,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     # Binding negativo parametrico mancante; riusare createConsumerClient o createApiClient in base al tipo.
     When l'utente tenta di creare un client "API" con il nome "Client https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_API"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_API" in lingua "it"
 
   Scenario: [ERROR_116] - Rifiuto di una chiave del client con un link nel nome
   Dato un client abilitato alla gestione delle chiavi
@@ -232,7 +232,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-valida" al "client" con il nome "Chiave https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_CLIENT_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_117] - Rifiuto della creazione di un portachiavi con un link nel nome
   Dato un amministratore abilitato alla creazione dei portachiavi di erogazione
@@ -241,7 +241,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     # Binding BFF negativo mancante; riusare createProducerKeychain senza attendere il successo.
     When l'utente tenta di creare un portachiavi di erogazione con il nome "Portachiavi https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCER_KEYCHAINS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCER_KEYCHAINS" in lingua "it"
 
   Scenario: [ERROR_118] - Rifiuto di una chiave del portachiavi con un link nel nome
   Dato un portachiavi di erogazione abilitato alla gestione delle chiavi
@@ -251,7 +251,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Given un portachiavi erogatore creato dal Comune di Milano
     # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-valida" al "portachiavi" con il nome "Chiave https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 
   Scenario: [ERROR_119] - Rifiuto della modifica di un client con un link nel nome
   Dato un client esistente e un amministratore abilitato alla sua gestione
@@ -262,7 +262,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     # Operazione BFF e binding negativo parametrico mancanti; verificare il contratto PATCH di rilascio.
     # Non rimappare questo ID su un'altra operazione.
     When l'utente tenta di modificare i dati del "client" con il nome "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__PATCH_CLIENTS_CLIENT_ID"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__PATCH_CLIENTS_CLIENT_ID" in lingua "it"
 
   Scenario: [ERROR_120] - Rifiuto della modifica di un portachiavi con un link nel nome
   Dato un portachiavi di erogazione esistente e un amministratore abilitato alla sua gestione
@@ -273,4 +273,4 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     # Operazione BFF e binding negativo parametrico mancanti; verificare il contratto PATCH di rilascio.
     # Non rimappare questo ID su un'altra operazione.
     When l'utente tenta di modificare i dati del "portachiavi" con il nome "Valore https://example.org"
-    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__PATCH_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID"
+    Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__PATCH_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID" in lingua "it"

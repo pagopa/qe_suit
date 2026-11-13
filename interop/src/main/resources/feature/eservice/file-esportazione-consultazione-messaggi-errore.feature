@@ -21,7 +21,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante; riusare readEService senza attendere il successo.
     When l'utente tenta di consultare i dettagli dell'e-service in erogazione
-    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID"
+    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID" in lingua "it"
 
   @producer-delegation-settings
   Scenario: [ERROR_170] - Impossibilità di consultare una versione dopo la revoca della delega
@@ -34,7 +34,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante; riusare readDescriptor senza attendere il successo.
     When l'utente tenta di consultare i dettagli della versione 1 dell'e-service in erogazione
-    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID"
+    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID" in lingua "it"
 
   @producer-delegation-settings
   Scenario: [ERROR_171] - Impossibilità per il delegato di esportare una versione dell'e-service
@@ -46,7 +46,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     And un admin appartenente al delegato Comune di Pozzallo
     # Operazione BFF e binding negativo comuni mancanti per l'esportazione della versione.
     When l'utente tenta di esportare la versione 1 dell'e-service
-    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_EXPORT_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID"
+    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_EXPORT_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID" in lingua "it"
 
   Scenario: [ERROR_172] - Impossibilità di allegare un documento a una versione eliminata
   Dato un e-service con una versione pubblicata e una versione successiva in bozza poi eliminata
@@ -61,7 +61,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     And la versione successiva dell'e-service creata in bozza e poi eliminata
     # Binding BFF comune mancante per il caricamento; riusare addDocument sulla versione eliminata.
     When l'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_DESCRIPTOR_NOT_FOUND"
+    Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_DESCRIPTOR_NOT_FOUND" in lingua "it"
 
   Scenario: [ERROR_173] - Rifiuto dell'importazione di un archivio senza la configurazione dell'e-service
   Dato un amministratore abilitato all'importazione degli e-service
@@ -71,7 +71,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     # Fixture da predisporre: ZIP leggibile, privo di configuration.json e con gli altri contenuti validi.
     # Operazione BFF e binding mancanti per l'importazione da file.
     When l'erogatore tenta di importare un e-service dal file "zip-senza-configurazione.zip"
-    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ZIP_STRUCTURE"
+    Then il messaggio di errore corrisponde al caso "BFF_INVALID_ZIP_STRUCTURE" in lingua "it"
 
   @producer-delegation-settings
   Scenario: [ERROR_174] - Impossibilità per l'erogatore di esportare un e-service con delega attiva
@@ -83,7 +83,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     And un admin appartenente all'erogatore Comune di Milano
     # Operazione BFF e binding negativo comuni mancanti per l'esportazione della versione.
     When l'utente tenta di esportare la versione 1 dell'e-service
-    Then il messaggio di errore corrisponde al caso "BFF_DELEGATED_ESERVICE_NOT_EXPORTABLE"
+    Then il messaggio di errore corrisponde al caso "BFF_DELEGATED_ESERVICE_NOT_EXPORTABLE" in lingua "it"
 
   Scenario: [ERROR_181] - Rifiuto di un PDF caricato come interfaccia REST
   Dato un e-service REST con una versione in bozza senza interfaccia
@@ -95,7 +95,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
       | ES-1  | Comune di Milano |
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "allegato-a.pdf" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_ESERVICE_INTERFACE_FILE_DETECTED"
+    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_ESERVICE_INTERFACE_FILE_DETECTED" in lingua "it"
 
   Scenario: [ERROR_182] - Rifiuto di un'interfaccia con una versione OpenAPI non supportata
   Dato un e-service REST con una versione in bozza senza interfaccia
@@ -107,7 +107,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
       | ES-1  | Comune di Milano |
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "openapi-versione-non-supportata.yaml" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "CATALOG_OPENAPI_VERSION_NOT_RECOGNIZED__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS"
+    Then il messaggio di errore corrisponde al caso "CATALOG_OPENAPI_VERSION_NOT_RECOGNIZED__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS" in lingua "it"
 
   Scenario: [ERROR_183] - Rifiuto di un documento il cui formato non è verificabile
   Dato un e-service con una versione in bozza disponibile per il caricamento di documenti
@@ -119,7 +119,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
       | ES-1  | Comune di Milano |
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "formato-non-rilevabile.bin" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_CONTENT_TYPE_DETECTED"
+    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_CONTENT_TYPE_DETECTED" in lingua "it"
 
   Scenario: [ERROR_184] - Rifiuto di un'interfaccia SOAP senza indirizzo del servizio
   Dato un e-service SOAP con una versione in bozza senza interfaccia
@@ -128,7 +128,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
 
     Given un e-service SOAP in bozza creato dall'erogatore
     When l'erogatore tenta di caricare l'interfaccia SOAP "missing-soap-address.wsdl" sul descrittore dell'e-service ottenendo un rifiuto per "assenza di soap:address"
-    Then il messaggio di errore corrisponde al caso "CATALOG_INTERFACE_EXTRACTING_SOAP_FIELD_VALUE_ERROR"
+    Then il messaggio di errore corrisponde al caso "CATALOG_INTERFACE_EXTRACTING_SOAP_FIELD_VALUE_ERROR" in lingua "it"
 
   Scenario: [ERROR_185] - Rifiuto di un'interfaccia REST con un URL del server non valido
   Dato un e-service REST con una versione in bozza senza interfaccia
@@ -140,7 +140,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
       | ES-1  | Comune di Milano |
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "openapi-server-non-valido.yaml" come "interfaccia" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_SERVER_URL"
+    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_SERVER_URL" in lingua "it"
 
   Scenario: [ERROR_186] - Rifiuto di un documento che supera la dimensione massima
   Dato un e-service con una versione in bozza disponibile per il caricamento di documenti
@@ -153,7 +153,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     # Dimensionare la fixture oltre il limite applicativo configurato e sotto il limite del proxy.
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "pdf-oltre-limite.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "CATALOG_CONTENT_TOO_LARGE_ERROR"
+    Then il messaggio di errore corrisponde al caso "CATALOG_CONTENT_TOO_LARGE_ERROR" in lingua "it"
 
   Scenario: [ERROR_187] - Rifiuto di un documento PDF con contenuto non valido
   Dato un e-service con una versione in bozza disponibile per il caricamento di documenti
@@ -165,4 +165,4 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
       | ES-1  | Comune di Milano |
     # Binding BFF comune mancante per il caricamento; riusare addDocument e gestire il rifiuto.
     When l'erogatore carica il file "pdf-con-contenuto-non-valido.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_FILE_UPLOAD_ERROR"
+    Then il messaggio di errore corrisponde al caso "CATALOG_INVALID_FILE_UPLOAD_ERROR" in lingua "it"

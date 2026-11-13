@@ -23,7 +23,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     # Operazione BFF e binding negativo mancanti per l'aggiornamento della verifica, distinto dalla creazione.
     # Calcolare ieri rispetto alla data del test, senza una data fissa.
     When l'erogatore tenta di aggiornare la verifica dell'attributo "VER-1" di PagoPA con scadenza ieri
-    Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED_ATTRIBUTE_ID"
+    Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED_ATTRIBUTE_ID" in lingua "it"
 
   Scenario: [ERROR_013] - Impossibilità di assegnare un attributo certificato già posseduto dall'ente
   Dato un attributo certificato già assegnato all'ente dallo stesso certificatore
@@ -38,7 +38,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
       | CERT-1 |
     # Binding negativo comune mancante; ricavare il tipo dall'alias e riusare addCertifiedAttribute.
     When il certificatore tenta di assegnare nuovamente l'attributo "CERT-1" all'ente PagoPA
-    Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED"
+    Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED" in lingua "it"
 
   # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_014] - Impossibilità di assegnare un attributo certificato discreto già posseduto dall'ente
@@ -54,7 +54,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     And l'attributo certificato discreto "DISC-1" già assegnato all'ente PagoPA con un valore ammesso
     # Binding negativo comune mancante; ricavare il tipo dall'alias e riusare addCertifiedDiscreteAttribute.
     When il certificatore tenta di assegnare nuovamente l'attributo "DISC-1" all'ente PagoPA
-    Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED_DISCRETE"
+    Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED_DISCRETE" in lingua "it"
 
   Scenario: [ERROR_015] - Rifiuto di una nuova verifica con scadenza nel passato
   Dato un attributo richiesto per la fruizione, ancora da verificare
@@ -75,7 +75,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     And un admin appartenente all'erogatore Comune di Milano
     # Binding BFF negativo mancante; riusare verifyVerifiedAttribute con scadenza ieri e gli altri dati validi.
     When l'erogatore tenta di verificare l'attributo "VER-1" di PagoPA con scadenza ieri
-    Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED"
+    Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED" in lingua "it"
 
   # NON REPLICABILE A FRONTEND
   Scenario: [ERROR_016] - Impossibilità per un ente non pubblico di abilitarsi alle deleghe
@@ -86,7 +86,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     Given un admin appartenente all'erogatore Sogecap
     # Binding BFF negativo mancante; riusare updateTenantDelegatedFeatures senza il flusso di successo.
     When Sogecap tenta di abilitarsi a ricevere deleghe di erogazione
-    Then il messaggio di errore corrisponde al caso "TENANT_OPERATION_FORBIDDEN"
+    Then il messaggio di errore corrisponde al caso "TENANT_OPERATION_FORBIDDEN" in lingua "it"
 
   Scenario: [ERROR_017] - Rifiuto di un contatto email con un link nelle note
   Dato un amministratore abilitato alla gestione dei contatti dell'ente
@@ -95,4 +95,4 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
 
     # Operazione BFF e binding negativo mancanti; mantenere tipo e indirizzo del contatto validi.
     When l'utente tenta di salvare un contatto email dell'ente con le note "Contatto https://example.org"
-    Then il messaggio di errore corrisponde al caso "TENANT_HYPERLINK_DETECTION_ERROR"
+    Then il messaggio di errore corrisponde al caso "TENANT_HYPERLINK_DETECTION_ERROR" in lingua "it"

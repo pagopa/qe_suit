@@ -26,7 +26,7 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
     And un admin appartenente all'erogatore Comune di Milano
     # Operazione BFF e binding mancanti per il download del documento firmato; evitare retry nel tentativo.
     When l'erogatore tenta di scaricare il documento firmato della richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "BFF_CONTRACT_EXCEPTION"
+    Then il messaggio di errore corrisponde al caso "BFF_CONTRACT_EXCEPTION" in lingua "it"
 
   Scenario: [ERROR_197] - Rifiuto di un allegato PDF con contenuto non valido
   Data una richiesta di fruizione del fruitore in bozza
@@ -37,4 +37,4 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
     # Fixture da predisporre: PDF con tipo ammesso e contenuto non valido.
     # Operazione BFF e binding mancanti per il caricamento degli allegati alla richiesta.
     When il fruitore tenta di allegare alla richiesta di fruizione il file "pdf-con-contenuto-non-valido.pdf"
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_INVALID_FILE_UPLOAD_ERROR"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_INVALID_FILE_UPLOAD_ERROR" in lingua "it"

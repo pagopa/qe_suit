@@ -21,7 +21,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
       | CERT-1 |
     # Binding BFF negativo mancante; riusare createCertifiedAttribute con il nome dell'attributo registrato.
     When l'erogatore tenta di creare un attributo "certificato" con il nome dell'attributo "CERT-1"
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_CERTIFIED_ATTRIBUTES"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_CERTIFIED_ATTRIBUTES" in lingua "it"
 
   Scenario: [ERROR_094] - Impossibilità di creare un attributo certificato discreto con un nome già presente
   Dato un attributo certificato discreto già presente nel registro
@@ -33,7 +33,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
       | DISC-1 |
     # Binding BFF negativo mancante; riusare createCertifiedDiscreteAttribute con il nome registrato e dati validi.
     When l'erogatore tenta di creare un attributo "certificato discreto" con il nome dell'attributo "DISC-1"
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_CERTIFIED_DISCRETE_ATTRIBUTES"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_CERTIFIED_DISCRETE_ATTRIBUTES" in lingua "it"
 
   Scenario: [ERROR_095] - Impossibilità di creare un attributo dichiarato con un nome già presente
   Dato un attributo dichiarato già presente nel registro
@@ -45,7 +45,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
       | DECL-1 |
     # Binding BFF negativo mancante; riusare createDeclaredAttribute con il nome dell'attributo registrato.
     When l'erogatore tenta di creare un attributo "dichiarato" con il nome dell'attributo "DECL-1"
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_DECLARED_ATTRIBUTES"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_DECLARED_ATTRIBUTES" in lingua "it"
 
   Scenario: [ERROR_096] - Impossibilità di creare un attributo verificato con un nome già presente
   Dato un attributo verificato già presente nel registro
@@ -57,7 +57,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
       | VER-1 |
     # Binding BFF negativo mancante; riusare createVerifiedAttribute con il nome dell'attributo registrato.
     When l'erogatore tenta di creare un attributo "verificato" con il nome dell'attributo "VER-1"
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_VERIFIED_ATTRIBUTES"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_VERIFIED_ATTRIBUTES" in lingua "it"
 
   Scenario: [ERROR_097] - Rifiuto di un attributo certificato con un link nel nome
   Dato un amministratore abilitato alla creazione degli attributi certificati
@@ -66,7 +66,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
 
     # Binding BFF negativo mancante; riusare createCertifiedAttribute con il nome indicato e gli altri dati validi.
     When l'erogatore tenta di creare un attributo "certificato" con il nome "Attributo https://example.org"
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_CERTIFIED_ATTRIBUTES"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_CERTIFIED_ATTRIBUTES" in lingua "it"
 
   Scenario: [ERROR_098] - Rifiuto di un attributo dichiarato con un link nel nome
   Dato un amministratore abilitato alla creazione degli attributi dichiarati
@@ -75,7 +75,7 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
 
     # Binding BFF negativo mancante; riusare createDeclaredAttribute con il nome indicato e gli altri dati validi.
     When l'erogatore tenta di creare un attributo "dichiarato" con il nome "Attributo https://example.org"
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_DECLARED_ATTRIBUTES"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_DECLARED_ATTRIBUTES" in lingua "it"
 
   Scenario: [ERROR_099] - Rifiuto di un attributo verificato con un link nel nome
   Dato un amministratore abilitato alla creazione degli attributi verificati
@@ -84,4 +84,4 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
 
     # Binding BFF negativo mancante; riusare createVerifiedAttribute con il nome indicato e gli altri dati validi.
     When l'erogatore tenta di creare un attributo "verificato" con il nome "Attributo https://example.org"
-    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_VERIFIED_ATTRIBUTES"
+    Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_VERIFIED_ATTRIBUTES" in lingua "it"

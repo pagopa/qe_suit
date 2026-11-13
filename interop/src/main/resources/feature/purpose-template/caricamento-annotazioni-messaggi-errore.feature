@@ -20,7 +20,7 @@ Feature: Messaggi di errore durante il caricamento degli allegati alle annotazio
     # Fixture da predisporre: file di testo valido, non identificato come PDF.
     # Operazione BFF e binding negativo comuni mancanti per gli allegati alle annotazioni.
     When l'operatore allega il file "allegato-non-pdf.txt" all'annotazione del template finalità con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_CONTENT_TYPE_DETECTED"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_CONTENT_TYPE_DETECTED" in lingua "it"
 
   Scenario: [ERROR_196] - Rifiuto di un allegato PDF con firma binaria non valida
   Dato un template finalità in bozza con una risposta annotata
@@ -30,4 +30,4 @@ Feature: Messaggi di errore durante il caricamento degli allegati alle annotazio
     # Fixture da predisporre: tipo PDF ammesso e firma binaria non valida.
     # Operazione BFF e binding negativo comuni mancanti per gli allegati alle annotazioni.
     When l'operatore allega il file "pdf-con-contenuto-non-valido.pdf" all'annotazione del template finalità con il nome "Allegato di test"
-    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_PDF_SIGNATURE_ERROR"
+    Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_PDF_SIGNATURE_ERROR" in lingua "it"

@@ -18,4 +18,4 @@ Feature: Messaggi di errore durante la verifica della client assertion
     And un admin appartenente al fruitore PagoPA
     # Binding esistente; manca l'adattatore BFF di DebugClientAssertionGateway per il rifiuto atteso.
     When l'utente inoltra la richiesta di validazione specificando client assertion creata e client creato
-    Then il messaggio di errore corrisponde al caso "BFF_TENANT_NOT_ALLOWED"
+    Then il messaggio di errore corrisponde al caso "BFF_TENANT_NOT_ALLOWED" in lingua "it"

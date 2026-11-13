@@ -30,7 +30,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente al fruitore PagoPA
     # Binding BFF negativo mancante; riusare submit senza attendere il successo.
     When il fruitore tenta di inviare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_SUBMISSION_FAILED"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_SUBMISSION_FAILED" in lingua "it"
 
   Scenario: [ERROR_149] - Impossibilità di approvare una richiesta di fruizione già attiva
   Dato un e-service pubblicato e una richiesta di fruizione del fruitore già attiva
@@ -41,7 +41,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente all'erogatore Comune di Milano
     # Binding BFF negativo mancante; riusare activate senza l'accesso al dettaglio previsto dal binding positivo.
     When l'erogatore tenta di approvare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE" in lingua "it"
 
   Scenario: [ERROR_150] - Impossibilità di approvare una richiesta senza verificare un attributo necessario
   Dato un e-service con un attributo verificato richiesto e non posseduto dal fruitore e una richiesta in attesa di approvazione
@@ -63,7 +63,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente all'erogatore Comune di Milano
     # Binding BFF negativo mancante; riusare activate senza l'accesso al dettaglio WEB.
     When l'erogatore tenta di approvare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ACTIVATION_FAILED"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ACTIVATION_FAILED" in lingua "it"
 
   Scenario Outline: [ERROR_151] - Impossibilità di approvare una richiesta per una versione <stato versione>
   Dato un e-service con approvazione manuale e una richiesta del fruitore in attesa per una versione archiviata o in archiviazione
@@ -77,7 +77,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente all'erogatore Comune di Milano
     # Binding BFF negativo mancante; riusare activate senza l'accesso al dettaglio WEB.
     When l'erogatore tenta di approvare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE" in lingua "it"
 
     Examples:
       | stato versione   |
@@ -93,7 +93,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti per il tentativo di riattivazione.
     When il fruitore tenta di riattivare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND" in lingua "it"
 
   Scenario: [ERROR_153] - Impossibilità di riattivare una richiesta per una versione archiviata
   Data una richiesta di fruizione del fruitore sospesa e riferita a una versione archiviata
@@ -111,7 +111,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti per il tentativo di riattivazione.
     When il fruitore tenta di riattivare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND" in lingua "it"
 
   Scenario: [ERROR_154] - Impossibilità di allegare un documento a una richiesta di fruizione attiva
   Dato un e-service pubblicato e una richiesta di fruizione del fruitore attiva
@@ -122,7 +122,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti per il caricamento degli allegati alla richiesta.
     When il fruitore tenta di allegare alla richiesta di fruizione il file "allegato-a.pdf"
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__POST_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__POST_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS" in lingua "it"
 
   Scenario: [ERROR_155] - Impossibilità di scaricare un documento già eliminato dalla richiesta
   Data una richiesta di fruizione del fruitore in bozza con un documento allegato e poi eliminato
@@ -138,7 +138,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And il file "allegato-a.pdf" allegato alla richiesta di fruizione e poi eliminato
     # Operazione BFF e binding mancanti per il download dell'allegato eliminato.
     When l'utente tenta di scaricare il documento dalla richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__GET_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__GET_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID" in lingua "it"
 
   Scenario: [ERROR_156] - Impossibilità di eliminare un documento già rimosso dalla richiesta
   Data una richiesta di fruizione del fruitore in bozza con un documento allegato e poi eliminato
@@ -154,7 +154,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And il file "allegato-a.pdf" allegato alla richiesta di fruizione e poi eliminato
     # Operazione BFF e binding mancanti per l'eliminazione dell'allegato.
     When il fruitore tenta di eliminare il documento dalla richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENT_NOT_FOUND__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID" in lingua "it"
 
   Scenario: [ERROR_157] - Impossibilità di eliminare un documento da una richiesta di fruizione attiva
   Data una richiesta di fruizione del fruitore con un documento allegato in bozza e poi attivata
@@ -172,7 +172,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And la richiesta di fruizione inviata e attivata
     # Operazione BFF e binding mancanti per l'eliminazione dell'allegato.
     When il fruitore tenta di eliminare il documento dalla richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID" in lingua "it"
 
   Scenario: [ERROR_158] - Impossibilità di sospendere una richiesta di fruizione in bozza
   Dato un e-service pubblicato e una richiesta di fruizione del fruitore in bozza
@@ -186,7 +186,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente all'erogatore Comune di Milano
     # Binding BFF negativo mancante; riusare suspend senza attendere il successo.
     When l'erogatore tenta di sospendere la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_SUSPEND"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_SUSPEND" in lingua "it"
 
   Scenario: [ERROR_159] - Impossibilità di rifiutare una richiesta di fruizione già attiva
   Dato un e-service pubblicato e una richiesta di fruizione del fruitore già attiva
@@ -197,7 +197,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente all'erogatore Comune di Milano
     # Operazione BFF e binding mancanti per il tentativo di rifiuto.
     When l'erogatore tenta di rifiutare la richiesta di fruizione con una motivazione valida
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_REJECT"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_REJECT" in lingua "it"
 
   Scenario: [ERROR_160] - Impossibilità di archiviare una richiesta di fruizione in bozza
   Dato un e-service pubblicato e una richiesta di fruizione del fruitore in bozza
@@ -211,7 +211,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente al fruitore PagoPA
     # Binding BFF negativo mancante; riusare archive senza attendere il successo.
     When il fruitore tenta di archiviare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_ARCHIVE"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_ARCHIVE" in lingua "it"
 
   Scenario: [ERROR_161] - Impossibilità di richiedere la fruizione di una versione deprecata
   Dato un e-service con la prima versione deprecata dopo la fruizione di un ente e una seconda versione pubblicata
@@ -220,7 +220,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     When il sistema impedisce al Comune di Pozzallo di inoltrare una richiesta di fruizione per la versione deprecata dell'EService
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_NOT_LATEST_ESERVICE_DESCRIPTOR"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_NOT_LATEST_ESERVICE_DESCRIPTOR" in lingua "it"
 
   Scenario: [ERROR_162] - Impossibilità di richiedere la fruizione della versione più recente sospesa
   Dato un e-service la cui versione più recente è sospesa
@@ -234,7 +234,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente al fruitore PagoPA
     # Binding BFF negativo mancante per la versione sospesa; riusare shouldFailToCreateAgreement.
     When il fruitore tenta di creare una richiesta di fruizione per la versione più recente dell'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS" in lingua "it"
 
   Scenario: [ERROR_163] - Impossibilità di richiedere la fruizione senza un attributo certificato necessario
   Dato un e-service pubblicato con un attributo certificato richiesto e non assegnato al fruitore
@@ -254,7 +254,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente al fruitore PagoPA
     # Binding BFF negativo mancante; riusare create ed estendere i motivi di shouldFailToCreateAgreement.
     When il fruitore tenta di creare una richiesta di fruizione per la versione più recente dell'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS" in lingua "it"
 
   Scenario: [ERROR_164] - Impossibilità di creare un'altra richiesta quando la fruizione è già attiva
   Dato un e-service pubblicato e una richiesta di fruizione del fruitore già attiva
@@ -268,7 +268,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente al fruitore PagoPA
     # Binding BFF negativo mancante; riusare create ed estendere i motivi di shouldFailToCreateAgreement.
     When il fruitore tenta di creare una richiesta di fruizione per la versione più recente dell'e-service "ES-1"
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS" in lingua "it"
 
   Scenario: [ERROR_165] - Impossibilità di duplicare una richiesta dopo la perdita di un attributo certificato
   Data una richiesta di fruizione rifiutata del fruitore e un attributo certificato richiesto non più posseduto dal fruitore
@@ -297,7 +297,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti per la duplicazione della richiesta.
     When il fruitore tenta di duplicare la richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE" in lingua "it"
 
   Scenario: [ERROR_166] - Impossibilità di duplicare una richiesta quando ne esiste già un'altra in corso
   Data una richiesta rifiutata del fruitore e un'altra richiesta attiva per lo stesso e-service e lo stesso fruitore
@@ -316,7 +316,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti; usare la richiesta duplicabile, non l'ultima richiesta creata.
     When il fruitore tenta di duplicare la richiesta di fruizione "RF-1"
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS_AGREEMENT_ID_CLONE"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS_AGREEMENT_ID_CLONE" in lingua "it"
 
   Scenario: [ERROR_167] - Impossibilità per un operatore di sicurezza di scaricare un allegato della richiesta
   Data una richiesta di fruizione del fruitore con un documento disponibile e un operatore di sicurezza dello stesso ente
@@ -333,4 +333,4 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And un security appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti per il download dell'allegato come utente corrente.
     When l'utente tenta di scaricare il documento dalla richiesta di fruizione
-    Then il messaggio di errore corrisponde al caso "AGREEMENT_UNAUTHORIZED_ERROR"
+    Then il messaggio di errore corrisponde al caso "AGREEMENT_UNAUTHORIZED_ERROR" in lingua "it"
