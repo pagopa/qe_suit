@@ -11,6 +11,7 @@ import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.purpose.domain.PurposeCreationFailureReason;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersionSeed;
 import it.pagopa.utils.async.PollingUtils;
@@ -55,6 +56,11 @@ public class M2MPurposeGateway implements PurposeGateway {
                 .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
                 .updateContext()
                 .get();
+    }
+
+    @Override
+    public void shouldFailToCreatePurpose(PurposeCreateCommand createCommand, PurposeCreationFailureReason reason) {
+        throw unsupportedOperation();
     }
 
     @Override
