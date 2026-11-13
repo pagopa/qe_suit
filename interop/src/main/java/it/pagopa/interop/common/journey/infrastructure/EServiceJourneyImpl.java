@@ -74,6 +74,16 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
+    public EServiceJourneyImpl shouldFailToUpdateEService(EServiceUpdateCommand command) {
+        String alias = command.getAlias();
+        EService eService = alias != null
+                ? entityStore.getByAliasOrThrow(alias, EService.class)
+                : entityStore.getLastOrThrow(EService.class);
+        eServiceUseCase.shouldFailToUpdateEService(eService, command);
+        return this;
+    }
+
+    @Override
     public EServiceJourneyImpl addRiskAnalysis() {
         EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceRiskAnalysis riskAnalysis =

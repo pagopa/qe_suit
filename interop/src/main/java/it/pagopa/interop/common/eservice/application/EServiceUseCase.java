@@ -32,6 +32,10 @@ public class EServiceUseCase {
         eServiceGateway.updateEService(eService.getRef(), command);
     }
 
+    public void shouldFailToUpdateEService(EService eService, EServiceUpdateCommand command) {
+        eServiceGateway.shouldFailToUpdateEService(eService.getRef(), command);
+    }
+
     public void deleteEService(EService eService) {
         eServiceGateway.deleteEService(eService);
     }

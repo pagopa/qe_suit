@@ -44,6 +44,8 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
 
     SELF updateEService(EServiceUpdateCommand command);
 
+    SELF shouldFailToUpdateEService(EServiceUpdateCommand command);
+
     SELF addRiskAnalysis();
 
     SELF archiveEService(GracePeriodDays gracePeriodDays);

@@ -93,6 +93,17 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
+    public void shouldFailToUpdateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+        if (!(command instanceof BffEServiceUpdateCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
+
+        restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
+                .withoutPolling()
+                .assertStatusCode(409)
+                .get();
+    }
+
+    @Override
     public void deleteEService(EService eService) {
         restClient.deleteEService(eService.getId())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)

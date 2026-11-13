@@ -15,6 +15,8 @@ public interface EServiceGateway extends Plugin<Channel> {
 
     void updateEService(EServiceRef eServiceRef, EServiceUpdateCommand command);
 
+    void shouldFailToUpdateEService(EServiceRef eServiceRef, EServiceUpdateCommand command);
+
     void deleteEService(EService eService);
 
     EService getEService(EServiceRef eServiceRef);
