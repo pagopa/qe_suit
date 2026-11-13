@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.send.common.user.domain.OrganizationRole;
 import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -88,7 +89,9 @@ public class WebSelfCareSessionPayloadFactory {
         payload.put("name", user.getName());
         payload.put("fiscal_number", user.getFiscalNumber());
         payload.put("uid", user.getUid());
-        if (!payload.containsKey("desired_exp") && payload.containsKey("exp")) {
+        // il portale cittadini rifiuta la sessione se c'è desired_exp, i portali mittente e imprese lo vogliono
+        if (!payload.containsKey("desired_exp") && payload.containsKey("exp")
+                && user.getType() != UserType.PF) {
             payload.put("desired_exp", payload.get("exp"));
         }
         return payload;
