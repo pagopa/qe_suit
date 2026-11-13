@@ -13,4 +13,12 @@ public interface PurposeCreateCommand {
     PurposeCreateCommand eserviceId(UUID eserviceId);
     PurposeCreateCommand consumerId(UUID consumerId);
     PurposeCreateCommand riskAnalysisForm(RiskAnalysisForm riskAnalysisForm);
+
+    UUID eserviceId();
+    String title();
+    String description();
+    Boolean isFreeOfCharge();
+    String freeOfChargeReason();
+    Integer dailyCalls();
+    RiskAnalysisForm riskAnalysisForm();
 }
