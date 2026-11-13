@@ -42,6 +42,13 @@ public class EServiceTemplateVersionUseCase {
         return eServiceTemplateVersionGateway.addVersion(eServiceTemplate.getRef());
     }
 
+    public void requestDocumentationUpload(EServiceTemplate template) {
+        EServiceTemplateVersion draft = template.getLastDraftVersion();
+        eServiceTemplateVersionGateway.requestDocumentUpload(
+                template.getRef(), draft.getRef(), "assets/eservice-template/openapi3-riferimenti.json"
+        );
+    }
+
     public EServiceTemplateVersion publishVersion(EServiceTemplate eServiceTemplate, EServiceTemplateVersion version) {
         if (version.getState() == EServiceTemplateVersionState.PUBLISHED) {
             return version;

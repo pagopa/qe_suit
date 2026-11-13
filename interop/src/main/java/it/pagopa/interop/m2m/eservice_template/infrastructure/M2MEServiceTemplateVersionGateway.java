@@ -69,6 +69,11 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
     }
 
     @Override
+    public void requestDocumentUpload(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath) {
+        throw new UnsupportedOperationException("Document upload is not supported on M2M V3");
+    }
+
+    @Override
     public void shouldFailToUploadInterface(
             EServiceTemplateRef templateRef,
             EServiceTemplateVersionRef versionRef,

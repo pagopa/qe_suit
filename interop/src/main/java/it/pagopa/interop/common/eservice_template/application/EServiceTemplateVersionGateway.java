@@ -24,6 +24,8 @@ public interface EServiceTemplateVersionGateway extends Plugin<Channel> {
 
     EServiceTemplateVersion uploadInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath);
 
+    void requestDocumentUpload(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath);
+
     void shouldFailToUploadInterface(
             EServiceTemplateRef templateRef,
             EServiceTemplateVersionRef versionRef,

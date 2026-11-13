@@ -127,6 +127,14 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
     }
 
     @Override
+    public void requestDocumentUpload(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath) {
+        File document = FileUtils.loadClasspathResourceAsTempFile(fixturePath);
+        restClient.createEServiceTemplateDocument(templateRef.id(), versionRef.versionId(),
+                DocumentKind.DOCUMENT.name(), Path.of(fixturePath).getFileName().toString(), document)
+                .withoutPolling();
+    }
+
+    @Override
     public EServiceTemplateVersion updateDraftVersion(
             EServiceTemplateRef templateRef,
             EServiceTemplateVersionRef versionRef,
@@ -191,4 +199,3 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
         return delimiter == Channel.BFF;
     }
 }
-

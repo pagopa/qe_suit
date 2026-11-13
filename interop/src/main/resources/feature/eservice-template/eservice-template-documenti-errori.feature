@@ -24,7 +24,7 @@ Feature: Messaggi di errore per i documenti dei template e-service
       | nome       | fixture        |
       | Allegato A | allegato-a.pdf |
     # Binding negativo comune mancante; riusare createEServiceTemplateDocument senza attendere il successo.
-    When l'erogatore carica il file "allegato-b.pdf" come "documento" sulla versione del template con il nome "Allegato A"
+    When l'erogatore allega il file "allegato-b.pdf" come "documento" sulla versione del template con il nome "Allegato A"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_VERSIONS_E_SERVICE_TEMPLATE_VERSION_ID_DOCUMENTS"
 
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
@@ -41,7 +41,7 @@ Feature: Messaggi di errore per i documenti dei template e-service
       | nome       | fixture        |
       | Allegato A | allegato-a.pdf |
     # Binding negativo comune mancante; riusare createEServiceTemplateDocument senza attendere il successo.
-    When l'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione del template con il nome "Allegato B"
+    When l'erogatore allega il file "allegato-a.pdf" come "documento" sulla versione del template con il nome "Allegato B"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_CHECKSUM_DUPLICATE"
 
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents/:documentId/update
@@ -86,7 +86,7 @@ Feature: Messaggi di errore per i documenti dei template e-service
       | tecnologia | stato | interfaccia               |
       | REST       | DRAFT | openapi3-riferimenti.json |
     # Binding negativo comune mancante; riusare createEServiceTemplateDocument senza attendere il successo.
-    When l'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione del template con il nome "Documento https://example.org"
+    When l'erogatore allega il file "allegato-a.pdf" come "documento" sulla versione del template con il nome "Documento https://example.org"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_VERSIONS_E_SERVICE_TEMPLATE_VERSION_ID_DOCUMENTS"
 
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents/:documentId/update

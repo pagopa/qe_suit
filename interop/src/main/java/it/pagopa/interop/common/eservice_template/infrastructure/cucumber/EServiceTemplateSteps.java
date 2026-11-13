@@ -1,12 +1,14 @@
 package it.pagopa.interop.common.eservice_template.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import io.cucumber.java.DataTableType;
 import io.cucumber.datatable.DataTable;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
+import it.pagopa.interop.common.eservice_template.application.EServiceTemplateVersionUseCase;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplatePreparationConfiguration;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
@@ -29,6 +31,12 @@ public class EServiceTemplateSteps {
     private final ObjectMapper objectMapper;
     private final EServiceTemplateConfigurationMapper configurationMapper;
     private final EntityStore entities;
+    private final EServiceTemplateVersionUseCase templateVersionUseCase;
+
+    @When("l'erogatore allega un file di documentazione all'{eServiceTemplate}")
+    public void requestDocumentationUpload(EServiceTemplate template) {
+        templateVersionUseCase.requestDocumentationUpload(template);
+    }
 
     @Given("un template e-service in ricezione con una versione in bozza")
     public void createReceiveDraftTemplate() {
