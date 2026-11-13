@@ -1,7 +1,9 @@
 package it.pagopa.interop.common.delegation.application;
 
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand;
+import it.pagopa.interop.common.delegation.application.command.ConsumerDelegationCreationCommand;
 import it.pagopa.interop.common.delegation.domain.Delegation;
+import it.pagopa.interop.common.delegation.domain.DelegationState;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -31,6 +33,27 @@ public class DelegationUseCase {
 
     public Delegation createConsumerDelegation(TenantRef delegateRef, EServiceRef eServiceRef) {
         return delegationGateway.createConsumerDelegation(delegateRef, eServiceRef);
+    }
+
+    public Delegation createConsumerDelegation(@NonNull ConsumerDelegationCreationCommand command) {
+        Tenant delegate = command.getDelegate();
+        TenantRef delegateRef = TenantRef.of(delegate.getOrganizationId());
+        currentUserSession.set(User.getTenantAdmin(delegate), delegate);
+        tenantUseCase.enableConsumerDelegationAvailability(delegateRef);
+
+        Tenant delegator = command.getDelegator();
+        currentUserSession.set(User.getTenantAdmin(delegator), delegator);
+        Delegation delegation = createConsumerDelegation(delegateRef, command.getEServiceRef());
+        delegationGateway.waitForConsumerDelegationState(delegation.getRef(), DelegationState.WAITING_FOR_APPROVAL);
+
+        return switch (command.getTargetState()) {
+            case WAITING_FOR_APPROVAL -> delegation;
+            case ACTIVE -> {
+                currentUserSession.set(User.getTenantAdmin(delegate), delegate);
+                approveConsumerDelegation(delegation.getRef());
+                yield delegationGateway.waitForConsumerDelegationState(delegation.getRef(), DelegationState.ACTIVE);
+            }
+        };
     }
 
     public Delegation createProducerDelegation(TenantRef delegateRef, EServiceRef eServiceRef) {

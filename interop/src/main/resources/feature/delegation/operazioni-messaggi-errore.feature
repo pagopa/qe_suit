@@ -18,8 +18,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
   Quando il delegato tenta di rifiutarla con una motivazione valida
   Allora il sistema rifiuta l'operazione e segnala che la delega non è più in attesa di approvazione.
 
-    # Binding di setup mancante, condiviso con ERROR_008; riusare createConsumerDelegation e approveConsumerDelegation.
-    Given una delega in fruizione per l'e-service da PagoPA al Comune di Pozzallo in stato ACTIVE
+    Given l'e-service è delegato in fruizione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     # Operazione BFF e binding negativi mancanti, condivisi con ERROR_011.
     # Il catalogo indica /consumer al singolare: verificare il contratto prima dell'implementazione.
@@ -95,8 +94,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
   Quando il delegato tenta di approvare nuovamente la delega
   Allora il sistema rifiuta l'approvazione e segnala che lo stato della delega non consente l'operazione.
 
-    # Binding di setup mancante; riusare createConsumerDelegation e approveConsumerDelegation.
-    Given una delega in fruizione per l'e-service da PagoPA al Comune di Pozzallo in stato ACTIVE
+    Given l'e-service è delegato in fruizione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
     # Binding BFF negativo mancante; riusare approveConsumerDelegation senza attendere il successo.
     When l'utente tenta di approvare la delega in fruizione
@@ -134,8 +132,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
   Quando il delegato tenta di rifiutare la delega inserendo un collegamento nella motivazione
   Allora il sistema rifiuta l'operazione e invita il delegato a rimuovere il collegamento dalla motivazione.
 
-    # Binding di setup mancante; riusare createConsumerDelegation.
-    Given una delega in fruizione per l'e-service da PagoPA al Comune di Pozzallo in stato WAITING_FOR_APPROVAL
+    Given l'e-service è delegato in fruizione da PagoPA al Comune di Pozzallo con una delega in stato WAITING_FOR_APPROVAL
     And un admin appartenente al delegato Comune di Pozzallo
     # Operazione BFF e binding mancanti per il rifiuto in fruizione con motivazione.
     When l'utente tenta di rifiutare la delega in fruizione con la motivazione "Consulta https://example.com per i dettagli"

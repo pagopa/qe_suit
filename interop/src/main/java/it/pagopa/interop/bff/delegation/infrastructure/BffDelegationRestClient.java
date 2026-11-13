@@ -61,7 +61,7 @@ public class BffDelegationRestClient extends RestClient {
         );
     }
 
-    public TestChain<Delegation> getProducerDelegation(@Nonnull UUID delegationId) {
+    public TestChain<Delegation> getDelegation(@Nonnull UUID delegationId) {
         return execute(
                 () -> delegationsApi.getDelegation()
                         .delegationIdPath(delegationId)

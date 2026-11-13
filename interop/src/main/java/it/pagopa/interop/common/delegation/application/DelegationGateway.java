@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.delegation.application;
 
 import it.pagopa.interop.common.delegation.domain.Delegation;
+import it.pagopa.interop.common.delegation.domain.DelegationState;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -25,6 +26,8 @@ public interface DelegationGateway extends Plugin<Channel> {
     );
 
     void approveConsumerDelegation(DelegationRef delegationRef);
+
+    Delegation waitForConsumerDelegationState(DelegationRef delegationRef, DelegationState expectedState);
 
     void rejectProducerDelegation(DelegationRef delegationRef);
 

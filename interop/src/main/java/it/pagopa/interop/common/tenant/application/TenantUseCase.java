@@ -20,6 +20,10 @@ public class TenantUseCase {
         tenantGateway.enableProducerDelegationAvailability(tenantRef);
     }
 
+    public void enableConsumerDelegationAvailability(TenantRef tenantRef) {
+        tenantGateway.enableConsumerDelegationAvailability(tenantRef);
+    }
+
     public void assignCertifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef) {
         tenantGateway.assignCertifiedAttribute(tenantRef, attributeRef);
     }

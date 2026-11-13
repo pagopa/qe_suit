@@ -102,6 +102,28 @@ public class BffTenantGateway implements TenantGateway {
     }
 
     @Override
+    public void enableConsumerDelegationAvailability(@NonNull TenantRef tenantRef) {
+        Tenant tenant = restClient.getTenant(tenantRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        if (isConsumerDelegationEnabled(tenant)) {
+            return;
+        }
+
+        boolean producerEnabled = isProducerDelegationEnabled(tenant);
+        var payload = new TenantDelegatedFeaturesFlagsUpdateSeed()
+                .isDelegatedProducerFeatureEnabled(producerEnabled)
+                .isDelegatedConsumerFeatureEnabled(true);
+        executeWithPolling(restClient.updateDelegatedFeatures(payload));
+
+        restClient.getTenant(tenantRef.id())
+                .withPolling(response -> response.isSuccess()
+                        && isConsumerDelegationEnabled(response.as(Tenant.class)))
+                .get();
+    }
+
+    @Override
     public void assignCertifiedAttribute(@NonNull TenantRef tenantRef, @NonNull AttributeRef attributeRef) {
         var command = bffCommand(requestFactory.assignCertifiedAttributeCommand(attributeRef), BffAssignCertifiedAttributeCommand.class);
         executeWithPolling(restClient.addCertifiedAttribute(tenantRef.id(), command.getBffPayload()));
