@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Supplier;
 
 @Slf4j
@@ -166,6 +167,83 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
             element.click();
             return element;
         });
+    }
+
+    @Override
+    public List<String> clickAndGetRequestUrls(XPathSelector selector) {
+        if (selector == null) {
+            throw new IllegalArgumentException("selector cannot be null");
+        }
+        if (!(driver instanceof JavascriptExecutor js)) {
+            throw new IllegalStateException("Driver does not support JavascriptExecutor");
+        }
+        String observationKey = "__suitRequests_" + UUID.randomUUID();
+        RuntimeException failure = null;
+        WebElement element = findWebElement(selector, defaultWaitTimeoutSeconds, Gettable.FindPolicy.CLICKABLE);
+        try {
+            js.executeScript("""
+                    if (typeof PerformanceObserver !== 'function' ||
+                        !PerformanceObserver.supportedEntryTypes.includes('resource')) {
+                        throw new Error('Resource timing observation is not supported');
+                    }
+                    const start = performance.now();
+                    const state = { urls: [], lastEntry: start };
+                    state.observer = new PerformanceObserver(list => {
+                        for (const entry of list.getEntries()) {
+                            if (entry.startTime >= start &&
+                                (entry.initiatorType === 'fetch' ||
+                                 entry.initiatorType === 'xmlhttprequest') &&
+                                /^https?:/.test(entry.name)) {
+                                state.urls.push(entry.name);
+                                state.lastEntry = performance.now();
+                            }
+                        }
+                    });
+                    window[arguments[0]] = state;
+                    state.observer.observe({ type: 'resource' });
+                    """, observationKey);
+            element.click();
+            return new WebDriverWait(driver, Duration.ofSeconds(defaultWaitTimeoutSeconds))
+                    .withMessage("No HTTP API request observed or collection did not become quiet within "
+                            + defaultWaitTimeoutSeconds + " seconds after click: " + selector)
+                    .until(ignored -> {
+                        Object result = js.executeScript("""
+                                const state = window[arguments[0]];
+                                if (!state) {
+                                    throw new Error('Request observation lost: full-page navigation is unsupported');
+                                }
+                                return state.urls.length > 0 &&
+                                    performance.now() - state.lastEntry >= 1000 ? state.urls : null;
+                                """, observationKey);
+                        if (result == null) {
+                            return null;
+                        }
+                        if (!(result instanceof List<?> values) ||
+                                values.isEmpty() || values.stream().anyMatch(value -> !(value instanceof String))) {
+                            throw new IllegalStateException("Invalid request URL collection returned by browser");
+                        }
+                        return values.stream().map(String.class::cast).toList();
+                    });
+        } catch (RuntimeException e) {
+            failure = e;
+            throw e;
+        } finally {
+            try {
+                js.executeScript("""
+                        const state = window[arguments[0]];
+                        if (state) {
+                            state.observer.disconnect();
+                            delete window[arguments[0]];
+                        }
+                        """, observationKey);
+            } catch (RuntimeException cleanupFailure) {
+                if (failure != null) {
+                    failure.addSuppressed(cleanupFailure);
+                } else {
+                    throw cleanupFailure;
+                }
+            }
+        }
     }
 
     @Override
@@ -537,7 +615,6 @@ public final class SeleniumApiAdapter implements IWebPresentationApiAdapter {
                         "}" +
                         "return out;",
                 element);
-
         if (raw instanceof Map<?, ?> map) {
             Map<String, String> attributes = new LinkedHashMap<>();
             for (Map.Entry<?, ?> entry : map.entrySet()) {
