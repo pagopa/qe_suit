@@ -15,6 +15,8 @@ public interface DelegationGateway extends Plugin<Channel> {
 
     void approveProducerDelegation(DelegationRef delegationRef);
 
+    void attemptProducerDelegationApproval(DelegationRef delegationRef);
+
     Delegation createConsumerDelegation(TenantRef delegateRef, EServiceRef eServiceRef);
 
     Delegation createProducerDelegation(TenantRef delegateRef, EServiceRef eServiceRef);
@@ -28,6 +30,8 @@ public interface DelegationGateway extends Plugin<Channel> {
     );
 
     void approveConsumerDelegation(DelegationRef delegationRef);
+
+    void attemptConsumerDelegationApproval(DelegationRef delegationRef);
 
     void attemptConsumerDelegationRejection(DelegationRef delegationRef);
 

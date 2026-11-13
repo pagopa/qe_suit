@@ -9,6 +9,11 @@ import lombok.RequiredArgsConstructor;
 public class ConsumerDelegationSteps {
     private final DelegationUseCase delegationUseCase;
 
+    @When("l'utente tenta di approvare {currentConsumerDelegation}")
+    public void attemptConsumerDelegationApproval(Delegation delegation) {
+        delegationUseCase.attemptConsumerDelegationApproval(delegation.getRef());
+    }
+
     @When("l'utente tenta di revocare {currentConsumerDelegation}")
     public void attemptConsumerDelegationRevocation(Delegation delegation) {
         delegationUseCase.attemptConsumerDelegationRevocation(delegation.getRef());

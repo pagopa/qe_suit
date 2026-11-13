@@ -31,9 +31,7 @@ public class BffDelegationGateway implements DelegationGateway {
         var response = restClient.createConsumerDelegation(delegateRef.id(), eServiceRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS);
         requireSuccessfulResponse(response.getRaw(), "creazione della delega di fruizione");
-        return response.map(mapper::toDelegation)
-                .updateContext()
-                .get();
+        return response.map(mapper::toDelegation).updateContext().get();
     }
 
     @Override
@@ -41,9 +39,7 @@ public class BffDelegationGateway implements DelegationGateway {
         var response = restClient.createProducerDelegation(delegateRef.id(), eServiceRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS);
         requireSuccessfulResponse(response.getRaw(), "creazione della delega di erogazione");
-        return response.map(mapper::toDelegation)
-                .updateContext()
-                .get();
+        return response.map(mapper::toDelegation).updateContext().get();
     }
 
     @Override
@@ -57,9 +53,7 @@ public class BffDelegationGateway implements DelegationGateway {
         var response = restClient.createProducerDelegation(delegateRef.id(), eServiceRef.id())
                 .withoutPolling();
         requireSuccessfulResponse(response.getRaw(), "creazione della delega di erogazione");
-        return response.map(mapper::toProducerDelegation)
-                .updateContext()
-                .get();
+        return response.map(mapper::toProducerDelegation).updateContext().get();
     }
 
     @Override
@@ -67,6 +61,11 @@ public class BffDelegationGateway implements DelegationGateway {
         var response = restClient.approveConsumerDelegation(delegationRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS);
         requireSuccessfulResponse(response.getRaw(), "approvazione della delega di fruizione");
+    }
+
+    @Override
+    public void attemptConsumerDelegationApproval(DelegationRef delegationRef) {
+        restClient.approveConsumerDelegation(delegationRef.id()).withoutPolling();
     }
 
     @Override
@@ -113,6 +112,11 @@ public class BffDelegationGateway implements DelegationGateway {
     }
 
     @Override
+    public void attemptProducerDelegationApproval(DelegationRef delegationRef) {
+        restClient.approveProducerDelegation(delegationRef.id()).withoutPolling();
+    }
+
+    @Override
     public void rejectProducerDelegation(DelegationRef delegationRef) {
         var response = restClient.rejectProducerDelegation(
                 delegationRef.id(), requestFactory.rejectionRequest()
@@ -141,9 +145,7 @@ public class BffDelegationGateway implements DelegationGateway {
     public ProducerDelegation getProducerDelegation(DelegationRef delegationRef) {
         return restClient.getDelegation(delegationRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(mapper::toProducerDelegation)
-                .updateContext()
-                .get();
+                .map(mapper::toProducerDelegation).updateContext().get();
     }
 
     @Override
@@ -152,9 +154,7 @@ public class BffDelegationGateway implements DelegationGateway {
         return restClient.getDelegation(delegationRef.id())
                 .withPolling(response -> hasExpectedState(response, expectedState.name()),
                         Duration.ofSeconds(45), Duration.ofSeconds(1))
-                .map(mapper::toProducerDelegation)
-                .updateContext()
-                .get();
+                .map(mapper::toProducerDelegation).updateContext().get();
     }
 
     @Override

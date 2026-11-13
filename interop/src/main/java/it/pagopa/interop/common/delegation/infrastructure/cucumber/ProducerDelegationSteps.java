@@ -18,6 +18,11 @@ public class ProducerDelegationSteps {
     private final InteropJourney interopJourney;
     private final DelegationUseCase delegationUseCase;
 
+    @When("l'utente tenta di approvare {currentProducerDelegation}")
+    public void attemptProducerDelegationApproval(Delegation delegation) {
+        delegationUseCase.attemptProducerDelegationApproval(delegation.getRef());
+    }
+
     @When("l'utente tenta di revocare {currentProducerDelegation}")
     public void attemptProducerDelegationRevocation(Delegation delegation) {
         delegationUseCase.attemptProducerDelegationRevocation(delegation.getRef());

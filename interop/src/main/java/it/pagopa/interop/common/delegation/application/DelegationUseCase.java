@@ -31,6 +31,10 @@ public class DelegationUseCase {
         delegationGateway.approveProducerDelegation(delegationRef);
     }
 
+    public void attemptProducerDelegationApproval(DelegationRef delegationRef) {
+        delegationGateway.attemptProducerDelegationApproval(delegationRef);
+    }
+
     public Delegation createConsumerDelegation(TenantRef delegateRef, EServiceRef eServiceRef) {
         return delegationGateway.createConsumerDelegation(delegateRef, eServiceRef);
     }
@@ -105,6 +109,10 @@ public class DelegationUseCase {
 
     public void approveConsumerDelegation(DelegationRef delegationRef) {
         delegationGateway.approveConsumerDelegation(delegationRef);
+    }
+
+    public void attemptConsumerDelegationApproval(DelegationRef delegationRef) {
+        delegationGateway.attemptConsumerDelegationApproval(delegationRef);
     }
 
     public void attemptConsumerDelegationRejection(DelegationRef delegationRef) {
