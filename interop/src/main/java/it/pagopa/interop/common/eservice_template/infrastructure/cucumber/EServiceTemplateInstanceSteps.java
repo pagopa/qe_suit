@@ -6,6 +6,7 @@ import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceUseCase;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstanceCreationFailureReason;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -51,6 +52,13 @@ public class EServiceTemplateInstanceSteps {
     @When("l'erogatore crea/istanzia un nuovo e-service dal {eServiceTemplate}")
     public void createTemplateInstance(EServiceTemplate template) {
         instanceUseCase.createEServiceInstance(template);
+    }
+
+    @When("l'erogatore tenta di istanziare il {eServiceTemplate} e inserisce un link nella parola identificativa")
+    public void attemptToCreateTemplateInstanceWithLinkInLabel(EServiceTemplate template) {
+        instanceUseCase.shouldFailToCreateEServiceInstance(template,
+                command -> command.instanceLabel("https://example.com"),
+                EServiceTemplateInstanceCreationFailureReason.HYPERLINK_DETECTED);
     }
 
     @When("l'erogatore configura con successo l'interfaccia SOAP del {eServiceDescriptor} dell'{currentEService} con i seguenti indirizzi:")

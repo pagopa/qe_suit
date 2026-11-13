@@ -12,11 +12,11 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceGateway;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateInstanceCreationCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstanceCreationFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
-import it.pagopa.interop.generated.openapi.clients.bff.model.InstanceEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceDescriptorTemplateInstanceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateInstanceDescriptorQuotas;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +45,20 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
 
         descriptorGateway.getEServiceDescriptor(serviceRef, descriptorRef);
         return eServiceGateway.getEService(serviceRef);
+    }
+
+    @Override
+    public void shouldFailToCreateEServiceInstance(EServiceTemplate template,
+            EServiceTemplateInstanceCreationCommand command, EServiceTemplateInstanceCreationFailureReason reason) {
+        if (!(command instanceof BffEServiceTemplateInstanceCreationCommand bffCommand)) {
+            throw new IllegalArgumentException("Expected BffEServiceTemplateInstanceCreationCommand");
+        }
+        int expectedStatus = switch (reason) {
+            case HYPERLINK_DETECTED -> 400;
+        };
+        restClient.createEServiceInstanceFromTemplate(template.getId(), bffCommand.getBffPayload())
+                .withoutPolling()
+                .assertStatusCode(expectedStatus);
     }
 
     @Override

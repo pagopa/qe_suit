@@ -16,8 +16,19 @@ import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.EservicesApi;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.infrastructure.response.ApiResponse;
+import it.pagopa.interop.bff.infrastructure.cucumber.BffErrorMessageSteps;
+import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceUseCase;
+import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateInstanceCreationCommand;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateInstanceCreationFailureReason;
+import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.EServiceTemplateInstanceSteps;
+import it.pagopa.interop.common.infrastructure.copy.ExpectedErrorMessages;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -25,6 +36,68 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class BffEServiceTemplateInstanceGatewayTest {
+    @ParameterizedTest
+    @ValueSource(ints = {400, 200, 500})
+    void linkInLabelIsSentOnceAndOnlyExpectedRejectionReachesErrorMessageAssertion(int status) throws Exception {
+        String messageId = "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_TEMPLATE_ID_ESERVICES";
+        String body = new ObjectMapper().writeValueAsString(Map.of("userMessage",
+                ExpectedErrorMessages.load().text(messageId, "it")));
+        var client = mock(ApiClient.class);
+        var api = mock(EservicesApi.class);
+        var operation = mock(EservicesApi.CreateEServiceInstanceFromTemplateOper.class);
+        when(client.eservices()).thenReturn(api);
+        when(api.createEServiceInstanceFromTemplate()).thenReturn(operation);
+        when(operation.templateIdPath(any())).thenReturn(operation);
+        when(operation.body(any())).thenReturn(operation);
+        when(operation.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(new ResponseBuilder().setStatusCode(status).setContentType(ContentType.JSON)
+                    .setBody(body).build());
+        });
+        var responses = mock(LastApiResponseStore.class);
+        doAnswer(invocation -> {
+            when(responses.getLastResponse()).thenReturn(invocation.getArgument(0));
+            return null;
+        }).when(responses).setLastResponse(any(ApiResponse.class));
+        var entities = mock(EntityStore.class);
+        var restClient = new BffEServiceRestClient(new TestChainFactory(responses, entities), client);
+        var serviceGateway = mock(BffEServiceGateway.class);
+        var descriptorGateway = mock(BffEServiceDescriptorGateway.class);
+        var gateway = new BffEServiceTemplateInstanceGateway(restClient, serviceGateway, descriptorGateway);
+        var instances = new EServiceTemplateInstanceUseCase(
+                gateway, new BffEServiceTemplateRequestFactory(), null, null);
+        var steps = new EServiceTemplateInstanceSteps(instances, null, null);
+        var template = EServiceTemplate.builder().id(UUID.randomUUID()).build();
+
+        if (status == 400) {
+            steps.attemptToCreateTemplateInstanceWithLinkInLabel(template);
+            new BffErrorMessageSteps(responses).assertErrorMessage(messageId, "it");
+        } else {
+            assertThatThrownBy(() -> steps.attemptToCreateTemplateInstanceWithLinkInLabel(template))
+                    .isInstanceOf(AssertionError.class);
+        }
+
+        verify(operation).templateIdPath(template.getId());
+        verify(operation).body(argThat(seed -> seed.getInstanceLabel().equals("https://example.com")));
+        verify(operation, times(1)).execute(any());
+        verify(responses).setLastResponse(any(ApiResponse.class));
+        verifyNoInteractions(serviceGateway, descriptorGateway, entities);
+    }
+
+    @Test
+    void negativeCreationRejectsCommandsFromOtherChannelsBeforeTransport() {
+        var restClient = mock(BffEServiceRestClient.class);
+        var gateway = new BffEServiceTemplateInstanceGateway(restClient, null, null);
+
+        assertThatThrownBy(() -> gateway.shouldFailToCreateEServiceInstance(
+                EServiceTemplate.builder().id(UUID.randomUUID()).build(),
+                mock(EServiceTemplateInstanceCreationCommand.class),
+                EServiceTemplateInstanceCreationFailureReason.HYPERLINK_DETECTED))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Expected BffEServiceTemplateInstanceCreationCommand");
+        verifyNoInteractions(restClient);
+    }
+
     @Test
     void typedCommandReachesRealTestChainTransportAndGatewayOnlyRefreshesCreatedDraft() {
         var client = mock(ApiClient.class);

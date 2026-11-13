@@ -686,8 +686,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given i seguenti template e-service pubblicati:
       | alias | erogatore        | nome                | tecnologia |
       | T-1   | Comune di Milano | Template di origine | REST       |
-    # Binding BFF mancante con parola identificativa; riusare createEServiceInstance e gestire il rifiuto.
-    When l'erogatore tenta di istanziare il template con la parola identificativa "https://a.it"
+    When l'erogatore tenta di istanziare il template e inserisce un link nella parola identificativa
     Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_TEMPLATE_ID_ESERVICES" in lingua "it"
 
   Scenario: [ERROR_082] - Rifiuto della modifica dei dati di un'istanza con un link nella parola identificativa
