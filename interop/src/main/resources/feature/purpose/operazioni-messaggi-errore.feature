@@ -10,8 +10,6 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Background:
     Given un admin appartenente al fruitore PagoPA
 
-  # Per i nomi espliciti riusare i payload delle factory: BffPurposeCreateCommand.title non è implementato.
-
   Scenario: [ERROR_198] - Rifiuto della modifica di una finalità da template con oltre un miliardo di chiamate API al giorno
   Data una finalità in bozza creata da un template pubblicato per un e-service sottoscritto dal fruitore
   Quando il fruitore tenta di impostare una stima di 1.000.000.001 chiamate API al giorno lasciando validi gli altri dati
@@ -34,16 +32,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il fruitore tenta di creare un'altra finalità con lo stesso nome per lo stesso e-service
   Allora il sistema rifiuta la creazione e segnala che il nome è già in uso.
 
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore        |
-      | ES-1  | Comune di Milano |
-    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
-    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
-      | alias |
-      | F-1   |
-    # Binding negativo parametrico mancante; riusare createPurpose o createReversePurpose secondo la modalità.
-    When il fruitore tenta di creare una finalità per l'e-service con il nome della finalità
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato DRAFT associate da PagoPA
+    When il fruitore tenta di creare una finalità con lo stesso nome della finalità creata in precedenza per lo stesso e-service
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES"
 
   Scenario: [ERROR_019] - Impossibilità di creare una finalità omonima per un e-service in ricezione
@@ -89,14 +79,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il fruitore tenta di inserire un collegamento nel nome lasciando validi gli altri dati
   Allora il sistema rifiuta la modifica e invita il fruitore a rimuovere il collegamento.
 
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore        |
-      | ES-1  | Comune di Milano |
-    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
-    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
-      | alias |
-      | F-1   |
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato DRAFT associate da PagoPA
     # Operazione BFF e binding negativo mancanti; riusare updateRequest per gli altri dati validi.
     When il fruitore tenta di modificare la finalità con il nome "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID"
@@ -294,14 +277,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Quando il fruitore tenta di aggiornarla parzialmente inserendo un collegamento nel nome
   Allora il sistema rifiuta la modifica e invita il fruitore a rimuovere il collegamento.
 
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore        |
-      | ES-1  | Comune di Milano |
-    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
-    # Binding di setup comune mancante; riusare createPurpose e registrare gli alias con i nomi effettivi.
-    And le seguenti finalità in bozza create da PagoPA per l'e-service "ES-1" con nomi distinti:
-      | alias |
-      | F-1   |
+    Given un eservice creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato DRAFT associate da PagoPA
     # Operazione BFF e binding negativo comuni mancanti; verificare il contratto PATCH di rilascio.
     # Il client espone POST per questa modifica; non rimappare questo ID su un altro endpoint.
     When il fruitore tenta di aggiornare parzialmente la finalità con il nome "Finalità https://example.org"

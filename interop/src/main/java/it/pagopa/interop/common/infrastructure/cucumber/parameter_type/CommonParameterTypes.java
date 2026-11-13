@@ -51,7 +51,7 @@ public class CommonParameterTypes {
         return ClientKind.valueOf(type.toUpperCase());
     }
 
-    @ParameterType("SUSPENDED")
+    @ParameterType("DRAFT|ACTIVE|SUSPENDED")
     public PurposeVersionState purposeState(String name) {
         return PurposeVersionState.valueOf(name.toUpperCase());
     }

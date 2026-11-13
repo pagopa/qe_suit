@@ -2,8 +2,10 @@ package it.pagopa.interop.common.purpose.application;
 
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.purpose.domain.PurposeCreationFailureReason;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import jakarta.annotation.Nullable;
@@ -28,6 +30,13 @@ public class PurposeUseCase {
     public Purpose createPurpose(EService eService) {
         PurposeCreateCommand command = purposeCommandFactory.validFullPopulatedCreateCommand(eService.getRef());
         return purposeGateway.createPurpose(command);
+    }
+
+    public void shouldFailToCreatePurposeWithSameTitle(Purpose existingPurpose) {
+        PurposeCreateCommand command = purposeCommandFactory.validFullPopulatedCreateCommand(
+                EServiceRef.of(existingPurpose.getEserviceId()));
+        command.title(existingPurpose.getTitle());
+        purposeGateway.shouldFailToCreatePurpose(command, PurposeCreationFailureReason.DUPLICATE_TITLE);
     }
 
     public Purpose createReversePurpose(EService eService, EServiceRiskAnalysis riskAnalysis) {

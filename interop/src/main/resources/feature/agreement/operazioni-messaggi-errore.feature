@@ -60,8 +60,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
       | verificato | 1      | VER-1     |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione in attesa di approvazione
-    # Binding di verifica mancante; riusare getAgreement.
-    And la richiesta di fruizione è ancora in stato PENDING
     And un admin appartenente all'erogatore Comune di Milano
     # Binding BFF negativo mancante; riusare activate senza l'accesso al dettaglio WEB.
     When l'erogatore tenta di approvare la richiesta di fruizione
@@ -76,8 +74,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     # Binding di setup mancante; riusare bringEServiceDescriptorToState per ARCHIVING, non per ARCHIVED.
     # L'archiviazione definitiva richiede un setup dedicato: non equivale all'avvio dell'archiviazione.
     And la versione dell'e-service associata alla richiesta di fruizione <stato versione>
-    # Binding di verifica mancante; riusare getAgreement.
-    And la richiesta di fruizione è ancora in stato PENDING
     And un admin appartenente all'erogatore Comune di Milano
     # Binding BFF negativo mancante; riusare activate senza l'accesso al dettaglio WEB.
     When l'erogatore tenta di approvare la richiesta di fruizione
