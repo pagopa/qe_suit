@@ -50,7 +50,7 @@ class BffDelegationRestClientTest {
         UUID eServiceId = UUID.randomUUID();
 
         client.createProducerDelegation(delegateId, eServiceId).withoutPolling().get();
-        Delegation delegation = client.getProducerDelegation(delegationId).withoutPolling().get();
+        Delegation delegation = client.getDelegation(delegationId).withoutPolling().get();
 
         var seed = org.mockito.ArgumentCaptor.forClass(DelegationSeed.class);
         verify(create).body(seed.capture());

@@ -46,6 +46,20 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
     }
 
     @Override
+    public DelegationJourneyImpl revokeConsumerDelegationAsDelegator(DelegationRef delegationRef, Tenant delegator) {
+        User originalUser = currentUserSession.getUser();
+        Tenant originalTenant = currentUserSession.getTenant();
+        try {
+            currentUserSession.set(User.getTenantAdmin(delegator), delegator);
+            delegationUseCase.revokeConsumerDelegation(delegationRef);
+            delegationUseCase.waitForConsumerDelegationRevocation(delegationRef);
+            return this;
+        } finally {
+            currentUserSession.set(originalUser, originalTenant);
+        }
+    }
+
+    @Override
     public DelegationJourneyImpl createConsumerDelegation(TenantRef delegateRef, EServiceRef eServiceRef) {
         delegationUseCase.createConsumerDelegation(delegateRef, eServiceRef);
         return this;

@@ -25,4 +25,6 @@ public interface DelegationJourney<SELF extends DelegationJourney<SELF>> extends
     SELF setUpProducerDelegation(ProducerDelegationSetupCommand command);
 
     SELF revokeProducerDelegationAsDelegator(DelegationRef delegationRef, Tenant delegator);
+
+    SELF revokeConsumerDelegationAsDelegator(DelegationRef delegationRef, Tenant delegator);
 }

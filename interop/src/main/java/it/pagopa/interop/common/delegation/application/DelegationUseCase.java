@@ -98,6 +98,14 @@ public class DelegationUseCase {
         delegationGateway.approveConsumerDelegation(delegationRef);
     }
 
+    public void revokeConsumerDelegation(DelegationRef delegationRef) {
+        delegationGateway.revokeConsumerDelegation(delegationRef);
+    }
+
+    public Delegation waitForConsumerDelegationRevocation(DelegationRef delegationRef) {
+        return delegationGateway.waitForConsumerDelegationRevocation(delegationRef);
+    }
+
     public void rejectProducerDelegation(DelegationRef delegationRef) {
         delegationGateway.rejectProducerDelegation(delegationRef);
     }

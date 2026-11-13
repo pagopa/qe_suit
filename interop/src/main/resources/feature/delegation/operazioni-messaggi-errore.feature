@@ -105,10 +105,10 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
   Quando il delegante tenta di revocare nuovamente la delega
   Allora il sistema rifiuta la revoca e segnala che lo stato della delega non consente l'operazione.
 
-    # Setup da completare: riusare creazione e approvazione; manca la revoca BFF in fruizione.
-    Given una delega in fruizione per l'e-service da PagoPA al Comune di Pozzallo in stato REVOKED
+    Given l'e-service è delegato in fruizione da PagoPA al Comune di Pozzallo con una delega in stato ACTIVE
+    And la delega in fruizione viene revocata da PagoPA
     And un admin appartenente al fruitore PagoPA
-    # Operazione BFF e binding mancanti per il tentativo di revoca in fruizione.
+    # Binding BFF negativo mancante; riusare revokeConsumerDelegation senza attendere il successo.
     When l'utente tenta di revocare la delega in fruizione
     Then il messaggio di errore corrisponde al caso "DELEGATION_INCORRECT_STATE__DELETE_CONSUMERS_DELEGATIONS_DELEGATION_ID"
 

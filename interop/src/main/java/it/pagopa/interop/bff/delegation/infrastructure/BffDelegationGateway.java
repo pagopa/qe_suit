@@ -76,9 +76,25 @@ public class BffDelegationGateway implements DelegationGateway {
             DelegationRef delegationRef,
             DelegationState expectedState
     ) {
+        return waitForConsumerDelegationState(delegationRef, expectedState.name());
+    }
+
+    @Override
+    public void revokeConsumerDelegation(DelegationRef delegationRef) {
+        var response = restClient.revokeConsumerDelegation(delegationRef.id())
+                .withoutPolling();
+        requireSuccessfulResponse(response.getRaw(), "revoca della delega di fruizione");
+    }
+
+    @Override
+    public Delegation waitForConsumerDelegationRevocation(DelegationRef delegationRef) {
+        return waitForConsumerDelegationState(delegationRef, "REVOKED");
+    }
+
+    private Delegation waitForConsumerDelegationState(DelegationRef delegationRef, String expectedState) {
         return restClient.getDelegation(delegationRef.id())
                 .withPolling(
-                        response -> hasExpectedState(response, expectedState.name()),
+                        response -> hasExpectedState(response, expectedState),
                         Duration.ofSeconds(45),
                         Duration.ofSeconds(1)
                 )

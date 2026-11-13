@@ -22,6 +22,11 @@ public class DelegationJourneySteps {
         interopJourney.revokeProducerDelegationAsDelegator(delegation.getRef(), delegator);
     }
 
+    @Given("{currentConsumerDelegation} viene revocata da/dal {tenant}")
+    public void revokeConsumerDelegation(Delegation delegation, Tenant delegator) {
+        interopJourney.revokeConsumerDelegationAsDelegator(delegation.getRef(), delegator);
+    }
+
     @Given("un e-service pubblicato da/dal {tenant} con una delega in erogazione a/al {tenant} in stato {delegationState}")
     public void createPublishedEServiceWithProducerDelegation(
             Tenant producer, Tenant delegate, DelegationState delegationState) {
