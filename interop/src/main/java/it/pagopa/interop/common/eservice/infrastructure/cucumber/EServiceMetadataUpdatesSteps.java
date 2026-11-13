@@ -11,6 +11,8 @@ import it.pagopa.interop.common.eservice.application.command.EServiceUpdateComma
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceMetadataUpdateConfiguration;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.EServiceMetadataUpdateConfigurationMapper;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -18,7 +20,7 @@ import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,16 +32,19 @@ public class EServiceMetadataUpdatesSteps {
     private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EServiceRequestFactory requestFactory;
     private final EntityStore entityStore;
-    private final Map<String, String> requestedMetadata = new HashMap<>();
+    private final EServiceMetadataUpdateConfigurationMapper configurationMapper;
     private EService initialEService;
+    private Map<String, String> requestedMetadata = Map.of();
 
     @When("un {userRole} di/del {tenant} richiede la modifica dei metadati dell'e-service {string}:")
-    public void updateMetadata(UserRole role, Tenant producer, String alias, EServiceUpdateCommand updateCommand) {
+    public void updateMetadata(UserRole role, Tenant producer, String alias, List<EServiceMetadataUpdateConfiguration> configurations) {
         EService currentEService = entityStore.getByAliasOrThrow(alias, EService.class);
         initialEService = currentEService.toBuilder()
                 .descriptors(new ArrayList<>(currentEService.getDescriptors()))
                 .build();
+        EServiceUpdateCommand updateCommand = requestFactory.defaultUpdateEServiceCommand();
         updateCommand.alias(alias);
+        requestedMetadata = configurationMapper.apply(configurations, updateCommand);
         interopJourney
                 .withProducer(producer, role)
                 .updateEService(updateCommand);
@@ -47,7 +52,9 @@ public class EServiceMetadataUpdatesSteps {
 
     @Then("l'e-service {string} presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori")
     public void assertMetadataUpdatedAndOtherDataPreserved(String alias) {
+
         EService actualEService = entityStore.getByAliasOrThrow(alias, EService.class);
+
         EService expectedEService = initialEService.toBuilder()
                 .name(requestedMetadata.getOrDefault("nome", initialEService.getName()))
                 .description(requestedMetadata.getOrDefault("descrizione", initialEService.getDescription()))
@@ -57,21 +64,11 @@ public class EServiceMetadataUpdatesSteps {
                 .mode(requestedMetadata.containsKey("mode")
                         ? EServiceMode.valueOf(requestedMetadata.get("mode"))
                         : initialEService.getMode())
-                .isSignalHubEnabled(requestedMetadata.containsKey("signalHubEnabled")
-                        ? Boolean.valueOf(requestedMetadata.get("signalHubEnabled"))
-                        : initialEService.getIsSignalHubEnabled())
-                .isConsumerDelegable(requestedMetadata.containsKey("consumerDelegable")
-                        ? Boolean.valueOf(requestedMetadata.get("consumerDelegable"))
-                        : initialEService.getIsConsumerDelegable())
-                .isClientAccessDelegable(requestedMetadata.containsKey("clientAccessDelegable")
-                        ? Boolean.valueOf(requestedMetadata.get("clientAccessDelegable"))
-                        : initialEService.getIsClientAccessDelegable())
-                .personalData(requestedMetadata.containsKey("handlePersonalData")
-                        ? Boolean.valueOf(requestedMetadata.get("handlePersonalData"))
-                        : initialEService.getPersonalData())
-                .asyncExchange(requestedMetadata.containsKey("asyncExchange")
-                        ? Boolean.valueOf(requestedMetadata.get("asyncExchange"))
-                        : initialEService.getAsyncExchange())
+                .isSignalHubEnabled(requestedBoolean("signalHubEnabled", initialEService.getIsSignalHubEnabled()))
+                .isConsumerDelegable(requestedBoolean("consumerDelegable", initialEService.getIsConsumerDelegable()))
+                .isClientAccessDelegable(requestedBoolean("clientAccessDelegable", initialEService.getIsClientAccessDelegable()))
+                .personalData(requestedBoolean("handlePersonalData", initialEService.getPersonalData()))
+                .asyncExchange(requestedBoolean("asyncExchange", initialEService.getAsyncExchange()))
                 .build();
 
         assertThat(actualEService)
@@ -131,5 +128,11 @@ public class EServiceMetadataUpdatesSteps {
             }
         });
         return command;
+    }
+
+    private Boolean requestedBoolean(String field, Boolean initialValue) {
+        return requestedMetadata.containsKey(field)
+                ? Boolean.valueOf(requestedMetadata.get(field))
+                : initialValue;
     }
 }
