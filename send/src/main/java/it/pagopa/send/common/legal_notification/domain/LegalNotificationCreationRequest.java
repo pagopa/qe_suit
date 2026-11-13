@@ -1,5 +1,7 @@
 package it.pagopa.send.common.legal_notification.domain;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,7 @@ import java.util.List;
  * {@code RequestOverrideApplier} (già generico via reflection) continui a funzionare invariato,
  * applicato a questo oggetto invece che al DTO OpenAPI.
  */
+@Getter
 public class LegalNotificationCreationRequest {
 
     private String paProtocolNumber;
@@ -133,81 +136,5 @@ public class LegalNotificationCreationRequest {
     public LegalNotificationCreationRequest clearRecipients() {
         this.recipients.clear();
         return this;
-    }
-
-    public String getPaProtocolNumber() {
-        return paProtocolNumber;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public String getAbstractText() {
-        return abstractText;
-    }
-
-    public DocumentRef getDocument() {
-        return document;
-    }
-
-    public FeePolicy getFeePolicy() {
-        return feePolicy;
-    }
-
-    public PhysicalCommunicationType getPhysicalCommunication() {
-        return physicalCommunication;
-    }
-
-    public String getSenderDenomination() {
-        return senderDenomination;
-    }
-
-    public String getSenderTaxId() {
-        return senderTaxId;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public String getTaxonomyCode() {
-        return taxonomyCode;
-    }
-
-    public Integer getPaFee() {
-        return paFee;
-    }
-
-    public Integer getVat() {
-        return vat;
-    }
-
-    public PagoPaIntMode getPagoPaIntMode() {
-        return pagoPaIntMode;
-    }
-
-    public Integer getPhysicalCommunicationPriority() {
-        return physicalCommunicationPriority;
-    }
-
-    public List<String> getAdditionalLanguages() {
-        return additionalLanguages;
-    }
-
-    public String getCancelledIun() {
-        return cancelledIun;
-    }
-
-    public Integer getAmount() {
-        return amount;
-    }
-
-    public String getPaymentExpirationDate() {
-        return paymentExpirationDate;
-    }
-
-    public List<ResolvedRecipient> getRecipients() {
-        return recipients;
     }
 }
