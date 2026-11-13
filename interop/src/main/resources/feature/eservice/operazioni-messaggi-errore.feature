@@ -30,7 +30,6 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given i seguenti e-service in bozza:
       | alias | erogatore        | nome               |
       | ES-1  | Comune di Milano | Catalogo duplicato |
-    # Binding esistente; shouldFailToCreateEService non è implementato sul BFF.
     When l'utente tenta di creare un e-service con il nome dell'e-service e gli altri dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_ESERVICES" in lingua "it"
 
@@ -78,6 +77,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID" in lingua "it" con i valori:
       | identifyingWord | Duplicato |
 
+  @channel:Given=BFF,When=WEB,Then=WEB
   Scenario: [ERROR_041] - Rifiuto dell'archiviazione dell'e-service con un preavviso inferiore a quello di una versione
   Dato un e-service con la prima versione in archiviazione con 120 giorni di preavviso e la seconda pubblicata
   Quando l'erogatore richiede l'archiviazione dell'intero e-service con 60 giorni di preavviso
@@ -86,8 +86,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     And un admin appartenente all'erogatore Comune di Milano
     And la versione 1 dell'e-service in fase di archiviazione con un periodo di preavviso di 120 giorni
-    # Binding BFF negativo mancante; riusare scheduleArchiveEservice senza il flusso di successo.
-    When l'erogatore richiede l'archiviazione dell'e-service con un periodo di preavviso di 60 giorni e una motivazione valida
+    When l'erogatore tenta di archiviare l'e-service con un periodo di preavviso di 60 giorni e una motivazione valida
     Then il messaggio di errore corrisponde al caso "CATALOG_GRACE_PERIOD_DAYS_LOWER_THAN_DESCRIPTOR__POST_ESERVICES_E_SERVICE_ID_SCHEDULE_ARCHIVE" in lingua "it"
 
   Scenario: [ERROR_042] - Rifiuto della richiesta del delegato di archiviare l'e-service con un preavviso insufficiente
