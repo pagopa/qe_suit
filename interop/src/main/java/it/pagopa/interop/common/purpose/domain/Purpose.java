@@ -47,6 +47,12 @@ public class Purpose implements Identifiable {
                 .orElse(null);
     }
 
+    public PurposeVersion getLastWaitingForApprovalVersion() {
+        return versions.stream().filter(version -> version.getPurposeVersionState() == PurposeVersionState.WAITING_FOR_APPROVAL)
+                .max(Comparator.comparing(PurposeVersion::getCreatedAt))
+                .orElse(null);
+    }
+
     public Optional<PurposeVersion> findVersionById(UUID versionId) {
         return versions.stream()
                 .filter(version -> version.getId().equals(versionId))
