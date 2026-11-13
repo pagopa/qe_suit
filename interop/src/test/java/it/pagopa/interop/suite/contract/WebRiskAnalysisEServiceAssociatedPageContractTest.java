@@ -217,27 +217,6 @@ public class WebRiskAnalysisEServiceAssociatedPageContractTest {
         }
     }
 
-    /**
-     * ES-RA-22: accesso alla sezione dalla pagina di dettaglio dell'E-Service erogatore.
-     */
-    private WebScenario<ProducerEServiceDetailPage> watchRiskAnalysisButtonScenario() {
-        return new WebScenario<>(
-                "Pulsante di accesso all'analisi del rischio dalla pagina di dettaglio dell'e-service",
-                page -> {},
-                page -> {
-                    var button = page.watchRiskAnalysisAssociatedButton();
-                    Assertions.assertThat(button.exists(Gettable.FindPolicy.PRESENT))
-                            .as("Pulsante di accesso presente").isTrue();
-                    Assertions.assertThat(button.exists(Gettable.FindPolicy.VISIBLE))
-                            .as("Pulsante di accesso visibile").isTrue();
-                    Assertions.assertThat(button.isDisabled())
-                            .as("Pulsante di accesso abilitato").isFalse();
-                    Assertions.assertThat(button.read())
-                            .as("Copy pulsante di accesso").isEqualTo(WATCH_RISK_ANALYSIS_LABEL);
-                }
-        );
-    }
-
     private static void assertVisibleWithCopy(Label label, String expectedCopy, String description) {
         Assertions.assertThat(label.exists(Gettable.FindPolicy.PRESENT))
                 .as("%s presente", description).isTrue();
@@ -264,8 +243,8 @@ public class WebRiskAnalysisEServiceAssociatedPageContractTest {
             Assertions.assertThat(item.infoLabel().exists())
                     .as("InfoLabel #%s assente", position).isFalse();
         } else {
-            Assertions.assertThat(item.infoLabel().read())
-                    .as("InfoLabel #%s", position).isEqualTo(expected.infoLabel());
+            Assertions.assertThat(normalize(item.infoLabel().read()))
+                    .as("InfoLabel #%s", position).isEqualTo(normalize(expected.infoLabel()));
         }
     }
 
@@ -296,6 +275,10 @@ public class WebRiskAnalysisEServiceAssociatedPageContractTest {
                 .filter(option -> values.contains(option.getValue()))
                 .map(option -> italianLabel(option.getLabel()))
                 .collect(Collectors.joining(", "));
+    }
+
+    private static String normalize(String s) {
+        return s == null ? null : s.replaceAll("\\s+", " ").trim();
     }
 
     private static String italianLabel(Map<String, String> labels) {

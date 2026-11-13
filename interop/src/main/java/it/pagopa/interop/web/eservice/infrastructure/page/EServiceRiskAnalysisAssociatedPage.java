@@ -23,11 +23,11 @@ public interface EServiceRiskAnalysisAssociatedPage extends Page {
     Breadcrumbs breadcrumbs();
 
     // --- Sezione 1: selezione dell'analisi del rischio (SectionContainer + RHFAutocompleteSingle) ---
-    @XPath("(.//main//section[contains(@class, 'MuiPaper-root') and not(.//ancestor::section)])[1]")
+    @XPath(".//section[contains(@class, 'MuiPaper-root') and contains(normalize-space(.), 'Analisi del rischio')]")
     RiskAnalysisSelectionSection selectionSection();
 
     // --- Sezione 2: riepilogo (SectionContainer + EServiceRiskAnalysisInfoSummary) ---
-    @XPath("(.//main//section[contains(@class, 'MuiPaper-root') and not(.//ancestor::section)])[2]")
+    @XPath("(.//section[contains(@class, 'MuiPaper-root') and .//h3[normalize-space(.)='Analisi del rischio']])[1]")
     RiskAnalysisSummarySection summarySection();
 
     // --- Opzioni del menu a tendina (popper renderizzato fuori dal main) ---
@@ -36,12 +36,12 @@ public interface EServiceRiskAnalysisAssociatedPage extends Page {
 
     @Override
     default void assertLoaded() {
-//        PollingUtils.pollUntil(
-//                () -> selectionSection().title().get(Gettable.FindPolicy.VISIBLE).isPresent()
-//                        && summarySection().title().get(Gettable.FindPolicy.VISIBLE).isPresent()
-//                        && !summarySection().questionAnswerItems().isEmpty(),
-//                loaded -> loaded,
-//                "La pagina EServiceRiskAnalysisAssociatedPage e il riepilogo dell'analisi del rischio devono essere caricati"
-//        );
+        PollingUtils.pollUntil(
+                () -> selectionSection().title().get(Gettable.FindPolicy.VISIBLE).isPresent()
+                        && summarySection().title().get(Gettable.FindPolicy.VISIBLE).isPresent()
+                        && !summarySection().questionAnswerItems().isEmpty(),
+                loaded -> loaded,
+                "La pagina EServiceRiskAnalysisAssociatedPage e il riepilogo dell'analisi del rischio devono essere caricati"
+        );
     }
 }
