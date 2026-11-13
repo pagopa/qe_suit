@@ -52,6 +52,24 @@ class EServiceTemplateInstanceUseCaseTest {
         verifyNoInteractions(versionGateway, descriptorGateway);
     }
 
+    @Test
+    void negativeCreationConfiguresDefaultCommandAndDelegatesExplicitReasonWithoutCreating() {
+        var requestFactory = mock(EServiceTemplateRequestFactory.class);
+        var command = mock(it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateInstanceCreationCommand.class);
+        when(requestFactory.defaultCreationEServiceTemplateInstanceCommand()).thenReturn(command);
+        var useCase = new EServiceTemplateInstanceUseCase(gateway, requestFactory, null, null);
+
+        useCase.shouldFailToCreateEServiceInstance(template, seed -> seed.instanceLabel("https://example.com"),
+                EServiceTemplateInstanceCreationFailureReason.HYPERLINK_DETECTED);
+
+        verify(requestFactory).defaultCreationEServiceTemplateInstanceCommand();
+        verify(command).instanceLabel("https://example.com");
+        verify(gateway).shouldFailToCreateEServiceInstance(
+                template, command, EServiceTemplateInstanceCreationFailureReason.HYPERLINK_DETECTED);
+        verifyNoMoreInteractions(gateway, command, requestFactory);
+        verifyNoInteractions(versionGateway, descriptorGateway);
+    }
+
     @ParameterizedTest
     @EnumSource(EServiceTechnology.class)
     void publishedInstanceConfiguresEndpointsAndMetadataWithoutReplacingInterfaceAndPreservesAlias(

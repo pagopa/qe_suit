@@ -13,6 +13,9 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
+import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.utils.async.PollingUtils;
@@ -33,6 +36,17 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     private final EServiceRiskAnalysisUseCase eServiceRiskAnalysisUseCase;
     private final CurrentUserSession currentUserSession;
     private final EServiceRequestFactory requestFactory;
+
+    @Override
+    public EServiceJourneyImpl createPublishedEServiceWithManualAgreementApproval(Tenant producer) {
+        currentUserSession.set(User.getTenantAdmin(producer), producer);
+        EService service = eServiceUseCase.createEService(requestFactory.defaultCreationEServiceCommand());
+        var command = requestFactory.defaultUpdateDescriptorCommand()
+                .agreementApprovalPolicy(AgreementApprovalPolicy.MANUAL);
+        lifecycle.bringToState(service, service.getLastDraftDescriptor(),
+                EServiceDescriptorState.PUBLISHED, command);
+        return this;
+    }
 
     @Override
     public EServiceJourneyImpl createEService(EServiceCreationCommand command, EServiceDescriptorState targetState) {

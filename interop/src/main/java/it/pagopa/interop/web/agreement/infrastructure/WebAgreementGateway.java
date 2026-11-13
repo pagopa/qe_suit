@@ -93,12 +93,22 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     }
 
     @Override
+    public void attemptAgreementSubmission(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementSubmission operation");
+    }
+
+    @Override
     public Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation) {
         producerAgreementDetailPage.navigateTo(agreement.getId().toString());
         producerAgreementDetailPage.assertLoaded();
         producerAgreementDetailPage.activeButton().click();
         producerAgreementDetailPage.confirmButton().click();
         return agreement;
+    }
+
+    @Override
+    public void attemptAgreementActivation(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementActivation operation");
     }
 
     @Override

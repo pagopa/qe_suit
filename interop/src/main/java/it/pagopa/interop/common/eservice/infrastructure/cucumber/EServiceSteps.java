@@ -6,9 +6,12 @@ import io.cucumber.java.en.When;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.*;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
+
+import static it.pagopa.utils.RandomUtils.randomAlphanumericName;
 
 @RequiredArgsConstructor
 public class EServiceSteps {
@@ -34,6 +37,59 @@ public class EServiceSteps {
     @Then("l'e-service importato non è presente tra gli e-service dell'erogatore")
     public void assertImportedEServiceNotPresentInProducerCatalog() {
         interopJourney.assertEServiceNotPresentInProducerCatalog(lastImportedEServiceName);
+    }
+
+    @When("l'utente apre la pagina di creazione di un e-service")
+    public void openEServiceCreation() {
+        eServiceUseCase.openEServiceCreation();
+    }
+
+    @When("l'utente apre la modifica dei dati generali in bozza dell'{currentEService}")
+    public void openDraftEServiceGeneralData(EService eService) {
+        eServiceUseCase.openDraftEServiceGeneralData(eService);
+    }
+
+    @When("l'utente apre la modifica dei dati generali in bozza per {eServiceByAlias}")
+    public void openDraftEServiceGeneralDataByAlias(EService eService) {
+        eServiceUseCase.openDraftEServiceGeneralData(eService);
+    }
+
+    @When("l'utente tenta di salvare nella bozza il nome di un altro e-service: {eServiceByAlias}")
+    public void attemptToUpdateDraftEServiceWithDuplicateName(EService existingEService) {
+        eServiceUseCase.shouldFailToUpdateDraftEServiceName(
+                existingEService.getName(), EServiceUpdateFailureReason.DUPLICATE_NAME
+        );
+    }
+
+    @When("l'utente tenta di salvare un link nella descrizione dell'e-service lasciando validi gli altri dati")
+    public void attemptToUpdateDraftEServiceDescriptionWithLink() {
+        eServiceUseCase.shouldFailToUpdateDraftEServiceDescription(
+                "Descrizione di test con https://example.com",
+                EServiceUpdateFailureReason.HYPERLINK_DETECTED
+        );
+    }
+
+    @When("l'utente tenta di creare un e-service con il nome dell'{currentEService} e gli altri dati validi")
+    public void attemptToCreateEServiceWithSameName(EService existingEService) {
+        eServiceUseCase.shouldFailToCreateEService(
+                command -> command.name(existingEService.getName()), EServiceCreationFailureReason.DUPLICATE_NAME
+        );
+    }
+
+    @When("l'utente tenta di creare un e-service con un link nel nome e gli altri dati validi")
+    public void attemptToCreateEServiceWithLinkInName() {
+        eServiceUseCase.shouldFailToCreateEService(
+                command -> command.name(randomAlphanumericName("eservice", 15) + " https://example.com"),
+                EServiceCreationFailureReason.HYPERLINK_DETECTED
+        );
+    }
+
+    @When("l'utente tenta di creare un e-service con il nome del {eServiceTemplate} e gli altri dati validi")
+    public void attemptToCreateEServiceWithTemplateName(EServiceTemplate template) {
+        eServiceUseCase.shouldFailToCreateEService(
+                command -> command.name(template.getName()),
+                EServiceCreationFailureReason.TEMPLATE_NAME_CONFLICT
+        );
     }
 
     @Given("la versione {int} dell'{currentEService} (è )in fase di archiviazione con un periodo di preavviso di {gracePeriodDays} giorni")

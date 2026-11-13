@@ -5,13 +5,14 @@ import it.pagopa.interop.common.agreement.domain.AgreementState;
 
 public class AgreementParameterTypes {
 
-    @ParameterType("attiva|sospesa|bozza|archiviata")
+    @ParameterType("attiva|sospesa|bozza|archiviata|in attesa di approvazione")
     public AgreementState agreementState(String value) {
         return switch (value.toLowerCase()) {
             case "attiva" -> AgreementState.ACTIVE;
             case "sospesa" -> AgreementState.SUSPENDED;
             case "bozza" -> AgreementState.DRAFT;
             case "archiviata" -> AgreementState.ARCHIVED;
+            case "in attesa di approvazione" -> AgreementState.PENDING;
             default -> throw new IllegalArgumentException("Unknown agreement state: " + value);
         };
     }

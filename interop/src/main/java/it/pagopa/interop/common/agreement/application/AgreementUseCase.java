@@ -84,8 +84,16 @@ public class AgreementUseCase {
         return activateAgreement(agreement, null);
     }
 
+    public void attemptAgreementActivation(Agreement agreement) {
+        agreementGateway.attemptAgreementActivation(agreement);
+    }
+
     public Agreement submitAgreement(Agreement agreement) {
         return agreementGateway.submitAgreement(agreement);
+    }
+
+    public void attemptAgreementSubmission(Agreement agreement) {
+        agreementGateway.attemptAgreementSubmission(agreement);
     }
 
     public Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation) {

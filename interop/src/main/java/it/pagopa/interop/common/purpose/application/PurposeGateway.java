@@ -8,6 +8,7 @@ import it.pagopa.interop.common.kernel.domain.PurposeRef;
 import it.pagopa.interop.common.kernel.domain.PurposeTemplateRef;
 import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.common.purpose.domain.PurposeCreationFailureReason;
 import jakarta.annotation.Nullable;
 import org.springframework.plugin.core.Plugin;
 
@@ -17,6 +18,8 @@ public interface PurposeGateway extends Plugin<Channel> {
     Purpose updatePurposeDailyCalls(PurposeRef purposeRef, int dailyCalls);
 
     Purpose createPurpose(PurposeCreateCommand createCommand);
+
+    void shouldFailToCreatePurpose(PurposeCreateCommand createCommand, PurposeCreationFailureReason reason);
 
     Purpose createReversePurpose(EServiceRef eServiceRef, EServiceRiskAnalysisRef riskAnalysisRef);
 

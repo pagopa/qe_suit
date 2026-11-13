@@ -55,6 +55,16 @@ public class AgreementSteps {
         agreementUseCase.verifyProducerAgreementDownloadAvailability(entityStore.getLastOrThrow(Agreement.class));
     }
 
+    @When("l'erogatore tenta di approvare la {currentAgreement}")
+    public void attemptAgreementActivation(Agreement agreement) {
+        agreementUseCase.attemptAgreementActivation(agreement);
+    }
+
+    @When("il fruitore tenta di inviare la {currentAgreement}")
+    public void attemptAgreementSubmission(Agreement agreement) {
+        agreementUseCase.attemptAgreementSubmission(agreement);
+    }
+
     @Then("il fruitore può scaricare il documento della richiesta di fruizione solo quanto è pronto")
     public void verifyAgreementDownloadAvailabilityForConsumer() {
         viewConsumerAgreementDetails();

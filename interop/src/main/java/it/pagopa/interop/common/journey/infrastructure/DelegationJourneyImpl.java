@@ -3,6 +3,7 @@ package it.pagopa.interop.common.journey.infrastructure;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.delegation.application.DelegationUseCase;
+import it.pagopa.interop.common.delegation.application.command.ConsumerDelegationCreationCommand;
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand;
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationSetupCommand;
 import it.pagopa.interop.common.delegation.domain.Delegation;
@@ -32,8 +33,42 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
     private final CurrentChannel<Channel> currentChannel;
 
     @Override
+    public DelegationJourneyImpl revokeProducerDelegationAsDelegator(DelegationRef delegationRef, Tenant delegator) {
+        User originalUser = currentUserSession.getUser();
+        Tenant originalTenant = currentUserSession.getTenant();
+        try {
+            currentUserSession.set(User.getTenantAdmin(delegator), delegator);
+            delegationUseCase.revokeProducerDelegation(delegationRef);
+            delegationUseCase.waitForProducerDelegationState(delegationRef, ProducerDelegationState.REVOKED);
+            return this;
+        } finally {
+            currentUserSession.set(originalUser, originalTenant);
+        }
+    }
+
+    @Override
+    public DelegationJourneyImpl revokeConsumerDelegationAsDelegator(DelegationRef delegationRef, Tenant delegator) {
+        User originalUser = currentUserSession.getUser();
+        Tenant originalTenant = currentUserSession.getTenant();
+        try {
+            currentUserSession.set(User.getTenantAdmin(delegator), delegator);
+            delegationUseCase.revokeConsumerDelegation(delegationRef);
+            delegationUseCase.waitForConsumerDelegationRevocation(delegationRef);
+            return this;
+        } finally {
+            currentUserSession.set(originalUser, originalTenant);
+        }
+    }
+
+    @Override
     public DelegationJourneyImpl createConsumerDelegation(TenantRef delegateRef, EServiceRef eServiceRef) {
         delegationUseCase.createConsumerDelegation(delegateRef, eServiceRef);
+        return this;
+    }
+
+    @Override
+    public DelegationJourneyImpl createConsumerDelegation(@NonNull ConsumerDelegationCreationCommand command) {
+        delegationUseCase.createConsumerDelegation(command);
         return this;
     }
 

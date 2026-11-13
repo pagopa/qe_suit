@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 public class EService implements Identifiable {
     UUID id;
     String name;
+    String instanceLabel;
     String producerId;
     EServiceTechnology technology;
     EServiceMode mode;

@@ -2,6 +2,8 @@ package it.pagopa.interop.common.eservice.application;
 
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
+import it.pagopa.interop.common.eservice.domain.EServiceCreationFailureReason;
 import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
@@ -57,5 +59,31 @@ public class EServiceUseCase {
 
     public void assertEServiceNotPresentInProducerCatalog(String eserviceName) {
         eServiceGateway.assertEServiceNotPresentInProducerCatalog(eserviceName);
+    }
+
+    public void openEServiceCreation() {
+        eServiceGateway.openEServiceCreation();
+    }
+
+    public void openDraftEServiceGeneralData(EService eService) {
+        eServiceGateway.openDraftEServiceGeneralData(eService);
+    }
+
+    public void shouldFailToUpdateDraftEServiceDescription(String description, EServiceUpdateFailureReason reason) {
+        eServiceGateway.shouldFailToUpdateDraftEServiceDescription(description, reason);
+    }
+
+    public void shouldFailToUpdateDraftEServiceName(String name, EServiceUpdateFailureReason reason) {
+        eServiceGateway.shouldFailToUpdateDraftEServiceName(name, reason);
+    }
+
+    public void shouldFailToCreateEService(Consumer<EServiceCreationCommand> config, EServiceCreationFailureReason reason) {
+        EServiceCreationCommand command = requestFactory.defaultCreationEServiceCommand();
+        config.accept(command);
+        shouldFailToCreateEService(command, reason);
+    }
+
+    public void shouldFailToCreateEService(EServiceCreationCommand command, EServiceCreationFailureReason reason) {
+        eServiceGateway.shouldFailToCreateEService(command, reason);
     }
 }

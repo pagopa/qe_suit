@@ -20,6 +20,8 @@ public interface EServiceDescriptorGateway extends Plugin<Channel> {
 
     EServiceDescriptor addDescriptor(EServiceRef eServiceRef);
 
+    EServiceDescriptor addDocument(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String path, String name);
+
     EServiceDescriptor publishDescriptor(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
 
     EServiceDescriptor publishDescriptorAwaitingApproval(

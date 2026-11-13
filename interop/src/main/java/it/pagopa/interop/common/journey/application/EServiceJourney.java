@@ -5,11 +5,14 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
+import it.pagopa.interop.common.kernel.domain.Tenant;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends JourneyModule {
+    SELF createPublishedEServiceWithManualAgreementApproval(Tenant producer);
+
     SELF createEService(EServiceCreationCommand command, EServiceDescriptorState state);
 
     SELF createEService(Consumer<EServiceCreationCommand> commandConfig, EServiceDescriptorState state);

@@ -14,9 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class EServiceTemplateParameterTypes {
     private final EntityStore entityStore;
 
-    @ParameterType("template|template preparato")
+    @ParameterType("template|template preparato|e-service template|e-service template in bozza")
     public EServiceTemplate eServiceTemplate(String reference) {
         return entityStore.getLastOrThrow(EServiceTemplate.class);
+    }
+
+    @ParameterType("template \"([^\"]+)\"")
+    public EServiceTemplate eServiceTemplateByAlias(String alias) {
+        return entityStore.getByAliasOrThrow(alias, EServiceTemplate.class);
     }
 
     @ParameterType("numero di URL non corrispondente|URL non ammesso")

@@ -154,6 +154,11 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     }
 
     @Override
+    public EServiceDescriptor addDocument(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String path, String name) {
+        return linkDocument(serviceRef, descriptorRef, path, DocumentKind.DOCUMENT, name);
+    }
+
+    @Override
     public void archiveDescriptor(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, GracePeriodDays gracePeriodDays) {
         archiveGateway.archive(serviceRef, descriptorRef, gracePeriodDays);
     }

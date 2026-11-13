@@ -4,6 +4,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.Delegation;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
 import org.jspecify.annotations.Nullable;
@@ -14,6 +15,10 @@ import static org.instancio.Select.field;
 @Component
 @RequiredArgsConstructor
 public class BffAgreementRequestFactory {
+
+    public AgreementSubmissionPayload submissionRequest() {
+        return new AgreementSubmissionPayload().consumerNotes("consumerNotes");
+    }
 
     public AgreementPayload creationRequest(EService eService, EServiceDescriptor descriptor, @Nullable Delegation delegation) {
         return Instancio.of(AgreementPayload.class)

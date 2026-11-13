@@ -5,6 +5,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +18,9 @@ import static org.mockito.Mockito.*;
 class EServicePurposeTemplateStepsTest {
     private final InteropJourney journey = mock(InteropJourney.class, RETURNS_SELF);
     private final InMemoryEntityStore entities = new InMemoryEntityStore();
-    private final EServicePurposeTemplateSteps steps = new EServicePurposeTemplateSteps(journey, entities);
+    private final PurposeTemplateUseCase purposeTemplateUseCase = mock(PurposeTemplateUseCase.class);
+    private final EServicePurposeTemplateSteps steps =
+            new EServicePurposeTemplateSteps(journey, entities, purposeTemplateUseCase);
 
     @Test
     void linksPurposeTemplateInRequestedStateToAliasedEServiceAsRequester() {

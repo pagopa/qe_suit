@@ -7,6 +7,12 @@ import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.common.eservice.application.EServiceGateway;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
 import it.pagopa.interop.common.eservice.domain.*;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
+import it.pagopa.interop.common.eservice.domain.EServiceCreationFailureReason;
+import it.pagopa.interop.common.eservice.domain.EServiceArchivingFailureReason;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
@@ -173,6 +179,31 @@ public class BffEServiceGateway implements EServiceGateway {
         } catch (IOException e) {
             throw new UncheckedIOException("Errore nella creazione del pacchetto ZIP di importazione E-Service SOAP", e);
         }
+    }
+
+    @Override
+    public void openEServiceCreation() {
+        throw new UnsupportedOperationException("Opening EService creation is not supported on the BFF channel");
+    }
+
+    @Override
+    public void openDraftEServiceGeneralData(EService eService) {
+        throw new UnsupportedOperationException("Opening draft EService editing is not supported on the BFF channel");
+    }
+
+    @Override
+    public void shouldFailToUpdateDraftEServiceDescription(String description, EServiceUpdateFailureReason reason) {
+        throw new UnsupportedOperationException("Attempting draft EService description update is not supported on the BFF channel");
+    }
+
+    @Override
+    public void shouldFailToUpdateDraftEServiceName(String name, EServiceUpdateFailureReason reason) {
+        throw new UnsupportedOperationException("Attempting draft EService name update is not supported on the BFF channel");
+    }
+
+    @Override
+    public void shouldFailToCreateEService(EServiceCreationCommand command, EServiceCreationFailureReason reason) {
+        throw new UnsupportedOperationException("Attempting duplicate EService creation is not supported on the BFF channel");
     }
 
     @Override

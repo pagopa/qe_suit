@@ -14,6 +14,8 @@ public interface TenantGateway extends Plugin<Channel> {
 
     void enableProducerDelegationAvailability(TenantRef tenantRef);
 
+    void enableConsumerDelegationAvailability(TenantRef tenantRef);
+
     void ensureProducerDelegationEnabled(TenantRef tenantRef);
 
     Set<UUID> getActiveCertifiedAttributeIds(TenantRef tenantRef);

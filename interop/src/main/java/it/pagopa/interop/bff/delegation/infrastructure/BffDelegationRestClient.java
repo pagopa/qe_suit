@@ -61,7 +61,7 @@ public class BffDelegationRestClient extends RestClient {
         );
     }
 
-    public TestChain<Delegation> getProducerDelegation(@Nonnull UUID delegationId) {
+    public TestChain<Delegation> getDelegation(@Nonnull UUID delegationId) {
         return execute(
                 () -> delegationsApi.getDelegation()
                         .delegationIdPath(delegationId)
@@ -93,9 +93,31 @@ public class BffDelegationRestClient extends RestClient {
         );
     }
 
+    public TestChain<Void> rejectConsumerDelegation(
+            @Nonnull UUID delegationId,
+            @Nonnull RejectDelegationPayload payload
+    ) {
+        return execute(
+                () -> consumerDelegationsApi.rejectConsumerDelegation()
+                        .delegationIdPath(delegationId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<Void> revokeProducerDelegation(@Nonnull UUID delegationId) {
         return execute(
                 () -> producerDelegationsApi.revokeProducerDelegation()
+                        .delegationIdPath(delegationId)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
+    public TestChain<Void> revokeConsumerDelegation(@Nonnull UUID delegationId) {
+        return execute(
+                () -> consumerDelegationsApi.revokeConsumerDelegation()
                         .delegationIdPath(delegationId)
                         .execute(Function.identity()),
                 Void.class

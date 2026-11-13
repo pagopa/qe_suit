@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.delegation.application;
 
 import it.pagopa.interop.common.delegation.domain.Delegation;
+import it.pagopa.interop.common.delegation.domain.DelegationState;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -14,9 +15,13 @@ public interface DelegationGateway extends Plugin<Channel> {
 
     void approveProducerDelegation(DelegationRef delegationRef);
 
+    void attemptProducerDelegationApproval(DelegationRef delegationRef);
+
     Delegation createConsumerDelegation(TenantRef delegateRef, EServiceRef eServiceRef);
 
     Delegation createProducerDelegation(TenantRef delegateRef, EServiceRef eServiceRef);
+
+    void attemptProducerDelegationCreation(TenantRef delegateRef, EServiceRef eServiceRef);
 
     ProducerDelegation createProducerDelegation(
             TenantRef delegatorRef,
@@ -26,9 +31,25 @@ public interface DelegationGateway extends Plugin<Channel> {
 
     void approveConsumerDelegation(DelegationRef delegationRef);
 
+    void attemptConsumerDelegationApproval(DelegationRef delegationRef);
+
+    void attemptConsumerDelegationRejection(DelegationRef delegationRef);
+
+    Delegation waitForConsumerDelegationState(DelegationRef delegationRef, DelegationState expectedState);
+
+    void revokeConsumerDelegation(DelegationRef delegationRef);
+
+    void attemptConsumerDelegationRevocation(DelegationRef delegationRef);
+
+    Delegation waitForConsumerDelegationRevocation(DelegationRef delegationRef);
+
     void rejectProducerDelegation(DelegationRef delegationRef);
 
+    void attemptProducerDelegationRejection(DelegationRef delegationRef);
+
     void revokeProducerDelegation(DelegationRef delegationRef);
+
+    void attemptProducerDelegationRevocation(DelegationRef delegationRef);
 
     ProducerDelegation getProducerDelegation(DelegationRef delegationRef);
 
