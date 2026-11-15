@@ -53,6 +53,10 @@ public class EServiceUseCase {
         eServiceGateway.archiveEService(eService.getRef(), gracePeriodDays);
     }
 
+    public void cloneEService(EService eService) {
+        eServiceGateway.cloneEService(eService.getRef(), eService.getLatestDescriptor().getRef());
+    }
+
     public void shouldFailToArchiveEService(EService eService, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason) {
         eServiceGateway.shouldFailToArchiveEService(eService.getRef(), gracePeriodDays, reason);
     }
