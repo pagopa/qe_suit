@@ -13,7 +13,7 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CatalogFilterPayload;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestFactory;
@@ -31,13 +31,21 @@ import static org.hamcrest.Matchers.is;
 @org.springframework.test.context.ActiveProfiles(resolver = it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles.class)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-@RequiredArgsConstructor
 public class BffEServiceContractTest {
 
     private final ApiClient apiClient;
     private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final BffEServiceRequestFactory requestFactory;
+
+    public BffEServiceContractTest(ApiClient apiClient,
+            @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
+            InteropJourney interopJourney, BffEServiceRequestFactory requestFactory) {
+        this.apiClient = apiClient;
+        this.httpContractValidator = httpContractValidator;
+        this.interopJourney = interopJourney;
+        this.requestFactory = requestFactory;
+    }
 
     @TestFactory
     Stream<DynamicTest> createEService() {
@@ -156,4 +164,3 @@ public class BffEServiceContractTest {
         return createdEService.getId();
     }
 }
-

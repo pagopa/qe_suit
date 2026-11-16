@@ -10,10 +10,12 @@ public class CucumberUserSession implements AuthSession {
 
     @Override
     public void set(InteropActor actor, Tenant tenant) {
+        if (!(actor instanceof User user)) {
+            throw new IllegalArgumentException("User session requires a user actor");
+        }
         this.currentActor = actor;
         this.currentTenant = tenant;
-        if(actor instanceof User user)
-            currentRole = user.getRole();
+        this.currentRole = user.getRole();
     }
 
     @Override

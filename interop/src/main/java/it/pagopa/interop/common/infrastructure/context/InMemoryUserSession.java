@@ -10,10 +10,12 @@ public class InMemoryUserSession implements AuthSession {
 
     @Override
     public void set(InteropActor actor, Tenant tenant) {
+        if (!(actor instanceof User user)) {
+            throw new IllegalArgumentException("User session requires a user actor");
+        }
         this.currentActor.set(actor);
         this.currentTenant.set(tenant);
-        if (actor instanceof User user)
-            this.currentRole.set(user.getRole());
+        this.currentRole.set(user.getRole());
     }
 
     @Override

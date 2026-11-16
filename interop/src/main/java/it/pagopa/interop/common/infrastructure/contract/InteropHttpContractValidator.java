@@ -1,47 +1,57 @@
 package it.pagopa.interop.common.infrastructure.contract;
 
+import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.infrastructure.contract.http.HttpContractAuthentication;
 import it.pagopa.infrastructure.contract.http.HttpContractStages;
 import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.InteropActor;
+import it.pagopa.interop.common.kernel.domain.InteropRole;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
-import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.m2m.kernel.domain.M2MRole;
+import org.springframework.beans.factory.ObjectProvider;
 
 import java.util.Objects;
 
 public class InteropHttpContractValidator {
     private final HttpContractValidator delegate;
     private final AuthSession authSession;
+    private final Channel expectedChannel;
+    private final ObjectProvider<CurrentChannel<Channel>> currentChannel;
 
     public InteropHttpContractValidator(
             HttpContractValidator delegate,
-            AuthSession authSession
+            AuthSession authSession,
+            Channel expectedChannel,
+            ObjectProvider<CurrentChannel<Channel>> currentChannel
     ) {
         this.delegate = Objects.requireNonNull(delegate, "delegate must not be null");
         this.authSession = Objects.requireNonNull(authSession, "authSession must not be null");
+        this.expectedChannel = Objects.requireNonNull(expectedChannel, "expectedChannel must not be null");
+        this.currentChannel = Objects.requireNonNull(currentChannel, "currentChannel must not be null");
     }
 
-    public HttpContractStages.ApiCallSelectionStage as(Tenant tenant, User user) {
+    public HttpContractStages.ApiCallSelectionStage as(Tenant tenant, InteropActor actor) {
         Objects.requireNonNull(tenant, "tenant must not be null");
-        Objects.requireNonNull(user, "user must not be null");
-
-        HttpContractAuthentication authentication = () -> authSession.set(user, tenant);
-        return operationSupplier -> delegate.apiCall(authentication, operationSupplier);
+        Objects.requireNonNull(actor, "actor must not be null");
+        return authenticated(() -> authSession.set(actor, tenant));
     }
 
-    public HttpContractStages.ApiCallSelectionStage as(Tenant tenant, UserRole role) {
+    public HttpContractStages.ApiCallSelectionStage as(Tenant tenant, InteropRole role) {
         Objects.requireNonNull(tenant, "tenant must not be null");
         Objects.requireNonNull(role, "role must not be null");
-        return as(tenant, User.getTenantUser(tenant, role));
+        return authenticated(() -> authSession.set(role, tenant));
     }
 
-    public HttpContractStages.ApiCallSelectionStage as(Tenant tenant, M2MRole m2MRole) {
-        Objects.requireNonNull(tenant, "tenant must not be null");
-        Objects.requireNonNull(m2MRole, "m2MRole must not be null");
-
-        HttpContractAuthentication authentication = () -> authSession.set(m2MRole, tenant);
-        return operationSupplier -> delegate.apiCall(authentication, operationSupplier);
+    private HttpContractStages.ApiCallSelectionStage authenticated(HttpContractAuthentication authentication) {
+        return operationSupplier -> delegate.apiCall(() -> {
+            Channel activeChannel = currentChannel.getObject().getCurrentChannel();
+            if (activeChannel != expectedChannel) {
+                throw new IllegalStateException(
+                        "Expected channel " + expectedChannel + ", found " + activeChannel
+                );
+            }
+            authentication.authenticate();
+        }, operationSupplier);
     }
 }

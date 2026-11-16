@@ -16,6 +16,7 @@ import it.pagopa.interop.common.producer_keychain.domain.ProducerKeychain;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -39,7 +40,7 @@ public class BffProducerKeychainContractTest {
     private final ProducerKeychainFactory commandFactory;
 
     public BffProducerKeychainContractTest(ApiClient apiClient,
-                                           InteropHttpContractValidator httpContractValidator,
+                                           @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
                                            InteropJourney interopJourney,
                                            BffProducerKeychainRequestFactory requestFactory,
                                            ProducerKeychainFactory commandFactory) {
@@ -89,4 +90,3 @@ public class BffProducerKeychainContractTest {
         response.then().statusCode(is(DEFAULT_SUCCESS_STATUS_CODE));
     }
 }
-
