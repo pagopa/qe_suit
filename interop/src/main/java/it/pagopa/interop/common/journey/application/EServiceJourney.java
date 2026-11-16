@@ -4,6 +4,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceCreationCom
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -25,6 +26,14 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
         return createEService(command -> {
         }, state);
     }
+
+    SELF shouldFailToImportSOAPEService(
+            String eserviceName,
+            String wsdlResourcePath,
+            SoapInterfaceUploadFailureReason reason
+    );
+
+    SELF assertEServiceNotPresentInProducerCatalog(String eserviceName);
 
     default SELF createEService() {
         return createEService(EServiceDescriptorState.DRAFT);

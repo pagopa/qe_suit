@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -119,6 +120,23 @@ public class BffEServiceDescriptorInterfaceGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(ignored -> readAndUpdate(serviceRef, descriptorRef))
                 .get();
+    }
+
+    public void shouldFailToUploadInterface(
+            EServiceRef serviceRef,
+            EServiceDescriptorRef descriptorRef,
+            String interfaceResourcePath,
+            SoapInterfaceUploadFailureReason reason
+    ) {
+        File document = FileUtils.loadClasspathResourceAsTempFile(interfaceResourcePath);
+        String fileName = Path.of(interfaceResourcePath).getFileName().toString();
+        var rawResponse = restClient.addDocument(
+                        serviceRef.id(), descriptorRef.id(), DocumentKind.INTERFACE.name(), fileName, document
+                )
+                .withoutPolling()
+                .assertStatusCode(400)
+                .getRaw();
+        BffSoapInterfaceProblemValidator.assertSoapInterfaceProblem(rawResponse, reason);
     }
 
     private EServiceDescriptor readAndUpdate(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {

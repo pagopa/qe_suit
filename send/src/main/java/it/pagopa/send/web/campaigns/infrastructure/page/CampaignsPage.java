@@ -3,6 +3,7 @@ package it.pagopa.send.web.campaigns.infrastructure.page;
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.frontend.e2e.framework.web.domain.Component;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.send.web.campaigns.infrastructure.page.component.CampagneBox;
@@ -17,6 +18,8 @@ public interface CampaignsPage extends Page {
     CampagneBox box();
     @XPath("//*[@data-testid='emptyState']//h6[contains(@class, 'MuiTypography-root') and contains(@class, 'MuiTypography-subtitle2')]")
     Readable<String> emptyStateLabel();
+    @XPath("//*[@data-testid='emptyState']")
+    Component emptyState();
     @XPath("//*[@id='rows-per-page']")
     Button rowsXPageButton();
     Optional<OneTrustBanner> oneTrustBanner();

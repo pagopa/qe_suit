@@ -7,7 +7,7 @@ import it.pagopa.application.context.BrowserContext;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.web.login.infrastructure.DynamicUserTokenProvider;
-import it.pagopa.send.web.login.infrastructure.SelfCareSessionPayloadFactory;
+import it.pagopa.send.web.login.infrastructure.WebSelfCareSessionPayloadFactory;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,14 +18,14 @@ public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImp
     private final IWebPresentationApiAdapter adapter;
     private final CurrentUserSession currentUserSession;
     private final BrowserContext browserContext;
-    private final SelfCareSessionPayloadFactory sessionPayloadFactory;
+    private final WebSelfCareSessionPayloadFactory sessionPayloadFactory;
     private final DynamicUserTokenProvider tokenProvider;
 
     public AuthenticatedLocatableCapabilityImpl(
             IWebPresentationApiAdapter adapter,
             CurrentUserSession currentUserSession,
             BrowserContext browserContext,
-            SelfCareSessionPayloadFactory sessionPayloadFactory,
+            WebSelfCareSessionPayloadFactory sessionPayloadFactory,
             DynamicUserTokenProvider tokenProvider
     ) {
         super(adapter);
@@ -66,7 +66,7 @@ public class AuthenticatedLocatableCapabilityImpl extends LocatableCapabilityImp
     }
 
     private String sessionTokenFor(User user) {
-        return tokenProvider.requireToken(user.getUsername());
+        return tokenProvider.requireToken(user.getSessionTokenKey());
     }
 
     private String buildSessionPayload(User user, String sessionToken) {

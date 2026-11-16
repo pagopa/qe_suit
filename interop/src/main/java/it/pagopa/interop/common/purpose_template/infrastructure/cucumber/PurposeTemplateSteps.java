@@ -9,6 +9,7 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
@@ -29,6 +30,12 @@ public class PurposeTemplateSteps {
         currentUserSession.set(User.getTenantAdmin(tenant), tenant);
         interopJourney.withProducer(tenant, UserRole.ADMIN)
             .createPurposeTemplate(tenant, PurposeTemplateState.DRAFT);
+    }
+
+    @Given("un template finalità creato da/dal {tenant} e pubblicato")
+    public void createPurposeTemplate(Tenant creator) {
+        interopJourney.withProducer(creator, UserRole.ADMIN)
+                .createPurposeTemplate(Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.PUBLISHED);
     }
 
     @Given("un template di finalità creato e pubblicato da {tenant}")

@@ -15,7 +15,7 @@ public class UserParameterTypes {
 
     private final UserProvider userProvider;
 
-    @ParameterType("User_1|User_2|Impresa_1|Impresa_2|Comune_1|Comune_2")
+    @ParameterType("User_1|User_2|Impresa_1|Impresa_2|Comune_1|Comune_2|PT_1")
     public User user(String userKey) {
         return userProvider.resolve(UserAlias.fromKey(userKey));
     }

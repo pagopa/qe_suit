@@ -1,29 +1,24 @@
 package it.pagopa.interop.common.journey.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.interop.common.eservice.application.*;
-import it.pagopa.interop.common.attribute.domain.Attribute;
-import it.pagopa.interop.common.attribute.domain.Attributes;
-import it.pagopa.interop.common.eservice.application.*;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorLifecycleUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
+import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.application.command.EServiceCreationCommand;
-import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
-import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
+import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.utils.async.PollingUtils;
-import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -54,7 +49,6 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
         return createEService(defaultCommand, targetState);
     }
 
-
     @Override
     public EServiceJourneyImpl addRiskAnalysis() {
         EService eService = entityStore.getLastOrThrow(EService.class);
@@ -78,6 +72,22 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
             eService.getDescriptors().forEach(descriptor -> eServiceDescriptorUseCase.getDescriptor(eService, descriptor));
             return eServiceUseCase.getEService(eService);
         }, predicate);
+        return this;
+    }
+
+    @Override
+    public EServiceJourneyImpl shouldFailToImportSOAPEService(
+            String eserviceName,
+            String wsdlResourcePath,
+            SoapInterfaceUploadFailureReason reason
+    ) {
+        eServiceUseCase.shouldFailToImportSOAPEService(eserviceName, wsdlResourcePath, reason);
+        return this;
+    }
+
+    @Override
+    public EServiceJourneyImpl assertEServiceNotPresentInProducerCatalog(String eserviceName) {
+        eServiceUseCase.assertEServiceNotPresentInProducerCatalog(eserviceName);
         return this;
     }
 
