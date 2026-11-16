@@ -9,7 +9,6 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
@@ -25,27 +24,13 @@ public class PurposeTemplateSteps {
     private final CurrentUserSession currentUserSession;
     private final EntityStore entityStore;
 
-    @Given("un template di finalità avviato in creazione da {tenant}")
-    public void startPurposeTemplateCreation(Tenant tenant) {
-        currentUserSession.set(User.getTenantAdmin(tenant), tenant);
-        interopJourney.withProducer(tenant, UserRole.ADMIN)
-            .createPurposeTemplate(tenant, PurposeTemplateState.DRAFT);
-    }
-
-    @Given("un template finalità creato da/dal {tenant} e pubblicato")
-    public void createPurposeTemplate(Tenant creator) {
+    @Given("un template di finalità {purposeTemplateState} creato da {tenant}")
+    public void createPurposeTemplate(PurposeTemplateState state, Tenant creator) {
         interopJourney.withProducer(creator, UserRole.ADMIN)
-                .createPurposeTemplate(Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.PUBLISHED);
+                .createPurposeTemplate(creator, state);
     }
 
-    @Given("un template di finalità creato e pubblicato da {tenant}")
-    public void createAndPublishPurposeTemplate(Tenant tenant) {
-        currentUserSession.set(User.getTenantAdmin(tenant), tenant);
-        interopJourney.withProducer(tenant, UserRole.ADMIN)
-            .createPurposeTemplate(tenant, PurposeTemplateState.PUBLISHED);
-    }
-
-    @When("{tenant} tenta di associare al proprio template di finalità l'e-service in modalità di ricezione")
+    @When("{tenant} tenta di associare al proprio template di finalità l'e-service creato")
     public void tryLinkEServiceToPurposeTemplate(Tenant tenant) {
         currentUserSession.set(User.getTenantAdmin(tenant), tenant);
         PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
@@ -53,7 +38,7 @@ public class PurposeTemplateSteps {
         purposeTemplateUseCase.tryLinkEService(purposeTemplate, eService);
     }
 
-    @When("{tenant} tenta di associare al proprio template di finalità il template e-service in modalità di ricezione")
+    @When("{tenant} tenta di associare al proprio template di finalità il template e-service creato")
     public void tryLinkEServiceTemplateToPurposeTemplate(Tenant tenant) {
         currentUserSession.set(User.getTenantAdmin(tenant), tenant);
         PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);

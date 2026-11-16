@@ -34,7 +34,7 @@ Feature: Gestione delle finalità inoltrate
       | alias | erogatore        | nome           |
       | ES-1  | Comune di Milano | E-service test |
     And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
-    And un template finalità creato dal Comune di Milano e pubblicato
+    And un template di finalità pubblicato creato da Comune di Milano
     And l'e-service con una finalità creata dal template in stato WAITING_FOR_APPROVAL associata dal Comune di Pozzallo
     Then Comune di Milano approva la finalità che va in stato ACTIVE
 
@@ -69,6 +69,6 @@ Feature: Gestione delle finalità inoltrate
       | alias | erogatore        | nome           |
       | ES-1  | Comune di Milano | E-service test |
     And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
-    And un template finalità creato dal Comune di Milano e pubblicato
+    And un template di finalità pubblicato creato da Comune di Milano
     And l'e-service con una finalità creata dal template in stato WAITING_FOR_APPROVAL associata dal Comune di Pozzallo
     Then Comune di Milano rifiuta la finalità che va in stato REJECTED

@@ -116,7 +116,7 @@ public class PurposeSteps {
         assertThat(actualState).isEqualTo(expectedState);
     }
 
-    @When("{tenant} tenta di creare una finalità a partire dal proprio template associando l'e-service in modalità di ricezione")
+    @When("{tenant} tenta di creare una finalità a partire dal proprio template associando l'e-service creato")
     public void tryCreatePurposeFromTemplateWithReceiveEService(Tenant tenant) {
         currentUserSession.set(User.getTenantAdmin(tenant), tenant);
         PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
@@ -124,7 +124,7 @@ public class PurposeSteps {
         purposeUseCase.tryCreatePurposeFromTemplate(purposeTemplate, eService);
     }
 
-    @When("{tenant} tenta di creare una finalità associando l'e-service in modalità di ricezione")
+    @When("{tenant} tenta di creare una finalità associando l'e-service creato")
     public void tryCreatePurposeWithReceiveEService(Tenant tenant) {
         currentUserSession.set(User.getTenantAdmin(tenant), tenant);
         EService eService = entityStore.getLastOrThrow(EService.class);
