@@ -15,9 +15,8 @@ Feature: Coerenza tra l'archiviazione di un e-service e quella delle sue version
 
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     And un admin appartenente all'erogatore Comune di Milano
-    And la versione 1 dell'e-service è in fase di archiviazione con un periodo di preavviso di 120 giorni
-    When l'erogatore tenta di archiviare l'e-service con un periodo di preavviso di 60 giorni e una motivazione valida
-    Then viene mostrata la snackbar con un messaggio di errore "Non puoi archiviare l’e-service prima di una versione già in fase di archiviazione. Seleziona una durata più lunga."
+    And la versione 1 dell'e-service in fase di archiviazione con un periodo di preavviso di 120 giorni
+    Then il sistema rifiuta l'archiviazione dell'e-service da parte dell'erogatore con un periodo di preavviso di 60 giorni e una motivazione valida
 
   Scenario: [ESERVICE_ARCHIVING_GRACE_PERIOD_1.2] - Impossibilità per il delegato di richiedere l'archiviazione di un e-service prima di una sua versione
   Dato un e-service con una delega in erogazione attiva e due versioni:
@@ -29,11 +28,10 @@ Feature: Coerenza tra l'archiviazione di un e-service e quella delle sue version
 
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     And un admin appartenente all'erogatore Comune di Milano
-    And la versione 1 dell'e-service è in fase di archiviazione con un periodo di preavviso di 120 giorni
-    And l'e-service è delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
+    And la versione 1 dell'e-service in fase di archiviazione con un periodo di preavviso di 120 giorni
+    And l'e-service delegato in erogazione dal Comune di Milano al Comune di Pozzallo con una delega in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
-    When il delegato tenta di richiedere al delegante l'archiviazione dell'intero e-service con un periodo di preavviso di 60 giorni e una motivazione valida
-    Then viene mostrata la snackbar con un messaggio di errore "Non puoi archiviare l’e-service prima di una versione già in fase di archiviazione. Seleziona una durata più lunga."
+    Then il sistema rifiuta la richiesta di archiviazione dell'e-service da parte del delegato con un periodo di preavviso di 60 giorni e una motivazione valida
 
   Scenario Outline: [ESERVICE_ARCHIVING_GRACE_PERIOD_1.3] - Archiviazione di un e-service con un preavviso compatibile con quello di una sua versione
   Dato un e-service con due versioni:
@@ -45,8 +43,8 @@ Feature: Coerenza tra l'archiviazione di un e-service e quella delle sue version
 
     Given un EService creato dal Comune di Milano con una versione divenuta deprecata dopo la fruizione di PagoPA
     And un admin appartenente all'erogatore Comune di Milano
-    And la versione 1 dell'e-service è in fase di archiviazione con un periodo di preavviso di <descriptor_grace_period> giorni
-    When l'erogatore archivia l'e-service con un periodo di preavviso di <eservice_grace_period> giorni e una motivazione valida
+    And la versione 1 dell'e-service in fase di archiviazione con un periodo di preavviso di <descriptor_grace_period> giorni
+    When l'erogatore tenta di archiviare l'e-service con un periodo di preavviso di <eservice_grace_period> giorni e una motivazione valida
     Then viene mostrata la snackbar con un messaggio di successo "Questo e-service sarà archiviato tra <eservice_grace_period> giorni"
 
     Examples:

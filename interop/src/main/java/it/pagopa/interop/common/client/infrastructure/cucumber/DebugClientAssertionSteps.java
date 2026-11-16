@@ -8,6 +8,8 @@ import it.pagopa.interop.common.client.application.command.DebugClientAssertionC
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientAssertion;
 import it.pagopa.interop.common.client.domain.DebugClientAssertionValidation;
+import it.pagopa.interop.common.client.infrastructure.cucumber.dto.ValidationExpected;
+import it.pagopa.interop.common.client.infrastructure.cucumber.dto.ValidationStep;
 import it.pagopa.kernel.security.DPoPProof;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

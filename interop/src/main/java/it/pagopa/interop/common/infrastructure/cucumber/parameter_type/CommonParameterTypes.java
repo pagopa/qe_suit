@@ -51,7 +51,7 @@ public class CommonParameterTypes {
         return ClientKind.valueOf(type.toUpperCase());
     }
 
-    @ParameterType("SUSPENDED")
+    @ParameterType("DRAFT|WAITING_FOR_APPROVAL|ACTIVE|SUSPENDED|ARCHIVED|REJECTED")
     public PurposeVersionState purposeState(String name) {
         return PurposeVersionState.valueOf(name.toUpperCase());
     }
@@ -66,15 +66,5 @@ public class CommonParameterTypes {
         return "asincrono".equals(name);
     }
 
-    @ParameterType("bozza|pubblicato")
-    public EServiceDescriptorState eServiceDescriptorState(String state) {
-        switch (state.toLowerCase()) {
-            case "bozza":
-                return EServiceDescriptorState.DRAFT;
-            case "pubblicato":
-                return EServiceDescriptorState.PUBLISHED;
-            default:
-                throw new IllegalArgumentException("Invalid EServiceDescriptorState: " + state);
-        }
-    }
+
 }
