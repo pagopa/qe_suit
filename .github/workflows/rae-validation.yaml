@@ -1,0 +1,103 @@
+name: "[RAE] Validate YAML and generate Markdown"
+
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rae-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  rae-validate:
+    name: rae-validate
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check RAE PR eligibility
+        id: eligibility
+        env:
+          PR_HEAD: ${{ github.event.pull_request.head.ref }}
+          PR_BASE: ${{ github.event.pull_request.base.ref }}
+          PR_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          THIS_REPO: ${{ github.repository }}
+        run: |
+          if [[ "$PR_HEAD" == feature/rae_* && "$PR_BASE" == develop && "$PR_REPO" == "$THIS_REPO" ]]; then
+            echo 'eligible=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'eligible=false' >> "$GITHUB_OUTPUT"
+            echo 'Not a same-repository RAE PR. Skipping RAE-specific validation.'
+          fi
+      - name: Checkout trusted generator from develop
+        if: steps.eligibility.outputs.eligible == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: trusted
+          persist-credentials: false
+      - name: Checkout PR head (data only, not executable code)
+        if: steps.eligibility.outputs.eligible == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: rae_pr
+          persist-credentials: false
+      - name: Install Python
+        if: steps.eligibility.outputs.eligible == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        if: steps.eligibility.outputs.eligible == 'true'
+        run: python -m pip install -r trusted/tools/rae-generator/requirements.txt
+      - name: Validate, render, and check Markdown
+        if: steps.eligibility.outputs.eligible == 'true'
+        working-directory: rae_pr
+        env:
+          RAE_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          # Exactly one RAE YAML with this branch's runner/timestamp.
+          NAME="${RAE_HEAD_REF#feature/}"
+          YAML="rae/${NAME}.yaml"
+          test -f "$YAML" || { echo "Missing $YAML"; exit 1; }
+          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae-generator" python -m rae_generator finalize "$YAML" --write
+          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae-generator" python -m rae_generator check "$YAML"
+          echo "rae_yaml=$YAML" >> "$GITHUB_ENV"
+          echo "rae_md=${YAML%.yaml}.md" >> "$GITHUB_ENV"
+      - name: Commit Markdown to PR branch if changed
+        if: steps.eligibility.outputs.eligible == 'true'
+        working-directory: rae_pr
+        env:
+          # Fine-grained PAT (Contents RW) or GitHub App token for this repo.
+          # GITHUB_TOKEN pushes do not trigger PR checks on the resulting commit.
+          RAE_AUTOMATION_TOKEN: ${{ secrets.RAE_AUTOMATION_TOKEN }}
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- "$rae_md" && [[ -f "$rae_md" && -z "$(git ls-files --others --exclude-standard -- "$rae_md")" ]]; then
+            echo 'Markdown is unchanged.'
+            exit 0
+          fi
+          test -n "$RAE_AUTOMATION_TOKEN" || {
+            echo 'Missing RAE_AUTOMATION_TOKEN: required to push and retrigger required PR checks.'
+            exit 1
+          }
+          # Guard against a newer QA push; never overwrite newer analysis.
+          git fetch "https://x-access-token:${RAE_AUTOMATION_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "+refs/heads/${HEAD_REF}:refs/remotes/rae-upstream/head" >/dev/null 2>&1
+          test "$(git rev-parse HEAD)" = "$(git rev-parse refs/remotes/rae-upstream/head)" || {
+            echo 'A newer QA push exists; a new validation run will handle it.'; exit 1;
+          }
+          git config user.name 'rae-automation[bot]'
+          git config user.email 'rae-automation@users.noreply.github.com'
+          git add -- "$rae_md"
+          git commit -m "docs(rae): render Markdown from validated YAML"
+          # Disable command tracing, do not print credentials in logs.
+          git -c credential.helper= push \
+            "https://x-access-token:${RAE_AUTOMATION_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "HEAD:refs/heads/${HEAD_REF}"
