@@ -1,16 +1,15 @@
+import json
+import pytest
+import yaml
 from copy import deepcopy
 from pathlib import Path
-import json
-import yaml
-import pytest
-
-from rae_generator.parsers import collect_reports, ReportError, parse_file
-from rae_generator.matching import choose_known, fingerprint, normalized_error
+from rae_generator.cli import main
 from rae_generator.generator import create_rae, write_yaml
 from rae_generator.history import load_history
+from rae_generator.matching import choose_known, fingerprint, normalized_error
+from rae_generator.parsers import collect_reports, ReportError, parse_file
 from rae_generator.renderer import render
 from rae_generator.validator import validate, ValidationError, read_yaml
-from rae_generator.cli import main
 
 
 def example_data():
@@ -193,3 +192,104 @@ def test_metadata_and_zero_ko_validated(tmp_path):
     data['rae']['release']='   '
     with pytest.raises(ValidationError,match='release'):
         validate(data)
+
+
+def test_cucumber_outline_same_name_different_example_rows(tmp_path):
+    folder = tmp_path / 'cucumber-reports'
+    folder.mkdir()
+    path = folder / 'report.json'
+    scenario_name = '[PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_1] Solo e-service attivi'
+    path.write_text(json.dumps([{'elements': [
+        {'name': scenario_name, 'line': 101, 'type': 'scenario',
+         'steps': [{'result': {'status': 'failed', 'error_message': 'same failure'}}]},
+        {'name': scenario_name, 'line': 102, 'type': 'scenario',
+         'steps': [{'result': {'status': 'failed', 'error_message': 'same failure'}}]},
+    ]}]))
+    rows = collect_reports(tmp_path)
+    assert len(rows) == 2  # Even identical failure messages are different examples.
+    assert {row.id_test for row in rows} == {
+        f'{scenario_name} [example line: 101]',
+        f'{scenario_name} [example line: 102]',
+    }
+
+
+def test_cucumber_outline_single_failed_example_has_source_line(tmp_path):
+    folder = tmp_path / 'cucumber-reports'
+    folder.mkdir()
+    path = folder / 'report.json'
+    path.write_text(json.dumps([{'elements': [
+        {'name': 'outline', 'line': 42, 'type': 'scenario_outline',
+         'steps': [{'result': {'status': 'failed', 'error_message': 'boom'}}]},
+    ]}]))
+    assert parse_file(path)[0].id_test == 'outline [example line: 42]'
+
+
+def test_cucumber_without_example_metadata_keeps_existing_id(tmp_path):
+    path = cucumber_json(tmp_path, name='Plain scenario')
+    assert parse_file(path)[0].id_test == 'Plain scenario'
+
+
+def test_cucumber_examples_id_named_group_and_stable_number(tmp_path):
+    folder = tmp_path / 'cucumber-reports'
+    folder.mkdir()
+    path = folder / 'report.json'
+    name = '[PRIVATE_CATALOG_HIGH_IMPACT_FILTERS_1] Solo e-service attivi'
+    group = 'versione-sospesa-superata-da-una-versione-successiva'
+
+    def scenario(group, idx, line, status, message='same failure'):
+        return {'name': name, 'keyword': 'Scenario Outline', 'type': 'scenario',
+                'id': f'feature;scenario;{group};{idx}', 'line': line,
+                'steps': [{'result': {'status': status, 'error_message': message}}]}
+
+    path.write_text(json.dumps([{'elements': [
+        scenario('versione-sospesa-non-superata', 2, 34, 'passed'),
+        scenario(group, 2, 39, 'failed'),
+        scenario(group, 3, 40, 'failed'),
+        scenario(group, 4, 42, 'passed'),
+        scenario('versione-pubblicata', 2, 46, 'failed'),
+    ]}]))
+    rows = collect_reports(tmp_path)
+    assert len(rows) == 3  # The two identical diagnostics are separate KO.
+    assert {row.id_test for row in rows} == {
+        f'{name} [Examples: {group} | Example #1]',
+        f'{name} [Examples: {group} | Example #2]',
+        f'{name} [Examples: versione-pubblicata | Example #1]',
+    }
+
+
+def test_cucumber_examples_unnamed_group_preserves_line_for_uniqueness(tmp_path):
+    folder = tmp_path / 'cucumber-reports';
+    folder.mkdir()
+    path = folder / 'report.json'
+    path.write_text(json.dumps([{'elements': [
+        {'name': 'outline', 'keyword': 'Scenario Outline', 'id': 'f;s;;2',
+         'line': 282, 'steps': [{'result': {'status': 'failed', 'error_message': 'same failure'}}]},
+        {'name': 'outline', 'keyword': 'Scenario Outline', 'id': 'f;s;;2',
+         'line': 310, 'steps': [{'result': {'status': 'failed', 'error_message': 'same failure'}}]},
+    ]}]))
+    rows = collect_reports(tmp_path)
+    assert len(rows) == 2
+    assert rows[0].id_test != rows[1].id_test
+    assert all('Example #1' in row.id_test for row in rows)
+
+
+def test_cucumber_examples_invalid_id_uses_source_line(tmp_path):
+    folder = tmp_path / 'cucumber-reports';
+    folder.mkdir()
+    path = folder / 'report.json'
+    path.write_text(json.dumps([{'elements': [
+        {'name': 'outline', 'keyword': 'Scenario Outline', 'id': 'nonstandard',
+         'line': 42, 'steps': [{'result': {'status': 'failed', 'error_message': 'boom'}}]},
+    ]}]))
+    assert parse_file(path)[0].id_test == 'outline [example line: 42]'
+
+
+def test_cucumber_plain_scenario_does_not_rewrite_trailing_number(tmp_path):
+    folder = tmp_path / 'cucumber-reports';
+    folder.mkdir()
+    path = folder / 'report.json'
+    path.write_text(json.dumps([{'elements': [
+        {'name': 'normal test', 'keyword': 'Scenario', 'id': 'feature;test;group;2',
+         'line': 20, 'steps': [{'result': {'status': 'failed', 'error_message': 'boom'}}]},
+    ]}]))
+    assert parse_file(path)[0].id_test == 'normal test'
