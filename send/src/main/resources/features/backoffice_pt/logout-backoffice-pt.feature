@@ -26,12 +26,12 @@ Feature: Disconnessione dai portali SEND degli enti
     Then la sessione della PG risulta terminata
 
   @backofficePt
-  Scenario: [BACKOFFICE_PT_LOGOUT_4] Dopo il logout il PT ritrova il filtro degli enti vuoto
-    Given il PT PT_1 effettua l'accesso a SelfCare con autenticazione SPID
-    And la pagina PtInstitutions è caricata con successo
-    When il PT cerca gli enti per "ente"
-    And l'utente esce dal portale con il pulsante Esci
-    And la pagina LoginPage è caricata con successo
-    And il PT PT_1 effettua l'accesso a SelfCare con autenticazione SPID
-    Then la pagina PtInstitutions è caricata con successo
+  Scenario: [BACKOFFICE_PT_LOGOUT_4] Dopo la disconnessione il partner tecnologico ritrova il filtro degli enti vuoto
+    Given il partner tecnologico: PT_1 ha effettuato l'accesso a SelfCare con autenticazione SPID
+    And il partner tecnologico ha accesso alle funzionalità del BackOffice PT
+    And il partner tecnologico cerca gli enti per "ente"
+    When il partner tecnologico richiede la disconnessione dal portale
+    And la sessione del partner tecnologico risulta terminata
+    And il partner tecnologico: PT_1 effettua l'accesso a SelfCare con autenticazione SPID
+    Then il partner tecnologico ha accesso alle funzionalità del BackOffice PT
     And il filtro degli enti è vuoto
