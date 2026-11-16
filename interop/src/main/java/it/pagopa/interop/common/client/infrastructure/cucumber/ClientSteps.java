@@ -2,6 +2,7 @@ package it.pagopa.interop.common.client.infrastructure.cucumber;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -53,20 +54,37 @@ public class ClientSteps {
                 .build();
     }
 
-    @Then("il client {string} conserva le associazioni e i dati di riferimento eccetto il nome")
-    public void assertClientPreservedExceptName(String clientAlias) {
+    @ParameterType("il nome e la descrizione|il nome|la descrizione")
+    public ClientMetadataField clientMetadataField(String field) {
+        return switch (field) {
+            case "il nome" -> ClientMetadataField.NAME;
+            case "la descrizione" -> ClientMetadataField.DESCRIPTION;
+            case "il nome e la descrizione" -> ClientMetadataField.NAME_AND_DESCRIPTION;
+            default -> throw new IllegalArgumentException("Campo metadato client non supportato: " + field);
+        };
+    }
+
+    @Then("il client {string} conserva le associazioni e i dati di riferimento eccetto {clientMetadataField}")
+    public void assertClientPreservedExceptField(String clientAlias, ClientMetadataField excludedField) {
         assertThat(clientReference)
                 .as("Riferimento del client salvato prima della modifica")
                 .isNotNull();
         Client client = entityStore.getByAliasOrThrow(clientAlias, Client.class);
 
-        assertThat(client.getName())
-                .as("Nome del client %s dopo la modifica", clientAlias)
-                .isNotEqualTo(clientReference.getName());
+        if (excludedField.fieldNames.contains("name")) {
+            assertThat(client.getName())
+                    .as("Nome del client %s dopo la modifica", clientAlias)
+                    .isNotEqualTo(clientReference.getName());
+        }
+        if (excludedField.fieldNames.contains("description")) {
+            assertThat(client.getDescription())
+                    .as("Descrizione del client %s dopo la modifica", clientAlias)
+                    .isNotEqualTo(clientReference.getDescription());
+        }
         assertThat(client)
-                .as("Dati e associazioni del client %s eccetto il nome", clientAlias)
+                .as("Dati e associazioni del client %s eccetto %s", clientAlias, excludedField.getLabel())
                 .usingRecursiveComparison()
-                .ignoringFields("name")
+                .ignoringFields(excludedField.fieldNames.toArray(String[]::new))
                 .isEqualTo(clientReference);
     }
 
@@ -118,5 +136,23 @@ public class ClientSteps {
 
         interopJourney.withProducer(producer, role);
         clientUseCase.updateMetadata(client, name, description);
+    }
+
+    public enum ClientMetadataField {
+        NAME(Set.of("name"), "il nome"),
+        DESCRIPTION(Set.of("description"), "la descrizione"),
+        NAME_AND_DESCRIPTION(Set.of("name", "description"), "il nome e la descrizione");
+
+        private final Set<String> fieldNames;
+        private final String label;
+
+        ClientMetadataField(Set<String> fieldNames, String label) {
+            this.fieldNames = fieldNames;
+            this.label = label;
+        }
+
+        public String getLabel() {
+            return label;
+        }
     }
 }

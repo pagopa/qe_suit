@@ -16,11 +16,26 @@ Feature: Modifica dei metadati dei client
     And un admin del Comune di Pozzallo ha associato la finalità al client "CL-1"
     And appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
     When un admin del Comune di Pozzallo richiede la modifica dei metadati del client "CL-1":
-      | campo | valore     |
-      | nome  | nuovo nome |
+      | campo       | valore            |
+      | nome        | nuovo nome        |
     Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
+    When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    And un admin del Comune di Pozzallo richiede la modifica dei metadati del client "CL-1":
+      | campo       | valore            |
+      | descrizione | nuova descrizione |
+    Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto la descrizione
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
+
+    When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    And un admin del Comune di Pozzallo richiede la modifica dei metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | nuovo nome        |
+      | descrizione | nuova descrizione |
+    Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome e la descrizione
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
+    
     Examples:
       | tipoClient |
       | CONSUMER   |
