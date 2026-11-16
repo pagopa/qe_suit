@@ -5,7 +5,8 @@ import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.infrastructure.auth.AuthSessionRoutingConfig;
 import it.pagopa.interop.common.infrastructure.config.CucumberConfig;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
-import it.pagopa.interop.common.infrastructure.cucumber.step.UserSteps;
+import it.pagopa.interop.bff.infrastructure.cucumber.step.BffUserSteps;
+import it.pagopa.interop.m2m.v3.infrastructure.cucumber.step.M2Mv3UserSteps;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -74,6 +75,8 @@ class M2Mv3AuthSessionTest {
         try (var context = new AnnotationConfigApplicationContext()) {
             context.getEnvironment().setActiveProfiles("junit");
             context.register(AuthSessionRoutingConfig.class, M2Mv3SessionConfig.class, JunitContextConfig.class);
+            context.registerBean(BffUserSteps.class);
+            context.registerBean(M2Mv3UserSteps.class);
             context.registerBean(M2Mv3ApiClientProvider.class,
                     () -> new M2Mv3ApiClientProvider(journey, currentChannel(context)));
             context.refresh();
@@ -88,12 +91,17 @@ class M2Mv3AuthSessionTest {
             when(journey.createClient(any())).thenReturn(journey);
             when(journey.get(Client.class)).thenReturn(client);
             channel.setCurrentChannel(Channel.BFF);
-            new UserSteps(session, channel).setUser(M2MRole.M2M_ADMIN, tenant);
+            context.getBean(M2Mv3UserSteps.class).setMachine(M2MRole.M2M_ADMIN, tenant);
             assertThat(channel.getCurrentChannel()).isEqualTo(Channel.BFF);
             assertThat(session.getActor()).isEqualTo(User.getTenantAdmin(tenant));
             channel.setCurrentChannel(Channel.M2M_V3);
             assertThat(session.getActor()).isSameAs(client);
             assertThat(session.getRole()).isEqualTo(M2MRole.M2M_ADMIN);
+            context.getBean(BffUserSteps.class).setUser(UserRole.ADMIN, Tenant.PAGO_PA);
+            assertThat(channel.getCurrentChannel()).isEqualTo(Channel.M2M_V3);
+            assertThat(session.getActor()).isSameAs(client);
+            channel.setCurrentChannel(Channel.BFF);
+            assertThat(session.getTenant()).isEqualTo(Tenant.PAGO_PA);
         }
     }
 
