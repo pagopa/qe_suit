@@ -35,8 +35,8 @@ public class WebProducerAgreementDetailsPageContractTest {
     private final InteropJourney interopJourney;
 
     /**
-     * Verifies that the producer agreement details page shows the expected
-     * title, description, filter labels and table of elements for the tenant administrator.
+     * Verifies that the producer agreement details page shows the expected actions,
+     * general information and requested-attribute sections for the tenant administrator.
      */
     @TestFactory
     Stream<DynamicTest> producerAgreementDetailsPageContract() {
@@ -58,7 +58,7 @@ public class WebProducerAgreementDetailsPageContractTest {
     private Stream<WebScenario<ProducerAgreementDetailsPage>> contractScenarios() {
         return Stream.of(
                 new WebScenario<>(
-                        "Producer agreement details page shows the expected content and filters",
+                        "Producer agreement details page shows the expected content",
                         page -> {
                         },
                         page -> assertSoftly(softly -> {
