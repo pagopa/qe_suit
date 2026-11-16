@@ -3,6 +3,7 @@ package it.pagopa.send.suite;
 import it.pagopa.infrastructure.reporting.contract.lifecycle.GenerateContractReport;
 import it.pagopa.send.suite.authorization.bff.BffCommonAuthorizationContractTest;
 import it.pagopa.send.suite.authorization.bff.BffOwnerPgAuthorizationContractTest;
+import it.pagopa.send.suite.authorization.bff.BffPtAuthorizationContractTest;
 import it.pagopa.send.suite.authorization.bff.BffRecipientAuthorizationContractTest;
 import it.pagopa.send.suite.authorization.bff.BffSenderPaAuthorizationContractTest;
 import org.junit.platform.suite.api.ConfigurationParameter;
@@ -18,7 +19,8 @@ import org.junit.platform.suite.api.Suite;
         BffOwnerPgAuthorizationContractTest.class,
         BffRecipientAuthorizationContractTest.class,
         BffSenderPaAuthorizationContractTest.class,
-        BffCommonAuthorizationContractTest.class
+        BffCommonAuthorizationContractTest.class,
+        BffPtAuthorizationContractTest.class
 })
 @ConfigurationParameters({
         @ConfigurationParameter(
