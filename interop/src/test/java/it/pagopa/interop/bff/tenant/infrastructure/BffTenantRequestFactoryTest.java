@@ -84,7 +84,7 @@ class BffTenantRequestFactoryTest {
         RevokeVerifiedAttributeCommand command = factory.revokeVerifiedAttributeCommand(AgreementRef.of(agreementId));
 
         assertThat(command).isInstanceOf(BffRevokeVerifiedAttributeCommand.class);
-        assertThat(((BffRevokeVerifiedAttributeCommand) command).getBffPayload().getAgreementId()).isEqualTo(agreementId);
+        assertThat(((BffRevokeVerifiedAttributeCommand) command).getAgreement().id()).isEqualTo(agreementId);
     }
 
     @Test
