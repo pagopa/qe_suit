@@ -61,7 +61,7 @@ public class ScenarioParameterTypes {
         return entityStore.getLastOrThrow(Agreement.class);
     }
 
-    @ParameterType("OUT_OF_DRAFT_OPERATION_FIELD|INVALID_DATA")
+    @ParameterType("OUT_OF_DRAFT_OPERATION_FIELD|INVALID_DATA|UNAUTHORIZED")
     public EServiceUpdateFailureReason eServiceUpdateFailureReason(String reason) {
         return EServiceUpdateFailureReason.valueOf(reason);
     }
