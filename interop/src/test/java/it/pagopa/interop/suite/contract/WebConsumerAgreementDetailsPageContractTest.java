@@ -105,7 +105,7 @@ public class WebConsumerAgreementDetailsPageContractTest {
                                     softly.assertThat(page.generalInfoSection().certifiedAttributesButton().read())
                                             .as("View certified attributes button")
                                             .isEqualTo("Visualizza attributi certificati");
-                                    softly.assertThat(page.generalInfoSection().providerContactsButton().read())
+                                    softly.assertThat(page.generalInfoSection().contactsButton().read())
                                             .as("View provider contacts button")
                                             .isEqualTo("Visualizza contatti erogatore");
 

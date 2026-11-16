@@ -17,16 +17,22 @@ public interface TenantSelectionPage extends AbstractComunePickerPage {
     @XPath("//*[@id=\"root\"]/div/div[2]/div[2]/div/div[2]/div/div/div/div[2]/div/div/div/div")
     Clickable tenantRow();
 
-    @XPath(".//button[normalize-space()='Login']")
+    // Selfcare ha rinominato il pulsante da "Login" ad "Accedi": si accettano entrambi finché tutti gli ambienti non sono allineati
+    @XPath(".//button[normalize-space()='Accedi' or normalize-space()='Login']")
     Button confirmBtn();
+
+    // dopo la scelta dell'ente si atterra sulla Panoramica di Area Riservata: si apre il prodotto SEND dell'ambiente
+    @XPath("${selettore.login.pa.area-riservata-selettore-env}")
+    Button sendProductButton();
 
     Optional<OneTrustBanner> oneTrustBanner();
 
     @Override
     default void selectComune(String tenant) {
-        oneTrustBanner().ifPresent(OneTrustBanner::accept);
+        oneTrustBanner().ifPresent(OneTrustBanner::acceptIfShown);
         searchFor().writeAndAssert(tenant);
         tenantRow().click();
         confirmBtn().click();
+        sendProductButton().click();
     }
 }
