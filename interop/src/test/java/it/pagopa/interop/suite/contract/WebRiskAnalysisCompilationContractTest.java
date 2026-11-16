@@ -311,9 +311,7 @@ class WebRiskAnalysisCompilationContractTest {
         for (int index = 0; index < labelPrefixes.length; index++) {
             assertThat(answers.get(index).getLabel()).startsWith(labelPrefixes[index]);
         }
-        answers.forEach(answer -> {
-            assertThat(answer.isDisabled()).isFalse();
-        });
+        answers.forEach(answer -> assertThat(answer.isDisabled()).isFalse());
     }
 
     private static void selectAndAssert(RadioGroup group, String labelPrefix) {

@@ -5,7 +5,6 @@ import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
-import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Consumer;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor

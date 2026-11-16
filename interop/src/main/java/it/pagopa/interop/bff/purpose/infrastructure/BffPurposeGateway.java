@@ -52,12 +52,13 @@ public class BffPurposeGateway implements PurposeGateway {
         var response = restClient.createPurposeVersion(purposeRef.id(), new PurposeVersionSeed().dailyCalls(dailyCalls))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS);
         var createdVersion = response.get();
-        return PollingUtils.pollUntil(
+        final var purpose1 = PollingUtils.pollUntil(
                 () -> getPurpose(purposeRef),
-                purpose -> purpose.findVersionById(createdVersion.getVersionId())
+                purpose -> purpose.findVersionById(Objects.requireNonNull(createdVersion).getVersionId())
                         .map(version -> Integer.valueOf(dailyCalls).equals(version.getDailyCalls()))
                         .orElse(false)
         );
+        return purpose1;
     }
 
     @Override
@@ -175,7 +176,7 @@ public class BffPurposeGateway implements PurposeGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
-        List<UUID> expectedIds = assignment.getReviewerIds().stream().sorted().toList();
+        List<UUID> expectedIds = Objects.requireNonNull(assignment.getReviewerIds()).stream().sorted().toList();
         PollingUtils.pollUntil(
                 () -> {
                     var response = restClient.getPurpose(purposeRef.id()).withoutPolling();
@@ -215,7 +216,7 @@ public class BffPurposeGateway implements PurposeGateway {
         if (!response.getRaw().isSuccess()) {
             throw new IllegalStateException("Risk-analysis form read failed for purpose " + purposeRef.id());
         }
-        var form = response.get().getRiskAnalysisForm();
+        var form = Objects.requireNonNull(response.get()).getRiskAnalysisForm();
         if (form == null || form.getVersion() == null || form.getAnswers() == null) {
             throw new IllegalStateException("Risk-analysis form is incomplete or absent for purpose " + purposeRef.id());
         }

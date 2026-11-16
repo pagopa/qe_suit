@@ -185,7 +185,7 @@ public class WebIntegrationRiskAnalysisInfoTest {
 
     private Purpose createToCompileRiskAnalysisWithReviewers(List<User> assignedReviewers, String pendingEServiceName) {
 
-        Purpose purpose = interopJourney
+        return interopJourney
                 .withConsumer(consumer, UserRole.ADMIN)
 
                 .setUpRiskAnalysisToCompile(
@@ -195,7 +195,7 @@ public class WebIntegrationRiskAnalysisInfoTest {
                         assignedReviewers
                 )
                 .get(Purpose.class);
-        return purpose;
+
 
     }
 }

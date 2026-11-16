@@ -19,6 +19,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.stubbing.OngoingStubbing;
 
 import java.util.List;
 import java.util.Map;
@@ -48,8 +49,8 @@ class BffPurposeGatewayRiskAnalysisTest {
                 .answers(Map.of("institutionalPurpose", List.of("Updated"),
                         "usesPersonalData", List.of("NO")))
                 .build();
-        TestChain<Void> write = mock(TestChain.class, RETURNS_DEEP_STUBS);
-        TestChain<Purpose> read = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain write = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain read = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.saveRiskAnalysisForm(eq(purposeId), any())).thenReturn(write);
         when(write.withoutPolling().getRaw().isSuccess()).thenReturn(true);
         when(restClient.getPurpose(purposeId)).thenReturn(read);
@@ -75,7 +76,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     @Test
     void failsImmediatelyWhenFormSaveIsRejected() {
         UUID purposeId = UUID.randomUUID();
-        TestChain<Void> write = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain write = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.saveRiskAnalysisForm(eq(purposeId), any())).thenReturn(write);
         when(write.withoutPolling().getRaw().isSuccess()).thenReturn(false);
         var form = it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm.builder()
@@ -91,7 +92,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     @Test
     void rejectsFailedOrMissingFormReads() {
         UUID purposeId = UUID.randomUUID();
-        TestChain<Purpose> read = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain read = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.getPurpose(purposeId)).thenReturn(read);
         when(read.withoutPolling().getRaw().isSuccess()).thenReturn(false, true);
         when(read.withoutPolling().get()).thenReturn(new Purpose());
@@ -107,9 +108,9 @@ class BffPurposeGatewayRiskAnalysisTest {
     void assignsRiskAnalysisReviewersWithRequestedModeAndIds(RiskAnalysisReviewMode reviewMode) {
         UUID purposeId = UUID.randomUUID();
         List<UUID> reviewerIds = List.of(UUID.randomUUID(), UUID.randomUUID());
-        TestChain<Void> chain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain chain = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.assignRiskAnalysisReviewers(eq(purposeId), any())).thenReturn(chain);
-        TestChain<Purpose> readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.getPurpose(purposeId)).thenReturn(readChain);
         when(readChain.withoutPolling().getRaw().isSuccess()).thenReturn(true);
         when(readChain.withoutPolling().get()).thenReturn(
@@ -131,12 +132,12 @@ class BffPurposeGatewayRiskAnalysisTest {
         UUID purposeId = UUID.randomUUID();
         UUID reviewerId = UUID.randomUUID();
         UUID removedReviewerId = UUID.randomUUID();
-        TestChain<Void> writeChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
-        TestChain<Purpose> readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain writeChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.assignRiskAnalysisReviewers(eq(purposeId), any())).thenReturn(writeChain);
         when(restClient.getPurpose(purposeId)).thenReturn(readChain);
         when(readChain.withoutPolling().getRaw().isSuccess()).thenReturn(true);
-        when(readChain.withoutPolling().get()).thenReturn(
+        final var objectOngoingStubbing = when(readChain.withoutPolling().get()).thenReturn(
                 purposeWithReviewers(List.of(reviewerId, removedReviewerId)),
                 purposeWithReviewers(List.of(removedReviewerId)),
                 purposeWithReviewers(List.of(reviewerId))
@@ -157,8 +158,8 @@ class BffPurposeGatewayRiskAnalysisTest {
     void waitsForTheWorkflowAndReviewerListToBecomeVisible() {
         UUID purposeId = UUID.randomUUID();
         UUID reviewerId = UUID.randomUUID();
-        TestChain<Void> writeChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
-        TestChain<Purpose> readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain writeChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.assignRiskAnalysisReviewers(eq(purposeId), any())).thenReturn(writeChain);
         when(restClient.getPurpose(purposeId)).thenReturn(readChain);
         when(readChain.withoutPolling().getRaw().isSuccess()).thenReturn(true);
@@ -177,8 +178,8 @@ class BffPurposeGatewayRiskAnalysisTest {
     @Test
     void failsOnAnUnsuccessfulReadWithoutRetrying() {
         UUID purposeId = UUID.randomUUID();
-        TestChain<Void> writeChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
-        TestChain<Purpose> readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain writeChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.assignRiskAnalysisReviewers(eq(purposeId), any())).thenReturn(writeChain);
         when(restClient.getPurpose(purposeId)).thenReturn(readChain);
 
@@ -193,7 +194,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     void propagatesReadFailuresAfterAssignment() {
         UUID purposeId = UUID.randomUUID();
         var failure = new IllegalStateException("Cannot read purpose");
-        TestChain<Void> writeChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain writeChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.assignRiskAnalysisReviewers(eq(purposeId), any())).thenReturn(writeChain);
         when(restClient.getPurpose(purposeId)).thenThrow(failure);
 
@@ -213,7 +214,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     void submitsRiskAnalysisWithFactoryPayload() {
         UUID purposeId = UUID.randomUUID();
         RiskAnalysisSubmissionSeed payload = new RiskAnalysisSubmissionSeed();
-        TestChain<Void> chain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain chain = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(commandFactory.riskAnalysisSubmissionRequest()).thenReturn(payload);
         when(restClient.submitRiskAnalysis(purposeId, payload)).thenReturn(chain);
 
@@ -226,9 +227,9 @@ class BffPurposeGatewayRiskAnalysisTest {
     @Test
     void signsRiskAnalysisWithRequestedMetadataVersion() {
         UUID purposeId = UUID.randomUUID();
-        TestChain<Void> chain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain chain = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.signRiskAnalysis(eq(purposeId), any())).thenReturn(chain);
-        TestChain<Purpose> readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.getPurpose(purposeId)).thenReturn(readChain);
         when(readChain.withoutPolling().getRaw().isSuccess()).thenReturn(true);
         when(readChain.withoutPolling().get()).thenReturn(
@@ -251,7 +252,7 @@ class BffPurposeGatewayRiskAnalysisTest {
         UUID purposeId = UUID.randomUUID();
         PurposeRef ref = PurposeRef.of(purposeId);
         BffPurposeGateway signingGateway = spy(gateway);
-        TestChain<Purpose> readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.getPurpose(purposeId)).thenReturn(readChain);
         when(readChain.withoutPolling().getRaw()).thenReturn(new ApiResponse(
                 new ResponseBuilder().setStatusCode(200).setBody("{}")
@@ -270,7 +271,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     @ValueSource(strings = {" ", "invalid", "2.5", "-1", "2147483648"})
     void rejectsMissingOrInvalidMetadataVersionWithoutSigning(String header) {
         UUID purposeId = UUID.randomUUID();
-        TestChain<Purpose> readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.getPurpose(purposeId)).thenReturn(readChain);
         var response = new ResponseBuilder().setStatusCode(200).setBody("{}");
         if (header != null) {
@@ -288,8 +289,8 @@ class BffPurposeGatewayRiskAnalysisTest {
     @Test
     void propagatesSigningReadFailuresWithoutRepeatingTheSignature() {
         UUID purposeId = UUID.randomUUID();
-        TestChain<Void> chain = mock(TestChain.class, RETURNS_DEEP_STUBS);
-        TestChain<Purpose> readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain chain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain readChain = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.signRiskAnalysis(eq(purposeId), any())).thenReturn(chain);
         when(restClient.getPurpose(purposeId)).thenReturn(readChain);
 
@@ -304,7 +305,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     void rejectsRiskAnalysisWithRequestedReason() {
         UUID purposeId = UUID.randomUUID();
         String rejectionReason = "Risk analysis rejected by contract test";
-        TestChain<Void> chain = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain chain = mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.rejectRiskAnalysis(eq(purposeId), any())).thenReturn(chain);
 
         gateway.rejectRiskAnalysis(PurposeRef.of(purposeId), rejectionReason);
