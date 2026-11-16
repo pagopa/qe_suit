@@ -10,7 +10,7 @@ import it.pagopa.infrastructure.context.*;
 import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngine;
 import it.pagopa.infrastructure.cucumber.channel.GherkinChannelEngineConfig;
 import it.pagopa.interop.common.attribute.infrastructure.cucumber.CertifiedAttributeFixtures;
-import it.pagopa.interop.common.infrastructure.auth.CucumberUserSession;
+import it.pagopa.interop.common.infrastructure.context.CucumberUserSession;
 import it.pagopa.interop.common.infrastructure.cucumber.channel.InteropChannelEngineConfigs;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import org.springframework.context.annotation.Bean;

@@ -2,7 +2,7 @@ package it.pagopa.interop.m2m.v3.infrastructure.auth;
 
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.client.domain.Client;
-import it.pagopa.interop.common.infrastructure.auth.AuthSessionRoutingConfig;
+import it.pagopa.interop.common.infrastructure.config.AuthSessionRoutingConfig;
 import it.pagopa.interop.common.infrastructure.config.CucumberConfig;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.bff.infrastructure.cucumber.step.BffUserSteps;

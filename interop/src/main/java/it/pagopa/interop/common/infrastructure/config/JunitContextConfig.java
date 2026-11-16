@@ -9,7 +9,7 @@ import it.pagopa.infrastructure.context.InMemoryBrowserContext;
 import it.pagopa.infrastructure.context.InMemoryCurrentChannel;
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.infrastructure.context.InMemoryTestContext;
-import it.pagopa.interop.common.infrastructure.auth.InMemoryUserSession;
+import it.pagopa.interop.common.infrastructure.context.InMemoryUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.test.context.TestConfiguration;

@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.auth;
+package it.pagopa.interop.common.infrastructure.config;
 
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor;

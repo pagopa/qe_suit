@@ -1,4 +1,4 @@
-package it.pagopa.interop.common.infrastructure.auth;
+package it.pagopa.interop.common.infrastructure.context;
 
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.*;
