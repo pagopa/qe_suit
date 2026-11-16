@@ -74,6 +74,12 @@ public class WebAdapterLoggingDecorator extends AbstractAdapterLoggingDecorator<
     }
 
     @Override
+    public void refresh() {
+        logger.logDebug("Refreshing browser page");
+        webAdapter.refresh();
+    }
+
+    @Override
     public void close() {
         logger.logDebug("Closing Browser");
         webAdapter.close();

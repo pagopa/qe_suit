@@ -5,8 +5,18 @@ import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceSeed;
 import lombok.Getter;
+import jakarta.annotation.Nullable;
 
 public class WebEServiceCreationCommand implements EServiceCreationCommand {
+    @Getter
+    private String alias;
+
+    @Override
+    public EServiceCreationCommand alias(@Nullable String alias) {
+        this.alias = alias;
+        return this;
+    }
+
     @Getter
     private final WebEServiceGeneralData webEServiceGeneralData = new WebEServiceGeneralData(new EServiceSeed());
 

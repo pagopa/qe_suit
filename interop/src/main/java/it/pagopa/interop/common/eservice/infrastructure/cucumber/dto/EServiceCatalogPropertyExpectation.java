@@ -1,0 +1,22 @@
+package it.pagopa.interop.common.eservice.infrastructure.cucumber.dto;
+
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class EServiceCatalogPropertyExpectation {
+    @JsonAlias("proprietà")
+    @JsonSetter(nulls = Nulls.FAIL)
+    @NotBlank
+    private String property;
+
+    @JsonAlias("valore")
+    @JsonSetter(nulls = Nulls.FAIL)
+    @NotBlank
+    private String value;
+}

@@ -13,7 +13,8 @@ public interface Button extends Component, Clickable, Readable<String>, Accessib
 
     default boolean isDisabled() {
         return this.get(FindPolicy.PRESENT)
-                .map(we -> we.getClasses().contains(DISABLED_CLASS))
+                .map(we -> we.getClasses().contains(DISABLED_CLASS)
+                        || we.getAttributes().containsKey("disabled"))
                 .orElseThrow(() -> new java.util.NoSuchElementException(
                         "Impossibile verificare lo stato del button: l'elemento UI non è presente nella pagina."
                 ));

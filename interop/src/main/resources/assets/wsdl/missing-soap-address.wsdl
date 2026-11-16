@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:tns="http://example.com/qe/service"
+                  targetNamespace="http://example.com/qe/service"
+                  name="QeService">
+
+    <wsdl:message name="PingRequest">
+        <wsdl:part name="request" type="xsd:string"/>
+    </wsdl:message>
+    <wsdl:message name="PingResponse">
+        <wsdl:part name="response" type="xsd:string"/>
+    </wsdl:message>
+
+    <wsdl:portType name="QePortType">
+        <wsdl:operation name="Ping">
+            <wsdl:input message="tns:PingRequest"/>
+            <wsdl:output message="tns:PingResponse"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="QeBinding" type="tns:QePortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="Ping">
+            <soap:operation soapAction="http://example.com/qe/service/Ping"/>
+            <wsdl:input>
+                <soap:body use="literal" namespace="http://example.com/qe/service"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal" namespace="http://example.com/qe/service"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="QeService">
+        <wsdl:port name="QePort" binding="tns:QeBinding"/>
+    </wsdl:service>
+</wsdl:definitions>
+

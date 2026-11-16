@@ -39,7 +39,7 @@ import java.util.stream.Stream;
 public class BffSenderPaAuthorizationContractTest {
 
     /** Utenze fuori dalla platea PA. */
-    private static final List<UserAlias> NON_PA_USERS = List.of(UserAlias.USER_1);
+    private static final List<UserAlias> NON_PA_USERS = List.of(UserAlias.USER_1, UserAlias.IMPRESA_1);
 
     /** Utenza della platea PA: la controprova verifica che non venga respinta. */
     private static final List<UserAlias> ALLOWED_PA_USERS = List.of(UserAlias.COMUNE_2);

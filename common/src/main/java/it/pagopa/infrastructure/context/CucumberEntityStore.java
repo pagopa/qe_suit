@@ -2,6 +2,7 @@ package it.pagopa.infrastructure.context;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.domain.Identifiable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,9 +46,16 @@ public class CucumberEntityStore implements EntityStore {
 
         if (index != -1) {
             ContextEntry<Model> oldEntry = entryList.get(index);
-            if (oldEntry.getAlias() != null && !oldEntry.getAlias().equals(alias)) {
-                aliasStorage.remove(oldEntry.getAlias());
+            String effectiveAlias = alias == null ? oldEntry.getAlias() : alias;
+            if (oldEntry.getAlias() != null && !oldEntry.getAlias().equals(effectiveAlias)) {
+                Identifiable oldAliasValue = aliasStorage.get(oldEntry.getAlias());
+                if (oldAliasValue != null
+                        && oldAliasValue.getClass() == modelClass
+                        && oldAliasValue.getId().equals(id)) {
+                    aliasStorage.remove(oldEntry.getAlias(), oldAliasValue);
+                }
             }
+            entry = new ContextEntry<>(item, effectiveAlias);
             entryList.set(index, entry);
             log.debug("Updated entry for type {} with ID {}", modelClass.getSimpleName(), id);
         } else {
@@ -55,14 +63,15 @@ public class CucumberEntityStore implements EntityStore {
             log.debug("Inserted new entry for type {} with ID {}", modelClass.getSimpleName(), id);
         }
 
-        if (alias != null) {
-            aliasStorage.put(alias, item);
+        if (entry.getAlias() != null) {
+            aliasStorage.put(entry.getAlias(), item);
         }
     }
 
+
     @Override
-    public <Model extends Identifiable> void upsert(Model model) {
-        ContextEntry<Model> entry = new ContextEntry<>(model, null);
+    public <Model extends Identifiable> void upsert(@Nullable String alias, Model model) {
+        ContextEntry<Model> entry = new ContextEntry<>(model, alias);
         upsert(entry);
     }
 
@@ -110,6 +119,11 @@ public class CucumberEntityStore implements EntityStore {
         return Optional.ofNullable(aliasStorage.get(alias));
     }
 
+    @Override
+    public <Model extends Identifiable> List<Model> getAll(Class<Model> modelClass) {
+        return entries(modelClass).stream().map(ContextEntry::getItem).toList();
+    }
+
     public <Model extends Identifiable> Optional<Model> getFirst(Class<Model> modelClass) {
         List<ContextEntry<Model>> entryList = entries(modelClass);
         return entryList.isEmpty() ? Optional.empty() : Optional.of(entryList.get(0).getItem());
@@ -141,11 +155,6 @@ public class CucumberEntityStore implements EntityStore {
     public <Model extends Identifiable> Model getLastOrThrow(Class<Model> modelClass) {
         return getLast(modelClass)
                 .orElseThrow(() -> new NoSuchElementException("Nessun elemento trovato per il tipo: " + modelClass.getSimpleName()));
-    }
-
-    @Override
-    public <Model extends Identifiable> List<Model> getAll(Class<Model> modelClass) {
-        return  entries(modelClass).stream().map(ContextEntry::getItem).toList();
     }
 
     public <Model extends Identifiable> Optional<Model> getAtIndex(Class<Model> modelClass, int index) {

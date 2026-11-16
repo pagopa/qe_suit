@@ -12,6 +12,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -114,10 +115,11 @@ public class WebProducerEServiceSummaryContractTest {
                                 .voucherLifespan(60)
                                 .agreementApprovalPolicy(APPROVAL_POLICY)
                                 .dailyCallsPerConsumer(DAILY_CALLS_PER_CONSUMER)
-                                .dailyCallsTotal(DAILY_CALLS_TOTAL),
+                                .dailyCallsTotal(DAILY_CALLS_TOTAL)
+                                .apiInterface(ApiInterface.builder()
+                                        .name(INTERFACE_NAME).path("assets/origin-interface.yaml").build()),
                         EServiceDescriptorState.DRAFT
                 )
-                .linkOpenApiInterface("assets/origin-interface.yaml", INTERFACE_NAME)
                 .get(EService.class);
     }
 

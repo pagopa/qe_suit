@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class BffMandateClientConfig {
 
-    @Value("${bff.api.base-url}")
+    @Value("${webapi.base-url}")
     private String basePath;
 
     @Bean
