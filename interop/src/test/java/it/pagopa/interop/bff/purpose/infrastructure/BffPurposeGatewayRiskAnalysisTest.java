@@ -220,6 +220,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void submitsRiskAnalysisWithFactoryPayload() {
         UUID purposeId = UUID.randomUUID();
         RiskAnalysisSubmissionSeed payload = new RiskAnalysisSubmissionSeed();
@@ -234,6 +235,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void signsRiskAnalysisWithRequestedMetadataVersion() {
         UUID purposeId = UUID.randomUUID();
         TestChain<Void> chain = (TestChain<Void>) mock(TestChain.class, RETURNS_DEEP_STUBS);
@@ -257,6 +259,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void signsUsingTheMetadataVersionFromTheResponseHeader() {
         UUID purposeId = UUID.randomUUID();
         PurposeRef ref = PurposeRef.of(purposeId);
@@ -280,6 +283,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     @ValueSource(strings = {" ", "invalid", "2.5", "-1", "2147483648"})
     void rejectsMissingOrInvalidMetadataVersionWithoutSigning(String header) {
         UUID purposeId = UUID.randomUUID();
+        @SuppressWarnings("unchecked")
         TestChain<Purpose> readChain = (TestChain<Purpose>) mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.getPurpose(purposeId)).thenReturn(readChain);
         var response = new ResponseBuilder().setStatusCode(200).setBody("{}");
@@ -296,6 +300,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void propagatesSigningReadFailuresWithoutRepeatingTheSignature() {
         UUID purposeId = UUID.randomUUID();
         TestChain<Void> chain = (TestChain<Void>) mock(TestChain.class, RETURNS_DEEP_STUBS);
@@ -311,6 +316,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void rejectsRiskAnalysisWithRequestedReason() {
         UUID purposeId = UUID.randomUUID();
         String rejectionReason = "Risk analysis rejected by contract test";
