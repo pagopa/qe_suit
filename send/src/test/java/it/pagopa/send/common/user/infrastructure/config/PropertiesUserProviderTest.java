@@ -56,6 +56,26 @@ class PropertiesUserProviderTest {
         });
     }
 
+    // PT_1 e Comune_1 sono la stessa persona: il PT deve usare la sua chiave, non il token PA dello username
+    @Test
+    void shouldResolveSessionTokenKeyFromConfigurationForDev() {
+        runnerFor("dev").run(context -> {
+            User user = context.getBean(PropertiesUserProvider.class).resolve(UserAlias.PT_1);
+
+            assertThat(user.getUsername()).isEqualTo("grossini");
+            assertThat(user.getSessionTokenKey()).isEqualTo("grossini-pt");
+        });
+    }
+
+    @Test
+    void shouldFallBackToUsernameAsSessionTokenKeyForDev() {
+        runnerFor("dev").run(context -> {
+            User user = context.getBean(PropertiesUserProvider.class).resolve(UserAlias.COMUNE_1);
+
+            assertThat(user.getSessionTokenKey()).isEqualTo("grossini");
+        });
+    }
+
     @Test
     void shouldFailForUnknownEnvironment() {
         runnerFor(FAKE_ENVIRONMENT).run(context -> assertThatThrownBy(
@@ -76,7 +96,7 @@ class PropertiesUserProviderTest {
     @Test
     void shouldFailWhenUserIsPlaceholder() {
         UsersProperties.UserEntry placeholder = new UsersProperties.UserEntry("REPLACE_ME", null, null, null, null,
-                null, null, null, null, null, null, false, null, null, null);
+                null, null, null, null, null, null, false, null, null, null, null);
         PropertiesUserProvider provider = providerWith(new UsersProperties(Map.of(UserAlias.COMUNE_1, placeholder)));
 
         assertThatThrownBy(() -> provider.resolve(UserAlias.COMUNE_1))

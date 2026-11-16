@@ -85,3 +85,38 @@ users:
     roles:
       - party-role: DELEGATE
         role: admin
+  PT_1:
+    username: grossini
+    # il token del PT è diverso da quello di grossini sul Comune: chiave propria in token.session
+    session-token-key: grossini-pt
+    password: ${pn.external.password.grossini:}
+    organization: "Partner Tecnologico Send"
+    tax-id: "10291850272"
+    organization-id: 7c2d9f1e-3c5b-4d9a-9f1a-8e6c2b7d4a91
+    uid: e9e4a9c7-9586-4b92-a7dd-ee1a0e77d398
+    denomination: giuseppe
+    family-name: rossini
+    personal-tax-id: RSSGPP80B02G273H
+    email: grossini@test.cert.it
+    ipa-code: PT_10291850272
+    has-groups: false
+    roles:
+      - party-role: DELEGATE
+        role: admin
+
+  PT_2:
+    username: msisti
+    password: ${pn.external.password.msisti:REPLACE_ME}
+    organization: "Partner Tecnologico Send"
+    tax-id: "10291850272"
+    organization-id: 7c2d9f1e-3c5b-4d9a-9f1a-8e6c2b7d4a91
+    uid: ecdcf9fb-52d3-41f2-b220-87f48975cc7b
+    denomination: Mattia
+    family-name: Sisti
+    personal-tax-id: SSTMTT76C23F205T
+    email: test@test.com
+    ipa-code: PT_10291850272
+    has-groups: false
+    roles:
+      - party-role: OPERATOR
+        role: operator
