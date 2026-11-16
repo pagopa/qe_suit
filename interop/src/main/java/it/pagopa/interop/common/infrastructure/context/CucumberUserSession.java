@@ -19,6 +19,13 @@ public class CucumberUserSession implements AuthSession {
     }
 
     @Override
+    public void set(Tenant tenant) {
+        this.currentActor = User.getTenantAdmin(tenant);
+        this.currentTenant = tenant;
+        this.currentRole = UserRole.ADMIN;
+    }
+
+    @Override
     public void set(InteropRole role, Tenant tenant) {
         if (!(role instanceof UserRole userRole)) {
             throw new IllegalArgumentException("User session requires a user role");

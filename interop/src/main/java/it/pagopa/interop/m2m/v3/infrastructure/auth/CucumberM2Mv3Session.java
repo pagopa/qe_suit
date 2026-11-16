@@ -26,6 +26,13 @@ public class CucumberM2Mv3Session implements AuthSession {
     }
 
     @Override
+    public void set(Tenant tenant) {
+        this.currentActor = clientProvider.getObject().getOrCreate(tenant, M2MRole.M2M_ADMIN);
+        this.currentTenant = tenant;
+        this.currentRole = M2MRole.M2M_ADMIN;
+    }
+
+    @Override
     public void set(InteropRole role, Tenant tenant) {
         if (!(role instanceof M2MRole m2mRole)) {
             throw new IllegalArgumentException("M2M v3 session requires an M2M role");

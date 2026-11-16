@@ -29,6 +29,13 @@ public class InMemoryM2Mv3Session implements AuthSession {
     }
 
     @Override
+    public void set(Tenant tenant) {
+        this.actor.set(clientProvider.getObject().getOrCreate(tenant, M2MRole.M2M_ADMIN));
+        this.tenant.set(tenant);
+        this.role.set(M2MRole.M2M_ADMIN);
+    }
+
+    @Override
     public void set(InteropRole role, Tenant tenant) {
         if (!(role instanceof M2MRole m2mRole)) {
             throw new IllegalArgumentException("M2M v3 session requires an M2M role");

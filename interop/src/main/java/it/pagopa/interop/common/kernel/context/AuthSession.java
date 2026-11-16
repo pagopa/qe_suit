@@ -9,6 +9,8 @@ import org.springframework.plugin.core.Plugin;
 public interface AuthSession extends Plugin<Channel> {
     void set(InteropActor actor, Tenant tenant);
 
+    void set(Tenant tenant);
+
     void set(InteropRole role, Tenant tenant);
 
     InteropActor getActor();

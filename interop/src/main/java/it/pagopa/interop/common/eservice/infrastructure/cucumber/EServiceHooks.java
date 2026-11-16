@@ -49,7 +49,7 @@ public class EServiceHooks {
             for (EService eservice : eservices) {
                 try {
                     Tenant producer = Tenant.fromOrganizationId(UUID.fromString(eservice.getProducerId()));
-                    authSession.set(User.getTenantAdmin(producer), producer);
+                    authSession.set(producer);
                     var descriptors = eservice.getDescriptors().stream()
                             .map(descriptor -> descriptor.getState() == EServiceDescriptorState.WAITING_FOR_APPROVAL
                                     ? descriptorReader.getDescriptor(eservice, descriptor) : descriptor)

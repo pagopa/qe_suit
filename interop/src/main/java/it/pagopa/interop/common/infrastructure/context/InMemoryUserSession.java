@@ -19,6 +19,13 @@ public class InMemoryUserSession implements AuthSession {
     }
 
     @Override
+    public void set(Tenant tenant) {
+        this.currentActor.set(User.getTenantAdmin(tenant));
+        this.currentTenant.set(tenant);
+        this.currentRole.set(UserRole.ADMIN);
+    }
+
+    @Override
     public void set(InteropRole role, Tenant tenant) {
         if (!(role instanceof UserRole userRole)) {
             throw new IllegalArgumentException("User session requires a user role");
