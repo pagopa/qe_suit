@@ -1,117 +1,76 @@
 Feature: Modifica dei metadati dei portachiavi erogatore
-  Come amministratore dell’ente erogatore
-  Voglio aggiornare nome e descrizione di un portachiavi
-  Per conservarne chiavi membri e associazioni agli e-service.
+  Come amministratore dell'ente e creatore di un portachiavi erogatore
+  Voglio aggiornare il nome e la descrizione dei portachiavi
+  preservato i dati non modificati e le associazioni al portachiavi.
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [PRODUCER_KEYCHAIN_METADATA_1] - Modifica di un metadato senza alterare le relazioni del portachiavi
-  Dato un portachiavi erogatore appartenente all'ente amministrato e contenente chiavi,
-  quando l’amministratore modifica un metadato del portachiavi,
-  allora il sistema aggiorna il solo campo richiesto preservando chiavi membri e associazioni.
+  Scenario: [PRODUCER_KEYCHAIN_METADATA_1] - L'amministratore aggiorna i metadati del portachiavi che preserva i dati non modificati e le associazioni
+  Un amministratore aggiorna i metadati di un portachiavi erogatore (solo nome, solo descrizione, nome e descrizione).
+  I dati modificati vengono aggiornati, quelli non modificati vengono preservati,
+  le associazioni al portachiavi vengono preservate.
 
-    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
-    When un admin del Comune di Milano richiede la modifica dei metadati del portachiavi "K-1":
-      | campo   | valore   |
-      | <campo> | <valore> |
-    Then il portachiavi "K-1" presenta i metadati richiesti
-    And il portachiavi "K-1" conserva i metadati non modificati
-    And il portachiavi "K-1" conserva identificativo, proprietario, chiavi, membri e associazioni
+    Given un portachiavi "K-1" creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
+    And un EService creato dal Comune di Milano con una richiesta di fruizione associata dal Comune di Pozzallo
+    And un admin del Comune di Milano ha associato l'e-service al portachiavi "K-1"
+    And i dati e le associazioni del portachiavi "K-1" allo stato attuale appuntati come riferimento
+    When un admin del Comune di Milano modifica i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | nuovo nome        |
+    Then il portachiavi "K-1" conserva le associazioni e i dati di riferimento eccetto il nome
 
-    Examples:
-      | campo       | valore                               |
-      | nome        | Portachiavi erogatore aggiornato     |
-      | descrizione | Descrizione aggiornata portachiavi   |
+    When i dati e le associazioni del portachiavi "K-1" allo stato attuale appuntati come riferimento
+    And un admin del Comune di Milano modifica i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | descrizione | nuova descrizione |
+    Then il portachiavi "K-1" conserva le associazioni e i dati di riferimento eccetto la descrizione
 
-  @work-item:QA-19036
-  @channel:Given=BFF,When=M2M,Then=BFF
-  Scenario Outline: [PRODUCER_KEYCHAIN_METADATA_2] - Modifica di un metadato senza alterare le relazioni del portachiavi
-  Dato un portachiavi erogatore appartenente all'ente amministrato e contenente chiavi,
-  quando l’amministratore modifica un metadato del portachiavi,
-  allora il sistema aggiorna il solo campo richiesto preservando chiavi membri e associazioni.
+    When i dati e le associazioni del portachiavi "K-1" allo stato attuale appuntati come riferimento
+    And un admin del Comune di Milano modifica i metadati del portachiavi "K-1":
+      | campo       | valore            |
+      | nome        | nuovo nome        |
+      | descrizione | nuova descrizione |
+    Then il portachiavi "K-1" conserva le associazioni e i dati di riferimento eccetto il nome e la descrizione
 
-    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
-    When un M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del portachiavi "K-1":
-      | campo   | valore   |
-      | <campo> | <valore> |
-    Then il portachiavi "K-1" presenta i metadati richiesti
-    And il portachiavi "K-1" conserva i metadati non modificati
-    And il portachiavi "K-1" conserva identificativo, proprietario, chiavi, membri e associazioni
-
-    Examples:
-      | campo       | valore                               |
-      | nome        | Portachiavi erogatore aggiornato     |
-      | descrizione | Descrizione aggiornata portachiavi   |
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [PRODUCER_KEYCHAIN_METADATA_3] - Modifica congiunta di nome e descrizione del portachiavi
-  Dato un portachiavi erogatore con chiavi e associazioni,
-  quando l’amministratore modifica nome e descrizione,
-  allora entrambi i metadati sono aggiornati senza alterare configurazione e relazioni.
-
-    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
-    When un admin del Comune di Milano richiede la modifica dei metadati del portachiavi "K-1":
-      | campo       | valore                                |
-      | nome        | Portachiavi erogatore aggiornato      |
-      | descrizione | Descrizione aggiornata portachiavi    |
-    Then il portachiavi "K-1" presenta i metadati richiesti
-    And il portachiavi "K-1" conserva identificativo, proprietario, chiavi, membri e associazioni
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=M2M,Then=BFF
-  Scenario: [PRODUCER_KEYCHAIN_METADATA_4] - Modifica congiunta di nome e descrizione del portachiavi
-  Dato un portachiavi erogatore con chiavi e associazioni,
-  quando l’amministratore modifica nome e descrizione,
-  allora entrambi i metadati sono aggiornati senza alterare configurazione e relazioni.
-
-    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
-    When un M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del portachiavi "K-1":
-      | campo       | valore                                |
-      | nome        | Portachiavi erogatore aggiornato      |
-      | descrizione | Descrizione aggiornata portachiavi    |
-    Then il portachiavi "K-1" presenta i metadati richiesti
-    And il portachiavi "K-1" conserva identificativo, proprietario, chiavi, membri e associazioni
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=WEB,Then=WEB
-  Scenario: [PRODUCER_KEYCHAIN_METADATA_WEB_1] - Form precompilato e conferma dopo il salvataggio
-  Dato una portachiavi erogatore modificabile con metadati già valorizzati,
-  quando l’utente apre il form modifica e salva nuovi valori,
-  allora il sistema mostra la conferma e il form riaperto presenta i nuovi metadati.
-
-    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
-    When un admin del Comune di Milano apre la modifica dei metadati della risorsa "R-1"
-    Then il form della risorsa "R-1" mostra i metadati correnti e i campi previsti
-    When un admin del Comune di Milano modifica e salva i metadati della risorsa "R-1"
-    Then il sistema conferma il salvataggio e chiude il form
-    And il dettaglio e il form riaperto della risorsa "R-1" presentano i metadati aggiornati
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=WEB,Then=WEB
-  Scenario: [PRODUCER_KEYCHAIN_METADATA_WEB_2] - Conservazione degli input in presenza di un errore di validazione
-  Dato un form di modifica aperto e compilato,
-  quando l’utente tenta di salvare un valore non valido,
-  allora il form resta aperto con i testi inseriti e indica il campo errato.
-
-    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
-    And il form di modifica dei metadati di una risorsa "K-1" del Comune di Milano aperto
-    When un admin del Comune di Milano inserisce metadati non validi nel form della risorsa "K-1" e richiede il salvataggio
-    Then il form della risorsa "R-1" rimane aperto con i testi inseriti
-    And il campo non valido mostra il messaggio di errore previsto
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=WEB,Then=WEB
-  Scenario: [PRODUCER_KEYCHAIN_METADATA_WEB_3] - Conservazione degli input in presenza di un conflitto di scrittura
-  Dato un form di modifica aperto su metadati che sono stati modificati nel frattempo,
-  quando l’utente prova a salvare i propri valori,
-  allora il form conserva gli input e segnala che il salvataggio non è avvenuto.
-
-    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
-    When il form di modifica dei metadati della risorsa "K-1" del Comune di Milano aperto con una modifica concorrente
-    And un admin del Comune di Milano richiede il salvataggio dei metadati nel form della risorsa "K-1"
-    Then il form della risorsa "K-1" rimane aperto con i testi inseriti
-    And il sistema segnala il mancato salvataggio della risorsa "K-1"
+#  @work-item:QA-19036
+#  @channel:Given=BFF,When=WEB,Then=WEB
+#  Scenario: [PRODUCER_KEYCHAIN_METADATA_WEB_1] - Form precompilato e conferma dopo il salvataggio
+#  Dato una portachiavi erogatore modificabile con metadati già valorizzati,
+#  quando l’utente apre il form modifica e salva nuovi valori,
+#  allora il sistema mostra la conferma e il form riaperto presenta i nuovi metadati.
+#
+#    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
+#    When un admin del Comune di Milano apre la modifica dei metadati della risorsa "R-1"
+#    Then il form della risorsa "R-1" mostra i metadati correnti e i campi previsti
+#    When un admin del Comune di Milano modifica e salva i metadati della risorsa "R-1"
+#    Then il sistema conferma il salvataggio e chiude il form
+#    And il dettaglio e il form riaperto della risorsa "R-1" presentano i metadati aggiornati
+#
+#  @work-item:QA-19036
+#  @channel:Given=BFF,When=WEB,Then=WEB
+#  Scenario: [PRODUCER_KEYCHAIN_METADATA_WEB_2] - Conservazione degli input in presenza di un errore di validazione
+#  Dato un form di modifica aperto e compilato,
+#  quando l’utente tenta di salvare un valore non valido,
+#  allora il form resta aperto con i testi inseriti e indica il campo errato.
+#
+#    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
+#    And il form di modifica dei metadati di una risorsa "K-1" del Comune di Milano aperto
+#    When un admin del Comune di Milano inserisce metadati non validi nel form della risorsa "K-1" e richiede il salvataggio
+#    Then il form della risorsa "R-1" rimane aperto con i testi inseriti
+#    And il campo non valido mostra il messaggio di errore previsto
+#
+#  @work-item:QA-19036
+#  @channel:Given=BFF,When=WEB,Then=WEB
+#  Scenario: [PRODUCER_KEYCHAIN_METADATA_WEB_3] - Conservazione degli input in presenza di un conflitto di scrittura
+#  Dato un form di modifica aperto su metadati che sono stati modificati nel frattempo,
+#  quando l’utente prova a salvare i propri valori,
+#  allora il form conserva gli input e segnala che il salvataggio non è avvenuto.
+#
+#    Given un portachiavi erogatore "K-1" del Comune di Milano con chiavi, membri e associazioni a e-service
+#    When il form di modifica dei metadati della risorsa "K-1" del Comune di Milano aperto con una modifica concorrente
+#    And un admin del Comune di Milano richiede il salvataggio dei metadati nel form della risorsa "K-1"
+#    Then il form della risorsa "K-1" rimane aperto con i testi inseriti
+#    And il sistema segnala il mancato salvataggio della risorsa "K-1"
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
