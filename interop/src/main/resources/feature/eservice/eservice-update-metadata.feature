@@ -244,29 +244,34 @@ Feature: Modifica dei metadati degli e-service
     Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per <errore>
 
     Examples:
-      | campo1 | valore1                        | campo2      | valore2 | errore                       |
-      | nome   | Servizio anagrafico aggiornato | descrizione | desc    | INVALID_DATA                 |
-      | nome   | Servizio anagrafico aggiornato | technology  | REST    | OUT_OF_DRAFT_OPERATION_FIELD |
+      | campo1 | valore1                        | campo2      | valore2     | errore                       |
+      | nome   | Servizio anagrafico aggiornato | descrizione | desc        | INVALID_DATA                 |
+      | nome   | Servizio anagrafico aggiornato | technology  | REST        | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | technology  | %last-used% | OUT_OF_DRAFT_OPERATION_FIELD |
 
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [ESERVICE_METADATA_PROTECTION_2] - Rifiuto atomico di campi operativi non modificabili
-  Dato una risorsa fuori bozza con configurazione operativa,
-  quando l’attore invia un metadato valido insieme a un campo operativo vietato,
-  allora il sistema rifiuta l’aggiornamento anche quando il campo operativo conserva il valore precedente.
 
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                   |
-      | ES-1  | Comune di Milano | E-service Tempo Attivo |
-    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "ES-1" insieme a un campo operativo vietato <variazione>
-    Then la modifica della risorsa "ES-1" viene rifiutata
-    And la risorsa "ES-1" conserva metadati, stati, versioni e relazioni iniziali
+  # TODO Rimuovere questo scenario di test: quello precedente, che utilizza %last-used%, copre già il caso da verificare
 
-    Examples:
-      | variazione           |
-      | con valore nuovo     |
-      | con valore invariato |
+  #  @work-item:QA-19036
+  #  @channel:Given=BFF,When=BFF,Then=BFF
+  #  Scenario Outline: [ESERVICE_METADATA_PROTECTION_2] - Rifiuto atomico di campi operativi non modificabili
+  #  Dato una risorsa fuori bozza con configurazione operativa,
+  #  quando l’attore invia un metadato valido insieme a un campo operativo vietato,
+  #  allora il sistema rifiuta l’aggiornamento anche quando il campo operativo conserva il valore precedente.
+  #
+  #    Given i seguenti e-service pubblicati:
+  #      | alias | erogatore        | nome                   |
+  #      | ES-1  | Comune di Milano | E-service Tempo Attivo |
+  #    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "ES-1" insieme a un campo operativo vietato <variazione>
+  #    Then la modifica della risorsa "ES-1" viene rifiutata
+  #    And la risorsa "ES-1" conserva metadati, stati, versioni e relazioni iniziali
+  #
+  #    Examples:
+  #      | variazione           |
+  #      | con valore nuovo     |
+  #      | con valore invariato |
 
+  # CASO DI TEST 7.2 - Ripetizione della modifica e gestione dei valori invariati
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_METADATA_PROTECTION_3] - Ripetizione dei metadati correnti senza effetti operativi
@@ -277,45 +282,82 @@ Feature: Modifica dei metadati degli e-service
     Given i seguenti e-service pubblicati:
       | alias | erogatore        | nome                   |
       | ES-1  | Comune di Milano | E-service Tempo Attivo |
-    When un admin del Comune di Milano aggiorna i metadati della risorsa "ES-1" con nuovi valori validi
-    And un admin del Comune di Milano ripete gli stessi valori per la risorsa "ES-1"
-    Then la ripetizione della modifica della risorsa "ES-1" viene accettata
-    And la risorsa "ES-1" conserva stati, versioni e relazioni
+    # When un admin del Comune di Milano aggiorna i metadati della risorsa "ES-1" con nuovi valori validi
+    When un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
+      | campo       | valore            |
+      | nome        | Nuovo nome        |
+      | descrizione | Nuova descrizione |
+    # And un admin del Comune di Milano ripete gli stessi valori per la risorsa "ES-1"
+    When un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
+      | campo       | valore      |
+      | nome        | %last-used% |
+      | descrizione | %last-used% |
+    Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
+  # TODO Rimuovere questo scenario di test: ci sono già scenari che coprono il caso da verificare
+  #  @work-item:QA-19036
+  #  @channel:Given=BFF,When=BFF,Then=BFF
+  #  Scenario: [ESERVICE_METADATA_PROTECTION_4] - Valori modificati e invariati nella stessa richiesta
+  #  Dato una risorsa con metadati già valorizzati,
+  #  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
+  #  allora il sistema applica solo il valore modificato senza alterare dati operativi.
+  #
+  #    Given i seguenti e-service pubblicati:
+  #      | alias | erogatore        | nome                   |
+  #      | ES-1  | Comune di Milano | E-service Tempo Attivo |
+  #    When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "ES-1" confermando gli altri valori correnti
+  #    Then la risorsa "ES-1" presenta il metadato aggiornato
+  #    And la risorsa "ES-1" conserva stati, versioni, relazioni e metadati invariati
+
+  # CASO DI TEST 7.4 - Applicazione dei controlli di ruolo, titolarità e delega
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_METADATA_PROTECTION_4] - Valori modificati e invariati nella stessa richiesta
-  Dato una risorsa con metadati già valorizzati,
-  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
-  allora il sistema applica solo il valore modificato senza alterare dati operativi.
+  Scenario Outline: [ESERVICE_METADATA_AUTHORIZATION_1] - Rispetto della titolarità dell'e-service
+  Dato un e-service in bozza,
+  quando un operatore con ruolo non autorizzato tenta la modifica dei metadati,
+  allora il sistema non accetta le richiesta.
 
     Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome                   |
-      | ES-1  | Comune di Milano | E-service Tempo Attivo |
-    When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "ES-1" confermando gli altri valori correnti
-    Then la risorsa "ES-1" presenta il metadato aggiornato
-    And la risorsa "ES-1" conserva stati, versioni, relazioni e metadati invariati
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [ESERVICE_METADATA_AUTHORIZATION_1] - Rispetto della titolarità e delle deleghe sulle risorse delegabili
-  Dato una risorsa delegabile con delega nello stato previsto,
-  quando un ente delegato richiede la modifica dei metadati,
-  allora il sistema accetta soltanto le richieste compatibili con ruolo e delega.
-
-    Given un e-service "ES-1" del Comune di Milano delegato in erogazione a PagoPA con delega <stato>
-    When un admin di PagoPA richiede la modifica dei metadati dell'e-service "ES-1":
+      | alias | erogatore | nome                   |
+      | ES-1  | Comune di Pozzallo    | E-service Tempo Attivo |
+    When un <ruolo> di Comune di Pozzallo tenta la modifica dei metadati dell'e-service "ES-1":
       | campo | valore                         |
       | nome  | Servizio anagrafico aggiornato |
-    Then la modifica dell'e-service "ES-1" ha esito <esito>
-    And in caso di rifiuto l'e-service "ES-1" conserva tutti i dati iniziali
+    Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per UNAUTHORIZED
 
     Examples:
-      | stato                | esito     |
-      | ACTIVE               | accettata |
-      | WAITING_FOR_APPROVAL | rifiutata |
-      | REJECTED             | rifiutata |
-      | REVOKED              | rifiutata |
+      | ruolo        |
+      # API è autorizzato
+      # | API          |
+      | SECURITY     |
+      # API è autorizzato: questa combinazione si può rimuovere
+      # | API,SECURITY |
+      | SUPPORT      |
+      | REVIEWER     |
+      | VIEWER       |
+
+
+  # TODO Rivedere autorizzazioni in delega
+  #  @work-item:QA-19036
+  #  @channel:Given=BFF,When=BFF,Then=BFF
+  #  Scenario Outline: [ESERVICE_METADATA_AUTHORIZATION_1] - Rispetto della titolarità e delle deleghe sulle risorse delegabili
+  #  Dato una risorsa delegabile con delega nello stato previsto,
+  #  quando un ente delegato richiede la modifica dei metadati,
+  #  allora il sistema accetta soltanto le richieste compatibili con ruolo e delega.
+  #
+  #    Given un e-service "ES-1" del Comune di Milano delegato in erogazione a PagoPA con delega <stato>
+  #    When un admin di PagoPA richiede la modifica dei metadati dell'e-service "ES-1":
+  #      | campo | valore                         |
+  #      | nome  | Servizio anagrafico aggiornato |
+  #    Then la modifica dell'e-service "ES-1" ha esito <esito>
+  #    And in caso di rifiuto l'e-service "ES-1" conserva tutti i dati iniziali
+  #
+  #    Examples:
+  #      | stato                | esito     |
+  #      | ACTIVE               | accettata |
+  #      | WAITING_FOR_APPROVAL | rifiutata |
+  #      | REJECTED             | rifiutata |
+  #      | REVOKED              | rifiutata |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF

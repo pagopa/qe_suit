@@ -73,12 +73,8 @@ public class EServiceMetadataUpdatesSteps {
         EService expectedEService = initialEService.toBuilder()
                 .name(requestedMetadata.getOrDefault("nome", initialEService.getName()))
                 .description(requestedMetadata.getOrDefault("descrizione", initialEService.getDescription()))
-                .technology(requestedMetadata.containsKey("technology")
-                        ? EServiceTechnology.valueOf(requestedMetadata.get("technology"))
-                        : initialEService.getTechnology())
-                .mode(requestedMetadata.containsKey("mode")
-                        ? EServiceMode.valueOf(requestedMetadata.get("mode"))
-                        : initialEService.getMode())
+                .technology(requestedEnum("technology", EServiceTechnology.class, initialEService.getTechnology()))
+                .mode(requestedEnum("mode", EServiceMode.class, initialEService.getMode()))
                 .isSignalHubEnabled(requestedBoolean("signalHubEnabled", initialEService.getIsSignalHubEnabled()))
                 .isConsumerDelegable(requestedBoolean("consumerDelegable", initialEService.getIsConsumerDelegable()))
                 .isClientAccessDelegable(requestedBoolean("clientAccessDelegable", initialEService.getIsClientAccessDelegable()))
@@ -93,7 +89,15 @@ public class EServiceMetadataUpdatesSteps {
 
     private Boolean requestedBoolean(String field, Boolean initialValue) {
         return requestedMetadata.containsKey(field)
-                ? Boolean.valueOf(requestedMetadata.get(field))
+                ? requestedMetadata.get(field) == null ? null : Boolean.valueOf(requestedMetadata.get(field))
                 : initialValue;
+    }
+
+    private <T extends Enum<T>> T requestedEnum(String field, Class<T> enumType, T initialValue) {
+        if (!requestedMetadata.containsKey(field)) {
+            return initialValue;
+        }
+        String value = requestedMetadata.get(field);
+        return value == null ? null : Enum.valueOf(enumType, value);
     }
 }
