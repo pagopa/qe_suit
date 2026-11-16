@@ -109,7 +109,7 @@ public class BffEServiceGateway implements EServiceGateway {
     public void shouldFailToUpdateEService(EServiceUpdateFailureReason reason) {
         var expected = switch (reason) {
             case INVALID_DATA -> 400;
-            case OUT_OF_DRAFT_OPERATION_FIELD -> 409;
+            case CONFLICT, OUT_OF_DRAFT_OPERATION_FIELD -> 409;
             case UNAUTHORIZED -> 403;
         };
         var actual = lastApiResponseStore.getLastResponse().getStatusCode();
