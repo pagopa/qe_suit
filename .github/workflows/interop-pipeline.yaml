@@ -131,6 +131,7 @@ jobs:
           path: |
             ./qe_suit/interop/target/logs/
             ./qe_suit/interop/target/cucumber-reports/
+            ./qe_suit/interop/target/junit-platform-reports/
             ./qe_suit/interop/target/contract-test/report.html
           if-no-files-found: warn
           retention-days: 10
