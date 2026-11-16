@@ -15,10 +15,12 @@ import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.mapper.ESer
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +34,7 @@ public class EServiceMetadataUpdatesSteps {
     private final EntityStore entityStore;
     private final EServiceMetadataUpdateConfigurationMapper configurationMapper;
     private EService initialEService;
+    private EService initialExistingEService;
     private Map<String, String> requestedMetadata = Map.of();
 
     @When("un {userRole} di/del {tenant} richiede la modifica dei metadati dell'e-service {string}:")
@@ -58,6 +61,61 @@ public class EServiceMetadataUpdatesSteps {
         interopJourney
                 .withProducer(producer, role)
                 .tryUpdateEService(updateCommand);
+    }
+
+    @When("un {userRole} di/del {tenant} richiede per l'e-service {string} il nome di {string} cambiandone soltanto le maiuscole e una nuova descrizione")
+    public void updateEServiceNameWithExisting(UserRole role, Tenant producer, String targetAlias, String existingAlias) {
+        updateEServiceNameWithExisting(role, producer, targetAlias, existingAlias, true, true, true);
+    }
+
+    @When("un {userRole} di/del {tenant} richiede di assegnare all'e-service {string} il nome di {string}")
+    public void updateEServiceNameWithExistingOfAnotherTenant(UserRole role, Tenant producer, String targetAlias, String existingAlias) {
+        updateEServiceNameWithExisting(role, producer, targetAlias, existingAlias, false, false, false);
+    }
+
+    private void updateEServiceNameWithExisting(
+            UserRole role,
+            Tenant producer,
+            String targetAlias,
+            String existingAlias,
+            boolean includeNewDescription,
+            boolean tryUpdate,
+            boolean changeCase
+    ) {
+        var existing = entityStore.getByAliasOrThrow(existingAlias, EService.class);
+        initialExistingEService = existing.toBuilder()
+                .descriptors(new ArrayList<>(existing.getDescriptors()))
+                .build();
+        String requestedName = changeCase ? existing.getName().toUpperCase(Locale.ROOT) : existing.getName();
+        EServiceUpdateCommand updateCommand = requestFactory.defaultUpdateEServiceCommand()
+                .alias(targetAlias)
+                .name(requestedName);
+        if (includeNewDescription) {
+            updateCommand.description(RandomUtils.randomAlphanumeric(20));
+        }
+        if (tryUpdate) {
+            interopJourney
+                    .withProducer(producer, role)
+                    .tryUpdateEService(updateCommand);
+        } else {
+            interopJourney
+                    .withProducer(producer, role)
+                    .updateEService(updateCommand)
+                    .waitUntilEService(targetAlias, eService -> eService.getName().equals(requestedName));
+        }
+    }
+
+    @Then("la rinomina della risorsa {string} viene accettata e ha lo stesso nome di {string}")
+    public void eServicesHaveSameName(String aliasEService1, String aliasEService2) {
+        var eService1 = entityStore.getByAliasOrThrow(aliasEService1, EService.class);
+        var eService2 = entityStore.getByAliasOrThrow(aliasEService2, EService.class);
+
+        assertThat(eService1.getName())
+                .as("Nome dell'e-service %s dopo la rinomina", aliasEService1)
+                .isEqualTo(eService2.getName());
+        assertThat(eService2)
+                .as("L'e-service %s non deve essere modificato dalla rinomina di %s", aliasEService2, aliasEService1)
+                .isEqualTo(initialExistingEService);
     }
 
     @When("la modifica dei metadati dell'e-service {string} viene rifiutata per {eServiceUpdateFailureReason}")
