@@ -2,6 +2,7 @@ package it.pagopa.interop.common.purpose_template.domain;
 
 import it.pagopa.domain.Identifiable;
 import it.pagopa.interop.common.kernel.domain.PurposeTemplateRef;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormTemplate;
 import lombok.Builder;
 import lombok.Singular;
 import lombok.Value;
@@ -23,6 +24,7 @@ public class PurposeTemplate implements Identifiable {
     PurposeTemplateState state;
     Instant createdAt;
     Instant updatedAt;
+    RiskAnalysisFormTemplate riskAnalysisFormTemplate;
 
     @Singular("eserviceId")
     List<UUID> linkedEServiceIds;
