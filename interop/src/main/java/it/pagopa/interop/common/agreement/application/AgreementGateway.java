@@ -54,4 +54,6 @@ public interface AgreementGateway extends Plugin<Channel> {
     Agreement awaitState(Agreement agreement, Set<AgreementState> expectedStates);
 
     void attemptAgreementSuspension(Agreement agreement);
+
+    void attemptAgreementReactivation(Agreement agreement);
 }

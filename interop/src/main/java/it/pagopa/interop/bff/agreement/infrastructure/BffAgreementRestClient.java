@@ -75,4 +75,13 @@ public class BffAgreementRestClient extends RestClient {
                 Void.class
         );
     }
+
+    public TestChain<Agreement> unsuspend(@Nonnull UUID agreementId, @Nullable UUID delegationId) {
+        var payload = new DelegationRef().delegationId(delegationId);
+        return execute(
+                () -> agreementsApi.unsuspendAgreement().agreementIdPath(agreementId)
+                        .body(payload).execute(Function.identity()),
+                Agreement.class
+        );
+    }
 }

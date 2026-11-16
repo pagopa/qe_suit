@@ -85,7 +85,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
     Given un EService creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un admin appartenente al fruitore PagoPA
-    # Operazione BFF e binding mancanti per il tentativo di riattivazione.
     When il fruitore tenta di riattivare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND" in lingua "it"
 
@@ -99,10 +98,8 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione sospesa
-    # Il binding di lifecycle non supporta ARCHIVED; serve il setup dell'archiviazione definitiva.
-    And la versione dell'e-service associata alla richiesta di fruizione archiviata
+    And la versione 2 dell'e-service "ES-1" del Comune di Milano pubblicata
     And un admin appartenente al fruitore PagoPA
-    # Operazione BFF e binding mancanti per il tentativo di riattivazione.
     When il fruitore tenta di riattivare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_UNSUSPEND" in lingua "it"
 

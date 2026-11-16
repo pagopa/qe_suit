@@ -169,4 +169,9 @@ public class BffAgreementGateway implements AgreementGateway {
     public void attemptAgreementSuspension(Agreement agreement) {
         restClient.suspend(agreement.getId(), null).withoutPolling();
     }
+
+    @Override
+    public void attemptAgreementReactivation(Agreement agreement) {
+        restClient.unsuspend(agreement.getId(), null).withoutPolling();
+    }
 }

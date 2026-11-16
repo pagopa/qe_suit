@@ -100,4 +100,9 @@ public class AgreementSteps {
     public void attemptAgreementSuspension(Agreement agreement) {
         agreementUseCase.attemptAgreementSuspension(agreement);
     }
+
+    @When("il fruitore tenta di riattivare la {currentAgreement}")
+    public void attemptAgreementReactivation(Agreement agreement) {
+        agreementUseCase.attemptAgreementReactivation(agreement);
+    }
 }

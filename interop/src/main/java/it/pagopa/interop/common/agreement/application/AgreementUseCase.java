@@ -111,4 +111,8 @@ public class AgreementUseCase {
     public void attemptAgreementSuspension(Agreement agreement) {
         agreementGateway.attemptAgreementSuspension(agreement);
     }
+
+    public void attemptAgreementReactivation(Agreement agreement) {
+        agreementGateway.attemptAgreementReactivation(agreement);
+    }
 }
