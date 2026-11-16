@@ -40,6 +40,7 @@ class BffPurposeGatewayRiskAnalysisTest {
             commandFactory
     );
 
+
     @Test
     void savesFormOnceAndWaitsForAllAnswersToBecomeVisible() {
         UUID purposeId = UUID.randomUUID();
@@ -48,8 +49,8 @@ class BffPurposeGatewayRiskAnalysisTest {
                 .answers(Map.of("institutionalPurpose", List.of("Updated"),
                         "usesPersonalData", List.of("NO")))
                 .build();
-        TestChain<Void> write = mock(TestChain.class, RETURNS_DEEP_STUBS);
-        TestChain<Purpose> read = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain<Void> write = (TestChain<Void>) mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain<Purpose> read =(TestChain<Purpose>) mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.saveRiskAnalysisForm(eq(purposeId), any())).thenReturn(write);
         when(write.withoutPolling().getRaw().isSuccess()).thenReturn(true);
         when(restClient.getPurpose(purposeId)).thenReturn(read);
@@ -75,7 +76,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     @Test
     void failsImmediatelyWhenFormSaveIsRejected() {
         UUID purposeId = UUID.randomUUID();
-        TestChain<Void> write = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain<Void> write = (TestChain<Void>) mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.saveRiskAnalysisForm(eq(purposeId), any())).thenReturn(write);
         when(write.withoutPolling().getRaw().isSuccess()).thenReturn(false);
         var form = it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm.builder()
@@ -91,7 +92,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     @Test
     void rejectsFailedOrMissingFormReads() {
         UUID purposeId = UUID.randomUUID();
-        TestChain<Purpose> read = mock(TestChain.class, RETURNS_DEEP_STUBS);
+        TestChain<Purpose> read = (TestChain<Purpose>) mock(TestChain.class, RETURNS_DEEP_STUBS);
         when(restClient.getPurpose(purposeId)).thenReturn(read);
         when(read.withoutPolling().getRaw().isSuccess()).thenReturn(false, true);
         when(read.withoutPolling().get()).thenReturn(new Purpose());
