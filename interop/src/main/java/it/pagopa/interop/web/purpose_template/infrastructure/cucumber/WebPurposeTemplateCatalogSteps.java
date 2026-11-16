@@ -17,7 +17,7 @@ public class WebPurposeTemplateCatalogSteps {
         consumerPurposeTemplateCatalogPage.navigateTo();
     }
 
-    @Then("l'accesso alla pagine del catalogo dei template finalità è {word}")
+    @Then("l'accesso alla pagina del catalogo dei template finalità è {word}")
     public void checkPurposeTemplateCatalogPageLoaded(String accessResult) {
         boolean shouldBeLoaded = accessResult.equals("consentito");
 

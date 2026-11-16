@@ -1,18 +1,20 @@
 package it.pagopa.interop.bff.purpose.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.interop.common.kernel.domain.EServiceRef;
-import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysisRef;
+import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.purpose.application.PurposeCommandFactory;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormTemplate;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.utils.RandomUtils;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
 import org.springframework.stereotype.Component;
@@ -32,6 +34,7 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
     private final RiskAnalysisGateway riskAnalysisGateway;
     private final RiskAnalysisDataFactory riskAnalysisDataFactory;
     private final CurrentUserSession currentUserSession;
+    private final EntityStore entityStore;
 
     @Override
     public PurposeCreateCommand emptyCreateCommand() {
@@ -113,14 +116,48 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
                 .create();
     }
 
-    public PurposeFromTemplateSeed creationFromTemplateRequest(EServiceRef eServiceRef) {
+    public PurposeFromTemplateSeed creationFromTemplateRequest(EServiceRef eServiceRef, PurposeTemplateRef purposeTemplateRef) {
+        return creationFromTemplateRequest(
+                eServiceRef.id(),
+                randomAlphanumericName("purpose"),
+                1,
+                purposeTemplateRef
+        );
+    }
+
+    public PurposeFromTemplateSeed creationFromTemplateRequest(
+            PurposeCreateCommand createCommand,
+            PurposeTemplateRef purposeTemplateRef
+    ) {
+        return creationFromTemplateRequest(
+                createCommand.eserviceId(),
+                createCommand.title(),
+                createCommand.dailyCalls(),
+                purposeTemplateRef
+        );
+    }
+
+    private PurposeFromTemplateSeed creationFromTemplateRequest(
+            UUID eserviceId,
+            String title,
+            Integer dailyCalls,
+            PurposeTemplateRef purposeTemplateRef
+    ) {
+        if (eserviceId == null || title == null || dailyCalls == null) {
+            throw new IllegalArgumentException("Purpose template creation requires an e-service, title, and daily calls");
+        }
         Tenant consumer = currentUserSession.getTenant();
+        PurposeTemplate purposeTemplate = entityStore.getById(purposeTemplateRef.id(), PurposeTemplate.class)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Selected purpose template not found in entity store: " + purposeTemplateRef.id()));
+
         return Instancio.of(PurposeFromTemplateSeed.class)
-                .set(field(PurposeFromTemplateSeed::getTitle), randomAlphanumericName("purpose"))
-                .set(field(PurposeFromTemplateSeed::getDailyCalls), 1)
-                .set(field(PurposeFromTemplateSeed::getEserviceId), eServiceRef.id())
+                .set(field(PurposeFromTemplateSeed::getTitle), title)
+                .set(field(PurposeFromTemplateSeed::getDailyCalls), dailyCalls)
+                .set(field(PurposeFromTemplateSeed::getEserviceId), eserviceId)
                 .set(field(PurposeFromTemplateSeed::getConsumerId), consumer.getOrganizationId())
-                .ignore(field(PurposeFromTemplateSeed::getRiskAnalysisForm))
+                .set(field(PurposeFromTemplateSeed::getRiskAnalysisForm),
+                        riskAnalysisFormTemplateSeed(purposeTemplate.getRiskAnalysisFormTemplate()))
                 .create();
     }
 
@@ -136,5 +173,27 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
         return new RiskAnalysisFormSeed()
                 .version(riskAnalysisGateway.getLatestRiskAnalysisConfig(consumer).getVersion())
                 .answers(new HashMap<>(riskAnalysisDataFactory.getTemplateForTenant(consumer, true)));
+    }
+
+    private RiskAnalysisFormSeed riskAnalysisFormTemplateSeed(@Nullable RiskAnalysisFormTemplate templateForm) {
+        Map<String, List<String>> answers = new HashMap<>();
+        if (templateForm == null || templateForm.getVersion() == null || templateForm.getVersion().isBlank()
+                || templateForm.getAnswerTemplates() == null) {
+            throw new IllegalArgumentException("Template risk analysis form must have a version and answers");
+        }
+        templateForm.getAnswerTemplates().forEach((question, answer) -> {
+            if (answer == null) {
+                throw new IllegalArgumentException("Missing template risk analysis answer data for: " + question);
+            }
+            if (answer.getEditable() == null) {
+                throw new IllegalArgumentException("Missing template risk analysis editability for: " + question);
+            }
+            if (answer.getSuggestedValues() != null && !answer.getSuggestedValues().isEmpty()) {
+                answers.put(question, List.of(answer.getSuggestedValues().get(0)));
+            } else if (answer.getEditable()) {
+                answers.put(question, List.of(RandomUtils.randomAlphanumericName("random-text")));
+            }
+        });
+        return new RiskAnalysisFormSeed().version(templateForm.getVersion()).answers(answers);
     }
 }

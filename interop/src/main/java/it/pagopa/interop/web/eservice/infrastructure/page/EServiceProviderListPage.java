@@ -2,10 +2,11 @@ package it.pagopa.interop.web.eservice.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.core.capability.core.Gettable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.PageSize;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.EServiceProviderListFilters;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.EServiceProviderListTable;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
@@ -29,12 +30,15 @@ public interface EServiceProviderListPage extends Page {
     @XPath(".//main//table")
     EServiceProviderListTable table();
 
+    @XPath(".//*[@data-testid='rows-per-page-select']")
+    PageSize pageItemsSelector();
+
     @Override
     default void assertLoaded() {
         Assertions.assertThat(pageTitle().read()).as("Provider e-service list page title available").isNotBlank();
-        filters().nameInput().get(FindPolicy.PRESENT)
+        filters().nameInput().get(Gettable.FindPolicy.PRESENT)
                 .orElseThrow(() -> new IllegalStateException("Name search input not loaded"));
-        filters().consumerInput().get(FindPolicy.PRESENT)
+        filters().consumerInput().get(Gettable.FindPolicy.PRESENT)
                 .orElseThrow(() -> new IllegalStateException("Consumer search input not loaded"));
     }
 }

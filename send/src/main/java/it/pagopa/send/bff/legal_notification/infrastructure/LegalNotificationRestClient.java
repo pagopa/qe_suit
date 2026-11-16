@@ -6,10 +6,10 @@ import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.send.generated.openapi.clients.bff.api.NotificationSentApi;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffFullNotificationV1;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffLegalNotificationsResponse;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationRequest;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffNewNotificationResponse;
 import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationTimelineResponse;
-import it.pagopa.send.generated.openapi.clients.bff.model.BffRequestStatus;
+import it.pagopa.send.generated.openapi.clients.bff.model.NewNotificationRequestV26;
+import it.pagopa.send.generated.openapi.clients.bff.model.NewNotificationResponse;
+import it.pagopa.send.generated.openapi.clients.bff.model.RequestStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -25,17 +25,17 @@ public class LegalNotificationRestClient extends RestClient {
         this.notificationSentApi = notificationSentApi;
     }
 
-    public TestChain<BffNewNotificationResponse> create(BffNewNotificationRequest payload) {
+    public TestChain<NewNotificationResponse> create(NewNotificationRequestV26 payload) {
         return execute(
                 () -> notificationSentApi.newSentNotificationV1().body(payload).execute(Function.identity()),
-                BffNewNotificationResponse.class
+                NewNotificationResponse.class
         );
     }
 
-    public TestChain<BffRequestStatus> delete(String iun) {
+    public TestChain<RequestStatus> delete(String iun) {
         return execute(
                 () -> notificationSentApi.notificationCancellationV1().iunPath(iun).execute(Function.identity()),
-                BffRequestStatus.class
+                RequestStatus.class
         );
     }
 

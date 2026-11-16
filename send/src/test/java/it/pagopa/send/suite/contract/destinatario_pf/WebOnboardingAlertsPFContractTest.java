@@ -1,6 +1,6 @@
 package it.pagopa.send.suite.contract.destinatario_pf;
 
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+import it.frontend.e2e.framework.core.capability.core.Gettable.FindPolicy;
 import it.frontend.e2e.framework.web.model.WebPresentationElement;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;

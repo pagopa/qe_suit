@@ -37,6 +37,22 @@ public interface NotificationTimelinePGPage extends Page {
     @XPath("//*[@data-testid=\"NotificationEventsTimeline\"]/ul/li/div[2]/div/div[1]")
     Readable<String> eventStatuses();
 
+    // evento più vecchio, in fondo alla cronologia: il deposito della notifica, presente da quando è accettata
+
+    @XPath("(//*[@data-testid=\"NotificationEventsTimeline\"]/ul/li)[last()]/div[2]/div/div[1]")
+    Readable<String> firstEventStatus();
+
+    // descrizione seguita dalla data dell'evento
+    @XPath("(//*[@data-testid=\"NotificationEventsTimeline\"]/ul/li)[last()]//*[@data-testid=\"dateItem\"]/parent::*")
+    Readable<String> firstEventDescription();
+
+    @XPath("(//*[@data-testid=\"NotificationEventsTimeline\"]/ul/li)[last()]//*[@data-testid=\"dateItem\"]")
+    Readable<String> firstEventDate();
+
+    // link per scaricare l'attestazione opponibile a terzi dell'evento
+    @XPath("((//*[@data-testid=\"NotificationEventsTimeline\"]/ul/li)[last()]//*[starts-with(@data-testid,\"download-legalfact\")])[1]")
+    Readable<String> firstEventLegalFact();
+
     @Override
     default void assertLoaded() {
         title().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(TITLE));

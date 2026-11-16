@@ -8,8 +8,14 @@ import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import org.springframework.plugin.core.Plugin;
 
+import java.util.Optional;
+
 public interface AttributeGateway extends Plugin<Channel> {
     Attribute getAttribute(AttributeRef attributeRef);
+
+    Optional<Attribute> findAttributeByOriginAndCode(String origin, String code);
+
+    Attribute createAttribute(Attribute attribute);
 
     void removeCertifiedAttributeThreshold(EServiceRef eServiceRef, EServiceDescriptorRef eServiceDescriptorRef, EServiceDescriptorState state, int groupIndex, int attributeIndex);;
 

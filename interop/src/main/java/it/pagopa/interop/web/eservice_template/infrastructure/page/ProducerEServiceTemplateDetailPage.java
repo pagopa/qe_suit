@@ -7,6 +7,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Drawer;
 import it.pagopa.infrastructure.suit.component.Snackbar;
+import it.pagopa.utils.async.PollingUtils;
 import org.assertj.core.api.Assertions;
 
 @Url("${interop.web.producer-e-service-template-list}/${eserviceTemplateId}/${versionId}")
@@ -29,9 +30,11 @@ public interface ProducerEServiceTemplateDetailPage extends Page {
 
     @Override
     default void assertLoaded() {
-        pageTitle().readAndAssert(name -> Assertions.assertThat(name)
-                .as("Page title is not blank")
-                .isNotBlank());
+        PollingUtils.pollUntil(
+                () -> pageTitle().read(),
+                name -> !name.isBlank(),
+                "Producer E-Service Template Detail Page is not loaded yet. Page title is blank"
+        );
     }
 }
 

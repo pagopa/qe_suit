@@ -9,54 +9,96 @@ import java.util.NoSuchElementException;
 @XPath(".//nav[contains(@class, 'MuiPagination-root')]")
 public interface Pagination extends Component {
 
-    String SELECTED_CLASS = "Mui-selected";
+    List<Button> buttons();
 
-    @XPath("(.//li)[last()]")
-    Button nextBtn();
+    default Button prevBtn() {
+        List<Button> buttons = buttons();
+        requirePaginationButtons(buttons);
+        return buttons.get(0);
+    }
 
-    @XPath("(.//li)[1]")
-    Button prevBtn();
+    default Button nextBtn() {
+        List<Button> buttons = buttons();
+        requirePaginationButtons(buttons);
+        return buttons.get(buttons.size() - 1);
+    }
 
-    /**
-     * Tutti i pulsanti "numero pagina" della nav, esclusi i pulsanti prev/next.
-     * L'elemento dell'eventuale ellissi ("…") non è un {@code <button>} e quindi
-     * viene naturalmente escluso da questa selezione.
-     */
-    @XPath("(.//li)[position() > 1 and position() < last()]//button")
-    List<Button> pageButtons();
+    default void goBack() {
+        Button previous = prevBtn();
 
-    /**
-     * Numero dell'ultima pagina dichiarata dalla nav, letto dal penultimo {@code <li>}
-     * (quello immediatamente precedente al pulsante "next"). Funziona sia nel caso con
-     * ellissi ({@code < 1 .. N >}) sia nel caso compatto senza ellissi ({@code < 1 2 3 >}).
-     */
-    default int lastPageNumber() {
-        List<Button> buttons = pageButtons();
-
-        if (buttons.isEmpty()) {
+        if (previous.isDisabled()) {
             throw new NoSuchElementException(
-                    "Impossibile determinare l'ultima pagina: nessun pulsante di paginazione trovato."
+                    "Impossibile tornare indietro: pulsante precedente disabilitato."
             );
         }
 
-        String lastPageText = buttons.get(buttons.size() - 1).read().trim();
+        previous.click();
+    }
+
+    default void goNext() {
+        Button next = nextBtn();
+
+        if (next.isDisabled()) {
+            throw new NoSuchElementException(
+                    "Impossibile andare avanti: pulsante successivo disabilitato."
+            );
+        }
+
+        next.click();
+    }
+
+    /**
+     * Restituisce il numero dell'ultima pagina, letto dal pulsante
+     * immediatamente precedente al pulsante "next".
+     * Funziona sia con ellissi sia senza ellissi.
+     */
+    default int lastPageNumber() {
+        List<Button> buttons = buttons();
+        requirePaginationButtons(buttons);
+
+        String lastPageText = buttons.get(buttons.size() - 2).read().trim();
         return Integer.parseInt(lastPageText);
     }
 
     /**
-     * Verifica che la nav di paginazione sia effettivamente utilizzabile, ovvero che
-     * esista almeno un pulsante pagina e che nessuno di essi sia disabilitato.
+     * Verifica che esista almeno un pulsante pagina e che tutti
+     * i pulsanti pagina siano abilitati.
+     * I pulsanti precedente e successivo sono esclusi dal controllo.
      */
     default boolean isUsable() {
-        List<Button> buttons = pageButtons();
-        return !buttons.isEmpty() && buttons.stream().noneMatch(Button::isDisabled);
+
+        if (buttons().size() < 3) {
+            return false;
+        }
+
+        for (int i = 1; i < buttons().size() - 1; i++) {
+            if (buttons().get(i).isDisabled()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
-    default boolean hasNext(){
-        return !nextBtn().isDisabled();
+    default boolean hasNext() {
+        List<Button> buttons = buttons();
+
+        return buttons.size() >= 3
+                && !buttons.get(buttons.size() - 1).isDisabled();
     }
 
-    default boolean hasPrevious(){
-        return !prevBtn().isDisabled();
+    default boolean hasPrevious() {
+        List<Button> buttons = buttons();
+
+        return buttons.size() >= 3
+                && !buttons.get(0).isDisabled();
+    }
+
+    private static void requirePaginationButtons(List<Button> buttons) {
+        if (buttons.size() < 3) {
+            throw new NoSuchElementException(
+                    "Paginazione incompleta: attesi i pulsanti precedente, pagina e successivo."
+            );
+        }
     }
 }

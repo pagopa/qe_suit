@@ -31,7 +31,6 @@ import java.util.stream.Stream;
         properties = {
                 "spring.profiles.include=junit",
                 "channel.web.browser=chrome",
-                "channel.web.headless=false",
         }
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
@@ -66,38 +65,45 @@ public class WebAgreementRequestPaginationContractTest {
         return new WebScenario<>(
                 "offset = 0: la navbar di paginazione è presente",
                 page -> {
-                    createPendingAgreementRequest();
-                    page.navigateTo("10", "0");
+                   int rowPerPage = page.pageSize().getSelectedSize();
+                   int totalRows = page.table().getTotalRows();
+
+                    while (rowPerPage < totalRows) {
+                        interopJourney
+                                .withProducer(PRODUCER, UserRole.ADMIN)
+                                .createEService(EServiceDescriptorState.PUBLISHED)
+                                .withConsumer(CONSUMER, UserRole.ADMIN)
+                                .linkAgreement(AgreementState.PENDING);
+
+                        totalRows = page.table().getTotalRows();
+                    }
                 },
-                page -> Assertions.assertThat(page.pagination())
-                        .isPresent()
-                        .get()
-                        .extracting(Pagination::isUsable)
-                        .isEqualTo(true)
+                page -> {
+                    Assertions.assertThat(page.pagination().exists())
+                            .as("Pagination navbar is present")
+                            .isTrue();
+
+                    Assertions.assertThat(page.pagination().isUsable())
+                            .as("Pagination navbar is usable")
+                            .isTrue();
+                }
         );
     }
 
     private WebScenario<AgreementRequestPage> highOffsetScenario() {
         return new WebScenario<>(
                 "offset elevato mantiene la navbar visibile a fine pagina",
+                page -> page.navigateTo("10", "1000"),
                 page -> {
-                    createPendingAgreementRequest();
-                    page.navigateTo("10", "1000");
-                },
-                page -> Assertions.assertThat(page.pagination())
-                        .isPresent()
-                        .get()
-                        .extracting(Pagination::isUsable)
-                        .isEqualTo(true)
-        );
-    }
+                    Assertions.assertThat(page.pagination().exists())
+                            .as("Pagination navbar is present")
+                            .isTrue();
 
-    private void createPendingAgreementRequest() {
-        interopJourney
-                .withProducer(PRODUCER, UserRole.ADMIN)
-                .createEService(EServiceDescriptorState.PUBLISHED)
-                .withConsumer(CONSUMER, UserRole.ADMIN)
-                .linkAgreement(AgreementState.PENDING);
+                    Assertions.assertThat(page.pagination().isUsable())
+                            .as("Pagination navbar is usable")
+                            .isTrue();
+                }
+        );
     }
 }
 

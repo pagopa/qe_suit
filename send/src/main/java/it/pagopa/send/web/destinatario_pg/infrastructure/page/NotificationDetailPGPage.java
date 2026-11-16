@@ -55,6 +55,10 @@ public interface NotificationDetailPGPage extends Page {
     @XPath("//p[normalize-space()=\"Codice IUN\"]/following-sibling::p[1]")
     Readable<String> iun();
 
+    // descrizione della notifica (abstract), sotto il blocco mittente e IUN
+    @XPath("//p[normalize-space()=\"Codice IUN\"]/ancestor::div[contains(@class,\"MuiGrid-container\")][1]/following-sibling::p[1]")
+    Readable<String> abstractText();
+
     // ultima riga del riepilogo, sotto la descrizione della notifica
     @XPath("(//*[@data-testid=\"titleBox\"]/ancestor::div[contains(@class,\"MuiPaper-root\")][1]//p)[last()]")
     Readable<String> legalDisclaimer();
@@ -63,6 +67,14 @@ public interface NotificationDetailPGPage extends Page {
 
     @XPath("//*[@id=\"notification-detail-document-attached\"]")
     Readable<String> documentsTitle();
+
+    // per quanto tempo i documenti restano disponibili online
+    @XPath("//*[@data-testid=\"documentsMessage\"]//p")
+    Readable<String> documentsAvailability();
+
+    // nome del primo documento allegato: il titolo o, se manca, il nome del file
+    @XPath("(//*[@data-testid=\"notificationDetailDocuments\"]//*[@data-testid=\"documentButton\"])[1]")
+    Readable<String> firstDocument();
 
     @XPath("//*[@data-testid=\"NotificationDetailTimeline\"]//h2")
     Readable<String> statusTitle();

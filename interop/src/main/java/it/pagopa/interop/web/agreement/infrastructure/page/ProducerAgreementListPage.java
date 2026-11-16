@@ -18,8 +18,8 @@ public interface ProducerAgreementListPage extends Page {
     @Override
     default void assertLoaded() {
         pageTitle().readAndAssert("Richieste di fruizione ricevute");
-        Assertions.assertThat(breadcrumbs().items().stream().map(Readable::read).toList())
+        Assertions.assertThat(breadcrumbs().getPath())
                 .as("Breadcrumbs")
-                .containsExactly("Erogazione", "Richieste ricevute");
+                .isEqualTo("Erogazione/Richieste ricevute");
     }
 }

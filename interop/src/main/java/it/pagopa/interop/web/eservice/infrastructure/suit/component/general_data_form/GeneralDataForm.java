@@ -10,6 +10,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceTechnology;
 @XPath(".//form")
 public interface GeneralDataForm extends Component {
 
+    String SUBMIT_BTN_TEXT = "Salva bozza e prosegui";
+
     AboutEServiceSection aboutEServiceSection();
 
     EServiceDetailsSection eServiceDetailsSection();
@@ -18,7 +20,7 @@ public interface GeneralDataForm extends Component {
 
     SignalHubSection signalHubSection();
 
-    @XPath(".//button[contains(., 'Salva bozza e prosegui')]")
+    @XPath(".//button[contains(., '" + SUBMIT_BTN_TEXT + "')]")
     Button saveDraftButton();
 
     default GeneralDataForm setEServiceName(String name) {
@@ -88,7 +90,7 @@ public interface GeneralDataForm extends Component {
     }
 
     default String getNameHelperText() {
-        return aboutEServiceSection().eServiceNameInput().getHelperText("name-infoLabel");
+        return aboutEServiceSection().nameHelperText().read();
     }
 
     default String getNameErrorText() {
@@ -96,7 +98,7 @@ public interface GeneralDataForm extends Component {
     }
 
     default String getDescriptionHelperText() {
-        return aboutEServiceSection().eServiceDescriptionInput().getHelperText("description-infoLabel");
+        return aboutEServiceSection().descriptionHelperText().read();
     }
 
     default String getDescriptionErrorText() {

@@ -29,9 +29,7 @@ public class ContractReportGenerator {
                 new ContractReportConfigurationLoader(),
                 new ContractReportConfigurationValidator(),
                 new OpenTestReportParser(),
-                new ContractReportBuilder(
-                        ContractTargetResolverRegistry.defaults()
-                ),
+                new ContractReportBuilder(ContractTargetResolverRegistry.defaults()),
                 new ContractReportRenderer()
         );
     }
@@ -62,4 +60,3 @@ public class ContractReportGenerator {
         renderer.render(report, outputHtml);
     }
 }
-

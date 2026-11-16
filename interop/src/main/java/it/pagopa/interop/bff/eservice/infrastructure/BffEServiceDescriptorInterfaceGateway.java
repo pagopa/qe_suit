@@ -11,12 +11,15 @@ import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.DelayUtils;
 import it.pagopa.utils.async.PollingUtils;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -79,7 +82,7 @@ public class BffEServiceDescriptorInterfaceGateway {
                         download(serviceRef, descriptorRef, metadata.getInterfaceDocument().getId())
                 ))
                 .build();
-        aggregate.addDescriptor(enriched);
+        aggregate.upsertDescriptor(enriched);
         entityStore.upsert(aggregate);
         return enriched;
     }
@@ -106,15 +109,34 @@ public class BffEServiceDescriptorInterfaceGateway {
             EServiceRef serviceRef,
             EServiceDescriptorRef descriptorRef,
             String path,
-            DocumentKind kind
+            DocumentKind kind,
+            @Nullable String name
     ) {
         File document = FileUtils.loadClasspathResourceAsTempFile(path);
-        String name = RandomUtils.randomAlphanumericName("interface") + ".yaml";
+        String fileName;
+        fileName = Objects.requireNonNullElseGet(name, () -> RandomUtils.randomAlphanumericName("interface") + ".yaml");
         DelayUtils.waitForSeconds(1);
-        return restClient.addDocument(serviceRef.id(), descriptorRef.id(), kind.name(), name, document)
+        return restClient.addDocument(serviceRef.id(), descriptorRef.id(), kind.name(), fileName, document)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(ignored -> readAndUpdate(serviceRef, descriptorRef))
                 .get();
+    }
+
+    public void shouldFailToUploadInterface(
+            EServiceRef serviceRef,
+            EServiceDescriptorRef descriptorRef,
+            String interfaceResourcePath,
+            SoapInterfaceUploadFailureReason reason
+    ) {
+        File document = FileUtils.loadClasspathResourceAsTempFile(interfaceResourcePath);
+        String fileName = Path.of(interfaceResourcePath).getFileName().toString();
+        var rawResponse = restClient.addDocument(
+                        serviceRef.id(), descriptorRef.id(), DocumentKind.INTERFACE.name(), fileName, document
+                )
+                .withoutPolling()
+                .assertStatusCode(400)
+                .getRaw();
+        BffSoapInterfaceProblemValidator.assertSoapInterfaceProblem(rawResponse, reason);
     }
 
     private EServiceDescriptor readAndUpdate(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {

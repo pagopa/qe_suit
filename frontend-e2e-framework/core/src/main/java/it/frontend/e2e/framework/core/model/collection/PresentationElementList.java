@@ -1,5 +1,6 @@
 package it.frontend.e2e.framework.core.model.collection;
 
+import it.frontend.e2e.framework.core.binder.ComponentList;
 import it.frontend.e2e.framework.core.binder.DefaultBinderInvocationHandler;
 import it.frontend.e2e.framework.core.binder.context.BindContext;
 import it.frontend.e2e.framework.core.capability.Capability;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Spliterator;
 import java.util.Spliterators;
 
-public class PresentationElementList<T extends Capability, S extends Selector, L extends Location, E extends AbstractPresentationElement<S,L>> extends AbstractList<T> {
+public class PresentationElementList<T extends Capability, S extends Selector, L extends Location, E extends AbstractPresentationElement<S, L>> extends AbstractList<T> implements ComponentList<T> {
 
     private final Class<T> itemType;
     private final CapabilityScope collectionScope;
@@ -34,28 +35,39 @@ public class PresentationElementList<T extends Capability, S extends Selector, L
 
     @Override
     public T get(int index) {
-        String indexedSelector = "(" + collectionScope.selector() + ")[" + (index + 1) + "]";
+        return get(index, Gettable.FindPolicy.PRESENT);
+    }
 
-        CapabilityScope itemScope = new CapabilityScope(
-                indexedSelector,
-                collectionScope.location(),
-                false
-        );
+    @Override
+    public T get(int index, Gettable.FindPolicy findPolicy) {
+        java.util.Objects.requireNonNull(findPolicy, "findPolicy");
 
-        return itemType.cast(Proxy.newProxyInstance(
-                itemType.getClassLoader(),
-                new Class<?>[]{itemType},
-                new DefaultBinderInvocationHandler(
-                        dispatcher,
-                        new BindContext(itemScope)
-                )
-        ));
+        CapabilityScope scope = itemScope(index);
+
+        boolean found = bindGettable(scope)
+                .getAll(findPolicy)
+                .map(elements -> !elements.isEmpty())
+                .orElse(false);
+
+        if (!found) {
+            throw new java.util.NoSuchElementException(
+                    "Elemento all'indice " + index
+                            + " non risolto con policy " + findPolicy
+            );
+        }
+
+        return createItemProxy(scope);
     }
 
     @Override
     public int size() {
+        return size(Gettable.FindPolicy.PRESENT);
+    }
+
+    @Override
+    public int size(Gettable.FindPolicy findPolicy) {
         return bindGettable(collectionScope)
-                .getAll()
+                .getAll(findPolicy)
                 .map(List::size)
                 .orElse(0);
     }
@@ -70,6 +82,33 @@ public class PresentationElementList<T extends Capability, S extends Selector, L
                         new BindContext(scope)
                 )
         );
+    }
+
+
+    private CapabilityScope itemScope(int index) {
+        if (index < 0) {
+            throw new IndexOutOfBoundsException("Indice negativo: " + index);
+        }
+
+        String indexedSelector =
+                "(" + collectionScope.selector() + ")[" + (index + 1) + "]";
+
+        return new CapabilityScope(
+                indexedSelector,
+                collectionScope.location(),
+                false
+        );
+    }
+
+    private T createItemProxy(CapabilityScope scope) {
+        return itemType.cast(Proxy.newProxyInstance(
+                itemType.getClassLoader(),
+                new Class<?>[]{itemType},
+                new DefaultBinderInvocationHandler(
+                        dispatcher,
+                        new BindContext(scope)
+                )
+        ));
     }
 
     @Override

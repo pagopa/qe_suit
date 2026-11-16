@@ -2,12 +2,14 @@ package it.pagopa.interop.web.infrastructure.config.suit;
 
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
+import it.frontend.e2e.framework.web.adapter.model.WebWaitSettings;
 import it.frontend.e2e.framework.web.adapter.IWebPresentationApiAdapter;
 import it.frontend.e2e.framework.web.config.WebSuiteBuilder;
 import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.infrastructure.suit.capability.AuthenticatedLocatableCapabilityHandler;
 import it.pagopa.interop.web.infrastructure.suit.component.NotFoundComponent;
 import it.pagopa.interop.web.infrastructure.suit.component.ServerErrorComponent;
+import it.pagopa.infrastructure.suit.component.Snackbar;
 import it.pagopa.interop.web.infrastructure.suit.component.UnauthorizedComponent;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +29,19 @@ public class WebSuitConfig {
     private String browser;
     private boolean headless;
     private List<String> arguments;
+    private Waits waits = new Waits();
+
+    @Getter
+    @Setter
+    public static class Waits {
+        private long defaultWaitTimeoutSeconds = 10;
+        private long retryWaitTimeoutSeconds = 60;
+        private long existsTimeoutSeconds = 0;
+
+        public WebWaitSettings toSettings() {
+            return new WebWaitSettings(defaultWaitTimeoutSeconds, retryWaitTimeoutSeconds, existsTimeoutSeconds);
+        }
+    }
 
     public WebPresentationGateway createWebPresentationGateway(
             Environment environment,
@@ -60,5 +75,11 @@ public class WebSuitConfig {
     @ScenarioScope
     public NotFoundComponent notFoundComponent(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(NotFoundComponent.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public Snackbar snackbar(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(Snackbar.class);
     }
 }

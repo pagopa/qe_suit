@@ -1,6 +1,7 @@
 package it.pagopa.interop.suite.contract;
 
-import it.frontend.e2e.framework.web.adapter.model.FindPolicy;
+
+import it.frontend.e2e.framework.core.capability.core.Gettable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand;
@@ -184,7 +185,7 @@ public class WebEServiceDuplicationContractTest {
     }
 
     private void assertDuplicationIsAbsentFromOpenMenu(ProducerEServiceDetailPage page) {
-        Assertions.assertThat(page.actionsMenu().get(FindPolicy.VISIBLE))
+        Assertions.assertThat(page.actionsMenu().get(Gettable.FindPolicy.VISIBLE))
                 .as("Actions menu is open and visible")
                 .isPresent();
         Assertions.assertThat(page.actionsMenuItems().getAll())

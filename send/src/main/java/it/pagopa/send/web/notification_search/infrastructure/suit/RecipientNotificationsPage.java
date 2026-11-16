@@ -5,10 +5,10 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
+import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.infrastructure.suit.component.TextField;
 import it.pagopa.send.web.login.infrastructure.page.component.OneTrustBanner;
 import it.pagopa.send.web.notification_search.infrastructure.suit.component.AddDomicileBanner;
-import it.pagopa.send.web.notification_search.infrastructure.suit.component.NotificationsTable;
 
 import java.util.Optional;
 
@@ -88,5 +88,5 @@ public interface RecipientNotificationsPage extends Page {
     Readable<String> rowsPerPageOptions();
 
     @XPath("//*[@data-testid=\"notificationsTable\"]")
-    NotificationsTable notificationsTable();
+    Table notificationsTable();
 }
