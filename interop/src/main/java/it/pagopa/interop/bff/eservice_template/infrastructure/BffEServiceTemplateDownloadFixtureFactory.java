@@ -21,6 +21,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -48,17 +52,17 @@ public class BffEServiceTemplateDownloadFixtureFactory {
                 BffUpdateEServiceTemplateVersionCommand.from(payload));
         UUID templateId = template.getId();
         UUID versionId = version.getId();
-        File document = FileUtils.loadClasspathResourceAsTempFile("assets/origin-interface.yaml");
+        List<File> documents = new ArrayList<>();
         try {
             UUID interfaceId = upload(templateId, versionId, "INTERFACE",
-                    RandomUtils.randomAlphanumericName("Specifica API"), document);
+                    RandomUtils.randomAlphanumericName("Specifica API"), uniqueDocument(documents));
             if (async) {
                 upload(templateId, versionId, "ASYNC_EXCHANGE_CALLBACK_INTERFACE",
-                        RandomUtils.randomAlphanumericName("Interfaccia callback"), document);
+                        RandomUtils.randomAlphanumericName("Interfaccia callback"), uniqueDocument(documents));
             }
             List<UUID> additionalIds = List.of(
-                    upload(templateId, versionId, "DOCUMENT", "Guida all'integrazione", document),
-                    upload(templateId, versionId, "DOCUMENT", "Informazioni aggiuntive", document));
+                    upload(templateId, versionId, "DOCUMENT", "Guida all'integrazione", uniqueDocument(documents)),
+                    upload(templateId, versionId, "DOCUMENT", "Informazioni aggiuntive", uniqueDocument(documents)));
             var metadata = PollingUtils.pollUntil(
                     () -> restClient.getEServiceTemplateVersion(templateId, versionId)
                             .withPolling(PollingStrategy.UNTIL_SUCCESS).get(),
@@ -78,8 +82,23 @@ public class BffEServiceTemplateDownloadFixtureFactory {
                             .map(EServiceDoc::getPrettyName).toList(),
                     async ? metadata.getAsyncExchangeCallbackInterface().getPrettyName() : null);
         } finally {
-            if (!document.delete()) document.deleteOnExit();
+            documents.forEach(file -> {
+                if (!file.delete()) file.deleteOnExit();
+            });
         }
+    }
+
+    /** Crea una copia con checksum univoco: il backend rifiuta contenuti duplicati (409). */
+    private File uniqueDocument(List<File> created) {
+        File file = FileUtils.loadClasspathResourceAsTempFile("assets/origin-interface.yaml");
+        created.add(file);
+        try {
+            Files.writeString(file.toPath(), Files.readString(file.toPath())
+                    + System.lineSeparator() + "# " + UUID.randomUUID() + System.lineSeparator());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        return file;
     }
 
     private UUID upload(UUID templateId, UUID versionId, String kind, String name, File document) {
