@@ -165,13 +165,13 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
   Quando il fruitore tenta di eliminare il documento dalla richiesta attiva
   Allora il sistema rifiuta l'eliminazione e segnala che i documenti non possono essere modificati fuori dalla bozza.
 
-    Given i seguenti e-service pubblicati:
+    Given i seguenti e-service pubblicati che richiedono un attributo verificato posseduto dal fruitore:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding di setup mancanti per gli allegati alla richiesta.
-    And il file "allegato-a.pdf" allegato alla richiesta di fruizione
+    And il file allegato alla richiesta di fruizione
     # Binding di setup mancante; riusare submitAgreement e l'attivazione solo se necessaria.
     And la richiesta di fruizione inviata e attivata
     # Operazione BFF e binding mancanti per l'eliminazione dell'allegato.
