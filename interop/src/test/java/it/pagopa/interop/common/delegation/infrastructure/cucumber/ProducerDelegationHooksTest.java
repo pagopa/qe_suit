@@ -71,8 +71,8 @@ class ProducerDelegationHooksTest {
         order.verify(session).set(User.getTenantAdmin(delegator), delegator);
         order.verify(useCase).revokeProducerDelegation(created.getRef());
         order.verify(useCase).waitForProducerDelegationState(created.getRef(), ProducerDelegationState.REVOKED);
-        order.verify(session).set(originalUser, originalTenant);
         order.verify(channel).setCurrentChannel(Channel.WEB_BROWSER);
+        order.verify(session).set(originalUser, originalTenant);
         verify(useCase, never()).rejectProducerDelegation(any());
     }
 

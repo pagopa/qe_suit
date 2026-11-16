@@ -38,6 +38,7 @@ import java.util.stream.Stream;
  * Excludes layout, colors, fonts, full legal text, TIMESTAMP,
  * global header/footer and index interaction.
  */
+@org.springframework.test.context.ActiveProfiles(resolver = it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles.class)
 @SpringBootTest(
         classes = {
                 TestBootApp.class,

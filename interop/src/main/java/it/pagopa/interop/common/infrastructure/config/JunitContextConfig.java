@@ -9,8 +9,7 @@ import it.pagopa.infrastructure.context.InMemoryBrowserContext;
 import it.pagopa.infrastructure.context.InMemoryCurrentChannel;
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.infrastructure.context.InMemoryTestContext;
-import it.pagopa.interop.common.infrastructure.context.InMemoryAuthSession;
-import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.infrastructure.auth.InMemoryUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -32,9 +31,9 @@ public class JunitContextConfig {
         return new InMemoryTestContext();
     }
 
-    @Bean
-    AuthSession currentUserSession() {
-        return new InMemoryAuthSession();
+    @Bean("userAuthSession")
+    InMemoryUserSession currentUserSession() {
+        return new InMemoryUserSession();
     }
 
     @Bean

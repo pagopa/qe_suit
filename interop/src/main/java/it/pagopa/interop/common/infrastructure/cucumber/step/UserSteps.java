@@ -1,7 +1,9 @@
 package it.pagopa.interop.common.infrastructure.cucumber.step;
 
 import io.cucumber.java.en.Given;
+import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 public class UserSteps {
 
     private final AuthSession authSession;
+    private final CurrentChannel<Channel> currentChannel;
 
     @Given("un {userRole} appartenente all'erogatore {tenant}")
     @Given("un {userRole} appartenente al fruitore {tenant}")
@@ -23,6 +26,21 @@ public class UserSteps {
     @Given("un {userM2MRole} appartenente all'erogatore {tenant}")
     @Given("un {userM2MRole} appartenente al fruitore {tenant}")
     public void setUser(M2MRole m2MRole, Tenant tenant) {
-        authSession.set(m2MRole, tenant);
+        Channel previousChannel = currentChannel.getCurrentChannel();
+        Throwable primaryFailure = null;
+        try {
+            currentChannel.setCurrentChannel(Channel.M2M_V3);
+            authSession.set(m2MRole, tenant);
+        } catch (RuntimeException | Error failure) {
+            primaryFailure = failure;
+            throw failure;
+        } finally {
+            try {
+                currentChannel.setCurrentChannel(previousChannel);
+            } catch (RuntimeException | Error failure) {
+                if (primaryFailure == null) throw failure;
+                primaryFailure.addSuppressed(failure);
+            }
+        }
     }
 }

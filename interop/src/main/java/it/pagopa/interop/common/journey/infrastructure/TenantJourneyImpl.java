@@ -31,11 +31,8 @@ public class TenantJourneyImpl implements TenantJourney<TenantJourneyImpl> {
             tenantUseCase.ensureProducerDelegationEnabled(TenantRef.of(tenant.getOrganizationId()));
             return this;
         } finally {
-            try {
-                session.set(originalActor, originalTenant);
-            } finally {
-                channel.setCurrentChannel(originalChannel);
-            }
+            channel.setCurrentChannel(originalChannel);
+            session.set(originalActor, originalTenant);
         }
     }
 

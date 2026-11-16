@@ -1,4 +1,4 @@
-package it.pagopa.interop.m2m.v3.infrastructure.security;
+package it.pagopa.interop.m2m.v3.infrastructure.auth;
 
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.kernel.security.AccessToken;

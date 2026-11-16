@@ -47,8 +47,8 @@ class EServiceTemplateHooksTest {
         order.verify(session).set(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO);
         order.verify(gateway).deleteDraftVersion(template.getRef(), draft.getRef());
         order.verify(gateway).suspendVersion(template.getRef(), published.getRef());
-        order.verify(session).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
         order.verify(channel).setCurrentChannel(Channel.WEB_BROWSER);
+        order.verify(session).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
         verifyNoMoreInteractions(gateway);
         assertThat(entities.getByAliasOrThrow("TPL-1", EServiceTemplate.class)).isSameAs(template);
     }

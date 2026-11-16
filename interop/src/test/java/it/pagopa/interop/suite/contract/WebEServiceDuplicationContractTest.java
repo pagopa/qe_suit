@@ -35,6 +35,7 @@ import java.util.stream.Stream;
  * In attesa del rilascio della feature, i test non sono funzionanti e sono esclusi
  * dagli NRT tramite {@code @Tag("ignore")}.
  */
+@org.springframework.test.context.ActiveProfiles(resolver = it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles.class)
 @SpringBootTest(
         classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
         properties = "spring.profiles.include=junit"

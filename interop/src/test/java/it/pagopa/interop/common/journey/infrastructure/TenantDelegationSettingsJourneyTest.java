@@ -46,7 +46,7 @@ class TenantDelegationSettingsJourneyTest {
         order.verify(channel).setCurrentChannel(Channel.BFF);
         order.verify(session).set(User.getTenantAdmin(recipient), recipient);
         order.verify(gateway).ensureProducerDelegationEnabled(ref);
-        order.verify(session).set(originalUser, originalTenant);
         order.verify(channel).setCurrentChannel(Channel.WEB_BROWSER);
+        order.verify(session).set(originalUser, originalTenant);
     }
 }

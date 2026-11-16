@@ -107,12 +107,14 @@ public class AgreementJourneyImpl implements AgreementJourney<AgreementJourneyIm
         } finally {
             Throwable restorationFailure = null;
             try {
-                authSession.set(originalActor, originalTenant);
+                currentChannel.setCurrentChannel(originalChannel);
             } catch (RuntimeException | Error failure) {
                 restorationFailure = failure;
             }
             try {
-                currentChannel.setCurrentChannel(originalChannel);
+                if (restorationFailure == null) {
+                    authSession.set(originalActor, originalTenant);
+                }
             } catch (RuntimeException | Error failure) {
                 if (restorationFailure == null) {
                     restorationFailure = failure;

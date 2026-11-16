@@ -51,8 +51,8 @@ class EServiceHooksTest {
         order.verify(channel).setCurrentChannel(Channel.BFF);
         order.verify(session).set(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO);
         order.verify(services).deleteEService(draft);
-        order.verify(session).set(previousUser, Tenant.AGID);
         order.verify(channel).setCurrentChannel(Channel.WEB_BROWSER);
+        order.verify(session).set(previousUser, Tenant.AGID);
         verifyNoMoreInteractions(services);
     }
 

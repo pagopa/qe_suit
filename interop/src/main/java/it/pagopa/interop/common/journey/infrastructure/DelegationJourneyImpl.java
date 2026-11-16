@@ -71,8 +71,8 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
             transitionToRequestedState(command, delegation);
             return this;
         } finally {
-            authSession.set(originalActor, originalTenant);
             currentChannel.setCurrentChannel(originalChannel);
+            authSession.set(originalActor, originalTenant);
         }
     }
 

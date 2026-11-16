@@ -1,10 +1,8 @@
-package it.pagopa.interop.m2m.v3.infrastructure.security;
+package it.pagopa.interop.m2m.v3.infrastructure.auth;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.infrastructure.auth.AccessTokenProvider;
-import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import it.pagopa.kernel.security.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,19 +19,11 @@ public class M2Mv3AccessTokenProvider {
     @Value("${interop.auth.oauth.server.sync}")
     private String syncHtu;
 
-    private final M2Mv3ApiClientProvider apiClientProvider;
     private final AccessTokenProvider accessTokenProvider;
     private final DPoPProofService dPoPProofService;
 
-    public M2Mv3AccessTokenContext getOrCreate(
-            Tenant tenant,
-            M2MRole role)
+    public M2Mv3AccessTokenContext create(Client client)
             throws NoSuchAlgorithmException, JsonProcessingException {
-
-        Client client = apiClientProvider.getOrCreate(
-                tenant,
-                role
-        );
 
         KeyPair dpopKeyPair = KeyPairUtils.generate(
                 KeyAlgorithm.EC

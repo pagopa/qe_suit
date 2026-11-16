@@ -41,8 +41,8 @@ public class EServiceTemplateHooks {
                 }
             }
         } finally {
-            session.set(user, tenant);
             channel.setCurrentChannel(previousChannel);
+            session.set(user, tenant);
         }
         if (failure.getSuppressed().length > 0) throw failure;
     }

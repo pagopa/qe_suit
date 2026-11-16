@@ -19,6 +19,7 @@ import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCreatePag
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+@org.springframework.test.context.ActiveProfiles(resolver = it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles.class)
 @SpringBootTest(
         classes = {
                 TestBootApp.class,

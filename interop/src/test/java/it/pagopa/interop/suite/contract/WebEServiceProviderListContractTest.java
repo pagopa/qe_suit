@@ -34,6 +34,7 @@ import java.util.stream.Stream;
  * Sidebar navigation is not exercised. Mobile coverage requires execution at a verified viewport;
  * this desktop DOM baseline alone does not establish mobile rendering behavior.
  */
+@org.springframework.test.context.ActiveProfiles(resolver = it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles.class)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
         properties = "spring.profiles.include=junit")
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)

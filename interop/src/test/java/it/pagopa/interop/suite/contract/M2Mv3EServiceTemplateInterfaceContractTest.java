@@ -22,6 +22,7 @@ import org.springframework.test.context.TestConstructor;
 import java.util.Map;
 import java.util.stream.Stream;
 
+@org.springframework.test.context.ActiveProfiles(resolver = it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles.class)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, M2Mv3ApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class M2Mv3EServiceTemplateInterfaceContractTest {

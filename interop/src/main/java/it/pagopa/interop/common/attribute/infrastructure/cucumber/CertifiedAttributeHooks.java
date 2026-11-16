@@ -45,16 +45,19 @@ public class CertifiedAttributeHooks {
         } catch (RuntimeException | AssertionError exception) {
             cleanupFailure.addSuppressed(exception);
         } finally {
+            boolean channelRestored = false;
             try {
-                authSession.set(previousUser, previousTenant);
+                currentChannel.setCurrentChannel(previousChannel);
+                channelRestored = true;
             } catch (RuntimeException | AssertionError exception) {
                 cleanupFailure.addSuppressed(exception);
-            } finally {
-                try {
-                    currentChannel.setCurrentChannel(previousChannel);
-                } catch (RuntimeException | AssertionError exception) {
-                    cleanupFailure.addSuppressed(exception);
+            }
+            try {
+                if (channelRestored) {
+                    authSession.set(previousUser, previousTenant);
                 }
+            } catch (RuntimeException | AssertionError exception) {
+                cleanupFailure.addSuppressed(exception);
             }
         }
         if (cleanupFailure.getSuppressed().length > 0) {

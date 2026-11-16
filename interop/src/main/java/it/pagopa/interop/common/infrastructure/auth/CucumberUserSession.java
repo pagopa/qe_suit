@@ -1,9 +1,9 @@
-package it.pagopa.interop.common.infrastructure.context;
+package it.pagopa.interop.common.infrastructure.auth;
 
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.*;
 
-public class CucumberAuthSession implements AuthSession {
+public class CucumberUserSession implements AuthSession {
     private InteropActor currentActor;
     private InteropRole currentRole;
     private Tenant currentTenant;
@@ -18,10 +18,13 @@ public class CucumberAuthSession implements AuthSession {
 
     @Override
     public void set(InteropRole role, Tenant tenant) {
+        if (!(role instanceof UserRole userRole)) {
+            throw new IllegalArgumentException("User session requires a user role");
+        }
+        User user = User.getTenantUser(tenant, userRole);
+        this.currentActor = user;
         this.currentRole = role;
         this.currentTenant = tenant;
-        if(role instanceof UserRole userRole)
-            currentActor = User.getTenantUser(tenant, userRole);
     }
 
     @Override
@@ -44,6 +47,12 @@ public class CucumberAuthSession implements AuthSession {
 
     public void reset() {
         this.currentActor = null;
+        this.currentRole = null;
         this.currentTenant = null;
+    }
+
+    @Override
+    public boolean supports(Channel delimiter) {
+        return delimiter == Channel.BFF || delimiter == Channel.WEB_BROWSER;
     }
 }

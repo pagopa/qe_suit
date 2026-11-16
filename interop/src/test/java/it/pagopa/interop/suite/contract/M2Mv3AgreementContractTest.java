@@ -22,6 +22,7 @@ import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
+@org.springframework.test.context.ActiveProfiles(resolver = it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles.class)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, M2Mv3ApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class M2Mv3AgreementContractTest {
@@ -46,10 +47,7 @@ public class M2Mv3AgreementContractTest {
     Stream<DynamicTest> createAgreement() {
         return httpContractValidator
                 .as(Tenant.COMUNE_DI_MILANO, M2MRole.M2M_ADMIN)
-                .apiCall(() -> {
-                    interopJourney.withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
-                    return apiClient.agreements().createAgreement();
-                })
+                .apiCall(() -> apiClient.agreements().createAgreement())
                 .payload(() -> {
                     EService createdEservice = interopJourney
                             .switchChannel(Channel.BFF)

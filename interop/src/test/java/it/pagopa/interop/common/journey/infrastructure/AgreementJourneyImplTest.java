@@ -74,8 +74,8 @@ class AgreementJourneyImplTest {
         order.verify(channel).setCurrentChannel(Channel.BFF);
         order.verify(session).set(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO);
         order.verify(agreements).activateAgreement(pending, null);
-        order.verify(session).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
         order.verify(channel).setCurrentChannel(Channel.WEB_BROWSER);
+        order.verify(session).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
     }
 
     @Test

@@ -63,8 +63,8 @@ public class ProducerDelegationHooks {
                 }
             }
         } finally {
-            authSession.set(previousUser, previousTenant);
             currentChannel.setCurrentChannel(previousChannel);
+            authSession.set(previousUser, previousTenant);
         }
         if (cleanupFailure.getSuppressed().length > 0) {
             throw cleanupFailure;

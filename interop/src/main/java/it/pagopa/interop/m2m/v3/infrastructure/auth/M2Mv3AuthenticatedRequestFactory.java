@@ -1,4 +1,4 @@
-package it.pagopa.interop.m2m.v3.infrastructure.security;
+package it.pagopa.interop.m2m.v3.infrastructure.auth;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.restassured.RestAssured;
@@ -9,7 +9,8 @@ import it.pagopa.application.context.TestContext;
 import it.pagopa.infrastructure.http.restassured.HttpLoggingFilter;
 import it.pagopa.infrastructure.http.restassured.TestPolicyFilterResolver;
 import it.pagopa.interop.common.kernel.context.AuthSession;
-import it.pagopa.interop.m2m.kernel.domain.M2MRole;
+import it.pagopa.interop.common.client.domain.Client;
+import it.pagopa.interop.common.kernel.domain.InteropActor;
 import it.pagopa.kernel.security.DPoPProofService;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -61,13 +62,11 @@ public class M2Mv3AuthenticatedRequestFactory {
         TestContext testContext = testKindProvider.getObject();
         AuthSession currentSession = currentApiClientSessions.getObject();
 
-        M2Mv3AccessTokenContext authContext =
-                accessTokenProvider.getOrCreate(
-                        currentSession.getTenant(),
-                        (M2MRole) currentSession.getRole()
-                );
-
-        currentSession.set(authContext.client(), currentSession.getTenant());
+        InteropActor actor = currentSession.getActor();
+        if (!(actor instanceof Client client)) {
+            throw new IllegalStateException("M2M v3 session does not contain a client");
+        }
+        M2Mv3AccessTokenContext authContext = accessTokenProvider.create(client);
 
         RequestSpecBuilder builder =
                 new RequestSpecBuilder()

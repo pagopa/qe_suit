@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 import static it.pagopa.interop.common.kernel.domain.UserRole.ADMIN;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+@org.springframework.test.context.ActiveProfiles(resolver = it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles.class)
 @SpringBootTest(
         classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
         properties = {"spring.profiles.include=junit", "channel.web.browser=chrome"}
