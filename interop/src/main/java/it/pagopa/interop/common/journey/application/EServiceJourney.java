@@ -56,4 +56,6 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
     SELF archiveEService(GracePeriodDays gracePeriodDays);
 
     SELF waitUntilEService(Predicate<EService> predicate);
+
+    SELF waitUntilEService(String alias, Predicate<EService> predicate);
 }
