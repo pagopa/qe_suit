@@ -11,19 +11,15 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     Given un admin appartenente all'erogatore Comune di Milano
 
   # Endpoint: POST /tenants/:tenantId/attributes/verified/:attributeId
-  Scenario: [ERROR_012] - Rifiuto dell'aggiornamento di una verifica con scadenza nel passato
-  Dato un attributo già verificato dall'erogatore per il fruitore
-  Quando l'erogatore tenta di aggiornarne la verifica con una scadenza precedente a oggi
+  Scenario: [ERROR_012] - Impossibilità di impostare nel passato la scadenza di un attributo verificato
+  Dato un attributo verificato già assegnato dall'erogatore al fruitore con una scadenza valida
+  Quando l'erogatore tenta di modificare la scadenza dell'attributo verificato impostandola a una data precedente a oggi
   Allora il sistema rifiuta la modifica e segnala che la scadenza non può essere nel passato.
 
     Given i seguenti attributi verificati creati da un admin del Comune di Milano:
       | alias |
       | VER-1 |
-    # Binding di setup mancante; riusare assignVerifiedAttribute con una richiesta di fruizione valida.
-    And l'attributo "VER-1" verificato dal Comune di Milano per PagoPA con una scadenza valida
-    # Operazione BFF e binding negativo mancanti per l'aggiornamento della verifica, distinto dalla creazione.
-    # Calcolare ieri rispetto alla data del test, senza una data fissa.
-    When l'erogatore tenta di aggiornare la verifica dell'attributo "VER-1" di PagoPA con scadenza ieri
+    When l'erogatore tenta di modificare la scadenza dell'attributo verificato "VER-1" di PagoPA impostandola a ieri
     Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED_ATTRIBUTE_ID" in lingua "it"
 
   # Endpoint: POST /tenants/:tenantId/attributes/certified

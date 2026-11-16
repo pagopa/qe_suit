@@ -11,11 +11,13 @@ import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.tenant.application.TenantGateway;
 import it.pagopa.interop.generated.openapi.clients.bff.model.Tenant;
 import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateVerifiedTenantAttributeSeed;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -173,6 +175,12 @@ public class BffTenantGateway implements TenantGateway {
         return delimiter == Channel.BFF;
     }
 
+
+    @Override
+    public void attemptVerifiedAttributeExpirationUpdate(TenantRef tenantRef, AttributeRef attributeRef, OffsetDateTime expirationDate) {
+        var payload = new UpdateVerifiedTenantAttributeSeed().expirationDate(expirationDate.toString());
+        restClient.updateVerifiedAttribute(tenantRef.id(), attributeRef.id(), payload).withoutPolling();
+    }
 
     private static <T> T bffCommand(Object command, Class<T> type) {
         if (!type.isInstance(command)) {

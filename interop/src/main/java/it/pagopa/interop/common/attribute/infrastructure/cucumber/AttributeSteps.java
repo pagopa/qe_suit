@@ -12,6 +12,9 @@ import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.tenant.application.TenantUseCase;
 import lombok.RequiredArgsConstructor;
 
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+
 @RequiredArgsConstructor
 public class AttributeSteps {
     private final AttributeUseCase attributeUseCase;
@@ -32,5 +35,14 @@ public class AttributeSteps {
     @Then("viene confermato l'esito di successo per la rimozione della soglia personalizzata")
     public void certifiedAttributeThresholdRemoved() {
         attributeUseCase.certifiedAttributeThresholdRemoved();
+    }
+
+    @When("l'erogatore tenta di modificare la scadenza dell'attributo verificato {string} di {tenant} impostandola a ieri")
+    public void attemptVerifiedAttributeExpirationUpdate(String alias, Tenant tenant) {
+        Attribute attribute = entityStore.getByAliasOrThrow(alias, Attribute.class);
+        tenantUseCase.attemptVerifiedAttributeExpirationUpdate(
+                TenantRef.of(tenant.getOrganizationId()), attribute.getRef(),
+                OffsetDateTime.now(ZoneOffset.UTC).minusDays(1)
+        );
     }
 }

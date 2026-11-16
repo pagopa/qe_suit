@@ -7,6 +7,7 @@ import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import org.springframework.plugin.core.Plugin;
 
+import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -37,4 +38,6 @@ public interface TenantGateway extends Plugin<Channel> {
     void revokeCertifiedDiscreteAttribute(TenantRef tenantRef, AttributeRef attributeRef);
 
     void revokeVerifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef, AgreementRef agreementRef);
+
+    void attemptVerifiedAttributeExpirationUpdate(TenantRef tenantRef, AttributeRef attributeRef, OffsetDateTime expirationDate);
 }

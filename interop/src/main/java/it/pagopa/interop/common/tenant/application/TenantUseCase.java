@@ -6,6 +6,8 @@ import it.pagopa.interop.common.kernel.domain.TenantRef;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class TenantUseCase {
@@ -54,5 +56,9 @@ public class TenantUseCase {
 
     public void revokeVerifiedAttribute(TenantRef tenantRef, AttributeRef attributeRef, AgreementRef agreementRef) {
         tenantGateway.revokeVerifiedAttribute(tenantRef, attributeRef, agreementRef);
+    }
+
+    public void attemptVerifiedAttributeExpirationUpdate(TenantRef tenantRef, AttributeRef attributeRef, OffsetDateTime expirationDate) {
+        tenantGateway.attemptVerifiedAttributeExpirationUpdate(tenantRef, attributeRef, expirationDate);
     }
 }

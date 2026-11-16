@@ -142,4 +142,14 @@ public class BffTenantRestClient extends RestClient {
                 Void.class
         );
     }
+
+    public TestChain<Void> updateVerifiedAttribute(
+            @Nonnull UUID tenantId, @Nonnull UUID attributeId, @Nonnull UpdateVerifiedTenantAttributeSeed seed
+    ) {
+        return execute(
+                () -> tenantsApi.updateVerifiedAttribute().tenantIdPath(tenantId).attributeIdPath(attributeId)
+                        .body(seed).execute(Function.identity()),
+                Void.class
+        );
+    }
 }
