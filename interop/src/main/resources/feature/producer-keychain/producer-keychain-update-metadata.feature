@@ -5,6 +5,7 @@ Feature: Modifica dei metadati dei portachiavi erogatore
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
   Scenario: [PRODUCER_KEYCHAIN_METADATA_1] - L'amministratore aggiorna i metadati del portachiavi che preserva i dati non modificati e le associazioni
   Un amministratore aggiorna i metadati di un portachiavi erogatore (solo nome, solo descrizione, nome e descrizione).
   I dati modificati vengono aggiornati, quelli non modificati vengono preservati,
