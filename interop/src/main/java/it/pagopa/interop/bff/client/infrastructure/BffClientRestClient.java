@@ -89,4 +89,12 @@ public class BffClientRestClient extends RestClient {
                 Client.class
         );
     }
+
+    public TestChain<Void> deleteKey(UUID clientId, String keyId) {
+        return execute(
+                () -> clientsApi.deleteClientKeyById().clientIdPath(clientId).keyIdPath(keyId)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
 }

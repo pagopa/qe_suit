@@ -144,17 +144,14 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_KEY_ALREADY_EXISTS" in lingua "it"
 
   # Endpoint: DELETE /clients/:clientId/keys/:keyId
-  Scenario: [ERROR_107] - Impossibilità di eliminare una chiave del client registrata da un altro operatore
-  Dato un client con una chiave registrata da un operatore di sicurezza
-  Quando un altro operatore di sicurezza dello stesso ente tenta di eliminare la chiave
+  Scenario: [ERROR_107] - Impossibilità per un operatore di sicurezza di eliminare una chiave del client registrata dall'amministratore
+  Dato un client con una chiave registrata dall'amministratore e un operatore di sicurezza associato
+  Quando l'operatore di sicurezza dello stesso ente tenta di eliminare la chiave
   Allora il sistema rifiuta l'eliminazione e segnala che l'operatore non è autorizzato.
 
-    # Binding di setup mancante; riusare createClient e addKey con due utenti distinti associati al client.
-    Given un client con una chiave registrata da un operatore di sicurezza e un altro operatore di sicurezza dello stesso ente associato al client
-    # Binding di identità mancante; il secondo operatore non deve essere sostituito dall'admin nel When.
-    And il secondo operatore di sicurezza selezionato come utente corrente
-    # Operazione BFF e binding negativo mancanti per l'eliminazione della chiave del client.
-    When l'utente tenta di eliminare la chiave registrata dall'altro operatore nel client
+    Given un client API creato dal Comune di Milano in cui è presente un utente security e una coppia di chiavi crittografiche
+    And un security appartenente all'erogatore Comune di Milano
+    When l'utente tenta di eliminare la chiave del client
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_USER_NOT_ALLOWED_TO_DELETE_CLIENT_KEY" in lingua "it"
 
   # Endpoint: POST /producerKeychains/:producerKeychainId/keys

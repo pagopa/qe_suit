@@ -24,4 +24,8 @@ public class ClientUseCase {
     public Client linkPurpose(Client client, Purpose purpose) {
         return clientGateway.addPurpose(client, purpose);
     }
+
+    public void attemptClientKeyDeletion(Client client) {
+        clientGateway.attemptClientKeyDeletion(client, client.getKeys().iterator().next());
+    }
 }

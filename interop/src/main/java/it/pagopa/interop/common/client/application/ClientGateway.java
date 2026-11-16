@@ -9,6 +9,7 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import org.springframework.plugin.core.Plugin;
+import it.pagopa.kernel.security.Key;
 
 import java.util.List;
 
@@ -30,4 +31,6 @@ public interface ClientGateway extends Plugin<Channel> {
     Client addPurpose(Client client, Purpose purpose);
 
     Client setAdmin(Client client, UserRef admin);
+
+    void attemptClientKeyDeletion(Client client, Key key);
 }

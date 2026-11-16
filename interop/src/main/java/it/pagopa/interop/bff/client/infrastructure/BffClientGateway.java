@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.client.infrastructure;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
@@ -18,12 +19,15 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.AddUsersToClientReq
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
+import it.pagopa.kernel.security.Key;
+import it.pagopa.utils.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.security.NoSuchAlgorithmException;
 
 @Service
 @RequiredArgsConstructor
@@ -143,6 +147,17 @@ public class BffClientGateway implements ClientGateway {
     @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
+    }
+
+    @Override
+    public void attemptClientKeyDeletion(Client client, Key key) {
+        String keyId;
+        try {
+            keyId = JwtUtils.calculateKidFromPublicKey(key.pair().getPublic());
+        } catch (NoSuchAlgorithmException | JsonProcessingException exception) {
+            throw new IllegalStateException("Cannot calculate key ID for client " + client.getId(), exception);
+        }
+        restClient.deleteKey(client.getId(), keyId).withoutPolling();
     }
 
     private void addKeys(Client client, KeySeed... keySeeds) {
