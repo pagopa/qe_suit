@@ -8,10 +8,7 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
   Per capire se il documento è disponibile o se devo correggere il file da allegare.
 
   Background:
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore        |
-      | ES-1  | Comune di Milano |
-    And un admin appartenente al fruitore PagoPA
+    Given un admin appartenente al fruitore PagoPA
 
   # Endpoint: GET /agreements/:agreementId/signedContract
   Scenario: [ERROR_168] - Impossibilità di scaricare un documento firmato non ancora disponibile
@@ -19,7 +16,10 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
   Quando l'erogatore tenta di scaricare il documento firmato della richiesta
   Allora il sistema rifiuta il download e segnala che il documento firmato non è ancora disponibile.
 
-    Given l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     # contractException richiede ACTIVE/SUSPENDED/ARCHIVED e signedContract assente.
     # Predisporre separatamente contratto presente e documento firmato assente, senza affidarsi a ritardi di generazione.
     And il contratto della richiesta di fruizione è disponibile
@@ -31,11 +31,22 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
 
   # Endpoint: POST /agreements/:agreementId/consumer-documents
   Scenario: [ERROR_197] - Rifiuto di un allegato PDF con contenuto non valido
-  Data una richiesta di fruizione del fruitore in bozza
+  Dato un e-service che richiede un attributo verificato e una richiesta di fruizione del fruitore in bozza
   Quando il fruitore tenta di allegare un file identificato come PDF ma con contenuto incompatibile con il formato dichiarato
   Allora il sistema rifiuta il caricamento e invita il fruitore a correggere il file prima di riprovare.
 
-    Given l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
+    Given i seguenti attributi verificati creati da un admin del Comune di Milano:
+      | alias |
+      | VER-1 |
+    And i seguenti e-service in bozza:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
+      | tipo       | gruppo | attributo |
+      | verificato | 1      | VER-1     |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
+    And un admin appartenente al fruitore PagoPA
     # Fixture da predisporre: PDF con tipo ammesso e contenuto non valido.
     # Operazione BFF e binding mancanti per il caricamento degli allegati alla richiesta.
     When il fruitore tenta di allegare alla richiesta di fruizione il file "pdf-con-contenuto-non-valido.pdf"

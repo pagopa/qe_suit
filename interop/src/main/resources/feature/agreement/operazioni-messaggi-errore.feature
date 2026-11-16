@@ -105,11 +105,29 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
   # Endpoint: POST /agreements/:agreementId/consumer-documents
   Scenario: [ERROR_154] - Impossibilità di allegare un documento a una richiesta di fruizione attiva
-  Dato un e-service pubblicato e una richiesta di fruizione del fruitore attiva
+  Dato un e-service che richiede un attributo verificato e una richiesta di fruizione attiva del fruitore che lo possiede
   Quando il fruitore tenta di allegare un documento alla richiesta
   Allora il sistema rifiuta il caricamento e segnala che i documenti non possono essere modificati fuori dalla bozza.
 
-    Given un EService creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
+    Given i seguenti attributi verificati creati da un admin del Comune di Milano:
+      | alias |
+      | VER-1 |
+    And i seguenti e-service in bozza:
+      | alias | erogatore        |
+      | ES-1  | Comune di Milano |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
+      | tipo       | gruppo | attributo |
+      | verificato | 1      | VER-1     |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
+    And un admin appartenente al fruitore PagoPA
+    # Binding positivo mancante; riusare submitAgreement e attendere PENDING.
+    And la richiesta di fruizione inviata
+    And un admin appartenente all'erogatore Comune di Milano
+    # Binding mancante; riusare assignVerifiedAttribute sulla richiesta corrente.
+    And l'attributo verificato "VER-1" assegnato a PagoPA per la richiesta di fruizione
+    # Binding positivo mancante; riusare activateAgreement e attendere ACTIVE.
+    And la richiesta di fruizione attivata
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti per il caricamento degli allegati alla richiesta.
     When il fruitore tenta di allegare alla richiesta di fruizione il file "allegato-a.pdf"
@@ -117,13 +135,20 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
   # Endpoint: GET /agreements/:agreementId/consumer-documents/:documentId
   Scenario: [ERROR_155] - Impossibilità di scaricare un documento già eliminato dalla richiesta
-  Data una richiesta di fruizione del fruitore in bozza con un documento allegato e poi eliminato
+  Dato un e-service che richiede un attributo verificato e una richiesta di fruizione in bozza con un documento allegato e poi eliminato
   Quando il fruitore tenta di scaricare lo stesso documento
   Allora il sistema rifiuta il download e segnala che il documento non è più disponibile.
 
-    Given i seguenti e-service pubblicati:
+    Given i seguenti attributi verificati creati da un admin del Comune di Milano:
+      | alias |
+      | VER-1 |
+    And i seguenti e-service in bozza:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
+      | tipo       | gruppo | attributo |
+      | verificato | 1      | VER-1     |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
     And un admin appartenente al fruitore PagoPA
     # Operazioni BFF e binding di setup mancanti; conservare il riferimento al documento eliminato.
@@ -134,13 +159,20 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
   # Endpoint: DELETE /agreements/:agreementId/consumer-documents/:documentId
   Scenario: [ERROR_156] - Impossibilità di eliminare un documento già rimosso dalla richiesta
-  Data una richiesta di fruizione del fruitore in bozza con un documento allegato e poi eliminato
+  Dato un e-service che richiede un attributo verificato e una richiesta di fruizione in bozza con un documento allegato e poi eliminato
   Quando il fruitore tenta di eliminare nuovamente lo stesso documento
   Allora il sistema rifiuta l'eliminazione e segnala che il documento non è più disponibile.
 
-    Given i seguenti e-service pubblicati:
+    Given i seguenti attributi verificati creati da un admin del Comune di Milano:
+      | alias |
+      | VER-1 |
+    And i seguenti e-service in bozza:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
+      | tipo       | gruppo | attributo |
+      | verificato | 1      | VER-1     |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
     And un admin appartenente al fruitore PagoPA
     # Operazioni BFF e binding di setup mancanti; conservare il riferimento al documento eliminato.
@@ -151,19 +183,32 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
   # Endpoint: DELETE /agreements/:agreementId/consumer-documents/:documentId
   Scenario: [ERROR_157] - Impossibilità di eliminare un documento da una richiesta di fruizione attiva
-  Data una richiesta di fruizione del fruitore con un documento allegato in bozza e poi attivata
+  Dato un e-service che richiede un attributo verificato e una richiesta del fruitore con un documento allegato in bozza e poi attivata dopo la verifica dell'attributo
   Quando il fruitore tenta di eliminare il documento dalla richiesta attiva
   Allora il sistema rifiuta l'eliminazione e segnala che i documenti non possono essere modificati fuori dalla bozza.
 
-    Given i seguenti e-service pubblicati che richiedono un attributo verificato posseduto dal fruitore:
+    Given i seguenti attributi verificati creati da un admin del Comune di Milano:
+      | alias |
+      | VER-1 |
+    And i seguenti e-service in bozza:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
+      | tipo       | gruppo | attributo |
+      | verificato | 1      | VER-1     |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding di setup mancanti per gli allegati alla richiesta.
     And il file allegato alla richiesta di fruizione
-    # Binding di setup mancante; riusare submitAgreement e l'attivazione solo se necessaria.
-    And la richiesta di fruizione inviata e attivata
+    # Binding positivo mancante; riusare submitAgreement e attendere PENDING.
+    And la richiesta di fruizione inviata
+    And un admin appartenente all'erogatore Comune di Milano
+    # Binding mancante; riusare assignVerifiedAttribute sulla richiesta corrente.
+    And l'attributo verificato "VER-1" assegnato a PagoPA per la richiesta di fruizione
+    # Binding positivo mancante; riusare activateAgreement e attendere ACTIVE.
+    And la richiesta di fruizione attivata
+    And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding mancanti per l'eliminazione dell'allegato.
     When il fruitore tenta di eliminare il documento dalla richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__DELETE_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS_DOCUMENT_ID" in lingua "it"
@@ -321,13 +366,20 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
   # Endpoint: GET /agreements/:agreementId/consumer-documents/:documentId
   Scenario: [ERROR_167] - Impossibilità per un operatore di sicurezza di scaricare un allegato della richiesta
-  Data una richiesta di fruizione del fruitore con un documento disponibile e un operatore di sicurezza dello stesso ente
+  Dato un e-service che richiede un attributo verificato, una richiesta di fruizione in bozza con un documento disponibile e un operatore di sicurezza del fruitore
   Quando l'operatore tenta di scaricare il documento
   Allora il sistema rifiuta il download e segnala che il ruolo non è autorizzato.
 
-    Given i seguenti e-service pubblicati:
+    Given i seguenti attributi verificati creati da un admin del Comune di Milano:
+      | alias |
+      | VER-1 |
+    And i seguenti e-service in bozza:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
+      | tipo       | gruppo | attributo |
+      | verificato | 1      | VER-1     |
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
     And un admin appartenente al fruitore PagoPA
     # Operazione BFF e binding di setup mancanti per gli allegati alla richiesta.
