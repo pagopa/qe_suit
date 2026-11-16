@@ -222,4 +222,8 @@ public class EServiceDescriptorUseCase {
             throw new AssertionError("L'interfaccia è cambiata dopo il rifiuto (" + reason + ")");
         }
     }
+
+    public void attemptProducerDescriptorDetailsRead(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptProducerDescriptorDetailsRead(eService.getRef(), descriptor.getRef());
+    }
 }

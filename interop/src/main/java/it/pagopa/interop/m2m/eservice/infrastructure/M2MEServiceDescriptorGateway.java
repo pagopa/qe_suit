@@ -266,4 +266,9 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
             Assertions.assertThat(error.getDetail()).isEqualTo(expectedDetail);
         });
     }
+
+    @Override
+    public void attemptProducerDescriptorDetailsRead(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Reading producer descriptor details is not supported on M2M V3");
+    }
 }

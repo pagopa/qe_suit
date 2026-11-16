@@ -80,4 +80,6 @@ public interface EServiceDescriptorGateway extends Plugin<Channel> {
     );
 
     void deleteDraftVersion(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    void attemptProducerDescriptorDetailsRead(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
 }

@@ -208,4 +208,9 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
         restClient.readDescriptor(serviceRef.id(), descriptorRef.id())
                 .withPolling(PollingStrategy.UNTIL_ERROR).assertStatusCode(404);
     }
+
+    @Override
+    public void attemptProducerDescriptorDetailsRead(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.readDescriptor(serviceRef.id(), descriptorRef.id()).withoutPolling();
+    }
 }

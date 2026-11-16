@@ -136,4 +136,9 @@ public class EServiceSteps {
     public void attemptProducerEServiceDetailsRead(EService eService) {
         eServiceUseCase.attemptProducerEServiceDetailsRead(eService);
     }
+
+    @When("l'utente tenta di consultare i dettagli della versione {int} dell'{currentEService} in erogazione")
+    public void attemptProducerDescriptorDetailsRead(int version, EService eService) {
+        descriptorUseCase.attemptProducerDescriptorDetailsRead(eService, eService.getDescriptorOrThrow(version));
+    }
 }

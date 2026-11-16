@@ -33,11 +33,9 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And la delega in erogazione viene revocata dal Comune di Milano
     And un admin appartenente al delegato Comune di Pozzallo
-    # Binding BFF negativo mancante; riusare readDescriptor senza attendere il successo.
     When l'utente tenta di consultare i dettagli della versione 1 dell'e-service in erogazione
     Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID" in lingua "it"
 
-  @producer-delegation-settings
   # Endpoint: GET /export/eservices/:eserviceId/descriptors/:descriptorId
   Scenario: [ERROR_171] - Impossibilità per il delegato di esportare una versione dell'e-service
   Dato un e-service dell'erogatore con una versione pubblicata e una delega attiva a un ente delegato
