@@ -2,12 +2,18 @@ package it.pagopa.send.web.login.infrastructure.cucumber;
 
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.web.destinatario_pg.infrastructure.page.NotificationPage;
 import it.pagopa.send.web.infrastructure.page.ConfigureAddressSendPage;
 import it.pagopa.send.web.login.infrastructure.LoginService;
+import it.pagopa.send.web.login.infrastructure.page.OneIdPage;
+import it.pagopa.send.web.login.infrastructure.page.PgLoginPage;
 import it.pagopa.send.web.login.infrastructure.page.component.PortalLogout;
+import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
+import it.pagopa.send.web.partner_tecnologico.infrastructure.page.PtInstitutionsPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,18 +23,18 @@ public class WebLoginSteps {
     private final WebPresentationGateway uiGateway;
     private final LoginService loginService;
 
-    @Given("la PA {user} effettua l'accesso a SelfCare con autenticazione SPID")
+    @Given("la PA {user} (ha )effettua(to) l'accesso a SelfCare con autenticazione SPID")
     public void spidAuthPa(User tenant) {
         loginService.loginAsTenant(tenant);
     }
 
-    @Given("il PT {user} effettua l'accesso a SelfCare con autenticazione SPID")
+    @Given("il PT {user} (ha )effettua(to) l'accesso a SelfCare con autenticazione SPID")
     public void spidAuthPt(User partner) {
         // il PT entra da SEND come una PA: dopo la scelta dell'ente il portale mittente lo reindirizza al BackOffice PT
         loginService.loginAsTenant(partner);
     }
 
-    @Given("{recipientType} {user} effettua l'accesso a SelfCare con autenticazione SPID")
+    @Given("{recipientType} {user} (ha )effettua(to) l'accesso a SelfCare con autenticazione SPID")
     public void spidAuthRecipient(String userType, User recipient) {
         loginService.loginAsRecipient(userType, recipient);
     }
@@ -54,8 +60,35 @@ public class WebLoginSteps {
         }
     }
 
-    @When("l'utente esce dal portale con il pulsante Esci")
+    @And("il PT ha accesso alle funzionalità del BackOffice PT")
+    public void partnerHasBackOfficeAccess() {
+        uiGateway.bind(PtInstitutionsPage.class).assertLoaded();
+    }
+
+    @And("la PA ha accesso alle funzionalità del portale ente mittente")
+    public void tenantHasPortalAccess() {
+        uiGateway.bind(DashboardPage.class).assertLoaded();
+    }
+
+    @And("la PG ha accesso alle funzionalità del portale imprese")
+    public void companyHasPortalAccess() {
+        skipSendConfiguration();
+        uiGateway.bind(NotificationPage.class).assertLoaded();
+    }
+
+    @When("^(?:il PT|la PA|la PG) richiede la disconnessione dal portale$")
     public void logout() {
         uiGateway.bind(PortalLogout.class).logout();
+    }
+
+    // PT e PA tornano al login di SelfCare, le imprese a quello del portale imprese
+    @Then("^la sessione (?:del PT|della PA) risulta terminata$")
+    public void tenantSessionEnded() {
+        uiGateway.bind(OneIdPage.class).assertLoaded();
+    }
+
+    @Then("la sessione della PG risulta terminata")
+    public void companySessionEnded() {
+        uiGateway.bind(PgLoginPage.class).assertLoaded();
     }
 }

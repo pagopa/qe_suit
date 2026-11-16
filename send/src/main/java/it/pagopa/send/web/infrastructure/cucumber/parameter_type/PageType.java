@@ -6,7 +6,6 @@ import it.pagopa.send.web.campaigns.infrastructure.page.CampaignsPage;
 import it.pagopa.send.web.infrastructure.page.ConfigureAddressSendPage;
 import it.pagopa.send.web.login.infrastructure.page.LogoutPage;
 import it.pagopa.send.web.login.infrastructure.page.OneIdPage;
-import it.pagopa.send.web.login.infrastructure.page.PgLoginPage;
 import it.pagopa.send.web.mittente.infrastructure.page.APIKeyPage;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
@@ -44,7 +43,6 @@ public class PageType {
 
     public enum PageEnum {
         LOGIN_PAGE("LoginPage", OneIdPage.class),
-        PG_LOGIN_PAGE("PgLoginPage", PgLoginPage.class),
         CAMPAIGNS_PAGE("CampaignsPage", CampaignsPage.class),
         LOGOUT_PAGE("LogoutPage", LogoutPage.class),
         DASHBOARD("Dashboard", DashboardPage.class),
