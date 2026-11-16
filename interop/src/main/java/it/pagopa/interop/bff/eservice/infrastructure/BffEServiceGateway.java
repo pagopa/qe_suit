@@ -210,4 +210,9 @@ public class BffEServiceGateway implements EServiceGateway {
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
     }
+
+    @Override
+    public void attemptProducerEServiceDetailsRead(EServiceRef eServiceRef) {
+        restClient.readEService(eServiceRef.id()).withoutPolling();
+    }
 }

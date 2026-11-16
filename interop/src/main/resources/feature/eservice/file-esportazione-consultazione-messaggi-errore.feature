@@ -20,7 +20,6 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And la delega in erogazione viene revocata dal Comune di Milano
     And un admin appartenente al delegato Comune di Pozzallo
-    # Binding BFF negativo mancante; riusare readEService senza attendere il successo.
     When l'utente tenta di consultare i dettagli dell'e-service in erogazione
     Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_PRODUCERS_ESERVICES_ESERVICE_ID" in lingua "it"
 

@@ -86,4 +86,8 @@ public class EServiceUseCase {
     public void shouldFailToCreateEService(EServiceCreationCommand command, EServiceCreationFailureReason reason) {
         eServiceGateway.shouldFailToCreateEService(command, reason);
     }
+
+    public void attemptProducerEServiceDetailsRead(EService eService) {
+        eServiceGateway.attemptProducerEServiceDetailsRead(eService.getRef());
+    }
 }

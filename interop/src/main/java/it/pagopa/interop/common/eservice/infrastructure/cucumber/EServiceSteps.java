@@ -131,4 +131,9 @@ public class EServiceSteps {
     public void deleteDraftVersion(EService eService) {
         descriptorUseCase.deleteDraftVersion(eService);
     }
+
+    @When("l'utente tenta di consultare i dettagli dell'{currentEService} in erogazione")
+    public void attemptProducerEServiceDetailsRead(EService eService) {
+        eServiceUseCase.attemptProducerEServiceDetailsRead(eService);
+    }
 }
