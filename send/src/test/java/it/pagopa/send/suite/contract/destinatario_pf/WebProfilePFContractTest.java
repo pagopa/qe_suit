@@ -13,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -32,7 +30,6 @@ import java.util.stream.Stream;
  * I dati mostrati sono quelli dell'utente con cui si apre la pagina, quindi si confrontano con nome, cognome e codice
  * fiscale dell'utenza {@link UserAlias#USER_1} dell'ambiente.
  */
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,

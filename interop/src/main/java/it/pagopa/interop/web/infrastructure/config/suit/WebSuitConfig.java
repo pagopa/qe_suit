@@ -9,6 +9,7 @@ import it.frontend.e2e.framework.web.model.location.Url;
 import it.pagopa.infrastructure.suit.capability.AuthenticatedLocatableCapabilityHandler;
 import it.pagopa.interop.web.infrastructure.suit.component.NotFoundComponent;
 import it.pagopa.interop.web.infrastructure.suit.component.ServerErrorComponent;
+import it.pagopa.infrastructure.suit.component.Snackbar;
 import it.pagopa.interop.web.infrastructure.suit.component.UnauthorizedComponent;
 import lombok.Getter;
 import lombok.Setter;
@@ -74,5 +75,11 @@ public class WebSuitConfig {
     @ScenarioScope
     public NotFoundComponent notFoundComponent(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(NotFoundComponent.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public Snackbar snackbar(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(Snackbar.class);
     }
 }
