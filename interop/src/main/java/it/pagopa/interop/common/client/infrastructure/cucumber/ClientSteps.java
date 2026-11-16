@@ -64,27 +64,37 @@ public class ClientSteps {
         };
     }
 
+    @Then("il client {string} conserva le associazioni e i dati di riferimento")
+    public void assertClientPreserved(String clientAlias) {
+        assertClientPreserved(clientAlias, Set.of(), "Dati e associazioni del client " + clientAlias);
+    }
+
     @Then("il client {string} conserva le associazioni e i dati di riferimento eccetto {clientMetadataField}")
     public void assertClientPreservedExceptField(String clientAlias, ClientMetadataField excludedField) {
+        assertClientPreserved(clientAlias, excludedField.fieldNames,
+                "Dati e associazioni del client " + clientAlias + " eccetto " + excludedField.getLabel());
+    }
+
+    private void assertClientPreserved(String clientAlias, Set<String> excludedFields, String description) {
         assertThat(clientReference)
                 .as("Riferimento del client salvato prima della modifica")
                 .isNotNull();
         Client client = entityStore.getByAliasOrThrow(clientAlias, Client.class);
 
-        if (excludedField.fieldNames.contains("name")) {
+        if (excludedFields.contains("name")) {
             assertThat(client.getName())
                     .as("Nome del client %s dopo la modifica", clientAlias)
                     .isNotEqualTo(clientReference.getName());
         }
-        if (excludedField.fieldNames.contains("description")) {
+        if (excludedFields.contains("description")) {
             assertThat(client.getDescription())
                     .as("Descrizione del client %s dopo la modifica", clientAlias)
                     .isNotEqualTo(clientReference.getDescription());
         }
         assertThat(client)
-                .as("Dati e associazioni del client %s eccetto %s", clientAlias, excludedField.getLabel())
+                .as(description)
                 .usingRecursiveComparison()
-                .ignoringFields(excludedField.fieldNames.toArray(String[]::new))
+                .ignoringFields(excludedFields.toArray(String[]::new))
                 .isEqualTo(clientReference);
     }
 
