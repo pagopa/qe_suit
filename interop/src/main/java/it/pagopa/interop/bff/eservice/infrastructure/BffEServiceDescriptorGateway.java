@@ -200,4 +200,12 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     public boolean supports(Channel channel) {
         return channel == Channel.BFF;
     }
+
+    @Override
+    public void deleteDraftVersion(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.deleteDraftVersion(serviceRef.id(), descriptorRef.id())
+                .withoutPolling().assertStatusCode(204);
+        restClient.readDescriptor(serviceRef.id(), descriptorRef.id())
+                .withPolling(PollingStrategy.UNTIL_ERROR).assertStatusCode(404);
+    }
 }

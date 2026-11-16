@@ -190,6 +190,11 @@ public class EServiceDescriptorUseCase {
         return eServiceDescriptorGateway.downloadInterface(eService.getRef(), descriptor.getRef());
     }
 
+    public void deleteDraftVersion(EService eService) {
+        EServiceDescriptor draft = eService.getLastDraftDescriptor();
+        eServiceDescriptorGateway.deleteDraftVersion(eService.getRef(), draft.getRef());
+    }
+
     private static void assertSameSnapshot(
             java.util.Optional<it.pagopa.interop.common.eservice.domain.EServiceDescriptorInterface> before,
             java.util.Optional<it.pagopa.interop.common.eservice.domain.EServiceDescriptorInterface> after,

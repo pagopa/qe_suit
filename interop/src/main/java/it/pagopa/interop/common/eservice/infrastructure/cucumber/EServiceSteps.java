@@ -126,4 +126,9 @@ public class EServiceSteps {
                 eService, gracePeriodDays, EServiceArchivingFailureReason.ARCHIVING_BEFORE_DESCRIPTOR
         );
     }
+
+    @Given("la versione in bozza appena creata dell'{currentEService} viene eliminata")
+    public void deleteDraftVersion(EService eService) {
+        descriptorUseCase.deleteDraftVersion(eService);
+    }
 }

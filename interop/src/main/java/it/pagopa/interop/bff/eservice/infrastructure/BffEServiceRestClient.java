@@ -168,4 +168,11 @@ public class BffEServiceRestClient extends RestClient {
                 ProducerEServices.class
         );
     }
+
+    public TestChain<Void> deleteDraftVersion(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+        return execute(
+                () -> eservicesApi.deleteDraft().eServiceIdPath(eserviceId).descriptorIdPath(descriptorId).execute(Function.identity()),
+                Void.class
+        );
+    }
 }

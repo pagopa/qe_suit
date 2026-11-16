@@ -166,6 +166,11 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
         return channel == Channel.M2M_V3;
     }
 
+    @Override
+    public void deleteDraftVersion(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Deleting draft descriptors is not supported on M2M V3");
+    }
+
     private EServiceDescriptorInterface fetchRemoteInterface(
             EServiceRef eServiceRef,
             EServiceDescriptorRef descriptorRef

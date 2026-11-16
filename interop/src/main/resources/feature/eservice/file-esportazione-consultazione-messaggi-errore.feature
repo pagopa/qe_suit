@@ -60,9 +60,8 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
     Given i seguenti e-service pubblicati:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
-    # Setup e binding mancanti; riusare addDescriptor, eliminare solo la bozza e conservarne il riferimento.
-    # Manca l'eliminazione BFF della versione; deleteEService eliminerebbe l'intero e-service.
-    And la versione successiva dell'e-service creata in bozza e poi eliminata
+    And la versione 2 dell'e-service "ES-1" del Comune di Milano in bozza
+    And la versione in bozza appena creata dell'e-service viene eliminata
     # Binding BFF comune mancante per il caricamento; riusare addDocument sulla versione eliminata.
     When l'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_DESCRIPTOR_NOT_FOUND" in lingua "it"
