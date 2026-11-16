@@ -95,4 +95,9 @@ public class AgreementSteps {
         };
         agreementUseCase.shouldFailToCreateAgreement(eService, eServiceDescriptor, reason);
     }
+
+    @When("l'erogatore tenta di sospendere la {currentAgreement}")
+    public void attemptAgreementSuspension(Agreement agreement) {
+        agreementUseCase.attemptAgreementSuspension(agreement);
+    }
 }

@@ -138,6 +138,11 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
         return delimiter == Channel.WEB_BROWSER;
     }
 
+    @Override
+    public void attemptAgreementSuspension(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementSuspension operation");
+    }
+
     private void verifyAgreementDownloadAvailability(Supplier<Button> downloadButton, Runnable reloadPage) {
         assertThat(downloadButton.get().isDisabled())
                 .as("Il link per scaricare la richiesta di fruizione inizialmente è disabilitato")

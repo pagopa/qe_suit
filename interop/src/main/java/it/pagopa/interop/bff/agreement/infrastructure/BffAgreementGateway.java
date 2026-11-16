@@ -164,4 +164,9 @@ public class BffAgreementGateway implements AgreementGateway {
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
     }
+
+    @Override
+    public void attemptAgreementSuspension(Agreement agreement) {
+        restClient.suspend(agreement.getId(), null).withoutPolling();
+    }
 }

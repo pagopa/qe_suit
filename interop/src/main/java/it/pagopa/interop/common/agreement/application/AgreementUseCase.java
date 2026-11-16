@@ -107,4 +107,8 @@ public class AgreementUseCase {
     public Agreement awaitState(Agreement agreement, Set<AgreementState> expectedStates) {
         return agreementGateway.awaitState(agreement, expectedStates);
     }
+
+    public void attemptAgreementSuspension(Agreement agreement) {
+        agreementGateway.attemptAgreementSuspension(agreement);
+    }
 }
