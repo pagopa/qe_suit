@@ -2,7 +2,7 @@ name: "[INTEROP] QA workflow"
 
 on:
   schedule:
-    - cron: '0 21 * * *'
+    - cron: '0 22 * * *'
       timezone: "Europe/Rome"
 
   workflow_dispatch:
