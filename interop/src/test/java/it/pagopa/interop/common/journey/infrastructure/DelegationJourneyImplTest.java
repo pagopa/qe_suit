@@ -3,6 +3,7 @@ package it.pagopa.interop.common.journey.infrastructure;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.delegation.application.DelegationUseCase;
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationSetupCommand;
+import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -62,6 +63,7 @@ class DelegationJourneyImplTest {
         InOrder order = inOrder(session, useCase);
         order.verify(session).set(User.getTenantAdmin(delegator), delegator);
         order.verify(useCase).createProducerDelegation(any(), any(), same(eService));
+        verify(entityStore).upsert(Delegation.builder().id(created.getId()).build());
         order.verify(useCase).waitForProducerDelegationState(
                 created.getRef(), ProducerDelegationState.WAITING_FOR_APPROVAL
         );

@@ -12,19 +12,15 @@ import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
-import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisAssignmentSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisRejectionSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisSignSeed;
+import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +36,19 @@ public class BffPurposeGateway implements PurposeGateway {
                 .map(mapper::toPurpose)
                 .updateContext()
                 .get();
+    }
+
+    @Override
+    public Purpose updatePurposeDailyCalls(PurposeRef purposeRef, int dailyCalls) {
+        var response = restClient.createPurposeVersion(purposeRef.id(), new PurposeVersionSeed().dailyCalls(dailyCalls))
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+        var createdVersion = response.get();
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(createdVersion.getVersionId())
+                        .map(version -> Integer.valueOf(dailyCalls).equals(version.getDailyCalls()))
+                        .orElse(false)
+        );
     }
 
     @Override
@@ -66,7 +75,22 @@ public class BffPurposeGateway implements PurposeGateway {
 
     @Override
     public Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef) {
-        return restClient.createPurposeFromTemplate(purposeTemplateRef.id(), commandFactory.creationFromTemplateRequest(eServiceRef))
+        return restClient.createPurposeFromTemplate(
+                        purposeTemplateRef.id(),
+                        commandFactory.creationFromTemplateRequest(eServiceRef, purposeTemplateRef)
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, PurposeCreateCommand createCommand) {
+        return restClient.createPurposeFromTemplate(
+                        purposeTemplateRef.id(),
+                        commandFactory.creationFromTemplateRequest(createCommand, purposeTemplateRef)
+                )
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(createdResource -> getPurpose(PurposeRef.of(createdResource.getId())))
                 .updateContext()
@@ -87,6 +111,33 @@ public class BffPurposeGateway implements PurposeGateway {
     }
 
     @Override
+    public Purpose rejectPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, String rejectionReason) {
+        restClient.rejectPurposeVersion(
+                purposeRef.id(), purposeVersionRef.id(), new RejectPurposeVersionPayload().rejectionReason(rejectionReason)
+                ).withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(purposeVersionRef.id())
+                        .map(version -> version.getPurposeVersionState() == PurposeVersionState.REJECTED)
+                        .orElse(false)
+        );
+    }
+
+    @Override
+    public Purpose askForApprovalPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef) {
+        it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef delegation = getDelegation(delegationRef);
+
+        restClient.activatePurposeVersion(purposeRef.id(), purposeVersionRef.id(), delegation)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.getLastWaitingForApprovalVersion() != null && purpose.getLastWaitingForApprovalVersion().getRef().equals(purposeVersionRef)
+        );
+    }
+
+    @Override
     public Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef) {
         it.pagopa.interop.generated.openapi.clients.bff.model.DelegationRef delegation = getDelegation(delegationRef);
 
@@ -99,61 +150,6 @@ public class BffPurposeGateway implements PurposeGateway {
                                 .orElseThrow(() -> new IllegalStateException("Purpose version not found"))
                                 .getRef().equals(purposeVersionRef)
         );
-    }
-
-    @Override
-    public void assignRiskAnalysisReviewers(
-            PurposeRef purposeRef,
-            RiskAnalysisReviewMode reviewMode,
-            List<UUID> reviewerIds
-    ) {
-        RiskAnalysisAssignmentSeed assignment = new RiskAnalysisAssignmentSeed()
-                    .reviewMode(toBffReviewMode(reviewMode))
-                .reviewerIds(List.copyOf(reviewerIds));
-
-        restClient.assignRiskAnalysisReviewers(purposeRef.id(), assignment)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .get();
-    }
-
-    @Override
-    public void submitRiskAnalysis(PurposeRef purposeRef) {
-        restClient.submitRiskAnalysis(purposeRef.id(), commandFactory.riskAnalysisSubmissionRequest())
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .get();
-    }
-
-    @Override
-    public void signRiskAnalysis(PurposeRef purposeRef, int metadataVersionToSign) {
-        RiskAnalysisSignSeed signRequest = new RiskAnalysisSignSeed()
-                .metadataVersionToSign(metadataVersionToSign);
-
-        restClient.signRiskAnalysis(purposeRef.id(), signRequest)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .get();
-    }
-
-    @Override
-    public void rejectRiskAnalysis(PurposeRef purposeRef, String rejectionReason) {
-        RiskAnalysisRejectionSeed rejectionRequest = new RiskAnalysisRejectionSeed()
-                .rejectionReason(rejectionReason);
-
-        restClient.rejectRiskAnalysis(purposeRef.id(), rejectionRequest)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .get();
-    }
-
-    private static it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode toBffReviewMode(
-            RiskAnalysisReviewMode reviewMode
-    ) {
-        return switch (reviewMode) {
-            case ADMIN_WRITES_ADMIN_SIGNS ->
-                    it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode.ADMIN_WRITES_ADMIN_SIGNS;
-            case ADMIN_WRITES_REVIEWER_SIGNS ->
-                    it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS;
-            case REVIEWER_WRITES_REVIEWER_SIGNS ->
-                    it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode.REVIEWER_WRITES_REVIEWER_SIGNS;
-        };
     }
 
     @Override
