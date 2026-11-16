@@ -5,6 +5,7 @@ import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisAnswerTemplate;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResources;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
@@ -37,7 +38,38 @@ public interface BffPurposeTemplateMapper {
     @Mapping(target = "linkedEServiceIds", ignore = true)
     @Mapping(target = "linkedResourceIds", ignore = true)
     @Mapping(target = "riskAnalysisAnswerIds", source = "purposeRiskAnalysisForm", qualifiedByName = "mapRiskAnalysisAnswerIds")
+    @Mapping(target = "riskAnalysisFormTemplate", source = "purposeRiskAnalysisForm", qualifiedByName = "mapRiskAnalysisFormTemplate")
     PurposeTemplate toPurposeTemplate(PurposeTemplateWithCompactCreator source);
+
+    @Named("mapRiskAnalysisFormTemplate")
+    default it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormTemplate mapRiskAnalysisFormTemplate(
+            RiskAnalysisFormTemplate form
+    ) {
+        if (form == null) {
+            return null;
+        }
+
+        Map<String, RiskAnalysisAnswerTemplate> answerTemplates = null;
+        if (form.getAnswers() != null) {
+            answerTemplates = new LinkedHashMap<>();
+            for (Map.Entry<String, RiskAnalysisTemplateAnswer> entry : form.getAnswers().entrySet()) {
+                if (entry.getKey() == null || entry.getValue() == null) {
+                    continue;
+                }
+                RiskAnalysisTemplateAnswer answer = entry.getValue();
+                answerTemplates.put(entry.getKey(), RiskAnalysisAnswerTemplate.builder()
+                        .values(answer.getValues())
+                        .editable(answer.getEditable())
+                        .suggestedValues(answer.getSuggestedValues())
+                        .build());
+            }
+        }
+
+        return it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormTemplate.builder()
+                .version(form.getVersion())
+                .answerTemplates(answerTemplates)
+                .build();
+    }
 
     @Named("mapRiskAnalysisAnswerIds")
     default Map<String, UUID> mapRiskAnalysisAnswerIds(RiskAnalysisFormTemplate form) {
@@ -74,6 +106,10 @@ public interface BffPurposeTemplateMapper {
         Map<String, UUID> answerIds = (mapped.getRiskAnalysisAnswerIds() != null && !mapped.getRiskAnalysisAnswerIds().isEmpty())
                 ? mapped.getRiskAnalysisAnswerIds()
                 : (existing.getRiskAnalysisAnswerIds() != null ? existing.getRiskAnalysisAnswerIds() : Map.of());
+        var riskAnalysisFormTemplate = mergeRiskAnalysisFormTemplate(
+                mapped.getRiskAnalysisFormTemplate(),
+                existing.getRiskAnalysisFormTemplate()
+        );
 
         return mapped.toBuilder()
                 .clearLinkedEServiceIds()
@@ -82,6 +118,48 @@ public interface BffPurposeTemplateMapper {
                 .linkedResourceIds(existing.getLinkedResourceIds() != null ? existing.getLinkedResourceIds() : List.of())
                 .clearRiskAnalysisAnswerIds()
                 .riskAnalysisAnswerIds(answerIds)
+                .riskAnalysisFormTemplate(riskAnalysisFormTemplate)
+                .build();
+    }
+
+    default it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormTemplate mergeRiskAnalysisFormTemplate(
+            it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormTemplate updated,
+            it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormTemplate existing
+    ) {
+        if (updated == null) {
+            return existing;
+        }
+        if (existing == null) {
+            return updated;
+        }
+
+        Map<String, RiskAnalysisAnswerTemplate> updatedAnswers = updated.getAnswerTemplates();
+        Map<String, RiskAnalysisAnswerTemplate> existingAnswers = existing.getAnswerTemplates();
+        if (updatedAnswers == null) {
+            updatedAnswers = existingAnswers;
+        } else if (existingAnswers != null) {
+            Map<String, RiskAnalysisAnswerTemplate> mergedAnswers = new LinkedHashMap<>();
+            for (Map.Entry<String, RiskAnalysisAnswerTemplate> entry : updatedAnswers.entrySet()) {
+                RiskAnalysisAnswerTemplate updatedAnswer = entry.getValue();
+                RiskAnalysisAnswerTemplate existingAnswer = existingAnswers.get(entry.getKey());
+                if (updatedAnswer == null || existingAnswer == null) {
+                    mergedAnswers.put(entry.getKey(), updatedAnswer);
+                    continue;
+                }
+                mergedAnswers.put(entry.getKey(), updatedAnswer.toBuilder()
+                        .values(updatedAnswer.getValues() != null ? updatedAnswer.getValues() : existingAnswer.getValues())
+                        .editable(updatedAnswer.getEditable() != null ? updatedAnswer.getEditable() : existingAnswer.getEditable())
+                        .suggestedValues(updatedAnswer.getSuggestedValues() != null
+                                ? updatedAnswer.getSuggestedValues()
+                                : existingAnswer.getSuggestedValues())
+                        .build());
+            }
+            updatedAnswers = mergedAnswers;
+        }
+
+        return it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormTemplate.builder()
+                .version(updated.getVersion() != null ? updated.getVersion() : existing.getVersion())
+                .answerTemplates(updatedAnswers)
                 .build();
     }
 
@@ -122,4 +200,3 @@ public interface BffPurposeTemplateMapper {
                 .build();
     }
 }
-

@@ -28,8 +28,6 @@ import org.junit.jupiter.api.Assertions;
 import it.pagopa.send.web.infrastructure.page.ConfigureAddressSendPage;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -45,7 +43,6 @@ import java.util.stream.Stream;
  * Le pagine che esistono solo se l'utente ha dei dati (dettaglio e timeline di una notifica, riepilogo del wizard di
  * attivazione, gestione del domicilio digitale, passi 2-4 di "Il meglio di SEND") non sono verificate.
  */
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,

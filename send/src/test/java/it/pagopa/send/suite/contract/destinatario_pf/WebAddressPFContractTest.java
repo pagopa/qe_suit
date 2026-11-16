@@ -12,8 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -26,7 +24,6 @@ import java.util.stream.Stream;
  * domicilio digitale e di SEND sull'app IO. Il contenuto delle card dipende dai recapiti dell'utente (attivi o da
  * attivare) e non viene verificato.
  */
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,
