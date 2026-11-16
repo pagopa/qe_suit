@@ -98,7 +98,6 @@ public interface BffLegalNotificationMapper {
                 .cancelledIun(source.getCancelledIun())
                 .amount(toDecimal(source.getAmount()))
                 .paymentExpirationDate(source.getPaymentExpirationDate());
-
         source.getRecipients().forEach(recipient -> request.addRecipientsItem(toRecipient(recipient)));
         return request;
     }
@@ -117,7 +116,6 @@ public interface BffLegalNotificationMapper {
         List<NotificationPaymentItem> paymentItems = recipient.payments().stream()
                 .map(this::toPaymentItem)
                 .toList();
-
         return new NotificationRecipientV24()
                 .recipientType(toRecipientType(recipient.type()))
                 .taxId(recipient.taxId())
@@ -128,13 +126,13 @@ public interface BffLegalNotificationMapper {
     }
 
     /**
-     * Un destinatario di notifica è per costruzione PF o PG, mai PA.
+     * Un destinatario di notifica è per costruzione PF o PG, mai PA o PT.
      */
     default NotificationRecipientV24.RecipientTypeEnum toRecipientType(UserType type) {
         return switch (type) {
             case PF -> NotificationRecipientV24.RecipientTypeEnum.PF;
             case PG -> NotificationRecipientV24.RecipientTypeEnum.PG;
-            case PA -> throw new IllegalStateException(type + " non può essere destinatario di una notifica");
+            case PA, PT -> throw new IllegalStateException(type + " non può essere destinatario di una notifica");
         };
     }
 

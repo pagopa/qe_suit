@@ -7,7 +7,8 @@ package it.pagopa.send.common.user.domain;
 public enum UserAlias {
     USER_1, USER_2,         // PF
     IMPRESA_1, IMPRESA_2,   // PG
-    COMUNE_1, COMUNE_2;     // PA
+    COMUNE_1, COMUNE_2,     // PA
+    PT_1;                   // PT
 
     /**
      * Alias a partire dalla chiave scritta nelle feature ({@code User_1} → {@link #USER_1}).
@@ -18,7 +19,7 @@ public enum UserAlias {
 
     /**
      * Tipologia dell'utenza, ricavata dal prefisso del nome: {@code USER_} persona fisica, {@code IMPRESA_} persona
-     * giuridica, {@code COMUNE_} pubblica amministrazione.
+     * giuridica, {@code COMUNE_} pubblica amministrazione, {@code PT_} partner tecnologico.
      */
     public UserType getType() {
         String name = name();
@@ -27,6 +28,9 @@ public enum UserAlias {
         }
         if (name.startsWith("IMPRESA_")) {
             return UserType.PG;
+        }
+        if (name.startsWith("PT_")) {
+            return UserType.PT;
         }
         if (name.startsWith("COMUNE_")) {
             return UserType.PA;

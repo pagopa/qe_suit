@@ -15,7 +15,7 @@ import it.pagopa.send.web.infrastructure.config.WebConfig;
 import it.pagopa.send.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityHandler;
 import it.pagopa.send.web.infrastructure.config.suit.AuthenticatedLocatableCapabilityImpl;
 import it.pagopa.send.web.login.infrastructure.DynamicUserTokenProvider;
-import it.pagopa.send.web.login.infrastructure.SelfCareSessionPayloadFactory;
+import it.pagopa.send.web.login.infrastructure.WebSelfCareSessionPayloadFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -60,7 +60,7 @@ public class WebJUnitSuitConfig {
     WebPresentationGateway webPresentationGateway(
             WebConfig webConfig,
             Environment environment,
-            SelfCareSessionPayloadFactory sessionPayloadFactory,
+            WebSelfCareSessionPayloadFactory sessionPayloadFactory,
             CurrentUserSession currentUserSession,
             DynamicUserTokenProvider tokenProvider
     ) {
