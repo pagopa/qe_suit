@@ -21,7 +21,7 @@ public class LoginSteps {
         loginUseCase.loginAsTenant(tenant);
     }
 
-    @Given("il PT {user} (ha )effettua(to) l'accesso a SelfCare con autenticazione SPID")
+    @Given("il partner tecnologico: {user} (ha )effettua(to) l'accesso a SelfCare con autenticazione SPID")
     public void spidAuthPt(User partner) {
         // il PT entra da SEND come una PA: dopo la scelta dell'ente il portale mittente lo reindirizza al BackOffice PT
         loginUseCase.loginAsTenant(partner);
@@ -47,21 +47,21 @@ public class LoginSteps {
         loginUseCase.skipSendConfiguration();
     }
 
-    @And("il PT ha accesso alle funzionalità del BackOffice PT")
+    @And("il partner tecnologico ha accesso alle funzionalità del BackOffice PT")
     @And("la PA ha accesso alle funzionalità del portale ente mittente")
     @And("la PG ha accesso alle funzionalità del portale imprese")
     public void verifyPortalAccess() {
         loginUseCase.verifyPortalAccess();
     }
 
-    @When("il PT richiede la disconnessione dal portale")
+    @When("il partner tecnologico richiede la disconnessione dal portale")
     @When("la PA richiede la disconnessione dal portale")
     @When("la PG richiede la disconnessione dal portale")
     public void logout() {
         loginUseCase.logout();
     }
 
-    @Then("la sessione del PT risulta terminata")
+    @Then("la sessione del partner tecnologico risulta terminata")
     @Then("la sessione della PA risulta terminata")
     @Then("la sessione della PG risulta terminata")
     public void verifySessionEnded() {

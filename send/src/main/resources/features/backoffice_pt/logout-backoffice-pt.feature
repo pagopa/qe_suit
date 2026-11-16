@@ -5,11 +5,11 @@ Feature: Disconnessione dai portali SEND degli enti
   così la mia sessione termina qualunque sia il tipo del mio ente
 
   @backofficePt
-  Scenario: [BACKOFFICE_PT_LOGOUT_1] Un ente PT effettua la disconnessione dal BackOffice PT
-    Given il PT PT_1 ha effettuato l'accesso a SelfCare con autenticazione SPID
-    And il PT ha accesso alle funzionalità del BackOffice PT
-    When il PT richiede la disconnessione dal portale
-    Then la sessione del PT risulta terminata
+  Scenario: [BACKOFFICE_PT_LOGOUT_1] Un partner tecnologico effettua la disconnessione dal BackOffice PT
+    Given il partner tecnologico: PT_1 ha effettuato l'accesso a SelfCare con autenticazione SPID
+    And il partner tecnologico ha accesso alle funzionalità del BackOffice PT
+    When il partner tecnologico richiede la disconnessione dal portale
+    Then la sessione del partner tecnologico risulta terminata
 
   @backofficePt
   Scenario: [BACKOFFICE_PT_LOGOUT_2] Un ente PA effettua la disconnessione dal portale ente mittente
