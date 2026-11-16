@@ -44,7 +44,7 @@ public class BffRequestSpecFactory {
                 ))
                 .addHeader(
                         "Authorization",
-                        "Bearer " + tokenProvider.requireToken(currentUserSession.getUser().getUsername())
+                        "Bearer " + tokenProvider.requireToken(currentUserSession.getUser().getSessionTokenKey())
                 )
                 .addFilter(new HttpLoggingFilter());
     }
