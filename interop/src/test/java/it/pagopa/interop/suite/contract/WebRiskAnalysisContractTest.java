@@ -22,7 +22,8 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Verifies the reviewer-facing risk-analysis page.
+ * Verifies the reviewer workspace's UI contract for its current empty or
+ * populated state without creating assignments.
  */
 @SpringBootTest(
         classes = {
@@ -42,10 +43,10 @@ class WebRiskAnalysisContractTest {
 
     private final WebBrowserContractValidator webContractValidator;
     /**
-     * Verifies the risk-analysis page when the reviewer has no assigned analyses
-     * and when assigned analyses are available.
+     * Checks the common page content and the empty or populated state encountered
+     * for the configured reviewer. A single execution does not cover both states.
      *
-     * @return the dynamic contract test for the risk-analysis page states
+     * @return dynamic UI contract tests for the current workspace state
      */
     @TestFactory
     @DisplayName("Risk analysis page shows the appropriate empty or populated state")

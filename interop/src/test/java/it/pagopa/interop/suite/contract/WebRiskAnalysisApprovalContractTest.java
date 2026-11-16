@@ -27,6 +27,10 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 
+/**
+ * Verifies the approval page's UI contract: navigation, accordion content,
+ * populated values, explanatory notes, enabled review actions and confirmation dialog.
+ */
 @SpringBootTest(
         classes = {
                 TestBootApp.class,
@@ -48,7 +52,6 @@ class WebRiskAnalysisApprovalContractTest {
     public static final String BTN_APPROVE = "Approva analisi del rischio";
     public static final String BTN_REJECT = "Rifiuta con motivazione";
 
-    // Informazioni Generali
     private static final String INFO_PURPOSE_NAME = "Nome della finalità";
     private static final String INFO_PROVIDER = "Erogatore";
     private static final String INFO_ESTIMATES_TITLE = "Stima e soglie di chiamate API";
@@ -56,7 +59,6 @@ class WebRiskAnalysisApprovalContractTest {
     private static final String INFO_ASSIGNMENT_DATE = "Data assegnazione";
     private static final String INFO_ASSIGNED_TO = "Assegnata a";
 
-    // Analisi del rischio
     private static final String RISK_TITLE = "Analisi del rischio";
     private static final String Q_PURPOSE = "Indicare per quale finalità si intende accedere ai dati messi a disposizione con la fruizione del presente E-service";
     private static final String Q_SPECIFIC_PURPOSE = "Specificare il fine perseguito per fini istituzionali che non richiedano prestazioni di elaborazioni aggiuntive";
@@ -66,6 +68,12 @@ class WebRiskAnalysisApprovalContractTest {
     private final InteropJourney interopJourney;
     private final WebBrowserContractValidator webContractValidator;
 
+    /**
+     * Prepares a submitted analysis and checks its content as the assigned reviewer
+     * without approving or rejecting it.
+     *
+     * @return dynamic UI contract tests for an analysis awaiting approval
+     */
     @TestFactory
     Stream<DynamicTest> verifyRiskAnalysisApprovalPageContent() {
         String eServiceName = RandomUtils.randomAlphanumericName("e-service_RA_to_approve");
@@ -85,24 +93,31 @@ class WebRiskAnalysisApprovalContractTest {
                                 },
                                 page -> {
                                     assertHeaderAndBreadcrumbs(page);
-                                    page.pageTitle().readAndAssert(TITLE);
+                                    page.title().readAndAssert(TITLE);
 
-                                    assertInformazioniGenerali(page.informazioniGeneraliCard());
-                                    assertAnalisiRischio(page.analisiRischioCard());
+                                    assertInformazioniGenerali(page.generalInfoCard());
+                                    assertAnalisiRischio(page.riskAnalysisCard());
 
-                                    // Alert Message
                                     page.alertMessage().readAndAssert(ALERT);
 
                                     assertFooterAction(page);
-
-
+                                    assertThat(page.approvalErrorAlert().exists(FindPolicy.VISIBLE))
+                                            .as("No approval error is shown before an approval attempt")
+                                            .isFalse();
+                                    page.approveButton().click();
+                                    assertThat(page.approvalConfirmationDialog().get(FindPolicy.VISIBLE))
+                                            .as("Approval confirmation dialog must open")
+                                            .isPresent();
+                                    page.approvalConfirmationDialog().confirmBtn().readAndAssert("Conferma");
+                                    assertThat(page.approvalConfirmationDialog().confirmBtn().get(FindPolicy.CLICKABLE))
+                                            .as("Confirmation must be enabled without submitting it")
+                                            .isPresent();
                                 }
                         )
                 ));
     }
 
     private static void assertFooterAction(RiskAnalysisApprovalPage page) {
-        // Action button
         assertThat(page.rejectButton().isDisabled()).as("Reject button must be enabled").isFalse();
         page.approveButton().readAndAssert(BTN_APPROVE);
 
@@ -111,7 +126,6 @@ class WebRiskAnalysisApprovalContractTest {
     }
 
     private static void assertHeaderAndBreadcrumbs(RiskAnalysisApprovalPage page) {
-        // Header e Navigazione
         assertThat(page.backToEServicesButton().isDisabled())
                 .as("Button enabled").isFalse();
         page.backToEServicesButton().readAndAssert("Torna alle analisi del rischio");

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -26,7 +27,17 @@ public class RiskAnalysisSetupJourneyImpl implements RiskAnalysisSetupJourney<Ri
     public RiskAnalysisSetupJourneyImpl setUpRiskAnalysisToCompile(
             String eServiceName, Tenant producer, Tenant consumer, User reviewer
     ) {
-        return setUp(eServiceName, producer, consumer, reviewer,
+        Objects.requireNonNull(reviewer, "reviewer must not be null");
+        return setUpRiskAnalysisToCompile(
+                eServiceName, producer, consumer, List.of(reviewer)
+        );
+    }
+
+    @Override
+    public RiskAnalysisSetupJourneyImpl setUpRiskAnalysisToCompile(
+            String eServiceName, Tenant producer, Tenant consumer, List<User> reviewers
+    ) {
+        return setUp(eServiceName, producer, consumer, reviewers,
                 RiskAnalysisReviewMode.REVIEWER_WRITES_REVIEWER_SIGNS);
     }
 
@@ -34,12 +45,22 @@ public class RiskAnalysisSetupJourneyImpl implements RiskAnalysisSetupJourney<Ri
     public RiskAnalysisSetupJourneyImpl setUpRiskAnalysisToApprove(
             String eServiceName, Tenant producer, Tenant consumer, User reviewer
     ) {
-        return setUp(eServiceName, producer, consumer, reviewer,
+        Objects.requireNonNull(reviewer, "reviewer must not be null");
+        return setUpRiskAnalysisToApprove(
+                eServiceName, producer, consumer, List.of(reviewer)
+        );
+    }
+
+    @Override
+    public RiskAnalysisSetupJourneyImpl setUpRiskAnalysisToApprove(
+            String eServiceName, Tenant producer, Tenant consumer, List<User> reviewers
+    ) {
+        return setUp(eServiceName, producer, consumer, reviewers,
                 RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS);
     }
 
     private RiskAnalysisSetupJourneyImpl setUp(
-            String eServiceName, Tenant producer, Tenant consumer, User reviewer, RiskAnalysisReviewMode mode
+            String eServiceName, Tenant producer, Tenant consumer, List<User> reviewers, RiskAnalysisReviewMode mode
     ) {
         Objects.requireNonNull(eServiceName, "eServiceName must not be null");
         if (eServiceName.isBlank()) {
@@ -47,9 +68,19 @@ public class RiskAnalysisSetupJourneyImpl implements RiskAnalysisSetupJourney<Ri
         }
         Objects.requireNonNull(producer, "producer must not be null");
         Objects.requireNonNull(consumer, "consumer must not be null");
-        Objects.requireNonNull(reviewer, "reviewer must not be null");
-        Objects.requireNonNull(reviewer.getUserId(), "reviewer userId must not be null");
+        Objects.requireNonNull(reviewers, "reviewers must not be null");
+        if (reviewers.isEmpty()) {
+            throw new IllegalArgumentException("reviewers must not be empty");
+        }
 
+        List<UUID> reviewerIds = reviewers.stream()
+                .map(reviewer -> {
+                    Objects.requireNonNull(reviewer, "reviewers must not contain null");
+                    return Objects.requireNonNull(
+                            reviewer.getUserId(), "reviewer userId must not be null"
+                    );
+                })
+                .toList();
         User originalUser = session.getUser();
         Tenant originalTenant = session.getTenant();
         Throwable failure = null;
@@ -59,7 +90,7 @@ public class RiskAnalysisSetupJourneyImpl implements RiskAnalysisSetupJourney<Ri
             session.set(User.getTenantAdmin(consumer), consumer);
             agreementJourney.linkAgreement(AgreementState.ACTIVE);
             purposeJourney.createPurpose(PurposeVersionState.DRAFT);
-            purposeJourney.assignRiskAnalysisReviewers(mode, List.of(reviewer.getUserId()));
+            purposeJourney.assignRiskAnalysisReviewers(mode, reviewerIds);
             if (mode == RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS) {
                 purposeJourney.submitRiskAnalysis();
             }

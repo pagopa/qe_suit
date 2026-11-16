@@ -10,17 +10,20 @@ import it.pagopa.infrastructure.suit.component.Link;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import it.pagopa.utils.async.PollingUtils;
 
+/**
+ * Page object for the RA information shown to a reviewer before starting
+ * risk-analysis compilation.
+ */
 @Url("${interop.web.base-url}/analisi-del-rischio/${riskAnalysisId}")
-public interface RiskAnalysisReviewPage extends Page {
+public interface RiskAnalysisInfoPage extends Page {
 
-    // --- Header & Breadcrumb ---
     @XPath(".//a[contains(normalize-space(), 'Torna alle analisi del rischio')]")
     Button backToEServicesButton();
 
     Breadcrumbs breadcrumbs();
 
-    @XPath(".//h1[normalize-space()='Informazioni finalità']")
-    Label pageTitle();
+    @XPath(".//h1")
+    Label title();
 
     @XPath(".//section[contains(@class, 'MuiPaper-root')][.//h2[normalize-space(.)='Informazioni generali']]")
     GeneralInfoCard generalInfoCard();
@@ -31,14 +34,22 @@ public interface RiskAnalysisReviewPage extends Page {
     @XPath(".//section[contains(@class, 'MuiPaper-root')][.//h2[normalize-space(.)='Assegnazione']]")
     AssignmentCard assignmentCard();
 
-    // --- Action ---
     @XPath(".//button[contains(normalize-space(), 'Inizia la compilazione')]")
     Button startCompilationBtn();
+
+    @XPath(".//h1")
+    Label unauthorizedTitle();
+
+    @XPath(".//h1/following-sibling::*[1]")
+    Label unauthorizedSubtitle();
+
+    @XPath(".//a[@href='/ui/it/' and normalize-space()='Torna alla home']")
+    Button backToHomeBtn();
 
     interface GeneralInfoCard extends Component {
 
         @XPath(".//h2")
-            Label title();
+        Label title();
 
         @XPath(".//p[normalize-space()='E-service da associare']")
         Label eserviceLabel();
@@ -75,6 +86,7 @@ public interface RiskAnalysisReviewPage extends Page {
 
         @XPath(".//p[normalize-space()='Motivazione titolo gratuito']/parent::div/following-sibling::div[1]//span")
         Label freeReasonValue();
+
     }
 
     interface APIEstimateCard extends Component {
@@ -103,14 +115,21 @@ public interface RiskAnalysisReviewPage extends Page {
 
         @XPath(".//p[normalize-space()='Assegnata a']/parent::div/following-sibling::div[1]//span")
         Label assignedToValue();
+
+
     }
 
+    /**
+     * Waits for the RA-information heading; does not verify the section contents.
+     */
     @Override
     default void assertLoaded() {
         PollingUtils.pollUntil(
-                () -> pageTitle().read(),
-                text -> text != null && !text.isBlank(),
-                "Risk Analysis review page is not loaded or its title is absent"
-        );
+                () -> {
+                    String title = title().read();
+                    return title != null && !title.isBlank();
+                },
+                Boolean.TRUE::equals,
+                "Risk Analysis information page is not loaded or  its title is absent" );
     }
 }

@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.purpose.infrastructure;
 
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -13,17 +14,25 @@ import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
-import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class BffPurposeGateway implements PurposeGateway {
     private final BffPurposeRestClient restClient;
     private final BffPurposeMapper mapper;
@@ -150,6 +159,165 @@ public class BffPurposeGateway implements PurposeGateway {
                                 .orElseThrow(() -> new IllegalStateException("Purpose version not found"))
                                 .getRef().equals(purposeVersionRef)
         );
+    }
+
+    @Override
+    public void assignRiskAnalysisReviewers(
+            PurposeRef purposeRef,
+            RiskAnalysisReviewMode reviewMode,
+            List<UUID> reviewerIds
+    ) {
+        RiskAnalysisAssignmentSeed assignment = new RiskAnalysisAssignmentSeed()
+                .reviewMode(toBffReviewMode(reviewMode))
+                .reviewerIds(List.copyOf(reviewerIds));
+
+        restClient.assignRiskAnalysisReviewers(purposeRef.id(), assignment)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        List<UUID> expectedIds = assignment.getReviewerIds().stream().sorted().toList();
+        PollingUtils.pollUntil(
+                () -> {
+                    var response = restClient.getPurpose(purposeRef.id()).withoutPolling();
+                    if (!response.getRaw().isSuccess()) {
+                        throw new IllegalStateException("Reviewer-assignment read failed for purpose " + purposeRef.id());
+                    }
+                    return response.get();
+                },
+                purpose -> {
+                    ReviewerWorkflow workflow = purpose.getReviewerWorkflow();
+                    if (workflow == null || workflow.getReviewers() == null) {
+                        log.debug("Reviewer assignment for purpose {}, reviewMode {}: workflow or reviewers absent",
+                                purposeRef.id(), reviewMode);
+                        return false;
+                    }
+                    List<UUID> actualIds = workflow.getReviewers().stream()
+                            .map(Reviewer::getUserId).sorted().toList();
+                    log.debug("Reviewer assignment for purpose {}, reviewMode {}: expected IDs {}, actual IDs {}",
+                            purposeRef.id(), reviewMode, expectedIds, actualIds);
+                    return actualIds.equals(expectedIds);
+                },
+                "Reviewer assignment did not become visible for purpose " + purposeRef.id()
+                        + ", reviewMode " + reviewMode + "; expected reviewer IDs: " + expectedIds
+        );
+    }
+
+    @Override
+    public void submitRiskAnalysis(PurposeRef purposeRef) {
+        restClient.submitRiskAnalysis(purposeRef.id(), commandFactory.riskAnalysisSubmissionRequest())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    @Override
+    public RiskAnalysisForm getRiskAnalysisForm(PurposeRef purposeRef) {
+        var response = restClient.getPurpose(purposeRef.id()).withoutPolling();
+        if (!response.getRaw().isSuccess()) {
+            throw new IllegalStateException("Risk-analysis form read failed for purpose " + purposeRef.id());
+        }
+        var form = response.get().getRiskAnalysisForm();
+        if (form == null || form.getVersion() == null || form.getAnswers() == null) {
+            throw new IllegalStateException("Risk-analysis form is incomplete or absent for purpose " + purposeRef.id());
+        }
+        var answers = form.getAnswers().entrySet().stream().collect(
+                Collectors.toUnmodifiableMap(
+                        Map.Entry::getKey, entry -> List.copyOf(entry.getValue())
+                )
+        );
+        return RiskAnalysisForm.builder()
+                .version(form.getVersion()).answers(answers).build();
+    }
+
+    @Override
+    public void saveRiskAnalysisForm(
+            PurposeRef purposeRef, RiskAnalysisForm form
+    ) {
+        Objects.requireNonNull(form, "Risk-analysis form must not be null");
+        var payload = new RiskAnalysisFormSeed().version(form.getVersion())
+                .answers(form.getAnswers().entrySet().stream().collect(
+                        Collectors.toMap(
+                                Map.Entry::getKey, entry -> List.copyOf(entry.getValue())
+                        )
+                ));
+        var expected = RiskAnalysisForm.builder()
+                .version(payload.getVersion()).answers(Map.copyOf(payload.getAnswers())).build();
+        var response = restClient.saveRiskAnalysisForm(purposeRef.id(), payload).withoutPolling();
+        if (!response.getRaw().isSuccess()) {
+            throw new IllegalStateException("Risk-analysis form save failed for purpose " + purposeRef.id());
+        }
+        PollingUtils.pollUntil(
+                () -> getRiskAnalysisForm(purposeRef),
+                expected::equals,
+                "Saved risk-analysis form did not become visible for purpose " + purposeRef.id()
+        );
+    }
+
+    @Override
+    public void signRiskAnalysis(PurposeRef purposeRef) {
+        var result = restClient.getPurpose(purposeRef.id()).withoutPolling();
+        if (!(result.getRaw() instanceof ApiResponse response) || !response.isSuccess()) {
+            throw new IllegalStateException("Cannot read metadata version for purpose " + purposeRef.id());
+        }
+        String header = response.getHeader("x-metadata-version");
+        if (header == null || header.isBlank()) {
+            throw new IllegalStateException("Missing x-metadata-version header for purpose " + purposeRef.id());
+        }
+        int metadataVersion;
+        try {
+            metadataVersion = Integer.parseInt(header.trim());
+        } catch (NumberFormatException ex) {
+            throw new IllegalStateException("Invalid x-metadata-version header for purpose " + purposeRef.id(), ex);
+        }
+        if (metadataVersion < 0) {
+            throw new IllegalStateException("Negative x-metadata-version header for purpose " + purposeRef.id());
+        }
+        signRiskAnalysis(purposeRef, metadataVersion);
+    }
+
+    @Override
+    public void signRiskAnalysis(PurposeRef purposeRef, int metadataVersionToSign) {
+        RiskAnalysisSignSeed signRequest = new RiskAnalysisSignSeed()
+                .metadataVersionToSign(metadataVersionToSign);
+
+        restClient.signRiskAnalysis(purposeRef.id(), signRequest)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        PollingUtils.pollUntil(
+                () -> {
+                    var response = restClient.getPurpose(purposeRef.id()).withoutPolling();
+                    if (!response.getRaw().isSuccess()) {
+                        throw new IllegalStateException("Risk-analysis signing read failed for purpose " + purposeRef.id());
+                    }
+                    return response.get();
+                },
+                purpose -> purpose.getReviewerWorkflow() != null
+                        && purpose.getReviewerWorkflow().getSigningState() == RiskAnalysisSigningState.SIGNED,
+                "Risk analysis did not become SIGNED for purpose " + purposeRef.id()
+        );
+    }
+
+    @Override
+    public void rejectRiskAnalysis(PurposeRef purposeRef, String rejectionReason) {
+        RiskAnalysisRejectionSeed rejectionRequest = new RiskAnalysisRejectionSeed()
+                .rejectionReason(rejectionReason);
+
+        restClient.rejectRiskAnalysis(purposeRef.id(), rejectionRequest)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    private static it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode toBffReviewMode(
+            RiskAnalysisReviewMode reviewMode
+    ) {
+        return switch (reviewMode) {
+            case ADMIN_WRITES_ADMIN_SIGNS ->
+                    it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode.ADMIN_WRITES_ADMIN_SIGNS;
+            case ADMIN_WRITES_REVIEWER_SIGNS ->
+                    it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode.ADMIN_WRITES_REVIEWER_SIGNS;
+            case REVIEWER_WRITES_REVIEWER_SIGNS ->
+                    it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisReviewMode.REVIEWER_WRITES_REVIEWER_SIGNS;
+        };
     }
 
     @Override

@@ -79,6 +79,18 @@ public class BffPurposeRestClient extends RestClient {
         );
     }
 
+    public TestChain<Void> saveRiskAnalysisForm(
+            @Nonnull UUID purposeId, @Nonnull RiskAnalysisFormSeed payload
+    ) {
+        return execute(
+                () -> purposesApi.editRiskAnalysisForm()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<Void> signRiskAnalysis(
             @Nonnull UUID purposeId,
             @Nonnull RiskAnalysisSignSeed payload

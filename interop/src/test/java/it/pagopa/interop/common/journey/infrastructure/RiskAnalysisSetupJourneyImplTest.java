@@ -129,7 +129,7 @@ class RiskAnalysisSetupJourneyImplTest {
                 .isInstanceOf(NullPointerException.class);
         assertThatThrownBy(() -> setup.setUpRiskAnalysisToApprove("fixture", producer, null, reviewer))
                 .isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> setup.setUpRiskAnalysisToCompile("fixture", producer, consumer, null))
+        assertThatThrownBy(() -> setup.setUpRiskAnalysisToCompile("fixture", producer, consumer, (List<User>) null))
                 .isInstanceOf(NullPointerException.class);
         verifyNoInteractions(services, agreements, purposes);
         verify(session, never()).set(any(), any());
