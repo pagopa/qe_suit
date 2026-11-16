@@ -293,3 +293,52 @@ def test_cucumber_plain_scenario_does_not_rewrite_trailing_number(tmp_path):
          'line': 20, 'steps': [{'result': {'status': 'failed', 'error_message': 'boom'}}]},
     ]}]))
     assert parse_file(path)[0].id_test == 'normal test'
+
+
+def test_open_test_contract_dynamic_id_three_components(tmp_path):
+    p = tmp_path / 'junit-platform-reports' / 'open-test-report.xml'
+    p.parent.mkdir()
+    p.write_text('''<e:events xmlns:e="urn:events" xmlns:core="urn:core"
+      xmlns:java="urn:java" xmlns:junit="urn:junit">
+      <e:started id="1" name="JUnit Jupiter"/>
+      <e:started id="2" parentId="1" name="WebTOSContractTest"/>
+      <e:started id="3" parentId="2" name="shouldDisplayTermsOfService()">
+        <core:sources><java:methodSource
+          className="it.pagopa.interop.suite.contract.WebTOSContractTest"
+          methodName="shouldDisplayTermsOfService"/></core:sources>
+      </e:started>
+      <e:started id="4" parentId="3" name="Visuale TOS: copy esatto del titolo pagina">
+        <core:metadata><junit:uniqueId>[engine:junit-jupiter]/[class:it.pagopa.interop.suite.contract.WebTOSContractTest]/[test-factory:shouldDisplayTermsOfService()]/[dynamic-test:#1]</junit:uniqueId></core:metadata>
+      </e:started>
+      <e:started id="5" parentId="3" name="Visuale TOS: 11 sezioni ordinate">
+        <core:metadata><junit:uniqueId>[engine:junit-jupiter]/[class:it.pagopa.interop.suite.contract.WebTOSContractTest]/[test-factory:shouldDisplayTermsOfService()]/[dynamic-test:#2]</junit:uniqueId></core:metadata>
+      </e:started>
+      <e:finished id="4"><core:result status="FAILED"><java:throwable>AssertionError: title</java:throwable></core:result></e:finished>
+      <e:finished id="5"><core:result status="FAILED"><java:throwable>AssertionError: sections</java:throwable></core:result></e:finished>
+      <e:finished id="3"><core:result status="FAILED"><java:throwable>AssertionError: container</java:throwable></core:result></e:finished>
+    </e:events>''')
+    rows = parse_file(p)
+    assert {r.id_test for r in rows} == {
+        'WebTOSContractTest::shouldDisplayTermsOfService::Visuale TOS: copy esatto del titolo pagina',
+        'WebTOSContractTest::shouldDisplayTermsOfService::Visuale TOS: 11 sezioni ordinate',
+    }
+    assert len(rows) == 2
+
+
+def test_open_test_non_contract_keeps_display_name(tmp_path):
+    p = open_xml(tmp_path, name='Test A')
+    assert parse_file(p)[0].id_test == 'Test A'
+
+
+def test_open_test_dynamic_without_method_source_falls_back(tmp_path):
+    p = tmp_path / 'junit-platform-reports' / 'open-test-report.xml'
+    p.parent.mkdir()
+    p.write_text('''<e:events xmlns:e="urn:e" xmlns:core="urn:core"
+      xmlns:junit="urn:junit" xmlns:java="urn:java">
+      <e:started id="1" name="factory()"/>
+      <e:started id="2" parentId="1" name="dynamic example">
+        <core:metadata><junit:uniqueId>[engine:junit-jupiter]/[dynamic-test:#1]</junit:uniqueId></core:metadata>
+      </e:started>
+      <e:finished id="2"><core:result status="FAILED"><java:throwable>boom</java:throwable></core:result></e:finished>
+    </e:events>''')
+    assert parse_file(p)[0].id_test == 'dynamic example'

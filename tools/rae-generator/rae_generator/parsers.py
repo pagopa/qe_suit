@@ -139,6 +139,54 @@ def _has_ancestor(event_id: str, ancestor_id: str, started: dict[str, ET.Element
         event_id = parent
     return False
 
+
+def _junit_source(start: ET.Element | None) -> tuple[str, str]:
+    """Read Java source metadata rather than guessing from display names."""
+    if start is None:
+        return '', ''
+    for element in start.iter():
+        if _local(element.tag) == 'methodSource':
+            return element.get('className', ''), element.get('methodName', '')
+    return '', ''
+
+
+def _junit_unique_id(start: ET.Element | None) -> str:
+    if start is None:
+        return ''
+    for element in start.iter():
+        if _local(element.tag) == 'uniqueId':
+            return _text(element)
+    return ''
+
+
+def _contract_test_id(event_id: str, started: dict[str, ET.Element]) -> str:
+    """For JUnit dynamic tests, use Class::FactoryMethod::DynamicTestName.
+
+    Only classify as a dynamic test when its parent is a method/factory
+    container or its JUnit uniqueId explicitly denotes a dynamic test.
+    Other JUnit tests preserve their existing display-name IDs.
+    """
+    leaf = started[event_id]
+    display_name = leaf.get('name', '').strip()
+    parent = started.get(leaf.get('parentId', ''))
+    class_name, method_name = _junit_source(parent)
+    is_dynamic = bool(method_name)
+
+    uid = _junit_unique_id(leaf)
+    if '[dynamic-test:' in uid or '[dynamic-container:' in uid:
+        is_dynamic = True
+    if not is_dynamic:
+        return display_name
+
+    # In real Open Test XML methodSource may live on the child as well.
+    if not method_name:
+        class_name, method_name = _junit_source(leaf)
+    if not class_name or not method_name:
+        # Source metadata is missing: do not invent a method name.
+        return display_name
+    return f'{class_name.rsplit(".", 1)[-1]}::{method_name}::{display_name}'
+
+
 def _parse_open_test(path: Path, root: ET.Element) -> list[Failure]:
     if _local(root.tag) != 'events':
         raise ReportError(f'JUnit Open Test XML senza root events: {path}')
@@ -169,7 +217,7 @@ def _parse_open_test(path: Path, root: ET.Element) -> list[Failure]:
         if not name:
             raise ReportError(f'JUnit Open Test KO senza nome: {path}')
         log = _text(throwable) or throwable.get('type') or 'JUnit failure'
-        failures.append(Failure(name, log, 'junit-open'))
+        failures.append(Failure(_contract_test_id(event_id, started), log, 'junit-open'))
     return failures
 
 
