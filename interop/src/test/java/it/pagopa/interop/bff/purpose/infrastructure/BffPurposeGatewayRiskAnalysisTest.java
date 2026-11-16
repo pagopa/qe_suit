@@ -42,6 +42,7 @@ class BffPurposeGatewayRiskAnalysisTest {
 
 
     @Test
+    @SuppressWarnings("unchecked")
     void savesFormOnceAndWaitsForAllAnswersToBecomeVisible() {
         UUID purposeId = UUID.randomUUID();
         var expected = it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm.builder()
@@ -74,6 +75,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void failsImmediatelyWhenFormSaveIsRejected() {
         UUID purposeId = UUID.randomUUID();
         TestChain<Void> write = (TestChain<Void>) mock(TestChain.class, RETURNS_DEEP_STUBS);
@@ -90,6 +92,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void rejectsFailedOrMissingFormReads() {
         UUID purposeId = UUID.randomUUID();
         TestChain<Purpose> read = (TestChain<Purpose>) mock(TestChain.class, RETURNS_DEEP_STUBS);
@@ -105,6 +108,7 @@ class BffPurposeGatewayRiskAnalysisTest {
 
     @ParameterizedTest
     @EnumSource(RiskAnalysisReviewMode.class)
+    @SuppressWarnings("unchecked")
     void assignsRiskAnalysisReviewersWithRequestedModeAndIds(RiskAnalysisReviewMode reviewMode) {
         UUID purposeId = UUID.randomUUID();
         List<UUID> reviewerIds = List.of(UUID.randomUUID(), UUID.randomUUID());
@@ -128,6 +132,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void waitsForExactReviewerIdsWithoutRepeatingTheAssignment() {
         UUID purposeId = UUID.randomUUID();
         UUID reviewerId = UUID.randomUUID();
@@ -142,7 +147,7 @@ class BffPurposeGatewayRiskAnalysisTest {
                 purposeWithReviewers(List.of(removedReviewerId)),
                 purposeWithReviewers(List.of(reviewerId))
         );
-        
+
         clearInvocations(readChain);
 
         gateway.assignRiskAnalysisReviewers(PurposeRef.of(purposeId),
@@ -156,6 +161,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void waitsForTheWorkflowAndReviewerListToBecomeVisible() {
         UUID purposeId = UUID.randomUUID();
         UUID reviewerId = UUID.randomUUID();
@@ -177,6 +183,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void failsOnAnUnsuccessfulReadWithoutRetrying() {
         UUID purposeId = UUID.randomUUID();
         TestChain<Void> writeChain = (TestChain<Void>) mock(TestChain.class, RETURNS_DEEP_STUBS);
@@ -192,6 +199,7 @@ class BffPurposeGatewayRiskAnalysisTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     void propagatesReadFailuresAfterAssignment() {
         UUID purposeId = UUID.randomUUID();
         var failure = new IllegalStateException("Cannot read purpose");
