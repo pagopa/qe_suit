@@ -5,6 +5,7 @@ import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.producer_keychain.application.BffProducerKeyCreationCommand;
 import it.pagopa.interop.bff.producer_keychain.application.BffProducerKeychainCreationCommand;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.producer_keychain.application.ProducerKeychainGateway;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeyCreationCommand;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeychainCreationCommand;
@@ -13,10 +14,14 @@ import it.pagopa.interop.common.producer_keychain.domain.ProducerKeychain;
 import it.pagopa.interop.common.producer_keychain.domain.ProducerKeychainPublicKey;
 import it.pagopa.interop.common.producer_keychain.domain.ProducerKeychainRef;
 import it.pagopa.interop.common.producer_keychain.domain.ProducerKeysPage;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceAdditionDetailsSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainUpdateSeed;
+import it.pagopa.kernel.security.Key;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,6 +50,10 @@ public class BffProducerKeychainGateway implements ProducerKeychainGateway {
         }
         restClient.createProducerKey(ref.id(), bffCommand.getKeySeed())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+        ProducerKeychain keychain = getProducerKeychain(ref);
+        var keys = keychain.getKeys() == null ? new ArrayList<Key>() : new ArrayList<>(keychain.getKeys());
+        keys.add(bffCommand.getKey());
+        entityStore.upsert(keychain.toBuilder().keys(List.copyOf(keys)).build());
     }
 
     @Override
@@ -93,8 +102,36 @@ public class BffProducerKeychainGateway implements ProducerKeychainGateway {
     }
 
     @Override
+    public void addEService(ProducerKeychainRef ref, EServiceRef eservice) {
+        restClient.addProducerKeychainEService(ref.id(), new EServiceAdditionDetailsSeed().eserviceId(eservice.id()))
+                .withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+        restClient.getProducerKeychain(ref.id())
+                .withPolling(response -> response.isSuccess()
+                        && response.as(it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain.class)
+                        .getEservices().stream().anyMatch(linked -> eservice.id().equals(linked.getId())))
+                .map(response -> mapper.toDomain(response,
+                        entityStore.getById(ref.id(), ProducerKeychain.class).orElse(null)))
+                .updateContext().get();
+    }
+
+    @Override
+    public ProducerKeychain updateMetadata(ProducerKeychainRef ref, String name, String description) {
+        restClient.updateProducerKeychain(ref.id(), updateSeed(name, description))
+                .withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+        return getProducerKeychain(ref);
+    }
+
+    @Override
+    public void tryToUpdateMetadata(ProducerKeychainRef ref, String name, String description) {
+        restClient.updateProducerKeychain(ref.id(), updateSeed(name, description)).withoutPolling();
+    }
+
+    private static ProducerKeychainUpdateSeed updateSeed(String name, String description) {
+        return new ProducerKeychainUpdateSeed().name(name).description(description);
+    }
+
+    @Override
     public boolean supports(@NonNull Channel channel) {
         return channel == Channel.BFF;
     }
 }
-

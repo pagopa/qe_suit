@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.producer_keychain.application;
 
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeyCreationCommand;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeychainCreationCommand;
 import it.pagopa.interop.common.producer_keychain.domain.KeyRef;
@@ -35,6 +36,18 @@ public class ProducerKeychainUseCase {
 
     public void deleteProducerKey(ProducerKeychainRef ref, KeyRef key) {
         gateway.deleteProducerKey(ref, key);
+    }
+
+    public void addEService(ProducerKeychainRef ref, EServiceRef eservice) {
+        gateway.addEService(ref, Objects.requireNonNull(eservice, "eservice"));
+    }
+
+    public ProducerKeychain updateMetadata(ProducerKeychainRef ref, String name, String description) {
+        return gateway.updateMetadata(ref, name, description);
+    }
+
+    public void tryToUpdateMetadata(ProducerKeychainRef ref, String name, String description) {
+        gateway.tryToUpdateMetadata(ref, name, description);
     }
 
     public ProducerKeychain getProducerKeychain(ProducerKeychainRef ref) {
