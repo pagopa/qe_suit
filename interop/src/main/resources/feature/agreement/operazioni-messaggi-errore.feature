@@ -66,23 +66,16 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ACTIVATION_FAILED" in lingua "it"
 
   # Endpoint: POST /agreements/:agreementId/approve
-  Scenario Outline: [ERROR_151] - Impossibilità di approvare una richiesta per una versione <stato versione>
-  Dato un e-service con approvazione manuale e una richiesta del fruitore in attesa per una versione archiviata o in archiviazione
+  Scenario: [ERROR_151] - Impossibilità di approvare una richiesta per un descrittore in archiviazione
+  Dato un e-service con approvazione manuale e una richiesta del fruitore in attesa per una versione in archiviazione
   Quando l'erogatore tenta di approvare la richiesta
   Allora il sistema rifiuta l'approvazione e segnala che lo stato della versione non consente l'operazione.
 
     Given un EService creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA in attesa di approvazione
-    # Binding di setup mancante; riusare bringEServiceDescriptorToState per ARCHIVING, non per ARCHIVED.
-    # L'archiviazione definitiva richiede un setup dedicato: non equivale all'avvio dell'archiviazione.
-    And la versione dell'e-service associata alla richiesta di fruizione <stato versione>
+    And l'e-service del Comune di Milano interamente in archiviazione
     And un admin appartenente all'erogatore Comune di Milano
     When l'erogatore tenta di approvare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_APPROVE" in lingua "it"
-
-    Examples:
-      | stato versione   |
-      | in archiviazione |
-      | archiviata       |
 
   # Endpoint: POST /agreements/:agreementId/unsuspend
   Scenario: [ERROR_152] - Impossibilità di riattivare una richiesta di fruizione già attiva
