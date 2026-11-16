@@ -7,12 +7,10 @@ import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
-import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -48,8 +46,8 @@ class PurposeStepsTest {
 
         steps.updatePurposeDailyCallsEstimateBeyondThreshold();
 
-        verifySession(channel, Tenant.COMUNE_DI_COMUN_NUOVO);
-        verify(currentChannel).getCurrentChannel();
+        verifySession(Tenant.COMUNE_DI_COMUN_NUOVO);
+        verifyNoInteractions(currentChannel);
         verify(useCase).updatePurposeDailyCallsEstimateBeyondThreshold(activePurpose, eService);
     }
 
@@ -72,8 +70,8 @@ class PurposeStepsTest {
 
         steps.approvePurpose(Tenant.COMUNE_DI_MILANO, PurposeVersionState.ACTIVE);
 
-        verifySession(channel, Tenant.COMUNE_DI_MILANO);
-        verify(currentChannel).getCurrentChannel();
+        verifySession(Tenant.COMUNE_DI_MILANO);
+        verifyNoInteractions(currentChannel);
         verify(useCase).activatePurpose(purpose, waiting, null);
     }
 
@@ -87,8 +85,8 @@ class PurposeStepsTest {
 
         steps.rejectPurpose(Tenant.COMUNE_DI_MILANO, PurposeVersionState.REJECTED);
 
-        verifySession(channel, Tenant.COMUNE_DI_MILANO);
-        verify(currentChannel).getCurrentChannel();
+        verifySession(Tenant.COMUNE_DI_MILANO);
+        verifyNoInteractions(currentChannel);
         verify(useCase).rejectPurpose(purpose, waiting, "Rifiutata nell'ambito del test");
     }
 
@@ -115,12 +113,8 @@ class PurposeStepsTest {
                 .isInstanceOf(AssertionError.class);
     }
 
-    private void verifySession(Channel channel, Tenant tenant) {
-        switch (channel) {
-            case BFF -> verify(userSession).set(User.getTenantAdmin(tenant), tenant);
-            case M2M_V3 -> verify(userSession).set(M2MRole.M2M_ADMIN, tenant);
-            default -> throw new IllegalArgumentException("Unexpected test channel: " + channel);
-        }
+    private void verifySession(Tenant tenant) {
+        verify(userSession).set(tenant);
         verifyNoMoreInteractions(userSession);
     }
 

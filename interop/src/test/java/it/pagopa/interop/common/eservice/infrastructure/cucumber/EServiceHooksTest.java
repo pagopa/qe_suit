@@ -49,7 +49,7 @@ class EServiceHooksTest {
 
         var order = inOrder(channel, session, services);
         order.verify(channel).setCurrentChannel(Channel.BFF);
-        order.verify(session).set(User.getTenantAdmin(Tenant.COMUNE_DI_MILANO), Tenant.COMUNE_DI_MILANO);
+        order.verify(session).set(Tenant.COMUNE_DI_MILANO);
         order.verify(services).deleteEService(draft);
         order.verify(channel).setCurrentChannel(Channel.WEB_BROWSER);
         order.verify(session).set(previousUser, Tenant.AGID);
