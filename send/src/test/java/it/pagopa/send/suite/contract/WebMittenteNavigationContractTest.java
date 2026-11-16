@@ -19,8 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
-import org.junit.jupiter.api.parallel.Execution;
-import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
@@ -35,7 +33,6 @@ import java.util.stream.Stream;
  * {@code WebContractRuntimeCaseExecutor}), quindi ogni scenario qui sotto è un no-op: il test
  * fallisce se e solo se la pagina non è raggiungibile o non si carica correttamente.
  */
-@Execution(ExecutionMode.CONCURRENT)
 @SpringBootTest(classes = {
         TestBootApp.class,
         JunitContextConfig.class,

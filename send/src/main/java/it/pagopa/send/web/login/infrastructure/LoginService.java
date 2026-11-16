@@ -33,7 +33,7 @@ public class LoginService {
     private final DashboardPage dashboardPage;
     private final NotificationPage notificationPage;
     private final NotificationPFPage notificationPFPage;
-    private final SelfCareSessionPayloadFactory sessionPayloadFactory;
+    private final WebSelfCareSessionPayloadFactory sessionPayloadFactory;
     private final DynamicUserTokenProvider tokenProvider;
 
     public void loginAsTenant(User tenant) {
@@ -72,7 +72,7 @@ public class LoginService {
     }
 
     private String sessionTokenFor(User user) {
-        return tokenProvider.requireToken(user.getUsername());
+        return tokenProvider.requireToken(user.getSessionTokenKey());
     }
 
     private void forceSession(String sessionPayload, Page landingPage) {
