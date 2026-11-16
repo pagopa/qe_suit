@@ -312,29 +312,26 @@ Feature: Modifica dei metadati degli e-service
   # CASO DI TEST 7.4 - Applicazione dei controlli di ruolo, titolarità e delega
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [ESERVICE_METADATA_AUTHORIZATION_1] - Rispetto della titolarità dell'e-service
+  Scenario Outline: [ESERVICE_METADATA_AUTHORIZATION_1] - Rifiuto della modifica dei metadati per ruolo non autorizzato.
   Dato un e-service in bozza,
-  quando un operatore con ruolo non autorizzato tenta la modifica dei metadati,
+  quando un operatore con ruolo non autorizzato o che non possiede la titolarità tenta la modifica dei metadati,
   allora il sistema non accetta le richiesta.
 
     Given i seguenti e-service pubblicati:
-      | alias | erogatore | nome                   |
-      | ES-1  | Comune di Pozzallo    | E-service Tempo Attivo |
-    When un <ruolo> di Comune di Pozzallo tenta la modifica dei metadati dell'e-service "ES-1":
+      | alias | erogatore          | nome                   |
+      | ES-1  | Comune di Pozzallo | E-service Tempo Attivo |
+    When un <ruolo> di <ente> tenta la modifica dei metadati dell'e-service "ES-1":
       | campo | valore                         |
       | nome  | Servizio anagrafico aggiornato |
     Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per UNAUTHORIZED
 
     Examples:
-      | ruolo        |
-      # API è autorizzato
-      # | API          |
-      | SECURITY     |
-      # API è autorizzato: questa combinazione si può rimuovere
-      # | API,SECURITY |
-      | SUPPORT      |
-      | REVIEWER     |
-      | VIEWER       |
+      | ente               | ruolo    |
+      | Comune di Pozzallo | SECURITY |
+      | Comune di Pozzallo | SUPPORT  |
+      | Comune di Pozzallo | REVIEWER |
+      | Comune di Pozzallo | VIEWER   |
+      | Comune di Milano   | ADMIN    |
 
 
   # TODO Rivedere autorizzazioni in delega
