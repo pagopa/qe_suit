@@ -107,7 +107,7 @@ public class ClientSteps {
         clientUseCase.linkPurpose(client, purpose);
     }
 
-    @When("un {userRole} di/del {tenant} richiede la modifica dei metadati del client {string}:")
+    @When("un {userRole} di/del {tenant} modifica i metadati del client {string}:")
     public void updateClientMetadata(
             UserRole role,
             Tenant producer,
@@ -115,6 +115,27 @@ public class ClientSteps {
             DataTable dataTable
     ) {
         Client client = entityStore.getByAliasOrThrow(clientAlias, Client.class);
+        MetadataUpdate metadata = readMetadataUpdate(client, dataTable);
+
+        interopJourney.withProducer(producer, role);
+        clientUseCase.updateMetadata(client, metadata.name(), metadata.description());
+    }
+
+    @When("un {userRole} di/del {tenant} tenta di modificare i metadati del client {string}:")
+    public void tryToUpdateClientMetadata(
+            UserRole role,
+            Tenant producer,
+            String clientAlias,
+            DataTable dataTable
+    ) {
+        Client client = entityStore.getByAliasOrThrow(clientAlias, Client.class);
+        MetadataUpdate metadata = readMetadataUpdate(client, dataTable);
+
+        interopJourney.withProducer(producer, role);
+        clientUseCase.tryToUpdateMetadata(client, metadata.name(), metadata.description());
+    }
+
+    private MetadataUpdate readMetadataUpdate(Client client, DataTable dataTable) {
         List<List<String>> rows = dataTable.cells();
 
         if (rows.size() < 2 || !rows.get(0).equals(List.of("campo", "valore"))) {
@@ -144,9 +165,10 @@ public class ClientSteps {
             }
         }
 
-        interopJourney.withProducer(producer, role);
-        clientUseCase.updateMetadata(client, name, description);
+        return new MetadataUpdate(name, description);
     }
+
+    private record MetadataUpdate(String name, String description) {}
 
     public enum ClientMetadataField {
         NAME(Set.of("name"), "il nome"),

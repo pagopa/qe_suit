@@ -57,4 +57,8 @@ public class ClientUseCase {
     public Client updateMetadata(Client client, String name, String description) {
         return clientGateway.updateMetadata(client, name, description);
     }
+
+    public void tryToUpdateMetadata(Client client, String name, String description) {
+        clientGateway.tryToUpdateMetadata(client, name, description);
+    }
 }

@@ -31,5 +31,7 @@ public interface ClientGateway extends Plugin<Channel> {
 
     Client updateMetadata(Client client, String name, String description);
 
+    void tryToUpdateMetadata(Client client, String name, String description);
+
     Client setAdmin(Client client, UserRef admin);
 }

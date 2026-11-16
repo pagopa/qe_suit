@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.client.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.client.application.BffClientCreationCommand;
@@ -33,6 +34,7 @@ public class BffClientGateway implements ClientGateway {
     private final BffClientRestClient restClient;
     private final EntityStore entityStore;
     private final BffClientMapper mapper;
+    private RawResponse lastResponse;
 
     @Override
     public Client getClient(ClientRef ref) {
@@ -140,6 +142,17 @@ public class BffClientGateway implements ClientGateway {
                 .map(ignored -> getClient(ClientRef.of(client.getId())))
                 .updateContext()
                 .get();
+    }
+
+    @Override
+    public void tryToUpdateMetadata(Client client, String name, String description) {
+        ClientUpdateSeed updateSeed = new ClientUpdateSeed()
+                .name(name)
+                .description(description);
+
+        this.lastResponse = restClient.updateClient(client.getId(), updateSeed)
+                .withoutPolling()
+                .getRaw();
     }
 
     @Override
