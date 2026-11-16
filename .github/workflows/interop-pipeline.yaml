@@ -235,6 +235,6 @@ jobs:
           git add -- "$YAML"
           git commit -m "chore(rae): [QA-18253] create analysis for $RUNNER ($TIMESTAMP)"
           git push origin "HEAD:refs/heads/$BRANCH"
-          gh pr create --draft --base develop --head "$BRANCH" \
+          gh pr create --draft --base develop --label "rae" --head "$BRANCH" \
             --title "RAE: ${RUNNER} (${TIMESTAMP})" \
             --body "RAE YAML to complete. NRT run: ${GITHUB_RUN_LINK}. Fill release, issue_jira, procedure and result; the RAE validation action will generate the Markdown."
