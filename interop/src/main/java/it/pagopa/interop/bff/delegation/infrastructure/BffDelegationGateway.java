@@ -173,9 +173,7 @@ public class BffDelegationGateway implements DelegationGateway {
             if (status == 404 || status == 409 || status == 429 || status >= 500) {
                 return false;
             }
-            throw new IllegalStateException(
-                    "Errore durante la lettura dello stato della delega (HTTP " + status + ")"
-            );
+            throw new IllegalStateException("Errore durante la lettura dello stato della delega (HTTP " + status + ")");
         }
         it.pagopa.interop.generated.openapi.clients.bff.model.Delegation delegation =
                 response.as(it.pagopa.interop.generated.openapi.clients.bff.model.Delegation.class);
@@ -190,9 +188,12 @@ public class BffDelegationGateway implements DelegationGateway {
             String status = response instanceof ApiResponse apiResponse
                     ? Integer.toString(apiResponse.getStatusCode())
                     : "sconosciuto";
-            throw new IllegalStateException(
-                    "Errore durante " + operation + " (HTTP " + status + ")"
-            );
+            throw new IllegalStateException("Errore durante " + operation + " (HTTP " + status + ")");
         }
+    }
+
+    @Override
+    public void attemptConsumerDelegationCreation(TenantRef delegateRef, EServiceRef eServiceRef) {
+        restClient.createConsumerDelegation(delegateRef.id(), eServiceRef.id()).withoutPolling();
     }
 }

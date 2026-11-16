@@ -81,7 +81,6 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
   Allora il sistema rifiuta la proposta e segnala che l'ente scelto non può ricevere la delega.
 
     Given un admin appartenente al fruitore PagoPA
-    # Binding BFF negativo mancante; riusare createConsumerDelegation e verificare Tenant.getTenantType.
     When PagoPA tenta di proporre la delega in fruizione a Sogecap per l'e-service
     Then il messaggio di errore corrisponde al caso "DELEGATION_DELEGATION_NOT_ALLOWED_FOR_TENANT__POST_CONSUMERS_DELEGATIONS" in lingua "it"
 

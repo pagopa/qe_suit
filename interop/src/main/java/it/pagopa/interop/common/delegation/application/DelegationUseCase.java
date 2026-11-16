@@ -161,4 +161,12 @@ public class DelegationUseCase {
     ) {
         return delegationGateway.waitForProducerDelegationState(delegationRef, expectedState);
     }
+
+    public void attemptConsumerDelegationCreation(TenantRef delegatorRef, TenantRef delegateRef, EService eService) {
+        Tenant currentTenant = currentUserSession.getTenant();
+        if (currentTenant == null || !delegatorRef.id().equals(currentTenant.getOrganizationId())) {
+            throw new IllegalArgumentException("La sessione corrente non appartiene al delegante " + delegatorRef.id());
+        }
+        delegationGateway.attemptConsumerDelegationCreation(delegateRef, eService.getRef());
+    }
 }
