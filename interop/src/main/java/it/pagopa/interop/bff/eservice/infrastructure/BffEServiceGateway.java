@@ -2,6 +2,7 @@ package it.pagopa.interop.bff.eservice.infrastructure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
@@ -56,7 +57,7 @@ public class BffEServiceGateway implements EServiceGateway {
     private final BffEServiceDescriptorGateway descriptorGateway;
     private final EntityStore entityStore;
     private final BffEServiceMapper mapper;
-    private RawResponse lastResponse;
+    private final LastApiResponseStore lastApiResponseStore;
 
     @Override
     public EService createEService(EServiceCreationCommand command) {
@@ -83,7 +84,7 @@ public class BffEServiceGateway implements EServiceGateway {
     public void tryUpdateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
         if (!(command instanceof BffEServiceUpdateCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
-        this.lastResponse = restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
+        restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
                 .withoutPolling()
                 .getRaw();
     }
@@ -111,7 +112,7 @@ public class BffEServiceGateway implements EServiceGateway {
             case OUT_OF_DRAFT_OPERATION_FIELD -> 409;
             case UNAUTHORIZED -> 403;
         };
-        var actual = ((ApiResponse) this.lastResponse).getStatusCode();
+        var actual = lastApiResponseStore.getLastResponse().getStatusCode();
         assertThat(actual).isEqualTo(expected);
     }
 
