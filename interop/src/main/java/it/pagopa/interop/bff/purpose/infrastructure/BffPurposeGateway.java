@@ -217,7 +217,7 @@ public class BffPurposeGateway implements PurposeGateway {
             throw new IllegalStateException("Risk-analysis form read failed for purpose " + purposeRef.id());
         }
         var form = Objects.requireNonNull(response.get()).getRiskAnalysisForm();
-        if (form == null || form.getVersion() == null || form.getAnswers() == null) {
+        if (form == null) {
             throw new IllegalStateException("Risk-analysis form is incomplete or absent for purpose " + purposeRef.id());
         }
         var answers = form.getAnswers().entrySet().stream().collect(
