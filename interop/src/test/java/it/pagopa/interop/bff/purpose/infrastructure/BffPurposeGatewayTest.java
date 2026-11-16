@@ -53,9 +53,10 @@ class BffPurposeGatewayTest {
         when(createFromTemplate.body(any())).thenReturn(createFromTemplate);
         when(api.getPurpose()).thenReturn(read);
         when(read.purposeIdPath(original.getId())).thenReturn(read);
+        LastApiResponseStore lastApiResponseStore = mock(LastApiResponseStore.class);
         gateway = new BffPurposeGateway(
-                new BffPurposeRestClient(new TestChainFactory(mock(LastApiResponseStore.class), store), apiClient),
-                mapper, commandFactory);
+                new BffPurposeRestClient(new TestChainFactory(lastApiResponseStore, store), apiClient),
+                mapper, commandFactory, lastApiResponseStore);
         store.upsert("purpose", original);
     }
 

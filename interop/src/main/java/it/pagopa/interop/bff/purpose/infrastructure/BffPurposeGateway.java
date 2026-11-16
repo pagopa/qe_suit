@@ -170,7 +170,7 @@ public class BffPurposeGateway implements PurposeGateway {
     }
 
     @Override
-    public boolean supports(Channel delimiter) {
+    public boolean supports(@NonNull Channel delimiter) {
         return delimiter == Channel.BFF;
     }
 
@@ -188,7 +188,7 @@ public class BffPurposeGateway implements PurposeGateway {
 
     @Override
     public Purpose tryCreatePurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef) {
-        var response = restClient.createPurposeFromTemplate(purposeTemplateRef.id(), commandFactory.creationFromTemplateRequest(eServiceRef))
+        var response = restClient.createPurposeFromTemplate(purposeTemplateRef.id(), commandFactory.creationFromTemplateRequest(eServiceRef, purposeTemplateRef))
                 .withoutPolling();
 
         return getPurpose(response);
