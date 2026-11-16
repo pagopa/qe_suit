@@ -33,5 +33,7 @@ public interface ClientGateway extends Plugin<Channel> {
 
     void tryToUpdateMetadata(Client client, String name, String description);
 
+    void shouldFailToUpdateMetadataAsForbidden();
+
     Client setAdmin(Client client, UserRef admin);
 }

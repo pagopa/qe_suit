@@ -1,7 +1,8 @@
 package it.pagopa.interop.bff.client.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.infrastructure.response.RawResponse;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.client.application.BffClientCreationCommand;
@@ -27,6 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Service
 @RequiredArgsConstructor
 public class BffClientGateway implements ClientGateway {
@@ -34,7 +37,7 @@ public class BffClientGateway implements ClientGateway {
     private final BffClientRestClient restClient;
     private final EntityStore entityStore;
     private final BffClientMapper mapper;
-    private RawResponse lastResponse;
+    private final LastApiResponseStore lastApiResponseStore;
 
     @Override
     public Client getClient(ClientRef ref) {
@@ -150,9 +153,18 @@ public class BffClientGateway implements ClientGateway {
                 .name(name)
                 .description(description);
 
-        this.lastResponse = restClient.updateClient(client.getId(), updateSeed)
-                .withoutPolling()
-                .getRaw();
+        restClient.updateClient(client.getId(), updateSeed)
+                .withoutPolling();
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsForbidden() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del client")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del client vietata")
+                .isEqualTo(403);
     }
 
     @Override

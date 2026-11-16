@@ -88,14 +88,16 @@ Feature: Modifica dei metadati dei client
     When un admin del Comune di Pozzallo tenta di modificare i metadati del client "CL-1":
       | campo       | valore            |
       | nome        | nuovo nome        |
-    Then il client "CL-1" conserva le associazioni e i dati di riferimento
+    Then la richiesta di modifica fallisce come operazione vietata
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
     When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
     And un admin del Comune di Pozzallo tenta di modificare i metadati del client "CL-1":
       | campo       | valore            |
       | descrizione | nuova descrizione |
-    Then il client "CL-1" conserva le associazioni e i dati di riferimento
+    Then la richiesta di modifica fallisce come operazione vietata
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
     When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
@@ -103,7 +105,8 @@ Feature: Modifica dei metadati dei client
       | campo       | valore            |
       | nome        | nuovo nome        |
       | descrizione | nuova descrizione |
-    Then il client "CL-1" conserva le associazioni e i dati di riferimento
+    Then la richiesta di modifica fallisce come operazione vietata
+    And il client "CL-1" conserva le associazioni e i dati di riferimento
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
 # TODO I test sulla UI vanno implementati come test di integrazione

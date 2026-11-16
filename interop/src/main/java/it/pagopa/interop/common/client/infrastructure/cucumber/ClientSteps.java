@@ -135,6 +135,11 @@ public class ClientSteps {
         clientUseCase.tryToUpdateMetadata(client, metadata.name(), metadata.description());
     }
 
+    @Then("la richiesta di modifica fallisce come operazione vietata")
+    public void shouldFailToUpdateMetadataAsForbidden() {
+        clientUseCase.shouldFailToUpdateMetadataAsForbidden();
+    }
+
     private MetadataUpdate readMetadataUpdate(Client client, DataTable dataTable) {
         List<List<String>> rows = dataTable.cells();
 

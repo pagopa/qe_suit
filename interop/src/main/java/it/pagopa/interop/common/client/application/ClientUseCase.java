@@ -61,4 +61,8 @@ public class ClientUseCase {
     public void tryToUpdateMetadata(Client client, String name, String description) {
         clientGateway.tryToUpdateMetadata(client, name, description);
     }
+
+    public void shouldFailToUpdateMetadataAsForbidden() {
+        clientGateway.shouldFailToUpdateMetadataAsForbidden();
+    }
 }

@@ -1,6 +1,7 @@
 package it.pagopa.interop.m2m.client.infrastructure;
 
-import it.pagopa.infrastructure.response.RawResponse;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
 import it.pagopa.interop.common.client.application.ClientGateway;
 import it.pagopa.interop.common.client.application.command.ClientCreationCommand;
 import it.pagopa.interop.common.client.application.command.ClientKeyCreationCommand;
@@ -10,14 +11,18 @@ import it.pagopa.interop.common.kernel.domain.ClientRef;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Service
+@RequiredArgsConstructor
 public class M2MClientGateway implements ClientGateway {
 
-    private RawResponse lastResponse;
+    private final LastApiResponseStore lastApiResponseStore;
 
     @Override
     public Client getClient(ClientRef ref) {
@@ -57,10 +62,20 @@ public class M2MClientGateway implements ClientGateway {
     @Override
     public void tryToUpdateMetadata(Client client, String name, String description) {
         // TODO PIN-11002: dopo il rilascio in DEV o QA e l'aggiornamento dello YAML M2M V3,
-        //  invocare l'endpoint senza polling e salvare la risposta (attesa 403) in lastResponse.
+        //  invocare l'endpoint senza polling e la risposta (attesa 403) viene salvata in LastApiResponseStore.
         throw new UnsupportedOperationException(
                 "Client metadata update attempts are not supported on M2M v3 until PIN-11002 is released in DEV or QA"
         );
+    }
+
+    @Override
+    public void shouldFailToUpdateMetadataAsForbidden() {
+        assertThat(lastApiResponseStore.getLastResponse())
+                .as("Risposta al tentativo di modifica dei metadati del client")
+                .isNotNull()
+                .extracting(ApiResponse::getStatusCode)
+                .as("Modifica dei metadati del client vietata")
+                .isEqualTo(403);
     }
 
     @Override
