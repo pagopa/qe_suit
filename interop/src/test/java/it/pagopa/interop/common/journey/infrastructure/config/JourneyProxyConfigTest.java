@@ -10,6 +10,7 @@ import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescr
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.journey.application.UserJourney;
 import it.pagopa.interop.common.journey.infrastructure.EServiceDescriptorJourneyImpl;
 import it.pagopa.interop.common.journey.infrastructure.EServiceJourneyImpl;
 import it.pagopa.interop.common.kernel.context.AuthSession;
@@ -39,7 +40,7 @@ class JourneyProxyConfigTest {
 
     @Test
     void createsRealAggregateProxyWithCompatibleInheritedMethodSignatures() {
-        InteropJourney journey = new JourneyProxyConfig().interopJourney(List.of());
+        InteropJourney journey = new JourneyProxyConfig().interopJourney(List.of(), mock(UserJourney.class));
 
         assertThat(Proxy.isProxyClass(journey.getClass())).isTrue();
     }
@@ -85,6 +86,6 @@ class JourneyProxyConfigTest {
                 mock(EServiceRiskAnalysisUseCase.class), session, requestFactory);
         var descriptorJourney = new EServiceDescriptorJourneyImpl(
                 descriptors, lifecycle, store, requestFactory, session);
-        return new JourneyProxyConfig().interopJourney(List.of(serviceJourney, descriptorJourney));
+        return new JourneyProxyConfig().interopJourney(List.of(serviceJourney, descriptorJourney), mock(UserJourney.class));
     }
 }
