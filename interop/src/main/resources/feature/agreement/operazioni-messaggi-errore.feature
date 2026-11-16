@@ -205,7 +205,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
     And un admin appartenente al fruitore PagoPA
-    # Binding BFF negativo mancante; riusare archive senza attendere il successo.
     When il fruitore tenta di archiviare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_ARCHIVE" in lingua "it"
 

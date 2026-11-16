@@ -56,4 +56,6 @@ public interface AgreementGateway extends Plugin<Channel> {
     void attemptAgreementSuspension(Agreement agreement);
 
     void attemptAgreementReactivation(Agreement agreement);
+
+    void attemptAgreementArchiving(Agreement agreement);
 }

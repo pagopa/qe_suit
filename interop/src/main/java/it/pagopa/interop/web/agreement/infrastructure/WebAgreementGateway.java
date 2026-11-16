@@ -173,4 +173,9 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     public void attemptAgreementReactivation(Agreement agreement) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementReactivation operation");
     }
+
+    @Override
+    public void attemptAgreementArchiving(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementArchiving operation");
+    }
 }

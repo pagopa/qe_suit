@@ -105,4 +105,9 @@ public class AgreementSteps {
     public void attemptAgreementReactivation(Agreement agreement) {
         agreementUseCase.attemptAgreementReactivation(agreement);
     }
+
+    @When("il fruitore tenta di archiviare la {currentAgreement}")
+    public void attemptAgreementArchiving(Agreement agreement) {
+        agreementUseCase.attemptAgreementArchiving(agreement);
+    }
 }

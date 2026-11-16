@@ -174,4 +174,9 @@ public class BffAgreementGateway implements AgreementGateway {
     public void attemptAgreementReactivation(Agreement agreement) {
         restClient.unsuspend(agreement.getId(), null).withoutPolling();
     }
+
+    @Override
+    public void attemptAgreementArchiving(Agreement agreement) {
+        restClient.archive(agreement.getId()).withoutPolling();
+    }
 }
