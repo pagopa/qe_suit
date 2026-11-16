@@ -6,10 +6,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class DeliveryClientConfig {
+public class BffDeliveryClientConfig {
 
     @Bean
-    public SenderReadB2BApi senderReadB2BApi(DeliveryRequestSpecFactory requestSpecFactory) {
+    public SenderReadB2BApi senderReadB2BApi(BffDeliveryRequestSpecFactory requestSpecFactory) {
         ApiClient.Config config = ApiClient.Config.apiConfig()
                 .reqSpecSupplier(requestSpecFactory::create);
 

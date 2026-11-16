@@ -33,6 +33,6 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
 })
 @ExcludeTags({"ignore"})
 @IncludeTags({"loadPage", "backstage", "sercqDomicilioDigitale"})
-public class NrtStandardSuite {
+public class NrtStandardSuiteTest {
 
 }

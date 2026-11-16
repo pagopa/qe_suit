@@ -4,7 +4,7 @@ import io.cucumber.java.PendingException;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
-import it.pagopa.send.web.notification_creation.infrastructure.factory.NotificationFactory;
+import it.pagopa.send.web.notification_creation.infrastructure.factory.WebNotificationFactory;
 import it.pagopa.send.web.notification_creation.application.NotificationData;
 import it.pagopa.send.web.notification_creation.infrastructure.page.CreateNotificationPage;
 import it.pagopa.send.web.mittente.infrastructure.page.NotificationSuccessPage;
@@ -12,9 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class CreazioneNotificaSteps {
+public class WebCreazioneNotificaSteps {
     private final NotificationContext context;
-    private final NotificationFactory notificationFactory;
+    private final WebNotificationFactory notificationFactory;
     private final WebPresentationGateway browser;
 
     @When("crea e invia una notifica di tipo {string}")

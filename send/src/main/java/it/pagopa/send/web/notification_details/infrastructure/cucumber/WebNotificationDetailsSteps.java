@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class NotificationDetailsSteps {
+public class WebNotificationDetailsSteps {
 
     @Then("la pagina di dettaglio della notifica contiene la sezione relativa al {notificationDetailsSection}")
     @Then("la pagina di dettaglio della notifica contiene la sezione relativa ai {notificationDetailsSection}")
