@@ -54,3 +54,12 @@ PYTHONPATH=tools/rae-generator python -m rae_generator check rae/rae_NrtStandard
 ## Sicurezza / limiti
 
 Il workflow `pull_request` esegue un checkout in sola lettura e concede il PAT soltanto al passo finale di push. Si deve mantenere il repository protetto da PR non attendibili; non eseguire codice proveniente da fork con un token di scrittura. Il PATH originale e il nome del branch vengono verificati. Il workflow può incontrare nuovi push fra fetch e push: il git push non-fast-forward fallirà senza cancellare lavoro QA.
+
+## Evolutiva report JSON dei contratti (QA-17448)
+
+- L'HTML e `contract-test/report.json` sono renderizzati dallo stesso `ContractReport` Java.
+- `schemaVersion: 1`, `summary`, `channels`, `groups` e tutti gli `scenarios` (PASS/FAIL/SKIPPED/ABORTED).
+- Ogni scenario contiene canale/target nel suo gruppo e `id_test` nel formato `Classe::Factory::Scenario`.
+- La RAE legge solo `cucumber-reports/report.json` e `contract-test/report.json`; non usa più XML JUnit.
+- Se manca uno dei due JSON o i totali Java non sono coerenti, la generazione fallisce.
+- JUnit XML può rimanere nell'artifact per debugging; non è un input RAE.

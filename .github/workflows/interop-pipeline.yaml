@@ -148,8 +148,7 @@ jobs:
             ./qe_suit/interop/target/logs/
             ./qe_suit/interop/target/cucumber-reports/
             ./qe_suit/interop/target/contract-test/report.html
-            ./qe_suit/interop/target/junit-platform-reports/
-            ./qe_suit/interop/target/surefire-reports/TEST-*.xml
+            ./qe_suit/interop/target/contract-test/report.json
             ./qe_suit/interop/target/rae/run_metadata.json
           if-no-files-found: warn
           retention-days: 10 # Preserve current setting until organization retention limit is verified.

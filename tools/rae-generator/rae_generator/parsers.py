@@ -241,43 +241,27 @@ def _idkey(s: str) -> str:
 
 
 def collect_reports(root: Path) -> list[Failure]:
-    """Parse all known files; fail closed when all inputs are absent or any is invalid.
+    """Use Cucumber JSON and the Java ContractReport JSON; JUnit XML is not an input.
 
-    Cucumber has precedence on overlapping JUnit records. Cross-format duplicate
-    detection requires both matching ID and comparable failure text; unrelated
-    tests with identical stack traces remain separate.
+    Both sources are required: missing contract export must fail closed rather
+    than silently undercounting contract failures.
     """
-    files: list[Path] = []
-    for name in ('cucumber-reports', 'surefire-reports', 'junit-platform-reports'):
-        folder = root / name
-        if folder.is_dir():
-            for path in sorted(folder.rglob('*')):
-                if not path.is_file():
-                    continue
-                if name == 'cucumber-reports' and path.suffix == '.json':
-                    files.append(path)
-                elif name == 'surefire-reports' and path.name.startswith('TEST-') and path.suffix == '.xml':
-                    files.append(path)
-                elif name == 'junit-platform-reports' and path.name == 'open-test-report.xml':
-                    files.append(path)
-    if not files:
-        raise ReportError(f'Nessun report Cucumber/JUnit trovato in {root}')
-    parsed = []
-    for path in files:
-        parsed.extend(parse_file(path))
-    # Prefer cucumber diagnostics when exact duplicates exist across report formats.
-    parsed.sort(key=lambda f: (f.source != 'cucumber', f.id_test.casefold()))
-    unique: list[Failure] = []
-    seen = set()
-    for f in parsed:
-        key = (_idkey(f.id_test), _error_key(f.error_log))
-        if key not in seen:
-            seen.add(key)
-            unique.append(f)
-    return unique
-
-
-def _error_key(s: str) -> str:
-    # File paths and line numbers may differ between reporting engines;
-    # compare the primary diagnostic line, retaining full original logs in YAML.
-    return re.sub(r'\s+', ' ', s.strip().splitlines()[0] if s.strip() else '').casefold()
+    from .contract_json import collect_contract_failures
+    cucumber_dir = root / 'cucumber-reports'
+    cucumber_files = sorted(cucumber_dir.glob('*.json'))
+    contract = root / 'contract-test' / 'report.json'
+    if not cucumber_files:
+        raise ReportError(f'Nessun report Cucumber JSON in: {cucumber_dir}')
+    if not contract.is_file():
+        raise ReportError(f'Contract JSON mancante: {contract}')
+    cucumber_failures = []
+    for cucumber in cucumber_files:
+        cucumber_failures.extend(_parse_cucumber(cucumber))
+    contract_failures = collect_contract_failures(contract)
+    result = cucumber_failures + contract_failures
+    ids: set[str] = set()
+    for failure in result:
+        if failure.id_test in ids:
+            raise ReportError(f'ID KO duplicato tra report: {failure.id_test}')
+        ids.add(failure.id_test)
+    return result

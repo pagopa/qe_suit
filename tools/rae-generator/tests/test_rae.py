@@ -28,7 +28,20 @@ def cucumber_json(tmp_path, name='Test A', error='java.lang.AssertionError: fail
     p.write_text(json.dumps([{'name':'Feature', 'elements':[
         {'name':name, 'steps':[{'name':'test step', 'result': {'status':'failed', 'error_message':error}}]}
     ]}]))
+    create_empty_contract_json(tmp_path)
     return p
+
+
+def create_empty_contract_json(tmp_path):
+    path = tmp_path / 'contract-test' / 'report.json'
+    path.parent.mkdir(exist_ok=True)
+    path.write_text(json.dumps({
+        'schemaVersion': 1,
+        'summary': {'total': 0, 'passed': 0, 'failed': 0,
+                    'skipped': 0, 'aborted': 0, 'preconditionFailed': 0},
+        'groups': []
+    }))
+    return path
 
 
 def open_xml(tmp_path, name='Test A', error='java.lang.AssertionError: failed'):
@@ -62,18 +75,10 @@ def test_surefire_xml(tmp_path):
     assert len(rows)==1 and rows[0].id_test=='Test B'
 
 
-def test_deduplicate_cross_format(tmp_path):
+def test_junit_xml_never_influences_rae_when_contract_json_present(tmp_path):
     cucumber_json(tmp_path)
-    open_xml(tmp_path)
-    rows=collect_reports(tmp_path)
-    assert len(rows)==1
-    assert rows[0].source=='cucumber'
-
-
-def test_same_error_different_names_not_deduplicated(tmp_path):
-    cucumber_json(tmp_path)
-    open_xml(tmp_path, name='Test B')
-    assert len(collect_reports(tmp_path))==2
+    open_xml(tmp_path, name='Unrelated JUnit failure')
+    assert len(collect_reports(tmp_path)) == 1
 
 
 def test_no_reports_is_error(tmp_path):
@@ -205,7 +210,7 @@ def test_cucumber_outline_same_name_different_example_rows(tmp_path):
         {'name': scenario_name, 'line': 102, 'type': 'scenario',
          'steps': [{'result': {'status': 'failed', 'error_message': 'same failure'}}]},
     ]}]))
-    rows = collect_reports(tmp_path)
+    rows = parse_file(path)
     assert len(rows) == 2  # Even identical failure messages are different examples.
     assert {row.id_test for row in rows} == {
         f'{scenario_name} [example line: 101]',
@@ -248,7 +253,7 @@ def test_cucumber_examples_id_named_group_and_stable_number(tmp_path):
         scenario(group, 4, 42, 'passed'),
         scenario('versione-pubblicata', 2, 46, 'failed'),
     ]}]))
-    rows = collect_reports(tmp_path)
+    rows = parse_file(path)
     assert len(rows) == 3  # The two identical diagnostics are separate KO.
     assert {row.id_test for row in rows} == {
         f'{name} [Examples: {group} | Example #1]',
@@ -267,7 +272,7 @@ def test_cucumber_examples_unnamed_group_preserves_line_for_uniqueness(tmp_path)
         {'name': 'outline', 'keyword': 'Scenario Outline', 'id': 'f;s;;2',
          'line': 310, 'steps': [{'result': {'status': 'failed', 'error_message': 'same failure'}}]},
     ]}]))
-    rows = collect_reports(tmp_path)
+    rows = parse_file(path)
     assert len(rows) == 2
     assert rows[0].id_test != rows[1].id_test
     assert all('Example #1' in row.id_test for row in rows)
@@ -342,3 +347,56 @@ def test_open_test_dynamic_without_method_source_falls_back(tmp_path):
       <e:finished id="2"><core:result status="FAILED"><java:throwable>boom</java:throwable></core:result></e:finished>
     </e:events>''')
     assert parse_file(p)[0].id_test == 'dynamic example'
+
+
+def test_contract_json_matches_java_summary(tmp_path):
+    cucumber_json(tmp_path)
+    contract = tmp_path / 'contract-test' / 'report.json'
+    payload = json.loads(contract.read_text())
+    payload['summary'].update(total=2, passed=1, failed=1)
+    payload['groups'] = [{
+        'channel': 'BFF', 'channelKey': 'bff', 'targetType': 'OPENAPI',
+        'target': 'POST /agreements', 'className': 'x.BffAgreementContractTest',
+        'methodName': 'createAgreement', 'scenarioCount': 2,
+        'scenarios': [
+            {'id_test': 'BffAgreementContractTest::createAgreement::case 1',
+             'status': 'FAILED', 'stackTrace': 'AssertionError: failed', 'preconditionFailure': False},
+            {'id_test': 'BffAgreementContractTest::createAgreement::case 2',
+             'status': 'PASSED', 'preconditionFailure': False},
+        ]}]
+    contract.write_text(json.dumps(payload))
+    results = collect_reports(tmp_path)
+    assert len(results) == 2  # One Cucumber + one Contract
+    assert results[1].id_test == 'BffAgreementContractTest::createAgreement::case 1'
+    assert results[1].source == 'contract-json'
+
+
+def test_contract_json_bad_total_fails_closed(tmp_path):
+    cucumber_json(tmp_path)
+    contract = tmp_path / 'contract-test' / 'report.json'
+    payload = json.loads(contract.read_text())
+    payload['summary']['failed'] = 184
+    contract.write_text(json.dumps(payload))
+    with pytest.raises(ReportError, match='failed'):
+        collect_reports(tmp_path)
+
+
+def test_contract_json_missing_fails_closed(tmp_path):
+    cucumber_json(tmp_path)
+    (tmp_path / 'contract-test' / 'report.json').unlink()
+    with pytest.raises(ReportError, match='Contract JSON mancante'):
+        collect_reports(tmp_path)
+
+
+def test_contract_json_duplicate_id_fails_closed(tmp_path):
+    cucumber_json(tmp_path)
+    contract = tmp_path / 'contract-test' / 'report.json'
+    payload = json.loads(contract.read_text())
+    payload['summary'].update(total=2, passed=0, failed=2)
+    payload['groups'] = [{'scenarioCount': 2, 'scenarios': [
+        {'id_test': 'duplicate', 'status': 'FAILED', 'preconditionFailure': False},
+        {'id_test': 'duplicate', 'status': 'FAILED', 'preconditionFailure': False},
+    ]}]
+    contract.write_text(json.dumps(payload))
+    with pytest.raises(ReportError, match='duplicato'):
+        collect_reports(tmp_path)
