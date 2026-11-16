@@ -118,6 +118,16 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
+    public EServiceJourneyImpl waitUntilEService(String alias, Predicate<EService> predicate) {
+        EService eService = entityStore.getByAliasOrThrow(alias, EService.class);
+        PollingUtils.pollUntil(() -> {
+            eService.getDescriptors().forEach(descriptor -> eServiceDescriptorUseCase.getDescriptor(eService, descriptor));
+            return eServiceUseCase.getEService(eService);
+        }, predicate);
+        return this;
+    }
+
+    @Override
     public EServiceJourneyImpl shouldFailToImportSOAPEService(
             String eserviceName,
             String wsdlResourcePath,

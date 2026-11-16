@@ -282,12 +282,10 @@ Feature: Modifica dei metadati degli e-service
     Given i seguenti e-service pubblicati:
       | alias | erogatore        | nome                   |
       | ES-1  | Comune di Milano | E-service Tempo Attivo |
-    # When un admin del Comune di Milano aggiorna i metadati della risorsa "ES-1" con nuovi valori validi
     When un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
       | campo       | valore            |
       | nome        | Nuovo nome        |
       | descrizione | Nuova descrizione |
-    # And un admin del Comune di Milano ripete gli stessi valori per la risorsa "ES-1"
     When un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
       | campo       | valore      |
       | nome        | %last-used% |
@@ -333,62 +331,48 @@ Feature: Modifica dei metadati degli e-service
       | Comune di Pozzallo | VIEWER   |
       | Comune di Milano   | ADMIN    |
 
+  # CASO DI TEST 7.4 - Applicazione dei controlli di ruolo, titolarità e delega
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario Outline: [ESERVICE_METADATA_AUTHORIZATION_2] - Rispetto della titolarità e delle deleghe sulle risorse delegabili
+  Dato una risorsa delegabile con delega nello stato previsto,
+  quando un ente delegato richiede la modifica dei metadati,
+  allora il sistema accetta soltanto le richieste compatibili con ruolo e delega.
+    Given i seguenti enti abilitati a ricevere deleghe di erogazione:
+      | ente               |
+      | Comune di Pozzallo |
+    And i seguenti e-service in bozza:
+      | alias | erogatore        | nome                   |
+      | ES-1  | Comune di Milano | E-service Tempo Attivo |
+    And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega <stato>
+    When un admin del Comune di Pozzallo tenta la modifica dei metadati dell'e-service "ES-1":
+      | campo | valore                         |
+      | nome  | Servizio anagrafico aggiornato |
+    Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per UNAUTHORIZED
 
-  # TODO Rivedere autorizzazioni in delega
-  #  @work-item:QA-19036
-  #  @channel:Given=BFF,When=BFF,Then=BFF
-  #  Scenario Outline: [ESERVICE_METADATA_AUTHORIZATION_1] - Rispetto della titolarità e delle deleghe sulle risorse delegabili
-  #  Dato una risorsa delegabile con delega nello stato previsto,
-  #  quando un ente delegato richiede la modifica dei metadati,
-  #  allora il sistema accetta soltanto le richieste compatibili con ruolo e delega.
-  #
-  #    Given un e-service "ES-1" del Comune di Milano delegato in erogazione a PagoPA con delega <stato>
-  #    When un admin di PagoPA richiede la modifica dei metadati dell'e-service "ES-1":
-  #      | campo | valore                         |
-  #      | nome  | Servizio anagrafico aggiornato |
-  #    Then la modifica dell'e-service "ES-1" ha esito <esito>
-  #    And in caso di rifiuto l'e-service "ES-1" conserva tutti i dati iniziali
-  #
-  #    Examples:
-  #      | stato                | esito     |
-  #      | ACTIVE               | accettata |
-  #      | WAITING_FOR_APPROVAL | rifiutata |
-  #      | REJECTED             | rifiutata |
-  #      | REVOKED              | rifiutata |
+    Examples:
+      | stato                     |
+      | in attesa di accettazione |
+      | rifiutata                 |
+      | revocata                  |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_METADATA_UNIQUENESS_1] - Rifiuto della rinomina in conflitto per un e-service
-  Dato due risorse nello stesso ambito di unicità con nomi distinti,
-  quando l’attore rinomina una risorsa usando il nome dell’altra e una descrizione valida,
-  allora la modifica è respinta integralmente lasciando intatte entrambe le risorse.
-
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore        | nome             |
-      | ES-1  | Comune di Milano | E-service Nome 1 |
-      | ES-2  | Comune di Milano | E-service Nome 2 |
-    When un admin del Comune di Milano richiede di assegnare alla risorsa "ES-1" il nome di "ES-2" e una nuova descrizione
-    Then la modifica della risorsa "ES-1" viene rifiutata
-    And le risorse "ES-1" e "ES-2" conservano tutti i dati iniziali
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_METADATA_UNIQUENESS_2] - Unicità non aggirabile con differenze di maiuscole e minuscole per un e-service
+  Scenario: [ESERVICE_METADATA_UNIQUENESS_1] - Unicità non aggirabile con differenze di maiuscole e minuscole per un e-service
   Dato due risorse nello stesso ambito di unicità,
   quando l’attore richiede un nome che coincide con quello dell’altra salvo le maiuscole,
-  allora la rinomina viene rifiutata senza applicare anche la descrizione valida.
+  allora la rinomina viene rifiutata.
 
     Given i seguenti e-service pubblicati:
       | alias | erogatore        | nome             |
       | ES-1  | Comune di Milano | E-service Nome 1 |
       | ES-2  | Comune di Milano | E-service Nome 2 |
-    When un admin del Comune di Milano richiede per "ES-1" il nome di "ES-2" cambiandone soltanto le maiuscole e una nuova descrizione
-    Then la modifica della risorsa "ES-1" viene rifiutata
-    And le risorse "ES-1" e "ES-2" conservano tutti i dati iniziali
+    When un admin del Comune di Milano richiede per l'e-service "ES-1" il nome di "ES-2" cambiandone soltanto le maiuscole e una nuova descrizione
+    Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per CONFLICT
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_METADATA_UNIQUENESS_3] - Omonimia consentita tra e-service in ambiti distinti
+  Scenario: [ESERVICE_METADATA_UNIQUENESS_2] - Omonimia consentita tra e-service in ambiti distinti
   Dato due risorse in ambiti di unicità distinti,
   quando l’attore assegna alla prima il nome della seconda,
   allora il sistema consente la rinomina e non modifica l’altra risorsa.
@@ -397,9 +381,14 @@ Feature: Modifica dei metadati degli e-service
       | alias | erogatore          | nome             |
       | ES-1  | Comune di Milano   | E-service Nome 1 |
       | ES-2  | Comune di Pozzallo | E-service Nome 2 |
-    When un admin del Comune di Milano richiede di assegnare alla risorsa "ES-1" il nome di "ES-2"
-    Then la rinomina della risorsa "ES-1" viene accettata
-    And la risorsa "ES-2" conserva tutti i dati iniziali
+    And la versione 1 dell'e-service "ES-2" del Comune di Pozzallo pubblicata
+    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
+    When un admin del Comune di Milano richiede di assegnare all'e-service "ES-1" il nome di "ES-2"
+    Then la rinomina della risorsa "ES-1" viene accettata e ha lo stesso nome di "ES-2"
+
+
+
+
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
