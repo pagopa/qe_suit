@@ -58,6 +58,23 @@ public class InMemoryUserSession implements AuthSession {
     }
 
     @Override
+    public Snapshot snapshot() {
+        var actor = currentActor.get();
+        var role = currentRole.get();
+        var tenant = currentTenant.get();
+        return Snapshot.forCurrentThread(() -> {
+            restore(currentActor, actor);
+            restore(currentRole, role);
+            restore(currentTenant, tenant);
+        });
+    }
+
+    private static <T> void restore(ThreadLocal<T> target, T value) {
+        if (value == null) target.remove();
+        else target.set(value);
+    }
+
+    @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF || delimiter == Channel.WEB_BROWSER;
     }

@@ -54,6 +54,18 @@ public class CucumberUserSession implements AuthSession {
         return currentTenant;
     }
 
+    @Override
+    public Snapshot snapshot() {
+        var actor = currentActor;
+        var role = currentRole;
+        var tenant = currentTenant;
+        return Snapshot.forCurrentThread(() -> {
+            currentActor = actor;
+            currentRole = role;
+            currentTenant = tenant;
+        });
+    }
+
     public void reset() {
         this.currentActor = null;
         this.currentRole = null;

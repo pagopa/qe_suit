@@ -68,6 +68,23 @@ public class InMemoryM2Mv3Session implements AuthSession {
     }
 
     @Override
+    public Snapshot snapshot() {
+        var savedActor = actor.get();
+        var savedRole = role.get();
+        var savedTenant = tenant.get();
+        return Snapshot.forCurrentThread(() -> {
+            restore(actor, savedActor);
+            restore(role, savedRole);
+            restore(tenant, savedTenant);
+        });
+    }
+
+    private static <T> void restore(ThreadLocal<T> target, T value) {
+        if (value == null) target.remove();
+        else target.set(value);
+    }
+
+    @Override
     public boolean supports(Channel channel) {
         return channel == Channel.M2M_V3;
     }

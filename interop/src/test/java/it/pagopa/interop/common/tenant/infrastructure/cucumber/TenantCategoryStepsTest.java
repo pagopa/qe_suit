@@ -6,6 +6,8 @@ import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.infrastructure.context.CucumberUserSession;
 import it.pagopa.interop.common.tenant.application.TenantCategoryUseCase;
 import it.pagopa.interop.common.tenant.application.command.CheckTenantCategoryCommand;
 import it.pagopa.interop.common.tenant.infrastructure.cucumber.dto.TenantCategoryExpectation;
@@ -50,13 +52,81 @@ class TenantCategoryStepsTest {
         var dto = transform(Map.of(
                 "ente", "Comune di Milano", "categoria", "COMUNI", "appartenenza", membership));
 
+        var snapshot = mock(AuthSession.Snapshot.class);
+        when(session.snapshot()).thenReturn(snapshot);
         steps.checkCategories(List.of(dto));
 
-        var ordered = inOrder(session, useCase);
-        ordered.verify(session).set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
+        var ordered = inOrder(session, useCase, snapshot);
+        ordered.verify(session).snapshot();
+        ordered.verify(session).set(Tenant.PAGO_PA);
         ordered.verify(useCase).check(new CheckTenantCategoryCommand(
                 TenantRef.of(Tenant.COMUNE_DI_MILANO.getOrganizationId()),
                 TenantCategory.COMUNI, !membership.equals("no")));
+        ordered.verify(snapshot).close();
+    }
+
+    @Test
+    void restoresPreviousSessionOrEmptySessionAfterSuccessAndFailure() {
+        for (boolean initiallySet : List.of(false, true)) {
+            for (boolean fails : List.of(false, true)) {
+                var actualSession = new CucumberUserSession();
+                if (initiallySet) actualSession.set(UserRole.API, Tenant.COMUNE_DI_MILANO);
+                var actualUseCase = mock(TenantCategoryUseCase.class);
+                var actualSteps = new TenantCategorySteps(mapper, actualUseCase, actualSession);
+                var dto = transform(Map.of(
+                        "ente", "Comune di Milano", "categoria", "COMUNI", "appartenenza", "sì"));
+                doAnswer(invocation -> {
+                    assertThat(actualSession.getTenant()).isEqualTo(Tenant.PAGO_PA);
+                    assertThat(actualSession.getRole()).isEqualTo(UserRole.ADMIN);
+                    if (fails) throw new IllegalStateException("category check failed");
+                    return null;
+                }).when(actualUseCase).check(any());
+                if (fails) {
+                    assertThatThrownBy(() -> actualSteps.checkCategories(List.of(dto)))
+                            .isInstanceOf(IllegalStateException.class).hasMessage("category check failed");
+                } else {
+                    actualSteps.checkCategories(List.of(dto));
+                }
+                if (initiallySet) {
+                    assertThat(actualSession.getActor())
+                            .isEqualTo(User.getTenantUser(Tenant.COMUNE_DI_MILANO, UserRole.API));
+                    assertThat(actualSession.getTenant()).isEqualTo(Tenant.COMUNE_DI_MILANO);
+                    assertThat(actualSession.getRole()).isEqualTo(UserRole.API);
+                } else {
+                    assertThatThrownBy(actualSession::getActor).isInstanceOf(IllegalStateException.class);
+                    assertThatThrownBy(actualSession::getRole).isInstanceOf(IllegalStateException.class);
+                    assertThatThrownBy(actualSession::getTenant).isInstanceOf(IllegalStateException.class);
+                }
+            }
+        }
+    }
+
+    @Test
+    void restoresSnapshotWhenTemporaryAuthenticationFails() {
+        var dto = transform(Map.of(
+                "ente", "Comune di Milano", "categoria", "COMUNI", "appartenenza", "sì"));
+        var snapshot = mock(AuthSession.Snapshot.class);
+        when(session.snapshot()).thenReturn(snapshot);
+        doThrow(new IllegalStateException("authentication failed")).when(session).set(Tenant.PAGO_PA);
+        assertThatThrownBy(() -> steps.checkCategories(List.of(dto)))
+                .isInstanceOf(IllegalStateException.class).hasMessage("authentication failed");
+        verify(snapshot).close();
+        verifyNoInteractions(useCase);
+    }
+
+    @Test
+    void restorationFailureIsSuppressedWhenCategoryCheckFails() {
+        var dto = transform(Map.of(
+                "ente", "Comune di Milano", "categoria", "COMUNI", "appartenenza", "sì"));
+        var snapshot = mock(AuthSession.Snapshot.class);
+        var checkFailure = new IllegalStateException("check failed");
+        var restoreFailure = new IllegalStateException("restore failed");
+        when(session.snapshot()).thenReturn(snapshot);
+        doThrow(checkFailure).when(useCase).check(any());
+        doThrow(restoreFailure).when(snapshot).close();
+        assertThatThrownBy(() -> steps.checkCategories(List.of(dto)))
+                .isSameAs(checkFailure)
+                .satisfies(failure -> assertThat(failure.getSuppressed()).containsExactly(restoreFailure));
     }
 
     @Test

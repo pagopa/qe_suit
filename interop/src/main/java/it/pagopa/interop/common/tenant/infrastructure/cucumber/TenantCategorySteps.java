@@ -3,7 +3,6 @@ package it.pagopa.interop.common.tenant.infrastructure.cucumber;
 import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.tenant.application.TenantCategoryUseCase;
 import it.pagopa.interop.common.tenant.infrastructure.cucumber.dto.TenantCategoryExpectation;
 import it.pagopa.interop.common.tenant.infrastructure.cucumber.dto.mapper.TenantCategoryExpectationMapper;
@@ -23,7 +22,9 @@ public class TenantCategorySteps {
         if (commands.isEmpty()) {
             throw new IllegalArgumentException("At least one tenant category expectation is required");
         }
-        session.set(Tenant.PAGO_PA);
-        commands.forEach(categories::check);
+        try (var snapshot = session.snapshot()) {
+            session.set(Tenant.PAGO_PA);
+            commands.forEach(categories::check);
+        }
     }
 }
