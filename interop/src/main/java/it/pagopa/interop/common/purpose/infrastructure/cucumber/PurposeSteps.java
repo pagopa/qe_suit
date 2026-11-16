@@ -57,6 +57,8 @@ public class PurposeSteps {
                 ));
         Tenant consumer = Tenant.fromOrganizationId(purpose.getConsumerId());
 
+        // TODO fare riferimento al ticket tecnico QA-19317
+        // Serve una soluzione per evitare di impostare sia currentUserSession che currentM2MSession
         switch (currentChannel.getCurrentChannel()) {
             case BFF -> authSession.set(User.getTenantAdmin(consumer), consumer);
             case M2M_V3 -> authSession.set(M2MRole.M2M_ADMIN, consumer);
