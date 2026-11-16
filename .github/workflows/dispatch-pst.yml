@@ -1,0 +1,27 @@
+name: Update PST for Draft PR
+
+on:
+  pull_request_target:
+    types: [opened, reopened, synchronize, converted_to_draft]
+
+permissions: {}
+
+jobs:
+  dispatch:
+    if: >-
+      github.event.pull_request.draft &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Start Generate PST on pn-b2b-client develop
+        env:
+          GH_TOKEN: ${{ secrets.PST_DISPATCH_TOKEN }}
+        run: |
+          if [[ -z "$GH_TOKEN" ]]; then
+            echo 'PST_DISPATCH_TOKEN is missing.' >&2
+            exit 1
+          fi
+          gh api --method POST \
+            repos/pagopa/pn-b2b-client/actions/workflows/generate-pst.yml/dispatches \
+            -f ref=develop

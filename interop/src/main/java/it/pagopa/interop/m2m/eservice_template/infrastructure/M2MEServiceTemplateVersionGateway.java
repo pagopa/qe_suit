@@ -2,6 +2,7 @@ package it.pagopa.interop.m2m.eservice_template.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateVersionGateway;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
@@ -34,6 +35,16 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
     }
 
     @Override
+    public void deleteDraftVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void suspendVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public EServiceTemplateVersion getEServiceTemplateVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
         var templateFromStore = entityStore.getById(templateRef.id(), EServiceTemplate.class).orElseThrow();
         return restClient.getEServiceTemplateVersion(templateRef.id(), versionRef.versionId())
@@ -54,6 +65,16 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
 
     @Override
     public EServiceTemplateVersion uploadInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, String fixturePath) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void shouldFailToUploadInterface(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String fixturePath,
+            SoapInterfaceUploadFailureReason reason
+    ) {
         throw new UnsupportedOperationException();
     }
 

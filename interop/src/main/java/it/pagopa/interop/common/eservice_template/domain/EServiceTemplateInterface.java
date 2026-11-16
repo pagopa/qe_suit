@@ -10,6 +10,8 @@ import lombok.Getter;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.List;
+import it.pagopa.interop.common.eservice.domain.SoapAddressConfiguration;
 
 @Getter
 @EqualsAndHashCode
@@ -85,6 +87,13 @@ public final class EServiceTemplateInterface implements Identifiable {
 
     public byte[] getContent() {
         return content == null ? null : Arrays.copyOf(content, content.length);
+    }
+
+    public List<SoapAddressConfiguration> soapAddressesAt(String endpoint) {
+        if (!hasDownloadedContent()) throw new IllegalStateException("Template interface content has not been downloaded");
+        return new WsdlAddressReader().parse(content).stream()
+                .map(address -> new SoapAddressConfiguration(address.service(), address.port(), endpoint))
+                .toList();
     }
 
     public boolean hasDownloadedContent() {
