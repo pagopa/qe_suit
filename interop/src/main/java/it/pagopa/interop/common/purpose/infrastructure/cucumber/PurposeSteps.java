@@ -34,7 +34,7 @@ public class PurposeSteps {
     @Given("l'e-service con una finalità in stato {purposeState} associata da/dal {tenant}")
     public void createPurposeForEService(PurposeVersionState purposeState, Tenant consumer) {
         interopJourney
-                .withConsumer(consumer, UserRole.ADMIN)
+                .withConsumer(consumer)
                 .createPurpose(purposeState);
     }
 
@@ -44,7 +44,7 @@ public class PurposeSteps {
         EService eService = entityStore.getLastOrThrow(EService.class);
 
         interopJourney
-                .withConsumer(consumer, UserRole.ADMIN)
+                .withConsumer(consumer)
                 .createPurposeFromTemplateAndLinkToEService(purposeTemplate, eService, purposeState);
     }
 
@@ -56,14 +56,7 @@ public class PurposeSteps {
                         "E-service not found for purpose " + purpose.getId()
                 ));
         Tenant consumer = Tenant.fromOrganizationId(purpose.getConsumerId());
-
-        // TODO fare riferimento al ticket tecnico QA-19317
-        // Serve una soluzione per evitare di impostare sia currentUserSession che currentM2MSession
-        switch (currentChannel.getCurrentChannel()) {
-            case BFF -> authSession.set(User.getTenantAdmin(consumer), consumer);
-            case M2M_V3 -> authSession.set(M2MRole.M2M_ADMIN, consumer);
-        }
-
+        authSession.set(consumer);
         purposeUseCase.updatePurposeDailyCallsEstimateBeyondThreshold(purpose, eService);
     }
 
@@ -96,12 +89,7 @@ public class PurposeSteps {
     }
 
     private void processWaitingPurpose(Tenant tenant, PurposeVersionState expectedState, BiFunction<Purpose, PurposeVersion, Purpose> operation) {
-        // TODO fare riferimento al ticket tecnico QA-19317
-        // Serve una soluzione per evitare di impostare sia currentUserSession che currentM2MSession
-        switch (currentChannel.getCurrentChannel()) {
-            case BFF -> authSession.set(User.getTenantAdmin(tenant), tenant);
-            case M2M_V3 -> authSession.set(M2MRole.M2M_ADMIN, tenant);
-        }
+        authSession.set(tenant);
 
         Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
         PurposeVersion waitingVersion = purpose.getLastWaitingForApprovalVersion();

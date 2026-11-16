@@ -15,7 +15,7 @@ public class EServiceArchivingSteps {
 
     @Given("{eServiceByAlias} del/di {tenant} interamente in archiviazione")
     public void archiveEntireEService(EService eService, Tenant producer) {
-        session.set(User.getTenantAdmin(producer), producer);
+        session.set(producer);
         archiving.archiveEntireEService(eService);
     }
 }

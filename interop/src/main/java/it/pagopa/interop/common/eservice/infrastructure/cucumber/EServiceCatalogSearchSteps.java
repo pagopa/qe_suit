@@ -116,7 +116,7 @@ public class EServiceCatalogSearchSteps {
         SearchEServiceCatalogCommand command = requestFactory.defaultSearchEServiceCatalogCommand();
         command.keyword(keyword);
         configurationMapper.apply(filters, command, entityStore);
-        session.set(User.getTenantAdmin(requester), requester);
+        session.set(requester);
         EServiceCatalog result = catalog.search(command);
         if (result == null) {
             throw new IllegalStateException("Catalog search returned no result");

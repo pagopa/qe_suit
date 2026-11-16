@@ -23,7 +23,7 @@ public class TenantCategorySteps {
         if (commands.isEmpty()) {
             throw new IllegalArgumentException("At least one tenant category expectation is required");
         }
-        session.set(User.getTenantAdmin(Tenant.PAGO_PA), Tenant.PAGO_PA);
+        session.set(Tenant.PAGO_PA);
         commands.forEach(categories::check);
     }
 }
