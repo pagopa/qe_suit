@@ -13,7 +13,7 @@ import java.util.List;
 record ConfiguredUser(UserType type, String username, String password, String taxId, String organization,
                       String organizationId, String uid, String denomination, String familyName,
                       String personalTaxId, List<OrganizationRole> roles, String ipaCode, boolean hasGroups,
-                      String email) implements User {
+                      String email, String sessionTokenKey) implements User {
 
     @Override
     public UserType getType() {
@@ -94,5 +94,11 @@ record ConfiguredUser(UserType type, String username, String password, String ta
     @Override
     public boolean isHasGroups() {
         return hasGroups;
+    }
+
+    // la chiave del token configurata se c'è, altrimenti lo username
+    @Override
+    public String getSessionTokenKey() {
+        return sessionTokenKey != null ? sessionTokenKey : username;
     }
 }

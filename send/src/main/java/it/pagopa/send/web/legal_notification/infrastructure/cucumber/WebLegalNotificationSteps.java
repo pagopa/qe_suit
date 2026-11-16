@@ -23,7 +23,7 @@ import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class LegalNotificationSteps {
+public class WebLegalNotificationSteps {
 
     private final LegalNotificationJourneyImpl journey;
     private final LegalNotificationUseCase legalNotificationUseCase;
