@@ -211,7 +211,7 @@ jobs:
           [[ "$RUNNER" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo 'Unsafe runner name'; exit 1; }
           for i in $(seq 1 5); do
             TIMESTAMP=$(date -u +%Y%m%d%H%M%S)
-            BRANCH="feature/rae_${RUNNER}_${TIMESTAMP}"
+            BRANCH="rae/rae_${RUNNER}_${TIMESTAMP}"
             if ! git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then break; fi
             sleep 1
           done
