@@ -109,6 +109,7 @@ public class BffEServiceGateway implements EServiceGateway {
         var expected = switch (reason) {
             case INVALID_DATA -> 400;
             case OUT_OF_DRAFT_OPERATION_FIELD -> 409;
+            case UNAUTHORIZED -> 403;
         };
         var actual = ((ApiResponse) this.lastResponse).getStatusCode();
         assertThat(actual).isEqualTo(expected);
@@ -142,6 +143,24 @@ public class BffEServiceGateway implements EServiceGateway {
 
         restClient.scheduleArchiveEservice(eServiceRef.id(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    @Override
+    public void cloneEService(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        restClient.cloneEService(eServiceRef.id(), descriptorRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdEServiceDescriptor -> {
+                    final EServiceRef clonedEServiceRef = EServiceRef.of(createdEServiceDescriptor.getId());
+                    final EServiceDescriptorRef clonedDescriptorRef = EServiceDescriptorRef.of(createdEServiceDescriptor.getDescriptorId());
+
+                    final EServiceDescriptor createdDescriptor = descriptorGateway.getEServiceDescriptor(clonedEServiceRef, clonedDescriptorRef);
+                    final EService clonedEService = getEService(clonedEServiceRef);
+                    clonedEService.upsertDescriptor(createdDescriptor);
+
+                    return clonedEService;
+                })
+                .updateContext()
                 .get();
     }
 

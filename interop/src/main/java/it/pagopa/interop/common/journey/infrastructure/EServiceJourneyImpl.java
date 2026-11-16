@@ -6,8 +6,6 @@ import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
-import it.pagopa.interop.common.eservice.application.*;
-import it.pagopa.interop.common.eservice.application.*;
 import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
@@ -99,6 +97,13 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     public EServiceJourneyImpl archiveEService(GracePeriodDays gracePeriodDays) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         eServiceUseCase.archiveEService(eService, gracePeriodDays);
+        return this;
+    }
+
+    @Override
+    public EServiceJourneyImpl cloneEService() {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        eServiceUseCase.cloneEService(eService);
         return this;
     }
 

@@ -105,6 +105,16 @@ public class BffEServiceRestClient extends RestClient {
         );
     }
 
+    public TestChain<CreatedEServiceDescriptor> cloneEService(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+        return execute(
+                () -> eservicesApi.cloneEServiceByDescriptor()
+                        .eServiceIdPath(eserviceId)
+                        .descriptorIdPath(descriptorId)
+                        .execute(Function.identity()),
+                CreatedEServiceDescriptor.class
+        );
+    }
+
     public TestChain<Void> deleteEService(@Nonnull UUID eserviceId) {
         return execute(() -> eservicesApi.deleteEService().eServiceIdPath(eserviceId).execute(Function.identity()), Void.class);
     }

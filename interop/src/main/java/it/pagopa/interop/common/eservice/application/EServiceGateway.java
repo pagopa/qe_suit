@@ -8,6 +8,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import org.springframework.plugin.core.Plugin;
 
@@ -25,6 +26,8 @@ public interface EServiceGateway extends Plugin<Channel> {
     EService getEService(EServiceRef eServiceRef);
 
     void archiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays);
+
+    void cloneEService(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
 
     void shouldFailToArchiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays, EServiceArchivingFailureReason reason);
 
