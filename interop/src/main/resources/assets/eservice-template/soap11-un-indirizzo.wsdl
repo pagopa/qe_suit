@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="urn:pagopa:pin10024:soap11"
-             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
-             targetNamespace="urn:pagopa:pin10024:soap11">
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  targetNamespace="urn:pagopa:pin10024:soap11">
     <wsdl:documentation>Template immutabile: &amp;preserva quote ' e CDATA.</wsdl:documentation>
     <wsdl:types>
         <xsd:schema targetNamespace="urn:pagopa:pin10024:soap11">

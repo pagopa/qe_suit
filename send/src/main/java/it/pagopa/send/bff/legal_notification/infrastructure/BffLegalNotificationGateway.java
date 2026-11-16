@@ -12,7 +12,6 @@ import it.pagopa.send.generated.openapi.clients.bff.model.BffNotificationStatus;
 import it.pagopa.send.generated.openapi.clients.bff.model.NewNotificationRequestV26;
 import it.pagopa.send.generated.openapi.clients.bff.model.NewNotificationResponse;
 import it.pagopa.send.common.legal_notification.application.LegalNotificationGateway;
-import it.pagopa.send.bff.legal_notification.infrastructure.LegalNotificationRestClient;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import it.pagopa.send.common.infrastructure.IUNHelper;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.LegalNotificationRequestFactory;

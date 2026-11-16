@@ -2,7 +2,9 @@ package it.pagopa.interop.bff.eservice_template.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
+import it.pagopa.interop.bff.eservice.infrastructure.BffSoapInterfaceProblemValidator;
 import it.pagopa.interop.bff.eservice_template.application.BffUpdateEServiceTemplateVersionCommand;
+import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateVersionGateway;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
@@ -21,7 +23,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,6 +34,19 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
     private final BffEServiceTemplateRestClient restClient;
     private final EntityStore entityStore;
     private final BffEServiceTemplateVersionMapper mapper;
+    private final BffEServiceTemplateLifecycleRestClient lifecycleClient;
+
+    @Override
+    public void deleteDraftVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
+        lifecycleClient.deleteDraftVersion(templateRef.id(), versionRef.versionId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+    }
+
+    @Override
+    public void suspendVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
+        lifecycleClient.suspendVersion(templateRef.id(), versionRef.versionId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS).get();
+    }
 
     @Override
     public EServiceTemplateVersion getEServiceTemplateVersion(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {
@@ -95,6 +109,24 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
     }
 
     @Override
+    public void shouldFailToUploadInterface(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            String fixturePath,
+            SoapInterfaceUploadFailureReason reason
+    ) {
+        File document = FileUtils.loadClasspathResourceAsTempFile(fixturePath);
+        String prettyName = Path.of(fixturePath).getFileName().toString();
+        var rawResponse = restClient.createEServiceTemplateDocument(
+                        templateRef.id(), versionRef.versionId(), DocumentKind.INTERFACE.name(), prettyName, document
+                )
+                .withoutPolling()
+                .assertStatusCode(400)
+                .getRaw();
+        BffSoapInterfaceProblemValidator.assertSoapInterfaceProblem(rawResponse, reason);
+    }
+
+    @Override
     public EServiceTemplateVersion updateDraftVersion(
             EServiceTemplateRef templateRef,
             EServiceTemplateVersionRef versionRef,
@@ -118,10 +150,7 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
         byte[] content = download(templateRef.id(), versionRef.versionId(), metadata.getId());
 
         EServiceTemplateInterface downloaded = metadata.withContent(content);
-        EServiceTemplateVersion enrichedVersion = templateVersion.toBuilder()
-                .interfaceDocument(downloaded)
-                .build();
-        EServiceTemplate enriched = upsertVersion(templateRef, enrichedVersion);
+        EServiceTemplate enriched = replaceInterface(templateRef, versionRef, downloaded);
         entityStore.upsert(enriched);
 
         return downloaded;
@@ -144,29 +173,17 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
                 .get();
     }
 
-    private EServiceTemplate upsertVersion(
-            EServiceTemplateRef templateRef,
-            EServiceTemplateVersion updatedVersion
-    ) {
+    private EServiceTemplate replaceInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef, EServiceTemplateInterface document) {
         EServiceTemplate template = this.entityStore.getById(templateRef.id(), EServiceTemplate.class)
                 .orElseThrow(() -> new IllegalStateException("Template not found in entity store"));
 
-        List<EServiceTemplateVersion> versions = new ArrayList<>(template.getVersions());
-        for (int i = 0; i < versions.size(); i++) {
-            if (versions.get(i).getId().equals(updatedVersion.getId())) {
-                versions.set(i, updatedVersion);
-                return template.toBuilder()
-                        .clearVersions()
-                        .versions(versions)
-                        .build();
-            }
-        }
+        List<EServiceTemplateVersion> versions = template.getVersions().stream()
+                .map(version -> version.getId().equals(versionRef.versionId())
+                        ? version.toBuilder().interfaceDocument(document).build()
+                        : version)
+                .toList();
 
-        versions.add(updatedVersion);
-        return template.toBuilder()
-                .clearVersions()
-                .versions(versions)
-                .build();
+        return template.toBuilder().clearVersions().versions(versions).build();
     }
 
     @Override
