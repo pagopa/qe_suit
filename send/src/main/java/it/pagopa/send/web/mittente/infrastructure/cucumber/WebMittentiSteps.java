@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class MittentiSteps {
+public class WebMittentiSteps {
 
     private final WebPresentationGateway browser;
     private final WebBrowserContext webBrowserContext;

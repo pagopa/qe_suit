@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
-public class LoginSteps {
+public class WebLoginSteps {
 
     private final WebPresentationGateway uiGateway;
     private final LoginService loginService;
@@ -18,6 +18,12 @@ public class LoginSteps {
     @Given("la PA {user} effettua l'accesso a SelfCare con autenticazione SPID")
     public void spidAuthPa(User tenant) {
         loginService.loginAsTenant(tenant);
+    }
+
+    @Given("il PT {user} effettua l'accesso a SelfCare con autenticazione SPID")
+    public void spidAuthPt(User partner) {
+        // il PT entra da SEND come una PA: dopo la scelta dell'ente il portale mittente lo reindirizza al BackOffice PT
+        loginService.loginAsTenant(partner);
     }
 
     @Given("{recipientType} {user} effettua l'accesso a SelfCare con autenticazione SPID")

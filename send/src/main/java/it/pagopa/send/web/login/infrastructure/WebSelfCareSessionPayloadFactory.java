@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.send.common.user.domain.OrganizationRole;
 import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -20,24 +21,26 @@ import java.util.Map;
  */
 @Component
 @RequiredArgsConstructor
-public class SelfCareSessionPayloadFactory {
+public class WebSelfCareSessionPayloadFactory {
 
     private final ObjectMapper objectMapper;
 
     /**
-     *  Sessione dell'utente: la parte comune ({@link #basePayload}) più i campi del suo tipo di utenza, ente (PA)
-     * oppure persona fisica o giuridica (PF/PG).
+     * Sessione dell'utente: la parte comune ({@link #basePayload}) più i campi del suo tipo di utenza, ente (PA),
+     * partner tecnologico (PT) oppure persona fisica o giuridica (PF/PG).
      */
     public String build(User user, String sessionToken) {
         Map<String, Object> payload = basePayload(user, sessionToken);
         switch (user.getType()) {
             case PA -> addTenantFields(payload, user);
+            case PT -> addPartnerFields(payload, user);
             case PF, PG -> addRecipientFields(payload, user);
         }
         return serialize(payload, user.getUsername());
     }
 
-    private void addTenantFields(Map<String, Object> payload, User tenant) {
+    // restituisce l'organizzazione aggiunta alla sessione, per i campi propri dei partner tecnologici
+    private Map<String, Object> addTenantFields(Map<String, Object> payload, User tenant) {
         // il portale mittente usa desired_exp come scadenza della sessione (è l'exp del sessionToken) e non vuole i
         // claim del JWT alla radice, a differenza del portale cittadino
         payload.put("desired_exp", payload.get("exp"));
@@ -53,6 +56,14 @@ public class SelfCareSessionPayloadFactory {
         organization.put("ipaCode", tenant.getIpaCode());
         organization.put("hasGroups", tenant.isHasGroups());
         payload.put("organization", organization);
+        return organization;
+    }
+
+    /**
+     * Il portale dei partner tecnologici usa la stessa sessione del portale mittente, con il tipo di ente nell'organizzazione.
+     */
+    private void addPartnerFields(Map<String, Object> payload, User partner) {
+        addTenantFields(payload, partner).put("institutionType", partner.getType().name());
     }
 
     /**
@@ -88,7 +99,9 @@ public class SelfCareSessionPayloadFactory {
         payload.put("name", user.getName());
         payload.put("fiscal_number", user.getFiscalNumber());
         payload.put("uid", user.getUid());
-        if (!payload.containsKey("desired_exp") && payload.containsKey("exp")) {
+        // il portale cittadini rifiuta la sessione se c'è desired_exp, i portali mittente e imprese lo vogliono
+        if (!payload.containsKey("desired_exp") && payload.containsKey("exp")
+                && user.getType() != UserType.PF) {
             payload.put("desired_exp", payload.get("exp"));
         }
         return payload;
