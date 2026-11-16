@@ -45,9 +45,13 @@ import static io.cucumber.junit.platform.engine.Constants.*;
                         (@debug-client-assertion-page-ui-flow
                          or @agreement
                          or @eservice-archiving
+                         or @private-catalog
+                         or eservice-template-interface
+                         or @eservice-attribute-threshold
                          or @debug-client-assertion-page-ui-behavior
                          or @dev-tools-page-ui-behavior)
                         and not @wait_for_fix
+                        and not @awaiting_for_qa
                         and not @ignore
                         """
         )

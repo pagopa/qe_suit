@@ -37,6 +37,13 @@ public class BffAgreementRestClient extends RestClient {
         );
     }
 
+    public TestChain<Agreements> activeProducerAgreements(UUID eServiceId, int offset, int limit) {
+        return execute(() -> agreementsApi.getProducerAgreements()
+                        .eservicesIdsQuery(eServiceId).statesQuery(AgreementState.ACTIVE.getValue())
+                        .offsetQuery(offset).limitQuery(limit).execute(Function.identity()),
+                Agreements.class);
+    }
+
     public TestChain<Agreement> submit(@Nonnull UUID agreementId, @Nonnull AgreementSubmissionPayload payload) {
         return execute(
                 () -> agreementsApi.submitAgreement().agreementIdPath(agreementId).body(payload).execute(Function.identity()),
@@ -50,6 +57,22 @@ public class BffAgreementRestClient extends RestClient {
         return execute(
                 () -> agreementsApi.approveAgreement().agreementIdPath(agreementId).body(payload).execute(Function.identity()),
                 Agreement.class
+        );
+    }
+
+    public TestChain<Agreement> suspend(@Nonnull UUID agreementId, @Nullable UUID delegationId) {
+        var payload = new DelegationRef().delegationId(delegationId);
+        return execute(
+                () -> agreementsApi.suspendAgreement().agreementIdPath(agreementId)
+                        .body(payload).execute(Function.identity()),
+                Agreement.class
+        );
+    }
+
+    public TestChain<Void> archive(@Nonnull UUID agreementId) {
+        return execute(
+                () -> agreementsApi.archiveAgreement().agreementIdPath(agreementId).reqSpec(reqSpec -> reqSpec.setContentType("application/json")).execute(Function.identity()),
+                Void.class
         );
     }
 }

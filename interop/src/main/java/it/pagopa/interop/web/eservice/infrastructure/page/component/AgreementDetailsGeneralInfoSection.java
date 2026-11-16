@@ -14,7 +14,7 @@ public interface AgreementDetailsGeneralInfoSection extends Component {
     @XPath(".//p[normalize-space()='Richiesta per l’e-service']")
     Label eServiceLabel();
 
-    @XPath(".//a[contains(@href,'/catalogo-e-service/')]")
+    @XPath(".//a[contains(@href,'e-service/')]")
     Link eServiceLink();
 
     @XPath(".//p[normalize-space()='Erogatore']")
@@ -35,6 +35,6 @@ public interface AgreementDetailsGeneralInfoSection extends Component {
     @XPath(".//button[.//span[normalize-space()='Visualizza attributi certificati']]")
     Button certifiedAttributesButton();
 
-    @XPath(".//button[.//span[normalize-space()='Visualizza contatti erogatore']]")
-    Button providerContactsButton();
+    @XPath(".//button[.//span[contains(normalize-space(), 'Visualizza contatti')]]")
+    Button contactsButton();
 }

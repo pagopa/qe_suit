@@ -17,6 +17,12 @@ import static org.instancio.Select.field;
 public class BffEServiceTemplateRequestFactory implements EServiceTemplateRequestFactory {
 
     @Override
+    public EServiceTemplateInstanceCreationCommand defaultCreationEServiceTemplateInstanceCommand() {
+        return new BffEServiceTemplateInstanceCreationCommand()
+                .instanceLabel(randomAlphanumericName("label", 6));
+    }
+
+    @Override
     public EServiceTemplateCreationCommand defaultCreationEServiceTemplateCommand() {
         return BffEServiceTemplateCreationCommand.from(creationRequest());
     }

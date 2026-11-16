@@ -158,7 +158,7 @@ public interface BffEServiceDescriptorMapper {
 
                         // Applica l'indice della lista esterna al campo group dell'Attribute di Dominio
                         it.pagopa.interop.common.attribute.domain.Attribute attrWithGroup = domainAttr.toBuilder()
-                                .group(i)
+                                .group(i + 1)
                                 .build();
 
                         flattenedList.add(attrWithGroup);
