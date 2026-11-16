@@ -1,7 +1,7 @@
 Feature: Modifica dei metadati dei client
-  Come amministratore dell'ente proprietario
+  Come amministratore dell'ente e creatore di un client e-service o interop
   Voglio aggiornare il nome e la descrizione dei client
-  Per mantenerne aggiornate le informazioni senza alterare identità, chiavi e associazioni.
+  preservato i dati non modificati, le associazioni e l'operatività del client.
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -15,169 +15,96 @@ Feature: Modifica dei metadati dei client
     And un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate dal Comune di Pozzallo
     And un admin del Comune di Pozzallo ha associato la finalità al client "CL-1"
     And appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
-    When un admin del Comune di Pozzallo richiede la modifica dei metadati del client "CL-1":
+    When un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
       | campo       | valore            |
       | nome        | nuovo nome        |
     Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
     When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
-    And un admin del Comune di Pozzallo richiede la modifica dei metadati del client "CL-1":
+    And un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
       | campo       | valore            |
       | descrizione | nuova descrizione |
     Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto la descrizione
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
     When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
-    And un admin del Comune di Pozzallo richiede la modifica dei metadati del client "CL-1":
+    And un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
       | campo       | valore            |
       | nome        | nuovo nome        |
       | descrizione | nuova descrizione |
     Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome e la descrizione
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
-    
+
     Examples:
       | tipoClient |
       | CONSUMER   |
       | API        |
 
   @work-item:QA-19036
-  @channel:Given=BFF,When=M2M,Then=BFF
-  Scenario Outline: [CLIENT_METADATA_2] - Modifica di un singolo metadato di un client Consumer da parte dell'amministratore M2M
-  Dato un client Consumer appartenente all'ente amministrato,
-  quando l'amministratore M2M ne modifica soltanto il nome o la descrizione,
-  allora il sistema salva il nuovo valore, conserva quello omesso
-  e mantiene invariati identità, chiavi e associazioni del client.
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario: [CLIENT_UPDATE_METADATA_2] - L'amministratore aggiorna i metadati del client e-service che preserva i dati non modificati, le associazioni e l'operatività
+  Un amministratore aggiorna i metadati di un client e-service (solo nome, solo descrizione, nome e descrizione).
+  I dati modificati vengono aggiornati, quelli non modificati vengono preservati,
+  le associazioni di chiavi e finalità al client e-service vengono preservate.
+  Il client e-service permette di generare voucher garantendo la corretta operatività.
 
-    Given un client "CL-1" CONSUMER creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When un M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del client "CL-1":
-      | campo   | valore   |
-      | <campo> | <valore> |
-    Then il client "CL-1" presenta i metadati richiesti
-    And il client "CL-1" conserva i metadati non modificati
-    And il client "CL-1" conserva identificativo, tipologia, proprietario, chiavi e associazioni
+    Given un client "CL-1" CONSUMER creato dal Comune di Pozzallo in cui è presente un utente admin e una coppia di chiavi crittografiche
+    And un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate dal Comune di Pozzallo
+    And un admin del Comune di Pozzallo ha associato la finalità al client "CL-1"
+    And appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    When un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | nuovo nome        |
+    Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
-    Examples:
-      | campo       | valore                            |
-      | nome        | Client aggiornato                 |
-      | descrizione | Descrizione aggiornata del client |
+    When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    And un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
+      | campo       | valore            |
+      | descrizione | nuova descrizione |
+    Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto la descrizione
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [CLIENT_METADATA_3] - Modifica congiunta di nome e descrizione di un client Consumer
-  Dato un client Consumer appartenente all'ente amministrato,
-  quando l'amministratore ne modifica contemporaneamente nome e descrizione,
-  allora il sistema salva entrambi i valori senza alterare identità, chiavi e associazioni.
-
-    Given un client "CL-1" CONSUMER creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When un admin del Comune di Milano richiede la modifica dei metadati del client "CL-1":
-      | campo       | valore                       |
-      | nome        | Client Consumer aggiornato   |
-      | descrizione | Nuova descrizione del client |
-    Then il client "CL-1" presenta i metadati richiesti
-    And il client "CL-1" conserva identificativo, tipologia, proprietario, chiavi e associazioni
+    When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    And un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | nuovo nome        |
+      | descrizione | nuova descrizione |
+    Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome e la descrizione
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
   @work-item:QA-19036
-  @channel:Given=BFF,When=M2M,Then=BFF
-  Scenario: [CLIENT_METADATA_4] - Modifica congiunta di nome e descrizione di un client Consumer da parte dell'amministratore M2M
-  Dato un client Consumer appartenente all'ente amministrato,
-  quando l'amministratore M2M ne modifica contemporaneamente nome e descrizione,
-  allora il sistema salva entrambi i valori senza alterare identità, chiavi e associazioni.
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario: [CLIENT_UPDATE_METADATA_3] - L'amministratore aggiorna i metadati del client interop che preserva i dati non modificati, le associazioni e l'operatività
+  Un amministratore aggiorna i metadati di un client interop (solo nome, solo descrizione, nome e descrizione).
+  La modifica richiesta viene rifiutata, i dati, le associazioni di chiavi e finalità al client vengono preservate.
+  Il client interop permette di generare voucher garantendo la corretta operatività.
 
-    Given un client "CL-1" CONSUMER creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When un M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del client "CL-1":
-      | campo       | valore                       |
-      | nome        | Client Consumer aggiornato   |
-      | descrizione | Nuova descrizione del client |
-    Then il client "CL-1" presenta i metadati richiesti
-    And il client "CL-1" conserva identificativo, tipologia, proprietario, chiavi e associazioni
+    Given un client "CL-1" API creato dal Comune di Pozzallo in cui è presente un utente admin e una coppia di chiavi crittografiche
+    And un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate dal Comune di Pozzallo
+    And un admin del Comune di Pozzallo ha associato la finalità al client "CL-1"
+    And appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    When un admin del Comune di Pozzallo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | nuovo nome        |
+    Then il client "CL-1" conserva le associazioni e i dati di riferimento
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [CLIENT_METADATA_5] - Modifica dei metadati di un client API
-  Dato un client API appartenente all'ente amministrato,
-  quando l'amministratore ne modifica il nome o la descrizione,
-  allora il sistema salva il metadato richiesto senza alterare identità, chiavi e associazioni.
+    When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    And un admin del Comune di Pozzallo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | descrizione | nuova descrizione |
+    Then il client "CL-1" conserva le associazioni e i dati di riferimento
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
-    Given un client "CL-1" API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When un admin del Comune di Milano richiede la modifica dei metadati del client "CL-1":
-      | campo   | valore   |
-      | <campo> | <valore> |
-    Then il client "CL-1" presenta i metadati richiesti
-    And il client "CL-1" conserva i metadati non modificati
-    And il client "CL-1" conserva identificativo, tipologia, proprietario, chiavi e associazioni
-
-    Examples:
-      | campo       | valore                            |
-      | nome        | Client API aggiornato             |
-      | descrizione | Descrizione aggiornata del client |
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [CLIENT_METADATA_6] - Modifica congiunta di nome e descrizione di un client API
-  Dato un client API appartenente all'ente amministrato,
-  quando l'amministratore ne modifica contemporaneamente nome e descrizione,
-  allora il sistema salva entrambi i metadati lasciando invariate le proprietà operative del client.
-
-    Given un client "CL-1" API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When un admin del Comune di Milano richiede la modifica dei metadati del client "CL-1":
-      | campo       | valore                       |
-      | nome        | Client API aggiornato        |
-      | descrizione | Nuova descrizione del client |
-    Then il client "CL-1" presenta i metadati richiesti
-    And il client "CL-1" conserva identificativo, tipologia, proprietario, chiavi e associazioni
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=M2M,Then=BFF
-  Scenario Outline: [CLIENT_METADATA_7] - Impossibilità per un amministratore M2M di modificare un client API
-  Dato un client API appartenente all'ente dell'amministratore,
-  quando l'amministratore M2M ne richiede la modifica dei metadati,
-  allora il sistema rifiuta l'operazione e conserva integralmente i dati del client.
-
-    Given un client "CL-1" API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When un M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del client "CL-1":
-      | campo   | valore   |
-      | <campo> | <valore> |
-    Then la modifica dei metadati del client "CL-1" viene rifiutata
-    And il client "CL-1" conserva tutti i dati iniziali
-
-    Examples:
-      | campo       | valore                            |
-      | nome        | Client API aggiornato             |
-      | descrizione | Descrizione aggiornata del client |
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=M2M,Then=BFF
-  Scenario: [CLIENT_METADATA_8] - Impossibilità per un amministratore M2M di modificare congiuntamente nome e descrizione di un client API
-  Dato un client API appartenente all'ente dell'amministratore,
-  quando l'amministratore M2M ne richiede la modifica congiunta di nome e descrizione,
-  allora il sistema rifiuta l'intera operazione senza modificare il client.
-
-    Given un client "CL-1" API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When un M2M_ADMIN del Comune di Milano richiede la modifica dei metadati del client "CL-1":
-      | campo       | valore                       |
-      | nome        | Client API aggiornato        |
-      | descrizione | Nuova descrizione del client |
-    Then la modifica dei metadati del client "CL-1" viene rifiutata
-    And il client "CL-1" conserva tutti i dati iniziali
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [CLIENT_METADATA_9] - Conservazione dell'operatività del client Consumer dopo la modifica
-  Dato un client Consumer con chiavi crittografiche e una finalità utilizzabile associata,
-  quando l'amministratore ne modifica nome e descrizione,
-  allora le chiavi e le associazioni rimangono invariate
-  e il client continua a consentire l'ottenimento di un voucher.
-
-    Given un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate da PagoPA
-    And un client "CL-1" CONSUMER creato da PagoPA, associato alla finalità creata, in cui è presente un utente admin e una coppia di chiavi crittografiche
-    When un admin di PagoPA richiede la modifica dei metadati del client "CL-1":
-      | campo       | valore                        |
-      | nome        | Client Consumer aggiornato    |
-      | descrizione | Descrizione aggiornata        |
-    Then il client "CL-1" conserva chiavi e associazioni
-    And il client "CL-1" consente di ottenere un nuovo voucher
-
+    When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    And un admin del Comune di Pozzallo tenta di modificare i metadati del client "CL-1":
+      | campo       | valore            |
+      | nome        | nuovo nome        |
+      | descrizione | nuova descrizione |
+    Then il client "CL-1" conserva le associazioni e i dati di riferimento
+    And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
 # TODO I test sulla UI vanno implementati come test di integrazione
 #
@@ -355,7 +282,7 @@ Feature: Modifica dei metadati dei client
   allora il sistema impedisce la modifica e conserva i dati iniziali.
 
     Given un client "CL-1" di tipo CONSUMER appartenente al Comune di Milano
-    When un security del Comune di Milano richiede la modifica dei metadati del client "CL-1":
+    When un security del Comune di Milano modifica i metadati del client "CL-1":
       | campo | valore             |
       | nome  | Client aggiornato  |
     Then la modifica dei metadati del client "CL-1" viene rifiutata
@@ -369,7 +296,7 @@ Feature: Modifica dei metadati dei client
   allora il sistema rifiuta l’operazione senza aggiornare la risorsa.
 
     Given un client "CL-1" di tipo CONSUMER appartenente al Comune di Milano
-    When un admin di PagoPA richiede la modifica dei metadati del client "CL-1":
+    When un admin di PagoPA modifica i metadati del client "CL-1":
       | campo | valore             |
       | nome  | Client aggiornato  |
     Then la modifica dei metadati del client "CL-1" viene rifiutata
