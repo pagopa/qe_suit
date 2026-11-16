@@ -1,9 +1,8 @@
 package it.pagopa.interop.common.journey.application;
 
 import it.pagopa.interop.common.kernel.domain.*;
-import org.springframework.plugin.core.Plugin;
 
-public interface UserJourney<SELF extends UserJourney<SELF>> extends JourneyModule, Plugin<Channel> {
+public interface UserJourney<SELF extends UserJourney<SELF>> extends JourneyModule {
     SELF withProducer(Tenant tenant);
 
     SELF withConsumer(Tenant tenant);

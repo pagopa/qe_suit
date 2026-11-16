@@ -9,10 +9,9 @@ import it.pagopa.interop.common.infrastructure.config.CacheConfig;
 import it.pagopa.interop.common.infrastructure.config.CucumberConfig;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.journey.application.InteropJourney;
-import it.pagopa.interop.common.journey.application.UserJourney;
 import it.pagopa.interop.common.journey.infrastructure.ClientJourneyImpl;
 import it.pagopa.interop.common.journey.infrastructure.FinalizerJourneyImpl;
-import it.pagopa.interop.common.journey.infrastructure.UserChannelJourney;
+import it.pagopa.interop.common.journey.infrastructure.UserJourneyImpl;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -21,7 +20,6 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import it.pagopa.interop.m2m.v3.infrastructure.auth.M2Mv3ApiClientProvider;
 import it.pagopa.interop.m2m.v3.infrastructure.auth.M2Mv3SessionConfig;
-import it.pagopa.interop.m2m.v3.infrastructure.journey.M2Mv3UserJourney;
 import org.junit.jupiter.api.Test;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -84,10 +82,10 @@ class UserJourneyRoutingTest {
             verify(clients, times(2)).createClient(any());
             journey.withProducer(TENANT, client).withConsumer(TENANT, client);
             assertThat(session.getActor()).isSameAs(client);
-            var routed = context.getBean("routedUserJourney", UserJourney.class);
-            assertThat(routed.withProducer(TENANT, client)).isSameAs(routed);
+            var userJourney = context.getBean(UserJourneyImpl.class);
+            assertThat(userJourney.withProducer(TENANT, client)).isSameAs(userJourney);
             channel.setCurrentChannel(Channel.BFF);
-            assertThat(routed.withConsumer(TENANT)).isSameAs(routed);
+            assertThat(userJourney.withConsumer(TENANT)).isSameAs(userJourney);
             assertThat(session.getRole()).isEqualTo(UserRole.ADMIN);
             channel.setCurrentChannel(Channel.M2M_V3);
             assertThatThrownBy(() -> journey.withConsumer(TENANT, UserRole.ADMIN))
@@ -131,8 +129,7 @@ class UserJourneyRoutingTest {
         context.getEnvironment().setActiveProfiles(profile);
         context.registerBean(ClientUseCase.class, () -> clients);
         context.register(AuthSessionRoutingConfig.class, M2Mv3SessionConfig.class,
-                UserJourneyRoutingConfig.class, JourneyProxyConfig.class,
-                UserChannelJourney.class, M2Mv3UserJourney.class,
+                JourneyProxyConfig.class, UserJourneyImpl.class,
                 ClientJourneyImpl.class, FinalizerJourneyImpl.class,
                 M2Mv3ApiClientProvider.class, CacheConfig.class, CachingConfig.class);
         context.register(profile.equals("junit") ? JunitContextConfig.class : CucumberConfig.class);
