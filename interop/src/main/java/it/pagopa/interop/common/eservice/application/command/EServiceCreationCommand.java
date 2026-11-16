@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice.application.command;
 
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
+import jakarta.annotation.Nullable;
 
 public interface EServiceCreationCommand {
     EServiceCreationCommand name(String name);
@@ -13,4 +14,7 @@ public interface EServiceCreationCommand {
     EServiceCreationCommand isSignalHubEnabled(Boolean isSignalHubEnabled);
     EServiceCreationCommand isConsumerDelegable(Boolean isConsumerDelegable);
     EServiceCreationCommand isClientAccessDelegable(Boolean isClientAccessDelegable);
+    EServiceCreationCommand alias(@Nullable String alias);
+
+    String getAlias();
 }
