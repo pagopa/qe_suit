@@ -211,7 +211,7 @@ jobs:
           [[ "$RUNNER" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo 'Unsafe runner name'; exit 1; }
           for i in $(seq 1 5); do
             TIMESTAMP=$(date -u +%Y%m%d%H%M%S)
-            BRANCH="feature/rae_${RUNNER}_${TIMESTAMP}"
+            BRANCH="rae/rae_${RUNNER}_${TIMESTAMP}"
             if ! git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then break; fi
             sleep 1
           done
@@ -233,8 +233,8 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -- "$YAML"
-          git commit -m "chore(rae): create analysis for $RUNNER ($TIMESTAMP)"
+          git commit -m "chore(rae): [QA-18253] create analysis for $RUNNER ($TIMESTAMP)"
           git push origin "HEAD:refs/heads/$BRANCH"
-          gh pr create --draft --base develop --head "$BRANCH" \
+          gh pr create --draft --base develop --label "rae" --label "interop" --head "$BRANCH" \
             --title "RAE: ${RUNNER} (${TIMESTAMP})" \
             --body "RAE YAML to complete. NRT run: ${GITHUB_RUN_LINK}. Fill release, issue_jira, procedure and result; the RAE validation action will generate the Markdown."
