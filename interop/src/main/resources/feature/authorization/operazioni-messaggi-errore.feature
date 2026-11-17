@@ -26,7 +26,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
     And un portachiavi erogatore creato dal Comune di Pozzallo
     And un admin appartenente al delegato Comune di Pozzallo
-    # Binding negativo mancante, condiviso con ERROR_204; riusare l'associazione BFF del portachiavi.
     When l'utente tenta di associare il portachiavi erogatore all'e-service "ES-1"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_TENANT_NOT_ALLOWED_ON_ESERVICE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES" in lingua "it"
 
@@ -45,7 +44,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
     And l'e-service "ES-1" del Comune di Milano interamente archiviato
     And un portachiavi erogatore creato dal Comune di Milano
     And un admin appartenente all'erogatore Comune di Milano
-    # Binding negativo mancante, condiviso con ERROR_203; riusare l'associazione BFF del portachiavi.
     When l'utente tenta di associare il portachiavi erogatore all'e-service "ES-1"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_ESERVICE_IN_ARCHIVED_STATE__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_ESERVICES" in lingua "it"
 

@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.producer_keychain.application;
 
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeyCreationCommand;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeychainCreationCommand;
 import it.pagopa.interop.common.producer_keychain.domain.KeyRef;
@@ -69,6 +70,8 @@ public class ProducerKeychainUseCase {
             offset = Math.addExact(offset, page.keys().size());
         }
     }
+
+    public void attemptEServiceAssociation(ProducerKeychainRef ref, EServiceRef eServiceRef) {
+        gateway.attemptEServiceAssociation(ref, eServiceRef);
+    }
 }
-
-

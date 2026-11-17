@@ -6,6 +6,7 @@ import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.ProducerKeychainApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
+import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceAdditionDetailsSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychain;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerKeychainSeed;
@@ -57,5 +58,11 @@ public class BffProducerKeychainRestClient extends RestClient {
     public TestChain<PublicKeys> getProducerKeys(UUID keychainId, int offset, int limit) {
         return execute(() -> api.getProducerKeys().producerKeychainIdPath(keychainId)
                 .offsetQuery(offset).limitQuery(limit).execute(Function.identity()), PublicKeys.class);
+    }
+
+    public TestChain<Void> addEService(UUID keychainId, UUID eServiceId) {
+        return execute(() -> api.addProducerKeychainEService().producerKeychainIdPath(keychainId)
+                .body(new EServiceAdditionDetailsSeed().eserviceId(eServiceId))
+                .execute(Function.identity()), Void.class);
     }
 }

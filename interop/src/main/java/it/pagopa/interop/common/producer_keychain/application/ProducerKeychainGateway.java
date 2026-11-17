@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.producer_keychain.application;
 
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeyCreationCommand;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeychainCreationCommand;
@@ -21,5 +22,5 @@ public interface ProducerKeychainGateway extends Plugin<Channel> {
     ProducerKeychainPublicKey getProducerKey(ProducerKeychainRef ref, KeyRef key);
     ProducerKeysPage getProducerKeys(ProducerKeychainRef ref, int offset, int limit);
     void updateProducerKeys(ProducerKeychainRef ref, List<ProducerKeychainPublicKey> keys);
+    void attemptEServiceAssociation(ProducerKeychainRef ref, EServiceRef eServiceRef);
 }
-
