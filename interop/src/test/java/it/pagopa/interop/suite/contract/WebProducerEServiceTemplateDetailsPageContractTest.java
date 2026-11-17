@@ -12,7 +12,7 @@ import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.web.eservice_template.infrastructure.page.ProducerEServiceTemplateDetailPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceTemplateDetailsPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
@@ -62,14 +62,14 @@ public class WebProducerEServiceTemplateDetailsPageContractTest {
                         Tenant.COMUNE_DI_MILANO
                 )
                 .on(
-                        ProducerEServiceTemplateDetailPage.class,
+                        ProducerEServiceTemplateDetailsPage.class,
                         template.getId().toString(),
                         version.getId().toString()
                 )
                 .tests(contractScenarios(template, version));
     }
 
-    private Stream<WebScenario<ProducerEServiceTemplateDetailPage>> contractScenarios(
+    private Stream<WebScenario<ProducerEServiceTemplateDetailsPage>> contractScenarios(
             EServiceTemplate template,
             EServiceTemplateVersion version
     ) {

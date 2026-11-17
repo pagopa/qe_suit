@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.eservice_template.infrastructure.page;
+package it.pagopa.interop.web.eservice.infrastructure.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
@@ -13,7 +13,7 @@ import it.pagopa.interop.web.eservice_template.infrastructure.page.component.Pro
 import it.pagopa.utils.async.PollingUtils;
 
 @Url("${interop.web.producer-e-service-template-list}/${eserviceTemplateId}/${versionId}")
-public interface ProducerEServiceTemplateDetailPage extends Page {
+public interface ProducerEServiceTemplateDetailsPage extends Page {
 
     @XPath(".//a[normalize-space()='Torna ai template'] | .//button[normalize-space()='Torna ai template']")
     Button backToTemplatesButton();
