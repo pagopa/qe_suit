@@ -100,4 +100,14 @@ public class EServiceTemplateSteps {
     public void attemptTemplateRenameWithDuplicateName(EServiceTemplate template, EServiceTemplate existing) {
         templateUseCase.attemptTemplateNameUpdate(template, existing.getName());
     }
+
+    @When("l'erogatore tenta di creare un template e-service duplicando il nome del {eServiceTemplateByAlias}")
+    public void attemptTemplateCreationWithDuplicateName(EServiceTemplate existing) {
+        templateUseCase.attemptTemplateCreation(existing.getName());
+    }
+
+    @When("l'erogatore tenta di creare un template e-service con il nome {string}")
+    public void attemptTemplateCreation(String name) {
+        templateUseCase.attemptTemplateCreation(name);
+    }
 }

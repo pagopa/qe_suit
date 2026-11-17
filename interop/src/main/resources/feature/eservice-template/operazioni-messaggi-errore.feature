@@ -52,7 +52,6 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
   Quando l'erogatore tenta di creare un template con un collegamento nel nome e gli altri dati validi
   Allora il sistema rifiuta la creazione e invita l'erogatore a rimuovere il collegamento.
 
-    # Binding BFF negativo mancante; riusare createEServiceTemplate con il nome indicato.
     When l'erogatore tenta di creare un template e-service con il nome "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES" in lingua "it"
 

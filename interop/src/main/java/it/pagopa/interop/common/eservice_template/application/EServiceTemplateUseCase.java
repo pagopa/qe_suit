@@ -86,4 +86,9 @@ public class EServiceTemplateUseCase {
         var command = requestFactory.defaultUpdateTemplateIntendedTargetCommand().intendedTarget(intendedTarget);
         eServiceTemplateGateway.attemptTemplateIntendedTargetUpdate(template.getRef(), command);
     }
+
+    public void attemptTemplateCreation(String name) {
+        var command = requestFactory.defaultCreationEServiceTemplateCommand().name(name);
+        eServiceTemplateGateway.attemptTemplateCreation(command);
+    }
 }

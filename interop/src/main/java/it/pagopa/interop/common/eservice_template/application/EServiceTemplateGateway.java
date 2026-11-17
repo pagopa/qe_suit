@@ -24,4 +24,6 @@ public interface EServiceTemplateGateway extends Plugin<Channel> {
     void attemptTemplateDescriptionUpdate(EServiceTemplateRef templateRef, UpdateEServiceTemplateDescriptionCommand command);
 
     void attemptTemplateIntendedTargetUpdate(EServiceTemplateRef templateRef, UpdateEServiceTemplateIntendedTargetCommand command);
+
+    void attemptTemplateCreation(EServiceTemplateCreationCommand command);
 }
