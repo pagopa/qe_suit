@@ -29,6 +29,30 @@ def _represent_literal(dumper: yaml.SafeDumper, value: _LiteralString):
 _RAEDumper.add_representer(_LiteralString, _represent_literal)
 
 
+def _space_between_rae_items(yaml_text: str) -> str:
+    """Add a visual separator between KO mapping items, never within error logs."""
+    lines = []
+    section = None
+    seen_item = False
+
+    for line in yaml_text.splitlines(keepends=True):
+        if line in ('ko_know:\n', 'ko:\n'):
+            section = line.rstrip('\n')
+            seen_item = False
+        elif line and not line.startswith((' ', '#', '\n', '\r', '- ')):
+            section = None
+
+        # PyYAML usually renders list items at column zero; other dumpers
+        # may indent them two spaces. Literal log contents are deeper.
+        if section and line.startswith(('- id_test:', '  - id_test:')):
+            if seen_item:
+                lines.append('\n')
+            seen_item = True
+        lines.append(line)
+
+    return ''.join(lines)
+
+
 def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment: str,
                executor: str, source_branch: str, run_url: str, data_ora: str,
                durata: str) -> dict:
@@ -75,8 +99,6 @@ def write_yaml(data: dict, output: Path) -> None:
                 item['error_log'] = _LiteralString(error_log.replace('\t', '    '))
             formatted[section].append(item)
 
-    output.write_text(
-        yaml.dump(formatted, Dumper=_RAEDumper, allow_unicode=True,
-                  sort_keys=False, width=110),
-        encoding='utf-8',
-    )
+    serialized = yaml.dump(formatted, Dumper=_RAEDumper, allow_unicode=True,
+                           sort_keys=False, width=110)
+    output.write_text(_space_between_rae_items(serialized), encoding='utf-8')

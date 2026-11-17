@@ -438,3 +438,32 @@ def test_error_log_without_trailing_newline_uses_chomping_strip(tmp_path):
     assert 'error_log: |-\n' in content
     assert loaded['ko'][0]['error_log'] == original.replace('\t', '    ')
     assert fingerprint(loaded['ko'][0]['error_log']) == fingerprint(original)
+
+
+def test_write_yaml_separates_ko_records_without_changing_data(tmp_path):
+    data = example_data()
+    first = data['ko'][0]
+    first['error_log'] = 'Error A\n\tat MyClass.run(MyClass.java:12)\n'
+    second = deepcopy(first)
+    second['id_test'] = 'Test B'
+    second['error_log'] = 'Error B\n\tat MyClass.run(MyClass.java:18)\n'
+    data['ko'].append(second)
+    data['ko_know'] = [dict(first, id_test='Known A'),
+                       dict(second, id_test='Known B')]
+    data['rae']['numero_ko'] = 4
+
+    path = tmp_path / 'rae.yaml'
+    write_yaml(data, path)
+    content = path.read_text(encoding='utf-8')
+    loaded = yaml.safe_load(content)
+
+    assert '\n\n- id_test: Known B\n' in content
+    assert '\n\n- id_test: Test B\n' in content
+    assert 'error_log: |\n' in content
+    assert len(loaded['ko']) == 2
+    assert len(loaded['ko_know']) == 2
+    for section in ('ko', 'ko_know'):
+        for original, restored in zip(data[section], loaded[section]):
+            assert restored['id_test'] == original['id_test']
+            assert fingerprint(restored['error_log']) == fingerprint(original['error_log'])
+    assert data['ko'][0]['error_log'].startswith('Error A\n\t')
