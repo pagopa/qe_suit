@@ -35,7 +35,7 @@ Feature: Modifica dei metadati dei template finalità
       | nome        | nuovo nome        |
       | descrizione | nuova descrizione |
       | destinatari | nuovi destinatari |
-    Then il template finalità conserva lo stato e i dati di riferimento eccetto i destinatari
+    Then il template finalità conserva lo stato e i dati di riferimento eccetto nome, descrizione e destinatari
 
     Examples:
       | stato      |

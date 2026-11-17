@@ -1,7 +1,9 @@
 package it.pagopa.interop.common.purpose_template.infrastructure.cucumber;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.journey.application.InteropJourney;
@@ -17,6 +19,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RequiredArgsConstructor
 public class PurposeTemplateSteps {
 
@@ -30,6 +34,49 @@ public class PurposeTemplateSteps {
         PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
         purposeTemplate = purposeTemplateUseCase.getPurposeTemplate(purposeTemplate);
         purposeTemplateReference = purposeTemplate.toBuilder().build();
+    }
+
+    @ParameterType("nome, descrizione e destinatari|il nome|la descrizione|i destinatari")
+    public PurposeTemplateMetadataField purposeTemplateMetadataField(String field) {
+        return switch (field) {
+            case "il nome" -> PurposeTemplateMetadataField.NAME;
+            case "la descrizione" -> PurposeTemplateMetadataField.DESCRIPTION;
+            case "i destinatari" -> PurposeTemplateMetadataField.TARGET_DESCRIPTION;
+            case "nome, descrizione e destinatari" -> PurposeTemplateMetadataField.ALL;
+            default -> throw new IllegalArgumentException(
+                    "Campo metadato template finalità non supportato: " + field);
+        };
+    }
+
+    @Then("il template finalità conserva lo stato e i dati di riferimento eccetto {purposeTemplateMetadataField}")
+    public void assertPurposeTemplatePreservedExceptField(PurposeTemplateMetadataField excludedField) {
+        assertThat(purposeTemplateReference)
+                .as("Riferimento del template finalità salvato prima della modifica")
+                .isNotNull();
+        PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
+        purposeTemplate = purposeTemplateUseCase.getPurposeTemplate(purposeTemplate);
+
+        if (excludedField.fieldNames.contains("title")) {
+            assertThat(purposeTemplate.getTitle())
+                    .as("Nome del template finalità dopo la modifica")
+                    .isNotEqualTo(purposeTemplateReference.getTitle());
+        }
+        if (excludedField.fieldNames.contains("description")) {
+            assertThat(purposeTemplate.getDescription())
+                    .as("Descrizione del template finalità dopo la modifica")
+                    .isNotEqualTo(purposeTemplateReference.getDescription());
+        }
+        if (excludedField.fieldNames.contains("targetDescription")) {
+            assertThat(purposeTemplate.getTargetDescription())
+                    .as("Destinatari del template finalità dopo la modifica")
+                    .isNotEqualTo(purposeTemplateReference.getTargetDescription());
+        }
+        assertThat(purposeTemplate)
+                .as("Stato e dati del template finalità eccetto " + excludedField.label)
+                .usingRecursiveComparison()
+                .ignoringFields("updatedAt")
+                .ignoringFields(excludedField.fieldNames.toArray(String[]::new))
+                .isEqualTo(purposeTemplateReference);
     }
 
     @Given("un template finalità creato da/dal {tenant} e pubblicato")
@@ -90,4 +137,19 @@ public class PurposeTemplateSteps {
     }
 
     private record MetadataUpdate(String name, String description, String targetDescription) {}
+
+    public enum PurposeTemplateMetadataField {
+        NAME(Set.of("title"), "il nome"),
+        DESCRIPTION(Set.of("description"), "la descrizione"),
+        TARGET_DESCRIPTION(Set.of("targetDescription"), "i destinatari"),
+        ALL(Set.of("title", "description", "targetDescription"), "nome, descrizione e destinatari");
+
+        private final Set<String> fieldNames;
+        private final String label;
+
+        PurposeTemplateMetadataField(Set<String> fieldNames, String label) {
+            this.fieldNames = fieldNames;
+            this.label = label;
+        }
+    }
 }
