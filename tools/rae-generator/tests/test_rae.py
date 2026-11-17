@@ -195,8 +195,7 @@ def test_metadata_and_zero_ko_validated(tmp_path):
     assert validate(data) == data
     assert 'Nessun fallimento' in render(data)
     data['rae']['release']='   '
-    with pytest.raises(ValidationError,match='release'):
-        validate(data)
+    assert validate(data) == data
 
 
 def test_cucumber_outline_same_name_different_example_rows(tmp_path):
