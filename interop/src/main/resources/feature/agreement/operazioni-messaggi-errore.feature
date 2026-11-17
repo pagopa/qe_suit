@@ -255,7 +255,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
       | ES-1  | Comune di Milano |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano sospesa
     And un admin appartenente al fruitore PagoPA
-    # Binding BFF negativo mancante per la versione sospesa; riusare shouldFailToCreateAgreement.
     When il fruitore tenta di creare una richiesta di fruizione per la versione più recente dell'e-service "ES-1"
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DESCRIPTOR_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS" in lingua "it"
 
@@ -276,7 +275,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
       | certificato | 1      | CERT-1    |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And un admin appartenente al fruitore PagoPA
-    # Binding BFF negativo mancante; riusare create ed estendere i motivi di shouldFailToCreateAgreement.
     When il fruitore tenta di creare una richiesta di fruizione per la versione più recente dell'e-service "ES-1"
     Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS" in lingua "it"
 
@@ -291,7 +289,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
       | ES-1  | Comune di Milano | Fruizione già attiva |
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     And un admin appartenente al fruitore PagoPA
-    # Binding BFF negativo mancante; riusare create ed estendere i motivi di shouldFailToCreateAgreement.
     When il fruitore tenta di creare una richiesta di fruizione per la versione più recente dell'e-service "ES-1"
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS" in lingua "it"
 

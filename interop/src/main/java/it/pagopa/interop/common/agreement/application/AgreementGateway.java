@@ -60,4 +60,6 @@ public interface AgreementGateway extends Plugin<Channel> {
     void attemptAgreementArchiving(Agreement agreement);
 
     void attemptConsumerDocumentUpload(Agreement agreement);
+
+    void attemptAgreementCreation(EService eService, EServiceDescriptor descriptor);
 }

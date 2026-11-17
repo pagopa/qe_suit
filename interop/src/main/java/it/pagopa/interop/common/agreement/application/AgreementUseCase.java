@@ -123,4 +123,8 @@ public class AgreementUseCase {
     public void attemptConsumerDocumentUpload(Agreement agreement) {
         agreementGateway.attemptConsumerDocumentUpload(agreement);
     }
+
+    public void attemptAgreementCreation(EService eService, EServiceDescriptor descriptor) {
+        agreementGateway.attemptAgreementCreation(eService, descriptor);
+    }
 }

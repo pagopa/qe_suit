@@ -187,4 +187,9 @@ public class BffAgreementGateway implements AgreementGateway {
         restClient.addConsumerDocument(agreement.getId(), "openapi3-riferimenti.json", "Allegato di test", document)
                 .withoutPolling();
     }
+
+    @Override
+    public void attemptAgreementCreation(EService eService, EServiceDescriptor descriptor) {
+        restClient.create(agreementRequestFactory.creationRequest(eService, descriptor, null)).withoutPolling();
+    }
 }

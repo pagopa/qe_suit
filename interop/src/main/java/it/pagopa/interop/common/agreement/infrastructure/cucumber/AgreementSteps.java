@@ -115,4 +115,9 @@ public class AgreementSteps {
     public void attemptConsumerDocumentUpload(Agreement agreement) {
         agreementUseCase.attemptConsumerDocumentUpload(agreement);
     }
+
+    @When("il fruitore tenta di creare una richiesta di fruizione per la versione più recente del{eServiceByAlias}")
+    public void attemptAgreementCreation(EService eService) {
+        agreementUseCase.attemptAgreementCreation(eService, eService.getLatestDescriptor());
+    }
 }
