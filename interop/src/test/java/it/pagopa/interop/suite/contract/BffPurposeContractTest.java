@@ -21,6 +21,7 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeEServiceSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
@@ -100,6 +101,11 @@ public class BffPurposeContractTest {
                     var receive = createPublishedReceiveEServiceWithActiveAgreement();
                     return commandFactory.reverseCreationRequest(receive.eService().getRef(), receive.riskAnalysis().getRef());
                 })
+                .targets(
+                        List.of(FuzzScenario.REMOVED),
+                        response -> response.then().statusCode(is(400)),
+                        List.of(PurposeEServiceSeed::getFreeOfChargeReason)
+                )
                 .tests();
     }
 
