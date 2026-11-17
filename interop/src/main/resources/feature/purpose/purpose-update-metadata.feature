@@ -5,6 +5,7 @@ Feature: Modifica dei metadati delle finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
   Scenario Outline: [PURPOSE_METADATA_1] - Il fruitore aggiorna i metadati della finalità che preserva lo stato e i dati non modificati
   Data una finalità non derivata da template per un e-service in modalità erogazione e nei vari possibili stati,
   quando il fruitore ne aggiorna titolo o descrizione,
@@ -39,30 +40,45 @@ Feature: Modifica dei metadati delle finalità
       | WAITING_FOR_APPROVAL |
       | REJECTED             |
 
-#      | inversa  | DRAFT                | titolo      | Finalità aggiornata                   |
-#      | inversa  | ACTIVE               | descrizione | Descrizione aggiornata della finalità |
-#      | inversa  | SUSPENDED            | titolo      | Finalità aggiornata                   |
-#      | inversa  | ARCHIVED             | descrizione | Descrizione aggiornata della finalità |
-
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [PURPOSE_METADATA_2] - Aggiornamento congiunto della finalità senza nuove versioni
-  Dato una finalità ordinaria o inversa non derivata da template,
-  quando il fruitore ne aggiorna titolo e descrizione,
-  allora la finalità conserva la propria configurazione e le versioni preesistenti.
+  @channel:Given=BFF,When=M2M,Then=M2M
+  Scenario Outline: [PURPOSE_METADATA_2] - Il fruitore aggiorna i metadati della finalità inversa che preserva lo stato e i dati non modificati
+  Data una finalità inversa non derivata da template per un e-service in modalità ricezione e nei vari possibili stati,
+  quando il fruitore ne aggiorna titolo o descrizione,
+  allora la modifica viene applicata senza alterare lo stato e i dati non modificati.
 
-    Given una finalità "P-1" <modalità> non derivata da template di PagoPA in stato ACTIVE
-    When un admin di PagoPA richiede la modifica dei metadati della finalità "P-1":
-      | campo       | valore                                |
-      | titolo      | Finalità aggiornata                   |
-      | descrizione | Descrizione aggiornata della finalità |
-    Then la finalità "P-1" presenta i metadati richiesti
-    And la finalità "P-1" conserva stato, versioni e configurazione funzionale
+    Given i seguenti e-service pubblicati:
+      | alias | erogatore        | nome                 | modalità  |
+      | ES-1  | Comune di Milano | E-service Notificato | ricezione |
+    And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
+    And una finalità in stato <stato> associata dal Comune di Pozzallo
+
+    And i dati della finalità allo stato attuale appuntati come riferimento
+    When un admin del Comune di Pozzallo modifica i metadati della finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+    Then la finalità conserva lo stato e i dati di riferimento eccetto il nome
+
+    When i dati della finalità allo stato attuale appuntati come riferimento
+    And un admin del Comune di Pozzallo modifica i metadati della finalità:
+      | campo       | valore            |
+      | descrizione | prima descrizione |
+    Then la finalità conserva lo stato e i dati di riferimento eccetto la descrizione
+
+    When i dati della finalità allo stato attuale appuntati come riferimento
+    And un admin del Comune di Pozzallo modifica i metadati della finalità:
+      | campo       | valore            |
+      | nome        | nuovo nome        |
+      | descrizione | nuova descrizione |
+    Then la finalità conserva lo stato e i dati di riferimento eccetto il nome e la descrizione
 
     Examples:
-      | modalità |
-      | ordinaria |
-      | inversa   |
+      | stato                |
+      | DRAFT                |
+      | ACTIVE               |
+      | SUSPENDED            |
+      | ARCHIVED             |
 
 #  @work-item:QA-19036
 #  @channel:Given=BFF,When=WEB,Then=WEB
