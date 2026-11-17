@@ -105,29 +105,13 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
   # Endpoint: POST /agreements/:agreementId/consumer-documents
   Scenario: [ERROR_154] - Impossibilità di allegare un documento a una richiesta di fruizione attiva
-  Dato un e-service che richiede un attributo verificato e una richiesta di fruizione attiva del fruitore che lo possiede
+  Dato un e-service e una richiesta di fruizione attiva
   Quando il fruitore tenta di allegare un documento alla richiesta
   Allora il sistema rifiuta il caricamento e segnala che i documenti non possono essere modificati fuori dalla bozza.
 
-    Given i seguenti attributi verificati creati da un admin del Comune di Milano:
-      | alias |
-      | VER-1 |
-    And i seguenti e-service in bozza:
-      | alias | erogatore        |
-      | ES-1  | Comune di Milano |
-    And la versione 1 dell'e-service "ES-1" del Comune di Milano configurata con i seguenti attributi richiesti:
-      | tipo       | gruppo | attributo |
-      | verificato | 1      | VER-1     |
-    And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
-    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione in attesa di approvazione
-    And un admin appartenente all'erogatore Comune di Milano
-    # Binding mancante; riusare assignVerifiedAttribute sulla richiesta corrente.
-    And l'attributo verificato "VER-1" assegnato a PagoPA per la richiesta di fruizione
-    # Binding positivo mancante; riusare activateAgreement e attendere ACTIVE.
-    And la richiesta di fruizione attivata
+    Given un EService creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un admin appartenente al fruitore PagoPA
-    # Operazione BFF e binding mancanti per il caricamento degli allegati alla richiesta.
-    When il fruitore tenta di allegare alla richiesta di fruizione il file "allegato-a.pdf"
+    When il fruitore tenta di allegare un documento valido alla richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_DOCUMENTS_CHANGE_NOT_ALLOWED__POST_AGREEMENTS_AGREEMENT_ID_CONSUMER_DOCUMENTS" in lingua "it"
 
   # Endpoint: GET /agreements/:agreementId/consumer-documents/:documentId
