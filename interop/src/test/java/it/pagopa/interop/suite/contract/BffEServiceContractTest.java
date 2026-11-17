@@ -208,6 +208,7 @@ public class BffEServiceContractTest {
 
     /* FIXME 17/11/2026: versione non definitiva, gli effettivi override verranno scritti
         al termine del paragone con gli esiti della versione di sopra. */
+    @Tag("private-compact-catalog")
     @TestFactory
     Stream<DynamicTest> getCompactCatalogEServices() {
         return httpContractValidator
