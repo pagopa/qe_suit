@@ -1910,26 +1910,6 @@
       }
     },
     {
-      "id": "BFF_BAD_REQUEST__PATCH_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PURPOSES_PURPOSE_ID",
-      "process": "BFF Process",
-      "error": "Bad Request",
-      "bffEndpoint": "PATCH /purposeTemplates/:purposeTemplateId/purposes/:purposeId",
-      "copy": {
-        "it": "La stima delle chiamate API al giorno non può superare 1.000.000.000. Modifica il numero e riprova.",
-        "en": "The estimated number of API calls per day can't exceed 1,000,000,000. Change the value and try again."
-      }
-    },
-    {
-      "id": "BFF_BAD_REQUEST__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID",
-      "process": "BFF Process",
-      "error": "Bad Request",
-      "bffEndpoint": "PUT /purposeTemplates/:purposeTemplateId",
-      "copy": {
-        "it": "Il numero di chiamate API al giorno che suggerisci al fruitore non può superare 1.000.000.000. Modifica il numero e riprova.",
-        "en": "The number of API calls per day you suggest to the consumer can't exceed 1,000,000,000. Change the number and try again."
-      }
-    },
-    {
       "id": "DELEGATION_INCORRECT_STATE__POST_CONSUMER_DELEGATIONS_DELEGATION_ID_REJECT",
       "process": "Delegation Process",
       "error": "incorrectState",

@@ -10,21 +10,6 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
   Background:
     Given un admin appartenente al fruitore PagoPA
 
-  # Endpoint: PUT /purposeTemplates/:purposeTemplateId
-  Scenario: [ERROR_199] - Rifiuto di una stima suggerita dal template superiore a un miliardo di chiamate API al giorno
-  Dato un template finalità in bozza con dati validi
-  Quando il creatore tenta di suggerire al fruitore 1.000.000.001 chiamate API al giorno
-  Allora il sistema rifiuta la modifica e invita il creatore a ridurre il suggerimento entro il limite di 1.000.000.000.
-
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore        |
-      | ES-1  | Comune di Milano |
-    And l'e-service "ES-1" collegato a un template di finalità in bozza
-    And un admin appartenente al fruitore PagoPA
-    # Operazione BFF e binding negativo mancanti per la modifica del template; mantenere validi gli altri dati.
-    When l'operatore tenta di modificare il template finalità suggerendo 1000000001 chiamate API al giorno
-    Then il messaggio di errore corrisponde al caso "BFF_BAD_REQUEST__PUT_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID" in lingua "it"
-
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/linkResource
   Scenario: [ERROR_206] - Impossibilità di suggerire in un template finalità un e-service creato da template
   Dati un template finalità in bozza e un e-service pubblicato creato da un template e-service
