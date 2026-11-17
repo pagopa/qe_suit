@@ -261,7 +261,7 @@ public class WebRiskAnalysisEServiceAssociatedPageContractTest {
     }
 
     private static String resolveAnswer(RiskAnalysisFormConfig.Question question, List<String> values) {
-        if ("text".equals(question.getVisualType())) {
+        if ("FREETEXT".equals(question.getDataType())) {
             return values.get(0);
         }
         return Optional.ofNullable(question.getOptions()).orElse(List.of()).stream()
