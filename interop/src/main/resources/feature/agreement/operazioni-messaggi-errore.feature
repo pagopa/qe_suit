@@ -119,10 +119,7 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
       | tipo       | gruppo | attributo |
       | verificato | 1      | VER-1     |
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
-    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione bozza
-    And un admin appartenente al fruitore PagoPA
-    # Binding positivo mancante; riusare submitAgreement e attendere PENDING.
-    And la richiesta di fruizione inviata
+    And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione in attesa di approvazione
     And un admin appartenente all'erogatore Comune di Milano
     # Binding mancante; riusare assignVerifiedAttribute sulla richiesta corrente.
     And l'attributo verificato "VER-1" assegnato a PagoPA per la richiesta di fruizione
