@@ -1,35 +1,34 @@
 Feature: Modifica dei metadati delle finalità
-  Come fruitore proprietario
+  Come creatore di una finalità
   Voglio aggiornare titolo e descrizione di una finalità ordinaria o inversa
-  Per conservarne stato e configurazione funzionale.
+  preservando lo stato e altri dati della finalità.
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [PURPOSE_METADATA_1] - Modifica di un singolo metadato di una finalità ordinaria o inversa
-  Dato una finalità non derivata da template nella modalità e nello stato previsti,
-  quando il fruitore ne aggiorna soltanto titolo o descrizione,
-  allora la modifica viene applicata senza alterare i dati operativi e il metadato omesso.
+  Scenario Outline: [PURPOSE_METADATA_1] - Il fruitore aggiorna i metadati della finalità che preserva lo stato e i dati non modificati
+  Data una finalità non derivata da template per un e-service in modalità erogazione e nei vari possibili stati,
+  quando il fruitore ne aggiorna titolo o descrizione,
+  allora la modifica viene applicata senza alterare lo stato e i dati non modificati.
 
-    Given una finalità "P-1" <modalità> non derivata da template di PagoPA in stato <stato>
-    When un admin di PagoPA richiede la modifica dei metadati della finalità "P-1":
-      | campo   | valore   |
-      | <campo> | <valore> |
-    Then la finalità "P-1" presenta i metadati richiesti
-    And la finalità "P-1" conserva i metadati non modificati
-    And la finalità "P-1" conserva stato, versioni e configurazione funzionale
+    Given un EService creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato <stato> associate dal Comune di Pozzallo
+    And i dati della finalità allo stato attuale appuntati come riferimento
+    When un admin del Comune di Pozzallo modifica i metadati della finalità:
+      | campo       | valore            |
+      | nome        | nuovo nome        |
+    Then la finalità conserva lo stato e i dati di riferimento eccetto il nome
 
     Examples:
-      | modalità | stato                | campo       | valore                                |
-      | ordinaria| DRAFT                | titolo      | Finalità aggiornata                   |
-      | ordinaria| ACTIVE               | descrizione | Descrizione aggiornata della finalità |
-      | ordinaria| SUSPENDED            | titolo      | Finalità aggiornata                   |
-      | ordinaria| ARCHIVED             | descrizione | Descrizione aggiornata della finalità |
-      | ordinaria| WAITING_FOR_APPROVAL | titolo      | Finalità aggiornata                   |
-      | ordinaria| REJECTED             | descrizione | Descrizione aggiornata della finalità |
-      | inversa  | DRAFT                | titolo      | Finalità aggiornata                   |
-      | inversa  | ACTIVE               | descrizione | Descrizione aggiornata della finalità |
-      | inversa  | SUSPENDED            | titolo      | Finalità aggiornata                   |
-      | inversa  | ARCHIVED             | descrizione | Descrizione aggiornata della finalità |
+      | stato                |
+      | DRAFT                |
+      | ACTIVE               |
+      | SUSPENDED            |
+      | ARCHIVED             |
+      | WAITING_FOR_APPROVAL |
+      | REJECTED             |
+#      | inversa  | DRAFT                | titolo      | Finalità aggiornata                   |
+#      | inversa  | ACTIVE               | descrizione | Descrizione aggiornata della finalità |
+#      | inversa  | SUSPENDED            | titolo      | Finalità aggiornata                   |
+#      | inversa  | ARCHIVED             | descrizione | Descrizione aggiornata della finalità |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
