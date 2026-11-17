@@ -13,7 +13,8 @@ public class WebCapabilityHandlerFactory  {
             WritableCapabilityHandler::new,
             adapter -> new ReadableCapabilityHandler<>(adapter, String.class),
             LocatableCapabilityHandler::new,
-            UploadableCapabilityHandler::new
+            UploadableCapabilityHandler::new,
+            AccessibleNameReadableCapabilityHandler::new
     );
 }
 }

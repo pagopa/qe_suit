@@ -12,6 +12,9 @@ import java.util.Optional;
 public interface IWebPresentationApiAdapter
         extends IPresentationApiAdapter<XPathSelector, Url, WebPresentationElement> {
 
+    /** Returns the computed name; lookup/driver failures are propagated, not treated as absence. */
+    String getAccessibleName(XPathSelector selector);
+
     Optional<String> getCookieValue(String name);
 
     Optional<WebPresentationElement> findElement(XPathSelector selector, Gettable.FindPolicy findPolicy);

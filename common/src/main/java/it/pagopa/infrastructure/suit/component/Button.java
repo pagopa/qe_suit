@@ -3,10 +3,11 @@ package it.pagopa.infrastructure.suit.component;
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.core.capability.core.Clickable;
 import it.frontend.e2e.framework.web.capability.core.Readable;
+import it.frontend.e2e.framework.web.capability.core.AccessibleNameReadable;
 import it.frontend.e2e.framework.web.domain.Component;
 
 @XPath(".//*[contains(@class, 'MuiButton')]")
-public interface Button extends Component, Clickable, Readable<String> {
+public interface Button extends Component, Clickable, Readable<String>, AccessibleNameReadable {
     String DISABLED_CLASS = "Mui-disabled";
     String SELECTED_CLASS = "Mui-selected";
 

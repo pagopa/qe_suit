@@ -1,6 +1,9 @@
 package it.pagopa.interop.web.eservice.infrastructure.suit.component.provider_eservice_summary;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
+import it.pagopa.infrastructure.suit.component.Button;
+
+import java.util.List;
 
 public interface AdditionalInfoCard extends EServiceSummaryCard {
 
@@ -12,6 +15,10 @@ public interface AdditionalInfoCard extends EServiceSummaryCard {
     AdditionalInfoContent content();
 
     interface AdditionalInfoContent extends Content {
+
+        // The frontend content contains only document-download buttons.
+        @XPath(".//button")
+        List<Button> documentDownloadButtons();
 
         @XPath(".//div[contains(@class,'MuiStack-root')][./div/p[normalize-space(.)='" + VERSION_DESCRIPTION + "']]")
         Field versionDescription();
