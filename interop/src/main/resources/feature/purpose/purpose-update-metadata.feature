@@ -53,7 +53,6 @@ Feature: Modifica dei metadati delle finalità
       | ES-1  | Comune di Milano | E-service Notificato | ricezione |
     And l'e-service "ES-1" del Comune di Milano sottoscritto dal Comune di Pozzallo con una richiesta di fruizione attiva
     And una finalità in stato <stato> associata dal Comune di Pozzallo
-
     And i dati della finalità allo stato attuale appuntati come riferimento
     When un admin del Comune di Pozzallo modifica i metadati della finalità:
       | campo       | valore            |
