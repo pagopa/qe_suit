@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.purpose.infrastructure.cucumber;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.ParameterType;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -43,6 +44,66 @@ public class PurposeSteps {
     public void savePurposeReference() {
         Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
         purposeReference = purpose.toBuilder().build();
+    }
+
+    @ParameterType("il nome e la descrizione|il nome|la descrizione")
+    public PurposeMetadataField purposeMetadataField(String field) {
+        return switch (field) {
+            case "il nome" -> PurposeMetadataField.NAME;
+            case "la descrizione" -> PurposeMetadataField.DESCRIPTION;
+            case "il nome e la descrizione" -> PurposeMetadataField.NAME_AND_DESCRIPTION;
+            default -> throw new IllegalArgumentException("Campo metadato finalita non supportato: " + field);
+        };
+    }
+
+    @Then("la finalità conserva lo stato e i dati di riferimento")
+    public void assertPurposePreserved() {
+        assertPurposePreserved(Set.of(), "Stato e dati della finalita");
+    }
+
+    @Then("la finalità conserva lo stato e i dati di riferimento eccetto {purposeMetadataField}")
+    public void assertPurposePreservedExceptField(PurposeMetadataField excludedField) {
+        assertPurposePreserved(excludedField.fieldNames,
+                "Stato e dati della finalita eccetto " + excludedField.label);
+    }
+
+    private void assertPurposePreserved(Set<String> excludedFields, String description) {
+        assertThat(purposeReference)
+                .as("Riferimento della finalita salvato prima della modifica")
+                .isNotNull();
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+
+
+        if (excludedFields.contains("title")) {
+            assertThat(purpose.getTitle())
+                    .as("Nome della finalita dopo la modifica")
+                    .isNotEqualTo(purposeReference.getTitle());
+        }
+        if (excludedFields.contains("description")) {
+            assertThat(purpose.getDescription())
+                    .as("Descrizione della finalita dopo la modifica")
+                    .isNotEqualTo(purposeReference.getDescription());
+        }
+        assertThat(purpose)
+                .as(description)
+                .usingRecursiveComparison()
+                .ignoringFields("versions.updatedAt")
+                .ignoringFields(excludedFields.toArray(String[]::new))
+                .isEqualTo(purposeReference);
+    }
+
+    public enum PurposeMetadataField {
+        NAME(Set.of("title"), "il nome"),
+        DESCRIPTION(Set.of("description"), "la descrizione"),
+        NAME_AND_DESCRIPTION(Set.of("title", "description"), "il nome e la descrizione");
+
+        private final Set<String> fieldNames;
+        private final String label;
+
+        PurposeMetadataField(Set<String> fieldNames, String label) {
+            this.fieldNames = fieldNames;
+            this.label = label;
+        }
     }
 
     @When("un {userRole} di/del {tenant} modifica i metadati della finalità:")
