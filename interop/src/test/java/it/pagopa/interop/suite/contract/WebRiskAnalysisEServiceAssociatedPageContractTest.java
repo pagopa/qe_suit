@@ -8,9 +8,11 @@ import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Link;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
+import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.journey.application.InteropJourney;
@@ -22,6 +24,7 @@ import it.pagopa.interop.web.eservice.infrastructure.page.component.RiskAnalysis
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -58,6 +61,30 @@ public class WebRiskAnalysisEServiceAssociatedPageContractTest {
     private final InteropJourney interopJourney;
     private final EntityStore entityStore;
     private final RiskAnalysisGateway riskAnalysisGateway;
+    private final EServiceUseCase eServiceUseCase;
+
+    private EService createdEService;
+
+    @AfterEach
+    void tearDownEService() {
+        if (createdEService == null) {
+            return;
+        }
+        EService toCleanUp = createdEService;
+        createdEService = null;
+
+        interopJourney
+                .switchChannel(Channel.BFF)
+                .withProducer(PRODUCER, UserRole.ADMIN);
+
+        boolean draftOnly = toCleanUp.getDescriptors().stream()
+                .allMatch(descriptor -> descriptor.getState() == EServiceDescriptorState.DRAFT);
+        if (draftOnly) {
+            eServiceUseCase.deleteEService(toCleanUp);
+        } else {
+            eServiceUseCase.archiveEService(toCleanUp, GracePeriodDays.NUMBER_60);
+        }
+    }
 
     @TestFactory
     Stream<DynamicTest> riskAnalysisEServiceAssociatedPageContract() {
@@ -78,17 +105,20 @@ public class WebRiskAnalysisEServiceAssociatedPageContractTest {
         interopJourney
                 .switchChannel(Channel.BFF)
                 .withProducer(PRODUCER, UserRole.ADMIN)
-                .createEService(command -> command.mode(EServiceMode.RECEIVE), EServiceDescriptorState.DRAFT)
+                .createEService(command -> command.mode(EServiceMode.RECEIVE), EServiceDescriptorState.DRAFT);
+        createdEService = entityStore.getLastOrThrow(EService.class);
+
+        interopJourney
                 .addRiskAnalysis()
                 .updateDescriptor(command -> {}, EServiceDescriptorState.PUBLISHED);
+        createdEService = entityStore.getLastOrThrow(EService.class);
 
-        EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceRiskAnalysis riskAnalysis = entityStore.getLastOrThrow(EServiceRiskAnalysis.class);
         RiskAnalysisFormConfig riskAnalysisConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(PRODUCER);
 
         return new PreparedData(
-                eService.getId().toString(),
-                eService.getActiveDescriptor().getId().toString(),
+                createdEService.getId().toString(),
+                createdEService.getActiveDescriptor().getId().toString(),
                 riskAnalysis.getName(),
                 buildExpectedSummary(riskAnalysis, riskAnalysisConfig)
         );
