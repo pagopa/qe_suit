@@ -212,4 +212,9 @@ public class BffTenantGateway implements TenantGateway {
         var command = bffCommand(requestFactory.assignCertifiedAttributeCommand(attributeRef), BffAssignCertifiedAttributeCommand.class);
         restClient.addCertifiedAttribute(tenantRef.id(), command.getBffPayload()).withoutPolling();
     }
+
+    @Override
+    public void attemptContactEmailSaveWithHyperlinkInNotes(@NonNull TenantRef tenantRef) {
+        restClient.addTenantMail(tenantRef.id(), requestFactory.contactEmailWithHyperlinkInNotes()).withoutPolling();
+    }
 }

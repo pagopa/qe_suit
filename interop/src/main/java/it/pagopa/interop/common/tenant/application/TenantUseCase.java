@@ -75,4 +75,8 @@ public class TenantUseCase {
         }
         tenantGateway.attemptCertifiedAttributeAssignment(tenantRef, attribute.getRef());
     }
+
+    public void attemptContactEmailSaveWithHyperlinkInNotes(TenantRef tenantRef) {
+        tenantGateway.attemptContactEmailSaveWithHyperlinkInNotes(tenantRef);
+    }
 }

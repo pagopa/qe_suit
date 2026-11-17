@@ -44,4 +44,6 @@ public interface TenantGateway extends Plugin<Channel> {
     void attemptProducerDelegationAvailability(TenantRef tenantRef);
 
     void attemptCertifiedAttributeAssignment(TenantRef tenantRef, AttributeRef attributeRef);
+
+    void attemptContactEmailSaveWithHyperlinkInNotes(TenantRef tenantRef);
 }

@@ -92,6 +92,5 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
   Quando tenta di salvare un contatto email valido con un collegamento nelle note
   Allora il sistema rifiuta il salvataggio e invita l'amministratore a rimuovere il collegamento.
 
-    # Operazione BFF e binding negativo mancanti; mantenere tipo e indirizzo del contatto validi.
-    When l'utente tenta di salvare un contatto email dell'ente con le note "Contatto https://example.org"
+    When l'utente tenta di salvare un contatto email dell'ente inserendo un link nelle note
     Then il messaggio di errore corrisponde al caso "TENANT_HYPERLINK_DETECTION_ERROR" in lingua "it"
