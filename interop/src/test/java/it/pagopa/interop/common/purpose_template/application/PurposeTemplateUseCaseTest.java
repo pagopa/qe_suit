@@ -22,6 +22,20 @@ import static org.mockito.Mockito.*;
 
 class PurposeTemplateUseCaseTest {
     @Test
+    void retrievesTheLatestPurposeTemplateFromTheGateway() {
+        var gateway = mock(PurposeTemplateGateway.class);
+        var useCase = new PurposeTemplateUseCase(
+                gateway, mock(RiskAnalysisGateway.class), mock(RiskAnalysisDataFactory.class));
+        var purposeTemplate = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        when(gateway.getPurposeTemplate(purposeTemplate.getId())).thenReturn(purposeTemplate);
+
+        assertThat(useCase.getPurposeTemplate(purposeTemplate)).isSameAs(purposeTemplate);
+
+        verify(gateway).getPurposeTemplate(purposeTemplate.getId());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
     void createsAMinimalRiskAnalysisForPublicAdministrationsWithoutPersonalData() {
         var gateway = mock(PurposeTemplateGateway.class);
         var configs = mock(RiskAnalysisGateway.class);

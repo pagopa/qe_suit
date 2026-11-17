@@ -18,6 +18,10 @@ public class PurposeTemplateUseCase {
     private final RiskAnalysisGateway riskAnalysisGateway;
     private final RiskAnalysisDataFactory riskAnalysisDataFactory;
 
+    public PurposeTemplate getPurposeTemplate(PurposeTemplate purposeTemplate) {
+        return purposeTemplateGateway.getPurposeTemplate(purposeTemplate.getId());
+    }
+
     /**
      * Crea (con l'identità corrente come creatore) un purpose template DRAFT per il tenant target,
      * con risposte di riferimento e configurazione per distinguere suggerimenti e valori fissi.
