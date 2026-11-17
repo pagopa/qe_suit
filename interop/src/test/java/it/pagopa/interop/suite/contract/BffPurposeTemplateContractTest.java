@@ -1,5 +1,6 @@
 package it.pagopa.interop.suite.contract;
 
+import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.bff.purpose_template.infrastructure.BffPurposeTemplateRequestFactory;
@@ -18,10 +19,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static org.hamcrest.Matchers.is;
 
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
@@ -67,6 +71,11 @@ public class BffPurposeTemplateContractTest {
                 .apiCall(() -> apiClient.purposeTemplates().updatePurposeTemplate())
                 .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.DRAFT).getId()))
                 .payload(asProducer(() -> requestFactory.updateRequest(PRODUCER)))
+                .targets(
+                        List.of(FuzzScenario.REMOVED),
+                        response -> response.then().statusCode(is(400)),
+                        List.of(PurposeTemplateSeed::getPurposeFreeOfChargeReason)
+                )
                 .tests();
     }
 
