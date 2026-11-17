@@ -59,4 +59,9 @@ public class AttributeSteps {
     public void attemptAttributeCreationWithHyperlink(AttributeKind kind) {
         attributeUseCase.attemptAttributeCreation(kind, "Attributo https://example.org");
     }
+
+    @When("il certificatore tenta di assegnare nuovamente l'{attributeByAlias} all'ente {tenant}")
+    public void attemptCertifiedAttributeAssignment(Attribute attribute, Tenant tenant) {
+        tenantUseCase.attemptCertifiedAttributeAssignment(TenantRef.of(tenant.getOrganizationId()), attribute);
+    }
 }

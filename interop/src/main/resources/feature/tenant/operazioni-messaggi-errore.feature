@@ -33,7 +33,6 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     And i seguenti attributi certificati assegnati da un admin del Comune di Milano a PagoPA:
       | alias  |
       | CERT-1 |
-    # Binding negativo comune mancante; ricavare il tipo dall'alias e riusare addCertifiedAttribute.
     When il certificatore tenta di assegnare nuovamente l'attributo "CERT-1" all'ente PagoPA
     Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED" in lingua "it"
 
@@ -50,7 +49,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
       | DISC-1 |
     # Binding di setup mancante; riusare assignCertifiedDiscreteAttribute con un valore numerico ammesso.
     And l'attributo certificato discreto "DISC-1" già assegnato all'ente PagoPA con un valore ammesso
-    # Binding negativo comune mancante; ricavare il tipo dall'alias e riusare addCertifiedDiscreteAttribute.
+    # Tentativo discreto ancora da implementare con un valore ammesso; non usare l'assegnazione certificata ordinaria.
     When il certificatore tenta di assegnare nuovamente l'attributo "DISC-1" all'ente PagoPA
     Then il messaggio di errore corrisponde al caso "TENANT_CERTIFIED_ATTRIBUTE_ALREADY_ASSIGNED__POST_TENANTS_TENANT_ID_ATTRIBUTES_CERTIFIED_DISCRETE" in lingua "it"
 

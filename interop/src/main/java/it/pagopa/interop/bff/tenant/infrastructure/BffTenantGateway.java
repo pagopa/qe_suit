@@ -206,4 +206,10 @@ public class BffTenantGateway implements TenantGateway {
     private static boolean isConsumerDelegationEnabled(Tenant tenant) {
         return tenant.getFeatures().stream().anyMatch(feature -> feature.getDelegatedConsumer() != null);
     }
+
+    @Override
+    public void attemptCertifiedAttributeAssignment(@NonNull TenantRef tenantRef, @NonNull AttributeRef attributeRef) {
+        var command = bffCommand(requestFactory.assignCertifiedAttributeCommand(attributeRef), BffAssignCertifiedAttributeCommand.class);
+        restClient.addCertifiedAttribute(tenantRef.id(), command.getBffPayload()).withoutPolling();
+    }
 }

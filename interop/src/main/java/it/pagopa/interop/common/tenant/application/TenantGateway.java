@@ -42,4 +42,6 @@ public interface TenantGateway extends Plugin<Channel> {
     void attemptVerifiedAttributeExpirationUpdate(TenantRef tenantRef, AttributeRef attributeRef, OffsetDateTime expirationDate);
 
     void attemptProducerDelegationAvailability(TenantRef tenantRef);
+
+    void attemptCertifiedAttributeAssignment(TenantRef tenantRef, AttributeRef attributeRef);
 }

@@ -1,5 +1,7 @@
 package it.pagopa.interop.common.tenant.application;
 
+import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
@@ -64,5 +66,13 @@ public class TenantUseCase {
 
     public void attemptProducerDelegationAvailability(TenantRef tenantRef) {
         tenantGateway.attemptProducerDelegationAvailability(tenantRef);
+    }
+
+    public void attemptCertifiedAttributeAssignment(TenantRef tenantRef, Attribute attribute) {
+        if (attribute.getKind() != AttributeKind.CERTIFIED) {
+            throw new IllegalArgumentException("Certified attribute assignment attempt requires kind CERTIFIED, but was "
+                    + attribute.getKind());
+        }
+        tenantGateway.attemptCertifiedAttributeAssignment(tenantRef, attribute.getRef());
     }
 }
