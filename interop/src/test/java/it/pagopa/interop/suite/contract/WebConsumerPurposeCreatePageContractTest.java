@@ -2,6 +2,8 @@ package it.pagopa.interop.suite.contract;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.agreement.domain.AgreementState;
+import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.journey.application.InteropJourney;
@@ -38,9 +40,12 @@ public class WebConsumerPurposeCreatePageContractTest {
      * Verifies that the consumer purpose create page shows the expected elements for the tenant administrator.
      */
     @TestFactory
-    Stream<DynamicTest> consumerAgreementDetailsPageContract() {
+    Stream<DynamicTest> consumerPurposeCreatePageContract() {
         PurposeTemplate purposeTemplate = interopJourney
-                .withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .withProducer(Tenant.PAGO_PA, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .withConsumer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN)
+                .linkAgreement(AgreementState.ACTIVE)
                 .createPurposeTemplate(Tenant.COMUNE_DI_MILANO, PurposeTemplateState.PUBLISHED)
                 .get(PurposeTemplate.class);
         return webContractValidator
