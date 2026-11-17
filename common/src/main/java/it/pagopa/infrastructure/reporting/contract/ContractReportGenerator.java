@@ -6,6 +6,7 @@ import it.pagopa.infrastructure.reporting.contract.config.ContractReportConfigur
 import it.pagopa.infrastructure.reporting.contract.model.ContractReport;
 import it.pagopa.infrastructure.reporting.contract.parser.JUnitExecutionNode;
 import it.pagopa.infrastructure.reporting.contract.parser.OpenTestReportParser;
+import it.pagopa.infrastructure.reporting.contract.renderer.ContractReportJsonRenderer;
 import it.pagopa.infrastructure.reporting.contract.renderer.ContractReportRenderer;
 import it.pagopa.infrastructure.reporting.contract.resolver.ContractTargetResolverRegistry;
 
@@ -58,5 +59,6 @@ public class ContractReportGenerator {
         List<JUnitExecutionNode> executionNodes = parser.parse(openTestReportXml);
         ContractReport report = builder.build(executionNodes, config, Instant.now());
         renderer.render(report, outputHtml);
+        new ContractReportJsonRenderer().render(report, outputHtml.resolveSibling("report.json"));
     }
 }
