@@ -115,8 +115,6 @@ public class WebRiskAnalysisEServiceAssociatedPageContractTest {
      * ES-RA-01 .. ES-RA-09: navigazione superiore e breadcrumbs.
      */
     private static void assertNavigation(EServiceRiskAnalysisAssociatedPage page, String eservicePath) {
-        System.out.println("\n\nassertNavigation\n\n");
-
         var back = page.backToEServiceButton();
         Assertions.assertThat(back.exists(Gettable.FindPolicy.PRESENT))
                 .as("Pulsante 'Torna all'e-service' presente").isTrue();
@@ -147,8 +145,6 @@ public class WebRiskAnalysisEServiceAssociatedPageContractTest {
      * Ultima verifica: l'apertura del menu modifica lo stato della pagina.
      */
     private static void assertSelection(EServiceRiskAnalysisAssociatedPage page, PreparedData data) {
-        System.out.println("\n\nassertSelection\n\n");
-
         var section = page.selectionSection();
         Assertions.assertThat(section.exists(Gettable.FindPolicy.PRESENT))
                 .as("Sezione di selezione presente").isTrue();
@@ -198,8 +194,6 @@ public class WebRiskAnalysisEServiceAssociatedPageContractTest {
      * ES-RA-18 .. ES-RA-21: riepilogo dell'analisi del rischio e corrispondenza domande/risposte.
      */
     private static void assertSummary(EServiceRiskAnalysisAssociatedPage page, PreparedData data) {
-        System.out.println("\n\nassertSummary\n\n");
-
         var section = page.summarySection();
         Assertions.assertThat(section.exists(Gettable.FindPolicy.PRESENT))
                 .as("Sezione di riepilogo presente").isTrue();
