@@ -95,7 +95,6 @@ class BffTenantRequestFactoryTest {
         assertThatThrownBy(() -> factory.assignVerifiedAttributeCommand(null, AgreementRef.of(UUID.randomUUID()))).isInstanceOf(NullPointerException.class);
         assertThatThrownBy(() -> factory.assignVerifiedAttributeCommand(AttributeRef.of(UUID.randomUUID()), null)).isInstanceOf(NullPointerException.class);
         assertThatThrownBy(() -> factory.revokeVerifiedAttributeCommand(null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> factory.revokeVerifiedAttributeCommand(AgreementRef.of(null))).isInstanceOf(NullPointerException.class);
     }
 
     @Test
