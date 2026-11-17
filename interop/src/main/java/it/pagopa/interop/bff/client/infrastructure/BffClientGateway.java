@@ -166,4 +166,15 @@ public class BffClientGateway implements ClientGateway {
                         .withPolling(PollingStrategy.UNTIL_SUCCESS)
         );
     }
+
+    @Override
+    public void attemptClientCreation(ClientCreationCommand command) {
+        if (!(command instanceof BffClientCreationCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of BffClientCreationCommand");
+        TestChain<CreatedResource> request = switch (bffCommand.getClientKind()) {
+            case API -> restClient.createApiClient(bffCommand.getClientSeed());
+            case CONSUMER -> restClient.createConsumerClient(bffCommand.getClientSeed());
+        };
+        request.withoutPolling();
+    }
 }

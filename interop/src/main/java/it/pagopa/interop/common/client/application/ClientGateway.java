@@ -33,4 +33,6 @@ public interface ClientGateway extends Plugin<Channel> {
     Client setAdmin(Client client, UserRef admin);
 
     void attemptClientKeyDeletion(Client client, Key key);
+
+    void attemptClientCreation(ClientCreationCommand command);
 }

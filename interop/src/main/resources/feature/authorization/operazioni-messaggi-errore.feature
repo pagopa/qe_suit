@@ -227,7 +227,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Quando tenta di creare un client di fruizione con un collegamento nel nome e gli altri dati validi
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento.
 
-    # Binding negativo parametrico mancante; riusare createConsumerClient o createApiClient in base al tipo.
     When l'utente tenta di creare un client "CONSUMER" con il nome "Client https://example.org"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_CONSUMER" in lingua "it"
 
@@ -237,7 +236,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Quando tenta di creare un client API con un collegamento nel nome e gli altri dati validi
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento.
 
-    # Binding negativo parametrico mancante; riusare createConsumerClient o createApiClient in base al tipo.
     When l'utente tenta di creare un client "API" con il nome "Client https://example.org"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_API" in lingua "it"
 
