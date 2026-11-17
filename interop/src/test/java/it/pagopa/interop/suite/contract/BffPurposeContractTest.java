@@ -80,6 +80,11 @@ public class BffPurposeContractTest {
                         response -> response.then().statusCode(is(400)),
                         List.of(PurposeSeed::getFreeOfChargeReason)
                 )
+                .targets(
+                        List.of(FuzzScenario.REPLACED_WITH_NIL_UUID),
+                        response -> response.then().statusCode(is(403)),
+                        List.of(PurposeSeed::getConsumerId)
+                )
                 .tests();
     }
 
@@ -126,6 +131,11 @@ public class BffPurposeContractTest {
                         List.of(FuzzScenario.REMOVED),
                         response -> response.then().statusCode(is(400)),
                         List.of(PurposeEServiceSeed::getFreeOfChargeReason)
+                )
+                .targets(
+                        List.of(FuzzScenario.REPLACED_WITH_NIL_UUID),
+                        response -> response.then().statusCode(is(403)),
+                        List.of(PurposeEServiceSeed::getConsumerId)
                 )
                 .tests();
     }
