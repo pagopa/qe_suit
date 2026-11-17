@@ -61,7 +61,7 @@ public class ScenarioParameterTypes {
         return entityStore.getLastOrThrow(Agreement.class);
     }
 
-    @ParameterType("portachiavi erogatore")
+    @ParameterType("portachiavi erogatore|portachiavi")
     public ProducerKeychain currentProducerKeychain(String token) {
         return entityStore.getLastOrThrow(ProducerKeychain.class);
     }

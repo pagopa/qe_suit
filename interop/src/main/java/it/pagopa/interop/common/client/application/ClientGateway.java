@@ -5,6 +5,7 @@ import it.pagopa.interop.common.client.application.command.ClientKeyCreationComm
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.ClientRef;
+import it.pagopa.interop.common.kernel.domain.KeyRegistrationMaterial;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
@@ -35,4 +36,8 @@ public interface ClientGateway extends Plugin<Channel> {
     void attemptClientKeyDeletion(Client client, Key key);
 
     void attemptClientCreation(ClientCreationCommand command);
+
+    void attemptKeyRegistration(Client client, KeyRegistrationMaterial material, String name);
+
+    void attemptPurposeAssociation(Client client, Purpose purpose);
 }

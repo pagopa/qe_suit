@@ -3,6 +3,7 @@ package it.pagopa.interop.common.client.application;
 import it.pagopa.interop.common.client.application.command.ClientCreationCommand;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientKind;
+import it.pagopa.interop.common.kernel.domain.KeyRegistrationMaterial;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,5 +35,13 @@ public class ClientUseCase {
     public void attemptClientCreation(ClientKind kind, String name) {
         var command = clientRequestFactory.creationRequest().kind(kind).name(name);
         clientGateway.attemptClientCreation(command);
+    }
+
+    public void attemptKeyRegistration(Client client, KeyRegistrationMaterial material, String name) {
+        clientGateway.attemptKeyRegistration(client, material, name);
+    }
+
+    public void attemptPurposeAssociation(Client client, Purpose purpose) {
+        clientGateway.attemptPurposeAssociation(client, purpose);
     }
 }

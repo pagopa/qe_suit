@@ -55,11 +55,8 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta l'associazione e segnala che la finalità non è attiva.
 
     Given un EService creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato DRAFT associate da PagoPA
-    # Binding di setup mancante; riusare createClient con tipo CONSUMER senza associare la finalità.
-    # Non usare il setup del client API o quello CONSUMER che associa già la finalità.
     And un client CONSUMER creato da PagoPA senza finalità associate
     And un admin appartenente al fruitore PagoPA
-    # Binding negativo mancante; riusare linkPurpose senza attendere il successo.
     When il fruitore tenta di associare il client alla finalità creata
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NO_ACTIVE_OR_SUSPENDED_PURPOSE_VERSION_FOUND__POST_CLIENTS_CLIENT_ID_PURPOSES" in lingua "it"
 
@@ -70,7 +67,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e segnala che le chiavi private non sono ammesse.
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "chiave-privata-effimera-pem" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_PRIVATE_KEY_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
@@ -81,7 +77,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e segnala che i certificati non sono ammessi.
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "certificato-x509" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_CERTIFICATE_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
@@ -92,7 +87,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e segnala che occorre inviare una sola chiave.
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "due-chiavi-pubbliche-pem" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_MULTIPLE_KEYS_EXCEPTION__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
@@ -103,7 +97,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e segnala che la chiave pubblica non è valida.
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "pem-incompleto" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_PUBLIC_KEY__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
@@ -114,7 +107,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e segnala che è richiesta una chiave RSA.
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "ec-pubblica" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_AN_RSAKEY__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
@@ -125,7 +117,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e segnala che la lunghezza della chiave non è ammessa.
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-1024-bit" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_KEY_LENGTH__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
@@ -137,7 +128,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     # La fixture identifica la chiave effettiva registrata dal Given, non una nuova chiave RSA.
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-già-registrata" al "client" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_KEY_ALREADY_EXISTS" in lingua "it"
 
@@ -159,7 +149,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e segnala che le chiavi private non sono ammesse.
 
     Given un portachiavi erogatore creato dal Comune di Milano
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "chiave-privata-effimera-pem" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_PRIVATE_KEY_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 
@@ -170,7 +159,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e segnala che i certificati non sono ammessi.
 
     Given un portachiavi erogatore creato dal Comune di Milano
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "certificato-x509" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_CERTIFICATE_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 
@@ -181,7 +169,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e segnala che occorre inviare una sola chiave.
 
     Given un portachiavi erogatore creato dal Comune di Milano
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "due-chiavi-pubbliche-pem" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_ALLOWED_MULTIPLE_KEYS_EXCEPTION__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 
@@ -192,7 +179,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e segnala che la chiave pubblica non è valida.
 
     Given un portachiavi erogatore creato dal Comune di Milano
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "pem-incompleto" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_PUBLIC_KEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 
@@ -203,7 +189,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e segnala che è richiesta una chiave RSA.
 
     Given un portachiavi erogatore creato dal Comune di Milano
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "ec-pubblica" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_NOT_AN_RSAKEY__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 
@@ -214,7 +199,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e segnala che la lunghezza della chiave non è ammessa.
 
     Given un portachiavi erogatore creato dal Comune di Milano
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-1024-bit" al "portachiavi" con il nome "Chiave di test"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_INVALID_KEY_LENGTH__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 
@@ -243,7 +227,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e invita l'erogatore a rimuovere il collegamento.
 
     Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-valida" al "client" con il nome "Chiave https://example.org"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_CLIENTS_CLIENT_ID_KEYS" in lingua "it"
 
@@ -253,7 +236,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Quando tenta di creare un portachiavi con un collegamento nel nome e gli altri dati validi
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento.
 
-    # Binding BFF negativo mancante; riusare createProducerKeychain senza attendere il successo.
     When l'utente tenta di creare un portachiavi di erogazione con il nome "Portachiavi https://example.org"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCER_KEYCHAINS" in lingua "it"
 
@@ -264,7 +246,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Allora il sistema rifiuta la registrazione e invita l'erogatore a rimuovere il collegamento.
 
     Given un portachiavi erogatore creato dal Comune di Milano
-    # Binding negativo parametrico mancante; riusare addKey per il client e createProducerKey per il portachiavi.
     When l'erogatore tenta di aggiungere la chiave di test "rsa-pubblica-valida" al "portachiavi" con il nome "Chiave https://example.org"
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCER_KEYCHAINS_PRODUCER_KEYCHAIN_ID_KEYS" in lingua "it"
 

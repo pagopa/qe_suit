@@ -1,6 +1,7 @@
 package it.pagopa.interop.common.producer_keychain.application;
 
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.common.kernel.domain.KeyRegistrationMaterial;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeyCreationCommand;
 import it.pagopa.interop.common.producer_keychain.application.command.ProducerKeychainCreationCommand;
 import it.pagopa.interop.common.producer_keychain.domain.KeyRef;
@@ -73,5 +74,13 @@ public class ProducerKeychainUseCase {
 
     public void attemptEServiceAssociation(ProducerKeychainRef ref, EServiceRef eServiceRef) {
         gateway.attemptEServiceAssociation(ref, eServiceRef);
+    }
+
+    public void attemptKeyRegistration(ProducerKeychain keychain, KeyRegistrationMaterial material, String name) {
+        gateway.attemptKeyRegistration(keychain, material, name);
+    }
+
+    public void attemptProducerKeychainCreation(ProducerKeychainCreationCommand command) {
+        gateway.attemptProducerKeychainCreation(Objects.requireNonNull(command, "command"));
     }
 }

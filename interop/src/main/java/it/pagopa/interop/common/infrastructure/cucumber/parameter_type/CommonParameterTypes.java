@@ -66,5 +66,18 @@ public class CommonParameterTypes {
         return "asincrono".equals(name);
     }
 
-
+    @ParameterType("chiave-privata-effimera-pem|certificato-x509|due-chiavi-pubbliche-pem|pem-incompleto|ec-pubblica|rsa-pubblica-1024-bit|rsa-pubblica-gi\u00e0-registrata|rsa-pubblica-valida")
+    public KeyRegistrationMaterial keyRegistrationMaterial(String name) {
+        return switch (name) {
+            case "chiave-privata-effimera-pem" -> KeyRegistrationMaterial.PRIVATE_KEY;
+            case "certificato-x509" -> KeyRegistrationMaterial.CERTIFICATE;
+            case "due-chiavi-pubbliche-pem" -> KeyRegistrationMaterial.MULTIPLE_PUBLIC_KEYS;
+            case "pem-incompleto" -> KeyRegistrationMaterial.INCOMPLETE_PEM;
+            case "ec-pubblica" -> KeyRegistrationMaterial.EC_PUBLIC_KEY;
+            case "rsa-pubblica-1024-bit" -> KeyRegistrationMaterial.RSA_1024_PUBLIC_KEY;
+            case "rsa-pubblica-gi\u00e0-registrata" -> KeyRegistrationMaterial.REGISTERED_PUBLIC_KEY;
+            case "rsa-pubblica-valida" -> KeyRegistrationMaterial.VALID_PUBLIC_KEY;
+            default -> throw new IllegalArgumentException("Unknown key registration material: " + name);
+        };
+    }
 }

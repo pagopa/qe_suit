@@ -6,12 +6,14 @@ import it.pagopa.infrastructure.template.action.TestChain;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.client.application.BffClientCreationCommand;
 import it.pagopa.interop.bff.client.application.BffClientKeyCreationCommand;
+import it.pagopa.interop.bff.infrastructure.security.BffKeyRequestFactory;
 import it.pagopa.interop.common.client.application.ClientGateway;
 import it.pagopa.interop.common.client.application.command.ClientCreationCommand;
 import it.pagopa.interop.common.client.application.command.ClientKeyCreationCommand;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.ClientRef;
+import it.pagopa.interop.common.kernel.domain.KeyRegistrationMaterial;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
@@ -36,6 +38,7 @@ public class BffClientGateway implements ClientGateway {
     private final BffClientRestClient restClient;
     private final EntityStore entityStore;
     private final BffClientMapper mapper;
+    private final BffKeyRequestFactory keyRequests;
 
     @Override
     public Client getClient(ClientRef ref) {
@@ -176,5 +179,17 @@ public class BffClientGateway implements ClientGateway {
             case CONSUMER -> restClient.createConsumerClient(bffCommand.getClientSeed());
         };
         request.withoutPolling();
+    }
+
+    @Override
+    public void attemptKeyRegistration(Client client, KeyRegistrationMaterial material, String name) {
+        restClient.addKey(client.getId(), keyRequests.registrationRequest(material, name, client.getKeys()))
+                .withoutPolling();
+    }
+
+    @Override
+    public void attemptPurposeAssociation(Client client, Purpose purpose) {
+        restClient.linkPurpose(client.getId(), new PurposeAdditionDetailsSeed().purposeId(purpose.getId()))
+                .withoutPolling();
     }
 }
