@@ -68,4 +68,17 @@ class PurposeUseCaseTest {
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("does not belong");
         verifyNoInteractions(gateway);
     }
+
+    @Test
+    void archivesTheRequestedPurposeVersion() {
+        Purpose archived = purpose.toBuilder()
+                .version(active.toBuilder().purposeVersionState(PurposeVersionState.ARCHIVED).build())
+                .build();
+        when(gateway.archivePurpose(purpose.getRef(), active.getRef())).thenReturn(archived);
+
+        assertThat(useCase.archivePurpose(purpose, active)).isSameAs(archived);
+
+        verify(gateway).archivePurpose(purpose.getRef(), active.getRef());
+        verifyNoMoreInteractions(gateway);
+    }
 }

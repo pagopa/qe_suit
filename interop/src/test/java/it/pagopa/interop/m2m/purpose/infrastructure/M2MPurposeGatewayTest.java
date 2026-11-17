@@ -27,6 +27,7 @@ class M2MPurposeGatewayTest {
     private final ApiClient apiClient = mock(ApiClient.class);
     private final PurposesApi api = mock(PurposesApi.class);
     private final PurposesApi.CreatePurposeVersionOper create = mock(PurposesApi.CreatePurposeVersionOper.class);
+    private final PurposesApi.ArchivePurposeOper archive = mock(PurposesApi.ArchivePurposeOper.class);
     private final PurposesApi.GetPurposeOper read = mock(PurposesApi.GetPurposeOper.class);
     private final M2MPurposeMapper mapper = mock(M2MPurposeMapper.class);
     private final UUID newVersionId = UUID.randomUUID();
@@ -43,6 +44,8 @@ class M2MPurposeGatewayTest {
         when(api.createPurposeVersion()).thenReturn(create);
         when(create.purposeIdPath(original.getId())).thenReturn(create);
         when(create.body(any())).thenReturn(create);
+        when(api.archivePurpose()).thenReturn(archive);
+        when(archive.purposeIdPath(original.getId())).thenReturn(archive);
         when(api.getPurpose()).thenReturn(read);
         when(read.purposeIdPath(original.getId())).thenReturn(read);
         gateway = new M2MPurposeGateway(
@@ -73,6 +76,28 @@ class M2MPurposeGatewayTest {
         verify(read, times(2)).execute(any());
         assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(updated);
         assertThat(updated.getLastActiveVersion()).isSameAs(active);
+    }
+
+    @Test
+    void archivesThePurposeAndWaitsForTheRequestedVersionBeforeRefreshingContext() {
+        Purpose archived = original.toBuilder().clearVersions().version(active.toBuilder()
+                .purposeVersionState(PurposeVersionState.ARCHIVED).build()).build();
+        when(archive.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(200, "{}"));
+        });
+        when(read.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(200, "{}"));
+        });
+        when(mapper.toPurpose(any())).thenReturn(archived);
+
+        assertThat(gateway.archivePurpose(original.getRef(), active.getRef())).isSameAs(archived);
+
+        verify(archive).purposeIdPath(original.getId());
+        verify(archive).execute(any());
+        verify(read).execute(any());
+        assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(archived);
     }
 
     private Response response(int status, String body) {

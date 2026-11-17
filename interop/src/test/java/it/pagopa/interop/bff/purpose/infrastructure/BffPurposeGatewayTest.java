@@ -32,6 +32,8 @@ class BffPurposeGatewayTest {
     private final PurposesApi.CreatePurposeVersionOper create = mock(PurposesApi.CreatePurposeVersionOper.class);
     private final PurposesApi.CreatePurposeFromTemplateOper createFromTemplate =
             mock(PurposesApi.CreatePurposeFromTemplateOper.class);
+    private final PurposesApi.ArchivePurposeVersionOper archiveVersion =
+            mock(PurposesApi.ArchivePurposeVersionOper.class);
     private final PurposesApi.GetPurposeOper read = mock(PurposesApi.GetPurposeOper.class);
     private final BffPurposeMapper mapper = mock(BffPurposeMapper.class);
     private final BffPurposeCommandFactory commandFactory = mock(BffPurposeCommandFactory.class);
@@ -51,6 +53,10 @@ class BffPurposeGatewayTest {
         when(create.body(any())).thenReturn(create);
         when(api.createPurposeFromTemplate()).thenReturn(createFromTemplate);
         when(createFromTemplate.body(any())).thenReturn(createFromTemplate);
+        when(api.archivePurposeVersion()).thenReturn(archiveVersion);
+        when(archiveVersion.purposeIdPath(original.getId())).thenReturn(archiveVersion);
+        when(archiveVersion.versionIdPath(active.getId())).thenReturn(archiveVersion);
+        when(archiveVersion.reqSpec(any())).thenReturn(archiveVersion);
         when(api.getPurpose()).thenReturn(read);
         when(read.purposeIdPath(original.getId())).thenReturn(read);
         gateway = new BffPurposeGateway(
@@ -114,6 +120,30 @@ class BffPurposeGatewayTest {
         verify(createFromTemplate).execute(any());
         verify(read).execute(any());
         assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(original);
+    }
+
+    @Test
+    void archivesTheRequestedVersionAndRefreshesTheAliasedContext() {
+        Purpose archived = original.toBuilder().clearVersions().version(active.toBuilder()
+                .purposeVersionState(PurposeVersionState.ARCHIVED).build()).build();
+        when(archiveVersion.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(200, "{}"));
+        });
+        when(read.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(200, "{}"));
+        });
+        when(mapper.toPurpose(any())).thenReturn(archived);
+
+        assertThat(gateway.archivePurpose(original.getRef(), active.getRef())).isSameAs(archived);
+
+        verify(archiveVersion).purposeIdPath(original.getId());
+        verify(archiveVersion).versionIdPath(active.getId());
+        verify(archiveVersion).reqSpec(any());
+        verify(archiveVersion).execute(any());
+        verify(read).execute(any());
+        assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(archived);
     }
 
     private Response response(int status, String body) {
