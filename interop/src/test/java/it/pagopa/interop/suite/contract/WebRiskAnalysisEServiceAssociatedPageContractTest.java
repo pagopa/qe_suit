@@ -197,7 +197,7 @@ public class WebRiskAnalysisEServiceAssociatedPageContractTest {
                 .as("Combobox abilitato").doesNotContainKey("disabled");
         Assertions.assertThat(inputAttributes.get("aria-expanded"))
                 .as("Combobox chiuso di default").isEqualTo("false");
-        Assertions.assertThat(inputAttributes.get("value"))
+        Assertions.assertThat(input.read())
                 .as("Analisi del rischio selezionata di default").isEqualTo(data.riskAnalysisName());
 
         Assertions.assertThat(section.popupButton().exists(Gettable.FindPolicy.PRESENT))
