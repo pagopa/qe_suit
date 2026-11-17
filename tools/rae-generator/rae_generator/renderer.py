@@ -15,12 +15,12 @@ def render(data: dict) -> str:
         '# Report di Analisi Esecuzione (RAE)', '',
         '| Campo | Valore |', '| --- | --- |',
     ]
-    labels = [('release', 'Release'), ('issue_jira', 'Issue Jira'), ('data_ora', 'Data e ora'),
+    labels = [('release', 'Release'), ('scope', 'Scope'), ('issue_jira', 'Issue Jira'), ('data_ora', 'Data e ora'),
               ('durata', 'Durata'), ('numero_ko', 'Numero KO'), ('run', 'Run GitHub Actions'),
               ('suite', 'Suite'), ('environment', 'Ambiente'), ('executor', 'Executor'),
               ('source_branch', 'Source branch')]
     for key, label in labels:
-        lines.append(f'| {label} | {_cell(m[key])} |')
+        lines.append(f'| {label} | {_cell(m.get(key, 'NIGHTLY') if key == 'scope' else m[key])} |')
     headers = '| ID TEST | ERROR LOG | PROCEDURE | RESULT | LINK PROD BUG | LINK SUITE BUG |'
     ruler = '| --- | --- | --- | --- | --- | --- |'
     for key, title in [('ko_know', 'KO - Dovuti a bug noti'), ('ko', 'KO - Altri fallimenti')]:

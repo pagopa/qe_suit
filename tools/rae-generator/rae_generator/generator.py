@@ -22,7 +22,7 @@ def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment:
     failures = collect_reports(report_root)
     history = load_history(history_dir, suite)
     data = {
-        'rae': {'release': '', 'issue_jira': '', 'data_ora': data_ora,
+        'rae': {'release': '', 'scope': 'NIGHTLY', 'issue_jira': '', 'data_ora': data_ora,
                 'durata': durata, 'numero_ko': len(failures), 'run': run_url,
                 'suite': suite, 'environment': environment, 'executor': executor,
                 'source_branch': source_branch},
