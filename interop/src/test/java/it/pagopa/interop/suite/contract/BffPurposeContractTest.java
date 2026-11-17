@@ -1,6 +1,7 @@
 package it.pagopa.interop.suite.contract;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.TestBootApp;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.bff.purpose.infrastructure.BffPurposeCommandFactory;
@@ -20,16 +21,20 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static org.hamcrest.Matchers.is;
 
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
@@ -49,11 +54,11 @@ public class BffPurposeContractTest {
     }
 
     public BffPurposeContractTest(ApiClient apiClient,
-        @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
-        InteropJourney interopJourney,
-        BffPurposeCommandFactory commandFactory,
-        EServiceDescriptorUseCase eServiceDescriptorUseCase,
-        EntityStore entityStore) {
+                                  @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
+                                  InteropJourney interopJourney,
+                                  BffPurposeCommandFactory commandFactory,
+                                  EServiceDescriptorUseCase eServiceDescriptorUseCase,
+                                  EntityStore entityStore) {
         this.apiClient = apiClient;
         this.httpContractValidator = httpContractValidator;
         this.interopJourney = interopJourney;
@@ -65,62 +70,67 @@ public class BffPurposeContractTest {
     @TestFactory
     Stream<DynamicTest> createPurpose() {
         return httpContractValidator
-            .as(CONSUMER, UserRole.ADMIN)
-            .apiCall(() -> apiClient.purposes().createPurpose())
-            .payload(() -> commandFactory.creationRequest(createPublishedEServiceWithActiveAgreement().getRef()))
-            .tests();
+                .as(CONSUMER, UserRole.ADMIN)
+                .apiCall(() -> apiClient.purposes().createPurpose())
+                .payload(() -> commandFactory.creationRequest(createPublishedEServiceWithActiveAgreement().getRef()))
+                .targets(
+                        List.of(FuzzScenario.REMOVED),
+                        response -> response.then().statusCode(is(400)),
+                        List.of(PurposeSeed::getFreeOfChargeReason)
+                )
+                .tests();
     }
 
     @TestFactory
     Stream<DynamicTest> updatePurpose() {
         return httpContractValidator
-            .as(CONSUMER, UserRole.ADMIN)
-            .apiCall(() -> apiClient.purposes().updatePurpose())
-            .pathParams(() -> Map.of("purposeId", createDraftPurposeId()))
-            .payload(asConsumer(commandFactory::updateRequest))
-            .tests();
+                .as(CONSUMER, UserRole.ADMIN)
+                .apiCall(() -> apiClient.purposes().updatePurpose())
+                .pathParams(() -> Map.of("purposeId", createDraftPurposeId()))
+                .payload(asConsumer(commandFactory::updateRequest))
+                .tests();
     }
 
     @TestFactory
     Stream<DynamicTest> createPurposeForReceiveEservice() {
         return httpContractValidator
-            .as(CONSUMER, UserRole.ADMIN)
-            .apiCall(() -> apiClient.purposes().createPurposeForReceiveEservice())
-            .payload(() -> {
-                var receive = createPublishedReceiveEServiceWithActiveAgreement();
-                return commandFactory.reverseCreationRequest(receive.eService().getRef(), receive.riskAnalysis().getRef());
-            })
-            .tests();
+                .as(CONSUMER, UserRole.ADMIN)
+                .apiCall(() -> apiClient.purposes().createPurposeForReceiveEservice())
+                .payload(() -> {
+                    var receive = createPublishedReceiveEServiceWithActiveAgreement();
+                    return commandFactory.reverseCreationRequest(receive.eService().getRef(), receive.riskAnalysis().getRef());
+                })
+                .tests();
     }
 
     @TestFactory
     Stream<DynamicTest> updateReversePurpose() {
         return httpContractValidator
-            .as(CONSUMER, UserRole.ADMIN)
-            .apiCall(() -> apiClient.purposes().updateReversePurpose())
-            .pathParams(() -> Map.of("purposeId", createDraftReversePurposeId()))
-            .payload(asConsumer(commandFactory::reverseUpdateRequest))
-            .tests();
+                .as(CONSUMER, UserRole.ADMIN)
+                .apiCall(() -> apiClient.purposes().updateReversePurpose())
+                .pathParams(() -> Map.of("purposeId", createDraftReversePurposeId()))
+                .payload(asConsumer(commandFactory::reverseUpdateRequest))
+                .tests();
     }
 
     private EService createPublishedEService(boolean receiveMode) {
         EServiceCreationCommand eServiceCommand = eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(false);
         UpdateEServiceDescriptorCommand updateCommand =
-            eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(10, 20);
+                eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(10, 20);
 
         if (receiveMode) {
             eServiceCommand.mode(EServiceMode.RECEIVE);
             // La risk analysis dell'e-service RECEIVE va aggiunta prima della pubblicazione
             interopJourney
-                .withProducer(PRODUCER, UserRole.ADMIN)
-                .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
-                .addRiskAnalysis()
-                .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
+                    .withProducer(PRODUCER, UserRole.ADMIN)
+                    .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
+                    .addRiskAnalysis()
+                    .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
         } else {
             interopJourney
-                .withProducer(PRODUCER, UserRole.ADMIN)
-                .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
-                .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
+                    .withProducer(PRODUCER, UserRole.ADMIN)
+                    .createEService(eServiceCommand, EServiceDescriptorState.DRAFT)
+                    .updateDescriptor(updateCommand, EServiceDescriptorState.PUBLISHED);
         }
 
         return entityStore.getLastOrThrow(EService.class);
@@ -141,27 +151,29 @@ public class BffPurposeContractTest {
 
     private void activateConsumerAgreement(EService eService) {
         interopJourney
-            .withConsumer(CONSUMER, UserRole.ADMIN)
-            .linkAgreement(eService, AgreementState.ACTIVE);
+                .withConsumer(CONSUMER, UserRole.ADMIN)
+                .linkAgreement(eService, AgreementState.ACTIVE);
     }
 
     private UUID createDraftPurposeId() {
         EService eService = createPublishedEServiceWithActiveAgreement();
         interopJourney
-            .withConsumer(CONSUMER, UserRole.ADMIN)
-            .createPurposeAndLinkToEService(eService, PurposeVersionState.DRAFT);
+                .withConsumer(CONSUMER, UserRole.ADMIN)
+                .createPurposeAndLinkToEService(eService, PurposeVersionState.DRAFT);
         return entityStore.getLastOrThrow(Purpose.class).getId();
     }
 
     private UUID createDraftReversePurposeId() {
         ReceiveEServiceSetup setup = createPublishedReceiveEServiceWithActiveAgreement();
         interopJourney
-            .withConsumer(CONSUMER, UserRole.ADMIN)
-            .createReversePurposeAndLinkToEService(setup.eService(), setup.riskAnalysis(), PurposeVersionState.DRAFT);
+                .withConsumer(CONSUMER, UserRole.ADMIN)
+                .createReversePurposeAndLinkToEService(setup.eService(), setup.riskAnalysis(), PurposeVersionState.DRAFT);
         return entityStore.getLastOrThrow(Purpose.class).getId();
     }
 
-    /** Imposta l'identità del consumer prima di costruire il payload (i supplier sono valutati prima dell'autenticazione). */
+    /**
+     * Imposta l'identità del consumer prima di costruire il payload (i supplier sono valutati prima dell'autenticazione).
+     */
     private <T> Supplier<T> asConsumer(Supplier<T> supplier) {
         return () -> {
             interopJourney.withConsumer(CONSUMER, UserRole.ADMIN);
