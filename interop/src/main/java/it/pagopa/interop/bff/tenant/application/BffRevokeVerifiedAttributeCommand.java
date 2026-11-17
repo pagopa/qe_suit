@@ -5,14 +5,16 @@ import it.pagopa.interop.common.tenant.application.command.RevokeVerifiedAttribu
 import lombok.Getter;
 
 import java.util.Objects;
+import lombok.NonNull;
 
 public class BffRevokeVerifiedAttributeCommand implements RevokeVerifiedAttributeCommand {
     @Getter
     private AgreementRef agreement;
 
     @Override
-    public RevokeVerifiedAttributeCommand agreement(AgreementRef agreementRef) {
-        this.agreement = Objects.requireNonNull(agreementRef, "AgreementRef cannot be null");
+    public RevokeVerifiedAttributeCommand agreement(@NonNull AgreementRef agreementRef) {
+        Objects.requireNonNull(agreementRef.id(), "agreementId cannot be null");
+        this.agreement = agreementRef;
         return this;
     }
 }
