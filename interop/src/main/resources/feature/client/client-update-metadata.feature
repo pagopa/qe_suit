@@ -1,7 +1,7 @@
 Feature: Modifica dei metadati dei client
   Come amministratore dell'ente e creatore di un client e-service o interop
   Voglio aggiornare il nome e la descrizione dei client
-  preservato i dati non modificati, le associazioni e l'operatività del client.
+  preservando i dati non modificati, le associazioni e l'operatività del client.
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
