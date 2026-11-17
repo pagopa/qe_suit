@@ -5,8 +5,8 @@ Feature: Accesso al BackOffice dei Partner Tecnologici
   così atterro sul portale dedicato al tipo del mio ente
 
   @backofficePt
-  Scenario: [BACKOFFICE_PT_ACCESSO_1] Un ente PT accede a SEND e atterra sul BackOffice PT
-    Given il PT PT_1 effettua l'accesso a SelfCare con autenticazione SPID
+  Scenario: [BACKOFFICE_PT_ACCESSO_1] Un partner tecnologico accede a SEND e atterra sul BackOffice PT
+    Given il partner tecnologico: PT_1 effettua l'accesso a SelfCare con autenticazione SPID
     Then la pagina PtInstitutions è caricata con successo
 
   @backofficePt
