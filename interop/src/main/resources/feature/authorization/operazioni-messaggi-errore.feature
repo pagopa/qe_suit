@@ -137,7 +137,7 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Quando l'operatore di sicurezza dello stesso ente tenta di eliminare la chiave
   Allora il sistema rifiuta l'eliminazione e segnala che l'operatore non è autorizzato.
 
-    Given un client API creato dal Comune di Milano in cui è presente un utente security e una coppia di chiavi crittografiche
+    Given un client API creato dal Comune di Milano in cui è presente un utente admin e una coppia di chiavi crittografiche
     And un security appartenente all'erogatore Comune di Milano
     When l'utente tenta di eliminare la chiave del client
     Then il messaggio di errore corrisponde al caso "AUTHORIZATION_USER_NOT_ALLOWED_TO_DELETE_CLIENT_KEY" in lingua "it"
