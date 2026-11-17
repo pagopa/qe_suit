@@ -165,6 +165,41 @@ class HttpContractValidatorCaseGenerationTest {
     }
 
     @Test
+    void targetOverrideResolvesMapKeyAndNestedListElement() throws Throwable {
+        FuzzEngine payloadFuzzEngine = source -> List.of(new FuzzCase(
+                path("/answers/purpose/0"),
+                new FuzzMutation(FuzzScenario.REMOVED, FuzzMutationKind.REMOVE, null),
+                objectMapper.valueToTree(Map.of("answers", Map.of("purpose", List.of("mutated"))))
+        ));
+        HttpContractValidator contract = new HttpContractValidator(
+                objectMapper,
+                payloadFuzzEngine,
+                source -> List.of(),
+                createDecomposer(),
+                completePolicy()
+        );
+        AtomicInteger scenarioExpectationCalls = new AtomicInteger();
+        AtomicInteger targetExpectationCalls = new AtomicInteger();
+
+        var tests = contract.apiCall(() -> new RecordingOper("map-target"))
+                .payload(new AnswersPayload(Map.of("purpose", List.of("original"))))
+                .scenario(FuzzScenario.REMOVED, response -> scenarioExpectationCalls.incrementAndGet())
+                .targets(
+                        FuzzScenario.REMOVED,
+                        response -> targetExpectationCalls.incrementAndGet(),
+                        List.of(payload -> payload.getAnswers().get("purpose").get(0))
+                )
+                .tests()
+                .toList();
+
+        assertEquals(1, tests.size());
+        assertTrue(tests.get(0).getDisplayName().contains("@ /answers/purpose/0"));
+        tests.get(0).getExecutable().execute();
+        assertEquals(1, targetExpectationCalls.get());
+        assertEquals(0, scenarioExpectationCalls.get());
+    }
+
+    @Test
     void payload_keeps_null_and_removed_while_path_params_uuid_only_keep_scalar_mutations() {
         UUID agreementId = UUID.fromString("c0d9f3c0-9a43-4d8f-9a36-c97c870b13b9");
         var payloadEngine = new it.pagopa.infrastructure.fuzzing.DefaultFuzzEngine(
@@ -254,6 +289,18 @@ class HttpContractValidatorCaseGenerationTest {
     record Payload(String name) {}
 
     record PathParams(String agreementId) {}
+
+    static class AnswersPayload {
+        private final Map<String, List<String>> answers;
+
+        AnswersPayload(Map<String, List<String>> answers) {
+            this.answers = answers;
+        }
+
+        public Map<String, List<String>> getAnswers() {
+            return answers;
+        }
+    }
 
     public static class RecordingOper {
         final String id;
