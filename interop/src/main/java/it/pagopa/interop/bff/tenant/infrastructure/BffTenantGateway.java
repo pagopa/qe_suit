@@ -217,4 +217,14 @@ public class BffTenantGateway implements TenantGateway {
     public void attemptContactEmailSaveWithHyperlinkInNotes(@NonNull TenantRef tenantRef) {
         restClient.addTenantMail(tenantRef.id(), requestFactory.contactEmailWithHyperlinkInNotes()).withoutPolling();
     }
+
+    @Override
+    public void attemptVerifiedAttributeVerification(
+            @NonNull TenantRef tenantRef, @NonNull AttributeRef attributeRef,
+            @NonNull AgreementRef agreementRef, @NonNull OffsetDateTime expirationDate
+    ) {
+        var command = bffCommand(requestFactory.assignVerifiedAttributeCommand(attributeRef, agreementRef)
+                .expirationDate(expirationDate.toString()), BffAssignVerifiedAttributeCommand.class);
+        restClient.verifyVerifiedAttribute(tenantRef.id(), command.getBffPayload()).withoutPolling();
+    }
 }

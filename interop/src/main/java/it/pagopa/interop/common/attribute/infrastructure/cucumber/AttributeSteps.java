@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.common.agreement.domain.Agreement;
 import it.pagopa.interop.common.attribute.application.AttributeUseCase;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.AttributeKind;
@@ -63,5 +64,14 @@ public class AttributeSteps {
     @When("il certificatore tenta di assegnare nuovamente l'{attributeByAlias} all'ente {tenant}")
     public void attemptCertifiedAttributeAssignment(Attribute attribute, Tenant tenant) {
         tenantUseCase.attemptCertifiedAttributeAssignment(TenantRef.of(tenant.getOrganizationId()), attribute);
+    }
+
+    @When("l'erogatore tenta di verificare l'{attributeByAlias} di {tenant} con scadenza ieri")
+    public void attemptVerifiedAttributeVerificationWithPastExpiration(Attribute attribute, Tenant tenant) {
+        Agreement agreement = entityStore.getLastOrThrow(Agreement.class);
+        tenantUseCase.attemptVerifiedAttributeVerification(
+                TenantRef.of(tenant.getOrganizationId()), attribute, agreement.getRef(),
+                OffsetDateTime.now(ZoneOffset.UTC).minusDays(1)
+        );
     }
 }
