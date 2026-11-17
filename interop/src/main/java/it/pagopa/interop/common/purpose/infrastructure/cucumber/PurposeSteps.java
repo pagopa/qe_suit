@@ -43,6 +43,7 @@ public class PurposeSteps {
     @Given("i dati della finalità allo stato attuale appuntati come riferimento")
     public void savePurposeReference() {
         Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purpose = purposeUseCase.getPurpose(purpose);
         purposeReference = purpose.toBuilder().build();
     }
 
@@ -72,7 +73,7 @@ public class PurposeSteps {
                 .as("Riferimento della finalita salvato prima della modifica")
                 .isNotNull();
         Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
-
+        purpose = purposeUseCase.getPurpose(purpose);
 
         if (excludedFields.contains("title")) {
             assertThat(purpose.getTitle())

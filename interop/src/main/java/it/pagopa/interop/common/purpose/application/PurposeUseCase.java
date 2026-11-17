@@ -5,15 +5,14 @@ import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
-import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.function.Consumer;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor
@@ -21,8 +20,19 @@ public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
 
+    public Purpose getPurpose(Purpose purpose) {
+        return purposeGateway.getPurpose(purpose.getRef());
+    }
+
     public Purpose updateMetadata(Purpose purpose, String name, String description) {
-        return purposeGateway.updateMetadata(purpose.getRef(), name, description);
+        purposeGateway.updateMetadata(purpose.getRef(), name, description);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purpose),
+                refreshed -> Objects.equals(name, refreshed.getTitle())
+                        && Objects.equals(description, refreshed.getDescription()),
+                "Purpose " + purpose.getId() + " metadata did not reach the requested name and description"
+        );
     }
 
     public Purpose updatePurposeDailyCallsEstimateBeyondThreshold(Purpose purpose, EService eService) {
