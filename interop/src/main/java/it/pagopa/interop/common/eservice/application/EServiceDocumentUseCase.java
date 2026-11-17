@@ -16,4 +16,8 @@ public class EServiceDocumentUseCase {
         }
         return gateway.addDocument(service.getRef(), descriptor.getRef(), path, name);
     }
+
+    public void attemptValidDocumentUpload(EService service, EServiceDescriptor descriptor) {
+        gateway.attemptValidDocumentUpload(service.getRef(), descriptor.getRef());
+    }
 }

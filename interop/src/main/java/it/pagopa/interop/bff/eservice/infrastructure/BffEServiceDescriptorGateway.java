@@ -218,4 +218,9 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     public void attemptDescriptorExport(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
         restClient.exportDescriptor(serviceRef.id(), descriptorRef.id()).withoutPolling();
     }
+
+    @Override
+    public void attemptValidDocumentUpload(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        interfaceGateway.attemptValidDocumentUpload(serviceRef, descriptorRef);
+    }
 }

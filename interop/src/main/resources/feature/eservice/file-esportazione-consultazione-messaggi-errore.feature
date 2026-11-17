@@ -57,8 +57,7 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
       | ES-1  | Comune di Milano |
     And la versione 2 dell'e-service "ES-1" del Comune di Milano in bozza
     And la versione in bozza appena creata dell'e-service viene eliminata
-    # Binding BFF comune mancante per il caricamento; riusare addDocument sulla versione eliminata.
-    When l'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato di test"
+    When l'erogatore tenta di caricare un file valido come documentazione per la versione 2 dell'e-service "ES-1"
     Then il messaggio di errore corrisponde al caso "BFF_ESERVICE_DESCRIPTOR_NOT_FOUND" in lingua "it"
 
   # Endpoint: POST /import/eservices

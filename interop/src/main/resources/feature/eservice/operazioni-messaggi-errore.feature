@@ -344,8 +344,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | ES-1  | Comune di Milano |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega revocata
     And un admin appartenente al delegato Comune di Pozzallo
-    # Binding BFF mancante per il caricamento; riusare addDocument e gestire il rifiuto.
-    When l'erogatore carica il file "allegato-a.pdf" come "documento" sulla versione dell'e-service con il nome "Allegato A"
+    When l'utente tenta di caricare un file valido come documentazione per la versione 1 dell'e-service "ES-1"
     Then il messaggio di errore corrisponde al caso "CATALOG_OPERATION_FORBIDDEN__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS" in lingua "it"
 
   # NON REPLICABILE A FRONTEND

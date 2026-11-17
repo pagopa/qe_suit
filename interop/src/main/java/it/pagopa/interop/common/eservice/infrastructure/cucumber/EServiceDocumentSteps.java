@@ -1,9 +1,11 @@
 package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
 import it.pagopa.interop.common.eservice.application.EServiceDocumentUseCase;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.EServiceDocumentConfiguration;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.SelectedEServiceDescriptor;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -21,5 +23,12 @@ public class EServiceDocumentSteps {
         for (var configuration : configurations) {
             descriptor = useCase.addDocument(service, descriptor, configuration.getFixture(), configuration.getName());
         }
+    }
+
+    @When("l'erogatore tenta di caricare un file valido come documentazione per {eServiceDescriptorByVersionAndAlias}")
+    @When("l'utente tenta di caricare un file valido come documentazione per {eServiceDescriptorByVersionAndAlias}")
+    public void attemptValidDocumentUpload(SelectedEServiceDescriptor selection) {
+        EService service = selection.getEService();
+        useCase.attemptValidDocumentUpload(service, service.getDescriptorOrThrow(selection.getVersion()));
     }
 }

@@ -176,4 +176,9 @@ public class BffEServiceDescriptorInterfaceGateway {
                 .get();
     }
 
+    public void attemptValidDocumentUpload(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
+        File document = FileUtils.loadClasspathResourceAsTempFile("assets/eservice-template/openapi3-riferimenti.json");
+        restClient.addDocument(serviceRef.id(), descriptorRef.id(), DocumentKind.DOCUMENT.name(), "Allegato di test", document)
+                .withoutPolling();
+    }
 }
