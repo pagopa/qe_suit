@@ -5,6 +5,7 @@ Feature: Modifica dei metadati dei template finalità
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
+  @channel:Given=BFF,When=M2M,Then=M2M
   Scenario Outline: [PURPOSE_TEMPLATE_METADATA_1] - Aggiornamento dei metadati nei diversi stati del template
   Dato un template finalità nello stato previsto,
   quando il creatore aggiorna un metadato,
