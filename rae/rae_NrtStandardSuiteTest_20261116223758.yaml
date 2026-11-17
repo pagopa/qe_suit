@@ -30,9 +30,9 @@ ko:
     \ Source)\n\tat it.pagopa.interop.common.agreement.application.AgreementUseCase.verifyConsumerAgreementDownloadAvailability(AgreementUseCase.java:30)\n\
     \tat it.pagopa.interop.common.agreement.infrastructure.cucumber.AgreementSteps.verifyAgreementDownloadAvailabilityForConsumer(AgreementSteps.java:61)\n\
     \tat ✽.il fruitore può scaricare il documento della richiesta di fruizione solo quanto è pronto(classpath:feature-expanded/agreement/download-agreement.feature:10)\n"
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: 'Riesecuzione in locale'
+  result: 'Il pulsante per scaricare il documento non è visibile.'
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11528'
   link_suite_bug: ''
 - id_test: '[PRODUCER_AGREEMENT_DOWNLOAD_1] Il link per scaricare il documento della richiesta di fruizione si abilita
     quando pronto per l''erogatore [Given=BFF,When=WEB,Then=WEB]'
@@ -53,9 +53,9 @@ ko:
     \ Source)\n\tat it.pagopa.interop.common.agreement.application.AgreementUseCase.verifyProducerAgreementDownloadAvailability(AgreementUseCase.java:34)\n\
     \tat it.pagopa.interop.common.agreement.infrastructure.cucumber.AgreementSteps.verifyAgreementDownloadAvailabilityForProducer(AgreementSteps.java:55)\n\
     \tat ✽.l'erogatore può scaricare il documento della richiesta di fruizione solo quanto è pronto(classpath:feature-expanded/agreement/download-agreement.feature:17)\n"
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: 'Riesecuzione in locale'
+  result: 'Il pulsante per scaricare il documento non è visibile.'
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11528'
   link_suite_bug: ''
 - id_test: '[PRIVATE_CATALOG_ORDERING_PAGINATION_2] Ordinamenti richiesti esplicitamente [Given=BFF,When=BFF,Then=BFF]
     [Examples: (senza nome) | Example #2 | line: 52]'
@@ -71,9 +71,9 @@ ko:
     \tat it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceCatalogAssertionSteps.shouldContainEServicesInRelativeOrder(EServiceCatalogAssertionSteps.java:63)\n\
     \tat ✽.tra i risultati della ricerca, considerando tutte le pagine, i seguenti e-service compaiono in quest'ordine\
     \ relativo:(classpath:feature-expanded/catalog/private-catalog-ordering-pagination.feature:43)\n"
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: 'Analisi dei log e riesecuzione in locale'
+  result: 'Ri-eseguendo il test è stato restituito un altro risultato.Il test fallisce poichè il riordinamento non viene applicato come desiderato.'
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11313'
   link_suite_bug: ''
 - id_test: '[PRIVATE_CATALOG_ORDERING_PAGINATION_2] Ordinamenti richiesti esplicitamente [Given=BFF,When=BFF,Then=BFF]
     [Examples: (senza nome) | Example #4 | line: 54]'
@@ -89,9 +89,9 @@ ko:
     \tat it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceCatalogAssertionSteps.shouldContainEServicesInRelativeOrder(EServiceCatalogAssertionSteps.java:63)\n\
     \tat ✽.tra i risultati della ricerca, considerando tutte le pagine, i seguenti e-service compaiono in quest'ordine\
     \ relativo:(classpath:feature-expanded/catalog/private-catalog-ordering-pagination.feature:43)\n"
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: 'Analisi dei log e riesecuzione in locale'
+  result: 'Ri-eseguendo il test è stato restituito un altro risultato.Il test fallisce poichè il riordinamento non viene applicato come desiderato.'
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11313'
   link_suite_bug: ''
 - id_test: '[PRIVATE_CATALOG_TEXT_SEARCH_6] Ricerca approssimata con un refuso [Given=BFF,When=BFF,Then=BFF]'
   error_log: "java.lang.IllegalStateException: Timed out waiting for catalog presence across pages: expected IDs\
@@ -115,8 +115,8 @@ ko:
     \tat org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)\n\tat org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)\n\
     \tat org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)\n\tat it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)\n\
     \t... 15 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'Analisi dei log e riesecuzione in locale'
+  result: 'll test fallisce poichè ai nomi assegnati agli eservice (es: Anagrafe) viene, in maniera trasparente, applicato un suffisso pseudocasuale utile a scogiurare eventuali confitti tra run parallele di test che presentano nomi analoghi. La ricerca testuale nel catalogo, come indicata dallo scenario, non riesce a compiersi come atteso per via di questo suffisso che abbassa la soglia di similiarità. Di seguito un approfondimento su slack https://pagopaspa.slack.com/archives/C0AHSHU477D/p1793179880736759?thread_ts=1793106020.071549&cid=C0AHSHU477D'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: '[ESERVICE_ARCHIVING_GRACE_PERIOD_1.1] - Impossibilità di archiviare un e-service prima di una sua versione
@@ -159,9 +159,9 @@ ko:
     \tat it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceSteps.rejectEServiceArchivingRequest(EServiceSteps.java:69)\n\
     \tat ✽.il sistema rifiuta la richiesta di archiviazione dell'e-service da parte del delegato con un periodo\
     \ di preavviso di 60 giorni e una motivazione valida(classpath:feature-expanded/eservice/archive-eservice.feature:36)\n"
-  procedure: ''
-  result: ''
-  link_prod_bug: ''
+  procedure: 'Analisi dei log e riesecuzione in locale'
+  result: 'Il test fallisce poichè il messaggio restituito è differente da quello atteso'
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11179'
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer::[payload] REPLACED_WITH_NULL @
     /answerData/annotation
