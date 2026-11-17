@@ -271,4 +271,9 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
     public void attemptProducerDescriptorDetailsRead(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
         throw new UnsupportedOperationException("Reading producer descriptor details is not supported on M2M V3");
     }
+
+    @Override
+    public void attemptDescriptorExport(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
+        throw new UnsupportedOperationException("Exporting an e-service descriptor is not supported on M2M V3");
+    }
 }

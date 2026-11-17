@@ -141,4 +141,9 @@ public class EServiceSteps {
     public void attemptProducerDescriptorDetailsRead(int version, EService eService) {
         descriptorUseCase.attemptProducerDescriptorDetailsRead(eService, eService.getDescriptorOrThrow(version));
     }
+
+    @When("l'utente tenta di esportare la versione {int} dell'{currentEService}")
+    public void attemptDescriptorExport(int version, EService eService) {
+        descriptorUseCase.attemptDescriptorExport(eService, eService.getDescriptorOrThrow(version));
+    }
 }

@@ -43,7 +43,6 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
 
     Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente al delegato Comune di Pozzallo
-    # Operazione BFF e binding negativo comuni mancanti per l'esportazione della versione.
     When l'utente tenta di esportare la versione 1 dell'e-service
     Then il messaggio di errore corrisponde al caso "BFF_INVALID_ESERVICE_REQUESTER__GET_EXPORT_ESERVICES_ESERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID" in lingua "it"
 
@@ -82,7 +81,6 @@ Feature: Messaggi di errore durante la consultazione, il trasferimento e il cari
 
     Given un e-service pubblicato dal Comune di Milano con una delega in erogazione al Comune di Pozzallo in stato ACTIVE
     And un admin appartenente all'erogatore Comune di Milano
-    # Operazione BFF e binding negativo comuni mancanti per l'esportazione della versione.
     When l'utente tenta di esportare la versione 1 dell'e-service
     Then il messaggio di errore corrisponde al caso "BFF_DELEGATED_ESERVICE_NOT_EXPORTABLE" in lingua "it"
 

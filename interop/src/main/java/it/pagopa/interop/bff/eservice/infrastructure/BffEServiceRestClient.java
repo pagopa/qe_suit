@@ -175,4 +175,11 @@ public class BffEServiceRestClient extends RestClient {
                 Void.class
         );
     }
+
+    public TestChain<FileResource> exportDescriptor(@Nonnull UUID eserviceId, @Nonnull UUID descriptorId) {
+        return execute(
+                () -> eservicesApi.exportEServiceDescriptor().eserviceIdPath(eserviceId).descriptorIdPath(descriptorId).execute(Function.identity()),
+                FileResource.class
+        );
+    }
 }

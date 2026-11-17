@@ -226,4 +226,8 @@ public class EServiceDescriptorUseCase {
     public void attemptProducerDescriptorDetailsRead(EService eService, EServiceDescriptor descriptor) {
         eServiceDescriptorGateway.attemptProducerDescriptorDetailsRead(eService.getRef(), descriptor.getRef());
     }
+
+    public void attemptDescriptorExport(EService eService, EServiceDescriptor descriptor) {
+        eServiceDescriptorGateway.attemptDescriptorExport(eService.getRef(), descriptor.getRef());
+    }
 }
