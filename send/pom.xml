@@ -344,7 +344,7 @@
                             <typeMappings>
                                 <typeMapping>OffsetDateTime=java.lang.String</typeMapping>
                             </typeMappings>
-                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/refs/tags/v1.22.1-RC.1/docs/openapi/aws/api-bff-WEB-aws.yaml</inputSpec>
+                            <inputSpec>https://raw.githubusercontent.com/pagopa/pn-bff/refs/tags/v1.23.0-RC.0/docs/openapi/aws/api-bff-WEB-aws.yaml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>rest-assured</library>
                             <generateApiTests>false</generateApiTests>
