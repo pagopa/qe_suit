@@ -18,7 +18,6 @@ import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceRiskAnalysisAssociatedPage;
-import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.component.RiskAnalysisQuestionAnswerItem;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
