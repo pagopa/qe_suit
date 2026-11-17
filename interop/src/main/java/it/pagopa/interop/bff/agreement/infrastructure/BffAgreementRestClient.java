@@ -10,6 +10,7 @@ import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -82,6 +83,18 @@ public class BffAgreementRestClient extends RestClient {
                 () -> agreementsApi.unsuspendAgreement().agreementIdPath(agreementId)
                         .body(payload).execute(Function.identity()),
                 Agreement.class
+        );
+    }
+
+    public TestChain<File> addConsumerDocument(
+            @Nonnull UUID agreementId, @Nonnull String name, @Nonnull String prettyName, @Nonnull File document
+    ) {
+        return execute(
+                () -> agreementsApi.addAgreementConsumerDocument().agreementIdPath(agreementId)
+                        .nameForm(name).prettyNameForm(prettyName)
+                        .reqSpec(reqSpec -> reqSpec.addMultiPart("doc", document, "application/octet-stream"))
+                        .execute(Function.identity()),
+                File.class
         );
     }
 }

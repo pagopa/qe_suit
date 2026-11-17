@@ -178,4 +178,9 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     public void attemptAgreementArchiving(Agreement agreement) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementArchiving operation");
     }
+
+    @Override
+    public void attemptConsumerDocumentUpload(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptConsumerDocumentUpload operation");
+    }
 }

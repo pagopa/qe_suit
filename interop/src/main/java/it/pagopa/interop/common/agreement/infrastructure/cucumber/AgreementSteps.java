@@ -110,4 +110,9 @@ public class AgreementSteps {
     public void attemptAgreementArchiving(Agreement agreement) {
         agreementUseCase.attemptAgreementArchiving(agreement);
     }
+
+    @When("il fruitore tenta di allegare un documento valido alla {currentAgreement}")
+    public void attemptConsumerDocumentUpload(Agreement agreement) {
+        agreementUseCase.attemptConsumerDocumentUpload(agreement);
+    }
 }

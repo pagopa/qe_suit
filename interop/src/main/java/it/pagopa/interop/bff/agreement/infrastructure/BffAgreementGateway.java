@@ -12,6 +12,7 @@ import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
 import it.pagopa.utils.async.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
+import it.pagopa.utils.FileUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -178,5 +179,12 @@ public class BffAgreementGateway implements AgreementGateway {
     @Override
     public void attemptAgreementArchiving(Agreement agreement) {
         restClient.archive(agreement.getId()).withoutPolling();
+    }
+
+    @Override
+    public void attemptConsumerDocumentUpload(Agreement agreement) {
+        var document = FileUtils.loadClasspathResourceAsTempFile("assets/eservice-template/openapi3-riferimenti.json");
+        restClient.addConsumerDocument(agreement.getId(), "openapi3-riferimenti.json", "Allegato di test", document)
+                .withoutPolling();
     }
 }

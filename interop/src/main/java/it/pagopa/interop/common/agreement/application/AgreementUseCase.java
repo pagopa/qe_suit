@@ -119,4 +119,8 @@ public class AgreementUseCase {
     public void attemptAgreementArchiving(Agreement agreement) {
         agreementGateway.attemptAgreementArchiving(agreement);
     }
+
+    public void attemptConsumerDocumentUpload(Agreement agreement) {
+        agreementGateway.attemptConsumerDocumentUpload(agreement);
+    }
 }

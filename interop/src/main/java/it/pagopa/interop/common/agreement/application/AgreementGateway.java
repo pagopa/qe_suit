@@ -58,4 +58,6 @@ public interface AgreementGateway extends Plugin<Channel> {
     void attemptAgreementReactivation(Agreement agreement);
 
     void attemptAgreementArchiving(Agreement agreement);
+
+    void attemptConsumerDocumentUpload(Agreement agreement);
 }
