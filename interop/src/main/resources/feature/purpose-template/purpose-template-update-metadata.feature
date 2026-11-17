@@ -1,7 +1,7 @@
 Feature: Modifica dei metadati dei template finalità
   Come creatore di un template finalità
-  Voglio modificarne titolo descrizione e destinatari
-  Per mantenere invariato lo stato del template e le finalità già derivate.
+  Voglio modificare titolo, descrizione e destinatari
+  preservando lo stato del template e le finalità già derivate.
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
@@ -10,20 +10,39 @@ Feature: Modifica dei metadati dei template finalità
   quando il creatore aggiorna un metadato,
   allora il sistema salva il nuovo valore senza modificare stato o configurazione operativa.
 
-    Given un template finalità "TP-1" creato da PagoPA in stato <stato>
-    When un admin di PagoPA richiede la modifica dei metadati del template finalità "TP-1":
-      | campo   | valore   |
-      | <campo> | <valore> |
-    Then il template finalità "TP-1" presenta i metadati richiesti
-    And il template finalità "TP-1" conserva i metadati non modificati
-    And il template finalità "TP-1" conserva stato e configurazione operativa
+    Given un template finalità creato dal Comune di Pozzallo in stato <stato>
+    And i dati del template finalità allo stato attuale appuntati come riferimento
+    When un admin del Comune di Pozzallo modifica i metadati del template finalità:
+      | campo       | valore            |
+      | nome        | primo nome        |
+    Then il template finalità conserva lo stato e i dati di riferimento eccetto il nome
+
+    When i dati del template finalità allo stato attuale appuntati come riferimento
+    And un admin del Comune di Pozzallo modifica i metadati del template finalità:
+      | campo       | valore            |
+      | descrizione | prima descrizione |
+    Then il template finalità conserva lo stato e i dati di riferimento eccetto la descrizione
+
+    When i dati del template finalità allo stato attuale appuntati come riferimento
+    And un admin del Comune di Pozzallo modifica i metadati del template finalità:
+      | campo       | valore            |
+      | destinatari | primi destinatari |
+    Then il template finalità conserva lo stato e i dati di riferimento eccetto i destinatari
+
+    When i dati del template finalità allo stato attuale appuntati come riferimento
+    And un admin del Comune di Pozzallo modifica i metadati del template finalità:
+      | campo       | valore            |
+      | nome        | nuovo nome        |
+      | descrizione | nuova descrizione |
+      | destinatari | nuovi destinatari |
+    Then il template finalità conserva lo stato e i dati di riferimento eccetto i destinatari
 
     Examples:
-      | stato     | campo       | valore                                |
-      | DRAFT     | titolo      | Template finalità aggiornato          |
-      | PUBLISHED | descrizione | Descrizione aggiornata del template   |
-      | SUSPENDED | destinatari | Testo dei destinatari aggiornato      |
-      | ARCHIVED  | titolo      | Template finalità aggiornato          |
+      | stato      |
+      | in bozza   |
+      | pubblicato |
+      | sospeso    |
+      | archiviato |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
