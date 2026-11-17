@@ -2,6 +2,8 @@ package it.pagopa.interop.common.eservice_template.application;
 
 import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -70,5 +72,9 @@ public class EServiceTemplateUseCase {
 
     public EServiceTemplate updateTemplateDescription(EServiceTemplate eServiceTemplate, UpdateEServiceTemplateDescriptionCommand command) {
         return eServiceTemplateGateway.updateTemplateDescription(eServiceTemplate.getRef(), command);
+    }
+
+    public EServiceTemplate uploadRiskAnalysis(EServiceTemplate template, TenantKind tenant, EServiceRiskAnalysis ra) {
+        return eServiceTemplateGateway.createEServiceTemplateRiskAnalysis(template.getRef(), tenant, ra);
     }
 }

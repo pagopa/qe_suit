@@ -8,6 +8,7 @@ import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactor
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
+import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,16 +32,23 @@ public class EServiceRiskAnalysisUseCase {
     }
 
     public EServiceRiskAnalysis addLatestRiskAnalysis(Tenant tenant, EService eService, boolean completed) {
+        EServiceRiskAnalysis eServiceRiskAnalysis = this.buildRiskAnalysis(tenant, completed);
+        return eServiceRiskAnalysisGateway.addRiskAnalysis(eService.getRef(), eServiceRiskAnalysis.getRiskAnalysisForm());
+    }
+
+    public EServiceRiskAnalysis buildRiskAnalysis(Tenant tenant, boolean completed) {
         RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(tenant);
         Map<String, List<String>> answers =
-                riskAnalysisDataFactory.getTemplateForTenant(tenant, completed);
+            riskAnalysisDataFactory.getTemplateForTenant(tenant, completed);
 
         RiskAnalysisForm form = RiskAnalysisForm.builder()
-                .version(latestConfig.getVersion())
-                .answers(answers)
-                .build();
-
-        return eServiceRiskAnalysisGateway.addRiskAnalysis(eService.getRef(), form);
+            .version(latestConfig.getVersion())
+            .answers(answers)
+            .build();
+        return EServiceRiskAnalysis.builder()
+            .riskAnalysisForm(form)
+            .name(RandomUtils.randomAlphanumericName("ra-", 4))
+            .build();
     }
 
     public EServiceRiskAnalysis getRiskAnalysis(EService eService) {

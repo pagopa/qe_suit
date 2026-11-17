@@ -6,9 +6,11 @@ import it.pagopa.interop.bff.eservice.infrastructure.BffEServiceRequestFactory;
 import it.pagopa.interop.bff.eservice_template.infrastructure.BffEServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorGateway;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisUseCase;
 import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.eservice_template.domain.*;
 import it.pagopa.interop.common.journey.infrastructure.EServiceTemplateInstanceJourneyImpl;
+import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -30,7 +32,9 @@ class EServiceTemplateInstanceUseCaseTest {
     private final EServiceDescriptorGateway descriptorGateway = mock(EServiceDescriptorGateway.class);
     private final BffEServiceTemplateRequestFactory factory = new BffEServiceTemplateRequestFactory();
     private final EServiceTemplateInstanceUseCase instances = new EServiceTemplateInstanceUseCase(
-            gateway, factory, new EServiceTemplateVersionUseCase(versionGateway, factory),
+            gateway, factory, new EServiceTemplateVersionUseCase(
+                    versionGateway, factory, mock(EServiceTemplateUseCase.class),
+                    mock(EServiceRiskAnalysisUseCase.class), mock(CurrentUserSession.class)),
             new EServiceDescriptorUseCase(descriptorGateway, new BffEServiceRequestFactory()));
     private final EServiceTemplateVersion published = EServiceTemplateVersion.builder().id(UUID.randomUUID())
             .version("1").state(EServiceTemplateVersionState.PUBLISHED).build();

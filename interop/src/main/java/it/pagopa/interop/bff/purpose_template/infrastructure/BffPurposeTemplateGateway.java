@@ -1,6 +1,9 @@
 package it.pagopa.interop.bff.purpose_template.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.application.context.LastApiResponseStore;
+import it.pagopa.infrastructure.response.ApiResponse;
+import it.pagopa.infrastructure.template.action.PollingAction;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
@@ -15,6 +18,8 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
+import org.assertj.core.api.Assertions;
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -32,6 +37,18 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
     private final BffPurposeTemplateMapper mapper;
     private final BffPurposeTemplateRequestFactory requestFactory;
     private final EntityStore entityStore;
+    private final LastApiResponseStore lastApiResponseStore;
+
+    @Override
+    public void shouldFailLinkToReceiveEService() {
+        ApiResponse lastResponse = lastApiResponseStore.getLastResponse();
+        Assertions.assertThat(lastResponse)
+                .as("Risposta al tentativo di associare un e-service o template e-service in ricezione al template di finalità")
+                .isNotNull();
+        Assertions.assertThat(lastResponse.getStatusCode())
+                .as("L'associazione di un e-service o template e-service in ricezione deve essere rifiutata con HTTP 409")
+                .isEqualTo(409);
+    }
 
     @Override
     public PurposeTemplate getPurposeTemplate(UUID purposeTemplateId) {
@@ -129,18 +146,12 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
 
     @Override
     public PurposeTemplate linkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef) {
-        LinkableResourceRequest payload = new LinkableResourceRequest()
-                .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE)
-                .eserviceId(eServiceRef.id());
-        return linkResource(purposeTemplate, payload, eServiceRef.id(), false);
+        return linkResource(purposeTemplate, linkEServicePayload(eServiceRef), eServiceRef.id(), false);
     }
 
     @Override
     public PurposeTemplate linkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplateRef templateRef) {
-        var payload = new LinkableResourceRequest()
-                .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE_TEMPLATE)
-                .eserviceTemplateId(templateRef.id());
-        return linkResource(purposeTemplate, payload, templateRef.id(), true);
+        return linkResource(purposeTemplate, linkEServiceTemplatePayload(templateRef), templateRef.id(), true);
     }
 
     private PurposeTemplate linkResource(
@@ -150,10 +161,54 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
                 .assertThat(linked -> resourceId.equals(template ? linked.getEserviceTemplateId() : linked.getEserviceId()))
                 .get();
 
+        return awaitLinkedResource(purposeTemplate, resourceId);
+    }
+
+    @Override
+    public PurposeTemplate tryLinkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef) {
+        return tryLinkResource(purposeTemplate, linkEServicePayload(eServiceRef), eServiceRef.id());
+    }
+
+    @Override
+    public PurposeTemplate tryLinkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplateRef eServiceTemplateRef) {
+        return tryLinkResource(purposeTemplate, linkEServiceTemplatePayload(eServiceTemplateRef), eServiceTemplateRef.id());
+    }
+
+    private @Nullable PurposeTemplate tryLinkResource(
+            PurposeTemplate purposeTemplate,
+            LinkableResourceRequest payload,
+            UUID resourceId
+    ) {
+        PollingAction<LinkedResource> response = restClient.linkResource(purposeTemplate.getId(), payload)
+                .withoutPolling();
+
+        if (!response.getRaw().isSuccess()) {
+            return null;
+        }
+
+        return response
+                .map(linked -> awaitLinkedResource(purposeTemplate, resourceId))
+                .updateContext()
+                .get();
+    }
+
+    private PurposeTemplate awaitLinkedResource(PurposeTemplate purposeTemplate, UUID resourceId) {
         return PollingUtils.pollUntil(
                 () -> fetchAllLinkedResources(purposeTemplate),
                 pt -> pt.getLinkedResourceIds().contains(resourceId)
         );
+    }
+
+    private static LinkableResourceRequest linkEServicePayload(EServiceRef eServiceRef) {
+        return new LinkableResourceRequest()
+                .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE)
+                .eserviceId(eServiceRef.id());
+    }
+
+    private static LinkableResourceRequest linkEServiceTemplatePayload(EServiceTemplateRef templateRef) {
+        return new LinkableResourceRequest()
+                .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE_TEMPLATE)
+                .eserviceTemplateId(templateRef.id());
     }
 
     private PurposeTemplate fetchAllLinkedResources(PurposeTemplate fallbackTemplate) {
