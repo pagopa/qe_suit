@@ -81,6 +81,12 @@ public class BffPurposeTemplateContractTest {
                         response -> response.then().statusCode(is(400)),
                         List.of(PurposeTemplateSeed::getPurposeFreeOfChargeReason)
                 )
+                .targets(
+                        FuzzScenario.REPLACED_WITH_BLANK_STRING,
+                        response -> response.then()
+                                .statusCode(is(400)),
+                        List.of(seed -> seed.getPurposeRiskAnalysisForm().getVersion())
+                )
                 .tests();
     }
 
