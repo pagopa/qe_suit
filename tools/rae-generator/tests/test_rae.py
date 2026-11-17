@@ -114,9 +114,11 @@ def test_history_last_7_same_suite_and_general(tmp_path):
     for i in range(1,11):
         data=example_data();data['rae']['suite']='SuiteA'
         data['ko'][0]['result']=f'A{i}'
+        data['ko'][0]['link_prod_bug'] = 'https://jira.local/QA-123'
         (hist/f'rae_SuiteA_20261116{i:06d}.yaml').write_text(yaml.safe_dump(data))
     for i in range(1,4):
         data=example_data();data['ko'][0]['result']=f'G{i}'
+        data['ko'][0]['link_prod_bug'] = 'https://jira.local/QA-123'
         (hist/f'rae_NrtStandardSuiteTest_20261116{i:06d}.yaml').write_text(yaml.safe_dump(data))
     records=load_history(hist,'SuiteA')
     assert len(records)==10
@@ -141,6 +143,7 @@ def test_create_rae_recognizes_historical(tmp_path):
     hist=tmp_path/'history';hist.mkdir()
     prior=example_data();prior['ko'][0]['error_log']='AssertionError: mismatch'
     prior['ko'][0]['procedure']='historical check';prior['ko'][0]['result']='known'
+    prior['ko'][0]['link_prod_bug'] = 'https://jira.local/QA-456'
     (hist/'rae_NrtStandardSuiteTest_20261116000000.yaml').write_text(yaml.safe_dump(prior))
     data=create_rae(tmp_path,hist,suite='NrtStandardSuiteTest',environment='qa',executor='qa',
                     source_branch='develop',run_url='https://example.org',
@@ -162,7 +165,7 @@ def test_renderer_determinism_and_markdown_escaping():
     data=validate(example_data())
     md=render(data)
     assert md==render(data)
-    assert 'KO - Dovuti a bug noti' in md and 'KO - Altri fallimenti' in md
+    assert all(title in md for title in ('KO - Bug di prodotto', 'KO - Bug di suite', 'KO - Da analizzare'))
     assert 'expected A &#124; B' in md
 
 

@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .history import load_history
-from .matching import choose_known
+from .matching import choose_known_with_level
 from .parsers import collect_reports
 
 FIELDS = ('id_test', 'error_log', 'procedure', 'result', 'link_prod_bug', 'link_suite_bug')
@@ -70,12 +70,15 @@ def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment:
         'ko_know': [], 'ko': []
     }
     for failure in failures:
-        previous = choose_known(failure.id_test, failure.error_log, history)
+        previous, match_type = choose_known_with_level(failure.id_test, failure.error_log, history)
         if previous:
             logging.info('KO noto %s: storico=%s ambiente=%s suite=%s', failure.id_test,
                          previous.get('_source_file'), previous.get('_source_environment'),
                          previous.get('_source_suite'))
-        entry = {'id_test': failure.id_test, 'error_log': failure.error_log}
+        # Provenance is frozen at generation time: QA adding links must not
+        # promote a newly investigated KO in this same RAE.
+        entry = {'id_test': failure.id_test, 'error_log': failure.error_log,
+                 'match_type': match_type}
         for field in FIELDS[2:]:
             entry[field] = str(previous.get(field, '') or '') if previous else ''
         data['ko_know' if previous else 'ko'].append(entry)

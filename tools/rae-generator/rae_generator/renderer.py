@@ -1,5 +1,6 @@
 """Deterministic Markdown renderer; YAML is the only mutable source of truth."""
 from __future__ import annotations
+
 import re
 
 
@@ -23,11 +24,30 @@ def render(data: dict) -> str:
         lines.append(f'| {label} | {_cell(m[key])} |')
     headers = '| ID TEST | ERROR LOG | PROCEDURE | RESULT | LINK PROD BUG | LINK SUITE BUG |'
     ruler = '| --- | --- | --- | --- | --- | --- |'
-    for key, title in [('ko_know', 'KO - Dovuti a bug noti'), ('ko', 'KO - Altri fallimenti')]:
+    # YAML collection membership is not evidence of a confirmed bug.
+    # Only a historical exact fingerprint plus an appropriate ticket can
+    # promote a KO. A QA-added ticket in the current RAE cannot promote it.
+    grouped = {'product': [], 'suite': [], 'analysis': []}
+    for section in ('ko_know', 'ko'):
+        for item in data[section]:
+            match_type = item.get('match_type', 'none')
+            if match_type == 'exact' and str(item.get('link_prod_bug') or '').strip():
+                category = 'product'  # Product wins when both links exist.
+            elif match_type == 'exact' and str(item.get('link_suite_bug') or '').strip():
+                category = 'suite'
+            else:
+                category = 'analysis'
+            grouped[category].append(item)
+
+    for category, title in (
+            ('product', 'KO - Bug di prodotto'),
+            ('suite', 'KO - Bug di suite'),
+            ('analysis', 'KO - Da analizzare'),
+    ):
         lines.extend(['', f'## {title}', '', headers, ruler])
-        for item in data[key]:
+        for item in grouped[category]:
             lines.append('| ' + ' | '.join(_cell(item[field]) for field in (
                 'id_test', 'error_log', 'procedure', 'result', 'link_prod_bug', 'link_suite_bug')) + ' |')
-        if not data[key]:
+        if not grouped[category]:
             lines.extend(['', 'Nessun fallimento.'])
     return '\n'.join(lines) + '\n'

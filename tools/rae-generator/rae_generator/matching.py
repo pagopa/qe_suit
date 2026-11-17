@@ -33,22 +33,29 @@ def _signature(text: str) -> str:
     return match.group(0) if match else primary[:65]
 
 
-def choose_known(test_id: str, error: str, candidates: list[dict], threshold: float = 0.90) -> dict | None:
+def choose_known_with_level(test_id: str, error: str, candidates: list[dict], threshold: float = 0.90) -> tuple[
+    dict | None, str]:
+    """Return a historical candidate and how it matched: exact, similar or none."""
     viable = [c for c in candidates if c.get('id_test', '').strip().casefold() == test_id.strip().casefold()
               and c.get('error_log') and c.get('procedure') and c.get('result')]
     if not viable:
-        return None
+        return None, 'none'
     normalized = normalized_error(error)
     digest = fingerprint(error)
     # Candidates are preordered newest-first by history loader.
     for candidate in viable:
         if fingerprint(candidate['error_log']) == digest:
-            return candidate
+            return candidate, 'exact'
     viable = [c for c in viable if _signature(c['error_log']) == _signature(error)]
     if not viable or not normalized:
-        return None
+        return None, 'none'
     texts = [normalized] + [normalized_error(c['error_log']) for c in viable]
     matrix = TfidfVectorizer(analyzer='char', ngram_range=(3, 5), lowercase=False).fit_transform(texts)
     scores = cosine_similarity(matrix[0:1], matrix[1:]).ravel()
     top = max(enumerate(scores), key=lambda pair: (pair[1], -pair[0]))
-    return viable[top[0]] if float(top[1]) >= threshold else None
+    return (viable[top[0]], 'similar') if float(top[1]) >= threshold else (None, 'none')
+
+
+def choose_known(test_id: str, error: str, candidates: list[dict], threshold: float = 0.90) -> dict | None:
+    """Backward-compatible API for callers that need only the candidate."""
+    return choose_known_with_level(test_id, error, candidates, threshold)[0]

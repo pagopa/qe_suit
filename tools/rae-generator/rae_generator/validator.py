@@ -1,11 +1,14 @@
 """Strict pre-merge RAE validation, independent of Markdown generation."""
 from __future__ import annotations
+
 import re
-from pathlib import Path
 import yaml
+from pathlib import Path
 
 METADATA = ('release', 'issue_jira', 'data_ora', 'durata', 'numero_ko', 'run', 'suite', 'environment', 'executor', 'source_branch')
 FIELDS = ('id_test', 'error_log', 'procedure', 'result', 'link_prod_bug', 'link_suite_bug')
+OPTIONAL_FIELDS = ('match_type',)  # Legacy RAE files without provenance remain valid.
+MATCH_TYPES = ('exact', 'similar', 'none')
 NAME = re.compile(r'^rae_[A-Za-z0-9_.-]+_\d{14}(?:_\d+)?\.yaml$')
 
 
@@ -44,8 +47,10 @@ def validate(data: object, filename: str | None = None) -> dict:
             if not isinstance(entry, dict):
                 errors.append(f'{prefix}: deve essere una mappa')
                 continue
-            if set(entry) != set(FIELDS):
+            if not set(FIELDS).issubset(entry) or set(entry) - set(FIELDS) - set(OPTIONAL_FIELDS):
                 errors.append(f'{prefix}: campi obbligatori mancanti o inattesi')
+            if 'match_type' in entry and entry['match_type'] not in MATCH_TYPES:
+                errors.append(f'{prefix}.match_type: deve essere exact, similar o none')
             for field in FIELDS:
                 value = entry.get(field)
                 if not isinstance(value, str) or (field in FIELDS[:4] and not value.strip()):

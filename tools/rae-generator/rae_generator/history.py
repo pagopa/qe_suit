@@ -1,7 +1,7 @@
 """Select the latest approved YAMLs already merged into develop."""
-from pathlib import Path
 import re
 import yaml
+from pathlib import Path
 
 SUITE_GENERAL = 'NrtStandardSuiteTest'
 FILENAME = re.compile(r'^rae_(.+)_(\d{14})(?:_\d+)?\.yaml$')
@@ -38,7 +38,9 @@ def load_history(rae_dir: Path, suite: str, limit: int = 7) -> list[dict]:
     for _, report, source_file in selected:
         for key in ('ko', 'ko_know'):
             for entry in report.get(key, []) or []:
-                if isinstance(entry, dict) and entry.get('procedure') and entry.get('result'):
+                if (isinstance(entry, dict) and entry.get('procedure') and entry.get('result')
+                        and (str(entry.get('link_prod_bug') or '').strip()
+                             or str(entry.get('link_suite_bug') or '').strip())):
                     history.append({**entry, '_source_environment': report['rae'].get('environment'),
                                     '_source_file': source_file, '_source_suite': report['rae'].get('suite')})
     return history
