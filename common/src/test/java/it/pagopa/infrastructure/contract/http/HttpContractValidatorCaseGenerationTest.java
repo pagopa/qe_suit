@@ -5,11 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
-import it.pagopa.infrastructure.fuzzing.FuzzCase;
-import it.pagopa.infrastructure.fuzzing.FuzzEngine;
-import it.pagopa.infrastructure.fuzzing.FuzzMutation;
-import it.pagopa.infrastructure.fuzzing.FuzzMutationKind;
-import it.pagopa.infrastructure.fuzzing.FuzzScenario;
+import it.pagopa.infrastructure.fuzzing.*;
 import it.pagopa.infrastructure.objectgraph.NodePath;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
 import org.junit.jupiter.api.Test;
@@ -127,6 +123,45 @@ class HttpContractValidatorCaseGenerationTest {
         assertTrue(error.getMessage().contains("targetPath: /name"));
         assertTrue(error.getMessage().contains("responseStatus: 400"));
         assertTrue(error.getMessage().contains("payload: {\"name\":\"\"}"));
+    }
+
+    @Test
+    void skippedScenarioDoesNotGenerateDynamicTest() {
+        FuzzScenario skipped = FuzzScenario.REPLACED_WITH_LONG_STRING;
+        FuzzEngine payloadFuzzEngine = source -> List.of(
+                new FuzzCase(
+                        path("/name"),
+                        new FuzzMutation(skipped, FuzzMutationKind.REPLACE, "long"),
+                        objectMapper.createObjectNode().put("name", "long")
+                ),
+                new FuzzCase(
+                        path("/name"),
+                        new FuzzMutation(FuzzScenario.REPLACED_WITH_EMPTY_STRING, FuzzMutationKind.REPLACE, ""),
+                        objectMapper.createObjectNode().put("name", "")
+                )
+        );
+        HttpContractPolicy.Builder builder = HttpContractPolicy.builder().success(response -> {
+        });
+        for (FuzzScenario scenario : FuzzScenario.values()) {
+            builder.scenario(scenario, response -> {
+            });
+        }
+        HttpContractValidator contract = new HttpContractValidator(
+                objectMapper,
+                payloadFuzzEngine,
+                source -> List.of(),
+                createDecomposer(),
+                builder.skipScenario(skipped).build()
+        );
+
+        var tests = contract.apiCall(() -> new RecordingOper("op"))
+                .payload(new Payload("valid"))
+                .tests()
+                .toList();
+
+        assertEquals(1, tests.size());
+        assertTrue(tests.get(0).getDisplayName().contains("REPLACED_WITH_EMPTY_STRING"));
+        assertFalse(tests.get(0).getDisplayName().contains(skipped.name()));
     }
 
     @Test
