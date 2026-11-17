@@ -13,6 +13,7 @@ import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchPurposeUpdateContent;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RejectPurposeVersionPayload;
@@ -34,6 +35,19 @@ public class BffPurposeGateway implements PurposeGateway {
         return restClient.getPurpose(purposeRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(mapper::toPurpose)
+                .updateContext()
+                .get();
+    }
+
+    @Override
+    public Purpose updateMetadata(PurposeRef purposeRef, String name, String description) {
+        PatchPurposeUpdateContent payload = new PatchPurposeUpdateContent()
+                .title(name)
+                .description(description);
+
+        return restClient.patchUpdatePurpose(purposeRef.id(), payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getPurpose(purposeRef))
                 .updateContext()
                 .get();
     }

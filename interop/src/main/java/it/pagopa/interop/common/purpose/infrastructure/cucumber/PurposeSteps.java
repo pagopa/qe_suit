@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.purpose.infrastructure.cucumber;
 
+import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -21,6 +22,9 @@ import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,6 +37,56 @@ public class PurposeSteps {
     private final PurposeUseCase purposeUseCase;
     private final CurrentUserSession currentUserSession;
     private final CurrentM2MSession currentM2MSession;
+    private Purpose purposeReference;
+
+    @Given("i dati della finalità allo stato attuale appuntati come riferimento")
+    public void savePurposeReference() {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        purposeReference = purpose.toBuilder().build();
+    }
+
+    @When("un {userRole} di/del {tenant} modifica i metadati della finalità:")
+    public void updatePurposeMetadata(UserRole role, Tenant consumer, DataTable dataTable) {
+        Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
+        MetadataUpdate metadata = readMetadataUpdate(purpose, dataTable);
+
+        interopJourney.withConsumer(consumer, role);
+        purposeUseCase.updateMetadata(purpose, metadata.name(), metadata.description());
+    }
+
+    private MetadataUpdate readMetadataUpdate(Purpose purpose, DataTable dataTable) {
+        List<List<String>> rows = dataTable.cells();
+        if (rows.size() < 2 || !rows.get(0).equals(List.of("campo", "valore"))) {
+            throw new IllegalArgumentException(
+                    "La tabella dei metadati della finalita deve avere le colonne 'campo' e 'valore' e almeno un campo"
+            );
+        }
+
+        String name = purpose.getTitle();
+        String description = purpose.getDescription();
+        Set<String> updatedFields = new HashSet<>();
+
+        for (List<String> row : rows.subList(1, rows.size())) {
+            if (row.size() != 2 || row.get(0) == null) {
+                throw new IllegalArgumentException("Ogni riga dei metadati della finalita deve contenere campo e valore");
+            }
+
+            String field = row.get(0);
+            if (!updatedFields.add(field)) {
+                throw new IllegalArgumentException("Campo metadato finalita duplicato: " + field);
+            }
+
+            switch (field) {
+                case "nome" -> name = row.get(1);
+                case "descrizione" -> description = row.get(1);
+                default -> throw new IllegalArgumentException("Campo metadato finalita non supportato: " + field);
+            }
+        }
+
+        return new MetadataUpdate(name, description);
+    }
+
+    private record MetadataUpdate(String name, String description) {}
 
     @Given("l'e-service con una finalità in stato {purposeState} associata da/dal {tenant}")
     public void createPurposeForEService(PurposeVersionState purposeState, Tenant consumer) {

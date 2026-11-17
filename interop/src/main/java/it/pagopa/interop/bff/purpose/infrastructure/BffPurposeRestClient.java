@@ -29,6 +29,16 @@ public class BffPurposeRestClient extends RestClient {
         );
     }
 
+    public TestChain<CreatedResource> patchUpdatePurpose(@Nonnull UUID purposeId, @Nonnull PatchPurposeUpdateContent payload) {
+        return execute(
+                () -> purposesApi.patchUpdatePurpose()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
     public TestChain<CreatedResource> createPurpose(@Nonnull PurposeSeed payload) {
         return execute(
                 () -> purposesApi.createPurpose().body(payload).execute(Function.identity()),

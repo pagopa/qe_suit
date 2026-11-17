@@ -21,6 +21,10 @@ public class PurposeUseCase {
     private final PurposeGateway purposeGateway;
     private final PurposeCommandFactory purposeCommandFactory;
 
+    public Purpose updateMetadata(Purpose purpose, String name, String description) {
+        return purposeGateway.updateMetadata(purpose.getRef(), name, description);
+    }
+
     public Purpose updatePurposeDailyCallsEstimateBeyondThreshold(Purpose purpose, EService eService) {
         PurposeVersion activeVersion = purpose.getLastActiveVersion();
         if (activeVersion == null) {

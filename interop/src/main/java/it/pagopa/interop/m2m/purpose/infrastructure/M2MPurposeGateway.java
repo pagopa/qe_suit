@@ -27,6 +27,11 @@ public class M2MPurposeGateway implements PurposeGateway {
     private final M2MPurposeMapper mapper;
 
     @Override
+    public Purpose updateMetadata(PurposeRef purposeRef, String name, String description) {
+        throw unsupportedOperation();
+    }
+
+    @Override
     public Purpose getPurpose(PurposeRef purposeRef) {
         return restClient.getPurpose(purposeRef.id())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
