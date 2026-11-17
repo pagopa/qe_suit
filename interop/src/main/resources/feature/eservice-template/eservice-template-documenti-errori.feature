@@ -1,6 +1,5 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
-@lingua:it,en
 Feature: Messaggi di errore per i documenti dei template e-service
 
   Come creatore di template e-service

@@ -1,6 +1,5 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
-@lingua:it,en
 Feature: Messaggi di errore durante la verifica della client assertion
 
   Come amministratore di un ente

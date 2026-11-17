@@ -1,6 +1,5 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
-@lingua:it,en
 Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
   Come erogatore o fruitore

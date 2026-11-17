@@ -1,6 +1,5 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
-@lingua:it,en
 Feature: Messaggi di errore durante il caricamento degli allegati alle annotazioni dei template finalità
 
   Come creatore di template finalità

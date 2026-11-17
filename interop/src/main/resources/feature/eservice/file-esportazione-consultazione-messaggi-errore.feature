@@ -1,6 +1,5 @@
 @error-copy
 @channel:Given=BFF,When=BFF,Then=BFF
-@lingua:it,en
 Feature: Messaggi di errore durante la consultazione, il trasferimento e il caricamento di file degli e-service
 
   Come erogatore o delegato
