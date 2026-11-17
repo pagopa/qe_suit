@@ -85,7 +85,6 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
   Allora il sistema rifiuta la modifica e segnala che l'operazione non è consentita.
 
     Given un admin appartenente all'erogatore Sogecap
-    # Binding BFF negativo mancante; riusare updateTenantDelegatedFeatures senza il flusso di successo.
     When Sogecap tenta di abilitarsi a ricevere deleghe di erogazione
     Then il messaggio di errore corrisponde al caso "TENANT_OPERATION_FORBIDDEN" in lingua "it"
 

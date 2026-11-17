@@ -22,8 +22,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 @Service
 @RequiredArgsConstructor
 public class BffTenantGateway implements TenantGateway {
@@ -180,6 +178,14 @@ public class BffTenantGateway implements TenantGateway {
     public void attemptVerifiedAttributeExpirationUpdate(TenantRef tenantRef, AttributeRef attributeRef, OffsetDateTime expirationDate) {
         var payload = new UpdateVerifiedTenantAttributeSeed().expirationDate(expirationDate.toString());
         restClient.updateVerifiedAttribute(tenantRef.id(), attributeRef.id(), payload).withoutPolling();
+    }
+
+    @Override
+    public void attemptProducerDelegationAvailability(@NonNull TenantRef tenantRef) {
+        Tenant tenant = restClient.getTenant(tenantRef.id()).withoutPolling().assertStatusCode(200).get();
+        producerDelegationEnabled(tenant, tenantRef);
+        var payload = requestFactory.enableProducerDelegationPayload(isConsumerDelegationEnabled(tenant));
+        restClient.updateTenantDelegatedFeatures(payload).withoutPolling();
     }
 
     private static <T> T bffCommand(Object command, Class<T> type) {

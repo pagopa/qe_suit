@@ -6,6 +6,7 @@ import it.pagopa.interop.common.kernel.domain.AttributeRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.tenant.application.TenantRequestFactory;
 import it.pagopa.interop.common.tenant.application.command.*;
+import it.pagopa.interop.generated.openapi.clients.bff.model.TenantDelegatedFeaturesFlagsUpdateSeed;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -39,5 +40,11 @@ public class BffTenantRequestFactory implements TenantRequestFactory {
     @Override
     public boolean supports(@jakarta.annotation.Nonnull Channel delimiter) {
         return delimiter == Channel.BFF;
+    }
+
+    public TenantDelegatedFeaturesFlagsUpdateSeed enableProducerDelegationPayload(boolean consumerEnabled) {
+        return new TenantDelegatedFeaturesFlagsUpdateSeed()
+                .isDelegatedProducerFeatureEnabled(true)
+                .isDelegatedConsumerFeatureEnabled(consumerEnabled);
     }
 }

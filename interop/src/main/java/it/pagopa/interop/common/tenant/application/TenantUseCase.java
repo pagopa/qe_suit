@@ -61,4 +61,8 @@ public class TenantUseCase {
     public void attemptVerifiedAttributeExpirationUpdate(TenantRef tenantRef, AttributeRef attributeRef, OffsetDateTime expirationDate) {
         tenantGateway.attemptVerifiedAttributeExpirationUpdate(tenantRef, attributeRef, expirationDate);
     }
+
+    public void attemptProducerDelegationAvailability(TenantRef tenantRef) {
+        tenantGateway.attemptProducerDelegationAvailability(tenantRef);
+    }
 }
