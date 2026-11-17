@@ -1,0 +1,2 @@
+PyYAML>=6.0,<7
+scikit-learn>=1.5,<2
