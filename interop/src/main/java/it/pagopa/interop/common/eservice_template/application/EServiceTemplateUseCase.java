@@ -71,4 +71,19 @@ public class EServiceTemplateUseCase {
     public EServiceTemplate updateTemplateDescription(EServiceTemplate eServiceTemplate, UpdateEServiceTemplateDescriptionCommand command) {
         return eServiceTemplateGateway.updateTemplateDescription(eServiceTemplate.getRef(), command);
     }
+
+    public void attemptTemplateNameUpdate(EServiceTemplate template, String name) {
+        var command = requestFactory.defaultUpdateTemplateNameCommand().name(name);
+        eServiceTemplateGateway.attemptTemplateNameUpdate(template.getRef(), command);
+    }
+
+    public void attemptTemplateDescriptionUpdate(EServiceTemplate template, String description) {
+        var command = requestFactory.defaultUpdateTemplateDescriptionCommand().description(description);
+        eServiceTemplateGateway.attemptTemplateDescriptionUpdate(template.getRef(), command);
+    }
+
+    public void attemptTemplateIntendedTargetUpdate(EServiceTemplate template, String intendedTarget) {
+        var command = requestFactory.defaultUpdateTemplateIntendedTargetCommand().intendedTarget(intendedTarget);
+        eServiceTemplateGateway.attemptTemplateIntendedTargetUpdate(template.getRef(), command);
+    }
 }

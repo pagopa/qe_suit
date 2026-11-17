@@ -105,4 +105,25 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
     public boolean supports(@NonNull Channel delimiter) {
         return delimiter == Channel.BFF;
     }
+
+    @Override
+    public void attemptTemplateNameUpdate(EServiceTemplateRef templateRef, UpdateEServiceTemplateNameCommand command) {
+        if (!(command instanceof BffUpdateEServiceTemplateNameCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateNameCommand.class.getSimpleName());
+        restClient.updateTemplateName(templateRef.id(), bffCommand.getBffPayload()).withoutPolling();
+    }
+
+    @Override
+    public void attemptTemplateDescriptionUpdate(EServiceTemplateRef templateRef, UpdateEServiceTemplateDescriptionCommand command) {
+        if (!(command instanceof BffUpdateEServiceTemplateDescriptionCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateDescriptionCommand.class.getSimpleName());
+        restClient.updateTemplateDescription(templateRef.id(), bffCommand.getBffPayload()).withoutPolling();
+    }
+
+    @Override
+    public void attemptTemplateIntendedTargetUpdate(EServiceTemplateRef templateRef, UpdateEServiceTemplateIntendedTargetCommand command) {
+        if (!(command instanceof BffUpdateEServiceTemplateIntendedTargetCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateIntendedTargetCommand.class.getSimpleName());
+        restClient.updateTemplateIntendedTarget(templateRef.id(), bffCommand.getBffPayload()).withoutPolling();
+    }
 }

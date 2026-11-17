@@ -43,7 +43,6 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
       | alias | erogatore        | nome                  | tecnologia |
       | T-1   | Comune di Milano | Catalogo esistente    | REST       |
       | T-2   | Comune di Milano | Catalogo da rinominare | REST       |
-    # Binding BFF negativo mancante; riusare updateTemplateName con il nome effettivo di T-1.
     When l'erogatore tenta di rinominare il template "T-2" con il nome del template "T-1"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_ESERVICE_TEMPLATE_DUPLICATE__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_NAME_UPDATE" in lingua "it"
 
@@ -79,7 +78,6 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     Given un template e-service preparato con la seguente configurazione:
       | alias | tecnologia | stato     | interfaccia               |
       | T-1   | REST       | PUBLISHED | openapi3-riferimenti.json |
-    # Binding BFF negativo parametrico mancante; usare updateTemplateIntendedTarget per il campo destinatario.
     When l'erogatore tenta di aggiornare il campo "destinatario" del template "T-1" con il valore "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_INTENDED_TARGET_UPDATE" in lingua "it"
 
@@ -92,7 +90,6 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     Given un template e-service preparato con la seguente configurazione:
       | alias | tecnologia | stato     | interfaccia               |
       | T-1   | REST       | PUBLISHED | openapi3-riferimenti.json |
-    # Binding BFF negativo parametrico mancante; usare updateTemplateDescription per il campo descrizione.
     When l'erogatore tenta di aggiornare il campo "descrizione" del template "T-1" con il valore "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_DESCRIPTION_UPDATE" in lingua "it"
 
@@ -105,7 +102,6 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     Given un template e-service preparato con la seguente configurazione:
       | alias | tecnologia | stato     | interfaccia               |
       | T-1   | REST       | PUBLISHED | openapi3-riferimenti.json |
-    # Binding BFF negativo parametrico mancante; usare updateTemplateName per il campo nome.
     When l'erogatore tenta di aggiornare il campo "nome" del template "T-1" con il valore "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_NAME_UPDATE" in lingua "it"
 

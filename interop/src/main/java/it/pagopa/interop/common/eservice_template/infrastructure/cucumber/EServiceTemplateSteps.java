@@ -9,6 +9,7 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateVersionUseCase;
+import it.pagopa.interop.common.eservice_template.application.EServiceTemplateUseCase;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplatePreparationConfiguration;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.eservice.domain.RestInterfaceConfiguration;
@@ -32,6 +33,7 @@ public class EServiceTemplateSteps {
     private final EServiceTemplateConfigurationMapper configurationMapper;
     private final EntityStore entities;
     private final EServiceTemplateVersionUseCase templateVersionUseCase;
+    private final EServiceTemplateUseCase templateUseCase;
 
     @Given("la bozza di {eServiceTemplate} creata viene eliminata")
     public void deleteDraftVersion(EServiceTemplate template) {
@@ -82,5 +84,20 @@ public class EServiceTemplateSteps {
                 values.get("contactUrl"),
                 values.get("termsAndConditionsUrl")
         );
+    }
+
+    @When("l'erogatore tenta di aggiornare il campo {string} del {eServiceTemplateByAlias} con il valore {string}")
+    public void attemptTemplateFieldUpdate(String field, EServiceTemplate template, String value) {
+        switch (field) {
+            case "nome" -> templateUseCase.attemptTemplateNameUpdate(template, value);
+            case "descrizione" -> templateUseCase.attemptTemplateDescriptionUpdate(template, value);
+            case "destinatario" -> templateUseCase.attemptTemplateIntendedTargetUpdate(template, value);
+            default -> throw new IllegalArgumentException("Unsupported template field: " + field);
+        }
+    }
+
+    @When("l'erogatore tenta di rinominare il {eServiceTemplateByAlias} con il nome del {eServiceTemplateByAlias}")
+    public void attemptTemplateRenameWithDuplicateName(EServiceTemplate template, EServiceTemplate existing) {
+        templateUseCase.attemptTemplateNameUpdate(template, existing.getName());
     }
 }
