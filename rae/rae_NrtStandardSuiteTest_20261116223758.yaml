@@ -188,7 +188,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Il comportamento della piattaforma per request attributes pari a NULL è al momento oggetto di discussione. Il KO non costituisce comunuqe un bug bloccante, essendo che il non equiparare NULL a <campo vuoto> è da lungo tempo il comportamento di default della piattaforma (ticket per maggiori dettagli) QA-18850: Da completare'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer::[payload] REPLACED_WITH_SQL_INJECTION
@@ -215,7 +215,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -242,7 +242,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Sostituendo il campo segnalato nel log con degli spazi, si riceve in risposta 200 al posto di 400.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -270,7 +270,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38 . La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -297,7 +297,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38 . La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -327,7 +327,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
   procedure: ''
-  result: ''
+  result: 'Campo non obbligatorio, tuttavia viene restituito un errore quando al suo posto viene specificato "null"'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffAgreementContractTest::createAgreement::[payload] REPLACED_WITH_NIL_UUID @ /eserviceId
@@ -356,7 +356,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
   procedure: ''
-  result: ''
+  result: 'eserviceId non esistente risponde Not Found ma con 400 anziché 404'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffAgreementContractTest::createAgreement::[payload] REPLACED_WITH_NIL_UUID @ /descriptorId
@@ -386,7 +386,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
   procedure: ''
-  result: ''
+  result: 'descriptorId con valore nil risponde 400 anziché 404'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffAgreementContractTest::createAgreement::[payload] REPLACED_WITH_NIL_UUID @ /delegationId
@@ -416,7 +416,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
   procedure: ''
-  result: ''
+  result: '- delegationId non risulta opzionale su POST /agreements - delegationId non esistente risponde Not Found ma con 400 anziché 404 - eserviceId non esistente risponde Not Found ma con 400 anziché 404- descriptorId non esistente risponde Not Found ma con 400 anziché 404'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffClientContractTest::createApiClient::[payload] REPLACED_WITH_NULL @ /description
@@ -445,7 +445,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
   procedure: ''
-  result: ''
+  result: 'Il test si aspetta 200 specificando null, aspettandosi che il comportamento riscontrato specificando null e quello riscontrato non specificando affatto il campo sia lo stesso, ma è da verificare. Vedi ticket allegato. Anche qualora si considerasse un bug non sarebbe bloccante (la piattaforma Interop segue questo comportamento da sempre)'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffClientContractTest::createApiClient::[payload] REMOVED @ /members/0
@@ -471,7 +471,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Quesito posto qui (https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429) e presentata questione al sync settimanale Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -498,7 +498,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38 . La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -525,7 +525,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38 . La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -551,7 +551,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con degli spazi, si riceve in risposta 200 al posto di 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffCertifiedAttributeContractTest::createCertifiedAttribute::[payload] REPLACED_WITH_SQL_INJECTION @
@@ -576,7 +576,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38 . La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -604,7 +604,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con degli spazi, si riceve in risposta 200, se non ci sono altri attributi con nome vuoto, oppure 409 se ne esiste uno perché già creato da un test precedente. Il risultato atteso è 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffCertifiedAttributeContractTest::createCertifiedAttribute::[payload] REPLACED_WITH_SQL_INJECTION @
@@ -631,7 +631,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38 . La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -658,7 +658,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo description con degli spazi, si riceve in risposta 200 quando invece ci si aspetterebbe un 400'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute::[payload] REPLACED_WITH_SQL_INJECTION
@@ -683,7 +683,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38 . La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -711,7 +711,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Accade con gli attributi certificati discreti, ma si direbbe che sia previsto poiché qui PIN-6881: Hyperlink Injection, non ne è prevista la copertura. Presumibilmente verrà coperta in futuro.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -740,7 +740,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con degli spazi, si riceve in risposta 200, se non ci sono altri attributi con nome vuoto, oppure 409 se ne esiste uno perché già creato da un test precedente. Il risultato atteso è 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute::[payload] REPLACED_WITH_SQL_INJECTION
@@ -767,7 +767,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -795,7 +795,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Accade con gli attributi certificati discreti, ma si direbbe che sia previsto poiché qui PIN-6881: Hyperlink Injection, non ne è prevista la copertura. Presumibilmente verrà coperta in futuro.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -825,7 +825,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
   procedure: ''
-  result: ''
+  result: 'Il test si aspetta 200 specificando null, aspettandosi che il comportamento riscontrato specificando null e quello riscontrato non specificando affatto il campo sia lo stesso, ma è da verificare. Vedi ticket allegato. Anche qualora si considerasse un bug non sarebbe bloccante (la piattaforma Interop segue questo comportamento da sempre)'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffClientContractTest::createConsumerClient::[payload] REMOVED @ /members/0
@@ -851,7 +851,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Quesito posto qui (https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429) e presentata questione al sync settimanale Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -878,7 +878,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -905,7 +905,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -931,7 +931,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con degli spazi, si riceve in risposta 200 al posto di 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffDeclaredAttributeContractTest::createDeclaredAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /description
@@ -955,7 +955,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -981,7 +981,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con degli spazi, si riceve in risposta 200, se non ci sono altri attributi con nome vuoto, oppure 409 se ne esiste uno perché già creato da un test precedente. Il risultato atteso è 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffDeclaredAttributeContractTest::createDeclaredAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /name
@@ -1006,7 +1006,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -1036,7 +1036,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo isSignalHubEnabled è - da specifica OpenApi - opzionale, tuttavia viene restituito un errore quando al suo posto viene specificato "null". Viene restituito correttamente 200 quando l’attributo viene invece semplicemente rimosso dal body'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::createEService::[payload] REPLACED_WITH_NULL @ /isConsumerDelegable
@@ -1065,7 +1065,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo isConsumerDelegable è - da specifica OpenApi - opzionale, tuttavia viene restituito un errore quando al suo posto viene specificato “null”. Viene restituito correttamente 200 quando l’attributo viene invece semplicemente rimosso dal body'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::createEService::[payload] REPLACED_WITH_NULL @ /isClientAccessDelegable
@@ -1094,7 +1094,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo isClientAccessDelegable è - da specifica OpenApi - opzionale, tuttavia viene restituito un errore quando al suo posto viene specificato “null”. Viene restituito correttamente 200 quando l’attributo viene invece semplicemente rimosso dal body'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::createEService::[payload] REPLACED_WITH_NULL @ /personalData
@@ -1123,7 +1123,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo personalData è - da specifica OpenApi - opzionale, tuttavia viene restituito un errore quando al suo posto viene specificato “null”. Viene restituito correttamente 200 quando l’attributo viene invece semplicemente rimosso dal body'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::createEService::[payload] REPLACED_WITH_NULL @ /asyncExchange
@@ -1152,7 +1152,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo asyncExchange è - da specifica OpenApi - opzionale, tuttavia viene restituito un errore quando al suo posto viene specificato “null”. Viene restituito correttamente 200 quando l’attributo viene invece semplicemente rimosso dal body'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::createEService::[payload] REPLACED_WITH_SQL_INJECTION @ /name
@@ -1180,7 +1180,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38 . La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -1208,7 +1208,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38 . La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -1239,7 +1239,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Campo non obbligatorio, tuttavia viene restituito un errore quando al suo posto viene specificato “null”'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_NULL @ /version/dailyCallsPerConsumer
@@ -1271,7 +1271,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Campo non obbligatorio, tuttavia viene restituito un errore quando al suo posto viene specificato “null”'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_NULL @ /version/dailyCallsTotal
@@ -1303,7 +1303,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Campo non obbligatorio, tuttavia viene restituito un errore quando al suo posto viene specificato “null”'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_NULL @ /version/agreementApprovalPolicy
@@ -1334,7 +1334,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Campo non obbligatorio, tuttavia viene restituito un errore quando al suo posto viene specificato “null”'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_NULL @ /isSignalHubEnabled
@@ -1365,7 +1365,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Campo non obbligatorio, tuttavia viene restituito un errore quando al suo posto viene specificato “null”'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_NULL @ /personalData
@@ -1396,7 +1396,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Campo non obbligatorio, tuttavia viene restituito un errore quando al suo posto viene specificato “null”'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_NULL @ /asyncExchange
@@ -1427,7 +1427,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Campo non obbligatorio, tuttavia viene restituito un errore quando al suo posto viene specificato “null”'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /name
@@ -1457,7 +1457,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38 . La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -1486,7 +1486,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -1515,7 +1515,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -1544,7 +1544,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -1569,7 +1569,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Alcuni test producono valori per campi “id” che tendono erroneamente a proporsi nei test successivi, provando errori di tipo “key already exist”. Il test, eseguito in isolamento, produce il bug qui segnalato [PIN-11354] createProducerKey alg blank - Jira'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffClientContractTest::createKey::[payload] REPLACED_WITH_SQL_INJECTION @ /alg
@@ -1595,7 +1595,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -1623,7 +1623,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'È risultato possibile specificare un valore per “alg” pari a una stringa vuota, ma non dovrebbe esserlo'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffClientContractTest::createKey::[payload] REPLACED_WITH_LONG_STRING @ /alg
@@ -1652,7 +1652,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'Alcuni test producono valori per campi “id” che tendono erroneamente a proporsi nei test successivi, provando errori di tipo “key already exist”. Il test, eseguito in isolamento, produce il bug qui segnalato [PIN-11053] Create key: altissima soglia caratteri - Jira'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffClientContractTest::createKey::[payload] REPLACED_WITH_SQL_INJECTION @ /name
@@ -1678,7 +1678,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -1705,7 +1705,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Alcuni test producono valori per campi “id” che tendono erroneamente a proporsi nei test successivi, provando errori di tipo “key already exist”. Il test, eseguito in isolamento, produce il bug qui segnalato [PIN-11354] createProducerKey alg blank - Jira'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffProducerKeychainContractTest::createProducerKey::[payload] REPLACED_WITH_SQL_INJECTION @ /alg
@@ -1730,7 +1730,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -1755,7 +1755,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'È risultato possibile specificare un valore per “alg” pari a una stringa vuota, ma non dovrebbe esserlo'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffProducerKeychainContractTest::createProducerKey::[payload] REPLACED_WITH_LONG_STRING @ /alg
@@ -1780,7 +1780,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'Per stringa eccessivamente lunga è atteso un errore, ma si è ottenuto invece esito positivo'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffProducerKeychainContractTest::createProducerKey::[payload] REPLACED_WITH_SQL_INJECTION @ /name
@@ -1803,7 +1803,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -1829,7 +1829,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -1855,7 +1855,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -1886,7 +1886,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Impostando il campo opzionale `riskAnalysisForm` a `null`, il valore viene trattato come non valido anziché come assenza del campo. Di conseguenza, il servizio restituisce uno status code `400 Bad Request` anziché l atteso `200 OK`.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_NULL @ /freeOfChargeReason
@@ -1916,8 +1916,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18850: Da completare'
+  result: 'Il comportamento della piattaforma per request attributes pari a NULL è al momento oggetto di discussione. Il KO non costituisce comunuqe un bug bloccante, essendo che il non equiparare NULL a <campo vuoto> è da lungo tempo il comportamento di default della piattaforma (ticket per maggiori dettagli)'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_NIL_UUID @ /eserviceId
@@ -1948,7 +1948,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo eserviceId popolato con valore NIL restituisce status code 500'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_NIL_UUID @ /consumerId
@@ -1981,7 +1981,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo consumerId popolato con valore NIL restituisce status code 403'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::createPurpose::[payload] REMOVED @ /freeOfChargeReason
@@ -2010,7 +2010,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'Impostando il campo opzionale freeOfChargeReason a `null`, il valore viene trattato come non valido anziché come assenza del campo. Di conseguenza, il servizio restituisce uno status code `400 Bad Request` anziché l atteso `200 OK`.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_BLANK_STRING @ /riskAnalysisForm/answers/institutionalPurpose/0
@@ -2037,7 +2037,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'Un campo obbligatorio della risk analysis può essere compilato con spazi vuoti e viene comunque accettato.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /riskAnalysisForm/answers/institutionalPurpose/0
@@ -2063,7 +2063,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -2090,7 +2090,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -2117,7 +2117,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -2147,7 +2147,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Viene impropriamente permesso di specificare una stringa blank per il campo freeOfChargeReason'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_LONG_STRING @ /freeOfChargeReason
@@ -2175,7 +2175,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'Viene accettata una stringa lunga 5.000 caratteri anziché essere rifiutata.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /freeOfChargeReason
@@ -2202,7 +2202,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -2260,7 +2260,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Il comportamento della piattaforma per request attributes pari a NULL è al momento oggetto di discussione. Il KO non costituisce comunuqe un bug bloccante, essendo che il non equiparare NULL a <campo vuoto> è da lungo tempo il comportamento di default della piattaforma (ticket per maggiori dettagli)'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REMOVED @ /freeOfChargeReason
@@ -2287,7 +2287,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo freeOfCharge è facoltativo ma se rimosso porta a Bad Request 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_NIL_UUID @ /eserviceId
@@ -2315,7 +2315,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'eserviceId non esistente risponde Not Found ma con 400 anziché 404'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_SQL_INJECTION @ /title
@@ -2340,7 +2340,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -2370,7 +2370,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'riskAnalysisId non esistente risponde Not Found ma con 400 anziché 404'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_BLANK_STRING @ /freeOfChargeReason
@@ -2395,7 +2395,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Viene impropriamente permesso di specificare una stringa blank per il campo freeOfChargeReason'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_SQL_INJECTION @ /description
@@ -2420,7 +2420,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -2446,7 +2446,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -2473,7 +2473,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'Una stringa viene accettata anziché rifiutata seppure lunga 5.000 caratteri.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeRiskAnalysisForm
@@ -2500,8 +2500,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18850: Da completare'
+  result: 'Il comportamento della piattaforma per request attributes pari a NULL è al momento oggetto di discussione. Il KO non costituisce comunuqe un bug bloccante, essendo che il non equiparare NULL a <campo vuoto> è da lungo tempo il comportamento di default della piattaforma (ticket per maggiori dettagli)'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm
@@ -2526,8 +2526,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18965: Da completare'
+  result: 'Il campo opzionale /purposeRiskAnalysisForm viene rimosso e la creazione ha successo con 201 Created (come da OpenAPI), ma la policy BFF globale si aspetta di default 200 OK.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/institutionalPurpose/annotation
@@ -2557,8 +2557,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18966: Da completare'
+  result: 'Il campo annotation in RiskAnalysisTemplateAnswerSeed è opzionale (@Nullable), ma trovandosi dentro una mappa (additionalProperties) il JacksonMutationValidityResolver non risolve il tipo del valore e applica POLICY_UNKNOWN (atteso 400 anziché 201).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/annotation
@@ -2588,8 +2588,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18900: Da completare'
+  result: 'Il campo annotation in RiskAnalysisTemplateAnswerSeed è opzionale (@Nullable), ma trovandosi dentro una mappa (additionalProperties) il JacksonMutationValidityResolver non risolve il tipo del valore e applica POLICY_UNKNOWN (atteso 400 anziché 201).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/purpose/annotation
@@ -2619,8 +2619,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18966: Da completare'
+  result: 'Il campo annotation in RiskAnalysisTemplateAnswerSeed è opzionale (@Nullable), ma trovandosi dentro una mappa (additionalProperties) il JacksonMutationValidityResolver non risolve il tipo del valore e applica POLICY_UNKNOWN (atteso 400 anziché 201).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/usesPersonalData/annotation
@@ -2650,8 +2650,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18966: Da completare'
+  result: 'Il campo annotation in RiskAnalysisTemplateAnswerSeed è opzionale (@Nullable), ma trovandosi dentro una mappa (additionalProperties) il JacksonMutationValidityResolver non risolve il tipo del valore e applica POLICY_UNKNOWN (atteso 400 anziché 201).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/usesThirdPartyPersonalData/annotation
@@ -2681,8 +2681,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18966: Da completare'
+  result: 'Il campo annotation in RiskAnalysisTemplateAnswerSeed è opzionale (@Nullable), ma trovandosi dentro una mappa (additionalProperties) il JacksonMutationValidityResolver non risolve il tipo del valore e applica POLICY_UNKNOWN (atteso 400 anziché 201).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeDailyCalls
@@ -2714,8 +2714,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18850: Da completare'
+  result: 'Il comportamento della piattaforma per request attributes pari a NULL è al momento oggetto di discussione. Il KO non costituisce comunuqe un bug bloccante, essendo che il non equiparare NULL a <campo vuoto> è da lungo tempo il comportamento di default della piattaforma (ticket per maggiori dettagli)'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeDailyCalls
@@ -2745,7 +2745,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Non inserendo il campo ci si aspettava un risultato di 200. Ricevuto 201.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /targetDescription
@@ -2775,7 +2775,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -2809,7 +2809,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -2840,7 +2840,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -2875,7 +2875,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo version ha @Size(min=1, max=250) senza @NotBlank; JacksonMutationValidityResolver considera valida una stringa di spazi ("   ", length=3 >= 1) aspettandosi 200, ma il backend valida semanticamente la versione restituendo 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @ /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
@@ -2906,7 +2906,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con degli spazi, si riceve in risposta 201 al posto di 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
@@ -2936,7 +2936,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -2968,7 +2968,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con degli spazi, si riceve in risposta 201 al posto di 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_LONG_STRING @ /purposeFreeOfChargeReason
@@ -2999,7 +2999,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con una stringa lunga, si riceve in risposta 201 al posto di 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeFreeOfChargeReason
@@ -3029,7 +3029,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38 . La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -3055,7 +3055,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con degli spazi, si riceve in risposta 200 al posto di 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffVerifiedAttributeContractTest::createVerifiedAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /description
@@ -3079,7 +3079,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -3105,7 +3105,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con degli spazi, si riceve in risposta 200 al posto di 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffVerifiedAttributeContractTest::createVerifiedAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /name
@@ -3130,7 +3130,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -3158,7 +3158,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con un valore numerico, si riceve in risposta 500 al posto di 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::publishPurposeTemplate::[pathParams] REPLACED_WITH_NIL_UUID @ /purposeTemplateId
@@ -3186,7 +3186,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 12 more\n"
   procedure: ''
-  result: ''
+  result: 'Nel caso di REPLACE con NIL UUID, ci si aspettava 404 ma si è ricevuto 500'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::publishPurposeTemplate::[pathParams] REPLACED_WITH_MALFORMED_UUID @ /purposeTemplateId
@@ -3213,7 +3213,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 12 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con un UUID non valido, si riceve in risposta 500 al posto di 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::queryEServicesCatalog::[payload] REPLACED_WITH_LONG_STRING @ /keyword
@@ -3242,7 +3242,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Per stringa eccessivamente lunga è atteso un errore, ma si è ottenuto invece esito positivo'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffDelegationContractTest::rejectConsumerDelegation::[payload] REPLACED_WITH_EMPTY_STRING @ /rejectionReason
@@ -3268,7 +3268,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
   procedure: ''
-  result: ''
+  result: 'È possibile specificare lista vuota per il campo rejectionReason, ma non dovrebbe esserlo'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffDelegationContractTest::rejectConsumerDelegation::[payload] REPLACED_WITH_BLANK_STRING @ /rejectionReason
@@ -3294,8 +3294,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
   procedure: ''
-  result: ''
-  link_prod_bug: ''
+  result: 'Non dovrebbe essere possibile specificare un valore per “rejectionReason” fatti di soli caratteri vuoti'
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11444'
   link_suite_bug: ''
 - id_test: BffDelegationContractTest::rejectConsumerDelegation::[payload] REPLACED_WITH_LONG_STRING @ /rejectionReason
   error_log: "java.lang.AssertionError: HTTP contract expectation failed\n- scope: PAYLOAD\n- scenario: REPLACED_WITH_LONG_STRING\n\
@@ -3324,7 +3324,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
   procedure: ''
-  result: ''
+  result: 'Rejection reason con stringa di 5.000 caratteri accettata anziché rifiutata.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffDelegationContractTest::rejectConsumerDelegation::[payload] REPLACED_WITH_SQL_INJECTION @ /rejectionReason
@@ -3353,7 +3353,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -3380,7 +3380,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
   procedure: ''
-  result: ''
+  result: 'È possibile specificare lista vuota per il campo rejectionReason, ma non dovrebbe esserlo'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffDelegationContractTest::rejectProducerDelegation::[payload] REPLACED_WITH_BLANK_STRING @ /rejectionReason
@@ -3409,8 +3409,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
   procedure: ''
-  result: ''
-  link_prod_bug: ''
+  result: 'Non dovrebbe essere possibile specificare un valore per “rejectionReason” fatti di soli caratteri vuoti'
+  link_prod_bug: 'https://pagopa.atlassian.net/browse/PIN-11444'
   link_suite_bug: ''
 - id_test: BffDelegationContractTest::rejectProducerDelegation::[payload] REPLACED_WITH_LONG_STRING @ /rejectionReason
   error_log: "java.lang.AssertionError: HTTP contract expectation failed\n- scope: PAYLOAD\n- scenario: REPLACED_WITH_LONG_STRING\n\
@@ -3439,7 +3439,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
   procedure: ''
-  result: ''
+  result: 'Rejection reason con stringa di 5.000 caratteri accettata anziché rifiutata.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffDelegationContractTest::rejectProducerDelegation::[payload] REPLACED_WITH_SQL_INJECTION @ /rejectionReason
@@ -3468,7 +3468,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 13 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -3496,7 +3496,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Nel caso di REPLACE con NIL UUID, ci si aspettava 404 ma si è ricevuto 500'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::unsuspendPurposeTemplate::[pathParams] REPLACED_WITH_WRONG_TYPE_NUMBER
@@ -3523,7 +3523,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con un valore numerico, si riceve in risposta 500 al posto di 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::unsuspendPurposeTemplate::[pathParams] REPLACED_WITH_MALFORMED_UUID @
@@ -3551,7 +3551,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 12 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con un UUID non valido, si riceve in risposta 500 al posto di 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /isSignalHubEnabled
@@ -3579,7 +3579,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Occorre decidere come comportarsi con i valori null sui campi esplicitati ma facoltativi.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /isConsumerDelegable
@@ -3607,7 +3607,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Occorre decidere come comportarsi con i valori null sui campi esplicitati ma facoltativi.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /isClientAccessDelegable
@@ -3635,7 +3635,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Occorre decidere come comportarsi con i valori null sui campi esplicitati ma facoltativi.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /personalData
@@ -3663,7 +3663,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Occorre decidere come comportarsi con i valori null sui campi esplicitati ma facoltativi.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /asyncExchange
@@ -3691,7 +3691,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Occorre decidere come comportarsi con i valori null sui campi esplicitati ma facoltativi.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_SQL_INJECTION @ /description
@@ -3715,7 +3715,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -3745,7 +3745,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -3770,7 +3770,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -3798,7 +3798,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -3824,7 +3824,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -3848,7 +3848,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -3875,7 +3875,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -3904,8 +3904,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18850: Da completare'
+  result: 'Il comportamento della piattaforma per request attributes pari a NULL è al momento oggetto di discussione. Il KO non costituisce comunuqe un bug bloccante, essendo che il non equiparare NULL a <campo vuoto> è da lungo tempo il comportamento di default della piattaforma (ticket per maggiori dettagli)'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_NULL @ /riskAnalysisForm
@@ -3932,7 +3932,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Occorre decidere come comportarsi con i valori null sui campi esplicitati ma facoltativi.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/institutionalPurpose
@@ -3959,7 +3959,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Campo obbligatorio rimosso, ma la finalità viene aggiornata ugualmente.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/institutionalPurpose/0
@@ -3986,7 +3986,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Compilare un campo obbligatorio con lista vuota viene accettato (200) anziché rifiutato (400).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties
@@ -4013,7 +4013,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Rimuovere un campo obbligatorio dalla risk analysis porta comunque ad aggiornare con successo (200) anziché fallire (400).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/0
@@ -4041,7 +4041,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Compilare un campo obbligatorio con lista vuota viene accettato (200) anziché rifiutato (400).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/purpose
@@ -4068,7 +4068,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Rimuovere un campo obbligatorio dalla risk analysis porta comunque ad aggiornare con successo (200) anziché fallire (400).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/purpose/0
@@ -4096,7 +4096,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Compilare un campo obbligatorio con lista vuota viene accettato (200) anziché rifiutato (400).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/usesThirdPartyPersonalData
@@ -4123,7 +4123,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Compilare un campo obbligatorio con lista vuota viene accettato (200) anziché rifiutato (400).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/usesThirdPartyPersonalData/0
@@ -4151,7 +4151,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Rimuovere un campo obbligatorio dal payload di un’analisi del rischio anziché 400 prosegue con 200.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /title
@@ -4177,7 +4177,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -4206,7 +4206,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -4235,7 +4235,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Viene accettata una stringa lunga 5.000 caratteri anziché essere rifiutata.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /freeOfChargeReason
@@ -4262,7 +4262,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -4292,7 +4292,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Un campo obbligatorio della risk analysis può essere compilato con spazi vuoti e viene comunque accettato.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /riskAnalysisForm/answers/institutionalPurpose/0
@@ -4320,7 +4320,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -4351,8 +4351,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18850: Da completare'
+  result: 'Il comportamento della piattaforma per request attributes pari a NULL è al momento oggetto di discussione. Il KO non costituisce comunuqe un bug bloccante, essendo che il non equiparare NULL a <campo vuoto> è da lungo tempo il comportamento di default della piattaforma (ticket per maggiori dettagli)'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/institutionalPurpose/annotation
@@ -4397,7 +4397,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo annotation in RiskAnalysisTemplateAnswerSeed è opzionale (@Nullable), ma trovandosi dentro una mappa (additionalProperties) il JacksonMutationValidityResolver non risolve il tipo del valore e applica POLICY_UNKNOWN (atteso 400 anziché 200).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/annotation
@@ -4441,7 +4441,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo annotation in RiskAnalysisTemplateAnswerSeed è opzionale (@Nullable), ma trovandosi dentro una mappa (additionalProperties) il JacksonMutationValidityResolver non risolve il tipo del valore e applica POLICY_UNKNOWN (atteso 400 anziché 200).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/purpose/annotation
@@ -4484,7 +4484,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo annotation in RiskAnalysisTemplateAnswerSeed è opzionale (@Nullable), ma trovandosi dentro una mappa (additionalProperties) il JacksonMutationValidityResolver non risolve il tipo del valore e applica POLICY_UNKNOWN (atteso 400 anziché 200).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/usesPersonalData/annotation
@@ -4529,7 +4529,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo annotation in RiskAnalysisTemplateAnswerSeed è opzionale (@Nullable), ma trovandosi dentro una mappa (additionalProperties) il JacksonMutationValidityResolver non risolve il tipo del valore e applica POLICY_UNKNOWN (atteso 400 anziché 200).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/usesThirdPartyPersonalData/annotation
@@ -4575,7 +4575,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo annotation in RiskAnalysisTemplateAnswerSeed è opzionale (@Nullable), ma trovandosi dentro una mappa (additionalProperties) il JacksonMutationValidityResolver non risolve il tipo del valore e applica POLICY_UNKNOWN (atteso 400 anziché 200).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeFreeOfChargeReason
@@ -4610,7 +4610,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo annotation in RiskAnalysisTemplateAnswerSeed è opzionale (@Nullable), ma trovandosi dentro una mappa (additionalProperties) il JacksonMutationValidityResolver non risolve il tipo del valore e applica POLICY_UNKNOWN (atteso 400 anziché 200).'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeFreeOfChargeReason
@@ -4642,8 +4642,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18850: Da completare'
+  result: 'Il comportamento della piattaforma per request attributes pari a NULL è al momento oggetto di discussione. Il KO non costituisce comunuqe un bug bloccante, essendo che il non equiparare NULL a <campo vuoto> è da lungo tempo il comportamento di default della piattaforma (ticket per maggiori dettagli)'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeDailyCalls
@@ -4676,8 +4676,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18850: Da completare'
+  result: 'Il comportamento della piattaforma per request attributes pari a NULL è al momento oggetto di discussione. Il KO non costituisce comunuqe un bug bloccante, essendo che il non equiparare NULL a <campo vuoto> è da lungo tempo il comportamento di default della piattaforma (ticket per maggiori dettagli)'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /targetDescription
@@ -4718,7 +4718,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -4752,7 +4752,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -4796,7 +4796,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -4832,7 +4832,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'Il campo version ha @Size(min=1, max=250) senza @NotBlank; JacksonMutationValidityResolver considera valida una stringa di spazi ("   ", length=3 >= 1) aspettandosi 200, ma il backend valida semanticamente la versione restituendo 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @ /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
@@ -4874,7 +4874,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con degli spazi, si riceve in risposta 200 al posto di 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
@@ -4915,7 +4915,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -4959,7 +4959,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 10 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -5003,7 +5003,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
   procedure: ''
-  result: ''
+  result: 'Sostituendo il campo segnalato nel log con una stringa lunga, si riceve in risposta 200 al posto di 400.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_NULL @ /freeOfChargeReason
@@ -5029,8 +5029,8 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
-  result: ''
+  procedure: 'QA-18850: Da completare'
+  result: 'Il comportamento della piattaforma per request attributes pari a NULL è al momento oggetto di discussione. Il KO non costituisce comunuqe un bug bloccante, essendo che il non equiparare NULL a <campo vuoto> è da lungo tempo il comportamento di default della piattaforma (ticket per maggiori dettagli)'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /title
@@ -5054,7 +5054,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -5079,7 +5079,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -5105,7 +5105,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'Viene accettata una stringa troppo lunga che doveva essere rifiutata.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /freeOfChargeReason
@@ -5129,7 +5129,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)\n\
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 6 more\n"
-  procedure: ''
+  procedure: 'Esito atteso negativo, ottenuto positivo. Chiesto chiarimenti qui https://pagopaspa.slack.com/archives/C069AP16WG7/p1789745492332429e presentata questione al sync settimanale QA-INTEROP del 23/09/2026 Interop: QA–Product Sync Timeline | 2026 09 23 Allineamento #38. La questione è al vaglio da parte di INTEROP.'
   result: ''
   link_prod_bug: ''
   link_suite_bug: ''
@@ -5156,7 +5156,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'campo non obbligatorio, tuttavia viene restituito un errore quando al suo posto viene specificato “null”'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: M2Mv3AgreementContractTest::createAgreement::[payload] REPLACED_WITH_NIL_UUID @ /eserviceId
@@ -5182,7 +5182,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'eserviceId non esistente risponde Not Found ma con 400 anziché 404'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: M2Mv3AgreementContractTest::createAgreement::[payload] REPLACED_WITH_NIL_UUID @ /descriptorId
@@ -5209,7 +5209,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'descriptorId con valore nil risponde 400 anziché 404'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: M2Mv3AgreementContractTest::createAgreement::[payload] REPLACED_WITH_NIL_UUID @ /delegationId
@@ -5236,7 +5236,7 @@ ko:
     \tat it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)\n\
     \t... 7 more\n"
   procedure: ''
-  result: ''
+  result: 'delegationId non risulta opzionale su POST /agreements; delegationId non esistente risponde Not Found ma con 400 anziché 404; eserviceId non esistente risponde Not Found ma con 400 anziché 404- descriptorId non esistente risponde Not Found ma con 400 anziché 404'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: WebEServiceDetailsCatalogPageContractTest::checkCustomThresholdsOnCatalog7::Precondition failed
@@ -5266,7 +5266,7 @@ ko:
     \tat org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)\n\tat it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)\n\
     \t... 24 more\n"
   procedure: ''
-  result: ''
+  result: 'Deve essere stato un problema di caricamento pagina. In locale il test passa.'
   link_prod_bug: ''
   link_suite_bug: ''
 - id_test: WebConsumerAgreementDetailsPageContractTest::consumerAgreementDetailsPageContract::Consumer agreement
