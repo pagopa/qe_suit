@@ -15,6 +15,9 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
 
     PurposeTemplate getPurposeTemplate(UUID purposeTemplateId);
 
+    PurposeTemplate updateMetadata(
+            PurposeTemplate purposeTemplate, String name, String description, String targetDescription);
+
     PurposeTemplate createPurposeTemplate(
             Tenant targetTenant, RiskAnalysisForm riskAnalysisForm, RiskAnalysisFormConfig config);
 

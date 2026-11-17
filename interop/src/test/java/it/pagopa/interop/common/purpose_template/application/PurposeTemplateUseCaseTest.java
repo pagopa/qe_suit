@@ -36,6 +36,32 @@ class PurposeTemplateUseCaseTest {
     }
 
     @Test
+    void updatesTemplateMetadataAndWaitsForTheRequestedValues() {
+        var gateway = mock(PurposeTemplateGateway.class);
+        var purposeTemplate = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("old title")
+                .description("old description")
+                .targetDescription("old target")
+                .build();
+        var updatedTemplate = purposeTemplate.toBuilder()
+                .title("new title")
+                .description("new description")
+                .targetDescription("new target")
+                .build();
+        when(gateway.getPurposeTemplate(purposeTemplate.getId())).thenReturn(updatedTemplate);
+        var useCase = new PurposeTemplateUseCase(
+                gateway, mock(RiskAnalysisGateway.class), mock(RiskAnalysisDataFactory.class));
+
+        assertThat(useCase.updateMetadata(purposeTemplate, "new title", "new description", "new target"))
+                .isEqualTo(updatedTemplate);
+
+        verify(gateway).updateMetadata(purposeTemplate, "new title", "new description", "new target");
+        verify(gateway).getPurposeTemplate(purposeTemplate.getId());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
     void createsAMinimalRiskAnalysisForPublicAdministrationsWithoutPersonalData() {
         var gateway = mock(PurposeTemplateGateway.class);
         var configs = mock(RiskAnalysisGateway.class);

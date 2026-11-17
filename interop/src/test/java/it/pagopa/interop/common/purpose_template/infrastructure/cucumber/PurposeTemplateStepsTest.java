@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.purpose_template.infrastructure.cucumber;
 
+import io.cucumber.datatable.DataTable;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -12,8 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
+import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class PurposeTemplateStepsTest {
@@ -65,5 +68,60 @@ class PurposeTemplateStepsTest {
         verify(entityStore).getLastOrThrow(PurposeTemplate.class);
         verify(useCase).getPurposeTemplate(storedTemplate);
         verifyNoMoreInteractions(entityStore, useCase);
+    }
+
+    @Test
+    void updatesOnlyTheRequestedSupportedMetadataFields() {
+        var entityStore = mock(EntityStore.class);
+        var journey = mock(InteropJourney.class, RETURNS_SELF);
+        var useCase = mock(PurposeTemplateUseCase.class);
+        var template = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("Titolo iniziale")
+                .description("Descrizione iniziale")
+                .targetDescription("Destinatari iniziali")
+                .build();
+        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+        var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
+        DataTable dataTable = DataTable.create(List.of(
+                List.of("campo", "valore"),
+                List.of("nome", "Nuovo titolo"),
+                List.of("descrizione", "Nuova descrizione"),
+                List.of("destinatari", "Destinatari aggiornati")
+        ));
+
+        steps.updatePurposeTemplateMetadata(UserRole.ADMIN, Tenant.COMUNE_DI_POZZALLO, dataTable);
+
+        verify(entityStore).getLastOrThrow(PurposeTemplate.class);
+        verify(journey).withProducer(Tenant.COMUNE_DI_POZZALLO, UserRole.ADMIN);
+        verify(useCase).updateMetadata(
+                template, "Nuovo titolo", "Nuova descrizione", "Destinatari aggiornati");
+        verifyNoMoreInteractions(entityStore, useCase);
+    }
+
+    @Test
+    void rejectsUnsupportedMetadataFieldsBeforeChangingTheTemplate() {
+        var entityStore = mock(EntityStore.class);
+        var journey = mock(InteropJourney.class, RETURNS_SELF);
+        var useCase = mock(PurposeTemplateUseCase.class);
+        var template = PurposeTemplate.builder()
+                .id(UUID.randomUUID())
+                .title("Titolo iniziale")
+                .description("Descrizione iniziale")
+                .targetDescription("Destinatari iniziali")
+                .build();
+        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
+        var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
+        DataTable dataTable = DataTable.create(List.of(
+                List.of("campo", "valore"),
+                List.of("non supportato", "valore")
+        ));
+
+        assertThatThrownBy(() ->
+                steps.updatePurposeTemplateMetadata(UserRole.ADMIN, Tenant.COMUNE_DI_POZZALLO, dataTable))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("non supportato: non supportato");
+
+        verifyNoInteractions(journey, useCase);
     }
 }

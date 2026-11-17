@@ -7,8 +7,11 @@ import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactor
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +23,20 @@ public class PurposeTemplateUseCase {
 
     public PurposeTemplate getPurposeTemplate(PurposeTemplate purposeTemplate) {
         return purposeTemplateGateway.getPurposeTemplate(purposeTemplate.getId());
+    }
+
+    public PurposeTemplate updateMetadata(
+            PurposeTemplate purposeTemplate, String name, String description, String targetDescription) {
+        purposeTemplateGateway.updateMetadata(purposeTemplate, name, description, targetDescription);
+
+        return PollingUtils.pollUntil(
+                () -> getPurposeTemplate(purposeTemplate),
+                refreshed -> Objects.equals(name, refreshed.getTitle())
+                        && Objects.equals(description, refreshed.getDescription())
+                        && Objects.equals(targetDescription, refreshed.getTargetDescription()),
+                "Purpose template " + purposeTemplate.getId()
+                        + " metadata did not reach the requested name, description and target description"
+        );
     }
 
     /**
