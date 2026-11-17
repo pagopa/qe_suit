@@ -33,4 +33,6 @@ public interface PurposeGateway extends Plugin<Channel> {
     Purpose askForApprovalPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
 
     Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
+
+    Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef);
 }

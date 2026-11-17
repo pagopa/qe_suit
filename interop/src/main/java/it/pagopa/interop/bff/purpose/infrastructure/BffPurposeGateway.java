@@ -167,6 +167,19 @@ public class BffPurposeGateway implements PurposeGateway {
     }
 
     @Override
+    public Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef) {
+        restClient.archivePurposeVersion(purposeRef.id(), purposeVersionRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(purposeVersionRef.id())
+                        .map(version -> version.getPurposeVersionState() == PurposeVersionState.ARCHIVED)
+                        .orElse(false)
+        );
+    }
+
+    @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
     }

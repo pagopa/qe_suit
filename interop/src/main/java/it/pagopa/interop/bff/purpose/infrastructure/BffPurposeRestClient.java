@@ -106,6 +106,17 @@ public class BffPurposeRestClient extends RestClient {
         );
     }
 
+    public TestChain<PurposeVersionResource> archivePurposeVersion(@Nonnull UUID purposeId, @Nonnull UUID versionId) {
+        return execute(
+                () -> purposesApi.archivePurposeVersion()
+                        .purposeIdPath(purposeId)
+                        .versionIdPath(versionId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json; charset=UTF-8"))
+                        .execute(Function.identity()),
+                PurposeVersionResource.class
+        );
+    }
+
     public TestChain<RiskAnalysisFormConfig> retrieveLatestRiskAnalysisConfiguration(TenantKind tenantKind){
         return execute(
                 () -> purposesApi.retrieveLatestRiskAnalysisConfiguration()

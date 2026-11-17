@@ -123,6 +123,19 @@ public class M2MPurposeGateway implements PurposeGateway {
     }
 
     @Override
+    public Purpose archivePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef) {
+        restClient.archivePurpose(purposeRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getPurpose(purposeRef),
+                purpose -> purpose.findVersionById(purposeVersionRef.id())
+                        .map(version -> version.getPurposeVersionState() == PurposeVersionState.ARCHIVED)
+                        .orElse(false)
+        );
+    }
+
+    @Override
     public boolean supports(@NonNull Channel channel) {
         return channel == Channel.M2M_V3;
     }

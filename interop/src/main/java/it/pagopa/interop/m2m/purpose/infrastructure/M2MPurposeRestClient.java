@@ -54,6 +54,15 @@ public class M2MPurposeRestClient extends RestClient {
         );
     }
 
+    public TestChain<Purpose> archivePurpose(@Nonnull UUID purposeId) {
+        return execute(
+                () -> purposesApi.archivePurpose()
+                        .purposeIdPath(purposeId)
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
     public TestChain<PurposeVersion> createPurposeVersion(@Nonnull UUID purposeId, @Nonnull PurposeVersionSeed payload) {
         return execute(
                 () -> purposesApi.createPurposeVersion()

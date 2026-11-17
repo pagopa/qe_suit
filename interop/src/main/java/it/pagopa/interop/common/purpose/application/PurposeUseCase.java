@@ -83,4 +83,8 @@ public class PurposeUseCase {
     public Purpose suspendPurpose(Purpose purpose, PurposeVersion purposeVersion, @Nullable DelegationRef delegationRef) {
         return purposeGateway.suspendPurpose(purpose.getRef(), purposeVersion.getRef(), delegationRef);
     }
+
+    public Purpose archivePurpose(Purpose purpose, PurposeVersion purposeVersion) {
+        return purposeGateway.archivePurpose(purpose.getRef(), purposeVersion.getRef());
+    }
 }
