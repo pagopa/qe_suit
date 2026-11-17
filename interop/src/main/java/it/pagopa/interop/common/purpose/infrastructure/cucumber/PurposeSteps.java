@@ -11,6 +11,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -155,6 +156,16 @@ public class PurposeSteps {
         interopJourney
                 .withConsumer(consumer, UserRole.ADMIN)
                 .createPurpose(purposeState);
+    }
+
+    @Given("una finalità in stato {purposeState} associata da/dal {tenant}")
+    public void createReversePurposeForEService(PurposeVersionState purposeState, Tenant consumer) {
+        EService eService = entityStore.getLastOrThrow(EService.class);
+        EServiceRiskAnalysis riskAnalysis = entityStore.getLastOrThrow(EServiceRiskAnalysis.class);
+
+        interopJourney
+                .withConsumer(consumer, UserRole.ADMIN)
+                .createReversePurposeAndLinkToEService(eService, riskAnalysis, purposeState);
     }
 
     @Given("l'e-service con una finalità creata dal template in stato {purposeState} associata da/dal {tenant}")
