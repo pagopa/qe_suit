@@ -19,7 +19,6 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
     Given i seguenti attributi certificati creati da un admin del Comune di Milano:
       | alias  |
       | CERT-1 |
-    # Binding BFF negativo mancante; riusare createCertifiedAttribute con il nome dell'attributo registrato.
     When l'erogatore tenta di creare un attributo "certificato" con il nome dell'attributo "CERT-1"
     Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_CERTIFIED_ATTRIBUTES" in lingua "it"
 
@@ -32,7 +31,6 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
     Given i seguenti attributi discreti creati da un admin del Comune di Milano:
       | alias  |
       | DISC-1 |
-    # Binding BFF negativo mancante; riusare createCertifiedDiscreteAttribute con il nome registrato e dati validi.
     When l'erogatore tenta di creare un attributo "certificato discreto" con il nome dell'attributo "DISC-1"
     Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_CERTIFIED_DISCRETE_ATTRIBUTES" in lingua "it"
 
@@ -45,7 +43,6 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
     Given i seguenti attributi dichiarati creati da un admin del Comune di Milano:
       | alias  |
       | DECL-1 |
-    # Binding BFF negativo mancante; riusare createDeclaredAttribute con il nome dell'attributo registrato.
     When l'erogatore tenta di creare un attributo "dichiarato" con il nome dell'attributo "DECL-1"
     Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_DECLARED_ATTRIBUTES" in lingua "it"
 
@@ -58,7 +55,6 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
     Given i seguenti attributi verificati creati da un admin del Comune di Milano:
       | alias |
       | VER-1 |
-    # Binding BFF negativo mancante; riusare createVerifiedAttribute con il nome dell'attributo registrato.
     When l'erogatore tenta di creare un attributo "verificato" con il nome dell'attributo "VER-1"
     Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_ATTRIBUTE_DUPLICATE__POST_VERIFIED_ATTRIBUTES" in lingua "it"
 
@@ -68,7 +64,6 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
   Quando tenta di creare un attributo certificato con un collegamento nel nome e gli altri dati validi
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento dal nome.
 
-    # Binding BFF negativo mancante; riusare createCertifiedAttribute con il nome indicato e gli altri dati validi.
     When l'erogatore tenta di creare un attributo "certificato" con un link all'interno del nome
     Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_CERTIFIED_ATTRIBUTES" in lingua "it"
 
@@ -78,7 +73,6 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
   Quando tenta di creare un attributo dichiarato con un collegamento nel nome e gli altri dati validi
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento dal nome.
 
-    # Binding BFF negativo mancante; riusare createDeclaredAttribute con il nome indicato e gli altri dati validi.
     When l'erogatore tenta di creare un attributo "dichiarato" con un link all'interno del nome
     Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_DECLARED_ATTRIBUTES" in lingua "it"
 
@@ -88,6 +82,5 @@ Feature: Messaggi di errore durante la creazione degli attributi nel registro
   Quando tenta di creare un attributo verificato con un collegamento nel nome e gli altri dati validi
   Allora il sistema rifiuta la creazione e invita l'amministratore a rimuovere il collegamento dal nome.
 
-    # Binding BFF negativo mancante; riusare createVerifiedAttribute con il nome indicato e gli altri dati validi.
     When l'erogatore tenta di creare un attributo "verificato" con un link all'interno del nome
     Then il messaggio di errore corrisponde al caso "ATTRIBUTE_REGISTRY_HYPERLINK_DETECTION_ERROR__POST_VERIFIED_ATTRIBUTES" in lingua "it"

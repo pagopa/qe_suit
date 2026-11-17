@@ -30,16 +30,7 @@ public class AttributeUseCase {
     }
 
     public Attribute createAttribute(AttributeKind kind, String name) {
-        java.util.Objects.requireNonNull(kind, "Attribute kind is required");
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Attribute name is required");
-        }
-        Attribute attribute = Attribute.builder()
-                .name(name)
-                .description("Test Description")
-                .kind(kind)
-                .build();
-        return attributeGateway.createAttribute(attribute);
+        return attributeGateway.createAttribute(creationAttribute(kind, name));
     }
 
     public void removeCertifiedAttributeThreshold(EService eService, int groupIndex, int attributeIndex) {
@@ -49,5 +40,21 @@ public class AttributeUseCase {
 
     public void certifiedAttributeThresholdRemoved() {
         attributeGateway.certifiedAttributeThresholdShouldBeRemoved();
+    }
+
+    public void attemptAttributeCreation(AttributeKind kind, String name) {
+        attributeGateway.attemptAttributeCreation(creationAttribute(kind, name));
+    }
+
+    private Attribute creationAttribute(AttributeKind kind, String name) {
+        java.util.Objects.requireNonNull(kind, "Attribute kind is required");
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Attribute name is required");
+        }
+        return Attribute.builder()
+                .name(name)
+                .description("Test Description")
+                .kind(kind)
+                .build();
     }
 }

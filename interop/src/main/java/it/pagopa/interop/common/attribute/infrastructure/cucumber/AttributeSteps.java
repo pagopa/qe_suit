@@ -6,6 +6,7 @@ import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.attribute.application.AttributeUseCase;
 import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.attribute.domain.AttributeKind;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
@@ -44,5 +45,18 @@ public class AttributeSteps {
                 TenantRef.of(tenant.getOrganizationId()), attribute.getRef(),
                 OffsetDateTime.now(ZoneOffset.UTC).minusDays(1)
         );
+    }
+
+    @When("l'erogatore tenta di creare un attributo \"{attributeKind}\" con il nome dell'{attributeByAlias}")
+    public void attemptAttributeCreationWithDuplicateName(AttributeKind kind, Attribute existing) {
+        if (existing.getKind() != kind) {
+            throw new IllegalArgumentException("The existing attribute must have kind " + kind);
+        }
+        attributeUseCase.attemptAttributeCreation(kind, existing.getName());
+    }
+
+    @When("l'erogatore tenta di creare un attributo \"{attributeKind}\" con un link all'interno del nome")
+    public void attemptAttributeCreationWithHyperlink(AttributeKind kind) {
+        attributeUseCase.attemptAttributeCreation(kind, "Attributo https://example.org");
     }
 }
