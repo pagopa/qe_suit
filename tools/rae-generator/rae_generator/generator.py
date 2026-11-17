@@ -1,15 +1,32 @@
 """Build a single YAML per NRT execution using approved history."""
 from __future__ import annotations
-from datetime import datetime, timezone
-from pathlib import Path
+
 import logging
 import re
 import yaml
+from datetime import datetime, timezone
+from pathlib import Path
+
 from .history import load_history
 from .matching import choose_known
 from .parsers import collect_reports
 
 FIELDS = ('id_test', 'error_log', 'procedure', 'result', 'link_prod_bug', 'link_suite_bug')
+
+
+class _LiteralString(str):
+    """Mark multiline error logs for YAML literal block serialization."""
+
+
+class _RAEDumper(yaml.SafeDumper):
+    """Keep safe YAML serialization and customize only literal strings."""
+
+
+def _represent_literal(dumper: yaml.SafeDumper, value: _LiteralString):
+    return dumper.represent_scalar('tag:yaml.org,2002:str', str(value), style='|')
+
+
+_RAEDumper.add_representer(_LiteralString, _represent_literal)
 
 
 def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment: str,
@@ -43,4 +60,23 @@ def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment:
 
 def write_yaml(data: dict, output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False, width=110), encoding='utf-8')
+
+    # Convert only multiline error logs to YAML literal blocks. Keep other
+    # fields and the caller's input dictionary unchanged.
+    formatted = data.copy()
+    for section in ('ko_know', 'ko'):
+        formatted[section] = []
+        for entry in data.get(section, []):
+            item = entry.copy()
+            error_log = item.get('error_log')
+            if isinstance(error_log, str) and '\n' in error_log:
+                # PyYAML escapes tab characters inside literal blocks. Expand
+                # stack-trace tabs to spaces so the YAML remains human-readable.
+                item['error_log'] = _LiteralString(error_log.replace('\t', '    '))
+            formatted[section].append(item)
+
+    output.write_text(
+        yaml.dump(formatted, Dumper=_RAEDumper, allow_unicode=True,
+                  sort_keys=False, width=110),
+        encoding='utf-8',
+    )

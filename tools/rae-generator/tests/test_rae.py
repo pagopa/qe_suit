@@ -400,3 +400,41 @@ def test_contract_json_duplicate_id_fails_closed(tmp_path):
     contract.write_text(json.dumps(payload))
     with pytest.raises(ReportError, match='duplicato'):
         collect_reports(tmp_path)
+
+
+def test_multiline_error_log_is_readable_and_preserves_matching(tmp_path):
+    data = example_data()
+    error = (
+        'java.lang.NoSuchElementException: Elemento non presente\n'
+        '\tat example.Button.isDisabled(Button.java:17)\n'
+        '\tat example.Test.run(Test.java:42)\n'
+    )
+    data['ko'][0]['error_log'] = error
+
+    path = tmp_path / 'rae_test.yaml'
+    write_yaml(data, path)
+    content = path.read_text(encoding='utf-8')
+    loaded = yaml.safe_load(content)
+
+    assert 'error_log: |\n' in content
+    assert r'\n\t' not in content
+    assert '    at example.Button.isDisabled' in content
+    assert loaded['ko'][0]['error_log'] == error.replace('\t', '    ')
+    assert data['ko'][0]['error_log'] == error  # Serialization doesn't mutate input.
+    assert loaded['ko'][0]['procedure'] == 'Controllata risposta'
+    assert fingerprint(loaded['ko'][0]['error_log']) == fingerprint(error)
+
+
+def test_error_log_without_trailing_newline_uses_chomping_strip(tmp_path):
+    data = example_data()
+    original = 'java.lang.RuntimeException: errore\n\tat Example.run(Example.java:1)'
+    data['ko'][0]['error_log'] = original
+    path = tmp_path / 'rae_test.yaml'
+
+    write_yaml(data, path)
+    content = path.read_text(encoding='utf-8')
+    loaded = yaml.safe_load(content)
+
+    assert 'error_log: |-\n' in content
+    assert loaded['ko'][0]['error_log'] == original.replace('\t', '    ')
+    assert fingerprint(loaded['ko'][0]['error_log']) == fingerprint(original)
