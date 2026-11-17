@@ -14,8 +14,21 @@ Feature: Modifica dei metadati delle finalità
     And i dati della finalità allo stato attuale appuntati come riferimento
     When un admin del Comune di Pozzallo modifica i metadati della finalità:
       | campo       | valore            |
-      | nome        | nuovo nome        |
+      | nome        | primo nome        |
     Then la finalità conserva lo stato e i dati di riferimento eccetto il nome
+
+    When i dati della finalità allo stato attuale appuntati come riferimento
+    And un admin del Comune di Pozzallo modifica i metadati della finalità:
+      | campo       | valore            |
+      | descrizione | prima descrizione |
+    Then la finalità conserva lo stato e i dati di riferimento eccetto la descrizione
+
+    When i dati della finalità allo stato attuale appuntati come riferimento
+    And un admin del Comune di Pozzallo modifica i metadati della finalità:
+      | campo       | valore            |
+      | nome        | nuovo nome        |
+      | descrizione | nuova descrizione |
+    Then la finalità conserva lo stato e i dati di riferimento eccetto il nome e la descrizione
 
     Examples:
       | stato                |
@@ -25,6 +38,7 @@ Feature: Modifica dei metadati delle finalità
       | ARCHIVED             |
       | WAITING_FOR_APPROVAL |
       | REJECTED             |
+
 #      | inversa  | DRAFT                | titolo      | Finalità aggiornata                   |
 #      | inversa  | ACTIVE               | descrizione | Descrizione aggiornata della finalità |
 #      | inversa  | SUSPENDED            | titolo      | Finalità aggiornata                   |
