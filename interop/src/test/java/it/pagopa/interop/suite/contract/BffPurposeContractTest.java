@@ -35,6 +35,7 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig.DEFAULT_SUCCESS_STATUS_CODE;
 import static org.hamcrest.Matchers.is;
 
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
@@ -89,6 +90,26 @@ public class BffPurposeContractTest {
                 .apiCall(() -> apiClient.purposes().updatePurpose())
                 .pathParams(() -> Map.of("purposeId", createDraftPurposeId()))
                 .payload(asConsumer(commandFactory::updateRequest))
+                .targets(
+                        FuzzScenario.REMOVED,
+                        response -> response.then().statusCode(is(DEFAULT_SUCCESS_STATUS_CODE)),
+                        List.of(
+                                payload -> payload.getRiskAnalysisForm().getAnswers()
+                                        .get("institutionalPurpose").get(0),
+                                payload -> payload.getRiskAnalysisForm().getAnswers()
+                                        .get("isRequestOnBehalfOfThirdParties"),
+                                payload -> payload.getRiskAnalysisForm().getAnswers()
+                                        .get("isRequestOnBehalfOfThirdParties").get(0),
+                                payload -> payload.getRiskAnalysisForm().getAnswers()
+                                        .get("purpose"),
+                                payload -> payload.getRiskAnalysisForm().getAnswers()
+                                        .get("purpose").get(0),
+                                payload -> payload.getRiskAnalysisForm().getAnswers()
+                                        .get("usesThirdPartyPersonalData"),
+                                payload -> payload.getRiskAnalysisForm().getAnswers()
+                                        .get("usesThirdPartyPersonalData").get(0)
+                        )
+                )
                 .tests();
     }
 
