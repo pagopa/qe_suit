@@ -75,6 +75,16 @@ def render(data: dict) -> str:
                 '**RESULT**', '', _prose(item['result']), '',
                 '**PROCEDURE**', '', _prose(item['procedure']), '',
             ])
+            matching = item.get('matching')
+            if isinstance(matching, dict) and matching.get('status') == 'pending_confirmation':
+                lines.extend([
+                    '**MATCH PROPOSTO — CONFERMA QA RICHIESTA**', '',
+                    'Proposta dalla RAE ' + _cell(matching.get('source_rae', '')) +
+                    '. Se equivalente, lasciare invariata l’analisi; se differente, correggerla.' +
+                    ' La conferma è acquisita solo dopo l’approvazione della RAE.', '',
+                ])
+            elif isinstance(matching, dict) and matching.get('status') == 'auto_matched':
+                lines.extend(['**MATCH AUTOMATICO CON FIRMA CONFERMATA**', ''])
             for field, label in [('link_prod_bug', 'LINK PROD BUG'), ('link_suite_bug', 'LINK SUITE BUG')]:
                 if item[field]:
                     lines.extend([f'**{label}:** {item[field]}', ''])
