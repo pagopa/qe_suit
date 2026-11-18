@@ -13,6 +13,7 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
+import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashSet;
@@ -95,16 +96,20 @@ public class PurposeTemplateSteps {
         PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
         MetadataUpdate metadata = readMetadataUpdate(purposeTemplate, dataTable);
 
-        journey.withProducer(creator, role);
+        if (role == UserRole.ADMIN) {
+            journey.withConsumer(creator);
+        } else {
+            journey.withConsumer(creator, role);
+        }
         purposeTemplateUseCase.updateMetadata(
                 purposeTemplate, metadata.name(), metadata.description(), metadata.targetDescription());
     }
 
     private MetadataUpdate readMetadataUpdate(PurposeTemplate purposeTemplate, DataTable dataTable) {
         List<List<String>> rows = dataTable.cells();
-        if (rows.size() < 2 || !rows.get(0).equals(List.of("campo", "valore"))) {
+        if (rows.size() < 2 || !rows.get(0).equals(List.of("campo", "valore unico"))) {
             throw new IllegalArgumentException(
-                    "La tabella dei metadati del template finalità deve avere le colonne 'campo' e 'valore' e almeno un campo"
+                    "La tabella dei metadati del template finalità deve avere le colonne 'campo' e 'valore unico' e almeno un campo"
             );
         }
 
@@ -125,15 +130,19 @@ public class PurposeTemplateSteps {
             }
 
             switch (field) {
-                case "nome" -> name = row.get(1);
-                case "descrizione" -> description = row.get(1);
-                case "destinatari" -> targetDescription = row.get(1);
+                case "nome" -> name = withUniqueSuffix(row.get(1));
+                case "descrizione" -> description = withUniqueSuffix(row.get(1));
+                case "destinatari" -> targetDescription = withUniqueSuffix(row.get(1));
                 default -> throw new IllegalArgumentException(
                         "Campo metadato template finalità non supportato: " + field);
             }
         }
 
         return new MetadataUpdate(name, description, targetDescription);
+    }
+
+    private String withUniqueSuffix(String value) {
+        return value + " " + RandomUtils.randomAlphanumeric(10);
     }
 
     private record MetadataUpdate(String name, String description, String targetDescription) {}

@@ -84,7 +84,7 @@ class PurposeTemplateStepsTest {
         when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
         var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
         DataTable dataTable = DataTable.create(List.of(
-                List.of("campo", "valore"),
+                List.of("campo", "valore unico"),
                 List.of("nome", "Nuovo titolo"),
                 List.of("descrizione", "Nuova descrizione"),
                 List.of("destinatari", "Destinatari aggiornati")
@@ -95,7 +95,10 @@ class PurposeTemplateStepsTest {
         verify(entityStore).getLastOrThrow(PurposeTemplate.class);
         verify(journey).withProducer(Tenant.COMUNE_DI_POZZALLO, UserRole.ADMIN);
         verify(useCase).updateMetadata(
-                template, "Nuovo titolo", "Nuova descrizione", "Destinatari aggiornati");
+                eq(template),
+                matches("Nuovo titolo [A-Za-z0-9]{10}"),
+                matches("Nuova descrizione [A-Za-z0-9]{10}"),
+                matches("Destinatari aggiornati [A-Za-z0-9]{10}"));
         verifyNoMoreInteractions(entityStore, useCase);
     }
 
@@ -113,8 +116,8 @@ class PurposeTemplateStepsTest {
         when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
         var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
         DataTable dataTable = DataTable.create(List.of(
-                List.of("campo", "valore"),
-                List.of("non supportato", "valore")
+                List.of("campo", "valore unico"),
+                List.of("non supportato", "valore unico")
         ));
 
         assertThatThrownBy(() ->
