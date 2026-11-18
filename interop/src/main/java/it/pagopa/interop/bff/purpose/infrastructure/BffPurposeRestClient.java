@@ -104,4 +104,11 @@ public class BffPurposeRestClient extends RestClient {
                 RiskAnalysisFormConfig.class
         );
     }
+
+    public TestChain<Purpose> updatePurpose(@Nonnull UUID purposeId, @Nonnull PurposeUpdateContent payload) {
+        return execute(
+                () -> purposesApi.updatePurpose().purposeIdPath(purposeId).body(payload).execute(Function.identity()),
+                Purpose.class
+        );
+    }
 }

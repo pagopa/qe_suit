@@ -53,8 +53,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | alias |
       | F-1   |
       | F-2   |
-    # Operazione BFF e binding negativo mancanti; riusare updateRequest per gli altri dati validi.
-    When il fruitore tenta di modificare la finalità "F-2" con il nome della finalità "F-1"
+    When il fruitore tenta di modificare la purpose "F-2" con il nome della purpose "F-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID" in lingua "it"
 
   # Endpoint: POST /purposes/:purposeId
@@ -64,8 +63,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Allora il sistema rifiuta la modifica e invita il fruitore a rimuovere il collegamento.
 
     Given un eservice creato dal Comune di Milano con una richiesta di fruizione in stato ACTIVE e una finalità in stato DRAFT associate da PagoPA
-    # Operazione BFF e binding negativo mancanti; riusare updateRequest per gli altri dati validi.
-    When il fruitore tenta di modificare la finalità con il nome "Valore https://example.org"
+    When il fruitore tenta di modificare la purpose con il nome "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID" in lingua "it"
 
   # Endpoint: POST /purposes/:purposeId/clone

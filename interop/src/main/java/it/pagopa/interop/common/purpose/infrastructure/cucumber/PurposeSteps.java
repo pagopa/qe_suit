@@ -127,4 +127,14 @@ public class PurposeSteps {
     public void purposeRiskAnalysisInStateAssignedToReviewer(String state, Tenant tenant) {
         // TODO: considerare di adattare la firma così che accetti {purposeState}
     }
+
+    @When("il fruitore tenta di modificare la {purposeByAlias} con il nome della {purposeByAlias}")
+    public void attemptNameUpdateWithAnotherPurposeName(Purpose purpose, Purpose existing) {
+        purposeUseCase.attemptNameUpdate(purpose, existing.getTitle());
+    }
+
+    @When("il fruitore tenta di modificare la {currentPurpose} con il nome {string}")
+    public void attemptNameUpdate(Purpose purpose, String name) {
+        purposeUseCase.attemptNameUpdate(purpose, name);
+    }
 }

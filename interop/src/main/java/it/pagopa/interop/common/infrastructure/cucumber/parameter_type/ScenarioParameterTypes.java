@@ -65,4 +65,9 @@ public class ScenarioParameterTypes {
     public ProducerKeychain currentProducerKeychain(String token) {
         return entityStore.getLastOrThrow(ProducerKeychain.class);
     }
+
+    @ParameterType("purpose \"([^\"]+)\"")
+    public Purpose purposeByAlias(String alias) {
+        return entityStore.getByAliasOrThrow(alias, Purpose.class);
+    }
 }

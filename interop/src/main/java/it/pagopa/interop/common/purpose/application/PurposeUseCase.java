@@ -88,4 +88,8 @@ public class PurposeUseCase {
     public Purpose suspendPurpose(Purpose purpose, PurposeVersion purposeVersion, @Nullable DelegationRef delegationRef) {
         return purposeGateway.suspendPurpose(purpose.getRef(), purposeVersion.getRef(), delegationRef);
     }
+
+    public void attemptNameUpdate(Purpose purpose, String name) {
+        purposeGateway.attemptNameUpdate(purpose.getRef(), name);
+    }
 }

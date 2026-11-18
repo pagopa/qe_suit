@@ -176,4 +176,9 @@ public class BffPurposeGateway implements PurposeGateway {
         delegation.setDelegationId(delegationRef != null ? delegationRef.id() : null);
         return delegation;
     }
+
+    @Override
+    public void attemptNameUpdate(PurposeRef purposeRef, String name) {
+        restClient.updatePurpose(purposeRef.id(), commandFactory.updateRequest().title(name)).withoutPolling();
+    }
 }
