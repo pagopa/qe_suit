@@ -38,9 +38,9 @@ def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment:
         entry = {'id_test': failure.id_test, 'error_log': failure.error_log}
         for field in FIELDS[2:]:
             entry[field] = str(previous.get(field, '') or '') if previous else ''
-        # A fuzzy match only prepopulates the analysis; it never marks a bug as known.
-        known_bug = bool(match and match.method == 'fingerprint'
-                         and (entry['link_prod_bug'] or entry['link_suite_bug']))
+        # The YAML is the source of truth: any accepted match with an attached
+        # bug is known, independently of fingerprint versus similarity.
+        known_bug = bool(previous and (entry['link_prod_bug'] or entry['link_suite_bug']))
         data['ko_know' if known_bug else 'ko'].append(entry)
     return data
 
