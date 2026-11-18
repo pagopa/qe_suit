@@ -7,7 +7,8 @@ import it.pagopa.infrastructure.contract.browser.WebSessionProvider;
 import it.pagopa.infrastructure.suit.capability.AuthenticatedLocatableCapability;
 import it.pagopa.infrastructure.suit.capability.AuthenticatedLocatableCapabilityHandler;
 import it.pagopa.interop.bff.infrastructure.security.bearer.BearerAuthProvider;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.User;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -22,14 +23,14 @@ public class WebAuthenticationConfiguration {
     WebSessionProvider webSessionConfigurer(
             @Qualifier("cucumberWebAdapter") IWebPresentationApiAdapter adapter,
             BrowserContext browserContext,
-            CurrentUserSession currentUserSession,
+            AuthSession authSession,
             BearerAuthProvider bearerAuthProvider,
             @Value("${interop.web.catalog}") String catalogUrl
     ) {
         return () -> {
-            var currentUser = currentUserSession.getUser();
-            var currentTenant = currentUserSession.getTenant();
-            String sessionToken = bearerAuthProvider.getToken(currentUser, currentTenant);
+            var currentUser = authSession.getActor();
+            var currentTenant = authSession.getTenant();
+            String sessionToken = bearerAuthProvider.getToken((User) currentUser, currentTenant);
 
             if (browserContext.getCurrentUrl() == null) {
                 adapter.navigateTo(Url.of(catalogUrl));

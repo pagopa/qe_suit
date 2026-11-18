@@ -3,21 +3,23 @@ package it.pagopa.infrastructure.contract.http;
 import io.restassured.response.Response;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 final class DefaultHttpContractPolicy implements HttpContractPolicy {
 
     private final Consumer<Response> success;
     private final EnumMap<FuzzScenario, Consumer<Response>> scenarioExpectations;
+    private final Set<FuzzScenario> skippedScenarios;
 
-    private DefaultHttpContractPolicy(Consumer<Response> success, EnumMap<FuzzScenario, Consumer<Response>> scenarioExpectations) {
+    private DefaultHttpContractPolicy(
+            Consumer<Response> success,
+            EnumMap<FuzzScenario, Consumer<Response>> scenarioExpectations,
+            Set<FuzzScenario> skippedScenarios
+    ) {
         this.success = success;
         this.scenarioExpectations = scenarioExpectations;
+        this.skippedScenarios = skippedScenarios;
     }
 
     @Override
@@ -28,6 +30,9 @@ final class DefaultHttpContractPolicy implements HttpContractPolicy {
     @Override
     public Consumer<Response> expectationFor(FuzzScenario scenario) {
         Objects.requireNonNull(scenario, "scenario must not be null");
+        if (skippedScenarios.contains(scenario)) {
+            throw new ContractHttpException("Scenario is skipped: " + scenario);
+        }
         Consumer<Response> expectation = scenarioExpectations.get(scenario);
         if (expectation == null) {
             throw new ContractHttpException("Missing expectation for scenario " + scenario);
@@ -35,9 +40,15 @@ final class DefaultHttpContractPolicy implements HttpContractPolicy {
         return expectation;
     }
 
+    @Override
+    public boolean isSkipped(FuzzScenario scenario) {
+        return skippedScenarios.contains(Objects.requireNonNull(scenario, "scenario must not be null"));
+    }
+
     static final class BuilderImpl implements HttpContractPolicy.Builder {
         private Consumer<Response> success;
         private final EnumMap<FuzzScenario, Consumer<Response>> scenarioExpectations = new EnumMap<>(FuzzScenario.class);
+        private final Set<FuzzScenario> skippedScenarios = EnumSet.noneOf(FuzzScenario.class);
 
         @Override
         public HttpContractPolicy.Builder success(Consumer<Response> expectation) {
@@ -54,6 +65,9 @@ final class DefaultHttpContractPolicy implements HttpContractPolicy {
         public HttpContractPolicy.Builder scenario(FuzzScenario scenario, Consumer<Response> expectation) {
             Objects.requireNonNull(scenario, "scenario must not be null");
             Objects.requireNonNull(expectation, "scenario expectation must not be null");
+            if (skippedScenarios.contains(scenario)) {
+                throw new ContractHttpException("Scenario is already configured to be skipped: " + scenario);
+            }
             if (scenarioExpectations.putIfAbsent(scenario, expectation) != null) {
                 throw new ContractHttpException("Duplicate scenario configuration: " + scenario);
             }
@@ -81,16 +95,40 @@ final class DefaultHttpContractPolicy implements HttpContractPolicy {
         }
 
         @Override
+        public HttpContractPolicy.Builder skipScenario(FuzzScenario scenario) {
+            Objects.requireNonNull(scenario, "scenario must not be null");
+            if (!skippedScenarios.add(scenario)) {
+                throw new ContractHttpException("Duplicate skipped scenario configuration: " + scenario);
+            }
+            scenarioExpectations.remove(scenario);
+            return this;
+        }
+
+        @Override
+        public HttpContractPolicy.Builder skipScenario(List<FuzzScenario> scenarios) {
+            validateScenarioList(scenarios);
+            for (FuzzScenario scenario : scenarios) {
+                skipScenario(scenario);
+            }
+            return this;
+        }
+
+        @Override
         public HttpContractPolicy build() {
             if (success == null) {
                 throw new ContractHttpException("Missing success expectation");
             }
             Set<FuzzScenario> missing = EnumSet.allOf(FuzzScenario.class);
             missing.removeAll(scenarioExpectations.keySet());
+            missing.removeAll(skippedScenarios);
             if (!missing.isEmpty()) {
                 throw new ContractHttpException("HttpContractPolicy is incomplete. Missing scenarios: " + missing);
             }
-            return new DefaultHttpContractPolicy(success, new EnumMap<>(scenarioExpectations));
+            return new DefaultHttpContractPolicy(
+                    success,
+                    new EnumMap<>(scenarioExpectations),
+                    EnumSet.copyOf(skippedScenarios)
+            );
         }
 
         private void validateScenarioList(List<FuzzScenario> scenarios) {
