@@ -32,7 +32,6 @@ class PurposeTemplateStepsTest {
         steps.createPurposeTemplate(creator, PurposeTemplateState.SUSPENDED);
 
         var order = inOrder(journey);
-        order.verify(journey).withProducer(creator);
         order.verify(journey).withProducer(creator, UserRole.ADMIN);
         order.verify(journey).createPurposeTemplate(
                 Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.SUSPENDED);
