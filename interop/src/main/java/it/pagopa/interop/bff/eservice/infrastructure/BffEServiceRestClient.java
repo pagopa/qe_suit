@@ -206,4 +206,9 @@ public class BffEServiceRestClient extends RestClient {
         return execute(() -> eservicesApi.updateEServiceName().eServiceIdPath(eserviceId)
                 .body(payload).execute(Function.identity()), Void.class);
     }
+
+    public TestChain<Void> submitDelegatedEServiceArchiving(@Nonnull UUID eserviceId, @Nonnull EServiceArchivingSeed payload) {
+        return execute(() -> eservicesApi.submitDelegatedEServiceArchiving().eServiceIdPath(eserviceId)
+                .body(payload).execute(Function.identity()), Void.class);
+    }
 }

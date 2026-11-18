@@ -207,4 +207,11 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
     public UpdateEServiceDescriptorDocumentSeed documentRenameRequest(String newName) {
         return new UpdateEServiceDescriptorDocumentSeed().prettyName(newName);
     }
+
+    public EServiceArchivingSeed archivingRequest(it.pagopa.interop.common.eservice.domain.GracePeriodDays gracePeriodDays) {
+        return Instancio.of(EServiceArchivingSeed.class)
+                .set(field(EServiceArchivingSeed::getGracePeriodDays), GracePeriodDays.fromValue(gracePeriodDays.getDays()))
+                .set(field(EServiceArchivingSeed::getArchivingReason), RandomUtils.randomAlphanumericName("archiving-reason"))
+                .create();
+    }
 }

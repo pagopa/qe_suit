@@ -45,4 +45,6 @@ public interface EServiceGateway extends Plugin<Channel> {
     void attemptProducerEServiceDetailsRead(EServiceRef eServiceRef);
 
     void attemptNameUpdate(EServiceRef eServiceRef, String name);
+
+    void attemptDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays);
 }

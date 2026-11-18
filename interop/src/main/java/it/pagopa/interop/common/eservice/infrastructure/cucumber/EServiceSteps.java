@@ -161,4 +161,9 @@ public class EServiceSteps {
     public void attemptNameUpdate(EService eService, String name) {
         eServiceUseCase.attemptNameUpdate(eService, name);
     }
+
+    @When("il delegato richiede al delegante l'archiviazione dell'{currentEService} con un periodo di preavviso di {gracePeriodDays} giorni e una motivazione valida")
+    public void attemptDelegatedArchivingRequest(EService eService, GracePeriodDays gracePeriodDays) {
+        eServiceUseCase.attemptDelegatedArchivingRequest(eService, gracePeriodDays);
+    }
 }

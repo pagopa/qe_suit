@@ -16,14 +16,12 @@ import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceDescriptorRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRef;
-import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceArchivingSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.FileResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PresignedUrl;
 import it.pagopa.interop.generated.openapi.clients.bff.model.ProducerEServices;
 import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
-import org.instancio.Instancio;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
@@ -40,7 +38,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.instancio.Select.field;
 
 @Service
 @RequiredArgsConstructor
@@ -96,10 +93,7 @@ public class BffEServiceGateway implements EServiceGateway {
 
     @Override
     public void archiveEService(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
-        EServiceArchivingSeed payload = Instancio.of(EServiceArchivingSeed.class)
-                .set(field(EServiceArchivingSeed::getGracePeriodDays), it.pagopa.interop.generated.openapi.clients.bff.model.GracePeriodDays.fromValue(gracePeriodDays.getDays()))
-                .set(field(EServiceArchivingSeed::getArchivingReason), RandomUtils.randomAlphanumericName("archiving-reason"))
-                .create();
+        var payload = requestFactory.archivingRequest(gracePeriodDays);
 
         restClient.scheduleArchiveEservice(eServiceRef.id(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
@@ -220,5 +214,11 @@ public class BffEServiceGateway implements EServiceGateway {
     @Override
     public void attemptNameUpdate(EServiceRef eServiceRef, String name) {
         restClient.updateName(eServiceRef.id(), requestFactory.updateNameRequest().name(name)).withoutPolling();
+    }
+
+    @Override
+    public void attemptDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
+        restClient.submitDelegatedEServiceArchiving(eServiceRef.id(), requestFactory.archivingRequest(gracePeriodDays))
+                .withoutPolling();
     }
 }
