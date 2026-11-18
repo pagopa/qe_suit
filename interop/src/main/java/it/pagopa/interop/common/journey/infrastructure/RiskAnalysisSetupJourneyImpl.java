@@ -3,7 +3,8 @@ package it.pagopa.interop.common.journey.infrastructure;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.journey.application.RiskAnalysisSetupJourney;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.InteropActor;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
@@ -21,7 +22,7 @@ public class RiskAnalysisSetupJourneyImpl implements RiskAnalysisSetupJourney<Ri
     private final EServiceJourneyImpl eServiceJourney;
     private final AgreementJourneyImpl agreementJourney;
     private final PurposeJourneyImpl purposeJourney;
-    private final CurrentUserSession session;
+    private final AuthSession authSession;
 
     @Override
     public RiskAnalysisSetupJourneyImpl setUpRiskAnalysisToCompile(
@@ -81,13 +82,13 @@ public class RiskAnalysisSetupJourneyImpl implements RiskAnalysisSetupJourney<Ri
                     );
                 })
                 .toList();
-        User originalUser = session.getUser();
-        Tenant originalTenant = session.getTenant();
+        InteropActor originalUser = authSession.getActor();
+        Tenant originalTenant = authSession.getTenant();
         Throwable failure = null;
         try {
-            session.set(User.getTenantAdmin(producer), producer);
+            authSession.set(User.getTenantAdmin(producer), producer);
             eServiceJourney.createEService(command -> command.name(eServiceName), EServiceDescriptorState.PUBLISHED);
-            session.set(User.getTenantAdmin(consumer), consumer);
+            authSession.set(User.getTenantAdmin(consumer), consumer);
             agreementJourney.linkAgreement(AgreementState.ACTIVE);
             purposeJourney.createPurpose(PurposeVersionState.DRAFT);
             purposeJourney.assignRiskAnalysisReviewers(mode, reviewerIds);
@@ -100,7 +101,7 @@ public class RiskAnalysisSetupJourneyImpl implements RiskAnalysisSetupJourney<Ri
             throw ex;
         } finally {
             try {
-                session.set(originalUser, originalTenant);
+                authSession.set(originalUser, originalTenant);
             } catch (RuntimeException | Error restoreFailure) {
                 if (failure == null) {
                     throw restoreFailure;

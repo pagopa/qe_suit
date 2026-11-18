@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -212,21 +213,26 @@ public class BffPurposeGateway implements PurposeGateway {
 
     @Override
     public RiskAnalysisForm getRiskAnalysisForm(PurposeRef purposeRef) {
+        return readRiskAnalysisForm(purposeRef).orElseThrow(() ->
+                new IllegalStateException("Risk-analysis form is incomplete or absent for purpose " + purposeRef.id()));
+    }
+
+    private Optional<RiskAnalysisForm> readRiskAnalysisForm(PurposeRef purposeRef) {
         var response = restClient.getPurpose(purposeRef.id()).withoutPolling();
         if (!response.getRaw().isSuccess()) {
             throw new IllegalStateException("Risk-analysis form read failed for purpose " + purposeRef.id());
         }
         var form = Objects.requireNonNull(response.get()).getRiskAnalysisForm();
         if (form == null) {
-            throw new IllegalStateException("Risk-analysis form is incomplete or absent for purpose " + purposeRef.id());
+            return Optional.empty();
         }
         var answers = form.getAnswers().entrySet().stream().collect(
                 Collectors.toUnmodifiableMap(
                         Map.Entry::getKey, entry -> List.copyOf(entry.getValue())
                 )
         );
-        return RiskAnalysisForm.builder()
-                .version(form.getVersion()).answers(answers).build();
+        return Optional.of(RiskAnalysisForm.builder()
+                .version(form.getVersion()).answers(answers).build());
     }
 
     @Override
@@ -247,8 +253,8 @@ public class BffPurposeGateway implements PurposeGateway {
             throw new IllegalStateException("Risk-analysis form save failed for purpose " + purposeRef.id());
         }
         PollingUtils.pollUntil(
-                () -> getRiskAnalysisForm(purposeRef),
-                expected::equals,
+                () -> readRiskAnalysisForm(purposeRef),
+                formSnapshot -> formSnapshot.filter(expected::equals).isPresent(),
                 "Saved risk-analysis form did not become visible for purpose " + purposeRef.id()
         );
     }

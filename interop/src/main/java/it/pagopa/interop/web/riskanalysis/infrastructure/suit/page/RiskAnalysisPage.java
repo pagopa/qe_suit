@@ -92,6 +92,11 @@ public interface RiskAnalysisPage extends Page {
      * @return row snapshots containing the e-service name and risk-analysis status
      */
     default List<RiskAnalysisRow> readRecordsEserviceStatus() {
+        PollingUtils.pollUntil(
+                () -> riskAnalysisTable().tHead(),
+                tableHead -> !tableHead.rows().isEmpty(),
+                "Risk Analysis table is not loaded"
+        );
         return riskAnalysisTable().tBody().rows().stream()
                 .map(row -> {
                     List<TableCell> cells = row.cells();

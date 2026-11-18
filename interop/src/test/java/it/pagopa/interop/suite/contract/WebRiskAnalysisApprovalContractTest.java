@@ -11,6 +11,8 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.GeneralInfoCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.RiskAnalysisCard;
 import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisApprovalPage;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +51,8 @@ class WebRiskAnalysisApprovalContractTest {
 
     private static final String TITLE = "Approvazione analisi del rischio";
     private static final String ALERT = "Quando approvi l’analisi del rischio, non potrai più modificarla e l’amministratore potrà pubblicare la finalità.";
-    public static final String BTN_APPROVE = "Approva analisi del rischio";
-    public static final String BTN_REJECT = "Rifiuta con motivazione";
+    private static final String BTN_APPROVE = "Approva analisi del rischio";
+    private static final String BTN_REJECT = "Rifiuta con motivazione";
 
     private static final String INFO_PURPOSE_NAME = "Nome della finalità";
     private static final String INFO_PROVIDER = "Erogatore";
@@ -95,8 +97,8 @@ class WebRiskAnalysisApprovalContractTest {
                                     assertHeaderAndBreadcrumbs(page);
                                     page.title().readAndAssert(TITLE);
 
-                                    assertInformazioniGenerali(page.generalInfoCard());
-                                    assertAnalisiRischio(page.riskAnalysisCard());
+                                    assertGeneralInfo(page.generalInfoCard());
+                                    assertRiskAnalysis(page.riskAnalysisCard());
 
                                     page.alertMessage().readAndAssert(ALERT);
 
@@ -140,7 +142,7 @@ class WebRiskAnalysisApprovalContractTest {
                 .isEqualTo(EXPECTED_RA_BREADCRUMB_HREF);
     }
 
-    private void assertInformazioniGenerali(RiskAnalysisApprovalPage.GeneralInfoCard card) {
+    private void assertGeneralInfo(GeneralInfoCard card) {
         card.accordionTitle().readAndAssert("Informazioni generali");
 
         assertThat(card.get().isPresent()).as("Card Informazioni Generali not found").isTrue();
@@ -180,7 +182,7 @@ class WebRiskAnalysisApprovalContractTest {
         assertNotBlank(card.assignedToValue().read(), INFO_ASSIGNED_TO);
     }
 
-    private void assertAnalisiRischio(RiskAnalysisApprovalPage.RiskAnalysisCard card) {
+    private void assertRiskAnalysis(RiskAnalysisCard card) {
         card.accordionTitle().readAndAssert(RISK_TITLE);
 
         assertThat(card.get().isPresent()).as("Card Analisi del Rischio not found").isTrue();

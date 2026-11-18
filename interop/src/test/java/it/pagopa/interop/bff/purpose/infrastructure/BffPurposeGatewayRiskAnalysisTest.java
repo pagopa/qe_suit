@@ -43,7 +43,7 @@ class BffPurposeGatewayRiskAnalysisTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    void savesFormOnceAndWaitsForAllAnswersToBecomeVisible() {
+    void savesFormOnceAndWaitsForAnInitiallyAbsentFormWithAllAnswers() {
         UUID purposeId = UUID.randomUUID();
         var expected = it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm.builder()
                 .version("3.0")
@@ -57,6 +57,7 @@ class BffPurposeGatewayRiskAnalysisTest {
         when(restClient.getPurpose(purposeId)).thenReturn(read);
         when(read.withoutPolling().getRaw().isSuccess()).thenReturn(true);
         when(read.withoutPolling().get()).thenReturn(
+                new Purpose(),
                 new Purpose().riskAnalysisForm(new it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisForm()
                         .version("3.0").answers(Map.of("institutionalPurpose", List.of("Old")))),
                 new Purpose().riskAnalysisForm(new it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisForm()
@@ -70,7 +71,7 @@ class BffPurposeGatewayRiskAnalysisTest {
         verify(restClient).saveRiskAnalysisForm(eq(purposeId), payload.capture());
         assertThat(payload.getValue().getVersion()).isEqualTo(expected.getVersion());
         assertThat(payload.getValue().getAnswers()).isEqualTo(expected.getAnswers());
-        verify(restClient, times(2)).getPurpose(purposeId);
+        verify(restClient, times(3)).getPurpose(purposeId);
         verify(write, never()).withPolling(any());
     }
 
