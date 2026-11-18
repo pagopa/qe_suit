@@ -15,6 +15,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeFromTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchReversePurposeUpdateContent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,6 +36,8 @@ class BffPurposeGatewayTest {
     private final PurposesApi.ArchivePurposeVersionOper archiveVersion =
             mock(PurposesApi.ArchivePurposeVersionOper.class);
     private final PurposesApi.GetPurposeOper read = mock(PurposesApi.GetPurposeOper.class);
+    private final PurposesApi.PatchUpdateReversePurposeOper patchReversePurpose =
+            mock(PurposesApi.PatchUpdateReversePurposeOper.class);
     private final BffPurposeMapper mapper = mock(BffPurposeMapper.class);
     private final BffPurposeCommandFactory commandFactory = mock(BffPurposeCommandFactory.class);
     private final UUID newVersionId = UUID.randomUUID();
@@ -59,6 +62,9 @@ class BffPurposeGatewayTest {
         when(archiveVersion.reqSpec(any())).thenReturn(archiveVersion);
         when(api.getPurpose()).thenReturn(read);
         when(read.purposeIdPath(original.getId())).thenReturn(read);
+        when(api.patchUpdateReversePurpose()).thenReturn(patchReversePurpose);
+        when(patchReversePurpose.purposeIdPath(original.getId())).thenReturn(patchReversePurpose);
+        when(patchReversePurpose.body(any())).thenReturn(patchReversePurpose);
         gateway = new BffPurposeGateway(
                 new BffPurposeRestClient(new TestChainFactory(mock(LastApiResponseStore.class), store), apiClient),
                 mapper, commandFactory);
@@ -88,6 +94,31 @@ class BffPurposeGatewayTest {
         verify(read, times(2)).execute(any());
         assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(updated);
         assertThat(updated.getLastActiveVersion()).isSameAs(active);
+    }
+
+    @Test
+    void patchesReversePurposeMetadataAndRefreshesTheAliasedContext() {
+        Purpose renamed = original.toBuilder().title("new title").description("new description").build();
+        when(patchReversePurpose.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(200, "{\"id\":\"" + original.getId() + "\"}"));
+        });
+        when(read.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(200, "{}"));
+        });
+        when(mapper.toPurpose(any())).thenReturn(renamed);
+
+        assertThat(gateway.updateReversePurposeMetadata(original.getRef(), "new title", "new description"))
+                .isSameAs(renamed);
+
+        verify(api).patchUpdateReversePurpose();
+        verify(patchReversePurpose).purposeIdPath(original.getId());
+        verify(patchReversePurpose).body(
+                new PatchReversePurposeUpdateContent().title("new title").description("new description"));
+        verify(patchReversePurpose).execute(any());
+        verify(read).execute(any());
+        assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(renamed);
     }
 
     @Test

@@ -14,7 +14,9 @@ import org.springframework.plugin.core.Plugin;
 public interface PurposeGateway extends Plugin<Channel> {
     Purpose getPurpose(PurposeRef purposeRef);
 
-    Purpose updateMetadata(PurposeRef purposeRef, String name, String description);
+    Purpose updatePurposeMetadata(PurposeRef purposeRef, String name, String description);
+
+    Purpose updateReversePurposeMetadata(PurposeRef purposeRef, String name, String description);
 
     Purpose updatePurposeDailyCalls(PurposeRef purposeRef, int dailyCalls);
 

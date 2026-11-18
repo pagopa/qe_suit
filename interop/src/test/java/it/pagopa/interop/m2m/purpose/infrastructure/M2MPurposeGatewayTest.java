@@ -11,6 +11,8 @@ import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.api.PurposesApi;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ReversePurposeDraftUpdateSeed;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateDraftPurposeRequest;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersionSeed;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +31,10 @@ class M2MPurposeGatewayTest {
     private final PurposesApi.CreatePurposeVersionOper create = mock(PurposesApi.CreatePurposeVersionOper.class);
     private final PurposesApi.ArchivePurposeOper archive = mock(PurposesApi.ArchivePurposeOper.class);
     private final PurposesApi.GetPurposeOper read = mock(PurposesApi.GetPurposeOper.class);
+    private final PurposesApi.UpdateDraftPurposeOper updatePurpose =
+            mock(PurposesApi.UpdateDraftPurposeOper.class);
+    private final PurposesApi.UpdateDraftReversePurposeOper updateReversePurpose =
+            mock(PurposesApi.UpdateDraftReversePurposeOper.class);
     private final M2MPurposeMapper mapper = mock(M2MPurposeMapper.class);
     private final UUID newVersionId = UUID.randomUUID();
     private final PurposeVersion active = PurposeVersion.builder().id(UUID.randomUUID())
@@ -48,6 +54,14 @@ class M2MPurposeGatewayTest {
         when(archive.purposeIdPath(original.getId())).thenReturn(archive);
         when(api.getPurpose()).thenReturn(read);
         when(read.purposeIdPath(original.getId())).thenReturn(read);
+        when(api.updateDraftPurpose()).thenReturn(updatePurpose);
+        when(updatePurpose.purposeIdPath(original.getId())).thenReturn(updatePurpose);
+        when(updatePurpose.reqSpec(any())).thenReturn(updatePurpose);
+        when(updatePurpose.body(any())).thenReturn(updatePurpose);
+        when(api.updateDraftReversePurpose()).thenReturn(updateReversePurpose);
+        when(updateReversePurpose.purposeIdPath(original.getId())).thenReturn(updateReversePurpose);
+        when(updateReversePurpose.reqSpec(any())).thenReturn(updateReversePurpose);
+        when(updateReversePurpose.body(any())).thenReturn(updateReversePurpose);
         gateway = new M2MPurposeGateway(
                 new M2MPurposeRestClient(new TestChainFactory(mock(LastApiResponseStore.class), store), apiClient),
                 mapper);
@@ -76,6 +90,60 @@ class M2MPurposeGatewayTest {
         verify(read, times(2)).execute(any());
         assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(updated);
         assertThat(updated.getLastActiveVersion()).isSameAs(active);
+    }
+
+    @Test
+    void patchesPurposeMetadataAndRefreshesTheAliasedContext() {
+        Purpose renamed = original.toBuilder().title("new title").description("new description").build();
+        when(updatePurpose.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(200, "{}"));
+        });
+        when(read.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(200, "{}"));
+        });
+        when(mapper.toPurpose(any())).thenReturn(renamed);
+
+        assertThat(gateway.updatePurposeMetadata(original.getRef(), "new title", "new description"))
+                .isSameAs(renamed);
+
+        var order = inOrder(api, updatePurpose, read);
+        order.verify(api).updateDraftPurpose();
+        order.verify(updatePurpose).purposeIdPath(original.getId());
+        order.verify(updatePurpose).body(
+                new UpdateDraftPurposeRequest().title("new title").description("new description"));
+        order.verify(updatePurpose).execute(any());
+        order.verify(api).getPurpose();
+        order.verify(read).purposeIdPath(original.getId());
+        order.verify(read).execute(any());
+        verifyNoInteractions(updateReversePurpose);
+        assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(renamed);
+    }
+
+    @Test
+    void patchesReversePurposeMetadataAndRefreshesTheAliasedContext() {
+        Purpose renamed = original.toBuilder().title("new title").description("new description").build();
+        when(updateReversePurpose.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(200, "{}"));
+        });
+        when(read.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(200, "{}"));
+        });
+        when(mapper.toPurpose(any())).thenReturn(renamed);
+
+        assertThat(gateway.updateReversePurposeMetadata(original.getRef(), "new title", "new description"))
+                .isSameAs(renamed);
+
+        verify(api).updateDraftReversePurpose();
+        verify(updateReversePurpose).purposeIdPath(original.getId());
+        verify(updateReversePurpose).body(
+                new ReversePurposeDraftUpdateSeed().title("new title").description("new description"));
+        verify(updateReversePurpose).execute(any());
+        verify(read).execute(any());
+        assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(renamed);
     }
 
     @Test

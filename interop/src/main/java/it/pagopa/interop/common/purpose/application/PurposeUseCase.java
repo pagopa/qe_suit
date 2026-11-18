@@ -24,9 +24,19 @@ public class PurposeUseCase {
         return purposeGateway.getPurpose(purpose.getRef());
     }
 
-    public Purpose updateMetadata(Purpose purpose, String name, String description) {
-        purposeGateway.updateMetadata(purpose.getRef(), name, description);
+    public Purpose updatePurposeMetadata(Purpose purpose, String name, String description) {
+        purposeGateway.updatePurposeMetadata(purpose.getRef(), name, description);
 
+        return pollForUpdatedMetadata(purpose, name, description);
+    }
+
+    public Purpose updateReversePurposeMetadata(Purpose purpose, String name, String description) {
+        purposeGateway.updateReversePurposeMetadata(purpose.getRef(), name, description);
+
+        return pollForUpdatedMetadata(purpose, name, description);
+    }
+
+    private Purpose pollForUpdatedMetadata(Purpose purpose, String name, String description) {
         return PollingUtils.pollUntil(
                 () -> getPurpose(purpose),
                 refreshed -> Objects.equals(name, refreshed.getTitle())

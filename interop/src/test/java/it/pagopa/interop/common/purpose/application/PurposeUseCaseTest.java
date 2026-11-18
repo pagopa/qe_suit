@@ -46,6 +46,31 @@ class PurposeUseCaseTest {
     }
 
     @Test
+    void updatesOrdinaryPurposeMetadata() {
+        Purpose updated = purpose.toBuilder().title("new title").description("new description").build();
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(updated);
+
+        assertThat(useCase.updatePurposeMetadata(purpose, "new title", "new description")).isSameAs(updated);
+
+        verify(gateway).updatePurposeMetadata(purpose.getRef(), "new title", "new description");
+        verify(gateway).getPurpose(purpose.getRef());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
+    void updatesReversePurposeMetadata() {
+        Purpose updated = purpose.toBuilder().title("new title").description("new description").build();
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(updated);
+
+        assertThat(useCase.updateReversePurposeMetadata(purpose, "new title", "new description"))
+                .isSameAs(updated);
+
+        verify(gateway).updateReversePurposeMetadata(purpose.getRef(), "new title", "new description");
+        verify(gateway).getPurpose(purpose.getRef());
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
     void requiresAnActiveVersion() {
         assertThatThrownBy(() -> useCase.updatePurposeDailyCallsEstimateBeyondThreshold(
                 purpose.toBuilder().clearVersions().build(), eService))

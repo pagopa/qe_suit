@@ -39,6 +39,17 @@ public class BffPurposeRestClient extends RestClient {
         );
     }
 
+    public TestChain<CreatedResource> patchUpdateReversePurpose(
+            @Nonnull UUID purposeId, @Nonnull PatchReversePurposeUpdateContent payload) {
+        return execute(
+                () -> purposesApi.patchUpdateReversePurpose()
+                        .purposeIdPath(purposeId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
+
     public TestChain<CreatedResource> createPurpose(@Nonnull PurposeSeed payload) {
         return execute(
                 () -> purposesApi.createPurpose().body(payload).execute(Function.identity()),
