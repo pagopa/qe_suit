@@ -1,8 +1,10 @@
 package it.pagopa.interop.common.purpose.infrastructure.cucumber;
 
+import io.cucumber.datatable.DataTable;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -18,8 +20,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import java.time.Instant;
-import java.util.UUID;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -94,6 +97,30 @@ class PurposeStepsTest {
         assertThatThrownBy(steps::updatePurposeDailyCallsEstimateBeyondThreshold)
                 .isInstanceOf(IllegalStateException.class).hasMessageContaining("E-service not found");
         verifyNoInteractions(useCase, userSession, currentChannel);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = EServiceMode.class, names = {"DELIVER", "RECEIVE"})
+    void updatesMetadataThroughTheGatewayForTheEServiceMode(EServiceMode mode) {
+        var eService = EService.builder().id(UUID.randomUUID()).mode(mode).build();
+        var purpose = Purpose.builder().id(UUID.randomUUID()).eserviceId(eService.getId())
+                .title("Titolo iniziale").description("Descrizione iniziale").build();
+        when(entities.getLastOrThrow(Purpose.class)).thenReturn(purpose);
+        when(entities.getById(eService.getId(), EService.class)).thenReturn(Optional.of(eService));
+        DataTable dataTable = DataTable.create(List.of(
+                List.of("campo", "valore"),
+                List.of("nome", "Nuovo titolo"),
+                List.of("descrizione", "Nuova descrizione")
+        ));
+
+        steps.updatePurposeMetadata(UserRole.ADMIN, Tenant.COMUNE_DI_COMUN_NUOVO, dataTable);
+
+        if (mode == EServiceMode.RECEIVE) {
+            verify(useCase).updateReversePurposeMetadata(purpose, "Nuovo titolo", "Nuova descrizione");
+        } else {
+            verify(useCase).updatePurposeMetadata(purpose, "Nuovo titolo", "Nuova descrizione");
+        }
+        verifyNoMoreInteractions(useCase);
     }
 
     @ParameterizedTest

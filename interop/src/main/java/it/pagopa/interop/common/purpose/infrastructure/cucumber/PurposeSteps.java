@@ -9,6 +9,7 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.*;
@@ -112,9 +113,23 @@ public class PurposeSteps {
     public void updatePurposeMetadata(UserRole role, Tenant consumer, DataTable dataTable) {
         Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
         MetadataUpdate metadata = readMetadataUpdate(purpose, dataTable);
+        EService eService = entityStore.getById(purpose.getEserviceId(), EService.class)
+                .orElseThrow(() -> new IllegalStateException(
+                        "E-service not found for purpose " + purpose.getId()
+                ));
 
-        interopJourney.withConsumer(consumer, role);
-        purposeUseCase.updateMetadata(purpose, metadata.name(), metadata.description());
+        if (role == UserRole.ADMIN) {
+            interopJourney.withConsumer(consumer);
+        } else {
+            interopJourney.withConsumer(consumer, role);
+        }
+        if (eService.getMode() == EServiceMode.RECEIVE) {
+            purposeUseCase.updateReversePurposeMetadata(purpose, metadata.name(), metadata.description());
+        } else if (eService.getMode() == EServiceMode.DELIVER) {
+            purposeUseCase.updatePurposeMetadata(purpose, metadata.name(), metadata.description());
+        } else {
+            throw new IllegalStateException("E-service mode is missing for purpose " + purpose.getId());
+        }
     }
 
     private MetadataUpdate readMetadataUpdate(Purpose purpose, DataTable dataTable) {
