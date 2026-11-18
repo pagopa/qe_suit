@@ -45,7 +45,7 @@ public class ScenarioParameterTypes {
         return entityStore.getLastOrThrow(EService.class);
     }
 
-    @ParameterType("e-service template")
+    @ParameterType("e-service template|template e-service")
     public EServiceTemplate currentEServiceTemplate(String token) {
         return entityStore.getLastOrThrow(EServiceTemplate.class);
     }
