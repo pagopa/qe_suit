@@ -7,6 +7,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.PageSize;
 import it.pagopa.infrastructure.suit.component.Pagination;
 import it.pagopa.interop.web.agreement.infrastructure.page.component.AgreementRequestTable;
+import it.pagopa.utils.async.PollingUtils;
 
 @Url("${interop.web.consumer-agreement-list}?limit=${limit}&offset=${offset}")
 public interface AgreementRequestPage extends Page {
@@ -22,7 +23,11 @@ public interface AgreementRequestPage extends Page {
 
     @Override
     default void assertLoaded() {
+        PollingUtils.pollUntil(
+                () -> pageTitle().read().equals("Richieste di fruizione inoltrate"),
+                isLoaded -> isLoaded,
+                "AgreementRequestPage not loaded"
+        );
         table().assertLoaded();
-        pageTitle().readAndAssert("Richieste di fruizione inoltrate");
     }
 }

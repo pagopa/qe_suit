@@ -7,11 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ObjectGraphQueryTest {
     private ObjectGraphDecomposer decomposer;
@@ -63,6 +61,21 @@ class ObjectGraphQueryTest {
         Method getter = RenamedPayload.class.getMethod("getCode");
         Node node = graph.find(ObjectGraphQuery.root().property(getter));
         assertEquals("/json_code", node.path().toString());
+    }
+
+    @Test
+    void mapKeyNavigationResolvesMapValuePath() throws Exception {
+        MapHolder holder = new MapHolder(Map.of("home", new Address("Rome")));
+        ObjectGraph graph = decomposer.decompose(holder);
+
+        Node city = graph.find(
+                ObjectGraphQuery.root()
+                        .property(MapHolder.class.getMethod("addresses"))
+                        .key("home")
+                        .property(Address.class.getMethod("getCity"))
+        );
+
+        assertEquals("/addresses/home/city", city.path().toString());
     }
 
     @Test
@@ -136,5 +149,8 @@ class ObjectGraphQueryTest {
         public String getCode() {
             return code;
         }
+    }
+
+    record MapHolder(Map<String, Address> addresses) {
     }
 }

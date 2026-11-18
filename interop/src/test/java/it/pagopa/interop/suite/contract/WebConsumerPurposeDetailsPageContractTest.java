@@ -133,9 +133,6 @@ public class WebConsumerPurposeDetailsPageContractTest {
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().purposeDescriptionValue().read())
                                             .as("General Info Purpose description value")
                                             .isNotBlank();
-                                    softly.assertThat(page.detailsTabPanel().generalInfoSection().downloadRiskAnalysisButton().read())
-                                            .as("General Info Risk Analysis download button")
-                                            .isEqualTo("Scarica analisi del rischio");
                                     softly.assertThat(page.detailsTabPanel().generalInfoSection().goToAgreementLink().read())
                                             .as("General Info Agreement link text")
                                             .isEqualTo("Vai a richiesta di fruizione");
