@@ -3,7 +3,6 @@ Feature: Modifica dei metadati degli e-service
   Voglio modificare nome e descrizione di un e-service indipendentemente dallo stato dei descrittori
   Per mantenere aggiornate le informazioni senza modificare le versioni operative.
 
-  # CASO DI TEST 1.1 - Modifica indipendente dallo stato dei descrittori
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [ESERVICE_METADATA_1a] - Modifica di un singolo metadato indipendente dallo stato del descrittore
@@ -26,11 +25,9 @@ Feature: Modifica dei metadati degli e-service
       | pubblicata | descrizione | Descrizione aggiornata del servizio |
       | sospesa    | nome        | Servizio anagrafico aggiornato      |
       | deprecata  | descrizione | Descrizione aggiornata del servizio |
-
       # Non è possibile archiviare un e-service in tempi accettabili.
-      # | archiviata             | nome        | Servizio anagrafico aggiornato      |
+      # | archiviata | nome        | Servizio anagrafico aggiornato      |
 
-  # CASO DI TEST 1.1 - Modifica indipendente dallo stato dei descrittori
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_METADATA_1b] Modifica di un singolo metadato con lo stato del descrittore in attesa di approvazione.
@@ -51,7 +48,6 @@ Feature: Modifica dei metadati degli e-service
       | descrizione | Descrizione aggiornata del servizio |
     Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
-  # CASO DI TEST 1.1 - Modifica indipendente dallo stato dei descrittori
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_METADATA_1c] - Modifica di un singolo metadato con lo stato del descrittore in archiviazione
@@ -69,7 +65,6 @@ Feature: Modifica dei metadati degli e-service
       | descrizione | Descrizione aggiornata del servizio |
     Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
-  # CASO DI TEST 1.1 - Modifica indipendente dallo stato dei descrittori
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_METADATA_1d] - Modifica di un singolo metadato co lo stato del descrittore in archiviazione sospesa
@@ -88,7 +83,6 @@ Feature: Modifica dei metadati degli e-service
       | descrizione | Descrizione aggiornata del servizio |
     Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
-  # CASO DI TEST 1.1 - Modifica indipendente dallo stato dei descrittori
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [ESERVICE_METADATA_2a] - Modifica congiunta dei metadati indipendente dallo stato del descrittore
@@ -112,11 +106,9 @@ Feature: Modifica dei metadati degli e-service
       | pubblicata |
       | sospesa    |
       | deprecata  |
-
       # Non è possibile archiviare un e-service in tempi accettabili.
-      # | archiviata                |
+      # | archiviata |
 
-  # CASO DI TEST 1.1 - Modifica indipendente dallo stato dei descrittori
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_METADATA_2b] - Modifica congiunta dei metadati con lo stato del descrittore in attesa di approvazione.
@@ -138,7 +130,6 @@ Feature: Modifica dei metadati degli e-service
       | descrizione | Descrizione aggiornata del servizio |
     Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
-  # CASO DI TEST 1.1 - Modifica indipendente dallo stato dei descrittori
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_METADATA_2c] - Modifica congiunta dei metadati con lo stato del descrittore in archiviazione.
@@ -157,7 +148,6 @@ Feature: Modifica dei metadati degli e-service
       | descrizione | Descrizione aggiornata del servizio |
     Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
-  # CASO DI TEST 1.1 - Modifica indipendente dallo stato dei descrittori
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario: [ESERVICE_METADATA_2d] - Modifica congiunta dei metadati con lo stato del descrittore in archiviazione sospesa.
@@ -225,7 +215,6 @@ Feature: Modifica dei metadati degli e-service
   #    Then il form della risorsa "R-1" rimane aperto con i testi inseriti
   #    And il sistema segnala il mancato salvataggio della risorsa "ES-1"
 
-  # CASO DI TEST 7.1 - Rifiuto atomico delle richieste non ammesse
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [ESERVICE_METADATA_PROTECTION_1] - Rifiuto della richiesta di modifica in presenza di metadati non ammessi
@@ -239,42 +228,19 @@ Feature: Modifica dei metadati degli e-service
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     When un admin del Comune di Milano tenta la modifica dei metadati dell'e-service "ES-1":
       | campo    | valore    |
-      | <campo1> | <valore1> |
-      | <campo2> | <valore2> |
+      | <campo1> | <valore_ammesso> |
+      | <campo2> | <valore_non_ammesso> |
     Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per <errore>
 
     Examples:
-      | campo1 | valore1                        | campo2      | valore2     | errore                       |
-      | nome   | Servizio anagrafico aggiornato | descrizione | desc        | INVALID_DATA                 |
-      | nome   | Servizio anagrafico aggiornato | technology  | REST        | OUT_OF_DRAFT_OPERATION_FIELD |
-      | nome   | Servizio anagrafico aggiornato | technology  | %last-used% | OUT_OF_DRAFT_OPERATION_FIELD |
+      | campo1 | valore_ammesso                 | campo2      | valore_non_ammesso | errore                       |
+      | nome   | Servizio anagrafico aggiornato | descrizione | desc               | INVALID_DATA                 |
+      | nome   | Servizio anagrafico aggiornato | technology  | REST               | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | technology  | %last-used%        | OUT_OF_DRAFT_OPERATION_FIELD |
 
-
-  # TODO Rimuovere questo scenario di test: quello precedente, che utilizza %last-used%, copre già il caso da verificare
-
-  #  @work-item:QA-19036
-  #  @channel:Given=BFF,When=BFF,Then=BFF
-  #  Scenario Outline: [ESERVICE_METADATA_PROTECTION_2] - Rifiuto atomico di campi operativi non modificabili
-  #  Dato una risorsa fuori bozza con configurazione operativa,
-  #  quando l’attore invia un metadato valido insieme a un campo operativo vietato,
-  #  allora il sistema rifiuta l’aggiornamento anche quando il campo operativo conserva il valore precedente.
-  #
-  #    Given i seguenti e-service pubblicati:
-  #      | alias | erogatore        | nome                   |
-  #      | ES-1  | Comune di Milano | E-service Tempo Attivo |
-  #    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "ES-1" insieme a un campo operativo vietato <variazione>
-  #    Then la modifica della risorsa "ES-1" viene rifiutata
-  #    And la risorsa "ES-1" conserva metadati, stati, versioni e relazioni iniziali
-  #
-  #    Examples:
-  #      | variazione           |
-  #      | con valore nuovo     |
-  #      | con valore invariato |
-
-  # CASO DI TEST 7.2 - Ripetizione della modifica e gestione dei valori invariati
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_METADATA_PROTECTION_3] - Ripetizione dei metadati correnti senza effetti operativi
+  Scenario: [ESERVICE_METADATA_PROTECTION_2] - Ripetizione dei metadati correnti senza effetti operativi
   Dato una risorsa i cui metadati sono modificabili,
   quando l’attore ripete una modifica già applicata,
   allora la ripetizione ha successo senza modificare versioni stati o relazioni.
@@ -292,22 +258,6 @@ Feature: Modifica dei metadati degli e-service
       | descrizione | %last-used% |
     Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
 
-  # TODO Rimuovere questo scenario di test: ci sono già scenari che coprono il caso da verificare
-  #  @work-item:QA-19036
-  #  @channel:Given=BFF,When=BFF,Then=BFF
-  #  Scenario: [ESERVICE_METADATA_PROTECTION_4] - Valori modificati e invariati nella stessa richiesta
-  #  Dato una risorsa con metadati già valorizzati,
-  #  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
-  #  allora il sistema applica solo il valore modificato senza alterare dati operativi.
-  #
-  #    Given i seguenti e-service pubblicati:
-  #      | alias | erogatore        | nome                   |
-  #      | ES-1  | Comune di Milano | E-service Tempo Attivo |
-  #    When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "ES-1" confermando gli altri valori correnti
-  #    Then la risorsa "ES-1" presenta il metadato aggiornato
-  #    And la risorsa "ES-1" conserva stati, versioni, relazioni e metadati invariati
-
-  # CASO DI TEST 7.4 - Applicazione dei controlli di ruolo, titolarità e delega
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [ESERVICE_METADATA_AUTHORIZATION_1] - Rifiuto della modifica dei metadati per ruolo non autorizzato.
@@ -331,7 +281,6 @@ Feature: Modifica dei metadati degli e-service
       | Comune di Pozzallo | VIEWER   |
       | Comune di Milano   | ADMIN    |
 
-  # CASO DI TEST 7.4 - Applicazione dei controlli di ruolo, titolarità e delega
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
   Scenario Outline: [ESERVICE_METADATA_AUTHORIZATION_2] - Rispetto della titolarità e delle deleghe sulle risorse delegabili
@@ -386,38 +335,49 @@ Feature: Modifica dei metadati degli e-service
     When un admin del Comune di Milano richiede di assegnare all'e-service "ES-1" il nome di "ES-2"
     Then la rinomina della risorsa "ES-1" viene accettata e ha lo stesso nome di "ES-2"
 
-
-
-
-
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [ESERVICE_METADATA_VALIDATION_1] - Rispetto dei limiti di lunghezza dei metadati
+  Scenario Outline: [ESERVICE_METADATA_VALIDATION_1] - Rifiuto di modifica dei metadati per le richieste che superano i limiti di lunghezza consentiti.
   Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
-  quando l’attore propone un testo alla lunghezza di confine,
-  allora il sistema accetta i valori ammessi e rifiuta gli altri senza modifiche parziali.
+  quando l’attore propone un testo oltre la dimensione minima o massima,
+  allora il sistema rifiuta le modifiche parziali.
 
     Given i seguenti e-service in bozza:
       | alias | erogatore        | nome             |
       | ES-1  | Comune di Milano | E-service Nome 1 |
-    When un admin del Comune di Milano richiede un valore di <lunghezza> caratteri per il campo <campo> della risorsa "ES-1"
-    Then la modifica della risorsa "ES-1" ha esito <esito>
-    And in caso di rifiuto la risorsa "ES-1" conserva tutti i dati iniziali
+    When un admin del Comune di Milano tenta la modifica del campo "<campo>" dell'e-service "ES-1" con un valore di <lunghezza> caratteri
+    Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per INVALID_DATA
 
     Examples:
-      | campo       | lunghezza | esito     |
-      | nome        | 4         | rifiutata |
-      | nome        | 5         | accettata |
-      | nome        | 60        | accettata |
-      | nome        | 61        | rifiutata |
-      | descrizione | 9         | rifiutata |
-      | descrizione | 10        | accettata |
-      | descrizione | 400       | accettata |
-      | descrizione | 401       | rifiutata |
+      | campo       | lunghezza |
+      | nome        | 4         |
+      | nome        | 61        |
+      | descrizione | 9         |
+      | descrizione | 401       |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_METADATA_VALIDATION_2] - Rifiuto di valori non ammessi nei metadati di un e-service
+  Scenario Outline: [ESERVICE_METADATA_VALIDATION_2] - Le modifiche ai metadati vengono accettate per le richieste che rispettano i limiti di lunghezza consentiti.
+  Dato una risorsa modificabile con un campo soggetto a limiti di lunghezza,
+  quando l’attore propone un testo alla lunghezza di confine,
+  allora il sistema accetta i valori ammessi.
+
+    Given i seguenti e-service in bozza:
+      | alias | erogatore        | nome             |
+      | ES-1  | Comune di Milano | E-service Nome 1 |
+    When un admin del Comune di Milano richiede la modifica del campo "<campo>" dell'e-service "ES-1" con un valore di <lunghezza> caratteri
+    Then l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
+
+    Examples:
+      | campo       | lunghezza |
+      | nome        | 5         |
+      | nome        | 60        |
+      | descrizione | 10        |
+      | descrizione | 400       |
+
+  @work-item:QA-19036
+  @channel:Given=BFF,When=BFF,Then=BFF
+  Scenario: [ESERVICE_METADATA_VALIDATION_3] - Rifiuto di valori non ammessi nei metadati di un e-service
   Dato una risorsa modificabile da un attore autorizzato,
   quando l’attore richiede una modifica con un valore vietato,
   allora il sistema rifiuta la richiesta e conserva i dati originari.
@@ -425,6 +385,6 @@ Feature: Modifica dei metadati degli e-service
     Given i seguenti e-service in bozza:
       | alias | erogatore        | nome             |
       | ES-1  | Comune di Milano | E-service Nome 1 |
-    When un admin del Comune di Milano richiede la modifica del campo nome della risorsa "ES-1" con valore vuoto
-    Then la modifica della risorsa "ES-1" viene rifiutata
-    And la risorsa "ES-1" conserva tutti i dati iniziali
+    When un admin del Comune di Milano richiede la modifica dell'e-service "ES-1" con un payload vuoto
+    Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per INVALID_DATA
+    And l'e-service "ES-1" presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori
