@@ -151,7 +151,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | nome       | fixture                                          |
       | Allegato A | assets/origin-interface.yaml                     |
       | Allegato B | assets/eservice-template/openapi3-riferimenti.json |
-    When l'erogatore rinomina il documento "Allegato B" della versione dell'e-service in "Allegato A"
+    When l'erogatore tenta di rinominare il documento "Allegato B" della versione 1 dell'e-service "ES-1" in "Allegato A"
     Then il messaggio di errore corrisponde al caso "CATALOG_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/riskAnalysis
@@ -766,7 +766,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And i seguenti documenti allegati alla versione dell'e-service:
       | nome       | fixture                      |
       | Allegato A | assets/origin-interface.yaml |
-    When l'erogatore rinomina il documento "Allegato A" della versione dell'e-service in "Documento https://example.org"
+    When l'erogatore tenta di rinominare il documento "Allegato A" della versione 1 dell'e-service "ES-1" in "Documento https://example.org"
     Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS_DOCUMENT_ID_UPDATE" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors

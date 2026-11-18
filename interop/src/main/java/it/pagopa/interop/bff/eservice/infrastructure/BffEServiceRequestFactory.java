@@ -203,4 +203,8 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
     public boolean supports(@NonNull Channel delimiter) {
         return delimiter == Channel.BFF;
     }
+
+    public UpdateEServiceDescriptorDocumentSeed documentRenameRequest(String newName) {
+        return new UpdateEServiceDescriptorDocumentSeed().prettyName(newName);
+    }
 }

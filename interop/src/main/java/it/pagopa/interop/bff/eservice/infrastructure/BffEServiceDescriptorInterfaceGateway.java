@@ -30,6 +30,7 @@ public class BffEServiceDescriptorInterfaceGateway {
     private final BffEServiceRestClient restClient;
     private final EntityStore entityStore;
     private final BffEServiceDescriptorMapper mapper;
+    private final BffEServiceRequestFactory requestFactory;
 
     public EServiceDescriptor configureSOAP(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, List<SoapAddressConfiguration> addresses) {
         restClient.addEServiceTemplateInstanceInterfaceSoap(
@@ -185,5 +186,10 @@ public class BffEServiceDescriptorInterfaceGateway {
         File document = FileUtils.loadClasspathResourceAsTempFile(path);
         restClient.addDocument(serviceRef.id(), descriptorRef.id(), DocumentKind.DOCUMENT.name(), name, document)
                 .withoutPolling();
+    }
+
+    public void attemptDocumentRename(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, UUID documentId, String newName) {
+        restClient.updateDocument(serviceRef.id(), descriptorRef.id(), documentId,
+                requestFactory.documentRenameRequest(newName)).withoutPolling();
     }
 }

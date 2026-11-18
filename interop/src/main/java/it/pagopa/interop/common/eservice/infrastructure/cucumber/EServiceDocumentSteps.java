@@ -37,4 +37,10 @@ public class EServiceDocumentSteps {
         EService service = selection.getEService();
         useCase.attemptDocumentUpload(service, service.getDescriptorOrThrow(selection.getVersion()), path, name);
     }
+
+    @When("l'erogatore tenta di rinominare il documento {string} del{eServiceDescriptorByVersionAndAlias} in {string}")
+    public void attemptDocumentRename(String documentName, SelectedEServiceDescriptor selection, String newName) {
+        EService service = selection.getEService();
+        useCase.attemptDocumentRename(service, service.getDescriptorOrThrow(selection.getVersion()), documentName, newName);
+    }
 }

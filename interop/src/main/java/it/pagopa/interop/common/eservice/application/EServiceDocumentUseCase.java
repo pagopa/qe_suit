@@ -27,4 +27,15 @@ public class EServiceDocumentUseCase {
         }
         gateway.attemptDocumentUpload(service.getRef(), descriptor.getRef(), path, name);
     }
+
+    public void attemptDocumentRename(EService service, EServiceDescriptor descriptor, String documentName, String newName) {
+        var matches = descriptor.getDocs().stream()
+                .filter(document -> documentName.equals(document.getPrettyName()))
+                .toList();
+        if (matches.size() != 1) {
+            throw new IllegalStateException("Expected exactly one document named '" + documentName
+                    + "' in descriptor " + descriptor.getId() + ", found " + matches.size());
+        }
+        gateway.attemptDocumentRename(service.getRef(), descriptor.getRef(), matches.get(0), newName);
+    }
 }

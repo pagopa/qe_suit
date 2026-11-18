@@ -182,4 +182,13 @@ public class BffEServiceRestClient extends RestClient {
                 FileResource.class
         );
     }
+
+    public TestChain<EServiceDoc> updateDocument(
+            @Nonnull UUID eserviceId, @Nonnull UUID descriptorId, @Nonnull UUID documentId,
+            @Nonnull UpdateEServiceDescriptorDocumentSeed payload
+    ) {
+        return execute(() -> eservicesApi.updateEServiceDocumentById().eServiceIdPath(eserviceId)
+                .descriptorIdPath(descriptorId).documentIdPath(documentId).body(payload)
+                .execute(Function.identity()), EServiceDoc.class);
+    }
 }
