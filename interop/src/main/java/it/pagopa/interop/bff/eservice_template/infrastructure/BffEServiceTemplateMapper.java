@@ -83,6 +83,8 @@ public interface BffEServiceTemplateMapper {
     @Mapping(target = "mode", source = "source.eserviceTemplate.mode")
     @Mapping(target = "state", source = "source.eserviceTemplate", qualifiedByName = "resolveTemplateState")
     @Mapping(target = "personalData", source = "source.eserviceTemplate.personalData")
+    @Mapping(target = "isSignalHubEnabled", source = "source.eserviceTemplate.isSignalHubEnabled")
+    @Mapping(target = "asyncExchange", source = "source.eserviceTemplate.asyncExchange")
     @Mapping(target = "createdAt", source = "existing.createdAt")
     @Mapping(target = "updatedAt", source = "existing.updatedAt")
     @Mapping(target = "versions", ignore = true)
@@ -111,6 +113,8 @@ public interface BffEServiceTemplateMapper {
                                 == it.pagopa.interop.generated.openapi.clients.bff.model
                                 .EServiceTemplateVersionState.PUBLISHED
                 );
+
+        // TODO Attualmente gli unici stati previsti sono DRAFT e PUBLISHED, ma vanno gestiti anche i rimanenti.
 
         return hasPublished
                 ? EServiceTemplateState.PUBLISHED
