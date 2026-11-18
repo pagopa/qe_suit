@@ -1,14 +1,16 @@
 package it.pagopa.interop.m2m.v3.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.infrastructure.contract.http.HttpContractPolicy;
 import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.infrastructure.fuzzing.FuzzEngine;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
 import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.Channel;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,10 +42,10 @@ public class M2Mv3ApiContractConfig {
     @Bean("m2mV3InteropHttpContractValidator")
     InteropHttpContractValidator interopHttpContractValidator(
             @Qualifier("m2mV3ApiContractValidator") HttpContractValidator m2mV3ApiContractValidator,
-            CurrentUserSession currentUserSession,
-            CurrentM2MSession currentM2MSession
+            @Qualifier("m2mV3AuthSession") AuthSession authSession,
+            ObjectProvider<CurrentChannel<Channel>> currentChannel
     ) {
-        return new InteropHttpContractValidator(m2mV3ApiContractValidator, currentUserSession, currentM2MSession);
+        return new InteropHttpContractValidator(m2mV3ApiContractValidator, authSession, Channel.M2M_V3, currentChannel);
     }
 
     @Bean(name = "m2mV3ApiContractPolicy")
