@@ -163,7 +163,41 @@ def test_renderer_determinism_and_markdown_escaping():
     md=render(data)
     assert md==render(data)
     assert 'KO - Dovuti a bug noti' in md and 'KO - Altri fallimenti' in md
-    assert 'expected A &#124; B' in md
+    assert 'AssertionError: expected A | B' in md
+    assert md.index('**RESULT**') < md.index('**PROCEDURE**') < md.index('**ERROR LOG**')
+    assert '| ID TEST | ERROR LOG |' not in md
+    assert '| Campo | Valore |' in md
+    assert '| --- | --- |' in md
+    assert '| Suite | NrtStandardSuiteTest |' in md
+    assert md.index('| Release |') < md.index('| Scope |') < md.index('| Issue Jira |')
+
+
+def test_renderer_full_width_logs_and_fences():
+    data = example_data()
+    data['ko'][0].update({
+        'error_log': 'AssertionError: expected A | B\n    at Example.java:1\n````\nlast line',
+        'result': 'Prima riga\nseconda riga',
+        'procedure': 'Riga uno\nRiga due',
+        'link_prod_bug': 'https://example.org/PROD-1',
+        'link_suite_bug': 'https://example.org/SUITE-1',
+    })
+    md = render(data)
+    assert '**RESULT**\n\nPrima riga seconda riga' in md
+    assert '**PROCEDURE**\n\nRiga uno Riga due' in md
+    assert '`````text\n' in md
+    assert 'AssertionError: expected A | B\n    at Example.java:1\n````\nlast line' in md
+    assert md.count('`````') == 2
+    assert '**LINK PROD BUG:** https://example.org/PROD-1' in md
+    assert '**LINK SUITE BUG:** https://example.org/SUITE-1' in md
+
+
+def test_renderer_both_ko_sections_and_empty_message():
+    data = example_data()
+    data['ko_know'] = data.pop('ko')
+    data['ko'] = []
+    md = render(data)
+    assert '### 1. Test A' in md
+    assert '## KO - Altri fallimenti\n\nNessun fallimento.' in md
 
 
 def test_cli_finalize_idempotent(tmp_path):
@@ -195,8 +229,7 @@ def test_metadata_and_zero_ko_validated(tmp_path):
     assert validate(data) == data
     assert 'Nessun fallimento' in render(data)
     data['rae']['release']='   '
-    with pytest.raises(ValidationError,match='release'):
-        validate(data)
+    assert validate(data) == data
 
 
 def test_cucumber_outline_same_name_different_example_rows(tmp_path):

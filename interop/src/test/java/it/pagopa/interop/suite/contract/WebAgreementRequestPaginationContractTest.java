@@ -93,7 +93,10 @@ public class WebAgreementRequestPaginationContractTest {
     private WebScenario<AgreementRequestPage> highOffsetScenario() {
         return new WebScenario<>(
                 "offset elevato mantiene la navbar visibile a fine pagina",
-                page -> page.navigateTo("10", "1000"),
+                page -> {
+                    page.navigateTo("10", "1000");
+                    page.assertLoaded();
+                },
                 page -> {
                     Assertions.assertThat(page.pagination().exists())
                             .as("Pagination navbar is present")

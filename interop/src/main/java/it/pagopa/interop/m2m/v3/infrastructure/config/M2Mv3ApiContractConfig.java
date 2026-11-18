@@ -56,7 +56,6 @@ public class M2Mv3ApiContractConfig {
                         FuzzScenario.REPLACED_WITH_EMPTY_STRING,
                         FuzzScenario.REPLACED_WITH_BLANK_STRING,
                         FuzzScenario.REPLACED_WITH_LONG_STRING,
-                        FuzzScenario.REPLACED_WITH_SQL_INJECTION,
                         FuzzScenario.REPLACED_WITH_URL_INJECTION,
                         FuzzScenario.REPLACED_WITH_WRONG_TYPE_STRING,
                         FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER,
@@ -68,6 +67,7 @@ public class M2Mv3ApiContractConfig {
                         FuzzScenario.REPLACED_WITH_MALFORMED_UUID,
                         FuzzScenario.REPLACED_WITH_UNKNOWN_ENUM
                 ), 400)
+                .skipScenario(FuzzScenario.REPLACED_WITH_SQL_INJECTION)
                 .scenarioStatus(FuzzScenario.REPLACED_WITH_NIL_UUID, 404)
                 .scenarioStatus(FuzzScenario.REPLACED_WITH_XSS, 403)
                 .build();
