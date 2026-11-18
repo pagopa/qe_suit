@@ -143,6 +143,18 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
     }
 
     @Override
+    public PurposeTemplate archivePurposeTemplate(PurposeTemplate purposeTemplate) {
+        restClient.archivePurposeTemplate(purposeTemplate.getId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        return PollingUtils.pollUntil(
+                () -> getPurposeTemplate(purposeTemplate.getId()),
+                pt -> pt.getState() == PurposeTemplateState.ARCHIVED
+        );
+    }
+
+    @Override
     public PurposeTemplate linkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef) {
         LinkableResourceRequest payload = new LinkableResourceRequest()
                 .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE)

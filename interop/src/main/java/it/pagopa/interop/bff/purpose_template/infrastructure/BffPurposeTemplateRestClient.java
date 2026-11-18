@@ -87,6 +87,16 @@ public class BffPurposeTemplateRestClient extends RestClient {
         );
     }
 
+    public TestChain<Void> archivePurposeTemplate(@Nonnull UUID purposeTemplateId) {
+        return execute(
+                () -> purposeTemplatesApi.archivePurposeTemplate()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/x-www-form-urlencoded; charset=UTF-8"))
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<LinkedResource> linkResource(@Nonnull UUID purposeTemplateId, @Nonnull LinkableResourceRequest payload) {
         return execute(
                 () -> purposeTemplatesApi.linkResourceToPurposeTemplate()

@@ -61,6 +61,10 @@ public class PurposeTemplateUseCase {
         return purposeTemplateGateway.suspendPurposeTemplate(purposeTemplate);
     }
 
+    public PurposeTemplate archivePurposeTemplate(PurposeTemplate purposeTemplate) {
+        return purposeTemplateGateway.archivePurposeTemplate(purposeTemplate);
+    }
+
     public PurposeTemplate linkEService(PurposeTemplate purposeTemplate, EService eService) {
         var templateRef = eService.getLatestDescriptor().getTemplateRef();
         if (templateRef != null) {

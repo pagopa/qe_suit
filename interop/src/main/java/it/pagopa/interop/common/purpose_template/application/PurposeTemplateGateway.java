@@ -27,6 +27,8 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
 
     PurposeTemplate suspendPurposeTemplate(PurposeTemplate purposeTemplate);
 
+    PurposeTemplate archivePurposeTemplate(PurposeTemplate purposeTemplate);
+
     PurposeTemplate linkEService(PurposeTemplate purposeTemplate, EServiceRef eServiceRef);
 
     PurposeTemplate linkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplateRef templateRef);
