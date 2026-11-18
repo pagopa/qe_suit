@@ -6,10 +6,12 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.InteropJourney;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.kernel.domain.DelegationRef;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -20,8 +22,6 @@ import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
-import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
-import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashSet;
@@ -37,8 +37,8 @@ public class PurposeSteps {
     private final EntityStore entityStore;
     private final InteropJourney interopJourney;
     private final PurposeUseCase purposeUseCase;
-    private final CurrentUserSession currentUserSession;
-    private final CurrentM2MSession currentM2MSession;
+    private final AuthSession authSession;
+    private final CurrentChannel<Channel> currentChannel;
     private Purpose purposeReference;
 
     @Given("i dati della finalità allo stato attuale appuntati come riferimento")
@@ -154,7 +154,7 @@ public class PurposeSteps {
     @Given("l'e-service con una finalità in stato {purposeState} associata da/dal {tenant}")
     public void createPurposeForEService(PurposeVersionState purposeState, Tenant consumer) {
         interopJourney
-                .withConsumer(consumer, UserRole.ADMIN)
+                .withConsumer(consumer)
                 .createPurpose(purposeState);
     }
 
@@ -174,7 +174,7 @@ public class PurposeSteps {
         EService eService = entityStore.getLastOrThrow(EService.class);
 
         interopJourney
-                .withConsumer(consumer, UserRole.ADMIN)
+                .withConsumer(consumer)
                 .createPurposeFromTemplateAndLinkToEService(purposeTemplate, eService, purposeState);
     }
 
@@ -186,10 +186,7 @@ public class PurposeSteps {
                         "E-service not found for purpose " + purpose.getId()
                 ));
         Tenant consumer = Tenant.fromOrganizationId(purpose.getConsumerId());
-        // TODO fare riferimento al ticket tecnico QA-19317
-        // Serve una soluzione per evitare di impostare sia currentUserSession che currentM2MSession
-        currentUserSession.set(User.getTenantAdmin(consumer), consumer);
-        currentM2MSession.set(consumer, M2MRole.M2M_ADMIN);
+        authSession.set(consumer);
         purposeUseCase.updatePurposeDailyCallsEstimateBeyondThreshold(purpose, eService);
     }
 
@@ -222,10 +219,7 @@ public class PurposeSteps {
     }
 
     private void processWaitingPurpose(Tenant tenant, PurposeVersionState expectedState, BiFunction<Purpose, PurposeVersion, Purpose> operation) {
-        // TODO fare riferimento al ticket tecnico QA-19317
-        // Serve una soluzione per evitare di impostare sia currentUserSession che currentM2MSession
-        currentUserSession.set(User.getTenantAdmin(tenant), tenant);
-        currentM2MSession.set(tenant, M2MRole.M2M_ADMIN);
+        authSession.set(tenant);
 
         Purpose purpose = entityStore.getLastOrThrow(Purpose.class);
         PurposeVersion waitingVersion = purpose.getLastWaitingForApprovalVersion();

@@ -3,7 +3,7 @@ package it.pagopa.interop.common.journey.infrastructure;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -27,7 +27,7 @@ class PurposeJourneyImplTest {
     private final EntityStore entityStore = mock(EntityStore.class);
     @SuppressWarnings("unchecked")
     private final CurrentChannel<Channel> currentChannel = mock(CurrentChannel.class);
-    private final CurrentUserSession currentUserSession = mock(CurrentUserSession.class);
+    private final AuthSession currentUserSession = mock(AuthSession.class);
     private final PurposeJourneyImpl journey =
             new PurposeJourneyImpl(purposeUseCase, entityStore, currentUserSession, currentChannel);
     private final Tenant producer = Tenant.COMUNE_DI_MILANO;
@@ -70,7 +70,7 @@ class PurposeJourneyImplTest {
                 .purposeVersionState(PurposeVersionState.WAITING_FOR_APPROVAL)
                 .build();
         Purpose waitingPurpose = draftPurpose.toBuilder().clearVersions().version(waitingVersion).build();
-        when(currentUserSession.getUser()).thenReturn(User.getTenantAdmin(consumer));
+        when(currentUserSession.getActor()).thenReturn(User.getTenantAdmin(consumer));
         when(currentUserSession.getTenant()).thenReturn(consumer);
         when(currentChannel.getCurrentChannel()).thenReturn(Channel.M2M_V3);
         when(purposeUseCase.createPurpose(eService)).thenReturn(draftPurpose);
@@ -94,7 +94,7 @@ class PurposeJourneyImplTest {
                 .build();
         Purpose waitingPurpose = draftPurpose.toBuilder().clearVersions().version(waitingVersion).build();
         IllegalStateException failure = new IllegalStateException("boom");
-        when(currentUserSession.getUser()).thenReturn(User.getTenantAdmin(consumer));
+        when(currentUserSession.getActor()).thenReturn(User.getTenantAdmin(consumer));
         when(currentUserSession.getTenant()).thenReturn(consumer);
         when(currentChannel.getCurrentChannel()).thenReturn(Channel.BFF);
         when(purposeUseCase.createPurpose(eService)).thenReturn(draftPurpose);

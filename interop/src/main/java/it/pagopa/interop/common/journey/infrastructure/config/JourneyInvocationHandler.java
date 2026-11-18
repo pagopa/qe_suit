@@ -3,6 +3,7 @@ package it.pagopa.interop.common.journey.infrastructure.config;
 import it.pagopa.interop.common.journey.application.JourneyModule;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -32,6 +33,8 @@ public class JourneyInvocationHandler implements InvocationHandler {
                 return result;
             } catch (NoSuchMethodException e) {
                 // Il delegato corrente non ha questo metodo, passa al prossimo
+            } catch (InvocationTargetException e) {
+                throw e.getTargetException();
             }
         }
         throw new UnsupportedOperationException("Nessun delegato implementa il metodo: " + method.getName());

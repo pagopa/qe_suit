@@ -4,11 +4,8 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.PurposeJourney;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
-import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
@@ -28,7 +25,7 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
 
     private final PurposeUseCase purposeUseCase;
     private final EntityStore entityStore;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
     private final CurrentChannel<Channel> currentChannel;
 
     @Override
@@ -146,15 +143,15 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
     }
 
     private Purpose withProducerSession(EService eService, Supplier<Purpose> action) {
-        User originalUser = currentUserSession.getUser();
-        Tenant originalTenant = currentUserSession.getTenant();
+        InteropActor originalUser = authSession.getActor();
+        Tenant originalTenant = authSession.getTenant();
         Channel originalChannel = currentChannel.getCurrentChannel();
         Throwable primaryFailure = null;
 
         try {
             Tenant producer = Tenant.fromOrganizationId(UUID.fromString(eService.getProducerId()));
             currentChannel.setCurrentChannel(Channel.BFF);
-            currentUserSession.set(User.getTenantAdmin(producer), producer);
+            authSession.set(User.getTenantAdmin(producer), producer);
             return action.get();
         } catch (RuntimeException | Error failure) {
             primaryFailure = failure;
@@ -162,7 +159,7 @@ public class PurposeJourneyImpl implements PurposeJourney<PurposeJourneyImpl> {
         } finally {
             Throwable restorationFailure = null;
             try {
-                currentUserSession.set(originalUser, originalTenant);
+                authSession.set(originalUser, originalTenant);
             } catch (RuntimeException | Error failure) {
                 restorationFailure = failure;
             }
