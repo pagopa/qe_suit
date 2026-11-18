@@ -27,6 +27,9 @@ public class Purpose implements Identifiable {
     String description;
     Boolean isFreeOfCharge;
     UUID delegationId;
+    RiskAnalysisReviewMode riskAnalysisReviewMode;
+    RiskAnalysisSigningState riskAnalysisSigningState;
+    Integer metadataVersion;
 
     @Singular("version")
     List<PurposeVersion> versions;

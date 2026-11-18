@@ -27,6 +27,16 @@ public interface PurposeGateway extends Plugin<Channel> {
 
     Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, PurposeCreateCommand createCommand);
 
+    Purpose clonePurpose(PurposeRef purposeRef, PurposeCloneCommand cloneCommand);
+
+    Purpose assignRiskAnalysisReviewer(PurposeRef purposeRef, AssignRiskAnalysisReviewerCommand assignCommand);
+
+    Purpose submitRiskAnalysis(PurposeRef purposeRef, SubmitRiskAnalysisCommand submitCommand);
+
+    Purpose signRiskAnalysis(PurposeRef purposeRef, SignRiskAnalysisCommand signCommand);
+
+    Purpose rejectRiskAnalysis(PurposeRef purposeRef, RejectRiskAnalysisCommand rejectCommand);
+
     Purpose activatePurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
 
     Purpose rejectPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, String rejectionReason);

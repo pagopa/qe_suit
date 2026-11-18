@@ -45,4 +45,8 @@ public class ApiResponse extends RawResponse {
         byte[] body = apiResponse.asByteArray();
         return Arrays.copyOf(body, body.length);
     }
+
+    public String getHeader(String name) {
+        return apiResponse.getHeader(name);
+    }
 }
