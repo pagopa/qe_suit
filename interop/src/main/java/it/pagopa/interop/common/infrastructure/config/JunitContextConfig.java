@@ -9,11 +9,8 @@ import it.pagopa.infrastructure.context.InMemoryBrowserContext;
 import it.pagopa.infrastructure.context.InMemoryCurrentChannel;
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.infrastructure.context.InMemoryTestContext;
-import it.pagopa.interop.common.infrastructure.context.InMemoryCurrentUserSession;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.infrastructure.context.InMemoryUserSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.interop.m2m.infrastructure.context.InMemoryCurrentM2MSession;
-import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -34,9 +31,9 @@ public class JunitContextConfig {
         return new InMemoryTestContext();
     }
 
-    @Bean
-    CurrentUserSession currentUserSession() {
-        return new InMemoryCurrentUserSession();
+    @Bean("userAuthSession")
+    InMemoryUserSession currentUserSession() {
+        return new InMemoryUserSession();
     }
 
     @Bean
@@ -53,10 +50,5 @@ public class JunitContextConfig {
     @Bean
     LastApiResponseStore lastApiResponseStore() {
         return new it.pagopa.infrastructure.context.InMemoryLastApiResponseStore();
-    }
-
-    @Bean
-    CurrentM2MSession currentM2MSession() {
-        return new InMemoryCurrentM2MSession();
     }
 }

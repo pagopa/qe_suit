@@ -4,7 +4,6 @@ import io.cucumber.java.en.Given;
 import it.pagopa.interop.common.infrastructure.cucumber.DataTableMapper;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.tenant.infrastructure.cucumber.dto.ProducerDelegationRecipient;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
@@ -43,9 +42,9 @@ class TenantDelegationSettingsStepsTest {
         steps.enableProducerDelegationRecipients(List.of(
                 transform(Map.of("ente", "Comune di Pozzallo")), transform(Map.of("ente", "Sogecap"))));
         var order = inOrder(journey);
-        order.verify(journey).withProducer(Tenant.COMUNE_DI_POZZALLO, User.getTenantAdmin(Tenant.COMUNE_DI_POZZALLO));
+        order.verify(journey).withProducer(Tenant.COMUNE_DI_POZZALLO);
         order.verify(journey).ensureProducerDelegationEnabled(Tenant.COMUNE_DI_POZZALLO);
-        order.verify(journey).withProducer(Tenant.SOGECAP, User.getTenantAdmin(Tenant.SOGECAP));
+        order.verify(journey).withProducer(Tenant.SOGECAP);
         order.verify(journey).ensureProducerDelegationEnabled(Tenant.SOGECAP);
         order.verifyNoMoreInteractions();
     }

@@ -20,7 +20,7 @@ public class TenantDelegationSettingsSteps {
         }
         tenants.forEach(tenant ->
                 journey
-                        .withProducer(tenant, User.getTenantAdmin(tenant))
+                        .withProducer(tenant)
                         .ensureProducerDelegationEnabled(tenant)
         );
     }

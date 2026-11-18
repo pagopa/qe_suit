@@ -4,7 +4,6 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.SelectedEServiceDescriptor;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.UserRole;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -26,7 +25,7 @@ class EServiceLifecycleJourneyStepsTest {
         );
 
         var order = inOrder(journey);
-        order.verify(journey).withProducer(Tenant.COMUNE_DI_POZZALLO, UserRole.ADMIN);
+        order.verify(journey).withProducer(Tenant.COMUNE_DI_POZZALLO);
         order.verify(journey).bringEServiceDescriptorToState(service, 2, WAITING_FOR_APPROVAL);
         order.verifyNoMoreInteractions();
     }

@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 public final class PollingUtils {
 
-    private static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(10);
+    private static final Duration DEFAULT_TIMEOUT = Duration.ofSeconds(20);
     private static final Duration DEFAULT_INTERVAL = Duration.ofSeconds(1);
 
     private PollingUtils() {

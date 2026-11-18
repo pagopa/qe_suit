@@ -5,7 +5,6 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.UserRole;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ class EServiceDescriptorSelectionTest {
                 selection, Tenant.COMUNE_DI_MILANO, EServiceDescriptorState.SUSPENDED
         );
         var order = inOrder(journey);
-        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
+        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO);
         order.verify(journey).bringEServiceDescriptorToState(eService, 1, EServiceDescriptorState.SUSPENDED);
         order.verifyNoMoreInteractions();
     }
