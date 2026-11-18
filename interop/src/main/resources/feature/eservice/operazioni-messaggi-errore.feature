@@ -225,7 +225,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
       | alias | template | suffisso   |
       | ES-1  | T-1      | Duplicato  |
       | ES-2  | T-1      | Modificare |
-    When l'erogatore tenta di modificare la sola parola identificativa dell'istanza "ES-2" in "Duplicato"
+    When l'erogatore tenta di modificare la sola parola identificativa dell'e-service creato da template "ES-2" in "Duplicato"
     Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE" in lingua "it" con i valori:
       | identifyingWord | Duplicato |
 
@@ -834,7 +834,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And le seguenti istanze di template e-service pubblicate:
       | alias | template | suffisso   |
       | ES-1  | T-1      | Modificare |
-    When l'erogatore tenta di modificare la sola parola identificativa dell'istanza "ES-1" in "https://a.it"
+    When l'erogatore tenta di modificare la sola parola identificativa dell'e-service creato da template "ES-1" in "https://a.it"
     Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_TEMPLATES_ESERVICES_E_SERVICE_ID_INSTANCE_LABEL_UPDATE" in lingua "it"
 
   # NON REPLICABILE A FRONTEND

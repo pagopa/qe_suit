@@ -107,4 +107,10 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
         restClient.updateEServiceTemplateInstance(instance.getId(),
                 requestFactory.instanceGeneralDataUpdateRequest(instance, instanceLabel)).withoutPolling();
     }
+
+    @Override
+    public void attemptInstanceLabelUpdate(EServiceRef instanceRef, String instanceLabel) {
+        restClient.updateEServiceInstanceLabel(instanceRef.id(),
+                requestFactory.instanceLabelUpdateRequest(instanceLabel)).withoutPolling();
+    }
 }

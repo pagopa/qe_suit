@@ -72,4 +72,11 @@ public class EServiceTemplateInstanceUseCase {
         }
         gateway.attemptGeneralDataUpdate(instance, instanceLabel);
     }
+
+    public void attemptInstanceLabelUpdate(EService instance, String instanceLabel) {
+        if (instanceLabel == null || instanceLabel.isBlank()) {
+            throw new IllegalArgumentException("Instance identifying word must not be blank");
+        }
+        gateway.attemptInstanceLabelUpdate(instance.getRef(), instanceLabel);
+    }
 }

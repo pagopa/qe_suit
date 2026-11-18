@@ -139,4 +139,8 @@ public class BffEServiceTemplateRequestFactory implements EServiceTemplateReques
                 .isConsumerDelegable(instance.getIsConsumerDelegable())
                 .isClientAccessDelegable(instance.getIsClientAccessDelegable());
     }
+
+    public EServiceInstanceLabelUpdateSeed instanceLabelUpdateRequest(String instanceLabel) {
+        return new EServiceInstanceLabelUpdateSeed().instanceLabel(instanceLabel);
+    }
 }

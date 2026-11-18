@@ -196,4 +196,9 @@ public class BffEServiceRestClient extends RestClient {
         return execute(() -> eservicesApi.updateEServiceTemplateInstanceById().eServiceIdPath(eserviceId)
                 .body(payload).execute(Function.identity()), CreatedResource.class);
     }
+
+    public TestChain<CreatedResource> updateEServiceInstanceLabel(@Nonnull UUID eserviceId, @Nonnull EServiceInstanceLabelUpdateSeed payload) {
+        return execute(() -> eservicesApi.updateEServiceInstanceLabelAfterPublication().eServiceIdPath(eserviceId)
+                .body(payload).execute(Function.identity()), CreatedResource.class);
+    }
 }

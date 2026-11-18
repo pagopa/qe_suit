@@ -116,4 +116,9 @@ public class EServiceTemplateInstanceSteps {
     public void attemptGeneralDataUpdate(EService instance, String instanceLabel) {
         instanceUseCase.attemptGeneralDataUpdate(instance, instanceLabel);
     }
+
+    @When("l'erogatore tenta di modificare la sola parola identificativa del{eServiceByAlias} in {string}")
+    public void attemptInstanceLabelUpdate(EService instance, String instanceLabel) {
+        instanceUseCase.attemptInstanceLabelUpdate(instance, instanceLabel);
+    }
 }

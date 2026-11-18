@@ -20,4 +20,6 @@ public interface EServiceTemplateInstanceGateway extends Plugin<Channel> {
     EService updateEServiceInstanceDescriptor(EServiceRef eServiceInstanceRef, EServiceDescriptorRef descriptorRef, EServiceDescriptorState currentDescriptorState, EServiceTemplateInstanceUpdateDescriptorCommand command);
 
     void attemptGeneralDataUpdate(EService instance, String instanceLabel);
+
+    void attemptInstanceLabelUpdate(EServiceRef instanceRef, String instanceLabel);
 }

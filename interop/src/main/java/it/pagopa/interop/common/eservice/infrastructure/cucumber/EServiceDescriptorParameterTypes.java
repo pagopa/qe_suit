@@ -35,7 +35,7 @@ public class EServiceDescriptorParameterTypes {
         return new SelectedEServiceDescriptor(selectedEService, versionNumber);
     }
 
-    @ParameterType("l'e-service \"([^\"]+)\"")
+    @ParameterType("l'(?:e-service(?: creato da template)?|istanza) \"([^\"]+)\"")
     public EService eServiceByAlias(String alias) {
         return entityStore.getByAliasOrThrow(alias, EService.class);
     }
