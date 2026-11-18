@@ -8,8 +8,13 @@ import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysisRef;
 import it.pagopa.interop.common.kernel.domain.PurposeRef;
 import it.pagopa.interop.common.kernel.domain.PurposeTemplateRef;
 import it.pagopa.interop.common.kernel.domain.PurposeVersionRef;
+import it.pagopa.interop.common.purpose.application.AssignRiskAnalysisReviewerCommand;
+import it.pagopa.interop.common.purpose.application.PurposeCloneCommand;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
 import it.pagopa.interop.common.purpose.application.PurposeGateway;
+import it.pagopa.interop.common.purpose.application.RejectRiskAnalysisCommand;
+import it.pagopa.interop.common.purpose.application.SignRiskAnalysisCommand;
+import it.pagopa.interop.common.purpose.application.SubmitRiskAnalysisCommand;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeCreationFailureReason;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
@@ -75,6 +80,31 @@ public class M2MPurposeGateway implements PurposeGateway {
 
     @Override
     public Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, PurposeCreateCommand createCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public Purpose clonePurpose(PurposeRef purposeRef, PurposeCloneCommand cloneCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public Purpose assignRiskAnalysisReviewer(PurposeRef purposeRef, AssignRiskAnalysisReviewerCommand assignCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public Purpose submitRiskAnalysis(PurposeRef purposeRef, SubmitRiskAnalysisCommand submitCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public Purpose signRiskAnalysis(PurposeRef purposeRef, SignRiskAnalysisCommand signCommand) {
+        throw unsupportedOperation();
+    }
+
+    @Override
+    public Purpose rejectRiskAnalysis(PurposeRef purposeRef, RejectRiskAnalysisCommand rejectCommand) {
         throw unsupportedOperation();
     }
 

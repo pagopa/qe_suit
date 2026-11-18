@@ -1,12 +1,22 @@
 package it.pagopa.interop.bff.purpose.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
+import it.pagopa.interop.bff.purpose.application.BffAssignRiskAnalysisReviewerCommand;
+import it.pagopa.interop.bff.purpose.application.BffPurposeCloneCommand;
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
+import it.pagopa.interop.bff.purpose.application.BffRejectRiskAnalysisCommand;
+import it.pagopa.interop.bff.purpose.application.BffSignRiskAnalysisCommand;
+import it.pagopa.interop.bff.purpose.application.BffSubmitRiskAnalysisCommand;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.purpose.application.AssignRiskAnalysisReviewerCommand;
+import it.pagopa.interop.common.purpose.application.PurposeCloneCommand;
 import it.pagopa.interop.common.purpose.application.PurposeCommandFactory;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
+import it.pagopa.interop.common.purpose.application.RejectRiskAnalysisCommand;
+import it.pagopa.interop.common.purpose.application.SignRiskAnalysisCommand;
+import it.pagopa.interop.common.purpose.application.SubmitRiskAnalysisCommand;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
@@ -167,6 +177,44 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
                 .set(field(PatchPurposeUpdateFromTemplateContent::getDailyCalls), 1)
                 .ignore(field(PatchPurposeUpdateFromTemplateContent::getRiskAnalysisForm))
                 .create();
+    }
+
+    @Override
+    public PurposeCloneCommand cloneCommand(EServiceRef eServiceRef) {
+        return new BffPurposeCloneCommand(new PurposeCloneSeed().eserviceId(eServiceRef.id()));
+    }
+
+    @Override
+    public AssignRiskAnalysisReviewerCommand assignRiskAnalysisReviewerCommand(
+            it.pagopa.interop.common.purpose.domain.RiskAnalysisReviewMode reviewMode,
+            List<UUID> reviewerIds
+    ) {
+        RiskAnalysisAssignmentSeed payload = new RiskAnalysisAssignmentSeed()
+                .reviewMode(RiskAnalysisReviewMode.fromValue(reviewMode.name()))
+                .reviewerIds(reviewerIds);
+        return new BffAssignRiskAnalysisReviewerCommand(payload);
+    }
+
+    @Override
+    public SubmitRiskAnalysisCommand submitRiskAnalysisCommand() {
+        Tenant consumer = authSession.getTenant();
+        RiskAnalysisSubmissionSeed payload = new RiskAnalysisSubmissionSeed()
+                .riskAnalysisForm(riskAnalysisFormSeed(consumer));
+        return new BffSubmitRiskAnalysisCommand(payload);
+    }
+
+    @Override
+    public SignRiskAnalysisCommand signRiskAnalysisCommand(int metadataVersionToSign) {
+        RiskAnalysisSignSeed payload = new RiskAnalysisSignSeed()
+                .metadataVersionToSign(metadataVersionToSign);
+        return new BffSignRiskAnalysisCommand(payload);
+    }
+
+    @Override
+    public RejectRiskAnalysisCommand rejectRiskAnalysisCommand(String rejectionReason) {
+        RiskAnalysisRejectionSeed payload = new RiskAnalysisRejectionSeed()
+                .rejectionReason(rejectionReason);
+        return new BffRejectRiskAnalysisCommand(payload);
     }
 
     private RiskAnalysisFormSeed riskAnalysisFormSeed(Tenant consumer) {
