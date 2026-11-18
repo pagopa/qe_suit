@@ -5,6 +5,7 @@ from pathlib import Path
 import logging
 import re
 import yaml
+from yaml.emitter import ScalarAnalysis
 from .history import load_history
 from .matching import find_match
 from .parsers import collect_reports
@@ -45,6 +46,34 @@ def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment:
     return data
 
 
+class RaeDumper(yaml.SafeDumper):
+    """Prefer readable literal blocks while preserving Java stack-trace tabs."""
+
+    def analyze_scalar(self, scalar):
+        analysis = super().analyze_scalar(scalar)
+        # PyYAML disables the literal style when a scalar contains tabs.
+        # Tabs *inside* the block content are valid YAML. Permit them only
+        # for multiline strings without other control characters.
+        if ('\n' in scalar and '\t' in scalar
+                and all(ord(ch) >= 32 or ch in '\t\n' for ch in scalar)):
+            return ScalarAnalysis(
+                analysis.scalar, analysis.empty, analysis.multiline,
+                analysis.allow_flow_plain, analysis.allow_block_plain,
+                analysis.allow_single_quoted, analysis.allow_double_quoted,
+                True,
+            )
+        return analysis
+
+
+def _represent_string(dumper, value):
+    return dumper.represent_scalar(
+        'tag:yaml.org,2002:str', value, style='|' if '\n' in value else None,
+    )
+
+
+RaeDumper.add_representer(str, _represent_string)
+
+
 def write_yaml(data: dict, output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False, width=110), encoding='utf-8')
+    output.write_text(yaml.dump(data, Dumper=RaeDumper, allow_unicode=True, sort_keys=False, width=110), encoding='utf-8')
