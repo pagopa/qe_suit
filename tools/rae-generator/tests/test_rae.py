@@ -473,7 +473,7 @@ def test_fingerprint_without_bug_remains_to_analyze(tmp_path):
     assert data['ko'][0]['procedure'] == 'historical check'
 
 
-def test_similarity_prepopulates_but_never_classifies_as_known(tmp_path):
+def test_similarity_with_bug_is_known(tmp_path):
     actual = 'AssertionError: the response status was 400 instead of 200 at endpoint /api/clients'
     previous_error = 'AssertionError: the response status was 401 instead of 200 at endpoint /api/clients'
     assert fingerprint(actual) != fingerprint(previous_error)
@@ -489,10 +489,10 @@ def test_similarity_prepopulates_but_never_classifies_as_known(tmp_path):
     data = create_rae(tmp_path, hist, suite='NrtStandardSuiteTest', environment='qa',
                       executor='qa', source_branch='develop', run_url='https://example.org',
                       data_ora='2026-11-16T18:00:00Z', durata='00:01:10')
-    assert data['ko_know'] == []
-    assert len(data['ko']) == 1
+    assert len(data['ko_know']) == 1
+    assert data['ko'] == []
     for field in ('procedure', 'result', 'link_prod_bug', 'link_suite_bug'):
-        assert data['ko'][0][field] == candidate[field]
+        assert data['ko_know'][0][field] == candidate[field]
 
 
 def test_fingerprint_suite_bug_is_known(tmp_path):
@@ -513,7 +513,7 @@ def test_renderer_dynamic_title_guide_and_collapsible_groups():
     data['rae']['data_ora'] = '2026-11-16T22:13:00Z'
     data['rae']['environment'] = 'qa'
     md = render(data)
-    assert md.startswith('# 20261116 Report Analisi Esiti (RAE) NrtStandardSuiteTest qa\n')
+    assert md.startswith('# 20261116 Report Analisi Esiti (RAE) NrtStandardSuiteTest QA\n')
     assert md.index('| Source branch |') < md.index('### Guida alla compilazione dei campi')
     assert md.index('### Guida alla compilazione dei campi') < md.index('## 0 - KO DOVUTI A BUG DI PRODOTTO NOTI')
     for label in ['**Result**', '**Procedure**', '**BUG SUITE**', '**BUG PRODOTTO**']:
@@ -524,3 +524,30 @@ def test_renderer_dynamic_title_guide_and_collapsible_groups():
     assert '<summary>Mostra/nascondi 1 KO</summary>' in md
     assert md.index('### 1. Test A') < md.index('</details>', md.index('## 1 - KO DA ANALIZZARE'))
     assert 'Nessun fallimento.' in md
+
+
+def test_similarity_without_bug_stays_to_analyze(tmp_path):
+    actual = 'AssertionError: the response status was 400 instead of 200 at endpoint /api/clients'
+    previous_error = 'AssertionError: the response status was 401 instead of 200 at endpoint /api/clients'
+    candidate = {'id_test': 'Test A', 'error_log': previous_error, 'procedure': 'investigate API',
+                 'result': 'known mismatch', 'link_prod_bug': '', 'link_suite_bug': ''}
+    cucumber_json(tmp_path, error=actual)
+    hist = tmp_path / 'history'; hist.mkdir()
+    prior = example_data(); prior['ko'] = [candidate]
+    (hist / 'rae_NrtStandardSuiteTest_20261116000000.yaml').write_text(yaml.safe_dump(prior))
+    data = create_rae(tmp_path, hist, suite='NrtStandardSuiteTest', environment='qa',
+                      executor='qa', source_branch='develop', run_url='https://example.org',
+                      data_ora='2026-11-16T18:00:00Z', durata='00:01:10')
+    assert data['ko_know'] == []
+    assert len(data['ko']) == 1
+    assert data['ko'][0]['procedure'] == 'investigate API'
+
+
+def test_renderer_unlinked_known_entry_moves_to_analysis():
+    data = example_data()
+    entry = data['ko'].pop()
+    data['ko_know'] = [entry]
+    md = render(data)
+    assert '## 0 - KO DOVUTI A BUG DI PRODOTTO NOTI' in md
+    assert '## 0 - KO DOVUTI A BUG DI SUITE NOTI' in md
+    assert '## 1 - KO DA ANALIZZARE' in md
