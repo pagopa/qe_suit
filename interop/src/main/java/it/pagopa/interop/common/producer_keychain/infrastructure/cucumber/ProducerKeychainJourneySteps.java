@@ -14,12 +14,14 @@ import it.pagopa.interop.common.producer_keychain.application.ProducerKeychainUs
 import it.pagopa.interop.common.producer_keychain.domain.ProducerKeychain;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@RequiredArgsConstructor
 public class ProducerKeychainJourneySteps {
     private final InteropJourney interopJourney;
     private final ProducerKeychainFactory factory;
@@ -27,24 +29,10 @@ public class ProducerKeychainJourneySteps {
     private final EntityStore entityStore;
     private final AuthSession authSession;
 
-    public ProducerKeychainJourneySteps(
-            InteropJourney interopJourney,
-            ProducerKeychainFactory factory,
-            ProducerKeychainUseCase useCase,
-            EntityStore entityStore,
-            @Qualifier("m2mV3AuthSession") AuthSession authSession
-    ) {
-        this.interopJourney = interopJourney;
-        this.factory = factory;
-        this.useCase = useCase;
-        this.entityStore = entityStore;
-        this.authSession = authSession;
-    }
-
     @Given("un portachiavi {string} creato da/dal {tenant} in cui è presente un (utente ){userRole} e una coppia di chiavi crittografiche")
     public void setupKeychain(String alias, Tenant producer, UserRole userRole) {
         interopJourney.withProducer(producer, UserRole.ADMIN);
-        authSession.set(M2MRole.M2M_ADMIN, producer);
+        authSession.set(producer);
         interopJourney.createProducerKeychain(
                 factory.creationCommand(List.of(User.getTenantUser(producer, userRole).getUserId())));
         entityStore.upsert(alias, entityStore.getLastOrThrow(ProducerKeychain.class));
@@ -57,7 +45,7 @@ public class ProducerKeychainJourneySteps {
         EService eservice = entityStore.getLastOrThrow(EService.class);
 
         interopJourney.withProducer(producer, userRole);
-        authSession.set(M2MRole.M2M_ADMIN, producer);
+        authSession.set(producer);
         useCase.addEService(keychain.getRef(), eservice.getRef());
     }
 
