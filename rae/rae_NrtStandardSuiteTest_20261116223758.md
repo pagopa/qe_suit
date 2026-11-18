@@ -1,16 +1,18 @@
 # Report di Analisi Esecuzione (RAE)
 
-**Release:**   
-**Scope:** NIGHTLY  
-**Issue Jira:** https://pagopa.atlassian.net/browse/QA-19638  
-**Data e ora:** 2026-11-16T22:13:00Z  
-**Durata:** 00:24:21  
-**Numero KO:** 188  
-**Run GitHub Actions:** https://github.com/pagopa/qe_suit/actions/runs/43967660883/attempts/1  
-**Suite:** NrtStandardSuiteTest  
-**Ambiente:** qa  
-**Executor:** giuseppe-veldorale  
-**Source branch:** develop  
+| Campo | Valore |
+| --- | --- |
+| Release |  |
+| Scope | NIGHTLY |
+| Issue Jira | https://pagopa.atlassian.net/browse/QA-19638 |
+| Data e ora | 2026-11-16T22:13:00Z |
+| Durata | 00:24:21 |
+| Numero KO | 188 |
+| Run GitHub Actions | https://github.com/pagopa/qe_suit/actions/runs/43967660883/attempts/1 |
+| Suite | NrtStandardSuiteTest |
+| Ambiente | qa |
+| Executor | giuseppe-veldorale |
+| Source branch | develop |
 
 ## KO - Dovuti a bug noti
 
