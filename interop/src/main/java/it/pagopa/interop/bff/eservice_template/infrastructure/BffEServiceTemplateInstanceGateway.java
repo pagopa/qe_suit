@@ -30,6 +30,7 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
     private final BffEServiceGateway eServiceGateway;
     private final BffEServiceDescriptorGateway descriptorGateway;
     private final EntityStore entityStore;
+    private final BffEServiceTemplateRequestFactory requestFactory;
 
     @Override
     public EService createEServiceInstance(EServiceTemplate template, EServiceTemplateInstanceCreationCommand command) {
@@ -99,5 +100,11 @@ public class BffEServiceTemplateInstanceGateway implements EServiceTemplateInsta
     @Override
     public boolean supports(Channel channel) {
         return channel == Channel.BFF;
+    }
+
+    @Override
+    public void attemptGeneralDataUpdate(EService instance, String instanceLabel) {
+        restClient.updateEServiceTemplateInstance(instance.getId(),
+                requestFactory.instanceGeneralDataUpdateRequest(instance, instanceLabel)).withoutPolling();
     }
 }

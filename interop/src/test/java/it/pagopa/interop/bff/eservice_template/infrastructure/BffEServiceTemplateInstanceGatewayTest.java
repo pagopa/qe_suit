@@ -63,7 +63,8 @@ class BffEServiceTemplateInstanceGatewayTest {
         var restClient = new BffEServiceRestClient(new TestChainFactory(responses, entities), client);
         var serviceGateway = mock(BffEServiceGateway.class);
         var descriptorGateway = mock(BffEServiceDescriptorGateway.class);
-        var gateway = new BffEServiceTemplateInstanceGateway(restClient, serviceGateway, descriptorGateway, entities);
+        var gateway = new BffEServiceTemplateInstanceGateway(restClient, serviceGateway, descriptorGateway, entities,
+                new BffEServiceTemplateRequestFactory());
         var instances = new EServiceTemplateInstanceUseCase(
                 gateway, new BffEServiceTemplateRequestFactory(), null, null);
         var steps = new EServiceTemplateInstanceSteps(instances, null, null, entities);
@@ -87,7 +88,8 @@ class BffEServiceTemplateInstanceGatewayTest {
     @Test
     void negativeCreationRejectsCommandsFromOtherChannelsBeforeTransport() {
         var restClient = mock(BffEServiceRestClient.class);
-        var gateway = new BffEServiceTemplateInstanceGateway(restClient, null, null, mock(EntityStore.class));
+        var gateway = new BffEServiceTemplateInstanceGateway(restClient, null, null, mock(EntityStore.class),
+                new BffEServiceTemplateRequestFactory());
 
         assertThatThrownBy(() -> gateway.shouldFailToCreateEServiceInstance(
                 EServiceTemplate.builder().id(UUID.randomUUID()).build(),
@@ -121,7 +123,8 @@ class BffEServiceTemplateInstanceGatewayTest {
         var restClient = new BffEServiceRestClient(new TestChainFactory(
                 mock(LastApiResponseStore.class), mock(EntityStore.class)), client);
         var entities = mock(EntityStore.class);
-        var gateway = new BffEServiceTemplateInstanceGateway(restClient, serviceGateway, descriptorGateway, entities);
+        var gateway = new BffEServiceTemplateInstanceGateway(restClient, serviceGateway, descriptorGateway, entities,
+                new BffEServiceTemplateRequestFactory());
         var template = EServiceTemplate.builder().id(UUID.randomUUID()).build();
         var command = new BffEServiceTemplateInstanceCreationCommand();
         command.instanceLabel("eservice-1");

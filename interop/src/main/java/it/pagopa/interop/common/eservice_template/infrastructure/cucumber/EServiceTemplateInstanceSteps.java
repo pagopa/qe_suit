@@ -111,4 +111,9 @@ public class EServiceTemplateInstanceSteps {
                 eService, descriptor, configuration
         );
     }
+
+    @When("l'erogatore tenta di aggiornare i dati dell'{currentEService} con la parola identificativa {string}")
+    public void attemptGeneralDataUpdate(EService instance, String instanceLabel) {
+        instanceUseCase.attemptGeneralDataUpdate(instance, instanceLabel);
+    }
 }

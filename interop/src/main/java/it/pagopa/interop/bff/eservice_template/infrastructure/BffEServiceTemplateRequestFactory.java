@@ -1,6 +1,7 @@
 package it.pagopa.interop.bff.eservice_template.infrastructure;
 
 import it.pagopa.interop.bff.eservice_template.application.*;
+import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -129,5 +130,13 @@ public class BffEServiceTemplateRequestFactory implements EServiceTemplateReques
     @Override
     public boolean supports(Channel channel) {
         return channel == Channel.BFF;
+    }
+
+    public UpdateEServiceTemplateInstanceSeed instanceGeneralDataUpdateRequest(EService instance, String instanceLabel) {
+        return new UpdateEServiceTemplateInstanceSeed()
+                .instanceLabel(instanceLabel)
+                .isSignalHubEnabled(instance.getIsSignalHubEnabled())
+                .isConsumerDelegable(instance.getIsConsumerDelegable())
+                .isClientAccessDelegable(instance.getIsClientAccessDelegable());
     }
 }

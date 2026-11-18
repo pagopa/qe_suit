@@ -65,4 +65,11 @@ public class EServiceTemplateInstanceUseCase {
     ) {
         return gateway.updateEServiceInstanceDescriptor(eServiceRef, descriptorRef, currentDescriptorState, command);
     }
+
+    public void attemptGeneralDataUpdate(EService instance, String instanceLabel) {
+        if (instanceLabel == null || instanceLabel.isBlank()) {
+            throw new IllegalArgumentException("Instance identifying word must not be blank");
+        }
+        gateway.attemptGeneralDataUpdate(instance, instanceLabel);
+    }
 }
