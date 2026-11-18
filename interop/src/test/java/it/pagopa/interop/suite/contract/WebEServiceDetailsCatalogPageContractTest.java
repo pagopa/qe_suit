@@ -4,6 +4,7 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.common.attribute.domain.Attribute;
 import it.pagopa.interop.common.attribute.domain.Attributes;
 import it.pagopa.interop.common.delegation.domain.Delegation;
@@ -29,6 +30,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.ArrayList;
@@ -37,10 +39,10 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-@org.springframework.test.context.ActiveProfiles(resolver = it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles.class)
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(
         classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
-        properties = {"spring.profiles.include=junit", "channel.web.browser=chrome"}
+        properties = {"channel.web.browser=chrome"}
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor

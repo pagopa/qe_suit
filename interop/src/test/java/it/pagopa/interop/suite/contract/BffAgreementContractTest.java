@@ -1,6 +1,7 @@
 package it.pagopa.interop.suite.contract;
 
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.bff.agreement.infrastructure.BffAgreementRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.common.agreement.domain.Agreement;
@@ -17,12 +18,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.Map;
 import java.util.stream.Stream;
 
-@org.springframework.test.context.ActiveProfiles(resolver = it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles.class)
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class BffAgreementContractTest {

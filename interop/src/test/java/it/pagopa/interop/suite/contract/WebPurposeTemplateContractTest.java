@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.core.capability.core.Gettable;
 import it.frontend.e2e.framework.web.binder.WebBinder;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -17,11 +18,12 @@ import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
-@org.springframework.test.context.ActiveProfiles(resolver = it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles.class)
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(
         classes = {
                 TestBootApp.class,
@@ -29,7 +31,6 @@ import java.util.stream.Stream;
                 WebJUnitSuitConfig.class
         },
         properties = {
-                "spring.profiles.include=junit",
                 "channel.web.browser=chrome",
         }
 )

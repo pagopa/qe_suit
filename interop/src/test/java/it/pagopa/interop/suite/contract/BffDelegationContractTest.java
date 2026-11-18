@@ -2,6 +2,7 @@ package it.pagopa.interop.suite.contract;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.bff.delegation.infrastructure.BffDelegationRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand;
@@ -25,6 +26,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.time.Duration;
@@ -32,7 +34,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-@org.springframework.test.context.ActiveProfiles(resolver = it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles.class)
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class BffDelegationContractTest {

@@ -4,6 +4,7 @@ package it.pagopa.interop.suite.contract;
 import it.frontend.e2e.framework.core.capability.core.Gettable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.common.delegation.application.command.ProducerDelegationCreationCommand;
 import it.pagopa.interop.common.delegation.domain.DelegationState;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestFactory;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
@@ -35,10 +37,9 @@ import java.util.stream.Stream;
  * In attesa del rilascio della feature, i test non sono funzionanti e sono esclusi
  * dagli NRT tramite {@code @Tag("ignore")}.
  */
-@org.springframework.test.context.ActiveProfiles(resolver = it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles.class)
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(
-        classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
-        properties = "spring.profiles.include=junit"
+        classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class}
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor

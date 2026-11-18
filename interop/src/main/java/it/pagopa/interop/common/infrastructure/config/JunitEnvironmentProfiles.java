@@ -8,9 +8,13 @@ import java.util.LinkedHashSet;
 public class JunitEnvironmentProfiles implements ActiveProfilesResolver {
     @Override
     public String[] resolve(Class<?> testClass) {
-        String environment = System.getProperty("spring.profiles.active");
+        return resolveProfiles(System.getProperty("spring.profiles.active"), System.getenv("SPRING_PROFILES_ACTIVE"));
+    }
+
+    static String[] resolveProfiles(String systemProfile, String environmentProfile) {
+        String environment = systemProfile;
         if (environment == null || environment.isBlank()) {
-            environment = System.getenv("SPRING_PROFILES_ACTIVE");
+            environment = environmentProfile;
         }
         if (environment == null || environment.isBlank()) {
             environment = "qa";
