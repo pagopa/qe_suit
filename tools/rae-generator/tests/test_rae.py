@@ -201,7 +201,7 @@ def test_renderer_both_ko_sections_and_empty_message():
     data['ko'] = []
     md = render(data)
     assert '### 1. Test A' in md
-    assert '## 0 - KO DA ANALIZZARE\n\nNessun fallimento.' in md
+    assert '## 0 - KO DA ANALIZZARE\n\n<details>\n<summary>Mostra/nascondi 0 KO</summary>\n\nNessun fallimento.' in md
 
 
 def test_cli_finalize_idempotent(tmp_path):
@@ -506,3 +506,21 @@ def test_fingerprint_suite_bug_is_known(tmp_path):
                       data_ora='2026-11-16T18:00:00Z', durata='00:01:10')
     assert len(data['ko_know']) == 1
     assert '## 1 - KO DOVUTI A BUG DI SUITE NOTI' in render(data)
+
+
+def test_renderer_dynamic_title_guide_and_collapsible_groups():
+    data = example_data()
+    data['rae']['data_ora'] = '2026-11-16T22:13:00Z'
+    data['rae']['environment'] = 'qa'
+    md = render(data)
+    assert md.startswith('# 20261116 Report Analisi Esiti (RAE) NrtStandardSuiteTest qa\n')
+    assert md.index('| Source branch |') < md.index('### Guida alla compilazione dei campi')
+    assert md.index('### Guida alla compilazione dei campi') < md.index('## 0 - KO DOVUTI A BUG DI PRODOTTO NOTI')
+    for label in ['**Result**', '**Procedure**', '**BUG SUITE**', '**BUG PRODOTTO**']:
+        assert label in md
+    assert md.count('<details>') == 3
+    assert md.count('</details>') == 3
+    assert md.count('<summary>Mostra/nascondi') == 3
+    assert '<summary>Mostra/nascondi 1 KO</summary>' in md
+    assert md.index('### 1. Test A') < md.index('</details>', md.index('## 1 - KO DA ANALIZZARE'))
+    assert 'Nessun fallimento.' in md
