@@ -47,7 +47,7 @@ import static org.assertj.core.api.Assertions.assertThat;
                 JunitContextConfig.class,
                 WebJUnitSuitConfig.class
         },
-        properties = {"spring.profiles.include=junit", "channel.web.browser=chrome", "channel.web.headless=false"}
+        properties = {"spring.profiles.include=junit", "channel.web.browser=chrome", "channel.web.headless=true"}
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
