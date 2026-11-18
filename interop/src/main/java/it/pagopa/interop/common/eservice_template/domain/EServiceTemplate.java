@@ -27,6 +27,8 @@ public class EServiceTemplate implements Identifiable {
     EServiceMode mode;
     EServiceTemplateState state;
     Boolean personalData;
+    Boolean isSignalHubEnabled;
+    Boolean asyncExchange;
     Instant createdAt;
     Instant updatedAt;
 
