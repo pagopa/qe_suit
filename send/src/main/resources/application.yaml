@@ -46,6 +46,13 @@ bff:
     # REPLACE_ME: sempre sovrascritto dal profilo attivo (test/dev/uat), valore reale solo in locale
     bearer-token: REPLACE_ME
 
+# ============================================================================
+# Pn Zendesk Auth API Configuration (richieste di supporto, platea PF)
+# ============================================================================
+zendesk:
+  api:
+    base-url: ${webapi.base-url}/zendesk-authorization
+
 verification:
   code:
     service:
