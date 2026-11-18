@@ -42,7 +42,7 @@ class Match:
 
 
 def find_match(test_id: str, error: str, candidates: list[dict], threshold: float = 0.90) -> Match | None:
-    """Return the candidate and match level; only fingerprint can classify a known bug."""
+    """Return the candidate and match level; both fingerprint and confident similarity can identify known bugs."""
     viable = [c for c in candidates if c.get('id_test', '').strip().casefold() == test_id.strip().casefold()
               and c.get('error_log') and c.get('procedure') and c.get('result')]
     if not viable:
@@ -61,7 +61,7 @@ def find_match(test_id: str, error: str, candidates: list[dict], threshold: floa
     scores = cosine_similarity(matrix[0:1], matrix[1:]).ravel()
     top = max(enumerate(scores), key=lambda pair: (pair[1], -pair[0]))
     score = float(top[1])
-    return Match(viable[top[0]], 'similarity', score) if score > threshold else None
+    return Match(viable[top[0]], 'similarity', score) if score >= threshold else None
 
 
 def choose_known(test_id: str, error: str, candidates: list[dict], threshold: float = 0.90) -> dict | None:
