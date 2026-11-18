@@ -38,6 +38,7 @@ import static io.cucumber.junit.platform.engine.Constants.PLUGIN_PROPERTY_NAME;
         @ConfigurationParameter(key = "junit.jupiter.execution.parallel.enabled", value = "true"),
         @ConfigurationParameter(key = "junit.jupiter.execution.parallel.mode.default", value = "concurrent"),
         @ConfigurationParameter(key = "junit.jupiter.execution.parallel.config.strategy", value = "dynamic"),
+        @ConfigurationParameter(key = "junit.jupiter.execution.parallel.config.dynamic.factor", value = "4"),
 
         // abilita parallelismo Cucumber
         @ConfigurationParameter(key = EXECUTION_MODE_FEATURE_PROPERTY_NAME, value = "concurrent"),
