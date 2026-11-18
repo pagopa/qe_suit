@@ -31,4 +31,10 @@ public class EServiceDocumentSteps {
         EService service = selection.getEService();
         useCase.attemptValidDocumentUpload(service, service.getDescriptorOrThrow(selection.getVersion()));
     }
+
+    @When("l'erogatore tenta di caricare il file {string} come documentazione per {eServiceDescriptorByVersionAndAlias} con il nome {string}")
+    public void attemptDocumentUpload(String path, SelectedEServiceDescriptor selection, String name) {
+        EService service = selection.getEService();
+        useCase.attemptDocumentUpload(service, service.getDescriptorOrThrow(selection.getVersion()), path, name);
+    }
 }

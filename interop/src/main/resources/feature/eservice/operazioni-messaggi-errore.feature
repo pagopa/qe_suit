@@ -120,8 +120,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And i seguenti documenti allegati alla versione dell'e-service:
       | nome       | fixture                      |
       | Allegato A | assets/origin-interface.yaml |
-    # Binding BFF mancante per il caricamento; riusare addDocument e gestire il rifiuto.
-    When l'erogatore carica il file "assets/eservice-template/openapi3-riferimenti.json" come "documento" sulla versione dell'e-service con il nome "Allegato A"
+    When l'erogatore tenta di caricare il file "assets/eservice-template/openapi3-riferimenti.json" come documentazione per la versione 1 dell'e-service "ES-1" con il nome "Allegato A"
     Then il messaggio di errore corrisponde al caso "CATALOG_DOCUMENT_PRETTY_NAME_DUPLICATE__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents
@@ -136,8 +135,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And i seguenti documenti allegati alla versione dell'e-service:
       | nome       | fixture                      |
       | Allegato A | assets/origin-interface.yaml |
-    # Binding BFF mancante per il caricamento; riusare addDocument e gestire il rifiuto.
-    When l'erogatore carica il file "assets/origin-interface.yaml" come "documento" sulla versione dell'e-service con il nome "Allegato B"
+    When l'erogatore tenta di caricare il file "assets/origin-interface.yaml" come documentazione per la versione 1 dell'e-service "ES-1" con il nome "Allegato B"
     Then il messaggio di errore corrisponde al caso "CATALOG_CHECKSUM_DUPLICATE" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents/:documentId/update
@@ -753,8 +751,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given i seguenti e-service in bozza:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
-    # Binding BFF mancante per il caricamento; riusare addDocument e gestire il rifiuto.
-    When l'erogatore carica il file "assets/origin-interface.yaml" come "documento" sulla versione dell'e-service con il nome "Documento https://example.org"
+    When l'erogatore tenta di caricare il file "assets/origin-interface.yaml" come documentazione per la versione 1 dell'e-service "ES-1" con il nome "Documento https://example.org"
     Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_DOCUMENTS" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/documents/:documentId/update

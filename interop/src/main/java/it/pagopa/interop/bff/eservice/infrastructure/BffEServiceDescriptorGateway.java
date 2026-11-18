@@ -223,4 +223,9 @@ public class BffEServiceDescriptorGateway implements EServiceDescriptorGateway {
     public void attemptValidDocumentUpload(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
         interfaceGateway.attemptValidDocumentUpload(serviceRef, descriptorRef);
     }
+
+    @Override
+    public void attemptDocumentUpload(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String path, String name) {
+        interfaceGateway.attemptDocumentUpload(serviceRef, descriptorRef, path, name);
+    }
 }

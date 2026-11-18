@@ -177,8 +177,13 @@ public class BffEServiceDescriptorInterfaceGateway {
     }
 
     public void attemptValidDocumentUpload(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef) {
-        File document = FileUtils.loadClasspathResourceAsTempFile("assets/eservice-template/openapi3-riferimenti.json");
-        restClient.addDocument(serviceRef.id(), descriptorRef.id(), DocumentKind.DOCUMENT.name(), "Allegato di test", document)
+        attemptDocumentUpload(serviceRef, descriptorRef,
+                "assets/eservice-template/openapi3-riferimenti.json", "Allegato di test");
+    }
+
+    public void attemptDocumentUpload(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String path, String name) {
+        File document = FileUtils.loadClasspathResourceAsTempFile(path);
+        restClient.addDocument(serviceRef.id(), descriptorRef.id(), DocumentKind.DOCUMENT.name(), name, document)
                 .withoutPolling();
     }
 }

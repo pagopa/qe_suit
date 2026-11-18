@@ -281,4 +281,9 @@ public class M2MEServiceDescriptorGateway implements EServiceDescriptorGateway {
     public void attemptValidDocumentUpload(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef) {
         throw new UnsupportedOperationException("Uploading descriptor documents is not supported on M2M V3");
     }
+
+    @Override
+    public void attemptDocumentUpload(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String path, String name) {
+        throw new UnsupportedOperationException("Uploading descriptor documents is not supported on M2M V3");
+    }
 }

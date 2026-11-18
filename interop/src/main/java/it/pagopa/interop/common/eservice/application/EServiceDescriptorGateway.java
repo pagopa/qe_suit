@@ -86,4 +86,6 @@ public interface EServiceDescriptorGateway extends Plugin<Channel> {
     void attemptDescriptorExport(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
 
     void attemptValidDocumentUpload(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef);
+
+    void attemptDocumentUpload(EServiceRef eServiceRef, EServiceDescriptorRef descriptorRef, String path, String name);
 }
