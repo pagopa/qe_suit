@@ -32,4 +32,9 @@ public class ConsumerDelegationSteps {
         delegationUseCase.attemptConsumerDelegationCreation(
                 TenantRef.of(delegator.getOrganizationId()), TenantRef.of(delegate.getOrganizationId()), eService);
     }
+
+    @When("l'utente tenta di rifiutare {currentConsumerDelegation} inserendo la motivazione {string}")
+    public void attemptConsumerDelegationRejection(Delegation delegation, String rejectionReason) {
+        delegationUseCase.attemptConsumerDelegationRejection(delegation.getRef(), rejectionReason);
+    }
 }

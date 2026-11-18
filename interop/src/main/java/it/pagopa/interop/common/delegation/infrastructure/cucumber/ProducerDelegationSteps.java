@@ -52,4 +52,9 @@ public class ProducerDelegationSteps {
                 mapper.toCommand(eServiceAlias, delegator, delegate, state)
         );
     }
+
+    @When("l'utente tenta di rifiutare {currentProducerDelegation} inserendo la motivazione {string}")
+    public void attemptProducerDelegationRejection(Delegation delegation, String rejectionReason) {
+        delegationUseCase.attemptProducerDelegationRejection(delegation.getRef(), rejectionReason);
+    }
 }

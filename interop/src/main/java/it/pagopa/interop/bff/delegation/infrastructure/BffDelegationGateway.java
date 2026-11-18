@@ -48,18 +48,16 @@ public class BffDelegationGateway implements DelegationGateway {
     }
 
     @Override
-    public ProducerDelegation createProducerDelegation(
-            @NonNull TenantRef delegatorRef, @NonNull TenantRef delegateRef, @NonNull EServiceRef eServiceRef) {
-        var response = restClient.createProducerDelegation(delegateRef.id(), eServiceRef.id())
-                .withoutPolling();
+    public ProducerDelegation createProducerDelegation(@NonNull TenantRef delegatorRef,
+            @NonNull TenantRef delegateRef, @NonNull EServiceRef eServiceRef) {
+        var response = restClient.createProducerDelegation(delegateRef.id(), eServiceRef.id()).withoutPolling();
         requireSuccessfulResponse(response.getRaw(), "creazione della delega di erogazione");
         return response.map(mapper::toProducerDelegation).updateContext().get();
     }
 
     @Override
     public void approveConsumerDelegation(DelegationRef delegationRef) {
-        var response = restClient.approveConsumerDelegation(delegationRef.id())
-                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+        var response = restClient.approveConsumerDelegation(delegationRef.id()).withPolling(PollingStrategy.UNTIL_SUCCESS);
         requireSuccessfulResponse(response.getRaw(), "approvazione della delega di fruizione");
     }
 
@@ -70,8 +68,7 @@ public class BffDelegationGateway implements DelegationGateway {
 
     @Override
     public void attemptConsumerDelegationRejection(DelegationRef delegationRef) {
-        restClient.rejectConsumerDelegation(delegationRef.id(), requestFactory.rejectionRequest())
-                .withoutPolling();
+        restClient.rejectConsumerDelegation(delegationRef.id(), requestFactory.rejectionRequest()).withoutPolling();
     }
 
     @Override
@@ -81,8 +78,7 @@ public class BffDelegationGateway implements DelegationGateway {
 
     @Override
     public void revokeConsumerDelegation(DelegationRef delegationRef) {
-        var response = restClient.revokeConsumerDelegation(delegationRef.id())
-                .withoutPolling();
+        var response = restClient.revokeConsumerDelegation(delegationRef.id()).withoutPolling();
         requireSuccessfulResponse(response.getRaw(), "revoca della delega di fruizione");
     }
 
@@ -118,22 +114,18 @@ public class BffDelegationGateway implements DelegationGateway {
 
     @Override
     public void rejectProducerDelegation(DelegationRef delegationRef) {
-        var response = restClient.rejectProducerDelegation(
-                delegationRef.id(), requestFactory.rejectionRequest()
-        ).withoutPolling();
+        var response = restClient.rejectProducerDelegation(delegationRef.id(), requestFactory.rejectionRequest()).withoutPolling();
         requireSuccessfulResponse(response.getRaw(), "rifiuto della delega di erogazione");
     }
 
     @Override
     public void attemptProducerDelegationRejection(DelegationRef delegationRef) {
-        restClient.rejectProducerDelegation(delegationRef.id(), requestFactory.rejectionRequest())
-                .withoutPolling();
+        restClient.rejectProducerDelegation(delegationRef.id(), requestFactory.rejectionRequest()).withoutPolling();
     }
 
     @Override
     public void revokeProducerDelegation(DelegationRef delegationRef) {
-        restClient.revokeProducerDelegation(delegationRef.id())
-                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+        restClient.revokeProducerDelegation(delegationRef.id()).withPolling(PollingStrategy.UNTIL_SUCCESS);
     }
 
     @Override
@@ -149,8 +141,7 @@ public class BffDelegationGateway implements DelegationGateway {
     }
 
     @Override
-    public ProducerDelegation waitForProducerDelegationState(
-            DelegationRef delegationRef, ProducerDelegationState expectedState) {
+    public ProducerDelegation waitForProducerDelegationState(DelegationRef delegationRef, ProducerDelegationState expectedState) {
         return restClient.getDelegation(delegationRef.id())
                 .withPolling(response -> hasExpectedState(response, expectedState.name()),
                         Duration.ofSeconds(45), Duration.ofSeconds(1))
@@ -165,9 +156,7 @@ public class BffDelegationGateway implements DelegationGateway {
     private boolean hasExpectedState(RawResponse response, String expectedState) {
         if (!response.isSuccess()) {
             if (!(response instanceof ApiResponse apiResponse)) {
-                throw new IllegalStateException(
-                        "Risposta non valida durante la lettura dello stato della delega"
-                );
+                throw new IllegalStateException("Risposta non valida durante la lettura dello stato della delega");
             }
             int status = apiResponse.getStatusCode();
             if (status == 404 || status == 409 || status == 429 || status >= 500) {
@@ -175,8 +164,7 @@ public class BffDelegationGateway implements DelegationGateway {
             }
             throw new IllegalStateException("Errore durante la lettura dello stato della delega (HTTP " + status + ")");
         }
-        it.pagopa.interop.generated.openapi.clients.bff.model.Delegation delegation =
-                response.as(it.pagopa.interop.generated.openapi.clients.bff.model.Delegation.class);
+        var delegation = response.as(it.pagopa.interop.generated.openapi.clients.bff.model.Delegation.class);
         if (delegation.getState() == null) {
             throw new IllegalStateException("La delega letta non contiene lo stato");
         }
@@ -195,5 +183,17 @@ public class BffDelegationGateway implements DelegationGateway {
     @Override
     public void attemptConsumerDelegationCreation(TenantRef delegateRef, EServiceRef eServiceRef) {
         restClient.createConsumerDelegation(delegateRef.id(), eServiceRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptProducerDelegationRejection(DelegationRef delegationRef, String rejectionReason) {
+        restClient.rejectProducerDelegation(delegationRef.id(), requestFactory.rejectionRequest(rejectionReason))
+                .withoutPolling();
+    }
+
+    @Override
+    public void attemptConsumerDelegationRejection(DelegationRef delegationRef, String rejectionReason) {
+        restClient.rejectConsumerDelegation(delegationRef.id(), requestFactory.rejectionRequest(rejectionReason))
+                .withoutPolling();
     }
 }

@@ -59,4 +59,8 @@ public interface DelegationGateway extends Plugin<Channel> {
     );
 
     void attemptConsumerDelegationCreation(TenantRef delegateRef, EServiceRef eServiceRef);
+
+    void attemptProducerDelegationRejection(DelegationRef delegationRef, String rejectionReason);
+
+    void attemptConsumerDelegationRejection(DelegationRef delegationRef, String rejectionReason);
 }

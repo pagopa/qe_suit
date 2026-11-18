@@ -169,4 +169,12 @@ public class DelegationUseCase {
         }
         delegationGateway.attemptConsumerDelegationCreation(delegateRef, eService.getRef());
     }
+
+    public void attemptProducerDelegationRejection(DelegationRef delegationRef, String rejectionReason) {
+        delegationGateway.attemptProducerDelegationRejection(delegationRef, rejectionReason);
+    }
+
+    public void attemptConsumerDelegationRejection(DelegationRef delegationRef, String rejectionReason) {
+        delegationGateway.attemptConsumerDelegationRejection(delegationRef, rejectionReason);
+    }
 }

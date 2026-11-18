@@ -118,8 +118,7 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
       | Comune di Pozzallo |
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega in attesa di accettazione
     And un admin appartenente al delegato Comune di Pozzallo
-    # Binding BFF negativo mancante; riusare rejectProducerDelegation con una motivazione parametrica.
-    When l'utente tenta di rifiutare la delega in erogazione inserendo un link all'interno della motivazione
+    When l'utente tenta di rifiutare la delega in erogazione inserendo la motivazione "Rifiuto https://example.org"
     Then il messaggio di errore corrisponde al caso "DELEGATION_HYPERLINK_DETECTION_ERROR__POST_PRODUCERS_DELEGATIONS_DELEGATION_ID_REJECT" in lingua "it"
 
   # Endpoint: POST /consumers/delegations/:delegationId/reject
@@ -130,6 +129,5 @@ Feature: Messaggi di errore durante la gestione delle deleghe in erogazione e in
 
     Given l'e-service è delegato in fruizione da PagoPA al Comune di Pozzallo con una delega in stato WAITING_FOR_APPROVAL
     And un admin appartenente al delegato Comune di Pozzallo
-    # Operazione BFF e binding mancanti per il rifiuto in fruizione con motivazione.
-    When l'utente tenta di rifiutare la delega in fruizione inserendo un link all'interno della motivazione
+    When l'utente tenta di rifiutare la delega in fruizione inserendo la motivazione "Rifiuto https://example.org"
     Then il messaggio di errore corrisponde al caso "DELEGATION_HYPERLINK_DETECTION_ERROR__POST_CONSUMERS_DELEGATIONS_DELEGATION_ID_REJECT" in lingua "it"
