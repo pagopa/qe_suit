@@ -18,7 +18,7 @@ spring:
 channel:
   web:
     browser: chrome
-    headless: false
+    headless: true
     arguments:
       - --window-size=1920,1080
       - --incognito
