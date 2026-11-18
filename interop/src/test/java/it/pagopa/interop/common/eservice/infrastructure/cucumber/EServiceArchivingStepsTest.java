@@ -10,7 +10,6 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.infrastructure.cucumber.parameter_type.CommonParameterTypes;
 import it.pagopa.interop.common.infrastructure.cucumber.parameter_type.ScenarioParameterTypes;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import org.junit.jupiter.api.Test;
 

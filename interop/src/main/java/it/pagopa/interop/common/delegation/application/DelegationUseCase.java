@@ -42,18 +42,18 @@ public class DelegationUseCase {
     public Delegation createConsumerDelegation(@NonNull ConsumerDelegationCreationCommand command) {
         Tenant delegate = command.getDelegate();
         TenantRef delegateRef = TenantRef.of(delegate.getOrganizationId());
-        currentUserSession.set(User.getTenantAdmin(delegate), delegate);
+        authSession.set(User.getTenantAdmin(delegate), delegate);
         tenantUseCase.enableConsumerDelegationAvailability(delegateRef);
 
         Tenant delegator = command.getDelegator();
-        currentUserSession.set(User.getTenantAdmin(delegator), delegator);
+        authSession.set(User.getTenantAdmin(delegator), delegator);
         Delegation delegation = createConsumerDelegation(delegateRef, command.getEServiceRef());
         delegationGateway.waitForConsumerDelegationState(delegation.getRef(), DelegationState.WAITING_FOR_APPROVAL);
 
         return switch (command.getTargetState()) {
             case WAITING_FOR_APPROVAL -> delegation;
             case ACTIVE -> {
-                currentUserSession.set(User.getTenantAdmin(delegate), delegate);
+                authSession.set(User.getTenantAdmin(delegate), delegate);
                 approveConsumerDelegation(delegation.getRef());
                 yield delegationGateway.waitForConsumerDelegationState(delegation.getRef(), DelegationState.ACTIVE);
             }
@@ -163,7 +163,7 @@ public class DelegationUseCase {
     }
 
     public void attemptConsumerDelegationCreation(TenantRef delegatorRef, TenantRef delegateRef, EService eService) {
-        Tenant currentTenant = currentUserSession.getTenant();
+        Tenant currentTenant = authSession.getTenant();
         if (currentTenant == null || !delegatorRef.id().equals(currentTenant.getOrganizationId())) {
             throw new IllegalArgumentException("La sessione corrente non appartiene al delegante " + delegatorRef.id());
         }

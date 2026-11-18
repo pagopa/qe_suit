@@ -17,7 +17,6 @@ import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
 import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;

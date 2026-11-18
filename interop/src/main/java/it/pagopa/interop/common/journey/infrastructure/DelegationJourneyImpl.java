@@ -29,29 +29,21 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
 
     @Override
     public DelegationJourneyImpl revokeProducerDelegationAsDelegator(DelegationRef delegationRef, Tenant delegator) {
-        User originalUser = currentUserSession.getUser();
-        Tenant originalTenant = currentUserSession.getTenant();
-        try {
-            currentUserSession.set(User.getTenantAdmin(delegator), delegator);
+        try (var originalSession = authSession.snapshot()) {
+            authSession.set(User.getTenantAdmin(delegator), delegator);
             delegationUseCase.revokeProducerDelegation(delegationRef);
             delegationUseCase.waitForProducerDelegationState(delegationRef, ProducerDelegationState.REVOKED);
             return this;
-        } finally {
-            currentUserSession.set(originalUser, originalTenant);
         }
     }
 
     @Override
     public DelegationJourneyImpl revokeConsumerDelegationAsDelegator(DelegationRef delegationRef, Tenant delegator) {
-        User originalUser = currentUserSession.getUser();
-        Tenant originalTenant = currentUserSession.getTenant();
-        try {
-            currentUserSession.set(User.getTenantAdmin(delegator), delegator);
+        try (var originalSession = authSession.snapshot()) {
+            authSession.set(User.getTenantAdmin(delegator), delegator);
             delegationUseCase.revokeConsumerDelegation(delegationRef);
             delegationUseCase.waitForConsumerDelegationRevocation(delegationRef);
             return this;
-        } finally {
-            currentUserSession.set(originalUser, originalTenant);
         }
     }
 

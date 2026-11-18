@@ -4,6 +4,7 @@ import io.cucumber.java.ParameterType;
 import it.pagopa.interop.common.client.domain.ClientKind;
 import it.pagopa.interop.common.delegation.domain.DelegationState;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.KeyRegistrationMaterial;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.kernel.domain.UserRole;
