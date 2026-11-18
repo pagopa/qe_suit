@@ -8,9 +8,9 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Stepper;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.additional_info_form.AdditionalInfoForm;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.additional_info_form.EServiceTemplateAdditionalInfoForm;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data_form.EServiceTemplateGeneralDataForm;
-import it.pagopa.interop.web.eservice.infrastructure.suit.component.technical_specs_form.TechnicalSpecsForm;
+import it.pagopa.interop.web.eservice.infrastructure.suit.component.technical_specs_form.EServiceTemplateTechnicalSpecsForm;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.threshold_attribute_form.ThresholdAndAttributeForm;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
 import it.pagopa.utils.async.PollingUtils;
@@ -43,9 +43,9 @@ public interface ProducerEServiceTemplateUpdatePage extends Page {
 
     ThresholdAndAttributeForm thresholdAndAttributeForm();
 
-    TechnicalSpecsForm technicalSpecsForm();
+    EServiceTemplateTechnicalSpecsForm technicalSpecsForm();
 
-    AdditionalInfoForm additionalInfoForm();
+    EServiceTemplateAdditionalInfoForm additionalInfoForm();
 
     @Override
     default void assertLoaded() {
