@@ -39,13 +39,13 @@ Example:
 
 ```java
 @Execution(ExecutionMode.CONCURRENT)
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(
         classes = {
                 TestBootApp.class,
                 JunitContextConfig.class,
                 WebJUnitSuitConfig.class
-        },
-        properties = "spring.profiles.include=junit"
+        }
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
@@ -82,6 +82,11 @@ public class WebDebugClientAssertionContractTest {
     }
 }
 ```
+
+The resolver activates `junit` alongside the environment selected by the
+`spring.profiles.active` JVM property or `SPRING_PROFILES_ACTIVE` environment variable.
+When neither is set, it selects `qa`. Use the same resolver for BFF and M2M
+contract tests; do not also set `spring.profiles.include=junit`.
 
 ## WebScenario
 

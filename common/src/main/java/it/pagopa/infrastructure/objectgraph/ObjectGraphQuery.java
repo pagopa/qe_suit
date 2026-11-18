@@ -25,6 +25,10 @@ public final class ObjectGraphQuery {
         return append(new IndexStep(index));
     }
 
+    public ObjectGraphQuery key(String key) {
+        return append(new MapKeyStep(key));
+    }
+
     public boolean isRoot() {
         return steps.isEmpty();
     }

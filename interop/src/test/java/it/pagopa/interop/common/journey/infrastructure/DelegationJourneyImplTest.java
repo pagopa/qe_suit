@@ -7,7 +7,7 @@ import it.pagopa.interop.common.delegation.domain.Delegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
 import it.pagopa.interop.common.eservice.domain.EService;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 class DelegationJourneyImplTest {
 
     private final DelegationUseCase useCase = mock(DelegationUseCase.class);
-    private final CurrentUserSession session = mock(CurrentUserSession.class);
+    private final AuthSession session = mock(AuthSession.class);
     private final CurrentChannel<Channel> channel = mock(CurrentChannel.class);
     private final it.pagopa.application.context.EntityStore entityStore =
             mock(it.pagopa.application.context.EntityStore.class);
@@ -50,7 +50,7 @@ class DelegationJourneyImplTest {
     void setUpSession() {
         originalUser = User.getTenantAdmin(Tenant.COMUNE_DI_COMUN_NUOVO);
         originalTenant = Tenant.COMUNE_DI_COMUN_NUOVO;
-        when(session.getUser()).thenReturn(originalUser);
+        when(session.getActor()).thenReturn(originalUser);
         when(session.getTenant()).thenReturn(originalTenant);
         when(channel.getCurrentChannel()).thenReturn(Channel.WEB_BROWSER);
         when(useCase.createProducerDelegation(any(), any(), same(eService))).thenReturn(created);

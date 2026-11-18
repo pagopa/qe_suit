@@ -26,7 +26,7 @@ public class RequiredAttributeJourneySteps {
         if (!producer.getOrganizationId().toString().equals(selected.getEService().getProducerId())) {
             throw new IllegalArgumentException("The stated producer does not own the selected e-service");
         }
-        interopJourney.withProducer(producer, UserRole.ADMIN)
+        interopJourney.withProducer(producer)
                 .configureRequiredAttributes(selected.getEService(), selected.getVersion(),
                         TenantRef.of(producer.getOrganizationId()), mapper.toRequests(configurations));
     }
