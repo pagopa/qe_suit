@@ -131,4 +131,8 @@ public class AgreementUseCase {
     public void attemptAgreementCloning(Agreement agreement) {
         agreementGateway.attemptAgreementCloning(agreement);
     }
+
+    public void attemptAgreementRejection(Agreement agreement) {
+        agreementGateway.attemptAgreementRejection(agreement);
+    }
 }

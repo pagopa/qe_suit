@@ -215,7 +215,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
     Given un EService creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un admin appartenente all'erogatore Comune di Milano
-    # Operazione BFF e binding mancanti per il tentativo di rifiuto.
     When l'erogatore tenta di rifiutare la richiesta di fruizione con una motivazione valida
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_REJECT" in lingua "it"
 

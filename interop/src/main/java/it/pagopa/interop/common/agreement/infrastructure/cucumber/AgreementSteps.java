@@ -126,4 +126,9 @@ public class AgreementSteps {
     public void attemptAgreementCloning(Agreement agreement) {
         agreementUseCase.attemptAgreementCloning(agreement);
     }
+
+    @When("l'erogatore tenta di rifiutare la {currentAgreement} con una motivazione valida")
+    public void attemptAgreementRejection(Agreement agreement) {
+        agreementUseCase.attemptAgreementRejection(agreement);
+    }
 }

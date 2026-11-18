@@ -64,4 +64,6 @@ public interface AgreementGateway extends Plugin<Channel> {
     void attemptAgreementCreation(EService eService, EServiceDescriptor descriptor);
 
     void attemptAgreementCloning(Agreement agreement);
+
+    void attemptAgreementRejection(Agreement agreement);
 }

@@ -4,6 +4,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.Delegation;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
+import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementRejectionPayload;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementSubmissionPayload;
 import lombok.RequiredArgsConstructor;
 import org.instancio.Instancio;
@@ -26,5 +27,9 @@ public class BffAgreementRequestFactory {
                 .set(field(AgreementPayload::getDescriptorId), descriptor.getId())
                 .set(field(AgreementPayload::getDelegationId), delegation != null ? delegation.getId() : null)
                 .create();
+    }
+
+    public AgreementRejectionPayload rejectionRequest() {
+        return new AgreementRejectionPayload().reason("La richiesta non soddisfa i requisiti per la fruizione");
     }
 }
