@@ -247,7 +247,7 @@ ko:
       nelle prossime run. Il difetto di suite è in corso di analisi sulla
       codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: '[ESERVICE_ARCHIVING_GRACE_PERIOD_1.1] - Impossibilità di archiviare un e-service prima di una sua versione
       [Given=BFF,When=WEB,Then=WEB]'
@@ -456,7 +456,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer::[payload]
       REPLACED_WITH_BLANK_STRING @ /answerData/suggestedValues/0
@@ -569,7 +569,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswerAnnotation::[payload]
       REPLACED_WITH_SQL_INJECTION @ /text
@@ -628,7 +628,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffAgreementContractTest::createAgreement::[payload] REPLACED_WITH_NULL @ /delegationId
     error_log: |
@@ -1029,7 +1029,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffClientContractTest::createApiClient::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
@@ -1084,7 +1084,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffCertifiedAttributeContractTest::createCertifiedAttribute::[payload] REPLACED_WITH_BLANK_STRING @
       /description
@@ -1195,7 +1195,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffCertifiedAttributeContractTest::createCertifiedAttribute::[payload] REPLACED_WITH_BLANK_STRING @
       /name
@@ -1307,7 +1307,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute::[payload]
       REPLACED_WITH_BLANK_STRING @ /description
@@ -1416,7 +1416,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute::[payload]
       REPLACED_WITH_URL_INJECTION @ /description
@@ -1580,7 +1580,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute::[payload]
       REPLACED_WITH_URL_INJECTION @ /name
@@ -1801,7 +1801,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffClientContractTest::createConsumerClient::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
@@ -1857,7 +1857,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffDeclaredAttributeContractTest::createDeclaredAttribute::[payload] REPLACED_WITH_BLANK_STRING @
       /description
@@ -1966,7 +1966,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffDeclaredAttributeContractTest::createDeclaredAttribute::[payload] REPLACED_WITH_BLANK_STRING @
       /name
@@ -2075,7 +2075,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffEServiceContractTest::createEService::[payload] REPLACED_WITH_NULL @ /isSignalHubEnabled
     error_log: |
@@ -2410,7 +2410,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffEServiceContractTest::createEService::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
@@ -2465,7 +2465,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_NULL @ /version
     error_log: |
@@ -2927,7 +2927,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /intendedTarget
@@ -2984,7 +2984,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /description
@@ -3041,7 +3041,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /version/description
@@ -3098,7 +3098,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffClientContractTest::createKey::[payload] REPLACED_WITH_BLANK_STRING @ /alg
     error_log: |
@@ -3342,7 +3342,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffProducerKeychainContractTest::createProducerKey::[payload] REPLACED_WITH_BLANK_STRING @ /alg
     error_log: |
@@ -3453,7 +3453,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffProducerKeychainContractTest::createProducerKey::[payload] REPLACED_WITH_EMPTY_STRING @ /alg
     error_log: |
@@ -3608,7 +3608,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffProducerKeychainContractTest::createProducerKeychain::[payload] REPLACED_WITH_SQL_INJECTION @
       /name
@@ -3665,7 +3665,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffProducerKeychainContractTest::createProducerKeychain::[payload] REPLACED_WITH_SQL_INJECTION @
       /description
@@ -3722,7 +3722,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_NULL @ /riskAnalysisForm
     error_log: |
@@ -3935,7 +3935,7 @@ ko:
       il lookup. La suite deve attendere 403 per questo specifico scenario,
       invece di 404. Il difetto di suite è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeContractTest::createPurpose::[payload] REMOVED @ /freeOfChargeReason
     error_log: |
@@ -3985,7 +3985,7 @@ ko:
       nell'aspettativa dello scenario. Il difetto di suite è in corso di
       analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_BLANK_STRING @
       /riskAnalysisForm/answers/institutionalPurpose/0
@@ -4085,7 +4085,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /title
     error_log: |
@@ -4133,7 +4133,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
@@ -4181,7 +4181,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_BLANK_STRING @ /freeOfChargeReason
     error_log: |
@@ -4330,7 +4330,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_NULL @
       /freeOfChargeReason
@@ -4433,7 +4433,7 @@ ko:
       il lookup. La suite deve attendere 403 per questo specifico scenario,
       invece di 404. Il difetto di suite è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REMOVED @ /freeOfChargeReason
     error_log: |
@@ -4484,7 +4484,7 @@ ko:
       nell'aspettativa dello scenario. Il difetto di suite è in corso di
       analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_NIL_UUID @
       /eserviceId
@@ -4583,7 +4583,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_NIL_UUID @
       /riskAnalysisId
@@ -4731,7 +4731,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_SQL_INJECTION @
       /freeOfChargeReason
@@ -4782,7 +4782,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_LONG_STRING @
       /freeOfChargeReason
@@ -5389,7 +5389,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /purposeTitle
@@ -5443,7 +5443,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /purposeDescription
@@ -5497,7 +5497,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @
       /purposeRiskAnalysisForm/version
@@ -5551,7 +5551,7 @@ ko:
       deve includere la validità semantica della versione. Il difetto di suite
       è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @
       /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
@@ -5662,7 +5662,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @
       /purposeFreeOfChargeReason
@@ -5825,7 +5825,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffVerifiedAttributeContractTest::createVerifiedAttribute::[payload] REPLACED_WITH_BLANK_STRING @
       /description
@@ -5934,7 +5934,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffVerifiedAttributeContractTest::createVerifiedAttribute::[payload] REPLACED_WITH_BLANK_STRING @
       /name
@@ -6043,7 +6043,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::publishPurposeTemplate::[pathParams]
       REPLACED_WITH_WRONG_TYPE_NUMBER @ /purposeTemplateId
@@ -6523,7 +6523,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffDelegationContractTest::rejectProducerDelegation::[payload] REPLACED_WITH_EMPTY_STRING @
       /rejectionReason
@@ -6772,7 +6772,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::unsuspendPurposeTemplate::[pathParams] REPLACED_WITH_NIL_UUID @
       /purposeTemplateId
@@ -7275,7 +7275,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_SQL_INJECTION @ /name
     error_log: |
@@ -7332,7 +7332,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffEServiceContractTest::updateEServiceDescription::[payload] REPLACED_WITH_SQL_INJECTION @
       /description
@@ -7390,7 +7390,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffEServiceContractTest::updateEServiceName::[payload] REPLACED_WITH_SQL_INJECTION @ /name
     error_log: |
@@ -7447,7 +7447,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffEServiceTemplateContractTest::updateEServiceTemplateDescription::[payload]
       REPLACED_WITH_SQL_INJECTION @ /description
@@ -7506,7 +7506,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffEServiceTemplateContractTest::updateEServiceTemplateIntendedTarget::[payload]
       REPLACED_WITH_SQL_INJECTION @ /intendedTarget
@@ -7561,7 +7561,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffEServiceTemplateContractTest::updateEServiceTemplateName::[payload] REPLACED_WITH_SQL_INJECTION
       @ /name
@@ -7616,7 +7616,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_NULL @ /freeOfChargeReason
     error_log: |
@@ -7779,7 +7779,7 @@ ko:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @
       /riskAnalysisForm/answers/institutionalPurpose/0
@@ -7834,7 +7834,7 @@ ko:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @
       /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties
@@ -7890,7 +7890,7 @@ ko:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @
       /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/0
@@ -7943,7 +7943,7 @@ ko:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/purpose
     error_log: |
@@ -7994,7 +7994,7 @@ ko:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/purpose/0
     error_log: |
@@ -8045,7 +8045,7 @@ ko:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @
       /riskAnalysisForm/answers/usesThirdPartyPersonalData
@@ -8097,7 +8097,7 @@ ko:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @
       /riskAnalysisForm/answers/usesThirdPartyPersonalData/0
@@ -8150,7 +8150,7 @@ ko:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /title
     error_log: |
@@ -8201,7 +8201,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
@@ -8255,7 +8255,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_LONG_STRING @ /freeOfChargeReason
     error_log: |
@@ -8357,7 +8357,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_BLANK_STRING @
       /riskAnalysisForm/answers/institutionalPurpose/0
@@ -8467,7 +8467,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_NULL @
       /purposeRiskAnalysisForm
@@ -8882,7 +8882,7 @@ ko:
       nell'aspettativa dello scenario. Il difetto di suite è in corso di
       analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_NULL @
       /purposeFreeOfChargeReason
@@ -9046,7 +9046,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /purposeTitle
@@ -9100,7 +9100,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /purposeDescription
@@ -9158,7 +9158,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @
       /purposeRiskAnalysisForm/version
@@ -9213,7 +9213,7 @@ ko:
       deve includere la validità semantica della versione. Il difetto di suite
       è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @
       /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
@@ -9324,7 +9324,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /purposeFreeOfChargeReason
@@ -9382,7 +9382,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_LONG_STRING @
       /purposeFreeOfChargeReason
@@ -9539,7 +9539,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
@@ -9589,7 +9589,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_LONG_STRING @
       /freeOfChargeReason
@@ -9693,7 +9693,7 @@ ko:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
 
   - id_test: M2Mv3AgreementContractTest::createAgreement::[payload] REPLACED_WITH_NULL @ /delegationId
     error_log: |
@@ -9955,7 +9955,7 @@ ko:
       attributi appena creati per requisiti e assegnazioni. Il difetto di
       suite è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: WebConsumerAgreementDetailsPageContractTest::consumerAgreementDetailsPageContract::Consumer
       agreement details page shows the expected content and filters
@@ -9997,7 +9997,7 @@ ko:
       ripetere la verifica di breadcrumb e titolo fino al caricamento, entro
       il timeout. Il difetto di suite è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: WebConsumerPurposeDetailsPageContractTest::consumerPurposeDetailsPageContract::Consumer purpose
       details page shows the expected content and filters
@@ -10056,7 +10056,7 @@ ko:
       trattamento dei dati personali. Il caso è classificato come flaky legato
       al carico, senza associazione a un bug di prodotto o di suite.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: WebProducerAgreementDetailsPageContractTest::producerAgreementDetailsPageContract::Producer
       agreement details page shows the expected content
@@ -10098,7 +10098,7 @@ ko:
       ripetere la verifica di breadcrumb e titolo fino al caricamento, entro
       il timeout. Il difetto di suite è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
   - id_test: 'WebTOSContractTest::shouldDisplayTermsOfService::Visuale TOS: 11 sezioni ordinate, titoli esatti e paragrafi
       non vuoti'
@@ -10138,4 +10138,4 @@ ko:
       verifica della presenza della paginazione prima di controllarne
       l'usabilità. Il difetto di suite è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
