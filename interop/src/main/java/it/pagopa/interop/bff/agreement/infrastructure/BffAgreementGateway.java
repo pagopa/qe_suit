@@ -86,7 +86,6 @@ public class BffAgreementGateway implements AgreementGateway {
                 .get();
     }
 
-
     @Override
     public Agreement submitAgreement(Agreement agreement) {
         return restClient.submit(agreement.getId(), agreementRequestFactory.submissionRequest())
@@ -103,9 +102,7 @@ public class BffAgreementGateway implements AgreementGateway {
 
     @Override
     public Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation) {
-        return restClient.activate(
-                        agreement.getId(), Optional.ofNullable(delegation).map(Delegation::getId).orElse(null)
-                )
+        return restClient.activate(agreement.getId(), Optional.ofNullable(delegation).map(Delegation::getId).orElse(null))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .assertThat( a -> a.getState().getValue().equals(AgreementState.ACTIVE.getValue()))
                 .map(mapper::toAgreement)
@@ -191,5 +188,15 @@ public class BffAgreementGateway implements AgreementGateway {
     @Override
     public void attemptAgreementCreation(EService eService, EServiceDescriptor descriptor) {
         restClient.create(agreementRequestFactory.creationRequest(eService, descriptor, null)).withoutPolling();
+    }
+
+    @Override
+    public void attemptAgreementCloning(Agreement agreement) {
+        restClient.cloneAgreement(agreement.getId()).withoutPolling();
+    }
+
+    @Override
+    public void attemptAgreementRejection(Agreement agreement) {
+        restClient.reject(agreement.getId(), agreementRequestFactory.rejectionRequest()).withoutPolling();
     }
 }

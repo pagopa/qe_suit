@@ -110,4 +110,9 @@ public class EServiceTemplateSteps {
     public void attemptTemplateCreation(String name) {
         templateUseCase.attemptTemplateCreation(name);
     }
+
+    @When("l'erogatore tenta di modificare la descrizione della versione {int} del {eServiceTemplateByAlias} in {string}")
+    public void attemptDraftVersionDescriptionUpdate(int version, EServiceTemplate template, String description) {
+        templateVersionUseCase.attemptDraftVersionDescriptionUpdate(template, template.getVersion(version), description);
+    }
 }

@@ -161,4 +161,9 @@ public class M2MPurposeGateway implements PurposeGateway {
     private static UnsupportedOperationException unsupportedOperation() {
         return new UnsupportedOperationException("This purpose operation is not supported on M2M v3");
     }
+
+    @Override
+    public void attemptNameUpdate(PurposeRef purposeRef, String name) {
+        throw unsupportedOperation();
+    }
 }

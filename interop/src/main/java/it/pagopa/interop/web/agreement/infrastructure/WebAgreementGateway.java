@@ -24,11 +24,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.util.function.Supplier;
 import java.util.Set;
 
-
 @Service
 @RequiredArgsConstructor
 public class WebAgreementGateway implements AgreementGateway, WebAgreementSecurityGateway {
-
     private final EServiceDetailPage eServiceDetailPage;
     private final ProducerAgreementDetailPage producerAgreementDetailPage;
     private final ConsumerAgreementDetailsPage consumerAgreementDetailsPage;
@@ -187,5 +185,15 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     @Override
     public void attemptAgreementCreation(EService eService, EServiceDescriptor descriptor) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementCreation operation");
+    }
+
+    @Override
+    public void attemptAgreementCloning(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementCloning operation");
+    }
+
+    @Override
+    public void attemptAgreementRejection(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementRejection operation");
     }
 }

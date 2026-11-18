@@ -215,7 +215,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
 
     Given un EService creato dal Comune di Milano con una richiesta di fruizione associata da PagoPA
     And un admin appartenente all'erogatore Comune di Milano
-    # Operazione BFF e binding mancanti per il tentativo di rifiuto.
     When l'erogatore tenta di rifiutare la richiesta di fruizione con una motivazione valida
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_NOT_IN_EXPECTED_STATE__POST_AGREEMENTS_AGREEMENT_ID_REJECT" in lingua "it"
 
@@ -317,7 +316,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And una richiesta di fruizione rifiutata per l'e-service, creata da PagoPA
     And l'attributo certificato "CERT-1" revocato a PagoPA
     And un admin appartenente al fruitore PagoPA
-    # Operazione BFF e binding mancanti per la duplicazione della richiesta.
     When il fruitore tenta di duplicare la richiesta di fruizione
     Then il messaggio di errore corrisponde al caso "AGREEMENT_MISSING_CERTIFIED_ATTRIBUTES_ERROR__POST_AGREEMENTS_AGREEMENT_ID_CLONE" in lingua "it"
 
@@ -337,7 +335,6 @@ Feature: Messaggi di errore durante la gestione delle richieste di fruizione
     And una richiesta di fruizione rifiutata per l'e-service "ES-1", creata da PagoPA e identificata come "RF-1"
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione attiva
     And un admin appartenente al fruitore PagoPA
-    # Operazione BFF e binding mancanti; usare la richiesta duplicabile, non l'ultima richiesta creata.
     When il fruitore tenta di duplicare la richiesta di fruizione "RF-1"
     Then il messaggio di errore corrisponde al caso "AGREEMENT_AGREEMENT_ALREADY_EXISTS__POST_AGREEMENTS_AGREEMENT_ID_CLONE" in lingua "it"
 

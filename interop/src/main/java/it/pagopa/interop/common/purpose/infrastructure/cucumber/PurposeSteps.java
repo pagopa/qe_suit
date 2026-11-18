@@ -232,4 +232,14 @@ public class PurposeSteps {
             default -> throw new IllegalArgumentException("Stato dell'analisi del rischio non supportato: " + state);
         };
     }
+
+    @When("il fruitore tenta di modificare la {purposeByAlias} con il nome della {purposeByAlias}")
+    public void attemptNameUpdateWithAnotherPurposeName(Purpose purpose, Purpose existing) {
+        purposeUseCase.attemptNameUpdate(purpose, existing.getTitle());
+    }
+
+    @When("il fruitore tenta di modificare la {currentPurpose} con il nome {string}")
+    public void attemptNameUpdate(Purpose purpose, String name) {
+        purposeUseCase.attemptNameUpdate(purpose, name);
+    }
 }

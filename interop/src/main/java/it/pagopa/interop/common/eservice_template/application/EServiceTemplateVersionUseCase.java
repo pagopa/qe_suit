@@ -145,4 +145,11 @@ public class EServiceTemplateVersionUseCase {
         if (!java.util.Arrays.equals(original.getContent(), current.getContent()))
             throw new AssertionError("I byte dell'interfaccia del template sono cambiati");
     }
+
+    public void attemptDraftVersionDescriptionUpdate(
+            EServiceTemplate template, EServiceTemplateVersion version, String description
+    ) {
+        var command = requestFactory.defaultUpdateTemplateVersionCommand().description(description);
+        eServiceTemplateVersionGateway.attemptDraftVersionUpdate(template.getRef(), version.getRef(), command);
+    }
 }

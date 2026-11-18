@@ -105,6 +105,13 @@ public class BffPurposeRestClient extends RestClient {
         );
     }
 
+    public TestChain<Purpose> updatePurpose(@Nonnull UUID purposeId, @Nonnull PurposeUpdateContent payload) {
+        return execute(
+                () -> purposesApi.updatePurpose().purposeIdPath(purposeId).body(payload).execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
     public TestChain<PurposeVersionResource> clonePurpose(@Nonnull UUID purposeId, @Nonnull PurposeCloneSeed payload) {
         return execute(
                 () -> purposesApi.clonePurpose()

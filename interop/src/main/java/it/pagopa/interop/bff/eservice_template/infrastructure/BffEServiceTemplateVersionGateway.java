@@ -198,4 +198,14 @@ public class BffEServiceTemplateVersionGateway implements EServiceTemplateVersio
     public boolean supports(@NonNull Channel delimiter) {
         return delimiter == Channel.BFF;
     }
+
+    @Override
+    public void attemptDraftVersionUpdate(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef,
+                                         UpdateEServiceTemplateVersionCommand command) {
+        if (!(command instanceof BffUpdateEServiceTemplateVersionCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateVersionCommand.class.getSimpleName());
+
+        restClient.updateDraftVersion(templateRef.id(), versionRef.versionId(), bffCommand.getBffPayload())
+                .withoutPolling();
+    }
 }
