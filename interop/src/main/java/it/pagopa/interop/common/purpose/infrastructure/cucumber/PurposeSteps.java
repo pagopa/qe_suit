@@ -21,6 +21,7 @@ import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
 import it.pagopa.interop.m2m.kernel.domain.M2MRole;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.function.BiFunction;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -114,5 +115,25 @@ public class PurposeSteps {
                 ));
 
         assertThat(actualState).isEqualTo(expectedState);
+    }
+
+    @Given("le seguenti finalità in bozza create da/dal {tenant} per l'e-service {string} con nomi distinti:")
+    public void draftPurposesCreatedForEServiceWithDistinctNames(Tenant consumer, String eServiceAlias, List<String> aliases) {
+        // TODO
+    }
+
+    @Given("un'altra finalità di/del {tenant} per l'e-service {string} con il nome che deriverebbe dalla duplicazione di {string}")
+    public void anotherPurposeWithDuplicatedName(Tenant consumer, String eServiceAlias, String sourcePurposeAlias) {
+        // TODO
+    }
+
+    @Given("una finalità in bozza creata da/dal {tenant} dal template finalità per l'e-service {string} e identificata come {string}")
+    public void draftPurposeCreatedFromTemplateForEService(Tenant consumer, String eServiceAlias, String purposeAlias) {
+        // TODO
+    }
+
+    @Given("un'analisi del rischio della finalità in stato {string} assegnata al valutatore di/del {tenant}")
+    public void purposeRiskAnalysisInStateAssignedToReviewer(String state, Tenant tenant) {
+        // TODO: considerare di adattare la firma così che accetti {purposeState}
     }
 }
