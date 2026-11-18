@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 import yaml
 
-METADATA = ('release', 'issue_jira', 'data_ora', 'durata', 'numero_ko', 'run', 'suite', 'environment', 'executor', 'source_branch')
+METADATA = ('release', 'scope', 'issue_jira', 'data_ora', 'durata', 'numero_ko', 'run', 'suite', 'environment', 'executor', 'source_branch')
 FIELDS = ('id_test', 'error_log', 'procedure', 'result', 'link_prod_bug', 'link_suite_bug')
 NAME = re.compile(r'^rae_[A-Za-z0-9_.-]+_\d{14}(?:_\d+)?\.yaml$')
 
@@ -25,11 +25,16 @@ def validate(data: object, filename: str | None = None) -> dict:
         meta = {}
     for field in METADATA:
         if field not in meta:
-            errors.append(f'rae.{field}: mancante')
-        elif field != 'numero_ko' and (not isinstance(meta[field], str) or not meta[field].strip()):
+            if field != 'scope':  # old approved RAE: implicitly NIGHTLY
+                errors.append(f'rae.{field}: mancante')
+        elif field == 'release' and not isinstance(meta[field], str):
+            errors.append('rae.release: deve essere una stringa, anche vuota')
+        elif field not in ('numero_ko', 'release', 'scope') and (not isinstance(meta[field], str) or not meta[field].strip()):
             errors.append(f'rae.{field}: valore obbligatorio non valido')
-    if set(meta) != set(METADATA):
+    if set(meta) not in (set(METADATA), set(METADATA) - {'scope'}):
         errors.append('rae: campi inattesi o mancanti')
+    if meta.get('scope', 'NIGHTLY') not in ('NO-PROMO', 'NIGHTLY', 'PROMO'):
+        errors.append('rae.scope: deve essere NO-PROMO, NIGHTLY o PROMO')
     if meta.get('environment') not in ('qa', 'dev'):
         errors.append('rae.environment: deve essere dev o qa')
     if not re.fullmatch(r'\d{2}:\d{2}:\d{2}', str(meta.get('durata', ''))):

@@ -1,10 +1,6 @@
 package it.pagopa.infrastructure.objectgraph;
 
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -81,7 +77,15 @@ final class JacksonObjectCorrelation {
             Object childValue = mapIterator.next().getValue();
             Map.Entry<String, JsonNode> jsonEntry = jsonIterator.next();
             JavaType childType = valueType != null ? valueType : resolveFallbackType(childValue);
-            walker.visit(jsonEntry.getValue(), childValue, childType, path.property(jsonEntry.getKey()), nodes, path, null);
+            walker.visit(
+                    jsonEntry.getValue(),
+                    childValue,
+                    childType,
+                    path.property(jsonEntry.getKey()),
+                    nodes,
+                    path,
+                    new MapKeyStep(jsonEntry.getKey())
+            );
         }
 
         if (mapIterator.hasNext() || jsonIterator.hasNext()) {

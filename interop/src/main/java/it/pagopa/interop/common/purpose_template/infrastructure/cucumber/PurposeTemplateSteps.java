@@ -15,7 +15,7 @@ public class PurposeTemplateSteps {
 
     @Given("un template finalità creato da/dal {tenant} e pubblicato")
     public void createPurposeTemplate(Tenant creator) {
-        journey.withProducer(creator, UserRole.ADMIN)
+        journey.withProducer(creator)
                 .createPurposeTemplate(Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.PUBLISHED);
     }
 }

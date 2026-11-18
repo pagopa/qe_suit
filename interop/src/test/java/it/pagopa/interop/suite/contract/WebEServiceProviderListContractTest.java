@@ -4,6 +4,7 @@ import it.frontend.e2e.framework.core.capability.core.Gettable;
 import it.frontend.e2e.framework.core.capability.core.Readable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
@@ -15,6 +16,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
@@ -34,8 +36,8 @@ import java.util.stream.Stream;
  * Sidebar navigation is not exercised. Mobile coverage requires execution at a verified viewport;
  * this desktop DOM baseline alone does not establish mobile rendering behavior.
  */
-@SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
-        properties = "spring.profiles.include=junit")
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
+@SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 public class WebEServiceProviderListContractTest {
