@@ -83,6 +83,7 @@ public class DelegationUseCase {
             case ACTIVE -> {
                 authSession.set(User.getTenantAdmin(delegate), delegate);
                 approveProducerDelegation(delegation.getRef());
+                waitForProducerDelegationState(delegation.getRef(), ProducerDelegationState.ACTIVE);
                 yield delegation;
             }
         };
