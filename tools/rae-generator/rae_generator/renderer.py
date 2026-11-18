@@ -37,12 +37,23 @@ def render(data: dict) -> str:
               ('source_branch', 'Source branch')]
     for key, label in labels:
         lines.append(f'| {label} | {_cell(m.get(key, "NIGHTLY") if key == "scope" else m[key])} |')
-    for key, title in [('ko_know', 'KO - Dovuti a bug noti'), ('ko', 'KO - Altri fallimenti')]:
-        lines.extend(['', f'## {title}', ''])
-        if not data[key]:
+    known = data['ko_know']
+    # Product bugs take precedence when both links are present.
+    product = [item for item in known if item['link_prod_bug']]
+    suite = [item for item in known if not item['link_prod_bug'] and item['link_suite_bug']]
+    # Defensive handling of legacy YAML: do not silently lose unlinked entries.
+    other = [item for item in known if not item['link_prod_bug'] and not item['link_suite_bug']] + data['ko']
+    groups = [
+        (product, 'KO DOVUTI A BUG DI PRODOTTO NOTI'),
+        (suite, 'KO DOVUTI A BUG DI SUITE NOTI'),
+        (other, 'KO DA ANALIZZARE'),
+    ]
+    for items, title in groups:
+        lines.extend(['', f'## {len(items)} - {title}', ''])
+        if not items:
             lines.append('Nessun fallimento.')
             continue
-        for index, item in enumerate(data[key], 1):
+        for index, item in enumerate(items, 1):
             if index > 1:
                 lines.extend(['', '---', ''])
             lines.extend([
