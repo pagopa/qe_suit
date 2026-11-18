@@ -21,7 +21,7 @@ public class ClientJourneySteps {
     @Given("un client CONSUMER creato da/dal {tenant}, associato alla {currentPurpose}, in cui è presente un (utente ){userRole} e una coppia di chiavi crittografiche")
     public void setupConsumerClient(Tenant consumer, Purpose purpose, UserRole userRole) {
         interopJourney
-                .withConsumer(consumer, UserRole.ADMIN)
+                .withConsumer(consumer)
                 .createClient(clientConfig ->
                         clientConfig
                                 .name(RandomUtils.randomAlphanumericName("client"))
@@ -35,7 +35,7 @@ public class ClientJourneySteps {
     @Given("un client API creato da/dal {tenant} in cui è presente un (utente ){userRole} e una coppia di chiavi crittografiche")
     public void setupApiClient(Tenant consumer, UserRole userRole) {
         interopJourney
-                .withConsumer(consumer, UserRole.ADMIN)
+                .withConsumer(consumer)
                 .createClient(clientConfig ->
                         clientConfig
                                 .name(RandomUtils.randomAlphanumericName("client"))

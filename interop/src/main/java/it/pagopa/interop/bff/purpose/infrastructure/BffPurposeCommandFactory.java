@@ -2,7 +2,7 @@ package it.pagopa.interop.bff.purpose.infrastructure;
 
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.bff.purpose.application.BffPurposeCreateCommand;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.*;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.purpose.application.PurposeCommandFactory;
@@ -33,7 +33,7 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
 
     private final RiskAnalysisGateway riskAnalysisGateway;
     private final RiskAnalysisDataFactory riskAnalysisDataFactory;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
     private final EntityStore entityStore;
 
     @Override
@@ -43,7 +43,7 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
 
     @Override
     public PurposeCreateCommand validFullPopulatedCreateCommand(EServiceRef eServiceRef) {
-        Tenant consumer = currentUserSession.getTenant();
+        Tenant consumer = authSession.getTenant();
         UUID consumerId = consumer.getOrganizationId();
 
         RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(consumer);
@@ -81,7 +81,7 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
     }
 
     public PurposeEServiceSeed reverseCreationRequest(EServiceRef eServiceRef, EServiceRiskAnalysisRef riskAnalysisRef) {
-        Tenant consumer = currentUserSession.getTenant();
+        Tenant consumer = authSession.getTenant();
         return Instancio.of(PurposeEServiceSeed.class)
                 .set(field(PurposeEServiceSeed::getTitle), randomAlphanumericName("purpose"))
                 .set(field(PurposeEServiceSeed::getDescription), randomAlphanumericName("description"))
@@ -95,7 +95,7 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
     }
 
     public PurposeUpdateContent updateRequest() {
-        Tenant consumer = currentUserSession.getTenant();
+        Tenant consumer = authSession.getTenant();
         return Instancio.of(PurposeUpdateContent.class)
                 .set(field(PurposeUpdateContent::getTitle), randomAlphanumericName("purpose"))
                 .set(field(PurposeUpdateContent::getDescription), randomAlphanumericName("description"))
@@ -146,7 +146,7 @@ public class BffPurposeCommandFactory implements PurposeCommandFactory {
         if (eserviceId == null || title == null || dailyCalls == null) {
             throw new IllegalArgumentException("Purpose template creation requires an e-service, title, and daily calls");
         }
-        Tenant consumer = currentUserSession.getTenant();
+        Tenant consumer = authSession.getTenant();
         PurposeTemplate purposeTemplate = entityStore.getById(purposeTemplateRef.id(), PurposeTemplate.class)
                 .orElseThrow(() -> new IllegalStateException(
                         "Selected purpose template not found in entity store: " + purposeTemplateRef.id()));
