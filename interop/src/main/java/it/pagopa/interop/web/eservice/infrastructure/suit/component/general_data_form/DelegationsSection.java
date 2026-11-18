@@ -1,20 +1,19 @@
 package it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data_form;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Checkbox;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Link;
 import it.pagopa.infrastructure.suit.component.Switch;
 
-@XPath(".//div[contains(@class, 'MuiPaper-root') and .//h2[normalize-space(.)='Deleghe']]")
+@XPath(".//*[contains(@class, 'MuiPaper-root') and .//h2[normalize-space(.)='Deleghe']]")
 public interface DelegationsSection extends Component {
     @XPath(".//h2")
-    Readable<String> title();
+    Label title();
 
     @XPath(".//p")
-    Readable<String> description();
+    Label description();
 
     @XPath(".//a[contains(., 'documentazione')]")
     Link documentationLink();
