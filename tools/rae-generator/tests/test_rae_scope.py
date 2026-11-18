@@ -29,8 +29,8 @@ def test_scope_enum_valid(scope):
     data['rae']['scope'] = scope
     assert validate(data) is data
     md = render(data)
-    assert f'**Scope:** {scope}' in md
-    assert md.index('**Release:**') < md.index('**Scope:**') < md.index('**Issue Jira:**')
+    assert f'| Scope | {scope} |' in md
+    assert md.index('| Release |') < md.index('| Scope |') < md.index('| Issue Jira |')
 
 
 def test_release_optional_but_must_be_string():
@@ -48,7 +48,7 @@ def test_legacy_without_scope_defaults_to_nightly():
     data = sample()
     del data['rae']['scope']
     validate(data)
-    assert '**Scope:** NIGHTLY' in render(data)
+    assert '| Scope | NIGHTLY |' in render(data)
 
 
 @pytest.mark.parametrize('scope', ['PROMO ', 'nightly', 'STAGING', None, 123])
