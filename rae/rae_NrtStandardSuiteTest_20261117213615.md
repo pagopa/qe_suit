@@ -4,7 +4,7 @@
 | --- | --- |
 | Release |  |
 | Scope | NIGHTLY |
-| Issue Jira | https://pagopa.atlassian.net/browse/QA-19638 |
+| Issue Jira | https://pagopa.atlassian.net/browse/QA-19655 |
 | Data e ora | 2026-11-17T21:09:46Z |
 | Durata | 00:25:57 |
 | Numero KO | 187 |
