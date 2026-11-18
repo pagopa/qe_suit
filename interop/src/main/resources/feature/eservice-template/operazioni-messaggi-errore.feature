@@ -64,7 +64,6 @@ Feature: Messaggi di errore durante la creazione e la modifica dei template e-se
     Given un template e-service preparato con la seguente configurazione:
       | alias | tecnologia | stato | interfaccia               |
       | T-1   | REST       | DRAFT | openapi3-riferimenti.json |
-    # Binding BFF negativo mancante; riusare updateDraftVersion senza attendere il successo.
     When l'erogatore tenta di modificare la descrizione della versione 1 del template "T-1" in "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_TEMPLATES_E_SERVICE_TEMPLATE_ID_VERSIONS_E_SERVICE_TEMPLATE_VERSION_ID" in lingua "it"
 

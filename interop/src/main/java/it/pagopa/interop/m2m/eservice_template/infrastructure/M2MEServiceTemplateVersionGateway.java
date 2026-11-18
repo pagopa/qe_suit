@@ -154,4 +154,10 @@ public class M2MEServiceTemplateVersionGateway implements EServiceTemplateVersio
             .versions(versions)
             .build();
     }
+
+    @Override
+    public void attemptDraftVersionUpdate(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef,
+                                         UpdateEServiceTemplateVersionCommand command) {
+        throw new UnsupportedOperationException("Draft template version update attempts are not supported on M2M V3");
+    }
 }

@@ -42,4 +42,10 @@ public interface EServiceTemplateVersionGateway extends Plugin<Channel> {
     EServiceTemplateInterface downloadInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef);
 
     Optional<EServiceTemplateInterface> readCurrentInterface(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef);
+
+    void attemptDraftVersionUpdate(
+            EServiceTemplateRef templateRef,
+            EServiceTemplateVersionRef versionRef,
+            UpdateEServiceTemplateVersionCommand command
+    );
 }
