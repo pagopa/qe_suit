@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+from dataclasses import dataclass
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
@@ -33,17 +34,25 @@ def _signature(text: str) -> str:
     return match.group(0) if match else primary[:65]
 
 
-def choose_known(test_id: str, error: str, candidates: list[dict], threshold: float = 0.90) -> dict | None:
+@dataclass(frozen=True)
+class Match:
+    candidate: dict
+    method: str  # "fingerprint" or "similarity"
+    score: float
+
+
+def find_match(test_id: str, error: str, candidates: list[dict], threshold: float = 0.90) -> Match | None:
+    """Return the candidate and match level; both fingerprint and confident similarity can identify known bugs."""
     viable = [c for c in candidates if c.get('id_test', '').strip().casefold() == test_id.strip().casefold()
               and c.get('error_log') and c.get('procedure') and c.get('result')]
     if not viable:
         return None
     normalized = normalized_error(error)
     digest = fingerprint(error)
-    # Candidates are preordered newest-first by history loader.
+    # History is newest-first: prefer the most recent exact match.
     for candidate in viable:
         if fingerprint(candidate['error_log']) == digest:
-            return candidate
+            return Match(candidate, 'fingerprint', 1.0)
     viable = [c for c in viable if _signature(c['error_log']) == _signature(error)]
     if not viable or not normalized:
         return None
@@ -51,4 +60,11 @@ def choose_known(test_id: str, error: str, candidates: list[dict], threshold: fl
     matrix = TfidfVectorizer(analyzer='char', ngram_range=(3, 5), lowercase=False).fit_transform(texts)
     scores = cosine_similarity(matrix[0:1], matrix[1:]).ravel()
     top = max(enumerate(scores), key=lambda pair: (pair[1], -pair[0]))
-    return viable[top[0]] if float(top[1]) >= threshold else None
+    score = float(top[1])
+    return Match(viable[top[0]], 'similarity', score) if score >= threshold else None
+
+
+def choose_known(test_id: str, error: str, candidates: list[dict], threshold: float = 0.90) -> dict | None:
+    """Compatibility helper for callers needing only the matching historical entry."""
+    match = find_match(test_id, error, candidates, threshold)
+    return match.candidate if match else None

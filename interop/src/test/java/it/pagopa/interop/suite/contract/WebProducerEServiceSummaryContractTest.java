@@ -3,6 +3,7 @@ package it.pagopa.interop.suite.contract;
 import it.frontend.e2e.framework.core.capability.core.Readable;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
@@ -28,6 +29,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
@@ -37,9 +39,9 @@ import static it.pagopa.interop.web.eservice.infrastructure.suit.page.ProducerES
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(
-        classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class},
-        properties = "spring.profiles.include=junit"
+        classes = {TestBootApp.class, JunitContextConfig.class, WebJUnitSuitConfig.class}
 )
 @TestConstructor(autowireMode = ALL)
 @RequiredArgsConstructor
