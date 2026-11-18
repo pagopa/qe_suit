@@ -23,7 +23,7 @@ public class BffUpdateEServiceTemplateCommand implements UpdateEServiceTemplateC
         this.bffPayload = new UpdateEServiceTemplateSeed();
     }
 
-    public PatchUpdateEServiceTemplateSeed getPatchEServiceTemplateSeed() {
+    public PatchUpdateEServiceTemplateSeed asPatchEServiceTemplateSeed() {
         var seed = new PatchUpdateEServiceTemplateSeed();
         seed.name(bffPayload.getName());
         seed.intendedTarget(bffPayload.getIntendedTarget());
