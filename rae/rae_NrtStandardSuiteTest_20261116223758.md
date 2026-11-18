@@ -222,6 +222,8 @@ Il suffisso casuale aggiunto al nome dell'e-service altera la similarità con il
 
 Rieseguire in locale PRIVATE_CATALOG_TEXT_SEARCH_6 in debug e sospendere l'esecuzione prima che l'hook After archivi o elimini l'e-service. Dai log della ri-esecuzione, risalire dall'ID atteso di ES-1 al nome effettivamente pubblicato e verificare quale suffisso ha aggiunto la suite al nome definito nel Gherkin. Con l'e-service ancora disponibile, ripetere nel catalogo autenticato la ricerca dello scenario usando lo stesso termine con refuso e gli stessi eventuali filtri. Ripetere la ricerca con il nome effettivo completo, suffisso incluso, per verificare se ES-1 è reperibile. Confrontare entrambi gli esiti con il timeout registrato nei log.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
 **ERROR LOG**
 
 ````text
@@ -410,6 +412,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer su POST /purposeTemplates/{purposeTemplateId}/riskAnalysis/answers. Consultare la richiesta e la risposta dello scenario su /answerData/annotation/text e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -520,6 +524,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer su POST /purposeTemplates/{purposeTemplateId}/riskAnalysis/answers. Consultare la richiesta e la risposta dello scenario su /answerData/suggestedValues/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -573,6 +579,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswerAnnotation su PUT /purposeTemplates/{purposeTemplateId}/riskAnalysis/answers/{answerId}/annotation. Consultare la richiesta e la risposta dello scenario su /text e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -997,6 +1005,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createApiClient su POST /clientsApi. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -1053,6 +1063,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createApiClient su POST /clientsApi. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -1167,6 +1179,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffCertifiedAttributeContractTest::createCertifiedAttribute su POST /certifiedAttributes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -1277,6 +1291,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffCertifiedAttributeContractTest::createCertifiedAttribute su POST /certifiedAttributes. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -1386,6 +1402,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute su POST /certifiedDiscreteAttributes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -1552,6 +1570,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute su POST /certifiedDiscreteAttributes. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -1781,6 +1801,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createConsumerClient su POST /clientsConsumer. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -1837,6 +1859,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createConsumerClient su POST /clientsConsumer. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -1951,6 +1975,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffDeclaredAttributeContractTest::createDeclaredAttribute su POST /declaredAttributes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -2060,6 +2086,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffDeclaredAttributeContractTest::createDeclaredAttribute su POST /declaredAttributes. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -2410,6 +2438,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::createEService su POST /eservices. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -2466,6 +2496,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::createEService su POST /eservices. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -2937,6 +2969,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::createEServiceTemplate su POST /eservices/templates. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -2993,6 +3027,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::createEServiceTemplate su POST /eservices/templates. Consultare la richiesta e la risposta dello scenario su /intendedTarget e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -3051,6 +3087,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::createEServiceTemplate su POST /eservices/templates. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -3107,6 +3145,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::createEServiceTemplate su POST /eservices/templates. Consultare la richiesta e la risposta dello scenario su /version/description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -3379,6 +3419,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createKey su POST /clients/{clientId}/keys. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -3488,6 +3530,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 204. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffProducerKeychainContractTest::createProducerKey su POST /producerKeychains/{producerKeychainId}/keys. Consultare la richiesta e la risposta dello scenario su /alg e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -3656,6 +3700,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 204. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffProducerKeychainContractTest::createProducerKey su POST /producerKeychains/{producerKeychainId}/keys. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -3708,6 +3754,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffProducerKeychainContractTest::createProducerKeychain su POST /producerKeychains. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -3765,6 +3813,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffProducerKeychainContractTest::createProducerKeychain su POST /producerKeychains. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -3994,6 +4044,8 @@ Il chiamante opera per il proprio ente, mentre consumerId è sostituito con l'UU
 
 Eseguire il solo scenario REPLACED_WITH_NIL_UUID di BffPurposeContractTest::createPurpose su POST /purposes. Sostituire /consumerId con l'UUID nil e mantenere validi gli altri riferimenti. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
 **ERROR LOG**
 
 ````text
@@ -4047,6 +4099,8 @@ La motivazione è omessa mentre l'indicatore di gratuità è true. Il BFF restit
 **PROCEDURE**
 
 Eseguire il solo scenario REMOVED di BffPurposeContractTest::createPurpose su POST /purposes. Rimuovere esclusivamente /freeOfChargeReason dal payload di partenza. Se il percorso identifica un elemento, verificare il contenuto del contenitore dopo la rimozione. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
 
 **ERROR LOG**
 
@@ -4150,6 +4204,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurpose su POST /purposes. Consultare la richiesta e la risposta dello scenario su /riskAnalysisForm/answers/institutionalPurpose/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -4200,6 +4256,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurpose su POST /purposes. Consultare la richiesta e la risposta dello scenario su /title e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -4249,6 +4307,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurpose su POST /purposes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -4408,6 +4468,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurpose su POST /purposes. Consultare la richiesta e la risposta dello scenario su /freeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -4511,6 +4573,8 @@ Il chiamante opera per il proprio ente, mentre consumerId è sostituito con l'UU
 
 Eseguire il solo scenario REPLACED_WITH_NIL_UUID di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Sostituire /consumerId con l'UUID nil e mantenere validi gli altri riferimenti. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
 **ERROR LOG**
 
 ````text
@@ -4561,6 +4625,8 @@ La motivazione è omessa mentre l'indicatore di gratuità è true. Il BFF restit
 **PROCEDURE**
 
 Eseguire il solo scenario REMOVED di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Rimuovere esclusivamente /freeOfChargeReason dal payload di partenza. Se il percorso identifica un elemento, verificare il contenuto del contenitore dopo la rimozione. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
 
 **ERROR LOG**
 
@@ -4663,6 +4729,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Consultare la richiesta e la risposta dello scenario su /title e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -4820,6 +4888,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -4869,6 +4939,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Consultare la richiesta e la risposta dello scenario su /freeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -5477,6 +5549,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 201. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /targetDescription e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -5530,6 +5604,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /purposeTitle e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -5585,6 +5661,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 201. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /purposeDescription e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -5638,6 +5716,8 @@ Il validatore rifiuta correttamente la versione del questionario composta da spa
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_BLANK_STRING di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Sostituire /purposeRiskAnalysisForm/version con tre spazi e controllare che il valore venga trasmesso senza normalizzazioni. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
 
 **ERROR LOG**
 
@@ -5748,6 +5828,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 201. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -5915,6 +5997,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 201. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /purposeFreeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -6025,6 +6109,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffVerifiedAttributeContractTest::createVerifiedAttribute su POST /verifiedAttributes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -6134,6 +6220,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffVerifiedAttributeContractTest::createVerifiedAttribute su POST /verifiedAttributes. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -6615,6 +6703,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 404. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffDelegationContractTest::rejectConsumerDelegation su POST /consumers/delegations/{delegationId}/reject. Consultare la richiesta e la risposta dello scenario su /rejectionReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Predisporre per ogni scenario una delega distinta, esistente e in stato rifiutabile, con un chiamante autorizzato al rifiuto.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -6860,6 +6950,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 404. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffDelegationContractTest::rejectProducerDelegation su POST /producers/delegations/{delegationId}/reject. Consultare la richiesta e la risposta dello scenario su /rejectionReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Predisporre per ogni scenario una delega distinta, esistente e in stato rifiutabile, con un chiamante autorizzato al rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -7380,6 +7472,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::updateEServiceById su PUT /eservices/{eServiceId}. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -7433,6 +7527,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::updateEServiceById su PUT /eservices/{eServiceId}. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -7491,6 +7587,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::updateEServiceDescription su POST /eservices/{eServiceId}/description/update. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -7547,6 +7645,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::updateEServiceName su POST /eservices/{eServiceId}/name/update. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -7605,6 +7705,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 204. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::updateEServiceTemplateDescription su POST /eservices/templates/{eServiceTemplateId}/description/update. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -7662,6 +7764,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 204. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::updateEServiceTemplateIntendedTarget su POST /eservices/templates/{eServiceTemplateId}/intendedTarget/update. Consultare la richiesta e la risposta dello scenario su /intendedTarget e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -7714,6 +7818,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::updateEServiceTemplateName su POST /eservices/templates/{eServiceTemplateId}/name/update. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -7881,6 +7987,8 @@ Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della
 
 Eseguire REMOVED su /riskAnalysisForm/answers/institutionalPurpose in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
 **ERROR LOG**
 
 ````text
@@ -7934,6 +8042,8 @@ Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della
 **PROCEDURE**
 
 Eseguire REMOVED su /riskAnalysisForm/answers/institutionalPurpose/0 in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
 
 **ERROR LOG**
 
@@ -7989,6 +8099,8 @@ Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della
 
 Eseguire REMOVED su /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
 **ERROR LOG**
 
 ````text
@@ -8043,6 +8155,8 @@ Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della
 
 Eseguire REMOVED su /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/0 in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
 **ERROR LOG**
 
 ````text
@@ -8093,6 +8207,8 @@ Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della
 **PROCEDURE**
 
 Eseguire REMOVED su /riskAnalysisForm/answers/purpose in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
 
 **ERROR LOG**
 
@@ -8145,6 +8261,8 @@ Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della
 
 Eseguire REMOVED su /riskAnalysisForm/answers/purpose/0 in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
 **ERROR LOG**
 
 ````text
@@ -8195,6 +8313,8 @@ Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della
 **PROCEDURE**
 
 Eseguire REMOVED su /riskAnalysisForm/answers/usesThirdPartyPersonalData in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
 
 **ERROR LOG**
 
@@ -8247,6 +8367,8 @@ Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della
 
 Eseguire REMOVED su /riskAnalysisForm/answers/usesThirdPartyPersonalData/0 in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
 **ERROR LOG**
 
 ````text
@@ -8298,6 +8420,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updatePurpose su POST /purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /title e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -8348,6 +8472,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updatePurpose su POST /purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -8456,6 +8582,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updatePurpose su POST /purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /freeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -8562,6 +8690,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updatePurpose su POST /purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /riskAnalysisForm/answers/institutionalPurpose/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -8963,6 +9093,8 @@ La motivazione è omessa mentre l'indicatore di gratuità è true. Il BFF restit
 
 Eseguire il solo scenario REMOVED di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Rimuovere esclusivamente /purposeFreeOfChargeReason dal payload di partenza. Se il percorso identifica un elemento, verificare il contenuto del contenitore dopo la rimozione. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
 **ERROR LOG**
 
 ````text
@@ -9130,6 +9262,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /targetDescription e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -9183,6 +9317,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /purposeTitle e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -9235,6 +9371,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /purposeDescription e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -9292,6 +9430,8 @@ Il validatore rifiuta correttamente la versione del questionario composta da spa
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_BLANK_STRING di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Sostituire /purposeRiskAnalysisForm/version con tre spazi e controllare che il valore venga trasmesso senza normalizzazioni. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
 
 **ERROR LOG**
 
@@ -9401,6 +9541,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -9453,6 +9595,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /purposeFreeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -9618,6 +9762,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updateReversePurpose su POST /reverse/purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /title e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
 **ERROR LOG**
 
 ````text
@@ -9668,6 +9814,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updateReversePurpose su POST /reverse/purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -9771,6 +9919,8 @@ La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione 
 **PROCEDURE**
 
 Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updateReversePurpose su POST /reverse/purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /freeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
 
 **ERROR LOG**
 
@@ -10046,6 +10196,8 @@ Il selettore 1 recupera il primo attributo accumulato nello store del thread, an
 
 Eseguire il setup delle soglie personalizzate con lo store del thread già popolato. Conservare i riferimenti degli attributi appena creati e confrontarli con quelli usati nei requisiti del descriptor e nelle assegnazioni. Verificare che ogni soglia sia associata all'attributo del setup corrente e che il test raggiunga le asserzioni Web.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
 **ERROR LOG**
 
 ````text
@@ -10103,6 +10255,8 @@ Il controllo del titolo viene eseguito quando il contenuto atteso non è ancora 
 **PROCEDURE**
 
 Aprire il dettaglio di una richiesta di fruizione con il ruolo previsto dallo scenario. In assertLoaded verificare tramite polling che i breadcrumb e il titolo Gestisci richiesta di fruizione assumano i valori attesi. Eseguire le asserzioni sul contenuto soltanto dopo il caricamento della pagina.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
 
 **ERROR LOG**
 
@@ -10176,6 +10330,8 @@ Il caricamento della pagina di creazione del template supera il timeout e il tit
 
 Seguire la navigazione alla pagina di creazione del template con trattamento dati personali disabilitato. Controllare URL, titolo, ruoli e risposte di caricamento fino allo scadere del polling.
 
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
 **ERROR LOG**
 
 ````text
@@ -10212,6 +10368,8 @@ Il controllo del titolo viene eseguito quando il contenuto atteso non è ancora 
 **PROCEDURE**
 
 Aprire il dettaglio di una richiesta di fruizione con il ruolo previsto dallo scenario. In assertLoaded verificare tramite polling che i breadcrumb e il titolo Gestisci richiesta di fruizione assumano i valori attesi. Eseguire le asserzioni sul contenuto soltanto dopo il caricamento della pagina.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
 
 **ERROR LOG**
 
@@ -10280,6 +10438,8 @@ La verifica della barra viene eseguita subito dopo la navigazione con offset ele
 **PROCEDURE**
 
 Aprire la lista delle richieste, quindi navigare nuovamente con offset superiore ai risultati disponibili. Attendere il completamento del caricamento della lista e verificare, tramite polling, che la barra di paginazione sia presente. Controllarne quindi l'usabilità e la possibilità di tornare a una pagina valida.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
 
 **ERROR LOG**
 
