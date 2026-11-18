@@ -166,8 +166,10 @@ def test_renderer_determinism_and_markdown_escaping():
     assert 'AssertionError: expected A | B' in md
     assert md.index('**RESULT**') < md.index('**PROCEDURE**') < md.index('**ERROR LOG**')
     assert '| ID TEST | ERROR LOG |' not in md
-    assert '| Campo | Valore |' not in md
-    assert '**Suite:** NrtStandardSuiteTest' in md
+    assert '| Campo | Valore |' in md
+    assert '| --- | --- |' in md
+    assert '| Suite | NrtStandardSuiteTest |' in md
+    assert md.index('| Release |') < md.index('| Scope |') < md.index('| Issue Jira |')
 
 
 def test_renderer_full_width_logs_and_fences():
