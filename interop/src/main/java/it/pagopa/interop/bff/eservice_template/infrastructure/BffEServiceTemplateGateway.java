@@ -61,6 +61,17 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
     }
 
     @Override
+    public EServiceTemplate patchEServiceTemplate(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command) {
+        if (!(command instanceof BffUpdateEServiceTemplateCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateCommand.class.getSimpleName());
+
+        return restClient.patchEServiceTemplate(templateRef.id(), bffCommand.getPatchEServiceTemplateSeed())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(ignored -> getEServiceTemplate(templateRef))
+                .get();
+    }
+
+    @Override
     public EServiceTemplate updateTemplateName(EServiceTemplateRef templateRef, UpdateEServiceTemplateNameCommand command) {
         if (!(command instanceof BffUpdateEServiceTemplateNameCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateNameCommand.class.getSimpleName());

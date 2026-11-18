@@ -13,6 +13,8 @@ public interface EServiceTemplateGateway extends Plugin<Channel> {
 
     EServiceTemplate updateEServiceTemplate(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command);
 
+    EServiceTemplate patchEServiceTemplate(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command);
+
     EServiceTemplate updateTemplateName(EServiceTemplateRef templateRef, UpdateEServiceTemplateNameCommand command);
 
     EServiceTemplate updateTemplateIntendedTarget(EServiceTemplateRef templateRef, UpdateEServiceTemplateIntendedTargetCommand command);

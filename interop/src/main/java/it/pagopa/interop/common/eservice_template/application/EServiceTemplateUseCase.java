@@ -39,6 +39,10 @@ public class EServiceTemplateUseCase {
         return eServiceTemplateGateway.updateEServiceTemplate(eServiceTemplate.getRef(), command);
     }
 
+    public EServiceTemplate patchEServiceTemplate(EServiceTemplate eServiceTemplate, UpdateEServiceTemplateCommand command) {
+        return eServiceTemplateGateway.patchEServiceTemplate(eServiceTemplate.getRef(), command);
+    }
+
     public EServiceTemplate updateTemplateName(EServiceTemplate eServiceTemplate, Consumer<UpdateEServiceTemplateNameCommand> config) {
         UpdateEServiceTemplateNameCommand command = requestFactory.defaultUpdateTemplateNameCommand();
         config.accept(command);

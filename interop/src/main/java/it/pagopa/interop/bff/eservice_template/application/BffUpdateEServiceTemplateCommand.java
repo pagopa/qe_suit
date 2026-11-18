@@ -3,6 +3,7 @@ package it.pagopa.interop.bff.eservice_template.application;
 import it.pagopa.interop.common.eservice.domain.EServiceMode;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateCommand;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchUpdateEServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
 import lombok.Getter;
 
@@ -20,6 +21,19 @@ public class BffUpdateEServiceTemplateCommand implements UpdateEServiceTemplateC
 
     public BffUpdateEServiceTemplateCommand() {
         this.bffPayload = new UpdateEServiceTemplateSeed();
+    }
+
+    public PatchUpdateEServiceTemplateSeed getPatchEServiceTemplateSeed() {
+        var seed = new PatchUpdateEServiceTemplateSeed();
+        seed.name(bffPayload.getName());
+        seed.intendedTarget(bffPayload.getIntendedTarget());
+        seed.description(bffPayload.getDescription());
+        seed.technology(bffPayload.getTechnology());
+        seed.mode(bffPayload.getMode());
+        seed.isSignalHubEnabled(bffPayload.getIsSignalHubEnabled());
+        seed.personalData(bffPayload.getPersonalData());
+        seed.asyncExchange(bffPayload.getAsyncExchange());
+        return seed;
     }
 
     @Override
