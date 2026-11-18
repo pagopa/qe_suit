@@ -32,7 +32,7 @@ public interface ApiCallThresholdSection extends Component {
     @XPath(".//span[@id='dailyCallsPerConsumer-infoLabel']")
     FormHelperText dailyCallsPerConsumerHelperText();
 
-    @XPath(".//span[@id='dailyCallsPerConsumer']/ancestor::div[contains(@class, 'MuiTextField-root')][1]//span[contains(@class, 'MuiFormHelperText-root') and contains(@class, 'Mui-error')]")
+    @XPath(".//*[@id='dailyCallsPerConsumer']/ancestor::div[contains(@class, 'MuiTextField-root')][1]//span[contains(@class, 'MuiFormHelperText-root') and contains(@class, 'Mui-error')]")
     FormHelperText dailyCallsPerConsumerErrorText();
 
     @XPath(".//*[@id='dailyCallsTotal']")
