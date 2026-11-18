@@ -11,28 +11,28 @@ Feature: Modifica dei metadati dei template finalità
   quando il creatore aggiorna un metadato,
   allora il sistema salva il nuovo valore senza modificare stato o configurazione operativa.
 
-    Given un template finalità creato dal Comune di Pozzallo in stato <stato>
+    Given un template finalità creato dal Comune di Comun Nuovo in stato <stato>
     And i dati del template finalità allo stato attuale appuntati come riferimento
-    When un admin del Comune di Pozzallo modifica i metadati del template finalità:
-      | campo       | valore            |
+    When un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
+      | campo       | valore unico      |
       | nome        | primo nome        |
     Then il template finalità conserva lo stato e i dati di riferimento eccetto il nome
 
     When i dati del template finalità allo stato attuale appuntati come riferimento
-    And un admin del Comune di Pozzallo modifica i metadati del template finalità:
-      | campo       | valore            |
+    And un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
+      | campo       | valore unico      |
       | descrizione | prima descrizione |
     Then il template finalità conserva lo stato e i dati di riferimento eccetto la descrizione
 
     When i dati del template finalità allo stato attuale appuntati come riferimento
-    And un admin del Comune di Pozzallo modifica i metadati del template finalità:
-      | campo       | valore            |
+    And un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
+      | campo       | valore unico      |
       | destinatari | primi destinatari |
     Then il template finalità conserva lo stato e i dati di riferimento eccetto i destinatari
 
     When i dati del template finalità allo stato attuale appuntati come riferimento
-    And un admin del Comune di Pozzallo modifica i metadati del template finalità:
-      | campo       | valore            |
+    And un admin del Comune di Comun Nuovo modifica i metadati del template finalità:
+      | campo       | valore unico      |
       | nome        | nuovo nome        |
       | descrizione | nuova descrizione |
       | destinatari | nuovi destinatari |
