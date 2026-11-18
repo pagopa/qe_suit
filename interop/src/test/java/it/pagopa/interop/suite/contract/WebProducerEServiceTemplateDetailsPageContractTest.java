@@ -203,9 +203,10 @@ public class WebProducerEServiceTemplateDetailsPageContractTest {
                             softly.assertThat(technicalInfo.documentsListLabel().read())
                                     .as("Documents list label")
                                     .isEqualTo("Elenco documenti");
-//                            softly.assertThat(technicalInfo.apiSpecLink().read())
-//                                    .as("API specification link")
-//                                    .isEqualTo("Specifica API");
+                            // in QA non va dato che la scritta non coincide con quanto visibile attualmente a livello empirico da UI
+                            softly.assertThat(technicalInfo.apiSpecLink().read())
+                                    .as("API specification link")
+                                    .isEqualTo("Specifica API");
                             softly.assertThat(technicalInfo.usefulLinksHeading().read())
                                     .as("Useful links heading")
                                     .isEqualTo("Link utili");
