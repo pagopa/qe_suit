@@ -3930,12 +3930,62 @@ expected: "9. Proprietà intellettuale"
 
 </details>
 
-## 36 - KO DOVUTI A BUG DI SUITE NOTI
+## 113 - KO DOVUTI A BUG DI SUITE NOTI
 
 <details>
-<summary>Mostra/nascondi 36 KO</summary>
+<summary>Mostra/nascondi 113 KO</summary>
 
-### 1. BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer::[payload] REPLACED_WITH_NULL @ /answerData/annotation
+### 1. [PRIVATE_CATALOG_TEXT_SEARCH_6] Ricerca approssimata con un refuso [Given=BFF,When=BFF,Then=BFF]
+
+**RESULT**
+
+Il suffisso casuale aggiunto al nome dell'e-service altera la similarità con il termine cercato e rende il fixture inadatto alla verifica del refuso. Lo scenario è stato posto in ignore e non dovrebbe comparire nelle prossime run. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Rieseguire in locale PRIVATE_CATALOG_TEXT_SEARCH_6 in debug e sospendere l'esecuzione prima che l'hook After archivi o elimini l'e-service. Dai log della ri-esecuzione, risalire dall'ID atteso di ES-1 al nome effettivamente pubblicato e verificare quale suffisso ha aggiunto la suite al nome definito nel Gherkin. Con l'e-service ancora disponibile, ripetere nel catalogo autenticato la ricerca dello scenario usando lo stesso termine con refuso e gli stessi eventuali filtri. Ripetere la ricerca con il nome effettivo completo, suffisso incluso, per verificare se ES-1 è reperibile. Confrontare entrambi gli esiti con il timeout registrato nei log.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.IllegalStateException: Timed out waiting for catalog presence across pages: expected IDs [e91d8c5e-8ef1-4758-a6fe-8c5017924196], missing IDs [e91d8c5e-8ef1-4758-a6fe-8c5017924196], last actual IDs [], last scanned offsets [0], last scan horizon 0, offset 0, limit 200, duration 30467ms
+	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceCatalogGateway.awaitPresence(BffEServiceCatalogGateway.java:92)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
+	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
+	at jdk.proxy2/jdk.proxy2.$Proxy160.awaitPresence(Unknown Source)
+	at it.pagopa.interop.common.eservice.application.EServiceCatalogUseCase.awaitPresence(EServiceCatalogUseCase.java:39)
+	at it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceCatalogSearchSteps.awaitPresence(EServiceCatalogSearchSteps.java:103)
+	at it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceCatalogAssertionSteps.shouldContainEService(EServiceCatalogAssertionSteps.java:30)
+	at ✽.l'e-service "ES-1" è presente tra i risultati della ricerca(classpath:feature-expanded/catalog/private-catalog-text-search.feature:109)
+Caused by: java.lang.IllegalStateException: Polling in timeout dopo 30 secondi.
+
+	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
+	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:80)
+	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceCatalogGateway.awaitPresence(BffEServiceCatalogGateway.java:77)
+	... 13 more
+Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.interop.common.eservice.application.EServiceCatalogTraversal@57d2c2db> within 30 seconds.
+	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
+	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
+	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
+	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
+	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
+	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
+	... 15 more
+
+````
+
+
+---
+
+### 2. BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer::[payload] REPLACED_WITH_NULL @ /answerData/annotation
 
 **RESULT**
 
@@ -3991,7 +4041,178 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 2. BffAgreementContractTest::createAgreement::[payload] REPLACED_WITH_NULL @ /delegationId
+### 3. BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer::[payload] REPLACED_WITH_SQL_INJECTION @ /answerData/annotation/text
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer su POST /purposeTemplates/{purposeTemplateId}/riskAnalysis/answers. Consultare la richiesta e la risposta dello scenario su /answerData/annotation/text e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /answerData/annotation/text
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"2054b58c-6069-4fff-a8d1-ac460694626a","values":[],"editable":false,"annotation":{"id":"2bd575d7-80bf-4a8a-9cdf-53b15d01e7fe","text":"' OR '1'='1","docs":[]},"suggestedValues":["answer-value-pad2qljXBHDDWxX"]}
+- payload: {"answerKey":"institutionalPurpose","answerData":{"values":[],"editable":false,"annotation":{"text":"' OR '1'='1"},"suggestedValues":["answer-value-pad2qljXBHDDWxX"]}}
+- pathParams: {"purposeTemplateId":"f948e673-62b5-4990-8bc8-e4b80d066ef1"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 4. BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer::[payload] REPLACED_WITH_SQL_INJECTION @ /answerData/suggestedValues/0
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer su POST /purposeTemplates/{purposeTemplateId}/riskAnalysis/answers. Consultare la richiesta e la risposta dello scenario su /answerData/suggestedValues/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /answerData/suggestedValues/0
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"5aa47fce-5b86-4b83-a2ce-a147823b49c1","values":[],"editable":false,"annotation":{"id":"c6e175d5-e7fd-438b-bb3d-6f79979ab135","text":"annotation-FwYdME0tzgm07MgV7AoM","docs":[]},"suggestedValues":["' OR '1'='1"]}
+- payload: {"answerKey":"institutionalPurpose","answerData":{"values":[],"editable":false,"annotation":{"text":"annotation-FwYdME0tzgm07MgV7AoM"},"suggestedValues":["' OR '1'='1"]}}
+- pathParams: {"purposeTemplateId":"a8148e57-3cd9-42a9-aff3-d6ed4ac665dd"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 5. BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswerAnnotation::[payload] REPLACED_WITH_SQL_INJECTION @ /text
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswerAnnotation su PUT /purposeTemplates/{purposeTemplateId}/riskAnalysis/answers/{answerId}/annotation. Consultare la richiesta e la risposta dello scenario su /text e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /text
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"509d3f1b-c532-4833-a420-8e2f8b1a8f8a","text":"' OR '1'='1","docs":[]}
+- payload: {"text":"' OR '1'='1"}
+- pathParams: {"answerId":"e1ebe640-8010-477e-88b2-094e1e987124","purposeTemplateId":"81020499-6088-4f7d-a41c-3a5100911fe3"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 6. BffAgreementContractTest::createAgreement::[payload] REPLACED_WITH_NULL @ /delegationId
 
 **RESULT**
 
@@ -4053,7 +4274,7 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 3. BffClientContractTest::createApiClient::[payload] REPLACED_WITH_NULL @ /description
+### 7. BffClientContractTest::createApiClient::[payload] REPLACED_WITH_NULL @ /description
 
 **RESULT**
 
@@ -4112,7 +4333,7 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 4. BffClientContractTest::createApiClient::[payload] REMOVED @ /members/0
+### 8. BffClientContractTest::createApiClient::[payload] REMOVED @ /members/0
 
 **RESULT**
 
@@ -4171,7 +4392,349 @@ Expected status code <400> but was <200>.
 
 ---
 
-### 5. BffClientContractTest::createConsumerClient::[payload] REPLACED_WITH_NULL @ /description
+### 9. BffClientContractTest::createApiClient::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createApiClient su POST /clientsApi. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"df90fa05-807b-4263-a3f8-2b8eb26705bc"}
+- payload: {"name":"' OR '1'='1","description":"description-Lz7X76bl7XNEldWuUROAvM3RifWdvUQD","members":["5d717b97-5308-49a5-8682-187663278f24"]}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 10. BffClientContractTest::createApiClient::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createApiClient su POST /clientsApi. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"1a83901b-e806-4b9a-a415-640f071faf42"}
+- payload: {"name":"client-SL0NiIgvxa6YjLPCv7rtTihI","description":"' OR '1'='1","members":["5d717b97-5308-49a5-8682-187663278f24"]}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 11. BffCertifiedAttributeContractTest::createCertifiedAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffCertifiedAttributeContractTest::createCertifiedAttribute su POST /certifiedAttributes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"3ddb60b1-37d8-4a01-8313-d043f03c20b8","code":"88d223c1a5a44f32d6fcfc5727bc05a69fcf580da910080f08c946e9a502b890","kind":"CERTIFIED","description":"' OR '1'='1","origin":"e79a24cd-8edc-441e-ae8d-e87c3aea0059","name":"name-NdlvWFxxqmoZZFeYLmOm6HL8","creationTime":"2026-11-17T21:20:01.310Z"}
+- payload: {"description":"' OR '1'='1","name":"name-NdlvWFxxqmoZZFeYLmOm6HL8"}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 12. BffCertifiedAttributeContractTest::createCertifiedAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffCertifiedAttributeContractTest::createCertifiedAttribute su POST /certifiedAttributes. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 409
+- responseBody: {"type":"about:blank","title":"Duplicate attribute name or code","status":409,"detail":"An attribute with name ' OR '1'='1 or code eaec06bf3a1b96664dcf224b93180d1f53774de2b1839040fa83e7421f09ee08 and origin e79a24cd-8edc-441e-ae8d-e87c3aea0059 already exists","correlationId":"b8939d68-7617-42b4-96cb-b4e550c4635a","errors":[{"code":"003-0002","detail":"An attribute with name ' OR '1'='1 or code eaec06bf3a1b96664dcf224b93180d1f53774de2b1839040fa83e7421f09ee08 and origin e79a24cd-8edc-441e-ae8d-e87c3aea0059 already exists"}]}
+- payload: {"description":"description-PusOZJ1RA55bzRSlDIQTstdTtjj1w875","name":"' OR '1'='1"}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <409>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 13. BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute su POST /certifiedDiscreteAttributes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"35c606eb-ff3e-43b9-a107-877ed0f9940e","code":"c1fed42efd25ac14324f813c7b5731aa17ff2e77527a6c0841ed94f52099509b","kind":"CERTIFIED_DISCRETE","description":"' OR '1'='1","origin":"e79a24cd-8edc-441e-ae8d-e87c3aea0059","name":"name-U4tEbNFUWP7qFzDqgYf1W0xH","creationTime":"2026-11-17T21:25:40.111Z"}
+- payload: {"description":"' OR '1'='1","name":"name-U4tEbNFUWP7qFzDqgYf1W0xH"}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 14. BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute su POST /certifiedDiscreteAttributes. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 409
+- responseBody: {"type":"about:blank","title":"Duplicate attribute name or code","status":409,"detail":"An attribute with name ' OR '1'='1 or code eaec06bf3a1b96664dcf224b93180d1f53774de2b1839040fa83e7421f09ee08 and origin e79a24cd-8edc-441e-ae8d-e87c3aea0059 already exists","correlationId":"cc954126-0784-43df-ab77-691267838685","errors":[{"code":"003-0002","detail":"An attribute with name ' OR '1'='1 or code eaec06bf3a1b96664dcf224b93180d1f53774de2b1839040fa83e7421f09ee08 and origin e79a24cd-8edc-441e-ae8d-e87c3aea0059 already exists"}]}
+- payload: {"description":"description-i7JZCW3XNcsVT4aHjOxtGajjONIApRwb","name":"' OR '1'='1"}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <409>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 15. BffClientContractTest::createConsumerClient::[payload] REPLACED_WITH_NULL @ /description
 
 **RESULT**
 
@@ -4230,7 +4793,7 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 6. BffClientContractTest::createConsumerClient::[payload] REMOVED @ /members/0
+### 16. BffClientContractTest::createConsumerClient::[payload] REMOVED @ /members/0
 
 **RESULT**
 
@@ -4289,7 +4852,591 @@ Expected status code <400> but was <200>.
 
 ---
 
-### 7. BffClientContractTest::createKey::[payload] REPLACED_WITH_SQL_INJECTION @ /alg
+### 17. BffClientContractTest::createConsumerClient::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createConsumerClient su POST /clientsConsumer. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"e2c4930b-6672-4cdb-84c4-92410395e77b"}
+- payload: {"name":"' OR '1'='1","description":"description-UUbN203fUxc2AVieHAocuubHpfOiqF1s","members":["5d717b97-5308-49a5-8682-187663278f24"]}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 18. BffClientContractTest::createConsumerClient::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createConsumerClient su POST /clientsConsumer. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"607f810d-9058-4ea0-957d-d7402a1ccc9f"}
+- payload: {"name":"client-1eRxlSfnxbX4G4iX8WcbhdGf","description":"' OR '1'='1","members":["5d717b97-5308-49a5-8682-187663278f24"]}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 19. BffDeclaredAttributeContractTest::createDeclaredAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffDeclaredAttributeContractTest::createDeclaredAttribute su POST /declaredAttributes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"081868cd-998b-4f7f-9bd5-5b8600551377","kind":"DECLARED","description":"' OR '1'='1","name":"name-VOHJjJRJkslRkWidBkI1Mxeq","creationTime":"2026-11-17T21:19:11.657Z"}
+- payload: {"description":"' OR '1'='1","name":"name-VOHJjJRJkslRkWidBkI1Mxeq"}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 20. BffDeclaredAttributeContractTest::createDeclaredAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffDeclaredAttributeContractTest::createDeclaredAttribute su POST /declaredAttributes. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"789c0627-6f93-47f3-8386-92405c91f47d","kind":"DECLARED","description":"description-V9keWoWzpinbzaAeHZjiKgC1BeBlidu1","name":"' OR '1'='1","creationTime":"2026-11-17T21:19:14.620Z"}
+- payload: {"description":"description-V9keWoWzpinbzaAeHZjiKgC1BeBlidu1","name":"' OR '1'='1"}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 21. BffEServiceContractTest::createEService::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::createEService su POST /eservices. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 409
+- responseBody: {"type":"about:blank","title":"EService template name conflict","status":409,"detail":"An EService template with name ' OR '1'='1 already exists","correlationId":"73d927d9-9f8e-4991-8586-579d4bffc99b","errors":[{"code":"001-0039","detail":"An EService template with name ' OR '1'='1 already exists"}]}
+- payload: {"name":"' OR '1'='1","description":"description-bjWmFdn2SsgRA9O4R8ev","technology":"REST","mode":"DELIVER","isSignalHubEnabled":false,"isConsumerDelegable":true,"isClientAccessDelegable":true,"personalData":false,"asyncExchange":false}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <409>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 22. BffEServiceContractTest::createEService::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::createEService su POST /eservices. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"70e2e713-ef9b-4498-94f0-f1cf3310452a","descriptorId":"489db0d2-3c02-4687-b83f-ae6cce5bf586"}
+- payload: {"name":"eservice-aGR3x1vhgL0o0np","description":"' OR '1'='1","technology":"REST","mode":"DELIVER","isSignalHubEnabled":false,"isConsumerDelegable":true,"isClientAccessDelegable":true,"personalData":false,"asyncExchange":false}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 23. BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::createEServiceTemplate su POST /eservices/templates. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"2175488f-46c4-49cc-8784-c277a29d34e5","versionId":"94cde101-f933-4c09-8ea5-70f658a5b9a2"}
+- payload: {"name":"' OR '1'='1","intendedTarget":"target-acAzLP7z2g8Q2CPvrTk2GB3FsMFGDa","description":"description-takgQEize8cp6JZY8kGmJkG7F6EI8IDQ0Kgys1PHRZJqMwtYBU","technology":"REST","mode":"DELIVER","version":{"description":"version-description-ydVg2gZSKxHx1mhO1vzzJmraUTgrk65xkga","voucherLifespan":60,"dailyCallsPerConsumer":1,"dailyCallsTotal":10,"agreementApprovalPolicy":"AUTOMATIC"},"isSignalHubEnabled":false,"personalData":false,"asyncExchange":false}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 24. BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /intendedTarget
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::createEServiceTemplate su POST /eservices/templates. Consultare la richiesta e la risposta dello scenario su /intendedTarget e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /intendedTarget
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"93ef322b-45d3-4d4e-8488-943f082fc497","versionId":"e3adf2f1-dfab-423c-9f58-ed37a6ae9caa"}
+- payload: {"name":"eservice-template-CmKetTohvEeK8UR","intendedTarget":"' OR '1'='1","description":"description-IdV1sbHFnCsEG6iMq9LXd0aKVshyuDTcoaSWBXjjBhovfPkdHu","technology":"REST","mode":"DELIVER","version":{"description":"version-description-wkg6SUwhyrHUrm4EINggi8FTHruZ48NrlPC","voucherLifespan":60,"dailyCallsPerConsumer":1,"dailyCallsTotal":10,"agreementApprovalPolicy":"AUTOMATIC"},"isSignalHubEnabled":false,"personalData":false,"asyncExchange":false}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 25. BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::createEServiceTemplate su POST /eservices/templates. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"4f7ea9c5-192d-4c84-9bfe-93740fb5dec2","versionId":"19ce31ee-588d-4383-aaeb-fdef94b9fe7f"}
+- payload: {"name":"eservice-template-2RlHH7UMiR9nr9A","intendedTarget":"target-HuMbY23HcgDVwdxGeVIxl4O0EAOAc1","description":"' OR '1'='1","technology":"REST","mode":"DELIVER","version":{"description":"version-description-An0bI2NUTVxCuMmSed3HWkRNxH4FUNkUNzO","voucherLifespan":60,"dailyCallsPerConsumer":1,"dailyCallsTotal":10,"agreementApprovalPolicy":"AUTOMATIC"},"isSignalHubEnabled":false,"personalData":false,"asyncExchange":false}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 26. BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /version/description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::createEServiceTemplate su POST /eservices/templates. Consultare la richiesta e la risposta dello scenario su /version/description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /version/description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"b69d031d-1f90-4bd6-a210-2a9e5c4f2668","versionId":"7879611c-3df2-4c76-bd8a-c2e9efd04620"}
+- payload: {"name":"eservice-template-rXEOa0mmDmf0GEj","intendedTarget":"target-lOPCCdSKZcM06mvLJCdaHBQaeadZEl","description":"description-VqGXYRWEKR8wIa0pWOhqO4ke9XXlXlSTbN6cRvseESKy0qLRF4","technology":"REST","mode":"DELIVER","version":{"description":"' OR '1'='1","voucherLifespan":60,"dailyCallsPerConsumer":1,"dailyCallsTotal":10,"agreementApprovalPolicy":"AUTOMATIC"},"isSignalHubEnabled":false,"personalData":false,"asyncExchange":false}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 27. BffClientContractTest::createKey::[payload] REPLACED_WITH_SQL_INJECTION @ /alg
 
 **RESULT**
 
@@ -4345,7 +5492,299 @@ Expected status code <400> but was <409>.
 
 ---
 
-### 8. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_NULL @ /freeOfChargeReason
+### 28. BffClientContractTest::createKey::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createKey su POST /clients/{clientId}/keys. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 409
+- responseBody: {"type":"about:blank","title":"Key already exists","status":409,"detail":"Key with kid gPprYV0AU4qUmVeKwgVNH2h3utYQdHEVoMWDDA8-X38 already exists","correlationId":"083a4e69-fe57-44dd-b0af-600896768d2f","errors":[{"code":"006-0017","detail":"Key with kid gPprYV0AU4qUmVeKwgVNH2h3utYQdHEVoMWDDA8-X38 already exists"}]}
+- payload: {"key":"LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUFtUzJNQ1NGdEJNbEd4eUsvUFNsNApQQ05XT1E2WW0yUndvNFVyYlJlenh1ZU5STHBYMzNxdGRSQmxRZG1ZbHNTSUQ4K0g4ZXJVMlQxcC9iYm9nSEFXCkNhOWlGZnRrd0FPbnVIcGxzYUhFeDVQUWNVNU1vNU5YWlFHNjRoQUQzTkY0ZE9Bc0dPK0V2NEZCd2pkb055T0sKczZpbUt4cklMNURUWXVBeExHdHN6RlAwTWpIYjNJQnBuWHNKQmUxeFpuTFlYeWRWZ25ucTQ5QzJ6MDhPblJKeApxUUxXa0Z4WUlCWVRYTjZVODZiZm94VFBPU3VyMjRlanlFTDYxR3hBRi9NN0FmaWRJMDFTV1J2cGkxWVB0MG85ClU5VStqV1RHOFpOZExTMmlrOEphVTlqb1I4VUUwdHR0bzBVcHovQk54YzFYRHkvU3JjbzdGY2loOU9iMU1HdmQKd3dJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==","use":"SIG","alg":"RS256","name":"' OR '1'='1"}
+- pathParams: {"clientId":"cb07de91-e7f3-49e2-b242-bb45de42acae"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <409>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 29. BffProducerKeychainContractTest::createProducerKey::[payload] REPLACED_WITH_SQL_INJECTION @ /alg
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 204. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffProducerKeychainContractTest::createProducerKey su POST /producerKeychains/{producerKeychainId}/keys. Consultare la richiesta e la risposta dello scenario su /alg e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /alg
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 204
+- responseBody: 
+- payload: {"key":"LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF0RzI1YjY0eUV2N0haVnFCbkx0YQpvajV1cjhoMi9pTEpDeElXeHJIanJaY2JNRVM0aGNLUm1SOENRdW9vSUM5S2I4LzhscXBmUHluWlQ5NEVqSVIvCjdGRWkyN3Y4TTdIaG5JZTY4SjZMTXVDUWdQVE1laldpbk1NWDRWM1pxMmg5Q2ZVcXZUSUdHY01yZlgvYmlGZ0MKeHlNTlRYR2JVSVVLL3IweXpkbURDeUp3cGZxenIxYVdiWGZaRVVvVDZOU1BSZ0lEZHJPQldUUjZOTlIwR3dkSwoxVWt1dWJnVnRZcW9zNE1TN1V3T0Z4WnBWZWgrWVJGZW9UTm1sb1BNbW50aTcvbTlQMkFZcUVPUnRYeFRYUzBECldUTHBpK3lZbmhWRTFuNHg4dlE4RjBTUENGaWh5VlhLdmtlNy9LQlhGSGZLcHowL2FEMGNaUUlhWldibVRlV1cKdFFJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==","use":"SIG","alg":"' OR '1'='1","name":"producer-key-EsUbZbT8ltBorm1"}
+- pathParams: {"producerKeychainId":"30fdad93-16c4-44f8-9222-5541be6ec3a2"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <204>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 30. BffProducerKeychainContractTest::createProducerKey::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 204. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffProducerKeychainContractTest::createProducerKey su POST /producerKeychains/{producerKeychainId}/keys. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 204
+- responseBody: 
+- payload: {"key":"LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUFzb05VK2pEWjRTWnZBOHRpVVR1cApwM0h0QzIrN3g5a0h2OUwzRW9zaE5FaDBPOXVGVUdvSGxmemdsOGxDb2I0WW0xb2lHWTU1ODJMMXpKSy9Ic0p2CmJxeGwvM2o4aXc0Yy9wZDBHWDlWTERFV09EREptN0hWMUpvSzJCQUJNazJKWk12Ty85MUFweWE1b1RibVJCVXgKTWJHNnNneXdoV3ZHK2s2cmJSVXZvUFV4L1I2NjF1MlY1WGFjcGtvajc4Sk1GNFV0bmhRcExwSWc2d3J3Q2ZHagphdk1qZE1FUzZHUFhtTXBUVEgxQjZ0aTNlSGJoUFFyT1QyU2ZsUktVS1pyZ24xRXppQTRTWENJc25pQk5ndlQzCnJ4TWtkRXhGUkxnNXhUbjhYY0l0NG9uM081SGZHMjdTWGdqSVFOWG5pQ0ppOWFJMVNRbWpSbzVjdmJSd2E3R1IKYXdJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==","use":"SIG","alg":"RS256","name":"' OR '1'='1"}
+- pathParams: {"producerKeychainId":"18f73cb8-5369-43b7-83a8-d2b4f8a9c7bb"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <204>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 31. BffProducerKeychainContractTest::createProducerKeychain::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffProducerKeychainContractTest::createProducerKeychain su POST /producerKeychains. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"06bd009c-0239-4221-8edf-ffabf6ab1768"}
+- payload: {"name":"' OR '1'='1","description":"description-1MmcxqqflD2XunjAtiQnfP6E0Xd883VQ","members":["5d717b97-5308-49a5-8682-187663278f24"]}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 32. BffProducerKeychainContractTest::createProducerKeychain::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffProducerKeychainContractTest::createProducerKeychain su POST /producerKeychains. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"fdf5d9ea-c3cb-4e4a-b9ab-309dbbe47699"}
+- payload: {"name":"producer-keychain-4vdpDmiFDzENQtIcGUlGcHLT","description":"' OR '1'='1","members":["5d717b97-5308-49a5-8682-187663278f24"]}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 33. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_NULL @ /freeOfChargeReason
 
 **RESULT**
 
@@ -4401,7 +5840,63 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 9. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_NULL @ /riskAnalysisForm
+### 34. BffPurposeContractTest::createPurpose::[payload] REMOVED @ /freeOfChargeReason
+
+**RESULT**
+
+La motivazione è omessa mentre l'indicatore di gratuità è true. Il BFF restituisce correttamente HTTP 400 per motivazione mancante. La suite attende 200 perché valuta soltanto l'opzionalità strutturale del campo. Occorre considerare la dipendenza fra gratuità e motivazione nell'aspettativa dello scenario. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REMOVED di BffPurposeContractTest::createPurpose su POST /purposes. Rimuovere esclusivamente /freeOfChargeReason dal payload di partenza. Se il percorso identifica un elemento, verificare il contenuto del contenitore dopo la rimozione. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REMOVED
+- targetPath: /freeOfChargeReason
+- mutationKind: REMOVE
+- mutationValue: null
+- expectationOrigin: INFERRED_VALID
+- responseStatus: 400
+- responseBody: {"type":"about:blank","title":"Missing free of charge reason","status":400,"detail":"Missing free of charge reason","correlationId":"a423856b-0182-46cc-af79-4366d1b03a91","errors":[{"code":"004-0013","detail":"Missing free of charge reason"}]}
+- payload: {"eserviceId":"fc9c2a12-0f9b-4718-8e36-4fd338dc50fa","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"title":"purpose-X7YrFjVKrDaI65Z","description":"description-lz9NobkK9PoZM3f","isFreeOfCharge":true,"dailyCalls":1}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <200> but was <400>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 35. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_NULL @ /riskAnalysisForm
 
 **RESULT**
 
@@ -4453,7 +5948,279 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 10. BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_NULL @ /freeOfChargeReason
+### 36. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_NIL_UUID @ /consumerId
+
+**RESULT**
+
+Il chiamante opera per il proprio ente, mentre consumerId è sostituito con l'UUID nil. Il BFF rifiuta la richiesta con HTTP 403 e codice 004-0008 perché il chiamante non è autorizzato a operare come fruitore per l'identificativo richiesto. Il controllo di autorizzazione precede il lookup. La suite deve attendere 403 per questo specifico scenario, invece di 404. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_NIL_UUID di BffPurposeContractTest::createPurpose su POST /purposes. Sostituire /consumerId con l'UUID nil e mantenere validi gli altri riferimenti. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_NIL_UUID
+- targetPath: /consumerId
+- mutationKind: REPLACE
+- mutationValue: 00000000-0000-0000-0000-000000000000
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 403
+- responseBody: {"type":"about:blank","title":"Tenant not allowed","status":403,"detail":"Tenant 80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20 is not allowed to perform the operation because is not operating as consumer","correlationId":"0be47fc0-b8bf-4509-b90e-933f409ec8ae","errors":[{"code":"004-0008","detail":"Tenant 80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20 is not allowed to perform the operation because is not operating as consumer"}]}
+- payload: {"eserviceId":"03d360aa-6475-4a49-a0d5-f9d97ef609cb","consumerId":"00000000-0000-0000-0000-000000000000","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"title":"purpose-53vDHXUixGg9lE2","description":"description-inkN6OlgXZqtT1I","isFreeOfCharge":true,"freeOfChargeReason":"reason-AFPNUCkB9HYfing","dailyCalls":1}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <404> but was <403>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$1(DefaultHttpContractPolicy.java:75)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 37. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /riskAnalysisForm/answers/institutionalPurpose/0
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurpose su POST /purposes. Consultare la richiesta e la risposta dello scenario su /riskAnalysisForm/answers/institutionalPurpose/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /riskAnalysisForm/answers/institutionalPurpose/0
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"6f7ed4dc-0227-45b2-8f1d-fa0bcf961f20"}
+- payload: {"eserviceId":"3765d6c2-8c14-4a12-b04d-712e8715aae0","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["' OR '1'='1"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"title":"purpose-w97f3yfsNyOcO5w","description":"description-3s1whfSH9zGyPZN","isFreeOfCharge":true,"freeOfChargeReason":"reason-qCRMy7o4dI7YYwO","dailyCalls":1}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 38. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /title
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurpose su POST /purposes. Consultare la richiesta e la risposta dello scenario su /title e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /title
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"8e7b5726-84d0-431b-8ae7-6644f947ac86"}
+- payload: {"eserviceId":"11f2c3f8-e3f3-4264-a639-990caa21e7c0","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"title":"' OR '1'='1","description":"description-WkaajtF9sLoaMtJ","isFreeOfCharge":true,"freeOfChargeReason":"reason-rsJskBZ8jBG1lM9","dailyCalls":1}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 39. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurpose su POST /purposes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"aa7f0992-d545-470a-98fd-6c75732ff989"}
+- payload: {"eserviceId":"2f314580-0306-4501-844a-aff1a7a669f2","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"title":"purpose-QYqobj3Ksv0srAU","description":"' OR '1'='1","isFreeOfCharge":true,"freeOfChargeReason":"reason-p0mIHxdKcdeqAnh","dailyCalls":1}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 40. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /freeOfChargeReason
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurpose su POST /purposes. Consultare la richiesta e la risposta dello scenario su /freeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /freeOfChargeReason
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"12bf085a-8212-49d4-85ce-fa58a16fe7c0"}
+- payload: {"eserviceId":"1be7f098-1645-4fe2-a42e-f3a3f87c5466","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"title":"purpose-AzVqJlWhuSj12U8","description":"description-HB6cpmrx5KMg9rc","isFreeOfCharge":true,"freeOfChargeReason":"' OR '1'='1","dailyCalls":1}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 41. BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_NULL @ /freeOfChargeReason
 
 **RESULT**
 
@@ -4509,7 +6276,275 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 11. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeRiskAnalysisForm
+### 42. BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REMOVED @ /freeOfChargeReason
+
+**RESULT**
+
+La motivazione è omessa mentre l'indicatore di gratuità è true. Il BFF restituisce correttamente HTTP 400 per motivazione mancante. La suite attende 200 perché valuta soltanto l'opzionalità strutturale del campo. Occorre considerare la dipendenza fra gratuità e motivazione nell'aspettativa dello scenario. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REMOVED di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Rimuovere esclusivamente /freeOfChargeReason dal payload di partenza. Se il percorso identifica un elemento, verificare il contenuto del contenitore dopo la rimozione. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REMOVED
+- targetPath: /freeOfChargeReason
+- mutationKind: REMOVE
+- mutationValue: null
+- expectationOrigin: INFERRED_VALID
+- responseStatus: 400
+- responseBody: {"type":"about:blank","title":"Missing free of charge reason","status":400,"detail":"Missing free of charge reason","correlationId":"30058058-37e9-42da-a326-66d2c3a0abee","errors":[{"code":"004-0013","detail":"Missing free of charge reason"}]}
+- payload: {"eserviceId":"b8bc03cc-b22e-4645-a9e5-3764b929e2a9","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisId":"deeb5c48-9733-4b48-ba59-a800f95629cb","title":"purpose-MkLJTW5iMl1etcs","description":"description-RolmBnsh08VLJwZ","isFreeOfCharge":true,"dailyCalls":1}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <200> but was <400>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 43. BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_NIL_UUID @ /consumerId
+
+**RESULT**
+
+Il chiamante opera per il proprio ente, mentre consumerId è sostituito con l'UUID nil. Il BFF rifiuta la richiesta con HTTP 403 e codice 004-0008 perché il chiamante non è autorizzato a operare come fruitore per l'identificativo richiesto. Il controllo di autorizzazione precede il lookup. La suite deve attendere 403 per questo specifico scenario, invece di 404. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_NIL_UUID di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Sostituire /consumerId con l'UUID nil e mantenere validi gli altri riferimenti. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_NIL_UUID
+- targetPath: /consumerId
+- mutationKind: REPLACE
+- mutationValue: 00000000-0000-0000-0000-000000000000
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 403
+- responseBody: {"type":"about:blank","title":"Tenant not allowed","status":403,"detail":"Tenant 80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20 is not allowed to perform the operation because is not operating as consumer","correlationId":"45c70987-8ea3-48b1-b259-2d488d4dd570","errors":[{"code":"004-0008","detail":"Tenant 80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20 is not allowed to perform the operation because is not operating as consumer"}]}
+- payload: {"eserviceId":"905b1a39-886b-4d78-a995-65ad6b80c89f","consumerId":"00000000-0000-0000-0000-000000000000","riskAnalysisId":"6ab06416-5a12-4f74-9d91-d61afb5c6f52","title":"purpose-VH1w5HAouwiNjxk","description":"description-r3sUwh1ordlFYi8","isFreeOfCharge":true,"freeOfChargeReason":"reason-MgCfcqlCZlEnxEw","dailyCalls":1}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <404> but was <403>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$1(DefaultHttpContractPolicy.java:75)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 44. BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_SQL_INJECTION @ /title
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Consultare la richiesta e la risposta dello scenario su /title e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /title
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"b69ad9a9-dfd1-46ab-95c6-32c3c72e2265"}
+- payload: {"eserviceId":"a70f9e94-37dc-46f3-8421-dfa0d214b0a8","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisId":"8e3a07e1-4693-485c-bd3b-6ea0c8e415b8","title":"' OR '1'='1","description":"description-YOBbxr2Ky8Aplfc","isFreeOfCharge":true,"freeOfChargeReason":"reason-2xGDohdyvY2Uuyc","dailyCalls":1}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 45. BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"9a716fbb-f409-4331-915f-2d225b3ff9a9"}
+- payload: {"eserviceId":"e88ab420-be4a-4af7-a910-d2cb620e5bfe","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisId":"106391d8-f8b8-4143-81de-26f5fb31b5b4","title":"purpose-gAdAM5UrGGMXAaH","description":"' OR '1'='1","isFreeOfCharge":true,"freeOfChargeReason":"reason-sUf2ZEmoiMRECtS","dailyCalls":1}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 46. BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_SQL_INJECTION @ /freeOfChargeReason
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Consultare la richiesta e la risposta dello scenario su /freeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /freeOfChargeReason
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"fd7e16df-ed71-4cff-aaae-9f4fd6713713"}
+- payload: {"eserviceId":"503a2106-9507-487f-870a-16f4a610ef4f","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisId":"286fa6ad-cc70-40a8-ba52-66e4fe09d22c","title":"purpose-mlBDVzyVOO348ar","description":"description-RfMeovMbi6MmRd6","isFreeOfCharge":true,"freeOfChargeReason":"' OR '1'='1","dailyCalls":1}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 47. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeRiskAnalysisForm
 
 **RESULT**
 
@@ -4565,7 +6600,7 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 12. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm
+### 48. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm
 
 **RESULT**
 
@@ -4621,7 +6656,7 @@ Expected status code <200> but was <201>.
 
 ---
 
-### 13. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/institutionalPurpose/annotation
+### 49. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/institutionalPurpose/annotation
 
 **RESULT**
 
@@ -4677,7 +6712,7 @@ Expected status code <400> but was <201>.
 
 ---
 
-### 14. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/annotation
+### 50. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/annotation
 
 **RESULT**
 
@@ -4733,7 +6768,7 @@ Expected status code <400> but was <201>.
 
 ---
 
-### 15. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/purpose/annotation
+### 51. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/purpose/annotation
 
 **RESULT**
 
@@ -4789,7 +6824,7 @@ Expected status code <400> but was <201>.
 
 ---
 
-### 16. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/usesPersonalData/annotation
+### 52. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/usesPersonalData/annotation
 
 **RESULT**
 
@@ -4845,7 +6880,7 @@ Expected status code <400> but was <201>.
 
 ---
 
-### 17. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/usesThirdPartyPersonalData/annotation
+### 53. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/usesThirdPartyPersonalData/annotation
 
 **RESULT**
 
@@ -4901,7 +6936,7 @@ Expected status code <400> but was <201>.
 
 ---
 
-### 18. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeDailyCalls
+### 54. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeDailyCalls
 
 **RESULT**
 
@@ -4957,7 +6992,7 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 19. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeDailyCalls
+### 55. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REMOVED @ /purposeDailyCalls
 
 **RESULT**
 
@@ -5013,7 +7048,581 @@ Expected status code <200> but was <201>.
 
 ---
 
-### 20. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /isSignalHubEnabled
+### 56. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /targetDescription
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 201. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /targetDescription e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /targetDescription
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 201
+- responseBody: {"id":"f525e13a-041c-478d-8da5-6495621f0278"}
+- payload: {"targetDescription":"' OR '1'='1","targetTenantKind":"PA","purposeTitle":"purpose-template-lkUWPIpASatBWjD","purposeDescription":"purpose-description-Iz7hddvJorrwbS1NXNco","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-TfSKF8cX7vA0jRjR2ioJ","purposeDailyCalls":1,"handlesPersonalData":false}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <201>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 57. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeTitle
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /purposeTitle e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /purposeTitle
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 409
+- responseBody: {"type":"about:blank","title":"Purpose Template title conflict","status":409,"detail":"Purpose Template title conflict for title ' OR '1'='1 and IDs 338e476d-8f19-4fda-93e1-67e8e8f9102d","correlationId":"70118aa7-0fb4-4479-a224-24583c5f14eb","errors":[{"code":"015-0002","detail":"Purpose Template title conflict for title ' OR '1'='1 and IDs 338e476d-8f19-4fda-93e1-67e8e8f9102d"}]}
+- payload: {"targetDescription":"target-description-QBoXFH2psq1v70dEmknx","targetTenantKind":"PA","purposeTitle":"' OR '1'='1","purposeDescription":"purpose-description-Qg4SolHO0lS0yNtybr3o","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-dmZ3joqwquSwjnr4wzn3","purposeDailyCalls":1,"handlesPersonalData":false}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <409>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 58. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeDescription
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 201. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /purposeDescription e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /purposeDescription
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 201
+- responseBody: {"id":"0353f542-cb85-4db5-b208-3ca51201c15c"}
+- payload: {"targetDescription":"target-description-3zxXvATEuNs4wQu4Khqg","targetTenantKind":"PA","purposeTitle":"purpose-template-JspJIJNvLiWmuGi","purposeDescription":"' OR '1'='1","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-I128PWgzKHMYGPSFtNsM","purposeDailyCalls":1,"handlesPersonalData":false}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <201>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 59. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @ /purposeRiskAnalysisForm/version
+
+**RESULT**
+
+Il validatore rifiuta correttamente la versione del questionario composta da spazi con HTTP 400 e codice 015-0004. La suite attende 200 perché considera soltanto tipo e lunghezza della stringa. L'aspettativa deve includere la validità semantica della versione. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_BLANK_STRING di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Sostituire /purposeRiskAnalysisForm/version con tre spazi e controllare che il valore venga trasmesso senza normalizzazioni. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_BLANK_STRING
+- targetPath: /purposeRiskAnalysisForm/version
+- mutationKind: REPLACE
+- mutationValue:    
+- expectationOrigin: INFERRED_VALID
+- responseStatus: 400
+- responseBody: {"type":"about:blank","title":"Risk analysis template validation failed","status":400,"detail":"Risk analysis template validation failed. Reasons: Error: Unexpected ruleset version    ","correlationId":"3fd1d3b7-b3ed-4fec-9b72-6e9c0d186cd0","errors":[{"code":"015-0004","detail":"Risk analysis template validation failed. Reasons: Error: Unexpected ruleset version    "}]}
+- payload: {"targetDescription":"target-description-CjEfESE4RFnvXc0xha5f","targetTenantKind":"PA","purposeTitle":"purpose-template-RSJREsw66Lt1QOP","purposeDescription":"purpose-description-32GXAX57sI94HpkUm7XV","purposeRiskAnalysisForm":{"version":"   ","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-eiZO40Zs0Dt1si7Bx40s","purposeDailyCalls":1,"handlesPersonalData":false}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <200> but was <400>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 60. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 201. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 201
+- responseBody: {"id":"504f8180-bd17-4afb-ba85-223296882107"}
+- payload: {"targetDescription":"target-description-q4PvSfmqWyLBUH14pKoj","targetTenantKind":"PA","purposeTitle":"purpose-template-bvrMVAHNHnB7eKv","purposeDescription":"purpose-description-1PSyKTlbnLYeZlwthNBm","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["' OR '1'='1"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-4VVla4oDBkeaV7MnBm6n","purposeDailyCalls":1,"handlesPersonalData":false}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <201>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 61. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeFreeOfChargeReason
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 201. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /purposeFreeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /purposeFreeOfChargeReason
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 201
+- responseBody: {"id":"3c029a94-fccd-4cf5-87e8-7d4c0630dfa4"}
+- payload: {"targetDescription":"target-description-LSxqbcGEfrNfKIf6QCbv","targetTenantKind":"PA","purposeTitle":"purpose-template-FWBGo26fqsadzlo","purposeDescription":"purpose-description-oXGSxcw23YEK9BIXfcV2","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"' OR '1'='1","purposeDailyCalls":1,"handlesPersonalData":false}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <201>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 62. BffVerifiedAttributeContractTest::createVerifiedAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffVerifiedAttributeContractTest::createVerifiedAttribute su POST /verifiedAttributes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"e4dfaf75-4075-46e6-bebb-cd3575a11c76","kind":"VERIFIED","description":"' OR '1'='1","name":"name-6DL9jNdFDL6Ja1aS7vHMjcbe","creationTime":"2026-11-17T21:19:22.275Z"}
+- payload: {"description":"' OR '1'='1","name":"name-6DL9jNdFDL6Ja1aS7vHMjcbe"}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 63. BffVerifiedAttributeContractTest::createVerifiedAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffVerifiedAttributeContractTest::createVerifiedAttribute su POST /verifiedAttributes. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 409
+- responseBody: {"type":"about:blank","title":"Duplicate attribute name","status":409,"detail":"An attribute with name ' OR '1'='1 already exists","correlationId":"4069f7be-3f62-4351-9638-b497de1eb13e","errors":[{"code":"003-0002","detail":"An attribute with name ' OR '1'='1 already exists"}]}
+- payload: {"description":"description-RvT00XmB8Xe3kp1GXDr6LSZpVLylBjsU","name":"' OR '1'='1"}
+- pathParams: null
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <409>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 64. BffDelegationContractTest::rejectConsumerDelegation::[payload] REPLACED_WITH_SQL_INJECTION @ /rejectionReason
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 404. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffDelegationContractTest::rejectConsumerDelegation su POST /consumers/delegations/{delegationId}/reject. Consultare la richiesta e la risposta dello scenario su /rejectionReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Predisporre per ogni scenario una delega distinta, esistente e in stato rifiutabile, con un chiamante autorizzato al rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /rejectionReason
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 204
+- responseBody: 
+- payload: {"rejectionReason":"' OR '1'='1"}
+- pathParams: {"delegationId":"18763dfb-164f-4ac2-a54d-694abc15acbf"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.get(ForkJoinTask.java:979)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <204>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 15 more
+
+````
+
+
+---
+
+### 65. BffDelegationContractTest::rejectProducerDelegation::[payload] REPLACED_WITH_SQL_INJECTION @ /rejectionReason
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 404. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffDelegationContractTest::rejectProducerDelegation su POST /producers/delegations/{delegationId}/reject. Consultare la richiesta e la risposta dello scenario su /rejectionReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Predisporre per ogni scenario una delega distinta, esistente e in stato rifiutabile, con un chiamante autorizzato al rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /rejectionReason
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 204
+- responseBody: 
+- payload: {"rejectionReason":"' OR '1'='1"}
+- pathParams: {"delegationId":"8a7f4893-d1d3-40fe-937d-66b8054f6836"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <204>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 13 more
+
+````
+
+
+---
+
+### 66. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /isSignalHubEnabled
 
 **RESULT**
 
@@ -5069,7 +7678,7 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 21. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /isConsumerDelegable
+### 67. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /isConsumerDelegable
 
 **RESULT**
 
@@ -5125,7 +7734,7 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 22. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /isClientAccessDelegable
+### 68. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /isClientAccessDelegable
 
 **RESULT**
 
@@ -5181,7 +7790,7 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 23. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /personalData
+### 69. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /personalData
 
 **RESULT**
 
@@ -5237,7 +7846,7 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 24. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /asyncExchange
+### 70. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_NULL @ /asyncExchange
 
 **RESULT**
 
@@ -5293,7 +7902,399 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 25. BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_NULL @ /freeOfChargeReason
+### 71. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::updateEServiceById su PUT /eservices/{eServiceId}. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 409
+- responseBody: {"type":"about:blank","title":"EService template name conflict","status":409,"detail":"An EService template with name ' OR '1'='1 already exists","correlationId":"54c43a54-4d20-4348-b96f-8265b71e9311","errors":[{"code":"001-0039","detail":"An EService template with name ' OR '1'='1 already exists"}]}
+- payload: {"name":"' OR '1'='1","description":"description-VZ731YE2nZkb8jpKm3rx","technology":"REST","mode":"DELIVER","isSignalHubEnabled":false,"isConsumerDelegable":true,"isClientAccessDelegable":true,"personalData":false,"asyncExchange":false}
+- pathParams: {"eServiceId":"360069c0-f386-4b3e-b686-68ccefaff8e4"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <409>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 72. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::updateEServiceById su PUT /eservices/{eServiceId}. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"352a47e5-c4eb-497a-a1e6-ac604a0e994b"}
+- payload: {"name":"eservice-KOlGJLlYSPr8MVP","description":"' OR '1'='1","technology":"REST","mode":"DELIVER","isSignalHubEnabled":false,"isConsumerDelegable":true,"isClientAccessDelegable":true,"personalData":false,"asyncExchange":false}
+- pathParams: {"eServiceId":"352a47e5-c4eb-497a-a1e6-ac604a0e994b"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 73. BffEServiceContractTest::updateEServiceDescription::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::updateEServiceDescription su POST /eservices/{eServiceId}/description/update. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"d88f2896-23c6-4c48-954b-00bc3bedae07"}
+- payload: {"description":"' OR '1'='1"}
+- pathParams: {"eServiceId":"d88f2896-23c6-4c48-954b-00bc3bedae07"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 74. BffEServiceContractTest::updateEServiceName::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::updateEServiceName su POST /eservices/{eServiceId}/name/update. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 409
+- responseBody: {"type":"about:blank","title":"EService template name conflict","status":409,"detail":"An EService template with name ' OR '1'='1 already exists","correlationId":"0bef660c-635e-402d-9ee3-2452de29090b","errors":[{"code":"001-0039","detail":"An EService template with name ' OR '1'='1 already exists"}]}
+- payload: {"name":"' OR '1'='1"}
+- pathParams: {"eServiceId":"1f02b8d7-f1c7-42ee-8595-d44897f3e60f"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <409>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 75. BffEServiceTemplateContractTest::updateEServiceTemplateDescription::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 204. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::updateEServiceTemplateDescription su POST /eservices/templates/{eServiceTemplateId}/description/update. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 204
+- responseBody: 
+- payload: {"description":"' OR '1'='1"}
+- pathParams: {"eServiceTemplateId":"09004be8-3bbc-4dbb-b6f6-e650fcb2c316"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <204>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 76. BffEServiceTemplateContractTest::updateEServiceTemplateIntendedTarget::[payload] REPLACED_WITH_SQL_INJECTION @ /intendedTarget
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 204. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::updateEServiceTemplateIntendedTarget su POST /eservices/templates/{eServiceTemplateId}/intendedTarget/update. Consultare la richiesta e la risposta dello scenario su /intendedTarget e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /intendedTarget
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 204
+- responseBody: 
+- payload: {"intendedTarget":"' OR '1'='1"}
+- pathParams: {"eServiceTemplateId":"7bb8de4c-b36c-41d0-8313-803124662a96"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <204>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 77. BffEServiceTemplateContractTest::updateEServiceTemplateName::[payload] REPLACED_WITH_SQL_INJECTION @ /name
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::updateEServiceTemplateName su POST /eservices/templates/{eServiceTemplateId}/name/update. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /name
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 409
+- responseBody: {"type":"about:blank","title":"Duplicated service name","status":409,"detail":"An EService Template with name ' OR '1'='1 already exists","correlationId":"5c46a76b-9e93-4eba-b6e5-663e20b5e185","errors":[{"code":"011-0004","detail":"An EService Template with name ' OR '1'='1 already exists"}]}
+- payload: {"name":"' OR '1'='1"}
+- pathParams: {"eServiceTemplateId":"e523af8c-b9c8-4d70-8739-941dce19863f"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <409>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 78. BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_NULL @ /freeOfChargeReason
 
 **RESULT**
 
@@ -5349,7 +8350,7 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 26. BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_NULL @ /riskAnalysisForm
+### 79. BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_NULL @ /riskAnalysisForm
 
 **RESULT**
 
@@ -5405,7 +8406,650 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 27. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeRiskAnalysisForm
+### 80. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/institutionalPurpose
+
+**RESULT**
+
+Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire REMOVED su /riskAnalysisForm/answers/institutionalPurpose in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REMOVED
+- targetPath: /riskAnalysisForm/answers/institutionalPurpose
+- mutationKind: REMOVE
+- mutationValue: null
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"86e88ff1-31bd-41e1-aafa-cb921240a751","versionId":"2f4780d8-afec-4da3-b5fd-b5992f0b5d8f"}
+- payload: {"title":"purpose-wsfV0fgtxsZ75Q8","description":"description-5Rq2TaA0hkqrhFv","isFreeOfCharge":true,"freeOfChargeReason":"reason-vaOUFHTqWSsO1xA","riskAnalysisForm":{"version":"3.2","answers":{"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
+- pathParams: {"purposeId":"86e88ff1-31bd-41e1-aafa-cb921240a751"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 81. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/institutionalPurpose/0
+
+**RESULT**
+
+Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire REMOVED su /riskAnalysisForm/answers/institutionalPurpose/0 in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REMOVED
+- targetPath: /riskAnalysisForm/answers/institutionalPurpose/0
+- mutationKind: REMOVE
+- mutationValue: null
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"a57e60f9-1a9e-4388-827a-19890ac97187","versionId":"c29831b7-c6e6-45c9-9f8e-aa65490b6e86"}
+- payload: {"title":"purpose-hhNybhbqd8y15MO","description":"description-qbZGTyJP7xSC8yZ","isFreeOfCharge":true,"freeOfChargeReason":"reason-gmgIugvGkt6VuIh","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":[],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
+- pathParams: {"purposeId":"a57e60f9-1a9e-4388-827a-19890ac97187"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 82. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties
+
+**RESULT**
+
+Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire REMOVED su /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REMOVED
+- targetPath: /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties
+- mutationKind: REMOVE
+- mutationValue: null
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"c5c4a438-b1ac-48bc-9b77-2e2445e5aa20","versionId":"1e7d804e-fd1a-47eb-9da2-f92251dfe984"}
+- payload: {"title":"purpose-K4XAL6ZMcVK4cSh","description":"description-Ph6KB2Ui7E0qECI","isFreeOfCharge":true,"freeOfChargeReason":"reason-YnBA1xi2Le38nZp","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
+- pathParams: {"purposeId":"c5c4a438-b1ac-48bc-9b77-2e2445e5aa20"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 83. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/0
+
+**RESULT**
+
+Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire REMOVED su /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/0 in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REMOVED
+- targetPath: /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/0
+- mutationKind: REMOVE
+- mutationValue: null
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"671fe5fa-5343-423e-841c-829ece9ec9b2","versionId":"f26bc427-59c8-4256-8b2a-7d683e1a7536"}
+- payload: {"title":"purpose-QrlxA3xBKTLgWn2","description":"description-OSG6dkJ0CQZKDIf","isFreeOfCharge":true,"freeOfChargeReason":"reason-si9KXflNqxcUNiP","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":[],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
+- pathParams: {"purposeId":"671fe5fa-5343-423e-841c-829ece9ec9b2"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 84. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/usesThirdPartyPersonalData
+
+**RESULT**
+
+Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire REMOVED su /riskAnalysisForm/answers/usesThirdPartyPersonalData in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REMOVED
+- targetPath: /riskAnalysisForm/answers/usesThirdPartyPersonalData
+- mutationKind: REMOVE
+- mutationValue: null
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"0160b4cd-6e22-4e72-97e1-0561d58cbf6c","versionId":"a01d6075-b846-4625-b645-1677f6f42436"}
+- payload: {"title":"purpose-UGPzLfPDZUx7DPA","description":"description-B80xP6aThV9ldaI","isFreeOfCharge":true,"freeOfChargeReason":"reason-XgBuIRrbgtzOgQc","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"]}},"dailyCalls":1}
+- pathParams: {"purposeId":"0160b4cd-6e22-4e72-97e1-0561d58cbf6c"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 85. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/purpose
+
+**RESULT**
+
+Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire REMOVED su /riskAnalysisForm/answers/purpose in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REMOVED
+- targetPath: /riskAnalysisForm/answers/purpose
+- mutationKind: REMOVE
+- mutationValue: null
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"5afade2f-6a10-4c7e-9361-06f8a703591c","versionId":"e30a1f93-cb90-4026-8528-50a65780af93"}
+- payload: {"title":"purpose-LDjEVEVw7XbxI85","description":"description-nRtMAyLeyE2yaTa","isFreeOfCharge":true,"freeOfChargeReason":"reason-TN0BBMFSSKg8GbR","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
+- pathParams: {"purposeId":"5afade2f-6a10-4c7e-9361-06f8a703591c"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 86. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/usesThirdPartyPersonalData/0
+
+**RESULT**
+
+Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire REMOVED su /riskAnalysisForm/answers/usesThirdPartyPersonalData/0 in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REMOVED
+- targetPath: /riskAnalysisForm/answers/usesThirdPartyPersonalData/0
+- mutationKind: REMOVE
+- mutationValue: null
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"2f438261-5ebb-4ffe-9174-816a8039c33a","versionId":"0e0cb014-8ae2-472d-9f68-4ba13bb54fec"}
+- payload: {"title":"purpose-lHWWglk73MgZZyr","description":"description-S0p685euE6appdP","isFreeOfCharge":true,"freeOfChargeReason":"reason-t9xZ1LE7F6LcGgG","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":[]}},"dailyCalls":1}
+- pathParams: {"purposeId":"2f438261-5ebb-4ffe-9174-816a8039c33a"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 87. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/purpose/0
+
+**RESULT**
+
+Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire REMOVED su /riskAnalysisForm/answers/purpose/0 in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REMOVED
+- targetPath: /riskAnalysisForm/answers/purpose/0
+- mutationKind: REMOVE
+- mutationValue: null
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"8f4fe047-28d7-47c8-a6ab-ccb120685e1c","versionId":"092c21b3-b148-4c5c-8fad-a7f7be5cc9b1"}
+- payload: {"title":"purpose-IPevR4F3DoaYyzk","description":"description-53KaWniGoWkZLWR","isFreeOfCharge":true,"freeOfChargeReason":"reason-MGorjpcGfStDu4t","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":[],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
+- pathParams: {"purposeId":"8f4fe047-28d7-47c8-a6ab-ccb120685e1c"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 88. BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /title
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updatePurpose su POST /purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /title e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /title
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"c4ee258b-97da-4b9c-88de-986b3fdb49d3","versionId":"997c483e-57bc-4ef7-b6bd-9fdda603081b"}
+- payload: {"title":"' OR '1'='1","description":"description-NAewle78C19d5Ia","isFreeOfCharge":true,"freeOfChargeReason":"reason-THycgqAGsialILP","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
+- pathParams: {"purposeId":"c4ee258b-97da-4b9c-88de-986b3fdb49d3"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 89. BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updatePurpose su POST /purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"af1c91f3-ff38-4d81-b68e-90df8e7c1df0","versionId":"c0d31346-57a3-457e-bf2d-c8a9639f141b"}
+- payload: {"title":"purpose-ioQt8BpdXXAf2jM","description":"' OR '1'='1","isFreeOfCharge":true,"freeOfChargeReason":"reason-PLqmQbgOdn68VbL","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
+- pathParams: {"purposeId":"af1c91f3-ff38-4d81-b68e-90df8e7c1df0"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 90. BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /freeOfChargeReason
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updatePurpose su POST /purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /freeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /freeOfChargeReason
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"4d180212-1bd0-41c1-a3ec-fcb4d2fb1c35","versionId":"35b9e940-a4f1-435e-8ca4-71559ad729b6"}
+- payload: {"title":"purpose-ad97x7HgSRP4jmc","description":"description-jifx5LVw6oPmqZP","isFreeOfCharge":true,"freeOfChargeReason":"' OR '1'='1","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
+- pathParams: {"purposeId":"4d180212-1bd0-41c1-a3ec-fcb4d2fb1c35"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 91. BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /riskAnalysisForm/answers/institutionalPurpose/0
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updatePurpose su POST /purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /riskAnalysisForm/answers/institutionalPurpose/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /riskAnalysisForm/answers/institutionalPurpose/0
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"995044cf-b377-4652-b07e-5e9c6f087e15","versionId":"4b451047-d4d6-4cee-8e58-3520c9357e1c"}
+- payload: {"title":"purpose-kycLhKFE46VVpHo","description":"description-E4SX5ZcffUUNTCU","isFreeOfCharge":true,"freeOfChargeReason":"reason-kDcqjXHFlPMIR6z","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["' OR '1'='1"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
+- pathParams: {"purposeId":"995044cf-b377-4652-b07e-5e9c6f087e15"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 7 more
+
+````
+
+
+---
+
+### 92. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeRiskAnalysisForm
 
 **RESULT**
 
@@ -5464,7 +9108,7 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 28. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/institutionalPurpose/annotation
+### 93. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/institutionalPurpose/annotation
 
 **RESULT**
 
@@ -5523,7 +9167,7 @@ Expected status code <400> but was <200>.
 
 ---
 
-### 29. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/annotation
+### 94. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/annotation
 
 **RESULT**
 
@@ -5582,7 +9226,7 @@ Expected status code <400> but was <200>.
 
 ---
 
-### 30. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/purpose/annotation
+### 95. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/purpose/annotation
 
 **RESULT**
 
@@ -5641,7 +9285,7 @@ Expected status code <400> but was <200>.
 
 ---
 
-### 31. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/usesPersonalData/annotation
+### 96. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/usesPersonalData/annotation
 
 **RESULT**
 
@@ -5700,7 +9344,7 @@ Expected status code <400> but was <200>.
 
 ---
 
-### 32. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/usesThirdPartyPersonalData/annotation
+### 97. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeRiskAnalysisForm/answers/usesThirdPartyPersonalData/annotation
 
 **RESULT**
 
@@ -5759,7 +9403,7 @@ Expected status code <400> but was <200>.
 
 ---
 
-### 33. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeFreeOfChargeReason
+### 98. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeFreeOfChargeReason
 
 **RESULT**
 
@@ -5818,7 +9462,66 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 34. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeDailyCalls
+### 99. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeFreeOfChargeReason
+
+**RESULT**
+
+La motivazione è omessa mentre l'indicatore di gratuità è true. Il BFF restituisce correttamente HTTP 400 per motivazione mancante. La suite attende 200 perché valuta soltanto l'opzionalità strutturale del campo. Occorre considerare la dipendenza fra gratuità e motivazione nell'aspettativa dello scenario. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REMOVED di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Rimuovere esclusivamente /purposeFreeOfChargeReason dal payload di partenza. Se il percorso identifica un elemento, verificare il contenuto del contenitore dopo la rimozione. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REMOVED
+- targetPath: /purposeFreeOfChargeReason
+- mutationKind: REMOVE
+- mutationValue: null
+- expectationOrigin: INFERRED_VALID
+- responseStatus: 400
+- responseBody: {"type":"about:blank","title":"Missing free of charge reason","status":400,"detail":"Missing free of charge reason","correlationId":"21386495-f409-4318-a65e-ed379f0d55f5","errors":[{"code":"015-0001","detail":"Missing free of charge reason"}]}
+- payload: {"targetDescription":"target-description-KZ46pRpSChaUbo6JG6OT","targetTenantKind":"PA","purposeTitle":"purpose-template-lscyNT3FjiU4M5V","purposeDescription":"purpose-description-DJlhDcnSpze3GR7bpBR5","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeDailyCalls":1,"handlesPersonalData":false}
+- pathParams: {"purposeTemplateId":"42d700e2-61bb-43e6-a65b-643d19ceb7e5"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <200> but was <400>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 100. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeDailyCalls
 
 **RESULT**
 
@@ -5877,7 +9580,354 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 35. BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_NULL @ /freeOfChargeReason
+### 101. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /targetDescription
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /targetDescription e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /targetDescription
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"c64018f9-c206-4fcf-84d6-05863945323d","targetDescription":"' OR '1'='1","targetTenantKind":"PA","creatorId":"e79a24cd-8edc-441e-ae8d-e87c3aea0059","state":"DRAFT","createdAt":"2026-11-17T21:25:56.655Z","updatedAt":"2026-11-17T21:25:58.997Z","purposeTitle":"purpose-template-NCP3rO3IUPKIokd","purposeDescription":"purpose-description-PHBpf536s5Ld8mlRJOdw","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"id":"39f8eca9-c04f-4236-9264-aec3beb93618","values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"id":"fb4407dd-e28f-46e4-8e5a-34b6b1775797","values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"id":"d9b72006-aeb4-40e7-91eb-c7978f29b115","values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"id":"4ab888ea-6b5a-4c51-b5b8-01cb68058c44","values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"id":"7ce33b1d-7eaa-42a0-9d9c-9d1efcc580a4","values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-lcD04geTvXe2SseLKzOp","purposeDailyCalls":1,"handlesPersonalData":false}
+- payload: {"targetDescription":"' OR '1'='1","targetTenantKind":"PA","purposeTitle":"purpose-template-NCP3rO3IUPKIokd","purposeDescription":"purpose-description-PHBpf536s5Ld8mlRJOdw","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-lcD04geTvXe2SseLKzOp","purposeDailyCalls":1,"handlesPersonalData":false}
+- pathParams: {"purposeTemplateId":"c64018f9-c206-4fcf-84d6-05863945323d"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 102. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeTitle
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /purposeTitle e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /purposeTitle
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 409
+- responseBody: {"type":"about:blank","title":"Purpose Template title conflict","status":409,"detail":"Purpose Template title conflict for title ' OR '1'='1 and IDs 338e476d-8f19-4fda-93e1-67e8e8f9102d","correlationId":"bf0151f1-45d9-45ad-9284-4691a3554519","errors":[{"code":"015-0002","detail":"Purpose Template title conflict for title ' OR '1'='1 and IDs 338e476d-8f19-4fda-93e1-67e8e8f9102d"}]}
+- payload: {"targetDescription":"target-description-UqTCLnaCjpt83r9ZOK6A","targetTenantKind":"PA","purposeTitle":"' OR '1'='1","purposeDescription":"purpose-description-DKms6vtymJJxTj09eYOA","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-DjmPhTAaYoqWWqGalGSW","purposeDailyCalls":1,"handlesPersonalData":false}
+- pathParams: {"purposeTemplateId":"7f67241f-3112-4906-b88c-38149afa6e43"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <409>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 103. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeDescription
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /purposeDescription e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /purposeDescription
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"983b0029-e606-44c1-95ec-59dcfbd20c6f","targetDescription":"target-description-4Wj3i40zD84YOSfNRWqC","targetTenantKind":"PA","creatorId":"e79a24cd-8edc-441e-ae8d-e87c3aea0059","state":"DRAFT","createdAt":"2026-11-17T21:26:26.838Z","updatedAt":"2026-11-17T21:26:29.102Z","purposeTitle":"purpose-template-atl7WgcZvJC3DoA","purposeDescription":"' OR '1'='1","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"id":"2cb61bee-631f-434c-992c-1127154095b5","values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"id":"5cde79db-af81-4e39-b9a8-a0251c8c5e23","values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"id":"4c92c30d-73a7-4373-90f4-e4c4045b23e6","values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"id":"4c7dabb2-df7b-4706-93c2-6cc682b4ef41","values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"id":"5f5ad3bd-0ac8-4ed5-812b-f6875cb06b3b","values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-XvCEaCM6aFuamXo6ypFD","purposeDailyCalls":1,"handlesPersonalData":false}
+- payload: {"targetDescription":"target-description-4Wj3i40zD84YOSfNRWqC","targetTenantKind":"PA","purposeTitle":"purpose-template-atl7WgcZvJC3DoA","purposeDescription":"' OR '1'='1","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-XvCEaCM6aFuamXo6ypFD","purposeDailyCalls":1,"handlesPersonalData":false}
+- pathParams: {"purposeTemplateId":"983b0029-e606-44c1-95ec-59dcfbd20c6f"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 104. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @ /purposeRiskAnalysisForm/version
+
+**RESULT**
+
+Il validatore rifiuta correttamente la versione del questionario composta da spazi con HTTP 400 e codice 015-0004. La suite attende 200 perché considera soltanto tipo e lunghezza della stringa. L'aspettativa deve includere la validità semantica della versione. Il difetto di suite è in corso di analisi sulla codebase.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_BLANK_STRING di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Sostituire /purposeRiskAnalysisForm/version con tre spazi e controllare che il valore venga trasmesso senza normalizzazioni. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_BLANK_STRING
+- targetPath: /purposeRiskAnalysisForm/version
+- mutationKind: REPLACE
+- mutationValue:    
+- expectationOrigin: INFERRED_VALID
+- responseStatus: 400
+- responseBody: {"type":"about:blank","title":"Risk analysis template validation failed","status":400,"detail":"Risk analysis template validation failed. Reasons: Error: Unexpected ruleset version    ","correlationId":"bedf51b3-66cd-4078-9611-691eacb4271d","errors":[{"code":"015-0004","detail":"Risk analysis template validation failed. Reasons: Error: Unexpected ruleset version    "}]}
+- payload: {"targetDescription":"target-description-MjRQlczobFuJYXVd7DU8","targetTenantKind":"PA","purposeTitle":"purpose-template-LfHP0Eq1gjaTpWS","purposeDescription":"purpose-description-LeSVRvZNbzHozvCPE1d3","purposeRiskAnalysisForm":{"version":"   ","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-gH2gxOTL8UBfk9J9VpIk","purposeDailyCalls":1,"handlesPersonalData":false}
+- pathParams: {"purposeTemplateId":"3dc609f6-7e5a-4f6b-8761-808cf3e8d498"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <200> but was <400>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 105. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"4da2a697-f024-4a8c-8209-ea29e51f9e6d","targetDescription":"target-description-CMcU3djmzAiJ4CBNfQuj","targetTenantKind":"PA","creatorId":"e79a24cd-8edc-441e-ae8d-e87c3aea0059","state":"DRAFT","createdAt":"2026-11-17T21:26:58.343Z","updatedAt":"2026-11-17T21:27:00.648Z","purposeTitle":"purpose-template-m9AJHTVyCVXoKTG","purposeDescription":"purpose-description-bPWPn8TiwzefQQ9M5Prg","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"id":"cbc68009-8af6-4d6b-ab29-7714d030fd06","values":[],"editable":false,"suggestedValues":["' OR '1'='1"]},"isRequestOnBehalfOfThirdParties":{"id":"fa8da315-6064-46c3-bb00-e5d32a043d4c","values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"id":"77046dce-7d59-43e5-8a58-5ca1f697b5de","values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"id":"57e34ea8-a3fe-496a-856f-55095001096e","values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"id":"d2ccb9a7-a27a-4819-a3f2-936e188a5e0b","values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-yXzcDXohf2NO0i0JjkcE","purposeDailyCalls":1,"handlesPersonalData":false}
+- payload: {"targetDescription":"target-description-CMcU3djmzAiJ4CBNfQuj","targetTenantKind":"PA","purposeTitle":"purpose-template-m9AJHTVyCVXoKTG","purposeDescription":"purpose-description-bPWPn8TiwzefQQ9M5Prg","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["' OR '1'='1"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-yXzcDXohf2NO0i0JjkcE","purposeDailyCalls":1,"handlesPersonalData":false}
+- pathParams: {"purposeTemplateId":"4da2a697-f024-4a8c-8209-ea29e51f9e6d"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 106. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeFreeOfChargeReason
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /purposeFreeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /purposeFreeOfChargeReason
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"id":"f6d4f2a6-cb3e-4960-b54b-1a6f101e9731","targetDescription":"target-description-2XbLaXRECKXdsqIeLddc","targetTenantKind":"PA","creatorId":"e79a24cd-8edc-441e-ae8d-e87c3aea0059","state":"DRAFT","createdAt":"2026-11-17T21:28:23.291Z","updatedAt":"2026-11-17T21:28:25.580Z","purposeTitle":"purpose-template-Axaum67z4Yf9Hoo","purposeDescription":"purpose-description-lH8XTgvTNx1E9mtlJp8A","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"id":"ff6095d5-7911-4eb3-97be-bc030dc312e9","values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"id":"97682f73-f3d7-4a61-ba6d-7de96a1458a9","values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"id":"c8dc59e2-b412-4b22-a769-d23fbbbe8d87","values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"id":"e1a0ea71-1fc6-4bd4-8f07-045b682cc8e9","values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"id":"b5b0265c-7f0c-4859-9069-ac56d9d9e274","values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"' OR '1'='1","purposeDailyCalls":1,"handlesPersonalData":false}
+- payload: {"targetDescription":"target-description-2XbLaXRECKXdsqIeLddc","targetTenantKind":"PA","purposeTitle":"purpose-template-Axaum67z4Yf9Hoo","purposeDescription":"purpose-description-lH8XTgvTNx1E9mtlJp8A","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"' OR '1'='1","purposeDailyCalls":1,"handlesPersonalData":false}
+- pathParams: {"purposeTemplateId":"f6d4f2a6-cb3e-4960-b54b-1a6f101e9731"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.Optional.ifPresent(Optional.java:178)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 107. BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_NULL @ /freeOfChargeReason
 
 **RESULT**
 
@@ -5930,7 +9980,167 @@ Expected status code <200> but was <400>.
 
 ---
 
-### 36. M2Mv3AgreementContractTest::createAgreement::[payload] REPLACED_WITH_NULL @ /delegationId
+### 108. BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /title
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updateReversePurpose su POST /reverse/purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /title e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /title
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"83d08562-c443-4a3d-b373-055155f7adb4","versionId":"98c89216-5ef4-47cd-95b0-a47473f99bf1"}
+- payload: {"title":"' OR '1'='1","description":"description-QWfjwMKp2mo6Bhj","isFreeOfCharge":true,"freeOfChargeReason":"reason-HKaC7PU28qNZDVW","dailyCalls":1}
+- pathParams: {"purposeId":"83d08562-c443-4a3d-b373-055155f7adb4"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 109. BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /description
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updateReversePurpose su POST /reverse/purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /description
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"84dde35f-b356-496c-8f77-ecdca5123f92","versionId":"a20f7b7d-6727-49bd-ae0e-6201146f9509"}
+- payload: {"title":"purpose-ZujhRlsAkoUZMN2","description":"' OR '1'='1","isFreeOfCharge":true,"freeOfChargeReason":"reason-MVlLiZDpHcuKCmr","dailyCalls":1}
+- pathParams: {"purposeId":"84dde35f-b356-496c-8f77-ecdca5123f92"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:1883)
+	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:440)
+	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 10 more
+
+````
+
+
+---
+
+### 110. BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /freeOfChargeReason
+
+**RESULT**
+
+La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
+
+**PROCEDURE**
+
+Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updateReversePurpose su POST /reverse/purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /freeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19653
+
+**ERROR LOG**
+
+````text
+java.lang.AssertionError: HTTP contract expectation failed
+- scope: PAYLOAD
+- scenario: REPLACED_WITH_SQL_INJECTION
+- targetPath: /freeOfChargeReason
+- mutationKind: REPLACE
+- mutationValue: ' OR '1'='1
+- expectationOrigin: POLICY_UNKNOWN
+- responseStatus: 200
+- responseBody: {"purposeId":"34acca01-611b-473e-8820-22c9681767dc","versionId":"b1fc9f1b-277f-4988-9298-c28bb9aa91e6"}
+- payload: {"title":"purpose-G8Cm5YvUkc76STu","description":"description-2BxGtpYQ8BGoypm","isFreeOfCharge":true,"freeOfChargeReason":"' OR '1'='1","dailyCalls":1}
+- pathParams: {"purposeId":"34acca01-611b-473e-8820-22c9681767dc"}
+	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
+	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
+Caused by: java.lang.AssertionError: 1 expectation failed.
+Expected status code <400> but was <200>.
+
+	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
+	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
+	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
+	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
+	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
+	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
+	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
+	... 6 more
+
+````
+
+
+---
+
+### 111. M2Mv3AgreementContractTest::createAgreement::[payload] REPLACED_WITH_NULL @ /delegationId
 
 **RESULT**
 
@@ -5983,4074 +10193,10 @@ Expected status code <201> but was <400>.
 
 ````
 
-</details>
 
-## 81 - KO DA ANALIZZARE
-
-<details>
-<summary>Mostra/nascondi 81 KO</summary>
-
-### 1. [PRIVATE_CATALOG_TEXT_SEARCH_6] Ricerca approssimata con un refuso [Given=BFF,When=BFF,Then=BFF]
-
-**RESULT**
-
-Il suffisso casuale aggiunto al nome dell'e-service altera la similarità con il termine cercato e rende il fixture inadatto alla verifica del refuso. Lo scenario è stato posto in ignore e non dovrebbe comparire nelle prossime run. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Rieseguire in locale PRIVATE_CATALOG_TEXT_SEARCH_6 in debug e sospendere l'esecuzione prima che l'hook After archivi o elimini l'e-service. Dai log della ri-esecuzione, risalire dall'ID atteso di ES-1 al nome effettivamente pubblicato e verificare quale suffisso ha aggiunto la suite al nome definito nel Gherkin. Con l'e-service ancora disponibile, ripetere nel catalogo autenticato la ricerca dello scenario usando lo stesso termine con refuso e gli stessi eventuali filtri. Ripetere la ricerca con il nome effettivo completo, suffisso incluso, per verificare se ES-1 è reperibile. Confrontare entrambi gli esiti con il timeout registrato nei log.
-
-**ERROR LOG**
-
-````text
-java.lang.IllegalStateException: Timed out waiting for catalog presence across pages: expected IDs [e91d8c5e-8ef1-4758-a6fe-8c5017924196], missing IDs [e91d8c5e-8ef1-4758-a6fe-8c5017924196], last actual IDs [], last scanned offsets [0], last scan horizon 0, offset 0, limit 200, duration 30467ms
-	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceCatalogGateway.awaitPresence(BffEServiceCatalogGateway.java:92)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
-	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
-	at it.pagopa.infrastructure.channel.ChannelRouter.invoke(ChannelRouter.java:43)
-	at it.pagopa.interop.common.infrastructure.ChannelRoutingInterceptor.invoke(ChannelRoutingInterceptor.java:40)
-	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
-	at org.springframework.aop.framework.JdkDynamicAopProxy.invoke(JdkDynamicAopProxy.java:222)
-	at jdk.proxy2/jdk.proxy2.$Proxy160.awaitPresence(Unknown Source)
-	at it.pagopa.interop.common.eservice.application.EServiceCatalogUseCase.awaitPresence(EServiceCatalogUseCase.java:39)
-	at it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceCatalogSearchSteps.awaitPresence(EServiceCatalogSearchSteps.java:103)
-	at it.pagopa.interop.common.eservice.infrastructure.cucumber.EServiceCatalogAssertionSteps.shouldContainEService(EServiceCatalogAssertionSteps.java:30)
-	at ✽.l'e-service "ES-1" è presente tra i risultati della ricerca(classpath:feature-expanded/catalog/private-catalog-text-search.feature:109)
-Caused by: java.lang.IllegalStateException: Polling in timeout dopo 30 secondi.
-
-	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:68)
-	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:80)
-	at it.pagopa.interop.bff.eservice.infrastructure.BffEServiceCatalogGateway.awaitPresence(BffEServiceCatalogGateway.java:77)
-	... 13 more
-Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in it.pagopa.utils.async.PollingUtils expected the predicate to return <true> but it returned <false> for input of <it.pagopa.interop.common.eservice.application.EServiceCatalogTraversal@57d2c2db> within 30 seconds.
-	at org.awaitility.core.ConditionAwaiter.await(ConditionAwaiter.java:167)
-	at org.awaitility.core.AbstractHamcrestCondition.await(AbstractHamcrestCondition.java:86)
-	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:1160)
-	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:712)
-	at org.awaitility.core.ConditionFactory.until(ConditionFactory.java:729)
-	at it.pagopa.utils.async.PollingUtils.pollUntil(PollingUtils.java:48)
-	... 15 more
-
-````
-
-
----
-
-### 2. BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer::[payload] REPLACED_WITH_SQL_INJECTION @ /answerData/annotation/text
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer su POST /purposeTemplates/{purposeTemplateId}/riskAnalysis/answers. Consultare la richiesta e la risposta dello scenario su /answerData/annotation/text e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /answerData/annotation/text
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"2054b58c-6069-4fff-a8d1-ac460694626a","values":[],"editable":false,"annotation":{"id":"2bd575d7-80bf-4a8a-9cdf-53b15d01e7fe","text":"' OR '1'='1","docs":[]},"suggestedValues":["answer-value-pad2qljXBHDDWxX"]}
-- payload: {"answerKey":"institutionalPurpose","answerData":{"values":[],"editable":false,"annotation":{"text":"' OR '1'='1"},"suggestedValues":["answer-value-pad2qljXBHDDWxX"]}}
-- pathParams: {"purposeTemplateId":"f948e673-62b5-4990-8bc8-e4b80d066ef1"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 3. BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer::[payload] REPLACED_WITH_SQL_INJECTION @ /answerData/suggestedValues/0
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer su POST /purposeTemplates/{purposeTemplateId}/riskAnalysis/answers. Consultare la richiesta e la risposta dello scenario su /answerData/suggestedValues/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /answerData/suggestedValues/0
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"5aa47fce-5b86-4b83-a2ce-a147823b49c1","values":[],"editable":false,"annotation":{"id":"c6e175d5-e7fd-438b-bb3d-6f79979ab135","text":"annotation-FwYdME0tzgm07MgV7AoM","docs":[]},"suggestedValues":["' OR '1'='1"]}
-- payload: {"answerKey":"institutionalPurpose","answerData":{"values":[],"editable":false,"annotation":{"text":"annotation-FwYdME0tzgm07MgV7AoM"},"suggestedValues":["' OR '1'='1"]}}
-- pathParams: {"purposeTemplateId":"a8148e57-3cd9-42a9-aff3-d6ed4ac665dd"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 4. BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswerAnnotation::[payload] REPLACED_WITH_SQL_INJECTION @ /text
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswerAnnotation su PUT /purposeTemplates/{purposeTemplateId}/riskAnalysis/answers/{answerId}/annotation. Consultare la richiesta e la risposta dello scenario su /text e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /text
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"509d3f1b-c532-4833-a420-8e2f8b1a8f8a","text":"' OR '1'='1","docs":[]}
-- payload: {"text":"' OR '1'='1"}
-- pathParams: {"answerId":"e1ebe640-8010-477e-88b2-094e1e987124","purposeTemplateId":"81020499-6088-4f7d-a41c-3a5100911fe3"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 5. BffClientContractTest::createApiClient::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createApiClient su POST /clientsApi. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"df90fa05-807b-4263-a3f8-2b8eb26705bc"}
-- payload: {"name":"' OR '1'='1","description":"description-Lz7X76bl7XNEldWuUROAvM3RifWdvUQD","members":["5d717b97-5308-49a5-8682-187663278f24"]}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 6. BffClientContractTest::createApiClient::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createApiClient su POST /clientsApi. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"1a83901b-e806-4b9a-a415-640f071faf42"}
-- payload: {"name":"client-SL0NiIgvxa6YjLPCv7rtTihI","description":"' OR '1'='1","members":["5d717b97-5308-49a5-8682-187663278f24"]}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 7. BffCertifiedAttributeContractTest::createCertifiedAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffCertifiedAttributeContractTest::createCertifiedAttribute su POST /certifiedAttributes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"3ddb60b1-37d8-4a01-8313-d043f03c20b8","code":"88d223c1a5a44f32d6fcfc5727bc05a69fcf580da910080f08c946e9a502b890","kind":"CERTIFIED","description":"' OR '1'='1","origin":"e79a24cd-8edc-441e-ae8d-e87c3aea0059","name":"name-NdlvWFxxqmoZZFeYLmOm6HL8","creationTime":"2026-11-17T21:20:01.310Z"}
-- payload: {"description":"' OR '1'='1","name":"name-NdlvWFxxqmoZZFeYLmOm6HL8"}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 8. BffCertifiedAttributeContractTest::createCertifiedAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffCertifiedAttributeContractTest::createCertifiedAttribute su POST /certifiedAttributes. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 409
-- responseBody: {"type":"about:blank","title":"Duplicate attribute name or code","status":409,"detail":"An attribute with name ' OR '1'='1 or code eaec06bf3a1b96664dcf224b93180d1f53774de2b1839040fa83e7421f09ee08 and origin e79a24cd-8edc-441e-ae8d-e87c3aea0059 already exists","correlationId":"b8939d68-7617-42b4-96cb-b4e550c4635a","errors":[{"code":"003-0002","detail":"An attribute with name ' OR '1'='1 or code eaec06bf3a1b96664dcf224b93180d1f53774de2b1839040fa83e7421f09ee08 and origin e79a24cd-8edc-441e-ae8d-e87c3aea0059 already exists"}]}
-- payload: {"description":"description-PusOZJ1RA55bzRSlDIQTstdTtjj1w875","name":"' OR '1'='1"}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <409>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 9. BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute su POST /certifiedDiscreteAttributes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"35c606eb-ff3e-43b9-a107-877ed0f9940e","code":"c1fed42efd25ac14324f813c7b5731aa17ff2e77527a6c0841ed94f52099509b","kind":"CERTIFIED_DISCRETE","description":"' OR '1'='1","origin":"e79a24cd-8edc-441e-ae8d-e87c3aea0059","name":"name-U4tEbNFUWP7qFzDqgYf1W0xH","creationTime":"2026-11-17T21:25:40.111Z"}
-- payload: {"description":"' OR '1'='1","name":"name-U4tEbNFUWP7qFzDqgYf1W0xH"}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 10. BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute su POST /certifiedDiscreteAttributes. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 409
-- responseBody: {"type":"about:blank","title":"Duplicate attribute name or code","status":409,"detail":"An attribute with name ' OR '1'='1 or code eaec06bf3a1b96664dcf224b93180d1f53774de2b1839040fa83e7421f09ee08 and origin e79a24cd-8edc-441e-ae8d-e87c3aea0059 already exists","correlationId":"cc954126-0784-43df-ab77-691267838685","errors":[{"code":"003-0002","detail":"An attribute with name ' OR '1'='1 or code eaec06bf3a1b96664dcf224b93180d1f53774de2b1839040fa83e7421f09ee08 and origin e79a24cd-8edc-441e-ae8d-e87c3aea0059 already exists"}]}
-- payload: {"description":"description-i7JZCW3XNcsVT4aHjOxtGajjONIApRwb","name":"' OR '1'='1"}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <409>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 11. BffClientContractTest::createConsumerClient::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createConsumerClient su POST /clientsConsumer. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"e2c4930b-6672-4cdb-84c4-92410395e77b"}
-- payload: {"name":"' OR '1'='1","description":"description-UUbN203fUxc2AVieHAocuubHpfOiqF1s","members":["5d717b97-5308-49a5-8682-187663278f24"]}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 12. BffClientContractTest::createConsumerClient::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createConsumerClient su POST /clientsConsumer. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"607f810d-9058-4ea0-957d-d7402a1ccc9f"}
-- payload: {"name":"client-1eRxlSfnxbX4G4iX8WcbhdGf","description":"' OR '1'='1","members":["5d717b97-5308-49a5-8682-187663278f24"]}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 13. BffDeclaredAttributeContractTest::createDeclaredAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffDeclaredAttributeContractTest::createDeclaredAttribute su POST /declaredAttributes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"081868cd-998b-4f7f-9bd5-5b8600551377","kind":"DECLARED","description":"' OR '1'='1","name":"name-VOHJjJRJkslRkWidBkI1Mxeq","creationTime":"2026-11-17T21:19:11.657Z"}
-- payload: {"description":"' OR '1'='1","name":"name-VOHJjJRJkslRkWidBkI1Mxeq"}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 14. BffDeclaredAttributeContractTest::createDeclaredAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffDeclaredAttributeContractTest::createDeclaredAttribute su POST /declaredAttributes. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"789c0627-6f93-47f3-8386-92405c91f47d","kind":"DECLARED","description":"description-V9keWoWzpinbzaAeHZjiKgC1BeBlidu1","name":"' OR '1'='1","creationTime":"2026-11-17T21:19:14.620Z"}
-- payload: {"description":"description-V9keWoWzpinbzaAeHZjiKgC1BeBlidu1","name":"' OR '1'='1"}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 15. BffEServiceContractTest::createEService::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::createEService su POST /eservices. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 409
-- responseBody: {"type":"about:blank","title":"EService template name conflict","status":409,"detail":"An EService template with name ' OR '1'='1 already exists","correlationId":"73d927d9-9f8e-4991-8586-579d4bffc99b","errors":[{"code":"001-0039","detail":"An EService template with name ' OR '1'='1 already exists"}]}
-- payload: {"name":"' OR '1'='1","description":"description-bjWmFdn2SsgRA9O4R8ev","technology":"REST","mode":"DELIVER","isSignalHubEnabled":false,"isConsumerDelegable":true,"isClientAccessDelegable":true,"personalData":false,"asyncExchange":false}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <409>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 16. BffEServiceContractTest::createEService::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::createEService su POST /eservices. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"70e2e713-ef9b-4498-94f0-f1cf3310452a","descriptorId":"489db0d2-3c02-4687-b83f-ae6cce5bf586"}
-- payload: {"name":"eservice-aGR3x1vhgL0o0np","description":"' OR '1'='1","technology":"REST","mode":"DELIVER","isSignalHubEnabled":false,"isConsumerDelegable":true,"isClientAccessDelegable":true,"personalData":false,"asyncExchange":false}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 17. BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::createEServiceTemplate su POST /eservices/templates. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"2175488f-46c4-49cc-8784-c277a29d34e5","versionId":"94cde101-f933-4c09-8ea5-70f658a5b9a2"}
-- payload: {"name":"' OR '1'='1","intendedTarget":"target-acAzLP7z2g8Q2CPvrTk2GB3FsMFGDa","description":"description-takgQEize8cp6JZY8kGmJkG7F6EI8IDQ0Kgys1PHRZJqMwtYBU","technology":"REST","mode":"DELIVER","version":{"description":"version-description-ydVg2gZSKxHx1mhO1vzzJmraUTgrk65xkga","voucherLifespan":60,"dailyCallsPerConsumer":1,"dailyCallsTotal":10,"agreementApprovalPolicy":"AUTOMATIC"},"isSignalHubEnabled":false,"personalData":false,"asyncExchange":false}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 18. BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /intendedTarget
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::createEServiceTemplate su POST /eservices/templates. Consultare la richiesta e la risposta dello scenario su /intendedTarget e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /intendedTarget
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"93ef322b-45d3-4d4e-8488-943f082fc497","versionId":"e3adf2f1-dfab-423c-9f58-ed37a6ae9caa"}
-- payload: {"name":"eservice-template-CmKetTohvEeK8UR","intendedTarget":"' OR '1'='1","description":"description-IdV1sbHFnCsEG6iMq9LXd0aKVshyuDTcoaSWBXjjBhovfPkdHu","technology":"REST","mode":"DELIVER","version":{"description":"version-description-wkg6SUwhyrHUrm4EINggi8FTHruZ48NrlPC","voucherLifespan":60,"dailyCallsPerConsumer":1,"dailyCallsTotal":10,"agreementApprovalPolicy":"AUTOMATIC"},"isSignalHubEnabled":false,"personalData":false,"asyncExchange":false}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 19. BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::createEServiceTemplate su POST /eservices/templates. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"4f7ea9c5-192d-4c84-9bfe-93740fb5dec2","versionId":"19ce31ee-588d-4383-aaeb-fdef94b9fe7f"}
-- payload: {"name":"eservice-template-2RlHH7UMiR9nr9A","intendedTarget":"target-HuMbY23HcgDVwdxGeVIxl4O0EAOAc1","description":"' OR '1'='1","technology":"REST","mode":"DELIVER","version":{"description":"version-description-An0bI2NUTVxCuMmSed3HWkRNxH4FUNkUNzO","voucherLifespan":60,"dailyCallsPerConsumer":1,"dailyCallsTotal":10,"agreementApprovalPolicy":"AUTOMATIC"},"isSignalHubEnabled":false,"personalData":false,"asyncExchange":false}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 20. BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /version/description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::createEServiceTemplate su POST /eservices/templates. Consultare la richiesta e la risposta dello scenario su /version/description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /version/description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"b69d031d-1f90-4bd6-a210-2a9e5c4f2668","versionId":"7879611c-3df2-4c76-bd8a-c2e9efd04620"}
-- payload: {"name":"eservice-template-rXEOa0mmDmf0GEj","intendedTarget":"target-lOPCCdSKZcM06mvLJCdaHBQaeadZEl","description":"description-VqGXYRWEKR8wIa0pWOhqO4ke9XXlXlSTbN6cRvseESKy0qLRF4","technology":"REST","mode":"DELIVER","version":{"description":"' OR '1'='1","voucherLifespan":60,"dailyCallsPerConsumer":1,"dailyCallsTotal":10,"agreementApprovalPolicy":"AUTOMATIC"},"isSignalHubEnabled":false,"personalData":false,"asyncExchange":false}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 21. BffClientContractTest::createKey::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffClientContractTest::createKey su POST /clients/{clientId}/keys. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 409
-- responseBody: {"type":"about:blank","title":"Key already exists","status":409,"detail":"Key with kid gPprYV0AU4qUmVeKwgVNH2h3utYQdHEVoMWDDA8-X38 already exists","correlationId":"083a4e69-fe57-44dd-b0af-600896768d2f","errors":[{"code":"006-0017","detail":"Key with kid gPprYV0AU4qUmVeKwgVNH2h3utYQdHEVoMWDDA8-X38 already exists"}]}
-- payload: {"key":"LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUFtUzJNQ1NGdEJNbEd4eUsvUFNsNApQQ05XT1E2WW0yUndvNFVyYlJlenh1ZU5STHBYMzNxdGRSQmxRZG1ZbHNTSUQ4K0g4ZXJVMlQxcC9iYm9nSEFXCkNhOWlGZnRrd0FPbnVIcGxzYUhFeDVQUWNVNU1vNU5YWlFHNjRoQUQzTkY0ZE9Bc0dPK0V2NEZCd2pkb055T0sKczZpbUt4cklMNURUWXVBeExHdHN6RlAwTWpIYjNJQnBuWHNKQmUxeFpuTFlYeWRWZ25ucTQ5QzJ6MDhPblJKeApxUUxXa0Z4WUlCWVRYTjZVODZiZm94VFBPU3VyMjRlanlFTDYxR3hBRi9NN0FmaWRJMDFTV1J2cGkxWVB0MG85ClU5VStqV1RHOFpOZExTMmlrOEphVTlqb1I4VUUwdHR0bzBVcHovQk54YzFYRHkvU3JjbzdGY2loOU9iMU1HdmQKd3dJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==","use":"SIG","alg":"RS256","name":"' OR '1'='1"}
-- pathParams: {"clientId":"cb07de91-e7f3-49e2-b242-bb45de42acae"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <409>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 22. BffProducerKeychainContractTest::createProducerKey::[payload] REPLACED_WITH_SQL_INJECTION @ /alg
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 204. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffProducerKeychainContractTest::createProducerKey su POST /producerKeychains/{producerKeychainId}/keys. Consultare la richiesta e la risposta dello scenario su /alg e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /alg
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 204
-- responseBody: 
-- payload: {"key":"LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF0RzI1YjY0eUV2N0haVnFCbkx0YQpvajV1cjhoMi9pTEpDeElXeHJIanJaY2JNRVM0aGNLUm1SOENRdW9vSUM5S2I4LzhscXBmUHluWlQ5NEVqSVIvCjdGRWkyN3Y4TTdIaG5JZTY4SjZMTXVDUWdQVE1laldpbk1NWDRWM1pxMmg5Q2ZVcXZUSUdHY01yZlgvYmlGZ0MKeHlNTlRYR2JVSVVLL3IweXpkbURDeUp3cGZxenIxYVdiWGZaRVVvVDZOU1BSZ0lEZHJPQldUUjZOTlIwR3dkSwoxVWt1dWJnVnRZcW9zNE1TN1V3T0Z4WnBWZWgrWVJGZW9UTm1sb1BNbW50aTcvbTlQMkFZcUVPUnRYeFRYUzBECldUTHBpK3lZbmhWRTFuNHg4dlE4RjBTUENGaWh5VlhLdmtlNy9LQlhGSGZLcHowL2FEMGNaUUlhWldibVRlV1cKdFFJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==","use":"SIG","alg":"' OR '1'='1","name":"producer-key-EsUbZbT8ltBorm1"}
-- pathParams: {"producerKeychainId":"30fdad93-16c4-44f8-9222-5541be6ec3a2"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <204>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 23. BffProducerKeychainContractTest::createProducerKey::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 204. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffProducerKeychainContractTest::createProducerKey su POST /producerKeychains/{producerKeychainId}/keys. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 204
-- responseBody: 
-- payload: {"key":"LS0tLS1CRUdJTiBQVUJMSUMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUFzb05VK2pEWjRTWnZBOHRpVVR1cApwM0h0QzIrN3g5a0h2OUwzRW9zaE5FaDBPOXVGVUdvSGxmemdsOGxDb2I0WW0xb2lHWTU1ODJMMXpKSy9Ic0p2CmJxeGwvM2o4aXc0Yy9wZDBHWDlWTERFV09EREptN0hWMUpvSzJCQUJNazJKWk12Ty85MUFweWE1b1RibVJCVXgKTWJHNnNneXdoV3ZHK2s2cmJSVXZvUFV4L1I2NjF1MlY1WGFjcGtvajc4Sk1GNFV0bmhRcExwSWc2d3J3Q2ZHagphdk1qZE1FUzZHUFhtTXBUVEgxQjZ0aTNlSGJoUFFyT1QyU2ZsUktVS1pyZ24xRXppQTRTWENJc25pQk5ndlQzCnJ4TWtkRXhGUkxnNXhUbjhYY0l0NG9uM081SGZHMjdTWGdqSVFOWG5pQ0ppOWFJMVNRbWpSbzVjdmJSd2E3R1IKYXdJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==","use":"SIG","alg":"RS256","name":"' OR '1'='1"}
-- pathParams: {"producerKeychainId":"18f73cb8-5369-43b7-83a8-d2b4f8a9c7bb"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <204>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 24. BffProducerKeychainContractTest::createProducerKeychain::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffProducerKeychainContractTest::createProducerKeychain su POST /producerKeychains. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"06bd009c-0239-4221-8edf-ffabf6ab1768"}
-- payload: {"name":"' OR '1'='1","description":"description-1MmcxqqflD2XunjAtiQnfP6E0Xd883VQ","members":["5d717b97-5308-49a5-8682-187663278f24"]}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 25. BffProducerKeychainContractTest::createProducerKeychain::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffProducerKeychainContractTest::createProducerKeychain su POST /producerKeychains. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"fdf5d9ea-c3cb-4e4a-b9ab-309dbbe47699"}
-- payload: {"name":"producer-keychain-4vdpDmiFDzENQtIcGUlGcHLT","description":"' OR '1'='1","members":["5d717b97-5308-49a5-8682-187663278f24"]}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 26. BffPurposeContractTest::createPurpose::[payload] REMOVED @ /freeOfChargeReason
-
-**RESULT**
-
-La motivazione è omessa mentre l'indicatore di gratuità è true. Il BFF restituisce correttamente HTTP 400 per motivazione mancante. La suite attende 200 perché valuta soltanto l'opzionalità strutturale del campo. Occorre considerare la dipendenza fra gratuità e motivazione nell'aspettativa dello scenario. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REMOVED di BffPurposeContractTest::createPurpose su POST /purposes. Rimuovere esclusivamente /freeOfChargeReason dal payload di partenza. Se il percorso identifica un elemento, verificare il contenuto del contenitore dopo la rimozione. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REMOVED
-- targetPath: /freeOfChargeReason
-- mutationKind: REMOVE
-- mutationValue: null
-- expectationOrigin: INFERRED_VALID
-- responseStatus: 400
-- responseBody: {"type":"about:blank","title":"Missing free of charge reason","status":400,"detail":"Missing free of charge reason","correlationId":"a423856b-0182-46cc-af79-4366d1b03a91","errors":[{"code":"004-0013","detail":"Missing free of charge reason"}]}
-- payload: {"eserviceId":"fc9c2a12-0f9b-4718-8e36-4fd338dc50fa","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"title":"purpose-X7YrFjVKrDaI65Z","description":"description-lz9NobkK9PoZM3f","isFreeOfCharge":true,"dailyCalls":1}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <200> but was <400>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 27. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_NIL_UUID @ /consumerId
-
-**RESULT**
-
-Il chiamante opera per il proprio ente, mentre consumerId è sostituito con l'UUID nil. Il BFF rifiuta la richiesta con HTTP 403 e codice 004-0008 perché il chiamante non è autorizzato a operare come fruitore per l'identificativo richiesto. Il controllo di autorizzazione precede il lookup. La suite deve attendere 403 per questo specifico scenario, invece di 404. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_NIL_UUID di BffPurposeContractTest::createPurpose su POST /purposes. Sostituire /consumerId con l'UUID nil e mantenere validi gli altri riferimenti. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_NIL_UUID
-- targetPath: /consumerId
-- mutationKind: REPLACE
-- mutationValue: 00000000-0000-0000-0000-000000000000
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 403
-- responseBody: {"type":"about:blank","title":"Tenant not allowed","status":403,"detail":"Tenant 80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20 is not allowed to perform the operation because is not operating as consumer","correlationId":"0be47fc0-b8bf-4509-b90e-933f409ec8ae","errors":[{"code":"004-0008","detail":"Tenant 80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20 is not allowed to perform the operation because is not operating as consumer"}]}
-- payload: {"eserviceId":"03d360aa-6475-4a49-a0d5-f9d97ef609cb","consumerId":"00000000-0000-0000-0000-000000000000","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"title":"purpose-53vDHXUixGg9lE2","description":"description-inkN6OlgXZqtT1I","isFreeOfCharge":true,"freeOfChargeReason":"reason-AFPNUCkB9HYfing","dailyCalls":1}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <404> but was <403>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$1(DefaultHttpContractPolicy.java:75)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 28. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /riskAnalysisForm/answers/institutionalPurpose/0
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurpose su POST /purposes. Consultare la richiesta e la risposta dello scenario su /riskAnalysisForm/answers/institutionalPurpose/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /riskAnalysisForm/answers/institutionalPurpose/0
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"6f7ed4dc-0227-45b2-8f1d-fa0bcf961f20"}
-- payload: {"eserviceId":"3765d6c2-8c14-4a12-b04d-712e8715aae0","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["' OR '1'='1"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"title":"purpose-w97f3yfsNyOcO5w","description":"description-3s1whfSH9zGyPZN","isFreeOfCharge":true,"freeOfChargeReason":"reason-qCRMy7o4dI7YYwO","dailyCalls":1}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 29. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /title
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurpose su POST /purposes. Consultare la richiesta e la risposta dello scenario su /title e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /title
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"8e7b5726-84d0-431b-8ae7-6644f947ac86"}
-- payload: {"eserviceId":"11f2c3f8-e3f3-4264-a639-990caa21e7c0","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"title":"' OR '1'='1","description":"description-WkaajtF9sLoaMtJ","isFreeOfCharge":true,"freeOfChargeReason":"reason-rsJskBZ8jBG1lM9","dailyCalls":1}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 30. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurpose su POST /purposes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"aa7f0992-d545-470a-98fd-6c75732ff989"}
-- payload: {"eserviceId":"2f314580-0306-4501-844a-aff1a7a669f2","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"title":"purpose-QYqobj3Ksv0srAU","description":"' OR '1'='1","isFreeOfCharge":true,"freeOfChargeReason":"reason-p0mIHxdKcdeqAnh","dailyCalls":1}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 31. BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /freeOfChargeReason
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurpose su POST /purposes. Consultare la richiesta e la risposta dello scenario su /freeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /freeOfChargeReason
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"12bf085a-8212-49d4-85ce-fa58a16fe7c0"}
-- payload: {"eserviceId":"1be7f098-1645-4fe2-a42e-f3a3f87c5466","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"title":"purpose-AzVqJlWhuSj12U8","description":"description-HB6cpmrx5KMg9rc","isFreeOfCharge":true,"freeOfChargeReason":"' OR '1'='1","dailyCalls":1}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 32. BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REMOVED @ /freeOfChargeReason
-
-**RESULT**
-
-La motivazione è omessa mentre l'indicatore di gratuità è true. Il BFF restituisce correttamente HTTP 400 per motivazione mancante. La suite attende 200 perché valuta soltanto l'opzionalità strutturale del campo. Occorre considerare la dipendenza fra gratuità e motivazione nell'aspettativa dello scenario. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REMOVED di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Rimuovere esclusivamente /freeOfChargeReason dal payload di partenza. Se il percorso identifica un elemento, verificare il contenuto del contenitore dopo la rimozione. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REMOVED
-- targetPath: /freeOfChargeReason
-- mutationKind: REMOVE
-- mutationValue: null
-- expectationOrigin: INFERRED_VALID
-- responseStatus: 400
-- responseBody: {"type":"about:blank","title":"Missing free of charge reason","status":400,"detail":"Missing free of charge reason","correlationId":"30058058-37e9-42da-a326-66d2c3a0abee","errors":[{"code":"004-0013","detail":"Missing free of charge reason"}]}
-- payload: {"eserviceId":"b8bc03cc-b22e-4645-a9e5-3764b929e2a9","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisId":"deeb5c48-9733-4b48-ba59-a800f95629cb","title":"purpose-MkLJTW5iMl1etcs","description":"description-RolmBnsh08VLJwZ","isFreeOfCharge":true,"dailyCalls":1}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <200> but was <400>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 33. BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_NIL_UUID @ /consumerId
-
-**RESULT**
-
-Il chiamante opera per il proprio ente, mentre consumerId è sostituito con l'UUID nil. Il BFF rifiuta la richiesta con HTTP 403 e codice 004-0008 perché il chiamante non è autorizzato a operare come fruitore per l'identificativo richiesto. Il controllo di autorizzazione precede il lookup. La suite deve attendere 403 per questo specifico scenario, invece di 404. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_NIL_UUID di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Sostituire /consumerId con l'UUID nil e mantenere validi gli altri riferimenti. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_NIL_UUID
-- targetPath: /consumerId
-- mutationKind: REPLACE
-- mutationValue: 00000000-0000-0000-0000-000000000000
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 403
-- responseBody: {"type":"about:blank","title":"Tenant not allowed","status":403,"detail":"Tenant 80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20 is not allowed to perform the operation because is not operating as consumer","correlationId":"45c70987-8ea3-48b1-b259-2d488d4dd570","errors":[{"code":"004-0008","detail":"Tenant 80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20 is not allowed to perform the operation because is not operating as consumer"}]}
-- payload: {"eserviceId":"905b1a39-886b-4d78-a995-65ad6b80c89f","consumerId":"00000000-0000-0000-0000-000000000000","riskAnalysisId":"6ab06416-5a12-4f74-9d91-d61afb5c6f52","title":"purpose-VH1w5HAouwiNjxk","description":"description-r3sUwh1ordlFYi8","isFreeOfCharge":true,"freeOfChargeReason":"reason-MgCfcqlCZlEnxEw","dailyCalls":1}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <404> but was <403>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$1(DefaultHttpContractPolicy.java:75)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 34. BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_SQL_INJECTION @ /title
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Consultare la richiesta e la risposta dello scenario su /title e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /title
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"b69ad9a9-dfd1-46ab-95c6-32c3c72e2265"}
-- payload: {"eserviceId":"a70f9e94-37dc-46f3-8421-dfa0d214b0a8","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisId":"8e3a07e1-4693-485c-bd3b-6ea0c8e415b8","title":"' OR '1'='1","description":"description-YOBbxr2Ky8Aplfc","isFreeOfCharge":true,"freeOfChargeReason":"reason-2xGDohdyvY2Uuyc","dailyCalls":1}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 35. BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"9a716fbb-f409-4331-915f-2d225b3ff9a9"}
-- payload: {"eserviceId":"e88ab420-be4a-4af7-a910-d2cb620e5bfe","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisId":"106391d8-f8b8-4143-81de-26f5fb31b5b4","title":"purpose-gAdAM5UrGGMXAaH","description":"' OR '1'='1","isFreeOfCharge":true,"freeOfChargeReason":"reason-sUf2ZEmoiMRECtS","dailyCalls":1}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 36. BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_SQL_INJECTION @ /freeOfChargeReason
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::createPurposeForReceiveEservice su POST /reverse/purposes. Consultare la richiesta e la risposta dello scenario su /freeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /freeOfChargeReason
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"fd7e16df-ed71-4cff-aaae-9f4fd6713713"}
-- payload: {"eserviceId":"503a2106-9507-487f-870a-16f4a610ef4f","consumerId":"80bc8c2a-0f36-47b5-9b7f-7b74c73d2b20","riskAnalysisId":"286fa6ad-cc70-40a8-ba52-66e4fe09d22c","title":"purpose-mlBDVzyVOO348ar","description":"description-RfMeovMbi6MmRd6","isFreeOfCharge":true,"freeOfChargeReason":"' OR '1'='1","dailyCalls":1}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 37. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /targetDescription
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 201. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /targetDescription e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /targetDescription
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 201
-- responseBody: {"id":"f525e13a-041c-478d-8da5-6495621f0278"}
-- payload: {"targetDescription":"' OR '1'='1","targetTenantKind":"PA","purposeTitle":"purpose-template-lkUWPIpASatBWjD","purposeDescription":"purpose-description-Iz7hddvJorrwbS1NXNco","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-TfSKF8cX7vA0jRjR2ioJ","purposeDailyCalls":1,"handlesPersonalData":false}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <201>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 38. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeTitle
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /purposeTitle e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /purposeTitle
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 409
-- responseBody: {"type":"about:blank","title":"Purpose Template title conflict","status":409,"detail":"Purpose Template title conflict for title ' OR '1'='1 and IDs 338e476d-8f19-4fda-93e1-67e8e8f9102d","correlationId":"70118aa7-0fb4-4479-a224-24583c5f14eb","errors":[{"code":"015-0002","detail":"Purpose Template title conflict for title ' OR '1'='1 and IDs 338e476d-8f19-4fda-93e1-67e8e8f9102d"}]}
-- payload: {"targetDescription":"target-description-QBoXFH2psq1v70dEmknx","targetTenantKind":"PA","purposeTitle":"' OR '1'='1","purposeDescription":"purpose-description-Qg4SolHO0lS0yNtybr3o","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-dmZ3joqwquSwjnr4wzn3","purposeDailyCalls":1,"handlesPersonalData":false}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <409>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 39. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeDescription
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 201. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /purposeDescription e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /purposeDescription
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 201
-- responseBody: {"id":"0353f542-cb85-4db5-b208-3ca51201c15c"}
-- payload: {"targetDescription":"target-description-3zxXvATEuNs4wQu4Khqg","targetTenantKind":"PA","purposeTitle":"purpose-template-JspJIJNvLiWmuGi","purposeDescription":"' OR '1'='1","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-I128PWgzKHMYGPSFtNsM","purposeDailyCalls":1,"handlesPersonalData":false}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <201>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 40. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @ /purposeRiskAnalysisForm/version
-
-**RESULT**
-
-Il validatore rifiuta correttamente la versione del questionario composta da spazi con HTTP 400 e codice 015-0004. La suite attende 200 perché considera soltanto tipo e lunghezza della stringa. L'aspettativa deve includere la validità semantica della versione. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_BLANK_STRING di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Sostituire /purposeRiskAnalysisForm/version con tre spazi e controllare che il valore venga trasmesso senza normalizzazioni. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_BLANK_STRING
-- targetPath: /purposeRiskAnalysisForm/version
-- mutationKind: REPLACE
-- mutationValue:    
-- expectationOrigin: INFERRED_VALID
-- responseStatus: 400
-- responseBody: {"type":"about:blank","title":"Risk analysis template validation failed","status":400,"detail":"Risk analysis template validation failed. Reasons: Error: Unexpected ruleset version    ","correlationId":"3fd1d3b7-b3ed-4fec-9b72-6e9c0d186cd0","errors":[{"code":"015-0004","detail":"Risk analysis template validation failed. Reasons: Error: Unexpected ruleset version    "}]}
-- payload: {"targetDescription":"target-description-CjEfESE4RFnvXc0xha5f","targetTenantKind":"PA","purposeTitle":"purpose-template-RSJREsw66Lt1QOP","purposeDescription":"purpose-description-32GXAX57sI94HpkUm7XV","purposeRiskAnalysisForm":{"version":"   ","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-eiZO40Zs0Dt1si7Bx40s","purposeDailyCalls":1,"handlesPersonalData":false}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <200> but was <400>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 41. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 201. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 201
-- responseBody: {"id":"504f8180-bd17-4afb-ba85-223296882107"}
-- payload: {"targetDescription":"target-description-q4PvSfmqWyLBUH14pKoj","targetTenantKind":"PA","purposeTitle":"purpose-template-bvrMVAHNHnB7eKv","purposeDescription":"purpose-description-1PSyKTlbnLYeZlwthNBm","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["' OR '1'='1"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-4VVla4oDBkeaV7MnBm6n","purposeDailyCalls":1,"handlesPersonalData":false}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <201>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 42. BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeFreeOfChargeReason
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 201. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::createPurposeTemplate su POST /purposeTemplates. Consultare la richiesta e la risposta dello scenario su /purposeFreeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /purposeFreeOfChargeReason
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 201
-- responseBody: {"id":"3c029a94-fccd-4cf5-87e8-7d4c0630dfa4"}
-- payload: {"targetDescription":"target-description-LSxqbcGEfrNfKIf6QCbv","targetTenantKind":"PA","purposeTitle":"purpose-template-FWBGo26fqsadzlo","purposeDescription":"purpose-description-oXGSxcw23YEK9BIXfcV2","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"' OR '1'='1","purposeDailyCalls":1,"handlesPersonalData":false}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <201>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 43. BffVerifiedAttributeContractTest::createVerifiedAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffVerifiedAttributeContractTest::createVerifiedAttribute su POST /verifiedAttributes. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"e4dfaf75-4075-46e6-bebb-cd3575a11c76","kind":"VERIFIED","description":"' OR '1'='1","name":"name-6DL9jNdFDL6Ja1aS7vHMjcbe","creationTime":"2026-11-17T21:19:22.275Z"}
-- payload: {"description":"' OR '1'='1","name":"name-6DL9jNdFDL6Ja1aS7vHMjcbe"}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 44. BffVerifiedAttributeContractTest::createVerifiedAttribute::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffVerifiedAttributeContractTest::createVerifiedAttribute su POST /verifiedAttributes. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 409
-- responseBody: {"type":"about:blank","title":"Duplicate attribute name","status":409,"detail":"An attribute with name ' OR '1'='1 already exists","correlationId":"4069f7be-3f62-4351-9638-b497de1eb13e","errors":[{"code":"003-0002","detail":"An attribute with name ' OR '1'='1 already exists"}]}
-- payload: {"description":"description-RvT00XmB8Xe3kp1GXDr6LSZpVLylBjsU","name":"' OR '1'='1"}
-- pathParams: null
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <409>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 45. BffDelegationContractTest::rejectConsumerDelegation::[payload] REPLACED_WITH_SQL_INJECTION @ /rejectionReason
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 404. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffDelegationContractTest::rejectConsumerDelegation su POST /consumers/delegations/{delegationId}/reject. Consultare la richiesta e la risposta dello scenario su /rejectionReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Predisporre per ogni scenario una delega distinta, esistente e in stato rifiutabile, con un chiamante autorizzato al rifiuto.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /rejectionReason
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 204
-- responseBody: 
-- payload: {"rejectionReason":"' OR '1'='1"}
-- pathParams: {"delegationId":"18763dfb-164f-4ac2-a54d-694abc15acbf"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.get(ForkJoinTask.java:979)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <204>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 15 more
-
-````
-
-
----
-
-### 46. BffDelegationContractTest::rejectProducerDelegation::[payload] REPLACED_WITH_SQL_INJECTION @ /rejectionReason
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 404. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffDelegationContractTest::rejectProducerDelegation su POST /producers/delegations/{delegationId}/reject. Consultare la richiesta e la risposta dello scenario su /rejectionReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Predisporre per ogni scenario una delega distinta, esistente e in stato rifiutabile, con un chiamante autorizzato al rifiuto.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /rejectionReason
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 204
-- responseBody: 
-- payload: {"rejectionReason":"' OR '1'='1"}
-- pathParams: {"delegationId":"8a7f4893-d1d3-40fe-937d-66b8054f6836"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <204>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 13 more
-
-````
-
-
----
-
-### 47. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::updateEServiceById su PUT /eservices/{eServiceId}. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 409
-- responseBody: {"type":"about:blank","title":"EService template name conflict","status":409,"detail":"An EService template with name ' OR '1'='1 already exists","correlationId":"54c43a54-4d20-4348-b96f-8265b71e9311","errors":[{"code":"001-0039","detail":"An EService template with name ' OR '1'='1 already exists"}]}
-- payload: {"name":"' OR '1'='1","description":"description-VZ731YE2nZkb8jpKm3rx","technology":"REST","mode":"DELIVER","isSignalHubEnabled":false,"isConsumerDelegable":true,"isClientAccessDelegable":true,"personalData":false,"asyncExchange":false}
-- pathParams: {"eServiceId":"360069c0-f386-4b3e-b686-68ccefaff8e4"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <409>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 48. BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::updateEServiceById su PUT /eservices/{eServiceId}. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"352a47e5-c4eb-497a-a1e6-ac604a0e994b"}
-- payload: {"name":"eservice-KOlGJLlYSPr8MVP","description":"' OR '1'='1","technology":"REST","mode":"DELIVER","isSignalHubEnabled":false,"isConsumerDelegable":true,"isClientAccessDelegable":true,"personalData":false,"asyncExchange":false}
-- pathParams: {"eServiceId":"352a47e5-c4eb-497a-a1e6-ac604a0e994b"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 49. BffEServiceContractTest::updateEServiceDescription::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::updateEServiceDescription su POST /eservices/{eServiceId}/description/update. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"d88f2896-23c6-4c48-954b-00bc3bedae07"}
-- payload: {"description":"' OR '1'='1"}
-- pathParams: {"eServiceId":"d88f2896-23c6-4c48-954b-00bc3bedae07"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 50. BffEServiceContractTest::updateEServiceName::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceContractTest::updateEServiceName su POST /eservices/{eServiceId}/name/update. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 409
-- responseBody: {"type":"about:blank","title":"EService template name conflict","status":409,"detail":"An EService template with name ' OR '1'='1 already exists","correlationId":"0bef660c-635e-402d-9ee3-2452de29090b","errors":[{"code":"001-0039","detail":"An EService template with name ' OR '1'='1 already exists"}]}
-- payload: {"name":"' OR '1'='1"}
-- pathParams: {"eServiceId":"1f02b8d7-f1c7-42ee-8595-d44897f3e60f"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <409>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 51. BffEServiceTemplateContractTest::updateEServiceTemplateDescription::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 204. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::updateEServiceTemplateDescription su POST /eservices/templates/{eServiceTemplateId}/description/update. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 204
-- responseBody: 
-- payload: {"description":"' OR '1'='1"}
-- pathParams: {"eServiceTemplateId":"09004be8-3bbc-4dbb-b6f6-e650fcb2c316"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <204>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 52. BffEServiceTemplateContractTest::updateEServiceTemplateIntendedTarget::[payload] REPLACED_WITH_SQL_INJECTION @ /intendedTarget
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 204. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::updateEServiceTemplateIntendedTarget su POST /eservices/templates/{eServiceTemplateId}/intendedTarget/update. Consultare la richiesta e la risposta dello scenario su /intendedTarget e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /intendedTarget
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 204
-- responseBody: 
-- payload: {"intendedTarget":"' OR '1'='1"}
-- pathParams: {"eServiceTemplateId":"7bb8de4c-b36c-41d0-8313-803124662a96"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <204>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 53. BffEServiceTemplateContractTest::updateEServiceTemplateName::[payload] REPLACED_WITH_SQL_INJECTION @ /name
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffEServiceTemplateContractTest::updateEServiceTemplateName su POST /eservices/templates/{eServiceTemplateId}/name/update. Consultare la richiesta e la risposta dello scenario su /name e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /name
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 409
-- responseBody: {"type":"about:blank","title":"Duplicated service name","status":409,"detail":"An EService Template with name ' OR '1'='1 already exists","correlationId":"5c46a76b-9e93-4eba-b6e5-663e20b5e185","errors":[{"code":"011-0004","detail":"An EService Template with name ' OR '1'='1 already exists"}]}
-- payload: {"name":"' OR '1'='1"}
-- pathParams: {"eServiceTemplateId":"e523af8c-b9c8-4d70-8739-941dce19863f"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <409>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 54. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/institutionalPurpose
-
-**RESULT**
-
-Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire REMOVED su /riskAnalysisForm/answers/institutionalPurpose in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REMOVED
-- targetPath: /riskAnalysisForm/answers/institutionalPurpose
-- mutationKind: REMOVE
-- mutationValue: null
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"86e88ff1-31bd-41e1-aafa-cb921240a751","versionId":"2f4780d8-afec-4da3-b5fd-b5992f0b5d8f"}
-- payload: {"title":"purpose-wsfV0fgtxsZ75Q8","description":"description-5Rq2TaA0hkqrhFv","isFreeOfCharge":true,"freeOfChargeReason":"reason-vaOUFHTqWSsO1xA","riskAnalysisForm":{"version":"3.2","answers":{"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
-- pathParams: {"purposeId":"86e88ff1-31bd-41e1-aafa-cb921240a751"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 55. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/institutionalPurpose/0
-
-**RESULT**
-
-Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire REMOVED su /riskAnalysisForm/answers/institutionalPurpose/0 in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REMOVED
-- targetPath: /riskAnalysisForm/answers/institutionalPurpose/0
-- mutationKind: REMOVE
-- mutationValue: null
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"a57e60f9-1a9e-4388-827a-19890ac97187","versionId":"c29831b7-c6e6-45c9-9f8e-aa65490b6e86"}
-- payload: {"title":"purpose-hhNybhbqd8y15MO","description":"description-qbZGTyJP7xSC8yZ","isFreeOfCharge":true,"freeOfChargeReason":"reason-gmgIugvGkt6VuIh","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":[],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
-- pathParams: {"purposeId":"a57e60f9-1a9e-4388-827a-19890ac97187"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 56. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties
-
-**RESULT**
-
-Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire REMOVED su /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REMOVED
-- targetPath: /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties
-- mutationKind: REMOVE
-- mutationValue: null
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"c5c4a438-b1ac-48bc-9b77-2e2445e5aa20","versionId":"1e7d804e-fd1a-47eb-9da2-f92251dfe984"}
-- payload: {"title":"purpose-K4XAL6ZMcVK4cSh","description":"description-Ph6KB2Ui7E0qECI","isFreeOfCharge":true,"freeOfChargeReason":"reason-YnBA1xi2Le38nZp","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
-- pathParams: {"purposeId":"c5c4a438-b1ac-48bc-9b77-2e2445e5aa20"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 57. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/0
-
-**RESULT**
-
-Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire REMOVED su /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/0 in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REMOVED
-- targetPath: /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/0
-- mutationKind: REMOVE
-- mutationValue: null
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"671fe5fa-5343-423e-841c-829ece9ec9b2","versionId":"f26bc427-59c8-4256-8b2a-7d683e1a7536"}
-- payload: {"title":"purpose-QrlxA3xBKTLgWn2","description":"description-OSG6dkJ0CQZKDIf","isFreeOfCharge":true,"freeOfChargeReason":"reason-si9KXflNqxcUNiP","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":[],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
-- pathParams: {"purposeId":"671fe5fa-5343-423e-841c-829ece9ec9b2"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 58. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/usesThirdPartyPersonalData
-
-**RESULT**
-
-Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire REMOVED su /riskAnalysisForm/answers/usesThirdPartyPersonalData in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REMOVED
-- targetPath: /riskAnalysisForm/answers/usesThirdPartyPersonalData
-- mutationKind: REMOVE
-- mutationValue: null
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"0160b4cd-6e22-4e72-97e1-0561d58cbf6c","versionId":"a01d6075-b846-4625-b645-1677f6f42436"}
-- payload: {"title":"purpose-UGPzLfPDZUx7DPA","description":"description-B80xP6aThV9ldaI","isFreeOfCharge":true,"freeOfChargeReason":"reason-XgBuIRrbgtzOgQc","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"]}},"dailyCalls":1}
-- pathParams: {"purposeId":"0160b4cd-6e22-4e72-97e1-0561d58cbf6c"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 59. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/purpose
-
-**RESULT**
-
-Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire REMOVED su /riskAnalysisForm/answers/purpose in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REMOVED
-- targetPath: /riskAnalysisForm/answers/purpose
-- mutationKind: REMOVE
-- mutationValue: null
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"5afade2f-6a10-4c7e-9361-06f8a703591c","versionId":"e30a1f93-cb90-4026-8528-50a65780af93"}
-- payload: {"title":"purpose-LDjEVEVw7XbxI85","description":"description-nRtMAyLeyE2yaTa","isFreeOfCharge":true,"freeOfChargeReason":"reason-TN0BBMFSSKg8GbR","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
-- pathParams: {"purposeId":"5afade2f-6a10-4c7e-9361-06f8a703591c"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 60. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/usesThirdPartyPersonalData/0
-
-**RESULT**
-
-Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire REMOVED su /riskAnalysisForm/answers/usesThirdPartyPersonalData/0 in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REMOVED
-- targetPath: /riskAnalysisForm/answers/usesThirdPartyPersonalData/0
-- mutationKind: REMOVE
-- mutationValue: null
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"2f438261-5ebb-4ffe-9174-816a8039c33a","versionId":"0e0cb014-8ae2-472d-9f68-4ba13bb54fec"}
-- payload: {"title":"purpose-lHWWglk73MgZZyr","description":"description-S0p685euE6appdP","isFreeOfCharge":true,"freeOfChargeReason":"reason-t9xZ1LE7F6LcGgG","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":[]}},"dailyCalls":1}
-- pathParams: {"purposeId":"2f438261-5ebb-4ffe-9174-816a8039c33a"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 61. BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/purpose/0
-
-**RESULT**
-
-Il salvataggio della bozza restituisce HTTP 200, compatibile con lo schema della mappa answers e con l'assenza di minItems negli array. L'attivazione viene bloccata con HTTP 400 e codice 004-0014 per risposta mancante o vuota. La validazione funzionale interviene all'attivazione. Il KO deriva dal 400 atteso dalla suite durante l'aggiornamento e richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire REMOVED su /riskAnalysisForm/answers/purpose/0 in una finalità in bozza con questionario inizialmente completo. Rileggere la finalità per verificare la risposta rimossa o l'array svuotato. Tentare l'attivazione mantenendo valide le altre precondizioni e leggere il motivo del rifiuto.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REMOVED
-- targetPath: /riskAnalysisForm/answers/purpose/0
-- mutationKind: REMOVE
-- mutationValue: null
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"8f4fe047-28d7-47c8-a6ab-ccb120685e1c","versionId":"092c21b3-b148-4c5c-8fad-a7f7be5cc9b1"}
-- payload: {"title":"purpose-IPevR4F3DoaYyzk","description":"description-53KaWniGoWkZLWR","isFreeOfCharge":true,"freeOfChargeReason":"reason-MGorjpcGfStDu4t","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":[],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
-- pathParams: {"purposeId":"8f4fe047-28d7-47c8-a6ab-ccb120685e1c"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 62. BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /title
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updatePurpose su POST /purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /title e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /title
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"c4ee258b-97da-4b9c-88de-986b3fdb49d3","versionId":"997c483e-57bc-4ef7-b6bd-9fdda603081b"}
-- payload: {"title":"' OR '1'='1","description":"description-NAewle78C19d5Ia","isFreeOfCharge":true,"freeOfChargeReason":"reason-THycgqAGsialILP","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
-- pathParams: {"purposeId":"c4ee258b-97da-4b9c-88de-986b3fdb49d3"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 63. BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updatePurpose su POST /purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"af1c91f3-ff38-4d81-b68e-90df8e7c1df0","versionId":"c0d31346-57a3-457e-bf2d-c8a9639f141b"}
-- payload: {"title":"purpose-ioQt8BpdXXAf2jM","description":"' OR '1'='1","isFreeOfCharge":true,"freeOfChargeReason":"reason-PLqmQbgOdn68VbL","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
-- pathParams: {"purposeId":"af1c91f3-ff38-4d81-b68e-90df8e7c1df0"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 64. BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /freeOfChargeReason
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updatePurpose su POST /purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /freeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /freeOfChargeReason
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"4d180212-1bd0-41c1-a3ec-fcb4d2fb1c35","versionId":"35b9e940-a4f1-435e-8ca4-71559ad729b6"}
-- payload: {"title":"purpose-ad97x7HgSRP4jmc","description":"description-jifx5LVw6oPmqZP","isFreeOfCharge":true,"freeOfChargeReason":"' OR '1'='1","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["prova prova prova"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
-- pathParams: {"purposeId":"4d180212-1bd0-41c1-a3ec-fcb4d2fb1c35"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 65. BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /riskAnalysisForm/answers/institutionalPurpose/0
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updatePurpose su POST /purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /riskAnalysisForm/answers/institutionalPurpose/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /riskAnalysisForm/answers/institutionalPurpose/0
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"995044cf-b377-4652-b07e-5e9c6f087e15","versionId":"4b451047-d4d6-4cee-8e58-3520c9357e1c"}
-- payload: {"title":"purpose-kycLhKFE46VVpHo","description":"description-E4SX5ZcffUUNTCU","isFreeOfCharge":true,"freeOfChargeReason":"reason-kDcqjXHFlPMIR6z","riskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":["' OR '1'='1"],"isRequestOnBehalfOfThirdParties":["NO"],"purpose":["INSTITUTIONAL"],"usesPersonalData":["NO"],"usesThirdPartyPersonalData":["NO"]}},"dailyCalls":1}
-- pathParams: {"purposeId":"995044cf-b377-4652-b07e-5e9c6f087e15"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 7 more
-
-````
-
-
----
-
-### 66. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REMOVED @ /purposeFreeOfChargeReason
-
-**RESULT**
-
-La motivazione è omessa mentre l'indicatore di gratuità è true. Il BFF restituisce correttamente HTTP 400 per motivazione mancante. La suite attende 200 perché valuta soltanto l'opzionalità strutturale del campo. Occorre considerare la dipendenza fra gratuità e motivazione nell'aspettativa dello scenario. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REMOVED di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Rimuovere esclusivamente /purposeFreeOfChargeReason dal payload di partenza. Se il percorso identifica un elemento, verificare il contenuto del contenitore dopo la rimozione. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REMOVED
-- targetPath: /purposeFreeOfChargeReason
-- mutationKind: REMOVE
-- mutationValue: null
-- expectationOrigin: INFERRED_VALID
-- responseStatus: 400
-- responseBody: {"type":"about:blank","title":"Missing free of charge reason","status":400,"detail":"Missing free of charge reason","correlationId":"21386495-f409-4318-a65e-ed379f0d55f5","errors":[{"code":"015-0001","detail":"Missing free of charge reason"}]}
-- payload: {"targetDescription":"target-description-KZ46pRpSChaUbo6JG6OT","targetTenantKind":"PA","purposeTitle":"purpose-template-lscyNT3FjiU4M5V","purposeDescription":"purpose-description-DJlhDcnSpze3GR7bpBR5","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeDailyCalls":1,"handlesPersonalData":false}
-- pathParams: {"purposeTemplateId":"42d700e2-61bb-43e6-a65b-643d19ceb7e5"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <200> but was <400>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 67. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /targetDescription
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /targetDescription e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /targetDescription
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"c64018f9-c206-4fcf-84d6-05863945323d","targetDescription":"' OR '1'='1","targetTenantKind":"PA","creatorId":"e79a24cd-8edc-441e-ae8d-e87c3aea0059","state":"DRAFT","createdAt":"2026-11-17T21:25:56.655Z","updatedAt":"2026-11-17T21:25:58.997Z","purposeTitle":"purpose-template-NCP3rO3IUPKIokd","purposeDescription":"purpose-description-PHBpf536s5Ld8mlRJOdw","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"id":"39f8eca9-c04f-4236-9264-aec3beb93618","values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"id":"fb4407dd-e28f-46e4-8e5a-34b6b1775797","values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"id":"d9b72006-aeb4-40e7-91eb-c7978f29b115","values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"id":"4ab888ea-6b5a-4c51-b5b8-01cb68058c44","values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"id":"7ce33b1d-7eaa-42a0-9d9c-9d1efcc580a4","values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-lcD04geTvXe2SseLKzOp","purposeDailyCalls":1,"handlesPersonalData":false}
-- payload: {"targetDescription":"' OR '1'='1","targetTenantKind":"PA","purposeTitle":"purpose-template-NCP3rO3IUPKIokd","purposeDescription":"purpose-description-PHBpf536s5Ld8mlRJOdw","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-lcD04geTvXe2SseLKzOp","purposeDailyCalls":1,"handlesPersonalData":false}
-- pathParams: {"purposeTemplateId":"c64018f9-c206-4fcf-84d6-05863945323d"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 68. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeTitle
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 409. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /purposeTitle e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /purposeTitle
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 409
-- responseBody: {"type":"about:blank","title":"Purpose Template title conflict","status":409,"detail":"Purpose Template title conflict for title ' OR '1'='1 and IDs 338e476d-8f19-4fda-93e1-67e8e8f9102d","correlationId":"bf0151f1-45d9-45ad-9284-4691a3554519","errors":[{"code":"015-0002","detail":"Purpose Template title conflict for title ' OR '1'='1 and IDs 338e476d-8f19-4fda-93e1-67e8e8f9102d"}]}
-- payload: {"targetDescription":"target-description-UqTCLnaCjpt83r9ZOK6A","targetTenantKind":"PA","purposeTitle":"' OR '1'='1","purposeDescription":"purpose-description-DKms6vtymJJxTj09eYOA","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-DjmPhTAaYoqWWqGalGSW","purposeDailyCalls":1,"handlesPersonalData":false}
-- pathParams: {"purposeTemplateId":"7f67241f-3112-4906-b88c-38149afa6e43"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <409>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 69. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeDescription
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /purposeDescription e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /purposeDescription
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"983b0029-e606-44c1-95ec-59dcfbd20c6f","targetDescription":"target-description-4Wj3i40zD84YOSfNRWqC","targetTenantKind":"PA","creatorId":"e79a24cd-8edc-441e-ae8d-e87c3aea0059","state":"DRAFT","createdAt":"2026-11-17T21:26:26.838Z","updatedAt":"2026-11-17T21:26:29.102Z","purposeTitle":"purpose-template-atl7WgcZvJC3DoA","purposeDescription":"' OR '1'='1","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"id":"2cb61bee-631f-434c-992c-1127154095b5","values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"id":"5cde79db-af81-4e39-b9a8-a0251c8c5e23","values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"id":"4c92c30d-73a7-4373-90f4-e4c4045b23e6","values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"id":"4c7dabb2-df7b-4706-93c2-6cc682b4ef41","values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"id":"5f5ad3bd-0ac8-4ed5-812b-f6875cb06b3b","values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-XvCEaCM6aFuamXo6ypFD","purposeDailyCalls":1,"handlesPersonalData":false}
-- payload: {"targetDescription":"target-description-4Wj3i40zD84YOSfNRWqC","targetTenantKind":"PA","purposeTitle":"purpose-template-atl7WgcZvJC3DoA","purposeDescription":"' OR '1'='1","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-XvCEaCM6aFuamXo6ypFD","purposeDailyCalls":1,"handlesPersonalData":false}
-- pathParams: {"purposeTemplateId":"983b0029-e606-44c1-95ec-59dcfbd20c6f"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 70. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @ /purposeRiskAnalysisForm/version
-
-**RESULT**
-
-Il validatore rifiuta correttamente la versione del questionario composta da spazi con HTTP 400 e codice 015-0004. La suite attende 200 perché considera soltanto tipo e lunghezza della stringa. L'aspettativa deve includere la validità semantica della versione. Il difetto di suite è in corso di analisi sulla codebase.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_BLANK_STRING di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Sostituire /purposeRiskAnalysisForm/version con tre spazi e controllare che il valore venga trasmesso senza normalizzazioni. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_BLANK_STRING
-- targetPath: /purposeRiskAnalysisForm/version
-- mutationKind: REPLACE
-- mutationValue:    
-- expectationOrigin: INFERRED_VALID
-- responseStatus: 400
-- responseBody: {"type":"about:blank","title":"Risk analysis template validation failed","status":400,"detail":"Risk analysis template validation failed. Reasons: Error: Unexpected ruleset version    ","correlationId":"bedf51b3-66cd-4078-9611-691eacb4271d","errors":[{"code":"015-0004","detail":"Risk analysis template validation failed. Reasons: Error: Unexpected ruleset version    "}]}
-- payload: {"targetDescription":"target-description-MjRQlczobFuJYXVd7DU8","targetTenantKind":"PA","purposeTitle":"purpose-template-LfHP0Eq1gjaTpWS","purposeDescription":"purpose-description-LeSVRvZNbzHozvCPE1d3","purposeRiskAnalysisForm":{"version":"   ","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-gH2gxOTL8UBfk9J9VpIk","purposeDailyCalls":1,"handlesPersonalData":false}
-- pathParams: {"purposeTemplateId":"3dc609f6-7e5a-4f6b-8761-808cf3e8d498"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <200> but was <400>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$successStatus$0(DefaultHttpContractPolicy.java:50)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 71. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0 e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"4da2a697-f024-4a8c-8209-ea29e51f9e6d","targetDescription":"target-description-CMcU3djmzAiJ4CBNfQuj","targetTenantKind":"PA","creatorId":"e79a24cd-8edc-441e-ae8d-e87c3aea0059","state":"DRAFT","createdAt":"2026-11-17T21:26:58.343Z","updatedAt":"2026-11-17T21:27:00.648Z","purposeTitle":"purpose-template-m9AJHTVyCVXoKTG","purposeDescription":"purpose-description-bPWPn8TiwzefQQ9M5Prg","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"id":"cbc68009-8af6-4d6b-ab29-7714d030fd06","values":[],"editable":false,"suggestedValues":["' OR '1'='1"]},"isRequestOnBehalfOfThirdParties":{"id":"fa8da315-6064-46c3-bb00-e5d32a043d4c","values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"id":"77046dce-7d59-43e5-8a58-5ca1f697b5de","values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"id":"57e34ea8-a3fe-496a-856f-55095001096e","values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"id":"d2ccb9a7-a27a-4819-a3f2-936e188a5e0b","values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-yXzcDXohf2NO0i0JjkcE","purposeDailyCalls":1,"handlesPersonalData":false}
-- payload: {"targetDescription":"target-description-CMcU3djmzAiJ4CBNfQuj","targetTenantKind":"PA","purposeTitle":"purpose-template-m9AJHTVyCVXoKTG","purposeDescription":"purpose-description-bPWPn8TiwzefQQ9M5Prg","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["' OR '1'='1"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"free-of-charge-reason-yXzcDXohf2NO0i0JjkcE","purposeDailyCalls":1,"handlesPersonalData":false}
-- pathParams: {"purposeTemplateId":"4da2a697-f024-4a8c-8209-ea29e51f9e6d"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 72. BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @ /purposeFreeOfChargeReason
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeTemplateContractTest::updatePurposeTemplate su PUT /purposeTemplates/{purposeTemplateId}. Consultare la richiesta e la risposta dello scenario su /purposeFreeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /purposeFreeOfChargeReason
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"id":"f6d4f2a6-cb3e-4960-b54b-1a6f101e9731","targetDescription":"target-description-2XbLaXRECKXdsqIeLddc","targetTenantKind":"PA","creatorId":"e79a24cd-8edc-441e-ae8d-e87c3aea0059","state":"DRAFT","createdAt":"2026-11-17T21:28:23.291Z","updatedAt":"2026-11-17T21:28:25.580Z","purposeTitle":"purpose-template-Axaum67z4Yf9Hoo","purposeDescription":"purpose-description-lH8XTgvTNx1E9mtlJp8A","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"id":"ff6095d5-7911-4eb3-97be-bc030dc312e9","values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"id":"97682f73-f3d7-4a61-ba6d-7de96a1458a9","values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"id":"c8dc59e2-b412-4b22-a769-d23fbbbe8d87","values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"id":"e1a0ea71-1fc6-4bd4-8f07-045b682cc8e9","values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"id":"b5b0265c-7f0c-4859-9069-ac56d9d9e274","values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"' OR '1'='1","purposeDailyCalls":1,"handlesPersonalData":false}
-- payload: {"targetDescription":"target-description-2XbLaXRECKXdsqIeLddc","targetTenantKind":"PA","purposeTitle":"purpose-template-Axaum67z4Yf9Hoo","purposeDescription":"purpose-description-lH8XTgvTNx1E9mtlJp8A","purposeRiskAnalysisForm":{"version":"3.2","answers":{"institutionalPurpose":{"values":[],"editable":false,"suggestedValues":["prova prova prova"]},"isRequestOnBehalfOfThirdParties":{"values":["NO"],"editable":false,"suggestedValues":[]},"purpose":{"values":["INSTITUTIONAL"],"editable":false,"suggestedValues":[]},"usesPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]},"usesThirdPartyPersonalData":{"values":["NO"],"editable":false,"suggestedValues":[]}}},"purposeIsFreeOfCharge":true,"purposeFreeOfChargeReason":"' OR '1'='1","purposeDailyCalls":1,"handlesPersonalData":false}
-- pathParams: {"purposeTemplateId":"f6d4f2a6-cb3e-4960-b54b-1a6f101e9731"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.Optional.ifPresent(Optional.java:178)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:436)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 73. BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /title
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updateReversePurpose su POST /reverse/purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /title e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /title
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"83d08562-c443-4a3d-b373-055155f7adb4","versionId":"98c89216-5ef4-47cd-95b0-a47473f99bf1"}
-- payload: {"title":"' OR '1'='1","description":"description-QWfjwMKp2mo6Bhj","isFreeOfCharge":true,"freeOfChargeReason":"reason-HKaC7PU28qNZDVW","dailyCalls":1}
-- pathParams: {"purposeId":"83d08562-c443-4a3d-b373-055155f7adb4"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
----
-
-### 74. BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /description
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updateReversePurpose su POST /reverse/purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /description e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /description
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"84dde35f-b356-496c-8f77-ecdca5123f92","versionId":"a20f7b7d-6727-49bd-ae0e-6201146f9509"}
-- payload: {"title":"purpose-ZujhRlsAkoUZMN2","description":"' OR '1'='1","isFreeOfCharge":true,"freeOfChargeReason":"reason-MVlLiZDpHcuKCmr","dailyCalls":1}
-- pathParams: {"purposeId":"84dde35f-b356-496c-8f77-ecdca5123f92"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool.helpJoin(ForkJoinPool.java:1883)
-	at java.base/java.util.concurrent.ForkJoinTask.awaitDone(ForkJoinTask.java:440)
-	at java.base/java.util.concurrent.ForkJoinTask.join(ForkJoinTask.java:670)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 10 more
-
-````
-
-
----
-
-### 75. BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /freeOfChargeReason
-
-**RESULT**
-
-La suite attende HTTP 400; il BFF restituisce HTTP 200. La policy di ammissione di questo input è in attesa di decisione da parte di Interop. Lo scenario è stato commentato e non dovrebbe essere eseguito nelle prossime run. La sospensione non è classificata come bug di suite e non richiede un ticket dedicato.
-
-**PROCEDURE**
-
-Eseguire il solo scenario REPLACED_WITH_SQL_INJECTION di BffPurposeContractTest::updateReversePurpose su POST /reverse/purposes/{purposeId}. Consultare la richiesta e la risposta dello scenario su /freeOfChargeReason e verificare l'aspettativa definita dalla policy. Confrontare lo status atteso con la risposta e leggere codice e dettaglio dell'eventuale errore. Verificare che la risorsa di partenza sia nello stato richiesto dall'operazione.
-
-**ERROR LOG**
-
-````text
-java.lang.AssertionError: HTTP contract expectation failed
-- scope: PAYLOAD
-- scenario: REPLACED_WITH_SQL_INJECTION
-- targetPath: /freeOfChargeReason
-- mutationKind: REPLACE
-- mutationValue: ' OR '1'='1
-- expectationOrigin: POLICY_UNKNOWN
-- responseStatus: 200
-- responseBody: {"purposeId":"34acca01-611b-473e-8820-22c9681767dc","versionId":"b1fc9f1b-277f-4988-9298-c28bb9aa91e6"}
-- payload: {"title":"purpose-G8Cm5YvUkc76STu","description":"description-2BxGtpYQ8BGoypm","isFreeOfCharge":true,"freeOfChargeReason":"' OR '1'='1","dailyCalls":1}
-- pathParams: {"purposeId":"34acca01-611b-473e-8820-22c9681767dc"}
-	at it.pagopa.infrastructure.contract.http.HttpContractFailureDiagnostics.enrich(HttpContractFailureDiagnostics.java:22)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:61)
-	at it.pagopa.infrastructure.contract.http.HttpContractInvocationBuilder.lambda$toDynamicTest$0(HttpContractInvocationBuilder.java:94)
-	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:373)
-	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1182)
-	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
-	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
-	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-Caused by: java.lang.AssertionError: 1 expectation failed.
-Expected status code <400> but was <200>.
-
-	at org.codehaus.groovy.vmplugin.v8.IndyInterface.fromCache(IndyInterface.java:344)
-	at io.restassured.internal.ResponseSpecificationImpl$HamcrestAssertionClosure.validate(ResponseSpecificationImpl.groovy:516)
-	at io.restassured.internal.ResponseSpecificationImpl.validateResponseIfRequired(ResponseSpecificationImpl.groovy:714)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:139)
-	at io.restassured.internal.ResponseSpecificationImpl.statusCode(ResponseSpecificationImpl.groovy:147)
-	at io.restassured.internal.ValidatableResponseOptionsImpl.statusCode(ValidatableResponseOptionsImpl.java:89)
-	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:80)
-	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
-	... 6 more
-
-````
-
-
 ---
 
-### 76. WebEServiceDetailsCatalogPageContractTest::checkCustomThresholdsOnCatalog7::Precondition failed
+### 112. WebEServiceDetailsCatalogPageContractTest::checkCustomThresholdsOnCatalog7::Precondition failed
 
 **RESULT**
 
@@ -10059,6 +10205,8 @@ Il selettore 1 recupera il primo attributo accumulato nello store del thread, an
 **PROCEDURE**
 
 Eseguire il setup delle soglie personalizzate con lo store del thread già popolato. Conservare i riferimenti degli attributi appena creati e confrontarli con quelli usati nei requisiti del descriptor e nelle assegnazioni. Verificare che ogni soglia sia associata all'attributo del setup corrente e che il test raggiunga le asserzioni Web.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
 
 **ERROR LOG**
 
@@ -10108,7 +10256,7 @@ Caused by: org.awaitility.core.ConditionTimeoutException: Lambda expression in i
 
 ---
 
-### 77. WebAgreementRequestPaginationContractTest::shouldShowPaginationNavbarRegardlessOfOffset::offset elevato mantiene la navbar visibile a fine pagina
+### 113. WebAgreementRequestPaginationContractTest::shouldShowPaginationNavbarRegardlessOfOffset::offset elevato mantiene la navbar visibile a fine pagina
 
 **RESULT**
 
@@ -10117,6 +10265,8 @@ La verifica della barra viene eseguita subito dopo la navigazione con offset ele
 **PROCEDURE**
 
 Aprire la lista delle richieste, quindi navigare nuovamente con offset superiore ai risultati disponibili. Attendere il completamento del caricamento della lista e verificare, tramite polling, che la barra di paginazione sia presente. Controllarne quindi l'usabilità e la possibilità di tornare a una pagina valida.
+
+**LINK SUITE BUG:** https://pagopa.atlassian.net/browse/QA-19652
 
 **ERROR LOG**
 
@@ -10127,10 +10277,14 @@ Expecting value to be true but was false
 
 ````
 
+</details>
 
----
+## 4 - KO DA ANALIZZARE
 
-### 78. [PRIVATE_CATALOG_ORDERING_PAGINATION_2] Ordinamenti richiesti esplicitamente [Given=BFF,When=BFF,Then=BFF] [Examples: (senza nome) | Example #1 | line: 51]
+<details>
+<summary>Mostra/nascondi 4 KO</summary>
+
+### 1. [PRIVATE_CATALOG_ORDERING_PAGINATION_2] Ordinamenti richiesti esplicitamente [Given=BFF,When=BFF,Then=BFF] [Examples: (senza nome) | Example #1 | line: 51]
 
 **RESULT**
 
@@ -10168,7 +10322,7 @@ but there were differences at these indexes:
 
 ---
 
-### 79. [PRIVATE_CATALOG_ORDERING_PAGINATION_2] Ordinamenti richiesti esplicitamente [Given=BFF,When=BFF,Then=BFF] [Examples: (senza nome) | Example #3 | line: 53]
+### 2. [PRIVATE_CATALOG_ORDERING_PAGINATION_2] Ordinamenti richiesti esplicitamente [Given=BFF,When=BFF,Then=BFF] [Examples: (senza nome) | Example #3 | line: 53]
 
 **RESULT**
 
@@ -10206,7 +10360,7 @@ but there were differences at these indexes:
 
 ---
 
-### 80. BffClientContractTest::createKey::[payload] REPLACED_WITH_EMPTY_STRING @ /alg
+### 3. BffClientContractTest::createKey::[payload] REPLACED_WITH_EMPTY_STRING @ /alg
 
 **RESULT**
 
@@ -10264,7 +10418,7 @@ Expected status code <400> but was <204>.
 
 ---
 
-### 81. WebPurposeTemplateContractTest::createPurposeTemplate::creating purpose template with personal data treatment enabled
+### 4. WebPurposeTemplateContractTest::createPurposeTemplate::creating purpose template with personal data treatment enabled
 
 **RESULT**
 
