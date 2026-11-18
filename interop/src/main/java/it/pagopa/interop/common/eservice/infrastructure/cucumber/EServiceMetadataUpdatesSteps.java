@@ -30,7 +30,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class EServiceMetadataUpdatesSteps {
 
     private final InteropJourney interopJourney;
-    private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
     private final EServiceRequestFactory requestFactory;
     private final EntityStore entityStore;
     private final EServiceMetadataUpdateConfigurationMapper configurationMapper;
