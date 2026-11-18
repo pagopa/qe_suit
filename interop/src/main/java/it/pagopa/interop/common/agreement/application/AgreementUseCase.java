@@ -127,4 +127,8 @@ public class AgreementUseCase {
     public void attemptAgreementCreation(EService eService, EServiceDescriptor descriptor) {
         agreementGateway.attemptAgreementCreation(eService, descriptor);
     }
+
+    public void attemptAgreementCloning(Agreement agreement) {
+        agreementGateway.attemptAgreementCloning(agreement);
+    }
 }

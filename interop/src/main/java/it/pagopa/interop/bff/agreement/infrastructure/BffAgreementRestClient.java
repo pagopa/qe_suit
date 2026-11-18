@@ -97,4 +97,11 @@ public class BffAgreementRestClient extends RestClient {
                 File.class
         );
     }
+
+    public TestChain<CreatedResource> cloneAgreement(@Nonnull UUID agreementId) {
+        return execute(
+                () -> agreementsApi.cloneAgreement().agreementIdPath(agreementId).execute(Function.identity()),
+                CreatedResource.class
+        );
+    }
 }

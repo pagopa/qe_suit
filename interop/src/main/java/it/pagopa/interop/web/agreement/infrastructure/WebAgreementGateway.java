@@ -188,4 +188,9 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     public void attemptAgreementCreation(EService eService, EServiceDescriptor descriptor) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementCreation operation");
     }
+
+    @Override
+    public void attemptAgreementCloning(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementCloning operation");
+    }
 }

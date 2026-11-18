@@ -86,7 +86,6 @@ public class BffAgreementGateway implements AgreementGateway {
                 .get();
     }
 
-
     @Override
     public Agreement submitAgreement(Agreement agreement) {
         return restClient.submit(agreement.getId(), agreementRequestFactory.submissionRequest())
@@ -191,5 +190,10 @@ public class BffAgreementGateway implements AgreementGateway {
     @Override
     public void attemptAgreementCreation(EService eService, EServiceDescriptor descriptor) {
         restClient.create(agreementRequestFactory.creationRequest(eService, descriptor, null)).withoutPolling();
+    }
+
+    @Override
+    public void attemptAgreementCloning(Agreement agreement) {
+        restClient.cloneAgreement(agreement.getId()).withoutPolling();
     }
 }

@@ -120,4 +120,10 @@ public class AgreementSteps {
     public void attemptAgreementCreation(EService eService) {
         agreementUseCase.attemptAgreementCreation(eService, eService.getLatestDescriptor());
     }
+
+    @When("il fruitore tenta di duplicare la {currentAgreement}")
+    @When("il fruitore tenta di duplicare la {agreementByAlias}")
+    public void attemptAgreementCloning(Agreement agreement) {
+        agreementUseCase.attemptAgreementCloning(agreement);
+    }
 }

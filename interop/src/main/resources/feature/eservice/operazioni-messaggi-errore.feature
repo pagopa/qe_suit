@@ -81,7 +81,6 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Then il messaggio di errore corrisponde al caso "CATALOG_E_SERVICE_NAME_DUPLICATE_FOR_PRODUCER__POST_TEMPLATES_ESERVICES_E_SERVICE_ID" in lingua "it" con i valori:
       | identifyingWord | Duplicato |
 
-  @channel:Given=BFF,When=WEB,Then=WEB
   # Endpoint: POST /eservices/:eServiceId/scheduleArchive
   Scenario: [ERROR_041] - Rifiuto dell'archiviazione dell'e-service con un preavviso inferiore a quello di una versione
   Dato un e-service con la prima versione in archiviazione con 120 giorni di preavviso e la seconda pubblicata
