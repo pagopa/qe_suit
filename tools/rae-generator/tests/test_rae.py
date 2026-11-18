@@ -1,4 +1,5 @@
 import json
+import re
 import pytest
 import yaml
 from copy import deepcopy
@@ -10,6 +11,23 @@ from rae_generator.matching import choose_known, find_match, fingerprint, normal
 from rae_generator.parsers import collect_reports, ReportError, parse_file
 from rae_generator.renderer import render
 from rae_generator.validator import validate, ValidationError, read_yaml
+
+
+def test_yaml_writer_uses_literal_blocks_and_preserves_values(tmp_path):
+    data = example_data()
+    row = data['ko'][0]
+    row['error_log'] = "java.lang.AssertionError: l'atteso\n\tat Example.run(Example.java:12)\n"
+    row['procedure'] = "Prima riga\nSeconda riga\n"
+    row['result'] = "L'atteso non coincide\nConfermato dal QA\n"
+    row['link_suite_bug'] = ''
+    path = tmp_path / 'rae_NrtStandardSuiteTest_20261118213605.yaml'
+    write_yaml(data, path)
+    contents = path.read_text(encoding='utf-8')
+    assert re.search(r'\berror_log: \|\n', contents)
+    assert re.search(r'\bprocedure: \|\n', contents)
+    assert re.search(r'\bresult: \|\n', contents)
+    assert "link_suite_bug: ''" in contents
+    assert yaml.safe_load(contents) == data
 
 
 def example_data():
