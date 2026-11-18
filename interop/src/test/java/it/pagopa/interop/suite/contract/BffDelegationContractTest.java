@@ -20,12 +20,14 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantRef;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
+import it.pagopa.utils.async.PollingUtils;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -81,34 +83,92 @@ public class BffDelegationContractTest {
                 .tests();
     }
 
-    private UUID createPendingProducerDelegationId() {
-        UUID eServiceId = interopJourney
-            .withProducer(PRODUCER, UserRole.ADMIN)
-            .createEService(EServiceDescriptorState.PUBLISHED)
-            .get(EService.class)
-            .getId();
-        ProducerDelegationCreationCommand delegationCommand = ProducerDelegationCreationCommand.builder()
-            .delegator(Tenant.fromOrganizationId(PRODUCER.getOrganizationId()))
-            .delegate(Tenant.fromOrganizationId(DELEGATE_PRODUCER.getOrganizationId()))
-            .targetState(DelegationState.WAITING_FOR_APPROVAL)
-            .eServiceRef(EServiceRef.of(eServiceId))
-            .build();
-        return interopJourney
-            .createProducerDelegation(delegationCommand)
-            .get(Delegation.class)
-            .getId();
-    }
-
     private UUID createPendingConsumerDelegationId() {
         EService eService = createPublishedEService();
+
         interopJourney
                 .withConsumer(CONSUMER_DELEGATOR, UserRole.ADMIN)
-                .createConsumerDelegation(TenantRef.of(DELEGATE_CONSUMER.getOrganizationId()), eService.getRef());
-        return entityStore.getLastOrThrow(Delegation.class).getId();
+                .createConsumerDelegation(
+                        TenantRef.of(DELEGATE_CONSUMER.getOrganizationId()),
+                        eService.getRef()
+                );
+
+        UUID delegationId = entityStore.getLastOrThrow(Delegation.class).getId();
+        interopJourney.withConsumer(DELEGATE_CONSUMER, UserRole.ADMIN);
+
+        PollingUtils.pollUntil(
+                () -> apiClient.delegations()
+                        .getDelegation()
+                        .delegationIdPath(delegationId)
+                        .execute(response -> response),
+                response -> {
+                    int status = response.statusCode();
+                    if (status == 404) {
+                        return false;
+                    }
+                    if (status != 200) {
+                        throw new IllegalStateException(
+                                "Errore verificando la visibilità della delega consumer (HTTP " + status + ")"
+                        );
+                    }
+                    return true;
+                },
+                Duration.ofSeconds(30),
+                Duration.ofSeconds(1),
+                "La delega consumer non è diventata visibile prima del reject: " + delegationId
+        );
+
+        return delegationId;
+    }
+
+    private UUID createPendingProducerDelegationId() {
+        UUID eServiceId = interopJourney
+                .withProducer(PRODUCER, UserRole.ADMIN)
+                .createEService(EServiceDescriptorState.PUBLISHED)
+                .get(EService.class)
+                .getId();
+
+        ProducerDelegationCreationCommand delegationCommand = ProducerDelegationCreationCommand.builder()
+                .delegator(Tenant.fromOrganizationId(PRODUCER.getOrganizationId()))
+                .delegate(Tenant.fromOrganizationId(DELEGATE_PRODUCER.getOrganizationId()))
+                .targetState(DelegationState.WAITING_FOR_APPROVAL)
+                .eServiceRef(EServiceRef.of(eServiceId))
+                .build();
+
+        interopJourney.createProducerDelegation(delegationCommand);
+        UUID delegationId = entityStore.getLastOrThrow(Delegation.class).getId();
+        interopJourney.withProducer(DELEGATE_PRODUCER, UserRole.ADMIN);
+
+        PollingUtils.pollUntil(
+                () -> apiClient.delegations()
+                        .getDelegation()
+                        .delegationIdPath(delegationId)
+                        .execute(response -> response),
+                response -> {
+                    int status = response.statusCode();
+                    if (status == 404) {
+                        return false;
+                    }
+                    if (status != 200) {
+                        throw new IllegalStateException(
+                                "Errore verificando la visibilità della delega producer (HTTP " + status + ")"
+                        );
+                    }
+                    return true;
+                },
+                Duration.ofSeconds(30),
+                Duration.ofSeconds(1),
+                "La delega producer non è diventata visibile prima del reject: " + delegationId
+        );
+
+        return delegationId;
     }
 
     private EService createPublishedEService() {
-        EServiceCreationCommand eServiceCommand = eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(false);
+        EServiceCreationCommand eServiceCommand =
+                eServiceDescriptorUseCase.getDefaultEServiceCreationCommand(false);
+        eServiceCommand.isConsumerDelegable(true);
+
         UpdateEServiceDescriptorCommand updateCommand =
                 eServiceDescriptorUseCase.getUpdateEServiceDescriptorCommand(10, 20);
 
