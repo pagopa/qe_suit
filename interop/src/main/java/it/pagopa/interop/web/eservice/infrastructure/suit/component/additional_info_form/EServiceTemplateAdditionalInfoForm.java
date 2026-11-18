@@ -22,13 +22,13 @@ public interface EServiceTemplateAdditionalInfoForm extends Component {
     @XPath(".//textarea[@name='description' and not(@aria-hidden='true')]")
     TextField versionDescriptionInput();
 
-    @XPath(".//textarea[@name='description' and not(@aria-hidden='true')]/ancestor::div[contains(@class, 'MuiTextField-root')][1]//span[contains(@class, 'MuiFormHelperText-root') and not(contains(@class, 'Mui-error'))]")
+    @XPath(".//span[@id='description-infoLabel']")
     FormHelperText versionDescriptionHelperText();
 
     @XPath(".//h2[normalize-space(.)='Documentazione']")
     Label documentationTitle();
 
-    @XPath(".//h2[normalize-space(.)='Documentazione']/following-sibling::p[1]")
+    @XPath(".//p[contains(normalize-space(.), 'Allega la documentazione tecnica')]")
     Label documentationDescription();
 
     @XPath(".//h2[normalize-space(.)='Documentazione']/ancestor::*[contains(@class, 'MuiPaper-root')][1]//label[contains(normalize-space(.), 'Nome documento')]")
@@ -68,6 +68,15 @@ public interface EServiceTemplateAdditionalInfoForm extends Component {
                         && goToSummaryButton().get(FindPolicy.VISIBLE).isPresent(),
                 Boolean::booleanValue,
                 "Informazioni aggiuntive template e-service non caricate"
+        );
+    }
+
+    default void uploadDocument(String absolutePath) {
+        documentUploadInput().upload(absolutePath);
+        PollingUtils.pollUntil(
+                () -> documentNameInput().get(FindPolicy.VISIBLE).isPresent(),
+                Boolean::booleanValue,
+                "Campo nome documento non comparso dopo il caricamento del file"
         );
     }
 }
