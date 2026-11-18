@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -105,6 +106,59 @@ public class EServiceMetadataUpdatesSteps {
         }
     }
 
+    @When("un {userRole} di/del {tenant} tenta la modifica del campo {string} dell'e-service {string} con un valore di {int} caratteri")
+    public void tryUpdateEServiceField(UserRole role, Tenant producer, String fieldName, String alias, int fieldLength) {
+        updateEServiceField(role, producer, fieldName, alias, fieldLength, true);
+    }
+
+    @When("un {userRole} di/del {tenant} richiede la modifica del campo {string} dell'e-service {string} con un valore di {int} caratteri")
+    public void updateEServiceField(UserRole role, Tenant producer, String fieldName, String alias, int fieldLength) {
+        updateEServiceField(role, producer, fieldName, alias, fieldLength, false);
+    }
+
+    private void updateEServiceField(UserRole role, Tenant producer, String fieldName, String alias, int fieldLength, boolean onlyTry) {
+        if (fieldLength < 0) {
+            throw new IllegalArgumentException("La lunghezza del campo non può essere negativa: " + fieldLength);
+        }
+
+        String value = RandomUtils.randomAlphanumeric(fieldLength);
+        EService currentEService = entityStore.getByAliasOrThrow(alias, EService.class);
+        initialEService = currentEService.toBuilder()
+                .descriptors(new ArrayList<>(currentEService.getDescriptors()))
+                .build();
+        requestedMetadata = Map.of(fieldName, value);
+
+        Consumer<EServiceUpdateCommand> updateCommand = command -> {
+            command.alias(alias);
+            switch (fieldName) {
+                case "nome" -> command.name(value);
+                case "descrizione" -> command.description(value);
+                default ->
+                        throw new IllegalArgumentException("Campo metadato e-service non supportato: " + fieldName);
+            }
+        };
+
+        InteropJourney journey = interopJourney.withProducer(producer, role);
+        if (onlyTry) {
+            journey.tryUpdateEService(updateCommand);
+        } else {
+            journey.updateEService(updateCommand);
+        }
+    }
+
+    @When("un {userRole} di/del {tenant} richiede la modifica dell'e-service {string} con un payload vuoto")
+    public void updateEServiceFieldWithEmptyPayload(UserRole role, Tenant producer, String alias) {
+        EService currentEService = entityStore.getByAliasOrThrow(alias, EService.class);
+        initialEService = currentEService.toBuilder()
+                .descriptors(new ArrayList<>(currentEService.getDescriptors()))
+                .build();
+        requestedMetadata = Map.of();
+
+        interopJourney
+                .withProducer(producer, role)
+                .tryUpdateEService(command -> command.alias(alias));
+    }
+
     @Then("la rinomina della risorsa {string} viene accettata e ha lo stesso nome di {string}")
     public void eServicesHaveSameName(String aliasEService1, String aliasEService2) {
         var eService1 = entityStore.getByAliasOrThrow(aliasEService1, EService.class);
@@ -118,16 +172,14 @@ public class EServiceMetadataUpdatesSteps {
                 .isEqualTo(initialExistingEService);
     }
 
-    @When("la modifica dei metadati dell'e-service {string} viene rifiutata per {eServiceUpdateFailureReason}")
+    @Then("la modifica dei metadati dell'e-service {string} viene rifiutata per {eServiceUpdateFailureReason}")
     public void shouldFailToUpdateMetadata(String alias, EServiceUpdateFailureReason reason) {
         interopJourney.shouldFailToUpdateEService(reason);
+
     }
 
     @Then("l'e-service {string} presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori")
     public void assertMetadataUpdatedAndOtherDataPreserved(String alias) {
-
-        EService actualEService = entityStore.getByAliasOrThrow(alias, EService.class);
-
         EService expectedEService = initialEService.toBuilder()
                 .name(requestedMetadata.getOrDefault("nome", initialEService.getName()))
                 .description(requestedMetadata.getOrDefault("descrizione", initialEService.getDescription()))
@@ -140,6 +192,7 @@ public class EServiceMetadataUpdatesSteps {
                 .asyncExchange(requestedBoolean("asyncExchange", initialEService.getAsyncExchange()))
                 .build();
 
+        EService actualEService = entityStore.getByAliasOrThrow(alias, EService.class);
         assertThat(actualEService)
                 .as("E-service %s dopo la modifica dei metadati", alias)
                 .isEqualTo(expectedEService);

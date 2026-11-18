@@ -79,6 +79,13 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
+    public EServiceJourneyImpl tryUpdateEService(Consumer<EServiceUpdateCommand> command) {
+        EServiceUpdateCommand defaultCommand = requestFactory.defaultUpdateEServiceCommand();
+        command.accept(defaultCommand);
+        return tryUpdateEService(defaultCommand);
+    }
+
+    @Override
     public EServiceJourneyImpl shouldFailToUpdateEService(EServiceUpdateFailureReason reason) {
         eServiceUseCase.shouldFailToUpdateEService(reason);
         return this;

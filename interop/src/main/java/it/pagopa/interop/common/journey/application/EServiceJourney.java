@@ -47,6 +47,8 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
 
     SELF tryUpdateEService(EServiceUpdateCommand command);
 
+    SELF tryUpdateEService(Consumer<EServiceUpdateCommand> command);
+
     SELF shouldFailToUpdateEService(EServiceUpdateFailureReason reason);
 
     SELF addRiskAnalysis();
