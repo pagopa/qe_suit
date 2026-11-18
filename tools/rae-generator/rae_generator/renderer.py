@@ -27,8 +27,9 @@ def _log_block(value: str) -> list[str]:
 
 def render(data: dict) -> str:
     m = data['rae']
+    date = str(m['data_ora'])[:10].replace('-', '')
     lines = [
-        '# Report di Analisi Esecuzione (RAE)', '',
+        f'# {date} Report Analisi Esiti (RAE) {m["suite"]} {m["environment"].upper()}', '',
         '| Campo | Valore |', '| --- | --- |',
     ]
     labels = [('release', 'Release'), ('scope', 'Scope'), ('issue_jira', 'Issue Jira'), ('data_ora', 'Data e ora'),
@@ -37,12 +38,36 @@ def render(data: dict) -> str:
               ('source_branch', 'Source branch')]
     for key, label in labels:
         lines.append(f'| {label} | {_cell(m.get(key, "NIGHTLY") if key == "scope" else m[key])} |')
-    for key, title in [('ko_know', 'KO - Dovuti a bug noti'), ('ko', 'KO - Altri fallimenti')]:
-        lines.extend(['', f'## {title}', ''])
-        if not data[key]:
-            lines.append('Nessun fallimento.')
+    lines.extend([
+        '', '### Guida alla compilazione dei campi', '',
+        '- **Result** *(obbligatorio)*: descrivere il motivo del KO e l’esito dell’analisi in modo chiaro e sintetico, senza ripercorrere i singoli passaggi dell’indagine.',
+        '- **Procedure** *(obbligatorio)*: documentare passo per passo le verifiche svolte per arrivare al risultato. Se è già stato effettuato un intervento, includere il link alla PR o al ticket relativo.',
+        '- **BUG SUITE**: indicare il ticket Jira relativo a un difetto della suite di test. Obbligatorio se non è presente un BUG PRODOTTO, salvo i casi motivati nella nota.',
+        '- **BUG PRODOTTO**: indicare il ticket Jira relativo a un difetto del prodotto. Se il problema riguarda componenti esterni (ad esempio SelfCare) e non esiste un ticket, spiegare il motivo nel campo Result. Obbligatorio se non è presente un BUG SUITE, salvo i casi motivati nella nota.',
+        '',
+        '> **Nota:** in assenza di ticket specifici, l’analisi si basa esclusivamente sulle informazioni riportate in **Result** e **Procedure**.',
+    ])
+    known = data['ko_know']
+    # Product bugs take precedence when both links are present.
+    product = [item for item in known if item['link_prod_bug']]
+    suite = [item for item in known if not item['link_prod_bug'] and item['link_suite_bug']]
+    # Defensive handling of legacy YAML: do not silently lose unlinked entries.
+    other = [item for item in known if not item['link_prod_bug'] and not item['link_suite_bug']] + data['ko']
+    groups = [
+        (product, 'KO DOVUTI A BUG DI PRODOTTO NOTI'),
+        (suite, 'KO DOVUTI A BUG DI SUITE NOTI'),
+        (other, 'KO DA ANALIZZARE'),
+    ]
+    for items, title in groups:
+        lines.extend([
+            '', f'## {len(items)} - {title}', '',
+            '<details>',
+            f'<summary>Mostra/nascondi {len(items)} KO</summary>', '',
+        ])
+        if not items:
+            lines.extend(['Nessun fallimento.', '', '</details>'])
             continue
-        for index, item in enumerate(data[key], 1):
+        for index, item in enumerate(items, 1):
             if index > 1:
                 lines.extend(['', '---', ''])
             lines.extend([
@@ -54,4 +79,5 @@ def render(data: dict) -> str:
                 if item[field]:
                     lines.extend([f'**{label}:** {item[field]}', ''])
             lines.extend(['**ERROR LOG**', '', *_log_block(item['error_log']), ''])
+        lines.append('</details>')
     return '\n'.join(lines).rstrip('\n') + '\n'

@@ -6,7 +6,7 @@ from pathlib import Path
 from rae_generator.cli import main
 from rae_generator.generator import create_rae, write_yaml
 from rae_generator.history import load_history
-from rae_generator.matching import choose_known, fingerprint, normalized_error
+from rae_generator.matching import choose_known, find_match, fingerprint, normalized_error
 from rae_generator.parsers import collect_reports, ReportError, parse_file
 from rae_generator.renderer import render
 from rae_generator.validator import validate, ValidationError, read_yaml
@@ -141,6 +141,7 @@ def test_create_rae_recognizes_historical(tmp_path):
     hist=tmp_path/'history';hist.mkdir()
     prior=example_data();prior['ko'][0]['error_log']='AssertionError: mismatch'
     prior['ko'][0]['procedure']='historical check';prior['ko'][0]['result']='known'
+    prior['ko'][0]['link_prod_bug'] = 'https://jira.local/PROD-1'
     (hist/'rae_NrtStandardSuiteTest_20261116000000.yaml').write_text(yaml.safe_dump(prior))
     data=create_rae(tmp_path,hist,suite='NrtStandardSuiteTest',environment='qa',executor='qa',
                     source_branch='develop',run_url='https://example.org',
@@ -162,7 +163,9 @@ def test_renderer_determinism_and_markdown_escaping():
     data=validate(example_data())
     md=render(data)
     assert md==render(data)
-    assert 'KO - Dovuti a bug noti' in md and 'KO - Altri fallimenti' in md
+    assert '0 - KO DOVUTI A BUG DI PRODOTTO NOTI' in md
+    assert '0 - KO DOVUTI A BUG DI SUITE NOTI' in md
+    assert '1 - KO DA ANALIZZARE' in md
     assert 'AssertionError: expected A | B' in md
     assert md.index('**RESULT**') < md.index('**PROCEDURE**') < md.index('**ERROR LOG**')
     assert '| ID TEST | ERROR LOG |' not in md
@@ -194,10 +197,11 @@ def test_renderer_full_width_logs_and_fences():
 def test_renderer_both_ko_sections_and_empty_message():
     data = example_data()
     data['ko_know'] = data.pop('ko')
+    data['ko_know'][0]['link_prod_bug'] = 'https://jira.local/PROD-1'
     data['ko'] = []
     md = render(data)
     assert '### 1. Test A' in md
-    assert '## KO - Altri fallimenti\n\nNessun fallimento.' in md
+    assert '## 0 - KO DA ANALIZZARE\n\n<details>\n<summary>Mostra/nascondi 0 KO</summary>\n\nNessun fallimento.' in md
 
 
 def test_cli_finalize_idempotent(tmp_path):
@@ -433,3 +437,117 @@ def test_contract_json_duplicate_id_fails_closed(tmp_path):
     contract.write_text(json.dumps(payload))
     with pytest.raises(ReportError, match='duplicato'):
         collect_reports(tmp_path)
+
+
+def test_renderer_three_sections_product_precedence_and_counts():
+    data = example_data()
+    base = data['ko'].pop()
+    product = {**base, 'id_test': 'Product only', 'link_prod_bug': 'https://jira.local/P-1'}
+    both = {**base, 'id_test': 'Both', 'link_prod_bug': 'https://jira.local/P-2',
+            'link_suite_bug': 'https://jira.local/S-2'}
+    suite = {**base, 'id_test': 'Suite only', 'link_suite_bug': 'https://jira.local/S-1'}
+    data['ko_know'] = [product, both, suite]
+    data['ko'] = [{**base, 'id_test': 'Fuzzy suggestion', 'procedure': 'suggested procedure'}]
+    data['rae']['numero_ko'] = 4
+    md = render(data)
+    assert '## 2 - KO DOVUTI A BUG DI PRODOTTO NOTI' in md
+    assert '## 1 - KO DOVUTI A BUG DI SUITE NOTI' in md
+    assert '## 1 - KO DA ANALIZZARE' in md
+    product_block = md.split('## 2 - KO DOVUTI A BUG DI PRODOTTO NOTI')[1].split('## 1 - KO DOVUTI A BUG DI SUITE NOTI')[0]
+    suite_block = md.split('## 1 - KO DOVUTI A BUG DI SUITE NOTI')[1].split('## 1 - KO DA ANALIZZARE')[0]
+    assert 'Both' in product_block and 'Both' not in suite_block
+    assert 'suggested procedure' in md
+
+
+def test_fingerprint_without_bug_remains_to_analyze(tmp_path):
+    cucumber_json(tmp_path, error='AssertionError: mismatch')
+    hist = tmp_path / 'history'; hist.mkdir()
+    prior = example_data()
+    prior['ko'][0]['error_log'] = 'AssertionError: mismatch'
+    prior['ko'][0]['procedure'] = 'historical check'
+    (hist / 'rae_NrtStandardSuiteTest_20261116000000.yaml').write_text(yaml.safe_dump(prior))
+    data = create_rae(tmp_path, hist, suite='NrtStandardSuiteTest', environment='qa',
+                      executor='qa', source_branch='develop', run_url='https://example.org',
+                      data_ora='2026-11-16T18:00:00Z', durata='00:01:10')
+    assert not data['ko_know']
+    assert data['ko'][0]['procedure'] == 'historical check'
+
+
+def test_similarity_with_bug_is_known(tmp_path):
+    actual = 'AssertionError: the response status was 400 instead of 200 at endpoint /api/clients'
+    previous_error = 'AssertionError: the response status was 401 instead of 200 at endpoint /api/clients'
+    assert fingerprint(actual) != fingerprint(previous_error)
+    candidate = {'id_test': 'Test A', 'error_log': previous_error, 'procedure': 'investigate API',
+                 'result': 'known mismatch', 'link_prod_bug': 'https://jira.local/PROD-1',
+                 'link_suite_bug': 'https://jira.local/SUITE-1'}
+    match = find_match('Test A', actual, [candidate])
+    assert match is not None and match.method == 'similarity' and match.score > 0.90
+    cucumber_json(tmp_path, error=actual)
+    hist = tmp_path / 'history'; hist.mkdir()
+    prior = example_data(); prior['ko'] = [candidate]
+    (hist / 'rae_NrtStandardSuiteTest_20261116000000.yaml').write_text(yaml.safe_dump(prior))
+    data = create_rae(tmp_path, hist, suite='NrtStandardSuiteTest', environment='qa',
+                      executor='qa', source_branch='develop', run_url='https://example.org',
+                      data_ora='2026-11-16T18:00:00Z', durata='00:01:10')
+    assert len(data['ko_know']) == 1
+    assert data['ko'] == []
+    for field in ('procedure', 'result', 'link_prod_bug', 'link_suite_bug'):
+        assert data['ko_know'][0][field] == candidate[field]
+
+
+def test_fingerprint_suite_bug_is_known(tmp_path):
+    cucumber_json(tmp_path, error='AssertionError: mismatch')
+    hist = tmp_path / 'history'; hist.mkdir()
+    prior = example_data(); prior['ko'][0].update(
+        error_log='AssertionError: mismatch', link_suite_bug='https://jira.local/SUITE-1')
+    (hist / 'rae_NrtStandardSuiteTest_20261116000000.yaml').write_text(yaml.safe_dump(prior))
+    data = create_rae(tmp_path, hist, suite='NrtStandardSuiteTest', environment='qa',
+                      executor='qa', source_branch='develop', run_url='https://example.org',
+                      data_ora='2026-11-16T18:00:00Z', durata='00:01:10')
+    assert len(data['ko_know']) == 1
+    assert '## 1 - KO DOVUTI A BUG DI SUITE NOTI' in render(data)
+
+
+def test_renderer_dynamic_title_guide_and_collapsible_groups():
+    data = example_data()
+    data['rae']['data_ora'] = '2026-11-16T22:13:00Z'
+    data['rae']['environment'] = 'qa'
+    md = render(data)
+    assert md.startswith('# 20261116 Report Analisi Esiti (RAE) NrtStandardSuiteTest QA\n')
+    assert md.index('| Source branch |') < md.index('### Guida alla compilazione dei campi')
+    assert md.index('### Guida alla compilazione dei campi') < md.index('## 0 - KO DOVUTI A BUG DI PRODOTTO NOTI')
+    for label in ['**Result**', '**Procedure**', '**BUG SUITE**', '**BUG PRODOTTO**']:
+        assert label in md
+    assert md.count('<details>') == 3
+    assert md.count('</details>') == 3
+    assert md.count('<summary>Mostra/nascondi') == 3
+    assert '<summary>Mostra/nascondi 1 KO</summary>' in md
+    assert md.index('### 1. Test A') < md.index('</details>', md.index('## 1 - KO DA ANALIZZARE'))
+    assert 'Nessun fallimento.' in md
+
+
+def test_similarity_without_bug_stays_to_analyze(tmp_path):
+    actual = 'AssertionError: the response status was 400 instead of 200 at endpoint /api/clients'
+    previous_error = 'AssertionError: the response status was 401 instead of 200 at endpoint /api/clients'
+    candidate = {'id_test': 'Test A', 'error_log': previous_error, 'procedure': 'investigate API',
+                 'result': 'known mismatch', 'link_prod_bug': '', 'link_suite_bug': ''}
+    cucumber_json(tmp_path, error=actual)
+    hist = tmp_path / 'history'; hist.mkdir()
+    prior = example_data(); prior['ko'] = [candidate]
+    (hist / 'rae_NrtStandardSuiteTest_20261116000000.yaml').write_text(yaml.safe_dump(prior))
+    data = create_rae(tmp_path, hist, suite='NrtStandardSuiteTest', environment='qa',
+                      executor='qa', source_branch='develop', run_url='https://example.org',
+                      data_ora='2026-11-16T18:00:00Z', durata='00:01:10')
+    assert data['ko_know'] == []
+    assert len(data['ko']) == 1
+    assert data['ko'][0]['procedure'] == 'investigate API'
+
+
+def test_renderer_unlinked_known_entry_moves_to_analysis():
+    data = example_data()
+    entry = data['ko'].pop()
+    data['ko_know'] = [entry]
+    md = render(data)
+    assert '## 0 - KO DOVUTI A BUG DI PRODOTTO NOTI' in md
+    assert '## 0 - KO DOVUTI A BUG DI SUITE NOTI' in md
+    assert '## 1 - KO DA ANALIZZARE' in md
