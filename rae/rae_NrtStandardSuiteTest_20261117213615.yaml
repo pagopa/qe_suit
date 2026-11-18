@@ -241,7 +241,7 @@ ko_know:
       nelle prossime run. Il difetto di suite è in corso di analisi sulla
       codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: '[ESERVICE_ARCHIVING_GRACE_PERIOD_1.1] - Impossibilità di archiviare un e-service prima di una sua versione [Given=BFF,When=WEB,Then=WEB]'
     error_log: |
       org.opentest4j.AssertionFailedError: [EService archiving rejection: ARCHIVING_BEFORE_DESCRIPTOR] 
@@ -445,7 +445,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswer::[payload] REPLACED_WITH_BLANK_STRING
       @ /answerData/suggestedValues/0
     error_log: |
@@ -556,7 +556,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::addPurposeTemplateRiskAnalysisAnswerAnnotation::[payload]
       REPLACED_WITH_SQL_INJECTION @ /text
     error_log: |
@@ -614,7 +614,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffAgreementContractTest::createAgreement::[payload] REPLACED_WITH_NULL @ /delegationId
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -1008,7 +1008,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffClientContractTest::createApiClient::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -1062,7 +1062,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffCertifiedAttributeContractTest::createCertifiedAttribute::[payload] REPLACED_WITH_BLANK_STRING @
       /description
     error_log: |
@@ -1171,7 +1171,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffCertifiedAttributeContractTest::createCertifiedAttribute::[payload] REPLACED_WITH_BLANK_STRING @ /name
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -1279,7 +1279,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute::[payload]
       REPLACED_WITH_BLANK_STRING @ /description
     error_log: |
@@ -1386,7 +1386,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute::[payload]
       REPLACED_WITH_URL_INJECTION @ /description
     error_log: |
@@ -1547,7 +1547,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffCertifiedDiscreteAttributeContractTest::createCertifiedDiscreteAttribute::[payload]
       REPLACED_WITH_URL_INJECTION @ /name
     error_log: |
@@ -1764,7 +1764,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffClientContractTest::createConsumerClient::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -1819,7 +1819,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffDeclaredAttributeContractTest::createDeclaredAttribute::[payload] REPLACED_WITH_BLANK_STRING @
       /description
     error_log: |
@@ -1926,7 +1926,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffDeclaredAttributeContractTest::createDeclaredAttribute::[payload] REPLACED_WITH_BLANK_STRING @ /name
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -2031,7 +2031,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffEServiceContractTest::createEService::[payload] REPLACED_WITH_NULL @ /isSignalHubEnabled
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -2360,7 +2360,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffEServiceContractTest::createEService::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -2414,7 +2414,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_NULL @ /version
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -2864,7 +2864,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /intendedTarget
     error_log: |
@@ -2920,7 +2920,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /description
     error_log: |
@@ -2976,7 +2976,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffEServiceTemplateContractTest::createEServiceTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /version/description
     error_log: |
@@ -3032,7 +3032,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffClientContractTest::createKey::[payload] REPLACED_WITH_BLANK_STRING @ /alg
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -3238,7 +3238,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffProducerKeychainContractTest::createProducerKey::[payload] REPLACED_WITH_EMPTY_STRING @ /alg
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -3456,7 +3456,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffProducerKeychainContractTest::createProducerKey::[payload] REPLACED_WITH_SQL_INJECTION @ /name
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -3511,7 +3511,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffProducerKeychainContractTest::createProducerKeychain::[payload] REPLACED_WITH_SQL_INJECTION @ /name
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -3566,7 +3566,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffProducerKeychainContractTest::createProducerKeychain::[payload] REPLACED_WITH_SQL_INJECTION @
       /description
     error_log: |
@@ -3622,7 +3622,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_NULL @ /freeOfChargeReason
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -3727,7 +3727,7 @@ ko_know:
       nell'aspettativa dello scenario. Il difetto di suite è in corso di
       analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_NULL @ /riskAnalysisForm
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -3827,7 +3827,7 @@ ko_know:
       il lookup. La suite deve attendere 403 per questo specifico scenario,
       invece di 404. Il difetto di suite è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_NIL_UUID @ /eserviceId
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -3979,7 +3979,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /title
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -4026,7 +4026,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -4073,7 +4073,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /freeOfChargeReason
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -4125,7 +4125,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::createPurpose::[payload] REPLACED_WITH_BLANK_STRING @ /freeOfChargeReason
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -4326,7 +4326,7 @@ ko_know:
       nell'aspettativa dello scenario. Il difetto di suite è in corso di
       analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_NIL_UUID @ /eserviceId
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -4428,7 +4428,7 @@ ko_know:
       il lookup. La suite deve attendere 403 per questo specifico scenario,
       invece di 404. Il difetto di suite è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_NIL_UUID @ /riskAnalysisId
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -4523,7 +4523,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_SQL_INJECTION @
       /description
     error_log: |
@@ -4572,7 +4572,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::createPurposeForReceiveEservice::[payload] REPLACED_WITH_LONG_STRING @
       /freeOfChargeReason
     error_log: |
@@ -4724,7 +4724,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_NULL @
       /purposeRiskAnalysisForm
     error_log: |
@@ -5269,7 +5269,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /purposeTitle
     error_log: |
@@ -5322,7 +5322,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /purposeDescription
     error_log: |
@@ -5375,7 +5375,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @
       /purposeRiskAnalysisForm/version
     error_log: |
@@ -5428,7 +5428,7 @@ ko_know:
       deve includere la validità semantica della versione. Il difetto di suite
       è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @
       /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
     error_log: |
@@ -5537,7 +5537,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::createPurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @
       /purposeFreeOfChargeReason
     error_log: |
@@ -5697,7 +5697,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffVerifiedAttributeContractTest::createVerifiedAttribute::[payload] REPLACED_WITH_BLANK_STRING @
       /description
     error_log: |
@@ -5804,7 +5804,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffVerifiedAttributeContractTest::createVerifiedAttribute::[payload] REPLACED_WITH_BLANK_STRING @ /name
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -5909,7 +5909,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::publishPurposeTemplate::[pathParams] REPLACED_WITH_WRONG_TYPE_NUMBER @
       /purposeTemplateId
     error_log: |
@@ -6380,7 +6380,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffDelegationContractTest::rejectProducerDelegation::[payload] REPLACED_WITH_EMPTY_STRING @
       /rejectionReason
     error_log: |
@@ -6623,7 +6623,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::unsuspendPurposeTemplate::[pathParams] REPLACED_WITH_MALFORMED_UUID @
       /purposeTemplateId
     error_log: |
@@ -7116,7 +7116,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffEServiceContractTest::updateEServiceById::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -7165,7 +7165,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffEServiceContractTest::updateEServiceDescription::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -7221,7 +7221,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffEServiceContractTest::updateEServiceName::[payload] REPLACED_WITH_SQL_INJECTION @ /name
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -7277,7 +7277,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffEServiceTemplateContractTest::updateEServiceTemplateDescription::[payload] REPLACED_WITH_SQL_INJECTION @
       /description
     error_log: |
@@ -7331,7 +7331,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffEServiceTemplateContractTest::updateEServiceTemplateIntendedTarget::[payload]
       REPLACED_WITH_SQL_INJECTION @ /intendedTarget
     error_log: |
@@ -7385,7 +7385,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffEServiceTemplateContractTest::updateEServiceTemplateName::[payload] REPLACED_WITH_SQL_INJECTION @ /name
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -7438,7 +7438,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_NULL @ /freeOfChargeReason
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -7597,7 +7597,7 @@ ko_know:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/institutionalPurpose/0
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -7650,7 +7650,7 @@ ko_know:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @
       /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties
     error_log: |
@@ -7705,7 +7705,7 @@ ko_know:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @
       /riskAnalysisForm/answers/isRequestOnBehalfOfThirdParties/0
     error_log: |
@@ -7760,7 +7760,7 @@ ko_know:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @
       /riskAnalysisForm/answers/usesThirdPartyPersonalData
     error_log: |
@@ -7811,7 +7811,7 @@ ko_know:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/purpose
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -7860,7 +7860,7 @@ ko_know:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @
       /riskAnalysisForm/answers/usesThirdPartyPersonalData/0
     error_log: |
@@ -7912,7 +7912,7 @@ ko_know:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REMOVED @ /riskAnalysisForm/answers/purpose/0
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -7961,7 +7961,7 @@ ko_know:
       richiede un'attesa di 200 per il salvataggio. Il difetto di suite è in
       corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /title
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -8010,7 +8010,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -8059,7 +8059,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_LONG_STRING @ /freeOfChargeReason
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -8157,7 +8157,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_SQL_INJECTION @
       /riskAnalysisForm/answers/institutionalPurpose/0
     error_log: |
@@ -8208,7 +8208,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::updatePurpose::[payload] REPLACED_WITH_BLANK_STRING @
       /riskAnalysisForm/answers/institutionalPurpose/0
     error_log: |
@@ -8731,7 +8731,7 @@ ko_know:
       nell'aspettativa dello scenario. Il difetto di suite è in corso di
       analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_NULL @ /purposeDailyCalls
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -8845,7 +8845,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /purposeTitle
     error_log: |
@@ -8902,7 +8902,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /purposeDescription
     error_log: |
@@ -8959,7 +8959,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @
       /purposeRiskAnalysisForm/version
     error_log: |
@@ -9013,7 +9013,7 @@ ko_know:
       deve includere la validità semantica della versione. Il difetto di suite
       è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_BLANK_STRING @
       /purposeRiskAnalysisForm/answers/institutionalPurpose/suggestedValues/0
     error_log: |
@@ -9130,7 +9130,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_SQL_INJECTION @
       /purposeFreeOfChargeReason
     error_log: |
@@ -9184,7 +9184,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeTemplateContractTest::updatePurposeTemplate::[payload] REPLACED_WITH_LONG_STRING @
       /purposeFreeOfChargeReason
     error_log: |
@@ -9335,7 +9335,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_SQL_INJECTION @ /description
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -9388,7 +9388,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: BffPurposeContractTest::updateReversePurpose::[payload] REPLACED_WITH_LONG_STRING @ /freeOfChargeReason
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -9491,7 +9491,7 @@ ko_know:
       prossime run. La sospensione non è classificata come bug di suite e non
       richiede un ticket dedicato.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19653
   - id_test: M2Mv3AgreementContractTest::createAgreement::[payload] REPLACED_WITH_NULL @ /delegationId
     error_log: |
       java.lang.AssertionError: HTTP contract expectation failed
@@ -9748,7 +9748,7 @@ ko_know:
       attributi appena creati per requisiti e assegnazioni. Il difetto di
       suite è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
   - id_test: 'WebTOSContractTest::shouldDisplayTermsOfService::Visuale TOS: 11 sezioni ordinate, titoli esatti e paragrafi
       non vuoti'
     error_log: |
@@ -9786,7 +9786,7 @@ ko_know:
       verifica della presenza della paginazione prima di controllarne
       l'usabilità. Il difetto di suite è in corso di analisi sulla codebase.
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 ko:
   - id_test: '[PRIVATE_CATALOG_ORDERING_PAGINATION_2] Ordinamenti richiesti esplicitamente [Given=BFF,When=BFF,Then=BFF] [Examples:
       (senza nome) | Example #1 | line: 51]'
