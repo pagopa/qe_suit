@@ -3,6 +3,7 @@ package it.pagopa.interop.common.journey.application;
 import it.pagopa.interop.common.eservice.application.command.EServiceTemplateInstanceUpdateDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateCreationCommand;
+import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateCommand;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
@@ -29,6 +30,16 @@ public interface EServiceTemplateJourney<SELF extends EServiceTemplateJourney<SE
             Consumer<UpdateEServiceTemplateVersionCommand> commandConfig,
             EServiceTemplateVersionState state
     );
+
+    // SELF patchEServiceTemplate(Consumer<UpdateEServiceTemplateCommand> commandConfig);
+
+    SELF patchEServiceTemplate(UpdateEServiceTemplateCommand command);
+
+    // SELF tryPatchEServiceTemplate(UpdateEServiceTemplateCommand command);
+
+    // SELF tryPatchServiceTemplate(Consumer<UpdateEServiceTemplateCommand> command);
+
+    // SELF shouldFailToPactchEServiceTemplate(EServiceTemplateUpdateFailureReason reason);
 
     SELF publishVersion(EServiceTemplateVersionState state);
 

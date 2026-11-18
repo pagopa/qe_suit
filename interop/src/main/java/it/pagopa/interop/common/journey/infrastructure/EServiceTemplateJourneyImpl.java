@@ -14,6 +14,7 @@ import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRe
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateUseCase;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateVersionUseCase;
 import it.pagopa.interop.common.eservice_template.application.command.EServiceTemplateCreationCommand;
+import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateCommand;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
@@ -56,6 +57,13 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     public EServiceTemplateJourneyImpl createEServiceTemplate(EServiceTemplateVersionState targetState) {
         EServiceTemplate draftTemplate = eServiceTemplateUseCase.createEServiceTemplate(cmd -> {});
         return processLifecycle(draftTemplate, draftTemplate.getLastDraftVersion(), targetState);
+    }
+
+    @Override
+    public EServiceTemplateJourneyImpl patchEServiceTemplate(UpdateEServiceTemplateCommand command) {
+        EServiceTemplate eServiceTemplate = entityStore.getLastOrThrow(EServiceTemplate.class);
+        eServiceTemplateUseCase.patchEServiceTemplate(eServiceTemplate, command);
+        return this;
     }
 
     @Override
@@ -155,6 +163,13 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
         return switch (targetState) {
             case DRAFT -> this;
             case PUBLISHED -> publishPipeline(template, version, configuration);
+            case SUSPENDED -> {
+                publishPipeline(template, version, configuration);
+                eServiceTemplateVersionUseCase.suspendEServiceTemplateVersion(template);
+                // waitUntilEServiceTemplate(templ -> templ.getState().equals(EServiceTemplateState.SUSPENDED));
+                // var tmp = entityStore.getLastOrThrow(EServiceTemplate.class);
+                yield this;
+            }
             default -> throw new UnsupportedOperationException(String.format("La transizione allo stato %s non è ancora supportata nel Journey.", targetState));
         };
     }
