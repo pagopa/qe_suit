@@ -1,6 +1,7 @@
 package it.pagopa.interop.suite.contract;
 
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.bff.agreement.infrastructure.BffAgreementRequestFactory;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.common.agreement.domain.Agreement;
@@ -13,24 +14,34 @@ import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.Map;
 import java.util.stream.Stream;
 
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-@RequiredArgsConstructor
 public class BffAgreementContractTest {
 
     private final ApiClient apiClient;
     private final InteropHttpContractValidator httpContractValidator;
     private final InteropJourney interopJourney;
     private final BffAgreementRequestFactory requestFactory;
+
+    public BffAgreementContractTest(ApiClient apiClient,
+            @Qualifier("bffInteropHttpContractValidator") InteropHttpContractValidator httpContractValidator,
+            InteropJourney interopJourney, BffAgreementRequestFactory requestFactory) {
+        this.apiClient = apiClient;
+        this.httpContractValidator = httpContractValidator;
+        this.interopJourney = interopJourney;
+        this.requestFactory = requestFactory;
+    }
 
     @TestFactory
     Stream<DynamicTest> createAgreement() {

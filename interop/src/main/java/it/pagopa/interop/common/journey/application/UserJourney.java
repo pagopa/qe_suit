@@ -1,15 +1,17 @@
 package it.pagopa.interop.common.journey.application;
 
-import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
-import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.kernel.domain.*;
 
 public interface UserJourney<SELF extends UserJourney<SELF>> extends JourneyModule {
-    SELF withProducer(Tenant tenant, User user);
+    SELF withProducer(Tenant tenant);
 
-    SELF withConsumer(Tenant tenant, User user);
+    SELF withConsumer(Tenant tenant);
 
-    SELF withProducer(Tenant tenant, UserRole role);
+    SELF withProducer(Tenant tenant, InteropActor actor);
 
-    SELF withConsumer(Tenant tenant, UserRole role);
+    SELF withConsumer(Tenant tenant, InteropActor actor);
+
+    SELF withProducer(Tenant tenant, InteropRole role);
+
+    SELF withConsumer(Tenant tenant, InteropRole role);
 }

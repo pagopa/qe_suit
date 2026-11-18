@@ -12,7 +12,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.journey.infrastructure.EServiceDescriptorJourneyImpl;
 import it.pagopa.interop.common.journey.infrastructure.EServiceJourneyImpl;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Proxy;
@@ -31,7 +31,7 @@ class JourneyProxyConfigTest {
     private final EServiceDescriptorUseCase descriptors = mock(EServiceDescriptorUseCase.class);
     private final EServiceDescriptorLifecycleUseCase lifecycle = mock(EServiceDescriptorLifecycleUseCase.class);
     private final EServiceRequestFactory requestFactory = mock(EServiceRequestFactory.class);
-    private final CurrentUserSession session = mock(CurrentUserSession.class);
+    private final AuthSession session = mock(AuthSession.class);
     private final EServiceDescriptor draft = EServiceDescriptor.builder()
             .id(UUID.randomUUID()).version("1").state(DRAFT).build();
     private final EService eService = EService.builder().id(UUID.randomUUID())

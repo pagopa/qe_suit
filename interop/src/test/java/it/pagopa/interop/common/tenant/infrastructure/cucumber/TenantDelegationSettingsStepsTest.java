@@ -46,9 +46,9 @@ class TenantDelegationSettingsStepsTest {
         steps.enableProducerDelegationRecipients(List.of(
                 transform(Map.of("ente", "Comune di Pozzallo")), transform(Map.of("ente", "Sogecap"))));
         var order = inOrder(journey);
-        order.verify(journey).withProducer(Tenant.COMUNE_DI_POZZALLO, User.getTenantAdmin(Tenant.COMUNE_DI_POZZALLO));
+        order.verify(journey).withProducer(Tenant.COMUNE_DI_POZZALLO);
         order.verify(journey).ensureProducerDelegationEnabled(Tenant.COMUNE_DI_POZZALLO);
-        order.verify(journey).withProducer(Tenant.SOGECAP, User.getTenantAdmin(Tenant.SOGECAP));
+        order.verify(journey).withProducer(Tenant.SOGECAP);
         order.verify(journey).ensureProducerDelegationEnabled(Tenant.SOGECAP);
         order.verifyNoMoreInteractions();
     }

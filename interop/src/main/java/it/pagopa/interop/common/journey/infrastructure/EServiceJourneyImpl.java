@@ -13,6 +13,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.GracePeriodDays;
 import it.pagopa.interop.common.eservice.domain.SoapInterfaceUploadFailureReason;
 import it.pagopa.interop.common.journey.application.EServiceJourney;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
@@ -34,12 +35,12 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     private final EServiceDescriptorLifecycleUseCase lifecycle;
     private final EntityStore entityStore;
     private final EServiceRiskAnalysisUseCase eServiceRiskAnalysisUseCase;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
     private final EServiceRequestFactory requestFactory;
 
     @Override
     public EServiceJourneyImpl createPublishedEServiceWithManualAgreementApproval(Tenant producer) {
-        currentUserSession.set(User.getTenantAdmin(producer), producer);
+        authSession.set(User.getTenantAdmin(producer), producer);
         EService service = eServiceUseCase.createEService(requestFactory.defaultCreationEServiceCommand());
         var command = requestFactory.defaultUpdateDescriptorCommand()
                 .agreementApprovalPolicy(AgreementApprovalPolicy.MANUAL);
@@ -67,7 +68,7 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     public EServiceJourneyImpl addRiskAnalysis() {
         EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceRiskAnalysis riskAnalysis =
-                eServiceRiskAnalysisUseCase.addLatestRiskAnalysis(currentUserSession.getTenant(), eService, true);
+                eServiceRiskAnalysisUseCase.addLatestRiskAnalysis(authSession.getTenant(), eService, true);
         entityStore.upsert(riskAnalysis);
         return this;
     }

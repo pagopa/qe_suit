@@ -26,7 +26,7 @@ public class EServicePurposeTemplateSteps {
     @Given("l'e-service {string} collegato a un template di finalità {purposeTemplateState}")
     public void linkPurposeTemplate(String alias, PurposeTemplateState state) {
         EService eService = entities.getByAliasOrThrow(alias, EService.class);
-        journey.withConsumer(Tenant.PAGO_PA, UserRole.ADMIN)
+        journey.withConsumer(Tenant.PAGO_PA)
                 .createPurposeTemplate(Tenant.PAGO_PA, state)
                 .linkEServiceToPurposeTemplate(eService);
     }

@@ -11,13 +11,8 @@ import it.pagopa.interop.common.delegation.domain.ProducerDelegation;
 import it.pagopa.interop.common.delegation.domain.ProducerDelegationState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.journey.application.DelegationJourney;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.common.kernel.domain.Channel;
-import it.pagopa.interop.common.kernel.domain.DelegationRef;
-import it.pagopa.interop.common.kernel.domain.EServiceRef;
-import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.TenantRef;
-import it.pagopa.interop.common.kernel.domain.User;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,7 +24,7 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
 
     private final DelegationUseCase delegationUseCase;
     private final EntityStore entityStore;
-    private final CurrentUserSession currentUserSession;
+    private final AuthSession authSession;
     private final CurrentChannel<Channel> currentChannel;
 
     @Override
@@ -92,13 +87,13 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
 
     @Override
     public DelegationJourneyImpl setUpProducerDelegation(ProducerDelegationSetupCommand command) {
-        User originalUser = currentUserSession.getUser();
-        Tenant originalTenant = currentUserSession.getTenant();
+        InteropActor originalActor = authSession.getActor();
+        Tenant originalTenant = authSession.getTenant();
         Channel originalChannel = currentChannel.getCurrentChannel();
 
         try {
             currentChannel.setCurrentChannel(Channel.BFF);
-            currentUserSession.set(User.getTenantAdmin(command.delegator()), command.delegator());
+            authSession.set(User.getTenantAdmin(command.delegator()), command.delegator());
             ProducerDelegation delegation = delegationUseCase.createProducerDelegation(
                     TenantRef.of(command.delegator().getOrganizationId()),
                     TenantRef.of(command.delegate().getOrganizationId()),
@@ -111,8 +106,8 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
             transitionToRequestedState(command, delegation);
             return this;
         } finally {
-            currentUserSession.set(originalUser, originalTenant);
             currentChannel.setCurrentChannel(originalChannel);
+            authSession.set(originalActor, originalTenant);
         }
     }
 
@@ -127,7 +122,7 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
             case REJECTED -> reject(command.delegate(), delegation);
             case REVOKED -> {
                 approve(command.delegate(), delegation);
-                currentUserSession.set(User.getTenantAdmin(command.delegator()), command.delegator());
+                authSession.set(User.getTenantAdmin(command.delegator()), command.delegator());
                 delegationUseCase.revokeProducerDelegation(delegation.getRef());
                 delegationUseCase.waitForProducerDelegationState(
                         delegation.getRef(), ProducerDelegationState.REVOKED
@@ -137,7 +132,7 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
     }
 
     private void approve(Tenant delegate, ProducerDelegation delegation) {
-        currentUserSession.set(User.getTenantAdmin(delegate), delegate);
+        authSession.set(User.getTenantAdmin(delegate), delegate);
         delegationUseCase.approveProducerDelegation(delegation.getRef());
         delegationUseCase.waitForProducerDelegationState(
                 delegation.getRef(), ProducerDelegationState.ACTIVE
@@ -145,7 +140,7 @@ public class DelegationJourneyImpl implements DelegationJourney<DelegationJourne
     }
 
     private void reject(Tenant delegate, ProducerDelegation delegation) {
-        currentUserSession.set(User.getTenantAdmin(delegate), delegate);
+        authSession.set(User.getTenantAdmin(delegate), delegate);
         delegationUseCase.rejectProducerDelegation(delegation.getRef());
         delegationUseCase.waitForProducerDelegationState(
                 delegation.getRef(), ProducerDelegationState.REJECTED

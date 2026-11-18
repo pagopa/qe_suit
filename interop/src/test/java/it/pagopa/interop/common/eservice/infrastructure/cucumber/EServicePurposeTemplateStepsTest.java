@@ -30,7 +30,7 @@ class EServicePurposeTemplateStepsTest {
         steps.linkPurposeTemplate("ES-1", PurposeTemplateState.PUBLISHED);
 
         var order = inOrder(journey);
-        order.verify(journey).withConsumer(Tenant.PAGO_PA, UserRole.ADMIN);
+        order.verify(journey).withConsumer(Tenant.PAGO_PA);
         order.verify(journey).createPurposeTemplate(Tenant.PAGO_PA, PurposeTemplateState.PUBLISHED);
         order.verify(journey).linkEServiceToPurposeTemplate(eService);
     }

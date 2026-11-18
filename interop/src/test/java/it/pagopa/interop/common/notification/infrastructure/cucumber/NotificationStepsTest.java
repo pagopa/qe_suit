@@ -15,13 +15,13 @@ import static org.mockito.Mockito.*;
 
 class NotificationStepsTest {
     @Test
-    void enablesNotificationsUsingTheExplicitConsumerAdmin() {
+    void enablesNotificationsUsingTheConsumerDefaultIdentity() {
         var journey = mock(InteropJourney.class, RETURNS_SELF);
 
         new NotificationSteps(journey).enableNotifications(Tenant.PAGO_PA);
 
         var order = inOrder(journey);
-        order.verify(journey).withConsumer(Tenant.PAGO_PA, UserRole.ADMIN);
+        order.verify(journey).withConsumer(Tenant.PAGO_PA);
         order.verify(journey).enableNotificationsFor(Tenant.PAGO_PA);
         order.verifyNoMoreInteractions();
     }

@@ -1,5 +1,6 @@
-package it.pagopa.interop.m2m.v3.infrastructure.security;
+package it.pagopa.interop.m2m.v3.infrastructure.auth;
 
+import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.interop.common.client.application.command.ClientKeyCreationCommand;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientKind;
@@ -15,9 +16,10 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-class M2Mv3ApiClientProvider {
+public class M2Mv3ApiClientProvider {
 
     private final InteropJourney interopJourney;
+    private final CurrentChannel<Channel> currentChannel;
 
     @Cacheable(
             cacheNames = "m2mApiClient",
@@ -38,9 +40,12 @@ class M2Mv3ApiClientProvider {
         User tenantAdmin = User.getTenantUser(tenant, UserRole.ADMIN);
         UserRef tenantAdminRef = UserRef.of(tenantAdmin, tenant);
 
-        return interopJourney
+        Channel previousChannel = currentChannel.getCurrentChannel();
+        Throwable primaryFailure = null;
+        try {
+            currentChannel.setCurrentChannel(Channel.BFF);
+            return interopJourney
                 .withProducer(tenant, tenantAdmin)
-                .switchChannel(Channel.BFF)
                 .createClient(clientConfig -> {
                     clientConfig
                             .name(RandomUtils.randomAlphanumericName("client"))
@@ -52,7 +57,17 @@ class M2Mv3ApiClientProvider {
 
                     if (role == M2MRole.M2M_ADMIN) clientConfig.admin(tenantAdminRef);
                 })
-                .switchChannel(Channel.M2M_V3)
                 .get(Client.class);
+        } catch (RuntimeException | Error failure) {
+            primaryFailure = failure;
+            throw failure;
+        } finally {
+            try {
+                currentChannel.setCurrentChannel(previousChannel);
+            } catch (RuntimeException | Error failure) {
+                if (primaryFailure == null) throw failure;
+                primaryFailure.addSuppressed(failure);
+            }
+        }
     }
 }
