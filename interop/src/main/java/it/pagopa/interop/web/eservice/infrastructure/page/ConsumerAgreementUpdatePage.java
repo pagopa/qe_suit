@@ -20,7 +20,7 @@ public interface ConsumerAgreementUpdatePage extends Page {
 
     Breadcrumbs breadcrumbs();
 
-    @XPath(".//h1")
+    @XPath("//h1")
     Readable<String> pageTitle();
 
     @XPath(".//a[normalize-space()='Torna alle richieste']")
@@ -55,7 +55,7 @@ public interface ConsumerAgreementUpdatePage extends Page {
     @Override
     default void assertLoaded() {
         PollingUtils.pollUntil(
-                () -> "Fruizione/Richieste inoltrate/Gestisci richiesta".equals(breadcrumbs().getPath())
+                () -> "Fruizione/Richieste inoltrate/Modifica richiesta".equals(breadcrumbs().getPath())
                         && "Gestisci richiesta di fruizione".equals(pageTitle().read()),
                 isLoaded -> isLoaded,
                 "ConsumerAgreementUpdatePage not loaded"
