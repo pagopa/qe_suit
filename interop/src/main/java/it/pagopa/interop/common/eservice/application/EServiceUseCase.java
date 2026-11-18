@@ -90,4 +90,8 @@ public class EServiceUseCase {
     public void attemptProducerEServiceDetailsRead(EService eService) {
         eServiceGateway.attemptProducerEServiceDetailsRead(eService.getRef());
     }
+
+    public void attemptNameUpdate(EService eService, String name) {
+        eServiceGateway.attemptNameUpdate(eService.getRef(), name);
+    }
 }

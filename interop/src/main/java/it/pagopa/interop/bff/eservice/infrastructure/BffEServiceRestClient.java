@@ -201,4 +201,9 @@ public class BffEServiceRestClient extends RestClient {
         return execute(() -> eservicesApi.updateEServiceInstanceLabelAfterPublication().eServiceIdPath(eserviceId)
                 .body(payload).execute(Function.identity()), CreatedResource.class);
     }
+
+    public TestChain<Void> updateName(@Nonnull UUID eserviceId, @Nonnull EServiceNameUpdateSeed payload) {
+        return execute(() -> eservicesApi.updateEServiceName().eServiceIdPath(eserviceId)
+                .body(payload).execute(Function.identity()), Void.class);
+    }
 }

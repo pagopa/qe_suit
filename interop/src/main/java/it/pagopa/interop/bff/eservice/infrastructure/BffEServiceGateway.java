@@ -52,6 +52,7 @@ public class BffEServiceGateway implements EServiceGateway {
     private final BffEServiceDescriptorGateway descriptorGateway;
     private final EntityStore entityStore;
     private final BffEServiceMapper mapper;
+    private final BffEServiceRequestFactory requestFactory;
 
     @Override
     public EService createEService(EServiceCreationCommand command) {
@@ -214,5 +215,10 @@ public class BffEServiceGateway implements EServiceGateway {
     @Override
     public void attemptProducerEServiceDetailsRead(EServiceRef eServiceRef) {
         restClient.readEService(eServiceRef.id()).withoutPolling();
+    }
+
+    @Override
+    public void attemptNameUpdate(EServiceRef eServiceRef, String name) {
+        restClient.updateName(eServiceRef.id(), requestFactory.updateNameRequest().name(name)).withoutPolling();
     }
 }

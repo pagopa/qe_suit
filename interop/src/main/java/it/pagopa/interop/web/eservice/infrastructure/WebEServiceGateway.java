@@ -181,4 +181,9 @@ public class WebEServiceGateway implements EServiceGateway {
     public void attemptProducerEServiceDetailsRead(EServiceRef eServiceRef) {
         throw new UnsupportedOperationException("WebEServiceGateway does not support attemptProducerEServiceDetailsRead operation");
     }
+
+    @Override
+    public void attemptNameUpdate(EServiceRef eServiceRef, String name) {
+        throw new UnsupportedOperationException("WebEServiceGateway does not support attemptNameUpdate operation");
+    }
 }

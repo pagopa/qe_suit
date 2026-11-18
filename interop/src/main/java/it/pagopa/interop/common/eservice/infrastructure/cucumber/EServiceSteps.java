@@ -146,4 +146,19 @@ public class EServiceSteps {
     public void attemptDescriptorExport(int version, EService eService) {
         descriptorUseCase.attemptDescriptorExport(eService, eService.getDescriptorOrThrow(version));
     }
+
+    @When("l'erogatore tenta di modificare il nome del{eServiceByAlias} con quello del{eServiceByAlias}")
+    public void attemptNameUpdateWithAnotherEServiceName(EService eService, EService existing) {
+        eServiceUseCase.attemptNameUpdate(eService, existing.getName());
+    }
+
+    @When("l'erogatore tenta di modificare il nome del{eServiceByAlias} con quello del {eServiceTemplateByAlias}")
+    public void attemptNameUpdateWithTemplateName(EService eService, EServiceTemplate template) {
+        eServiceUseCase.attemptNameUpdate(eService, template.getName());
+    }
+
+    @When("l'erogatore tenta di modificare il nome del{eServiceByAlias} in {string}")
+    public void attemptNameUpdate(EService eService, String name) {
+        eServiceUseCase.attemptNameUpdate(eService, name);
+    }
 }

@@ -43,4 +43,6 @@ public interface EServiceGateway extends Plugin<Channel> {
     void assertEServiceNotPresentInProducerCatalog(String eserviceName);
 
     void attemptProducerEServiceDetailsRead(EServiceRef eServiceRef);
+
+    void attemptNameUpdate(EServiceRef eServiceRef, String name);
 }

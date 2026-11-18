@@ -38,7 +38,7 @@ class BffEServiceArchivingTransportTest {
         var restClient = new BffEServiceRestClient(
                 new TestChainFactory(mock(LastApiResponseStore.class), entities), apiClient);
         var gateway = new BffEServiceGateway(restClient, mock(BffEServiceDescriptorGateway.class),
-                entities, mock(BffEServiceMapper.class));
+                entities, mock(BffEServiceMapper.class), new BffEServiceRequestFactory());
 
         gateway.archiveEService(ref, GracePeriodDays.NUMBER_60);
 

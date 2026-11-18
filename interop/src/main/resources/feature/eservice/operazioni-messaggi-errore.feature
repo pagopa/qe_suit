@@ -209,7 +209,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And i seguenti e-service pubblicati:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
-    When l'erogatore tenta di modificare il nome dell'e-service con quello del template
+    When l'erogatore tenta di modificare il nome dell'e-service "ES-1" con quello del template "T-1"
     Then il messaggio di errore corrisponde al caso "CATALOG_ESERVICE_TEMPLATE_NAME_CONFLICT__POST_ESERVICES_E_SERVICE_ID_NAME_UPDATE" in lingua "it"
 
   # Endpoint: POST /templates/eservices/:eServiceId/instanceLabel/update
@@ -803,7 +803,7 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given i seguenti e-service pubblicati:
       | alias | erogatore        |
       | ES-1  | Comune di Milano |
-    When l'erogatore tenta di modificare il nome dell'e-service in "Valore https://example.org"
+    When l'erogatore tenta di modificare il nome dell'e-service "ES-1" in "Valore https://example.org"
     Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_NAME_UPDATE" in lingua "it"
 
   # Endpoint: POST /eservices/:eServiceId/descriptors/:descriptorId/reject
