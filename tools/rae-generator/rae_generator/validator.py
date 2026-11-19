@@ -7,6 +7,8 @@ import yaml
 METADATA = ('release', 'scope', 'issue_jira', 'data_ora', 'durata', 'numero_ko', 'run', 'suite', 'environment', 'executor', 'source_branch')
 FIELDS = ('id_test', 'error_log', 'procedure', 'result', 'link_prod_bug', 'link_suite_bug')
 NAME = re.compile(r'^rae_[A-Za-z0-9_.-]+_\d{14}(?:_\d+)?\.yaml$')
+MATCH_STATUSES = {'pending_confirmation', 'confirmed', 'auto_matched'}
+MATCH_FIELDS = {'status', 'source_rae', 'source_id_test', 'proposed_digest'}
 
 
 class ValidationError(ValueError):
@@ -25,7 +27,7 @@ def validate(data: object, filename: str | None = None) -> dict:
         meta = {}
     for field in METADATA:
         if field not in meta:
-            if field != 'scope':  # old approved RAE: implicitly NIGHTLY
+            if field != 'scope':
                 errors.append(f'rae.{field}: mancante')
         elif field == 'release' and not isinstance(meta[field], str):
             errors.append('rae.release: deve essere una stringa, anche vuota')
@@ -49,12 +51,34 @@ def validate(data: object, filename: str | None = None) -> dict:
             if not isinstance(entry, dict):
                 errors.append(f'{prefix}: deve essere una mappa')
                 continue
-            if set(entry) != set(FIELDS):
+            if not set(FIELDS).issubset(entry) or set(entry) - (set(FIELDS) | {'matching'}):
                 errors.append(f'{prefix}: campi obbligatori mancanti o inattesi')
             for field in FIELDS:
                 value = entry.get(field)
                 if not isinstance(value, str) or (field in FIELDS[:4] and not value.strip()):
                     errors.append(f'{prefix}.{field}: valore non valido o vuoto')
+            matching = entry.get('matching')
+            if matching is not None:
+                if not isinstance(matching, dict):
+                    errors.append(f'{prefix}.matching: deve essere una mappa')
+                else:
+                    if (matching.get('status') not in MATCH_STATUSES
+                            or set(matching) - MATCH_FIELDS):
+                        errors.append(f'{prefix}.matching: stato o campi non validi')
+                    if (not isinstance(matching.get('source_rae'), str)
+                            or not NAME.fullmatch(matching['source_rae'])):
+                        errors.append(f'{prefix}.matching.source_rae: nome non valido')
+                    if (not isinstance(matching.get('source_id_test'), str)
+                            or not matching['source_id_test'].strip()):
+                        errors.append(f'{prefix}.matching.source_id_test: mancante')
+                    digest = matching.get('proposed_digest')
+                    if digest is not None and (not isinstance(digest, str)
+                                              or not re.fullmatch(r'[0-9a-f]{64}', digest)):
+                        errors.append(f'{prefix}.matching.proposed_digest: SHA-256 non valido')
+                    if matching.get('status') == 'pending_confirmation' and digest is None:
+                        errors.append(f'{prefix}.matching.proposed_digest: obbligatorio per pending')
+                    if section == 'ko_know' and matching.get('status') == 'pending_confirmation':
+                        errors.append(f'{prefix}: pending_confirmation deve restare in ko')
     records = (data.get('ko') if isinstance(data.get('ko'), list) else []) + (data.get('ko_know') if isinstance(data.get('ko_know'), list) else [])
     if type(meta.get('numero_ko')) is not int or meta.get('numero_ko') != len(records):
         errors.append('rae.numero_ko: non coincide con la somma dei KO')

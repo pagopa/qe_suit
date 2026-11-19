@@ -1,0 +1,47 @@
+{
+  "historical_ko": 188,
+  "current_ko": 187,
+  "same_id_test": 184,
+  "variants": {
+    "v2_masks": {
+      "clusters": 45,
+      "counts": {
+        "CANDIDATE_SAME_TEST": 167,
+        "NO_TEMPLATE_MATCH": 11,
+        "TEMPLATE_OTHER_TEST_ONLY": 6,
+        "NO_HISTORY_SAME_TEST": 3
+      },
+      "recognized_same_test": 167,
+      "recognized_pct_of_common": 90.76,
+      "status_changes_detected_among_recognized": 0,
+      "note": "Status diverso e' un warning diagnostico; non prova una diversa causa. Regex status euristica."
+    },
+    "auto_no_masks": {
+      "clusters": 45,
+      "counts": {
+        "CANDIDATE_SAME_TEST": 164,
+        "NO_TEMPLATE_MATCH": 14,
+        "TEMPLATE_OTHER_TEST_ONLY": 6,
+        "NO_HISTORY_SAME_TEST": 3
+      },
+      "recognized_same_test": 164,
+      "recognized_pct_of_common": 89.13,
+      "status_changes_detected_among_recognized": 0,
+      "note": "Status diverso e' un warning diagnostico; non prova una diversa causa. Regex status euristica."
+    },
+    "auto_keep_numeric": {
+      "clusters": 45,
+      "counts": {
+        "CANDIDATE_SAME_TEST": 164,
+        "NO_TEMPLATE_MATCH": 14,
+        "TEMPLATE_OTHER_TEST_ONLY": 6,
+        "NO_HISTORY_SAME_TEST": 3
+      },
+      "recognized_same_test": 164,
+      "recognized_pct_of_common": 89.13,
+      "status_changes_detected_among_recognized": 0,
+      "note": "Status diverso e' un warning diagnostico; non prova una diversa causa. Regex status euristica."
+    }
+  },
+  "csv": "poc_drain3_v3_risultati.csv"
+}

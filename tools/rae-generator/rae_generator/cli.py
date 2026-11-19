@@ -6,7 +6,8 @@ from pathlib import Path
 import sys
 from .generator import create_rae, write_yaml
 from .renderer import render
-from .validator import read_yaml, ValidationError
+from .validator import read_yaml, validate, ValidationError
+import yaml
 from .parsers import ReportError
 
 
@@ -20,8 +21,12 @@ def main(argv: list[str] | None = None) -> int:
     finalize = sub.add_parser('finalize', help='Validate YAML and generate Markdown')
     finalize.add_argument('yaml_file', type=Path)
     finalize.add_argument('--write', action='store_true', help='Write MD next to YAML')
+    finalize.add_argument('--qa-reviewed', action='store_true', help='QA review verified by workflow')
+    finalize.add_argument('--original-yaml', type=Path, help='Immutable generator-created original YAML')
     check = sub.add_parser('check', help='Validate YAML and verify committed Markdown')
     check.add_argument('yaml_file', type=Path)
+    check.add_argument('--qa-reviewed', action='store_true', help='QA review verified by workflow')
+    check.add_argument('--original-yaml', type=Path, help='Immutable generator-created original YAML')
     args = parser.parse_args(argv)
     try:
         if args.command == 'generate':
@@ -35,8 +40,11 @@ def main(argv: list[str] | None = None) -> int:
             print(f'Generated {args.output}: {data["rae"]["numero_ko"]} KO')
         else:
             data = read_yaml(args.yaml_file)
+            if args.qa_reviewed and not args.original_yaml:
+                raise ValidationError('--qa-reviewed richiede --original-yaml')
+            original = validate(yaml.safe_load(args.original_yaml.read_text(encoding='utf-8'))) if args.original_yaml else None
             md = args.yaml_file.with_suffix('.md')
-            expected = render(data)
+            expected = render(data, original_data=original, qa_reviewed=args.qa_reviewed)
             if args.command == 'check':
                 if not md.is_file() or md.read_text(encoding='utf-8') != expected:
                     raise ValidationError(f'Markdown assente o non sincronizzato: {md}')
