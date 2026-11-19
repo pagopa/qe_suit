@@ -17,4 +17,5 @@ Feature: Accesso al BackOffice dei Partner Tecnologici
   @backofficePt
   Scenario: [BACKOFFICE_PT_ACCESSO_3] Un'impresa accede a SEND e atterra sul portale imprese
     Given la PG Impresa_1 effettua l'accesso a SelfCare con autenticazione SPID
+    And se presente, viene saltata la configurazione del prodotto SEND
     Then ha accesso alle funzionalità del portale imprese
