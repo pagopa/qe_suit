@@ -21,11 +21,13 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.ClientUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.CreatedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.KeySeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeAdditionDetailsSeed;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -127,11 +129,15 @@ public class BffClientGateway implements ClientGateway {
         PurposeAdditionDetailsSeed purposeSeed = new PurposeAdditionDetailsSeed()
                 .purposeId(purpose.getId());
 
-        return restClient.linkPurpose(client.getId(), purposeSeed)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map((Void) -> getClient(ClientRef.of(client.getId())))
-                .updateContext()
-                .get();
+        restClient.linkPurpose(client.getId(), purposeSeed)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getClient(ClientRef.of(client.getId())),
+                updatedClient -> updatedClient.getPurposes().stream()
+                        .anyMatch(linkedPurpose -> purpose.getId().equals(linkedPurpose.getId())),
+                "Finalita %s non associata al client %s".formatted(purpose.getId(), client.getId())
+        );
     }
 
     @Override
