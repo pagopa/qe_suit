@@ -22,7 +22,7 @@ Feature: Modifica dei metadati dei template e-service
       | in bozza                 | descrizione    | Descrizione aggiornata del template |
       | pubblicata               | intendedTarget | Nuovo testo dei destinatari         |
       | sospesa                  | nome           | Template anagrafico aggiornato      |
-   #TODO | soltanto deprecate       | descrizione | Descrizione aggiornata del template  |
+      #TODO | soltanto deprecate       | descrizione | Descrizione aggiornata del template  |
       | pubblicata e nuova bozza | intendedTarget | Nuovo testo dei destinatari         |
 
   @work-item:QA-19036
@@ -127,33 +127,29 @@ Feature: Modifica dei metadati dei template e-service
       | descrizione | %last-used% |
     Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
 
-
-
-
-
-
-
-
-
-
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_PROTECTION_5] - Impossibilità di sovrascrivere i metadati di un e-service derivato
+  Scenario: [ESERVICE_TEMPLATE_METADATA_PROTECTION_3] - Impossibilità di sovrascrivere i metadati di un e-service derivato
   Dato un e-service ottenuto da un template,
   quando l’erogatore tenta di modificarne direttamente i metadati ereditati,
   allora la modifica è respinta senza cambiare il template o la sua istanza.
 
-    Given un e-service "ES-1" derivato dal template e-service "TE-1" del Comune di Milano
-    When un admin del Comune di Milano richiede la modifica dei metadati dell'e-service "ES-1":
-      | campo   | valore   |
-      | <campo> | <valore> |
-    Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata
-    And l'e-service "ES-1" e il template "TE-1" conservano i metadati iniziali
-
-    Examples:
+    Given i seguenti template e-service pubblicati:
+      | alias | nome                  | tecnologia |
+      | TPL-1 | Template Modello Alfa | SOAP       |
+    And le seguenti istanze di template pubblicate:
+      | alias | template |
+      | ES-1  | TPL-1    |
+    When un admin del Comune di Milano tenta la modifica dei metadati dell'e-service "ES-1":
       | campo       | valore                              |
       | nome        | Nome aggiornato dell'istanza        |
       | descrizione | Descrizione aggiornata dell'istanza |
+    Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per NOT_ALLOWED
+
+
+
+
+
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
