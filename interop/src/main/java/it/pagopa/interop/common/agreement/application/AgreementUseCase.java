@@ -135,4 +135,8 @@ public class AgreementUseCase {
     public void attemptAgreementRejection(Agreement agreement) {
         agreementGateway.attemptAgreementRejection(agreement);
     }
+
+    public void attemptAgreementSignedDocumentDownload(Agreement agreement) {
+        agreementGateway.attemptAgreementSignedDocumentDownload(agreement);
+    }
 }

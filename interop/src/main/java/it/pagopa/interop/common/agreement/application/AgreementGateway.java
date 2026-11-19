@@ -66,4 +66,6 @@ public interface AgreementGateway extends Plugin<Channel> {
     void attemptAgreementCloning(Agreement agreement);
 
     void attemptAgreementRejection(Agreement agreement);
+
+    void attemptAgreementSignedDocumentDownload(Agreement agreement);
 }

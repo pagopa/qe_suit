@@ -111,4 +111,11 @@ public class BffAgreementRestClient extends RestClient {
                 Agreement.class
         );
     }
+
+    public TestChain<File> downloadSignedDocument(@Nonnull UUID agreementId) {
+        return execute(
+                () -> agreementsApi.downloadSignedDocument().agreementIdPath(agreementId).execute(Function.identity()),
+                File.class
+        );
+    }
 }

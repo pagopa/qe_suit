@@ -199,4 +199,9 @@ public class BffAgreementGateway implements AgreementGateway {
     public void attemptAgreementRejection(Agreement agreement) {
         restClient.reject(agreement.getId(), agreementRequestFactory.rejectionRequest()).withoutPolling();
     }
+
+    @Override
+    public void attemptAgreementSignedDocumentDownload(Agreement agreement) {
+        restClient.downloadSignedDocument(agreement.getId()).withoutPolling();
+    }
 }

@@ -131,4 +131,9 @@ public class AgreementSteps {
     public void attemptAgreementRejection(Agreement agreement) {
         agreementUseCase.attemptAgreementRejection(agreement);
     }
+
+    @When("l'erogatore tenta di scaricare il documento firmato della {currentAgreement}")
+    public void attemptAgreementSignedDocumentDownload(Agreement agreement) {
+        agreementUseCase.attemptAgreementSignedDocumentDownload(agreement);
+    }
 }
