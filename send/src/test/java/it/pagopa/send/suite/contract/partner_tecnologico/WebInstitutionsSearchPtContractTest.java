@@ -12,19 +12,17 @@ import it.pagopa.send.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.send.web.partner_tecnologico.infrastructure.page.PtInstitutionsPage;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Assumptions;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ThrowingRunnable;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
 import java.time.Duration;
 import java.util.Locale;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -33,6 +31,7 @@ import java.util.stream.Stream;
  * <p>
  * Testi e selettori vengono dal sorgente di pn-pt-webapp (PN-21981).
  */
+@Tag("backofficePt")
 @EnabledIf(expression = "${partner-tecnologico.enabled}", loadContext = true)
 @SpringBootTest(classes = {
         TestBootApp.class,
@@ -45,15 +44,12 @@ public class WebInstitutionsSearchPtContractTest {
 
     private static final String TOO_SHORT = "ab";
     private static final String NO_MATCH = "zzzqqq";
-    private static final String OTHER_NO_MATCH = "qqqzzz";    private static final String MIN_LENGTH_ERROR = "Inserisci almeno tre caratteri";
-    // limite del parametro search di GET /bff/v1/pt/institutions
+    private static final String OTHER_NO_MATCH = "qqqzzz";
+    private static final String MIN_LENGTH_ERROR = "Inserisci almeno tre caratteri";
+    // limite del parametro search di GET /bff/v1/pt/institutions: il campo accetta testo più lungo, l'errore compare alla ricerca
     private static final int MAX_LENGTH = 250;
-    // 255 caratteri: ogni blocco di 10 finisce con la sua posizione (xxxxxxx010 ... xxxxxxx250), poi "abcde" oltre il
-    // massimo, così dal valore letto si vede dove si ferma il campo
-    private static final String TOO_LONG = IntStream.rangeClosed(1, MAX_LENGTH / 10)
-            .mapToObj(block -> String.format("%10s", String.format("%03d", block * 10)).replace(' ', 'x'))
-            .collect(Collectors.joining()) + "abcde";
-    private static final int ROWS_PER_PAGE = 10;
+    private static final String TOO_LONG = "x".repeat(MAX_LENGTH + 1);
+    private static final String MAX_LENGTH_ERROR = "Scrivi massimo " + MAX_LENGTH + " caratteri";
     private static final Duration TIMEOUT = Duration.ofSeconds(30);
 
     private final WebBrowserContractValidator webContractValidator;
@@ -65,10 +61,11 @@ public class WebInstitutionsSearchPtContractTest {
      * <ul>
      *     <li>con meno di 3 caratteri compare l'errore e "Cerca" resta abilitato;</li>
      *     <li>una stringa senza corrispondenze mostra il messaggio di nessun risultato;</li>
-     *     <li>non si possono scrivere più caratteri del massimo;</li>
+     *     <li>oltre il numero massimo di caratteri compare l'errore;</li>
      *     <li>dopo aver svuotato il filtro con la X si può fare una nuova ricerca;</li>
      *     <li>la ricerca non distingue tra maiuscole e minuscole;</li>
-     *     <li>con i risultati in una sola pagina il paginatore non ha pulsanti di pagina.</li>
+     *     <li>con i risultati in una sola pagina (la ricerca per codice fiscale del primo ente della lista, che trova solo
+     *     quell'ente) il paginatore non ha né pulsanti di pagina né il numero di righe per pagina.</li>
      * </ul>
      */
     @TestFactory
@@ -95,10 +92,9 @@ public class WebInstitutionsSearchPtContractTest {
                         ),
 
                         new WebScenario<>(
-                                "numero massimo di caratteri: non si scrive oltre il massimo",
-                                page -> page.searchInput().cleanAndWrite(TOO_LONG),
-                                // TODO: oggi il campo accetta tutti i caratteri e il BFF risponde 400 oltre i 250
-                                page -> page.searchInput().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(TOO_LONG.substring(0, MAX_LENGTH)))
+                                "oltre il numero massimo di caratteri: errore",
+                                page -> page.searchInstitutions(TOO_LONG),
+                                page -> page.searchError().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(MAX_LENGTH_ERROR))
                         ),
 
                         new WebScenario<>(
@@ -128,13 +124,13 @@ public class WebInstitutionsSearchPtContractTest {
                         ),
 
                         new WebScenario<>(
-                                "risultati in una sola pagina: nessun pulsante di pagina",
-                                page -> {},
+                                "risultati in una sola pagina: né pulsanti di pagina né righe per pagina",
+                                page -> page.searchInstitutions(page.institutionTaxCodes().read()),
                                 page -> {
-                                    // con meno righe del massimo per pagina i risultati stanno in una sola pagina
-                                    Assumptions.assumeThat(page.institutionNames().readAll()).hasSizeLessThan(ROWS_PER_PAGE);
+                                    // la lista precedente resta visibile finché la ricerca non è conclusa
+                                    eventually(() -> Assertions.assertThat(page.institutionNames().readAll()).as("enti trovati").hasSize(1));
                                     Assertions.assertThat(page.pageButtons().readAll()).as("pulsanti di pagina").isEmpty();
-                                    page.rowsPerPage().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(String.valueOf(ROWS_PER_PAGE)));
+                                    Assertions.assertThat(page.rowsPerPage().readAll()).as("numero di righe per pagina").isEmpty();
                                 }
                         )
                 ));

@@ -56,14 +56,14 @@ class PropertiesUserProviderTest {
         });
     }
 
-    // PT_1 e Comune_1 sono la stessa persona: il PT deve usare la sua chiave, non il token PA dello username
+    // la chiave del token configurata vince sullo username (per PT_1 "m.curie" non è usabile come chiave)
     @Test
     void shouldResolveSessionTokenKeyFromConfigurationForDev() {
         runnerFor("dev").run(context -> {
             User user = context.getBean(PropertiesUserProvider.class).resolve(UserAlias.PT_1);
 
-            assertThat(user.getUsername()).isEqualTo("grossini");
-            assertThat(user.getSessionTokenKey()).isEqualTo("grossini-pt");
+            assertThat(user.getUsername()).isEqualTo("m.curie");
+            assertThat(user.getSessionTokenKey()).isEqualTo("curie");
         });
     }
 

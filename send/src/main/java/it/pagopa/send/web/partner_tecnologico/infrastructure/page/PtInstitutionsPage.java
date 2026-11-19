@@ -67,6 +67,10 @@ public interface PtInstitutionsPage extends Page {
     @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"institutionsTableDesktop\"]//tbody//tr/td[1]")
     Readable<String> institutionNames();
 
+    // seconda colonna della tabella (codice fiscale), a caricamento concluso
+    @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"institutionsTableDesktop\"]//tbody//tr/td[2]")
+    Readable<String> institutionTaxCodes();
+
     // pulsanti di pagina del paginatore (numeri e frecce): ci sono solo se i risultati stanno su più pagine
     @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"pageSelector\"]//button")
     Readable<String> pageButtons();
@@ -75,9 +79,9 @@ public interface PtInstitutionsPage extends Page {
     @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"institutionsTableDesktop\"]")
     Table institutionsTable();
 
-    // numero di righe per pagina, sotto la tabella
+    // numero di righe per pagina, sotto la tabella: nascosto quando i risultati stanno nella pagina più piccola (10)
     @XPath("//*[@data-testid=\"itemsPerPageSelector\"]//button")
-    Button rowsPerPage();
+    Readable<String> rowsPerPage();
 
     PtHeader header();
 
