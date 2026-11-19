@@ -3,8 +3,6 @@ package it.pagopa.interop.bff.eservice.infrastructure;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
-import it.pagopa.infrastructure.response.ApiResponse;
-import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.bff.eservice.application.BffEServiceUpdateCommand;
@@ -86,7 +84,7 @@ public class BffEServiceGateway implements EServiceGateway {
             throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
         restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
                 .withoutPolling()
-                .getRaw();
+                .get();
     }
 
     @Override
