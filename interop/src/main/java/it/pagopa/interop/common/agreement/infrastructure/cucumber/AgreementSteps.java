@@ -148,4 +148,9 @@ public class AgreementSteps {
         agreementUseCase.attemptAgreementDocumentDownload(agreement);
     }
 
+    @When("il fruitore tenta di eliminare il documento dalla {currentAgreement}")
+    public void attemptAgreementDocumentDeletion(Agreement agreement) {
+        agreementUseCase.attemptAgreementDocumentDeletion(agreement);
+    }
+
 }

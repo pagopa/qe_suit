@@ -147,4 +147,8 @@ public class AgreementUseCase {
     public void attemptAgreementDocumentDownload(Agreement agreement) {
         agreementGateway.attemptAgreementDocumentDownload(agreement);
     }
+
+    public void attemptAgreementDocumentDeletion(Agreement agreement) {
+        agreementGateway.attemptAgreementDocumentDeletion(agreement);
+    }
 }

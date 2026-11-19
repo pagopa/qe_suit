@@ -126,4 +126,11 @@ public class BffAgreementRestClient extends RestClient {
         );
     }
 
+    public TestChain<Void> deleteAgreementConsumerDocument(@Nonnull UUID agreementId, @Nonnull UUID documentId) {
+        return execute(
+                () -> agreementsApi.removeAgreementConsumerDocument().agreementIdPath(agreementId).documentIdPath(documentId).execute(Function.identity()),
+                Void.class
+        );
+    }
+
 }
