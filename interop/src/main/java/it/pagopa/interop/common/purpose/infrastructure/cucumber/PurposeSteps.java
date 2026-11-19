@@ -252,4 +252,9 @@ public class PurposeSteps {
     public void attemptRiskAnalysisSigning(Purpose purpose) {
         purposeUseCase.attemptRiskAnalysisSigning(purpose);
     }
+
+    @When("il valutatore tenta di rifiutare l'analisi del rischio della {currentPurpose} con la motivazione {string}")
+    public void attemptRiskAnalysisRejection(Purpose purpose, String rejectionReason) {
+        purposeUseCase.attemptRiskAnalysisRejection(purpose, rejectionReason);
+    }
 }

@@ -141,4 +141,18 @@ class PurposeUseCaseTest {
         verify(gateway).signRiskAnalysis(purpose.getRef(), command);
         verifyNoMoreInteractions(gateway);
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"Informazioni insufficienti", "Motivazione https://example.org"})
+    void attemptsRejectionWithTheExactReasonWithoutUsingThePositiveOperation(String reason) {
+        var commands = mock(PurposeCommandFactory.class);
+        var command = mock(RejectRiskAnalysisCommand.class);
+        when(commands.rejectRiskAnalysisCommand(reason)).thenReturn(command);
+
+        new PurposeUseCase(gateway, commands).attemptRiskAnalysisRejection(purpose, reason);
+
+        verify(commands).rejectRiskAnalysisCommand(reason);
+        verify(gateway).attemptRiskAnalysisRejection(purpose.getRef(), command);
+        verifyNoMoreInteractions(gateway, commands);
+    }
 }

@@ -178,7 +178,6 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     # Mantenere il mapping atteso; usare la modalità in cui l'admin compila e il valutatore firma.
     Given un'analisi del rischio della finalità in stato "approvata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
-    # Operazione BFF e binding negativo parametrico mancanti per il rifiuto dell'analisi.
     When il valutatore tenta di rifiutare l'analisi del rischio della finalità con la motivazione "Informazioni insufficienti"
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT" in lingua "it"
 
@@ -192,7 +191,6 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
     # Mantenere il mapping atteso; usare la modalità in cui l'admin compila e il valutatore firma.
     Given un'analisi del rischio della finalità in stato "rifiutata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
-    # Operazione BFF e binding negativo parametrico mancanti per il rifiuto dell'analisi.
     When il valutatore tenta di rifiutare l'analisi del rischio della finalità con la motivazione "Informazioni insufficienti"
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT" in lingua "it"
 
@@ -232,10 +230,8 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
 
     # Richiede il workflow abilitato, una finalità DELIVER non delegata e la modalità in cui l'admin compila e il valutatore firma.
     # La richiesta deve essere già sottoposta al valutatore (SUBMITTED), altrimenti prevale un errore di stato o modalità.
-    # Setup e binding parametrico mancanti per il workflow valutatore.
     Given un'analisi del rischio della finalità in stato "in attesa di valutazione" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
-    # Operazione BFF e binding negativo parametrico mancanti per il rifiuto dell'analisi.
     When il valutatore tenta di rifiutare l'analisi del rischio della finalità con la motivazione "Motivazione https://example.org"
     Then il messaggio di errore corrisponde al caso "PURPOSE_HYPERLINK_DETECTION_ERROR__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_REJECT" in lingua "it"
 

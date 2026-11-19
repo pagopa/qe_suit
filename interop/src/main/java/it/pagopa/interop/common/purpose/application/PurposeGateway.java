@@ -50,4 +50,6 @@ public interface PurposeGateway extends Plugin<Channel> {
     void attemptPurposeCloning(PurposeRef purposeRef, PurposeCloneCommand cloneCommand);
 
     void attemptRiskAnalysisSigning(PurposeRef purposeRef, SignRiskAnalysisCommand signCommand);
+
+    void attemptRiskAnalysisRejection(PurposeRef purposeRef, RejectRiskAnalysisCommand rejectCommand);
 }

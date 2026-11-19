@@ -137,6 +137,11 @@ public class PurposeUseCase {
         purposeGateway.attemptRiskAnalysisSigning(purpose.getRef(), command);
     }
 
+    public void attemptRiskAnalysisRejection(Purpose purpose, String rejectionReason) {
+        RejectRiskAnalysisCommand command = purposeCommandFactory.rejectRiskAnalysisCommand(rejectionReason);
+        purposeGateway.attemptRiskAnalysisRejection(purpose.getRef(), command);
+    }
+
     private int resolveMetadataVersion(Purpose purpose) {
         Integer metadataVersion = purpose.getMetadataVersion();
         if (metadataVersion == null) {
