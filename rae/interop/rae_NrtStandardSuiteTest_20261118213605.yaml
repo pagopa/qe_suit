@@ -5746,10 +5746,19 @@ ko:
        but was: null
       at WebConsumerPurposeDetailsPageContractTest.lambda$contractScenarios$1(WebConsumerPurposeDetailsPageContractTest.java:81)
       	at it.pagopa.interop.suite.contract.WebConsumerPurposeDetailsPageContractTest.lambda$contractScenarios$2(WebConsumerPurposeDetailsPageContractTest.java:71)
-    procedure: ''
-    result: ''
+    procedure: 'Log analizzato. Test ripetuto in locale e il problema si riscontra anche in locale 
+    org.assertj.core.error.AssertJMultipleFailuresError: 
+    Multiple Failures (1 failure)
+    -- failure 1 --
+    [Purpose description] 
+    expected: "description-PCqzYWfN6Hn7oTs"
+     but was: null
+    at WebConsumerPurposeDetailsPageContractTest.lambda$contractScenarios$1(WebConsumerPurposeDetailsPageContractTest.java:81)
+    
+    Dopo confronto con tester che ha lavorato sul test in questione, è emerso che la struttura della pagina è cambiata. Nella versione precedente la descrizione era riportata in due parti : una vicina al titolo (h1) della pagina ed una ulteriore riportata tra i dettagli della purpose. Analizzando la versione più recente del FE si riscontra che la descrizione è presente solo tra i dettagli della purpose, ma non più vicina al titolo della pagina.'
+    result: 'Errore restituito dopo aggiornamento del FE che ha portato alla rimozione della description della purpose che era originariamente riportata in due luoghi distinti prima della modifica più recente.'
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19689'
   - id_test: WebProducerEServiceTemplateDetailsPageContractTest::producerEServiceTemplateDetailsPageContract::Producer
       e-service template details page shows expected content in Details tab
     error_log: |
