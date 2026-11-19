@@ -37,7 +37,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
         properties = {
                 "spring.profiles.include=junit",
                 "channel.web.browser=chrome",
-                "channel.web.headless=false"
+                "channel.web.headless=true"
         }
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
