@@ -119,7 +119,11 @@ public class ClientSteps {
         Client client = entityStore.getByAliasOrThrow(clientAlias, Client.class);
         MetadataUpdate metadata = readMetadataUpdate(client, dataTable);
 
-        interopJourney.withProducer(producer, role);
+        if (role == UserRole.ADMIN) {
+            interopJourney.withProducer(producer);
+        } else {
+            interopJourney.withConsumer(producer, role);
+        }
         clientUseCase.updateMetadata(client, metadata.name(), metadata.description());
     }
 
@@ -133,7 +137,11 @@ public class ClientSteps {
         Client client = entityStore.getByAliasOrThrow(clientAlias, Client.class);
         MetadataUpdate metadata = readMetadataUpdate(client, dataTable);
 
-        interopJourney.withProducer(producer, role);
+        if (role == UserRole.ADMIN) {
+            interopJourney.withProducer(producer);
+        } else {
+            interopJourney.withConsumer(producer, role);
+        }
         clientUseCase.tryToUpdateMetadata(client, metadata.name(), metadata.description());
     }
 
