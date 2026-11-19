@@ -5775,10 +5775,10 @@ ko:
       	at org.assertj.core.api.SoftAssertionsProvider.assertSoftly(SoftAssertionsProvider.java:122)
       	at org.assertj.core.api.SoftAssertions.assertSoftly(SoftAssertions.java:165)
       	at it.pagopa.interop.suite.contract.WebProducerEServiceTemplateDetailsPageContractTest.lambda$contractScenarios$3(WebProducerEServiceTemplateDetailsPageContractTest.java:81)
-    procedure: ''
-    result: ''
+    procedure: 'Log analizzato. Test ripetuto con run in locale e il problema si riscontra anche in locale. Effettuato anche check manuale sulla pagina controllando se XPath usato sia corretto e la risorsa URL (tag <a>) viene correttamente trovata sulla pagina in ambiente dev e in ambiente qa. Si desume che possa essere un problema di mancato caricamento entro i 20 secondi di polling.'
+    result: 'Un elemento Link non viene trovato nella pagina al suo caricamento dal test. XPath correntemente usato risulta corretto facendo il check manuale sul HTML della pagina. Si desume sia un problema di flakiness che non dovrebbe capitare dando più tempo per caricare gli elementi.'
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19690'
   - id_test: WebProducerAgreementContractTest::shouldShowAgreementDetailToProducer::richiesta di fruizione ricevuta
       visibile all'utente API del Comune di Milano
     error_log: |
