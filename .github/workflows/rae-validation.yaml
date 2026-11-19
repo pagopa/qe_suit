@@ -29,7 +29,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          if [[ ( "$PR_HEAD" == rae/rae_* || "$PR_HEAD" == feature/rae_* ) \
+          if [[ ( "$PR_HEAD" == rae/*/rae_* || "$PR_HEAD" == rae/rae_* || "$PR_HEAD" == feature/rae_* ) \
                 && "$PR_BASE" == develop \
                 && "$PR_REPO" == "$THIS_REPO" ]]; then
             echo 'eligible=true' >> "$GITHUB_OUTPUT"
@@ -75,11 +75,21 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Supports:
-          #   rae/rae_NrtStandardSuiteTest_TIMESTAMP
-          #   feature/rae_NrtStandardSuiteTest_TIMESTAMP
-          NAME="${RAE_HEAD_REF#*/}"
-          YAML="rae/${NAME}.yaml"
+          # New branches: rae/<namespace>/rae_<suite>_<timestamp>
+          # Legacy in-flight branches still use rae/rae_* or feature/rae_*.
+          # Never infer a namespace from YAML contents or PR-controlled paths.
+          if [[ "$RAE_HEAD_REF" =~ ^rae/([A-Za-z0-9][A-Za-z0-9_.-]*)/(rae_[A-Za-z0-9_.-]+_[0-9]{14})$ ]]; then
+            NAMESPACE="${BASH_REMATCH[1]}"
+            NAME="${BASH_REMATCH[2]}"
+            [[ "$NAMESPACE" != "." && "$NAMESPACE" != ".." ]] || exit 1
+            YAML="rae/${NAMESPACE}/${NAME}.yaml"
+          elif [[ "$RAE_HEAD_REF" =~ ^(rae|feature)/(rae_[A-Za-z0-9_.-]+_[0-9]{14})$ ]]; then
+            NAME="${BASH_REMATCH[2]}"
+            YAML="rae/${NAME}.yaml"
+          else
+            echo "Invalid RAE branch name: $RAE_HEAD_REF"
+            exit 1
+          fi
 
           test -f "$YAML" || {
             echo "Missing $YAML"
