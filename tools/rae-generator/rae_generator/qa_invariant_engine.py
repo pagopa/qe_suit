@@ -13,6 +13,8 @@ from typing import Literal
 UUID = re.compile(r'(?i)\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b')
 FRAME = re.compile(r'^\s*at\s+(?P<method>\S+)\((?P<source>[^():\n]*)(?::(?P<line>\d+))?\)\s*$')
 PROXY = re.compile(r'\$Proxy\d+(?=\.)')
+SEGMENTS = re.compile(r'([._:/-])')
+HEAD_TOKENS = re.compile(r'\S+')
 
 
 @dataclass(frozen=True)
@@ -98,6 +100,107 @@ def group_signature(approvals: list[Approval]) -> dict:
             'variable_lines': variable_lines}
 
 
+def _char_family(observed: list[str]) -> str | None:
+    """Agnostic character-family envelope; no domain/product identifiers."""
+    if not observed or not all(x and x.isascii() and x.isalnum() for x in observed):
+        return None
+    if all(x.isdigit() for x in observed):
+        return 'DIGIT'
+    if all(x.upper() == x for x in observed):
+        return 'UPPER_ALNUM'
+    if all(x.lower() == x for x in observed):
+        return 'LOWER_ALNUM'
+    return 'ALNUM'
+
+
+def _matches_family(value: str, family: str, lengths: set[int]) -> bool:
+    if len(value) not in lengths or not value.isascii() or not value.isalnum():
+        return False
+    return (family == 'ALNUM' or (family == 'DIGIT' and value.isdigit())
+            or (family == 'UPPER_ALNUM' and value.upper() == value)
+            or (family == 'LOWER_ALNUM' and value.lower() == value))
+
+
+def _structural_token_reasons(previous: list[str], incoming: str, pos: int) -> list[Reason] | None:
+    """Learn variable subsegments without any IUN/UUID/Java-specific schema.
+
+    Require >= 2 independently observed variable segments plus stable anchors
+    on both sides. All historical values must share delimiter skeleton.
+    Previously invariant segments remain exact until QA approves a change.
+    """
+    parsed = [SEGMENTS.split(v) for v in previous]
+    current = SEGMENTS.split(incoming)
+    if len({len(parts) for parts in parsed}) != 1 or len(current) != len(parsed[0]):
+        return None
+    skeleton = parsed[0]
+    if any(any(parts[i] != skeleton[i] for i in range(1, len(skeleton), 2))
+           for parts in parsed + [current]):
+        return None
+    variable = [i for i in range(0, len(skeleton), 2)
+                if len({parts[i] for parts in parsed}) >= 2]
+    # A single changing substring is too ambiguous to generalize as an ID.
+    if len(variable) < 2:
+        return None
+    # This is a bounded identifier-like region: preserve anchored context.
+    left = [i for i in range(0, min(variable), 2)
+            if len({parts[i] for parts in parsed}) == 1 and len(skeleton[i]) >= 2]
+    right = [i for i in range(max(variable) + 2, len(skeleton), 2)
+             if len({parts[i] for parts in parsed}) == 1 and len(skeleton[i]) >= 1]
+    if not left or not right:
+        return None
+    issues: list[Reason] = []
+    for i in range(0, len(skeleton), 2):
+        observed = [parts[i] for parts in parsed]
+        new = current[i]
+        if new in observed:
+            continue
+        if i not in variable:
+            issues.append(Reason('STRUCTURAL_INVARIANT_CHANGED',
+                                 f'token {pos}, segmento {i // 2}: {observed[0]}',
+                                 new, 'Una porzione del valore rimasta invariata nello storico QA è cambiata'))
+            continue
+        family = _char_family(observed)
+        lengths = {len(x) for x in observed}
+        if family is None or not _matches_family(new, family, lengths):
+            issues.append(Reason('STRUCTURAL_VARIANT_OUT_OF_SHAPE',
+                                 f'token {pos}, segmento {i // 2}: {sorted(set(observed))}',
+                                 new, 'La variante non rispetta il formato osservato nelle conferme QA'))
+    return issues
+
+
+def _message_reasons(historical: list[str], current: str) -> list[Reason]:
+    # An existing approved message is always an admissible value.
+    if current in historical:
+        return []
+    # Keep existing explicit UUID learning, independently of token segmentation.
+    historical_ids = set().union(*(set(UUID.findall(h)) for h in historical))
+    if len(historical_ids) >= 2:
+        normalized = lambda s: UUID.sub('<UUID>', s)
+        if any(normalized(h) == normalized(current) for h in historical):
+            return []
+    rows = [HEAD_TOKENS.findall(h) for h in historical]
+    incoming = HEAD_TOKENS.findall(current)
+    if not rows or len({len(r) for r in rows}) != 1 or len(incoming) != len(rows[0]):
+        return [Reason('MESSAGE_CHANGED', historical[-1], current,
+                       'La struttura dei token del messaggio diagnostico è cambiata')]
+    reasons: list[Reason] = []
+    for pos, token in enumerate(incoming):
+        approved = [row[pos] for row in rows]
+        if token in approved:
+            continue
+        # UUID generalization at a single aligned token, including key=value.
+        if len(historical_ids) >= 2 and any(UUID.sub('<UUID>', v) == UUID.sub('<UUID>', token)
+                                             for v in approved):
+            continue
+        structural = _structural_token_reasons(approved, token, pos)
+        if structural is not None:
+            reasons.extend(structural)
+        else:
+            reasons.append(Reason('MESSAGE_CHANGED', ', '.join(sorted(set(approved))), token,
+                                  'Valore non approvato o senza struttura sufficientemente distintiva'))
+    return reasons
+
+
 @dataclass
 class Group:
     suite: str
@@ -128,14 +231,9 @@ class Group:
         if not hist_heads:
             return False, [Reason('NO_APPROVAL', '', '', 'Firma priva di conferme QA')], 0
 
-        # UUIDs can generalize only after two distinct QA-confirmed UUIDs.
-        historical_ids = set().union(*(set(UUID.findall(h)) for h in hist_heads))
-        allow_new_uuid = len(historical_ids) >= 2
-        normalized = (lambda s: UUID.sub('<UUID>', s)) if allow_new_uuid else (lambda s: s)
-        compatible_head = any(normalized(h) == normalized(head) for h in hist_heads)
-        if not compatible_head:
-            reasons.append(Reason('MESSAGE_CHANGED', hist_heads[-1], head,
-                                  'Messaggio diagnostico differente dai valori QA approvati'))
+        # QA-approved structural learning applies to every diagnostic token,
+        # not just UUIDs. It does not use current KO as training evidence.
+        reasons.extend(_message_reasons(hist_heads, head))
 
         # Determine frame position semantics only when all approved shapes align.
         frame_lengths = {len(fs) for fs in hist_frames}
@@ -203,6 +301,15 @@ class Group:
         else:
             overlap = 0
         score = 0.75 * head_ratio + 0.25 * overlap
+        # A diagnostic message with strong unchanged token context is suitable
+        # for QA proposal even if the long variable token lowers char-similarity.
+        # Never use this floor to authorize `known`.
+        head_tokens = head.split()
+        if len(head_tokens) >= 8 and any(len(h.split()) == len(head_tokens) for h in hist_heads):
+            common = max(sum(a == b for a, b in zip(head_tokens, h.split())) / len(head_tokens)
+                         for h in hist_heads if len(h.split()) == len(head_tokens))
+            if common >= 0.75:
+                score = max(score, 0.74)
         return False, reasons, score
 
 
@@ -236,14 +343,30 @@ class QALearningMatcher:
                                     'Nessuna conferma QA disponibile per questa suite e test'),))
         results = [(g, *g.evaluate(observation)) for g in groups]
         compatible = [(g, r) for g, ok, r, _ in results if ok]
-        if len(compatible) == 1:
-            g, _ = compatible[0]
-            return Decision('known', g.ticket, g.group_id)
+        # Check ambiguity BEFORE applying the minimum-confirmations rule:
+        # one fully learned group plus one identical singleton is still unsafe.
         if len(compatible) > 1:
             tickets = tuple(sorted({g.ticket for g, _ in compatible}))
+            detail = ('Il log è compatibile con più identità di difetto storiche, '
+                      'inclusi eventuali gruppi con una sola occorrenza. '
+                      'Verificare la causa prima di assegnare il ticket.')
+            conflicts = ', '.join(f'{g.group_id} (ticket {g.ticket}, {len(g.approvals)} eventi QA)'
+                                  for g, _ in compatible)
+            code = ('AMBIGUOUS_QA_GROUPS' if all(len(g.approvals) >= 2 for g, _ in compatible)
+                    else 'HISTORICAL_DEFECT_CONFLICT')
             return Decision('proposed', None, None,
-                            (Reason('AMBIGUOUS_QA_GROUPS', ', '.join(tickets), '',
-                                    'Più gruppi QA approvati corrispondono al nuovo log'),), tickets)
+                            (Reason(code, conflicts, '', detail),), tickets)
+        if len(compatible) == 1:
+            g, _ = compatible[0]
+            if len(g.approvals) >= 2:
+                return Decision('known', g.ticket, g.group_id)
+            return Decision('proposed', g.ticket, g.group_id,
+                            (Reason('INSUFFICIENT_QA_CONFIRMATIONS',
+                                    f'{g.group_id}: 1 occorrenza QA',
+                                    observation.error,
+                                    'Il log coincide con un solo evento storico, ma non esiste '
+                                    'una seconda conferma QA che autorizzi il riconoscimento automatico'),),
+                            (g.ticket,))
         ranked = sorted(results, key=lambda r: r[3], reverse=True)
         best, _, reasons, score = ranked[0]
         if score >= self.proposal_threshold:

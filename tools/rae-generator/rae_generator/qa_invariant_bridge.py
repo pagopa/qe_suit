@@ -44,8 +44,10 @@ def build_learning(history):
     engine = QALearningMatcher()
     candidates = {}
     for k, rows in groups.items():
-        if len(rows) < 2:
-            continue
+        # A singleton historical group is NOT enough evidence for `known`,
+        # but it MUST remain visible to veto an incompatible auto-match.
+        # In particular, an identical log with a different QA defect identity
+        # is a conflict even when it has only one historical occurrence.
         # Historical entries are newest-first. Each group must carry one
         # consistent ticket identity; conflicting tickets require QA review.
         tickets = {(str(r.get('link_prod_bug') or ''), str(r.get('link_suite_bug') or ''))
