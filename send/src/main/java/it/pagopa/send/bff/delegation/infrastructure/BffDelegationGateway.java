@@ -82,6 +82,6 @@ public class BffDelegationGateway implements DelegationGateway {
     }
 
     private String sessionToken(User user) {
-        return tokenProvider.requireToken(user.getSessionTokenKey());
+        return tokenProvider.requireToken(user.getUsername());
     }
 }

@@ -106,7 +106,7 @@ public class BffEServiceGateway implements EServiceGateway {
     @Override
     public void shouldFailToUpdateEServiceMetadata(EServiceUpdateFailureReason reason) {
         var expected = switch (reason) {
-            case INVALID_DATA -> 400;
+            case INVALID_DATA, NOT_ALLOWED -> 400;
             case CONFLICT, OUT_OF_DRAFT_OPERATION_FIELD -> 409;
             case UNAUTHORIZED -> 403;
         };
