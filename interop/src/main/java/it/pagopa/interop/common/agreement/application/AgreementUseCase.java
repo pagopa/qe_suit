@@ -139,4 +139,8 @@ public class AgreementUseCase {
     public void attemptAgreementSignedDocumentDownload(Agreement agreement) {
         agreementGateway.attemptAgreementSignedDocumentDownload(agreement);
     }
+
+    public void attemptInvalidFormatConsumerDocumentUpload(Agreement agreement) {
+        agreementGateway.attemptInvalidFormatConsumerDocumentUpload(agreement);
+    }
 }

@@ -29,7 +29,7 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
     Then il messaggio di errore corrisponde al caso "BFF_CONTRACT_EXCEPTION" in lingua "it"
 
   # Endpoint: POST /agreements/:agreementId/consumer-documents
-  Scenario: [ERROR_197] - Rifiuto di un allegato PDF con contenuto non valido
+  Scenario: [ERROR_197] - Rifiuto di un allegato con contenuto non valido
   Dato un e-service che richiede un attributo verificato e una richiesta di fruizione del fruitore in bozza
   Quando il fruitore tenta di allegare un file identificato come PDF ma con contenuto incompatibile con il formato dichiarato
   Allora il sistema rifiuta il caricamento e invita il fruitore a correggere il file prima di riprovare.
@@ -48,5 +48,5 @@ Feature: Messaggi di errore durante il download del documento firmato e il caric
     And un admin appartenente al fruitore PagoPA
     # Fixture da predisporre: PDF con tipo ammesso e contenuto non valido.
     # Operazione BFF e binding mancanti per il caricamento degli allegati alla richiesta.
-    When il fruitore tenta di allegare alla richiesta di fruizione il file "pdf-con-contenuto-non-valido.pdf"
+    When il fruitore tenta di allegare la richiesta di fruizione un file con formato non valido
     Then il messaggio di errore corrisponde al caso "AGREEMENT_INVALID_FILE_UPLOAD_ERROR" in lingua "it"

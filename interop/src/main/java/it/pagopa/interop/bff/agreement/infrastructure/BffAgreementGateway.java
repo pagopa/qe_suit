@@ -204,4 +204,11 @@ public class BffAgreementGateway implements AgreementGateway {
     public void attemptAgreementSignedDocumentDownload(Agreement agreement) {
         restClient.downloadSignedDocument(agreement.getId()).withoutPolling();
     }
+
+    @Override
+    public void attemptInvalidFormatConsumerDocumentUpload(Agreement agreement) {
+        var document = FileUtils.loadClasspathResourceAsTempFile("assets/agreement/esempio.csv");
+        restClient.addConsumerDocument(agreement.getId(), "openapi3-riferimenti.json", "Allegato di test", document)
+                .withoutPolling();
+    }
 }

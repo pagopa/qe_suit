@@ -5,7 +5,8 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.agreement.application.AgreementUseCase;
-import it.pagopa.interop.common.agreement.domain.Agreement;
+import it.pagopa.interop.common.agreement.domain
+        .Agreement;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -135,5 +136,10 @@ public class AgreementSteps {
     @When("l'erogatore tenta di scaricare il documento firmato della {currentAgreement}")
     public void attemptAgreementSignedDocumentDownload(Agreement agreement) {
         agreementUseCase.attemptAgreementSignedDocumentDownload(agreement);
+    }
+
+    @When("il fruitore tenta di allegare la {currentAgreement} un file con formato non valido")
+    public void attemptInvalidFormatConsumerDocumentUpload(Agreement agreement) {
+        agreementUseCase.attemptInvalidFormatConsumerDocumentUpload(agreement);
     }
 }
