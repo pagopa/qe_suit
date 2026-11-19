@@ -6,16 +6,25 @@ import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.interop.common.agreement.application.AgreementUseCase;
 import it.pagopa.interop.common.agreement.domain.Agreement;
+import it.pagopa.interop.common.agreement.domain.AgreementApprovalPolicy;
 import it.pagopa.interop.common.agreement.domain.AgreementCreationFailureReason;
 import it.pagopa.interop.common.agreement.domain.AgreementState;
+import it.pagopa.interop.common.attribute.domain.Attribute;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
+import it.pagopa.interop.common.eservice.application.command.UpdateEServiceDescriptorCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
+import it.pagopa.interop.common.eservice.infrastructure.cucumber.dto.SelectedEServiceDescriptor;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.context.AuthSession;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.User;
-import it.pagopa.interop.common.kernel.domain.UserRole;
+import it.pagopa.interop.common.kernel.domain.TenantRef;
+import it.pagopa.interop.common.tenant.application.TenantUseCase;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Set;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class AgreementSteps {
@@ -23,6 +32,9 @@ public class AgreementSteps {
     private final AuthSession authSession;
     private final EntityStore entityStore;
     private final InteropJourney interopJourney;
+    private final TenantUseCase tenantUseCase;
+    private final EServiceDescriptorUseCase eServiceDescriptorUseCase;
+    private final EServiceRequestFactory eServiceRequestFactory;
 
     @When("l'erogatore accede ai dettagli della richiesta di fruizione ricevuta")
     public void viewProducerAgreementDetails() {
@@ -119,6 +131,86 @@ public class AgreementSteps {
     @When("il fruitore tenta di creare una richiesta di fruizione per la versione più recente del{eServiceByAlias}")
     public void attemptAgreementCreation(EService eService) {
         agreementUseCase.attemptAgreementCreation(eService, eService.getLatestDescriptor());
+    }
+
+    @Given("il contratto della {currentAgreement} è disponibile")
+    public void agreementContractAvailable(Agreement agreement) {
+        agreementUseCase.awaitContractAvailable(agreement);
+    }
+
+    @Given("il documento firmato della {currentAgreement} non è ancora disponibile")
+    public void agreementSignedContractNotYetAvailable(Agreement agreement) {
+        agreementUseCase.verifySignedContractNotYetAvailable(agreement);
+    }
+
+    @Given("il file allegato alla {currentAgreement}")
+    public void attachConsumerDocumentToAgreement(Agreement agreement) {
+        agreementUseCase.addConsumerDocument(agreement, null);
+    }
+
+    @Given("il file {string} allegato alla {currentAgreement}")
+    public void attachNamedConsumerDocumentToAgreement(String fileName, Agreement agreement) {
+        agreementUseCase.addConsumerDocument(agreement, fileName);
+    }
+
+    @Given("il documento allegato alla {currentAgreement} viene eliminato")
+    public void removeAttachedDocumentFromAgreement(Agreement agreement) {
+        agreementUseCase.removeLastConsumerDocument(agreement);
+    }
+
+    @Given("la {currentAgreement} inviata")
+    public void submitAgreement(Agreement agreement) {
+        Agreement submitted = agreementUseCase.submitAgreement(agreement);
+        agreementUseCase.awaitState(submitted, Set.of(AgreementState.PENDING));
+    }
+
+    @Given("l'{attributeByAlias} assegnato a/al {tenant} per la {currentAgreement}")
+    public void assignVerifiedAttributeForAgreement(Attribute attribute, Tenant consumer, Agreement agreement) {
+        tenantUseCase.assignVerifiedAttribute(
+                TenantRef.of(consumer.getOrganizationId()),
+                attribute.getRef(),
+                agreement.getRef()
+        );
+    }
+
+    @Given("la {currentAgreement} attivata")
+    public void activateAgreement(Agreement agreement) {
+        Agreement activated = agreementUseCase.activateAgreement(agreement);
+        agreementUseCase.awaitState(activated, Set.of(AgreementState.ACTIVE));
+    }
+
+    @Given("{eServiceDescriptorByVersionAndAlias} configurata per l'approvazione manuale delle richieste di fruizione")
+    public void configureDescriptorForManualAgreementApproval(SelectedEServiceDescriptor selected) {
+        EService eService = selected.getEService();
+        EServiceDescriptor descriptor = eService.getDescriptorOrThrow(selected.getVersion());
+        Tenant producer = Tenant.fromOrganizationId(UUID.fromString(eService.getProducerId()));
+        authSession.set(producer);
+
+        UpdateEServiceDescriptorCommand command = eServiceRequestFactory.defaultUpdateDescriptorCommand()
+                .agreementApprovalPolicy(AgreementApprovalPolicy.MANUAL);
+        EServiceDescriptor updated = eServiceDescriptorUseCase.updateDescriptor(eService, descriptor, command);
+        eService.upsertDescriptor(updated);
+    }
+
+    @Given("una richiesta di fruizione rifiutata per l'{currentEService}, creata da/dal {tenant}")
+    @Given("una richiesta di fruizione rifiutata per {eServiceByAlias}, creata da/dal {tenant}")
+    public void createRejectedAgreementForEService(EService eService, Tenant consumer) {
+        interopJourney
+                .withConsumer(consumer)
+                .linkAgreement(eService, AgreementState.REJECTED);
+    }
+
+    @Given("una richiesta di fruizione rifiutata per {eServiceByAlias}, creata da/dal {tenant} e identificata come {string}")
+    public void createRejectedAgreementForEServiceWithAlias(EService eService, Tenant consumer, String alias) {
+        if (alias == null || alias.isBlank()) {
+            throw new IllegalArgumentException("Agreement alias must not be blank");
+        }
+        if (entityStore.getByAlias(alias, Agreement.class).isPresent()) {
+            throw new IllegalArgumentException("Agreement alias is already registered: " + alias);
+        }
+        interopJourney
+                .withConsumer(consumer)
+                .linkAgreement(eService, AgreementState.REJECTED, null, alias);
     }
 
     @When("il fruitore tenta di duplicare la {currentAgreement}")

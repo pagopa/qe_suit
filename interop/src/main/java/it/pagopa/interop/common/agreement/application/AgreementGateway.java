@@ -8,6 +8,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
+import it.pagopa.interop.common.kernel.domain.Document;
 import jakarta.annotation.Nullable;
 import org.springframework.plugin.core.Plugin;
 
@@ -49,9 +50,17 @@ public interface AgreementGateway extends Plugin<Channel> {
 
     Agreement suspendAgreement(Agreement agreement, @Nullable Delegation delegation);
 
+    Agreement rejectAgreement(Agreement agreement);
+
     Agreement archiveAgreement(Agreement agreement);
 
     Agreement awaitState(Agreement agreement, Set<AgreementState> expectedStates);
+
+    Agreement awaitContractAvailable(Agreement agreement);
+
+    Agreement addConsumerDocument(Agreement agreement, @Nullable String fileName);
+
+    Agreement removeConsumerDocument(Agreement agreement, Document document);
 
     void attemptAgreementSuspension(Agreement agreement);
 

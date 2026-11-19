@@ -6,12 +6,15 @@ import it.pagopa.interop.common.agreement.domain.AgreementState;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.Delegation;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.utils.async.PollingUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Service
 @RequiredArgsConstructor
@@ -100,12 +103,42 @@ public class AgreementUseCase {
         return agreementGateway.suspendAgreement(agreement, delegation);
     }
 
+    public Agreement rejectAgreement(Agreement agreement) {
+        return agreementGateway.rejectAgreement(agreement);
+    }
+
     public Agreement archiveAgreement(Agreement agreement) {
         return agreementGateway.archiveAgreement(agreement);
     }
 
     public Agreement awaitState(Agreement agreement, Set<AgreementState> expectedStates) {
         return agreementGateway.awaitState(agreement, expectedStates);
+    }
+
+    public Agreement awaitContractAvailable(Agreement agreement) {
+        return agreementGateway.awaitContractAvailable(agreement);
+    }
+
+    public void verifySignedContractNotYetAvailable(Agreement agreement) {
+        Agreement refreshed = getAgreement(agreement);
+        assertThat(refreshed.getIsDocumentReady())
+                .as("Il documento firmato della richiesta di fruizione non deve essere ancora disponibile")
+                .isNotEqualTo(Boolean.TRUE);
+    }
+
+    public Agreement addConsumerDocument(Agreement agreement, @Nullable String fileName) {
+        return agreementGateway.addConsumerDocument(agreement, fileName);
+    }
+
+    public Agreement removeLastConsumerDocument(Agreement agreement) {
+        Agreement current = agreement.getConsumerDocuments() != null && !agreement.getConsumerDocuments().isEmpty()
+                ? agreement
+                : getAgreement(agreement);
+        if (current.getConsumerDocuments() == null || current.getConsumerDocuments().isEmpty()) {
+            throw new IllegalStateException("No consumer document found for agreement " + agreement.getId());
+        }
+        Document document = current.getConsumerDocuments().get(current.getConsumerDocuments().size() - 1);
+        return agreementGateway.removeConsumerDocument(current, document);
     }
 
     public void attemptAgreementSuspension(Agreement agreement) {

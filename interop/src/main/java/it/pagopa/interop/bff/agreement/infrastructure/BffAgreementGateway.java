@@ -10,6 +10,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.utils.async.PollingUtils;
 import it.pagopa.interop.generated.openapi.clients.bff.model.AgreementPayload;
 import it.pagopa.utils.FileUtils;
@@ -17,6 +18,7 @@ import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.Optional;
 import java.util.Set;
 
@@ -127,6 +129,15 @@ public class BffAgreementGateway implements AgreementGateway {
     }
 
     @Override
+    public Agreement rejectAgreement(Agreement agreement) {
+        return restClient.reject(agreement.getId(), agreementRequestFactory.rejectionRequest())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(mapper::toAgreement)
+                .updateContext()
+                .get();
+    }
+
+    @Override
     public Agreement archiveAgreement(Agreement agreement) {
         restClient.archive(agreement.getId())
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
@@ -156,6 +167,66 @@ public class BffAgreementGateway implements AgreementGateway {
                     return false;
                 }
         );
+    }
+
+    @Override
+    public Agreement awaitContractAvailable(Agreement agreement) {
+        return PollingUtils.pollUntil(
+                () -> getAgreement(agreement.getRef()),
+                current -> Boolean.TRUE.equals(current.getIsContractPresent())
+        );
+    }
+
+    @Override
+    public Agreement addConsumerDocument(Agreement agreement, @Nullable String fileName) {
+        String defaultFileName = "allegato-a.pdf";
+        String effectiveFileName = fileName != null && !fileName.isBlank() ? fileName : defaultFileName;
+        File documentFile = resolveConsumerDocumentFile(effectiveFileName);
+
+        restClient.addConsumerDocument(
+                        agreement.getId(),
+                        effectiveFileName,
+                        effectiveFileName,
+                        documentFile
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        return PollingUtils.pollUntil(
+                () -> getAgreement(agreement.getRef()),
+                current -> current.getConsumerDocuments() != null
+                        && current.getConsumerDocuments().stream()
+                        .anyMatch(doc -> effectiveFileName.equals(doc.getName())
+                                || effectiveFileName.equals(doc.getPrettyName()))
+        );
+    }
+
+    @Override
+    public Agreement removeConsumerDocument(Agreement agreement, Document document) {
+        restClient.removeConsumerDocument(agreement.getId(), document.getId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        return PollingUtils.pollUntil(
+                () -> getAgreement(agreement.getRef()),
+                current -> current.getConsumerDocuments() == null
+                        || current.getConsumerDocuments().stream()
+                        .noneMatch(doc -> document.getId().equals(doc.getId()))
+        );
+    }
+
+    private File resolveConsumerDocumentFile(String fileName) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            classLoader = BffAgreementGateway.class.getClassLoader();
+        }
+        for (String candidate : java.util.List.of(fileName, "assets/" + fileName, "assets/agreement/" + fileName)) {
+            String normalized = candidate.startsWith("/") ? candidate.substring(1) : candidate;
+            if (classLoader.getResource(normalized) != null) {
+                return FileUtils.loadClasspathResourceAsTempFile(normalized);
+            }
+        }
+        throw new IllegalStateException("Risorsa non trovata nel classpath: " + fileName);
     }
 
     @Override
