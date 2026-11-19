@@ -166,4 +166,9 @@ public class M2MPurposeGateway implements PurposeGateway {
     public void attemptNameUpdate(PurposeRef purposeRef, String name) {
         throw unsupportedOperation();
     }
+
+    @Override
+    public void attemptPurposeCloning(PurposeRef purposeRef, PurposeCloneCommand cloneCommand) {
+        throw unsupportedOperation();
+    }
 }

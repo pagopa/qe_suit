@@ -3,6 +3,7 @@ package it.pagopa.interop.common.purpose.application;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
@@ -67,5 +68,19 @@ class PurposeUseCaseTest {
                 purpose, eService.toBuilder().id(UUID.randomUUID()).build()))
                 .isInstanceOf(IllegalArgumentException.class).hasMessageContaining("does not belong");
         verifyNoInteractions(gateway);
+    }
+
+    @Test
+    void attemptsCloningForTheSelectedPurposeAndItsOwnEService() {
+        var commands = mock(PurposeCommandFactory.class);
+        var command = mock(PurposeCloneCommand.class);
+        var eServiceRef = EServiceRef.of(purpose.getEserviceId());
+        when(commands.cloneCommand(eServiceRef)).thenReturn(command);
+
+        new PurposeUseCase(gateway, commands).attemptPurposeCloning(purpose);
+
+        verify(commands).cloneCommand(eServiceRef);
+        verify(gateway).attemptPurposeCloning(purpose.getRef(), command);
+        verifyNoMoreInteractions(gateway, commands);
     }
 }

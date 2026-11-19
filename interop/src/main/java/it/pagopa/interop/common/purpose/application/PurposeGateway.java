@@ -46,4 +46,6 @@ public interface PurposeGateway extends Plugin<Channel> {
     Purpose suspendPurpose(PurposeRef purposeRef, PurposeVersionRef purposeVersionRef, @Nullable DelegationRef delegationRef);
 
     void attemptNameUpdate(PurposeRef purposeRef, String name);
+
+    void attemptPurposeCloning(PurposeRef purposeRef, PurposeCloneCommand cloneCommand);
 }

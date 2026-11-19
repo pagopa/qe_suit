@@ -82,8 +82,7 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
       | F-1   |
     # Setup e binding mancanti; verificare il nome derivato dal clone, senza assumere prefissi o suffissi.
     And un'altra finalità di PagoPA per l'e-service "ES-1" con il nome che deriverebbe dalla duplicazione di "F-1"
-    # Operazione BFF e binding negativo mancanti; usare F-1, non l'ultima finalità creata.
-    When il fruitore tenta di duplicare la finalità "F-1"
+    When il fruitore tenta di duplicare la purpose "F-1"
     Then il messaggio di errore corrisponde al caso "PURPOSE_DUPLICATED_PURPOSE_TITLE__POST_PURPOSES_PURPOSE_ID_CLONE" in lingua "it"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/purposes

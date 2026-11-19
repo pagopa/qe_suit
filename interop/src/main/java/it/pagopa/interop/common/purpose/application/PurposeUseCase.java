@@ -136,4 +136,9 @@ public class PurposeUseCase {
     public void attemptNameUpdate(Purpose purpose, String name) {
         purposeGateway.attemptNameUpdate(purpose.getRef(), name);
     }
+
+    public void attemptPurposeCloning(Purpose purpose) {
+        PurposeCloneCommand command = purposeCommandFactory.cloneCommand(EServiceRef.of(purpose.getEserviceId()));
+        purposeGateway.attemptPurposeCloning(purpose.getRef(), command);
+    }
 }

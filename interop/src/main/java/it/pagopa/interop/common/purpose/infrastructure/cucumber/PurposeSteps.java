@@ -242,4 +242,9 @@ public class PurposeSteps {
     public void attemptNameUpdate(Purpose purpose, String name) {
         purposeUseCase.attemptNameUpdate(purpose, name);
     }
+
+    @When("il fruitore tenta di duplicare la {purposeByAlias}")
+    public void attemptPurposeCloning(Purpose purpose) {
+        purposeUseCase.attemptPurposeCloning(purpose);
+    }
 }
