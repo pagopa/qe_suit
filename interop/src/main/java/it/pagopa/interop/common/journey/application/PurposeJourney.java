@@ -22,7 +22,7 @@ public interface PurposeJourney<SELF extends PurposeJourney<SELF>> extends Journ
 
     SELF submitRiskAnalysis();
 
-    SELF signRiskAnalysis(int metadataVersionToSign);
+    SELF signRiskAnalysis();
 
     SELF rejectRiskAnalysis(String rejectionReason);
 }

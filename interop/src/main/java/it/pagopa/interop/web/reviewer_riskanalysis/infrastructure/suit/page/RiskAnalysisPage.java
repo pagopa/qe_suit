@@ -5,14 +5,19 @@ import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
+import it.pagopa.infrastructure.suit.component.Link;
 import it.pagopa.infrastructure.suit.component.Pagination;
 import it.pagopa.infrastructure.suit.component.Table;
 import it.pagopa.infrastructure.suit.component.TableCell;
+import it.pagopa.infrastructure.suit.component.TableRow;
 import it.pagopa.infrastructure.suit.component.Tabs;
 import it.pagopa.infrastructure.suit.component.TextField;
 import it.pagopa.utils.async.PollingUtils;
 
+import java.net.URI;
+import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Page object for the risk-analysis workspace and its unauthorized-access view.
@@ -51,6 +56,14 @@ public interface RiskAnalysisPage extends Page {
     @XPath(".//*[@role='tabpanel' and @aria-labelledby = //button[@role='tab' and @aria-selected='true']/@id]//nav[contains(@class,'MuiPagination-root')]")
     Pagination pagination();
 
+    @XPath(".//*[@role='tabpanel' and @aria-labelledby = //button[@role='tab' and @aria-selected='true']/@id]//table/tbody/tr")
+    List<AssignmentRow> assignmentRows();
+
+    interface AssignmentRow extends TableRow {
+        @XPath("./td//a[contains(@href, '/analisi-del-rischio/')]")
+        Link detailLink();
+    }
+
     @XPath(".//h1")
     Label unauthorizedTitle();
 
@@ -77,19 +90,40 @@ public interface RiskAnalysisPage extends Page {
     }
 
     /**
-     * Snapshot of the e-service name, reviewer or total number of reviewers and status shown for a risk analysis.
+     * Snapshot of a risk analysis shown in the table.
      *
+     * @param purposeId identifier from the analysis detail link
      * @param eserviceName name of the associated e-service
      * @param reviewerOrTotReviewer reviewer or total number of reviewers
      * @param status displayed risk-analysis status
      */
-    record RiskAnalysisRow(String eserviceName, String reviewerOrTotReviewer, String status) {}
+    record RiskAnalysisRow(UUID purposeId, String eserviceName, String reviewerOrTotReviewer, String status) {}
+
+    static UUID purposeIdFromDetailHref(String href) {
+        if (href == null || href.isBlank()) {
+            throw new IllegalArgumentException("Risk-analysis detail link has no href");
+        }
+        String path = URI.create(href).getPath();
+        if (path == null) {
+            throw new IllegalArgumentException("Risk-analysis detail link has no path: " + href);
+        }
+        List<String> segments = Arrays.asList(path.split("/", -1));
+        int marker = segments.indexOf("analisi-del-rischio");
+        if (marker < 0 || marker + 1 >= segments.size() || segments.get(marker + 1).isBlank()) {
+            throw new IllegalArgumentException("Risk-analysis detail link has no purpose ID: " + href);
+        }
+        try {
+            return UUID.fromString(segments.get(marker + 1));
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Invalid purpose ID in risk-analysis detail link: " + href, ex);
+        }
+    }
 
     /**
-     * Reads the e-service name and status from each row on the currently selected
+     * Reads each analysis from the currently selected
      * tab and pagination page, preserving display order without navigating.
      *
-     * @return row snapshots containing the e-service name and risk-analysis status
+     * @return row snapshots containing the purpose identity and displayed values
      */
     default List<RiskAnalysisRow> readRecordsEserviceStatus() {
         PollingUtils.pollUntil(
@@ -97,10 +131,12 @@ public interface RiskAnalysisPage extends Page {
                 tableHead -> !tableHead.rows().isEmpty(),
                 "Risk Analysis table is not loaded"
         );
-        return riskAnalysisTable().tBody().rows().stream()
+        return assignmentRows().stream()
                 .map(row -> {
+                    UUID purposeId = purposeIdFromDetailHref(row.detailLink().getHref());
                     List<TableCell> cells = row.cells();
                     return new RiskAnalysisRow(
+                            purposeId,
                             cells.get(1).read().trim(),
                             cells.get(3).read().trim(),
                             cells.get(4).read().trim()

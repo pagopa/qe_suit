@@ -42,7 +42,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Risk Analysis Detail Web Contract Tests")
 public class WebReviewerRiskAnalysisDetailContractTest {
 
-    private static final int INITIAL_RISK_ANALYSIS_METADATA_VERSION = 2;
     private static final String RISK_ANALYSIS_REJECTION_REASON = "Risk analysis rejected by contract test";
 
     private final InteropJourney interopJourney;
@@ -312,11 +311,10 @@ public class WebReviewerRiskAnalysisDetailContractTest {
 
     private Purpose createAndSignRiskAnalysis() {
         return interopJourney
-                .withConsumer(consumer, reviewer).signRiskAnalysis(INITIAL_RISK_ANALYSIS_METADATA_VERSION).get(Purpose.class);
+                .withConsumer(consumer, reviewer).signRiskAnalysis().get(Purpose.class);
     }
 
     private Purpose createAndRejectRiskAnalysis() {
         return interopJourney.withConsumer(consumer, reviewer).rejectRiskAnalysis(RISK_ANALYSIS_REJECTION_REASON).get(Purpose.class);
     }
 }
-
