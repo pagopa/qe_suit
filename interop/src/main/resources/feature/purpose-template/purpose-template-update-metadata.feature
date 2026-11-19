@@ -75,7 +75,7 @@ Feature: Modifica dei metadati dei template finalità
       | nome        | nuovo nome        |
       | descrizione | nuova descrizione |
       | destinatari | nuovi destinatari |
-    Then un admin appartenente al fruitore Comune di Comun Nuovo
+    Then un admin del Comune di Comun Nuovo
     And la finalità conserva lo stato e i dati di riferimento
 
 #  @work-item:QA-19036
