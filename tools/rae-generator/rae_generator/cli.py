@@ -7,7 +7,7 @@ import sys
 from .generator import create_rae, write_yaml
 from .namespace import namespace_dir, validate_output_path
 from .renderer import render
-from .validator import read_yaml, validate, ValidationError
+from .validator import read_yaml, validate, ValidationError, validate_original_evidences  # RAE_REVIEW_PANEL_V1
 import yaml
 from .parsers import ReportError
 
@@ -46,6 +46,8 @@ def main(argv: list[str] | None = None) -> int:
             if args.qa_reviewed and not args.original_yaml:
                 raise ValidationError('--qa-reviewed richiede --original-yaml')
             original = validate(yaml.safe_load(args.original_yaml.read_text(encoding='utf-8'))) if args.original_yaml else None
+            if original is not None:
+                validate_original_evidences(data, original)
             md = args.yaml_file.with_suffix('.md')
             expected = render(data, original_data=original, qa_reviewed=args.qa_reviewed)
             if args.command == 'check':

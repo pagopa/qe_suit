@@ -8,6 +8,7 @@ from yaml.emitter import ScalarAnalysis
 from .history import load_history
 from .progressive import ProgressiveMatcher, analysis_digest
 from .parsers import collect_reports
+from .review_evidence import snapshot  # RAE_REVIEW_PANEL_V1
 
 FIELDS = ('id_test', 'error_log', 'procedure', 'result', 'link_prod_bug', 'link_suite_bug')
 
@@ -43,6 +44,11 @@ def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment:
             }
             if decision == 'proposed':
                 matching['proposed_digest'] = analysis_digest(entry)
+                # Diagnostic snapshot only; never changes classifier decisions.
+                if matcher is not None:
+                    evidence = snapshot(matcher.last_review_reasons)
+                    if evidence:
+                        matching['review_evidence'] = evidence
             entry['matching'] = matching
             logging.info('RAE %s per %s da %s', decision, failure.id_test, previous['_source_file'])
         # The ticket alone can never promote a suggestion to a known KO.

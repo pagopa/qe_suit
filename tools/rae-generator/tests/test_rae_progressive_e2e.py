@@ -82,7 +82,7 @@ def test_01_first_seen_history_proposes_not_known(monkeypatch, tmp_path):
 def test_02_no_confirmation_before_human_review(monkeypatch, tmp_path):
     _, proposal = setup_proposal(monkeypatch, tmp_path)
     before = render(proposal)
-    assert 'MATCH PROPOSTO' in before
+    assert 'Corrispondenza storica da validare' in before
     assert 'Validazione finale prima dell’automazione' not in before
     assert not is_qa_confirmed(proposal['ko'][0], original=proposal['ko'][0], qa_reviewed=False)
 

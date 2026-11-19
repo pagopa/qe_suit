@@ -72,6 +72,7 @@ jobs:
         working-directory: rae_pr
         env:
           RAE_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          RAE_JIRA_HOSTS: pagopa.atlassian.net  # Canonical Jira tenant; syntax and host, not ticket existence
         run: |
           set -euo pipefail
 
