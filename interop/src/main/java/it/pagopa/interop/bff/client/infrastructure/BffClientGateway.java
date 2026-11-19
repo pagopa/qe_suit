@@ -146,11 +146,16 @@ public class BffClientGateway implements ClientGateway {
                 .name(name)
                 .description(description);
 
-        return restClient.updateClient(client.getId(), updateSeed)
-                .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(ignored -> getClient(ClientRef.of(client.getId())))
-                .updateContext()
-                .get();
+        restClient.updateClient(client.getId(), updateSeed)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getClient(ClientRef.of(client.getId())),
+                updatedClient -> (name == null || Objects.equals(name, updatedClient.getName()))
+                        && (description == null || Objects.equals(description, updatedClient.getDescription())),
+                "Metadati attesi non ancora visibili per il client %s (nome: %s, descrizione: %s)"
+                        .formatted(client.getId(), name, description)
+        );
     }
 
     @Override
