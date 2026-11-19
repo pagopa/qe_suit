@@ -9,6 +9,7 @@ import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.DelegationRef;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.Purpose;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersion;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeFromTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersionSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ReversePurposeDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateDraftPurposeRequest;
@@ -40,6 +41,19 @@ public class M2MPurposeRestClient extends RestClient {
     public TestChain<Purpose> createPurpose(@Nonnull PurposeSeed payload) {
         return execute(
                 () -> purposesApi.createPurpose()
+                        .body(payload)
+                        .execute(Function.identity()),
+                Purpose.class
+        );
+    }
+
+    public TestChain<Purpose> createPurposeFromTemplate(
+            @Nonnull UUID purposeTemplateId,
+            @Nonnull PurposeFromTemplateSeed payload
+    ) {
+        return execute(
+                () -> purposesApi.createPurposeFromTemplate()
+                        .purposeTemplateIdPath(purposeTemplateId)
                         .body(payload)
                         .execute(Function.identity()),
                 Purpose.class

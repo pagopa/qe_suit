@@ -6,11 +6,17 @@ import io.restassured.response.Response;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
+import it.pagopa.interop.common.kernel.domain.EServiceRef;
+import it.pagopa.interop.common.kernel.domain.PurposeTemplateRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisAnswerTemplate;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormTemplate;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.api.PurposesApi;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeFromTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ReversePurposeDraftUpdateSeed;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.UpdateDraftPurposeRequest;
 import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.PurposeVersionSeed;
@@ -18,6 +24,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -31,11 +39,14 @@ class M2MPurposeGatewayTest {
     private final PurposesApi.CreatePurposeVersionOper create = mock(PurposesApi.CreatePurposeVersionOper.class);
     private final PurposesApi.ArchivePurposeOper archive = mock(PurposesApi.ArchivePurposeOper.class);
     private final PurposesApi.GetPurposeOper read = mock(PurposesApi.GetPurposeOper.class);
+    private final PurposesApi.CreatePurposeFromTemplateOper createFromTemplate =
+            mock(PurposesApi.CreatePurposeFromTemplateOper.class);
     private final PurposesApi.UpdateDraftPurposeOper updatePurpose =
             mock(PurposesApi.UpdateDraftPurposeOper.class);
     private final PurposesApi.UpdateDraftReversePurposeOper updateReversePurpose =
             mock(PurposesApi.UpdateDraftReversePurposeOper.class);
     private final M2MPurposeMapper mapper = mock(M2MPurposeMapper.class);
+    private final M2MPurposeRequestFactory requestFactory = new M2MPurposeRequestFactory(store);
     private final UUID newVersionId = UUID.randomUUID();
     private final PurposeVersion active = PurposeVersion.builder().id(UUID.randomUUID())
             .createdAt(Instant.EPOCH).purposeVersionState(PurposeVersionState.ACTIVE).dailyCalls(10).build();
@@ -54,6 +65,9 @@ class M2MPurposeGatewayTest {
         when(archive.purposeIdPath(original.getId())).thenReturn(archive);
         when(api.getPurpose()).thenReturn(read);
         when(read.purposeIdPath(original.getId())).thenReturn(read);
+        when(api.createPurposeFromTemplate()).thenReturn(createFromTemplate);
+        when(createFromTemplate.purposeTemplateIdPath(any())).thenReturn(createFromTemplate);
+        when(createFromTemplate.body(any())).thenReturn(createFromTemplate);
         when(api.updateDraftPurpose()).thenReturn(updatePurpose);
         when(updatePurpose.purposeIdPath(original.getId())).thenReturn(updatePurpose);
         when(updatePurpose.reqSpec(any())).thenReturn(updatePurpose);
@@ -64,7 +78,8 @@ class M2MPurposeGatewayTest {
         when(updateReversePurpose.body(any())).thenReturn(updateReversePurpose);
         gateway = new M2MPurposeGateway(
                 new M2MPurposeRestClient(new TestChainFactory(mock(LastApiResponseStore.class), store), apiClient),
-                mapper);
+                mapper,
+                requestFactory);
         store.upsert("purpose", original);
     }
 
@@ -144,6 +159,57 @@ class M2MPurposeGatewayTest {
         verify(updateReversePurpose).execute(any());
         verify(read).execute(any());
         assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(renamed);
+    }
+
+    @Test
+    void createsPurposeFromTemplateAndRefreshesContext() {
+        UUID templateId = UUID.randomUUID();
+        UUID eServiceId = UUID.randomUUID();
+        PurposeTemplateRef templateRef = PurposeTemplateRef.of(templateId);
+        PurposeTemplate template = PurposeTemplate.builder()
+                .id(templateId)
+                .riskAnalysisFormTemplate(RiskAnalysisFormTemplate.builder()
+                        .version("1.0")
+                        .answerTemplates(Map.of(
+                                "suggested", RiskAnalysisAnswerTemplate.builder()
+                                        .editable(false)
+                                        .suggestedValues(List.of("predefined answer"))
+                                        .build(),
+                                "editable", RiskAnalysisAnswerTemplate.builder()
+                                        .editable(true)
+                                        .build()
+                        ))
+                        .build())
+                .build();
+        store.upsert(template);
+        when(createFromTemplate.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(201, "{\"id\":\"" + original.getId() + "\"}"));
+        });
+        when(read.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(200, "{}"));
+        });
+        when(mapper.toPurpose(any())).thenReturn(original);
+
+        assertThat(gateway.createPurposeFromTemplate(templateRef, EServiceRef.of(eServiceId)))
+                .isSameAs(original);
+
+        var payloadCaptor = org.mockito.ArgumentCaptor.forClass(PurposeFromTemplateSeed.class);
+        verify(createFromTemplate).purposeTemplateIdPath(templateId);
+        verify(createFromTemplate).body(payloadCaptor.capture());
+        PurposeFromTemplateSeed payload = payloadCaptor.getValue();
+        assertThat(payload.getEserviceId()).isEqualTo(eServiceId);
+        assertThat(payload.getTitle()).isNotBlank();
+        assertThat(payload.getDailyCalls()).isEqualTo(1);
+        assertThat(payload.getRiskAnalysisForm().getVersion()).isEqualTo("1.0");
+        assertThat(payload.getRiskAnalysisForm().getAnswers())
+                .containsEntry("suggested", java.util.List.of("predefined answer"))
+                .containsKey("editable");
+        assertThat(payload.getRiskAnalysisForm().getAnswers().get("editable").get(0)).isNotEmpty();
+        verify(createFromTemplate).execute(any());
+        verify(read).execute(any());
+        assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(original);
     }
 
     @Test

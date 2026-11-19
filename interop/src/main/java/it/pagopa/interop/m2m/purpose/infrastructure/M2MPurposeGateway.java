@@ -25,6 +25,7 @@ public class M2MPurposeGateway implements PurposeGateway {
 
     private final M2MPurposeRestClient restClient;
     private final M2MPurposeMapper mapper;
+    private final M2MPurposeRequestFactory requestFactory;
 
     @Override
     public Purpose updatePurposeMetadata(PurposeRef purposeRef, String name, String description) {
@@ -82,7 +83,14 @@ public class M2MPurposeGateway implements PurposeGateway {
 
     @Override
     public Purpose createPurposeFromTemplate(PurposeTemplateRef purposeTemplateRef, EServiceRef eServiceRef) {
-        throw unsupportedOperation();
+        return restClient.createPurposeFromTemplate(
+                        purposeTemplateRef.id(),
+                        requestFactory.creationFromTemplateRequest(eServiceRef, purposeTemplateRef)
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(createdPurpose -> getPurpose(PurposeRef.of(createdPurpose.getId())))
+                .updateContext()
+                .get();
     }
 
     @Override
