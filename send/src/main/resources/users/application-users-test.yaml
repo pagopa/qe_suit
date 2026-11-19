@@ -87,9 +87,7 @@ users:
         role: admin
   PT_1:
     username: m.curie
-    # chiave del token senza punto: in token.session il punto di "m.curie" anniderebbe la chiave
-    session-token-key: curie
-    password: ${pn.external.password.grossini:}
+    password: ${pn.external.password.m.curie:}
     organization: "PT Send"
     tax-id: "65748394857"
     organization-id: 033f454e-9443-4976-8531-51f4462b99a4

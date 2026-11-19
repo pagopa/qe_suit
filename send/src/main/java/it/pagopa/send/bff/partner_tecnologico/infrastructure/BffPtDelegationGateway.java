@@ -50,7 +50,7 @@ public class BffPtDelegationGateway implements PtDelegationGateway {
     }
 
     private List<PtInstitution> institutions(User partner, int limit, PollingStrategy strategy) {
-        return restClient.getInstitutions(tokenProvider.requireToken(partner.getSessionTokenKey()), limit)
+        return restClient.getInstitutions(tokenProvider.requireToken(partner.getUsername()), limit)
                 .withPolling(strategy)
                 .get()
                 .getItems().stream()

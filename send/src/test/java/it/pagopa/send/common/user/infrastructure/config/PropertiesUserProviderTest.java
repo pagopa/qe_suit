@@ -56,26 +56,6 @@ class PropertiesUserProviderTest {
         });
     }
 
-    // la chiave del token configurata vince sullo username (per PT_1 "m.curie" non è usabile come chiave)
-    @Test
-    void shouldResolveSessionTokenKeyFromConfigurationForDev() {
-        runnerFor("dev").run(context -> {
-            User user = context.getBean(PropertiesUserProvider.class).resolve(UserAlias.PT_1);
-
-            assertThat(user.getUsername()).isEqualTo("m.curie");
-            assertThat(user.getSessionTokenKey()).isEqualTo("curie");
-        });
-    }
-
-    @Test
-    void shouldFallBackToUsernameAsSessionTokenKeyForDev() {
-        runnerFor("dev").run(context -> {
-            User user = context.getBean(PropertiesUserProvider.class).resolve(UserAlias.COMUNE_1);
-
-            assertThat(user.getSessionTokenKey()).isEqualTo("grossini");
-        });
-    }
-
     @Test
     void shouldFailForUnknownEnvironment() {
         runnerFor(FAKE_ENVIRONMENT).run(context -> assertThatThrownBy(
@@ -96,7 +76,7 @@ class PropertiesUserProviderTest {
     @Test
     void shouldFailWhenUserIsPlaceholder() {
         UsersProperties.UserEntry placeholder = new UsersProperties.UserEntry("REPLACE_ME", null, null, null, null,
-                null, null, null, null, null, null, false, null, null, null, null);
+                null, null, null, null, null, null, false, null, null, null);
         PropertiesUserProvider provider = providerWith(new UsersProperties(Map.of(UserAlias.COMUNE_1, placeholder)));
 
         assertThatThrownBy(() -> provider.resolve(UserAlias.COMUNE_1))
