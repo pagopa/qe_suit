@@ -1,20 +1,19 @@
 package it.pagopa.interop.web.eservice.infrastructure.suit.component.general_data_form;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
-import it.frontend.e2e.framework.web.capability.core.Readable;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Alert;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Link;
 import it.pagopa.infrastructure.suit.component.Switch;
 
-@XPath(".//div[contains(@class, 'MuiPaper-root') and .//h2[normalize-space(.)='Signal Hub: servizio di notifica della variazione dei dati']]")
+@XPath(".//*[contains(@class, 'MuiPaper-root') and .//h2[normalize-space(.)='Signal Hub: servizio di notifica della variazione dei dati']]")
 public interface SignalHubSection extends Component {
     @XPath(".//h2")
-    Readable<String> title();
+    Label title();
 
     @XPath(".//a[contains(., 'soluzione integrata')]/ancestor::p[1]")
-    Readable<String> description();
+    Label description();
 
     @XPath(".//a[contains(., 'documento di designazione')]/ancestor::p[1]")
     Label designationDescription();

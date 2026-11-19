@@ -2,7 +2,7 @@ name: "[INTEROP] QA workflow"
 
 on:
   schedule:
-    - cron: '0 21 * * *'
+    - cron: '0 22 * * *'
       timezone: "Europe/Rome"
 
   workflow_dispatch:
@@ -95,6 +95,21 @@ jobs:
 
       - name: Run Test Suite
         run: |
+          START_EPOCH=$(date -u +%s)
+          START_ISO=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          METADATA_FILE="$GITHUB_WORKSPACE/qe_suit/interop/target/rae/run_metadata.json"
+          mkdir -p "$(dirname "$METADATA_FILE")"
+          finish_rae_metadata() {
+            code=$?
+            END_EPOCH=$(date -u +%s)
+            ELAPSED=$((END_EPOCH - START_EPOCH))
+            printf '{"data_ora":"%s","durata":"%02d:%02d:%02d"}\n' \
+              "$START_ISO" "$((ELAPSED/3600))" "$(((ELAPSED%3600)/60))" "$((ELAPSED%60))" \
+              > "$METADATA_FILE"
+            return "$code"
+          }
+          trap finish_rae_metadata EXIT
+
           cd ./qe_suit/interop
 
           if [[ "${{ env.ENVIRONMENT }}" == "dev" ]]; then
@@ -111,6 +126,7 @@ jobs:
           bash ./mvnw -B -ntp test \
             "$SPRING_PROFILE" \
             -Dtest="${{ env.JAVA_TEST_SUITE }}"
+
       # Il log e' cronologico: con i test in parallelo le righe di scenari diversi
       # si alternano. Qui viene prodotta una seconda copia raggruppata per caso di test,
       # leggibile senza dover filtrare a mano.
@@ -132,5 +148,96 @@ jobs:
             ./qe_suit/interop/target/logs/
             ./qe_suit/interop/target/cucumber-reports/
             ./qe_suit/interop/target/contract-test/report.html
+            ./qe_suit/interop/target/contract-test/report.json
+            ./qe_suit/interop/target/rae/run_metadata.json
           if-no-files-found: warn
-          retention-days: 10
+          retention-days: 10 # Preserve current setting until organization retention limit is verified.
+
+  generate_rae:
+    name: Generate RAE YAML and Draft PR
+    needs: run_tests
+    if: ${{ always() && (needs.run_tests.result == 'success' || needs.run_tests.result == 'failure') }}
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      JAVA_TEST_SUITE: ${{ inputs.javaTestSuite || 'NrtStandardSuiteTest' }}
+      ENVIRONMENT: ${{ inputs.environment || 'qa' }}
+      BRANCH_NAME: ${{ inputs.branchName || github.ref_name }}
+      RAE_NAMESPACE: interop
+      GH_TOKEN: ${{ secrets.RAE_AUTOMATION_TOKEN || github.token }}
+    steps:
+      - name: Checkout RAE Generator source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: generator-source
+          persist-credentials: false
+
+      - name: Checkout develop for RAE history and branch creation
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+          path: base
+          token: ${{ secrets.RAE_AUTOMATION_TOKEN || github.token }}
+          persist-credentials: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install RAE Python dependencies
+        run: python -m pip install -r generator-source/tools/rae-generator/requirements.txt
+
+      - name: Download test reports
+        uses: actions/download-artifact@v4
+        with:
+          name: qa-test-artifacts
+          path: /tmp/rae-test-artifacts
+
+      - name: Generate YAML and open Draft PR
+        env:
+          GITHUB_ACTOR_NAME: ${{ github.actor }}
+          GITHUB_RUN_LINK: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          cd base
+          METADATA=/tmp/rae-test-artifacts/rae/run_metadata.json
+          test -s "$METADATA" || { echo 'Missing Maven execution metadata, refusing to create RAE'; exit 1; }
+          git fetch origin develop
+          git checkout -B rae-generator-base origin/develop
+          RUNNER="$JAVA_TEST_SUITE"
+          [[ "$RUNNER" =~ ^[A-Za-z0-9_.-]+$ ]] || { echo 'Unsafe runner name'; exit 1; }
+          [[ "$RAE_NAMESPACE" =~ ^[A-Za-z0-9][A-Za-z0-9_.-]*$ ]] && [[ "$RAE_NAMESPACE" != "." ]] && [[ "$RAE_NAMESPACE" != ".." ]] || { echo 'Unsafe RAE namespace'; exit 1; }
+          for i in $(seq 1 5); do
+            TIMESTAMP=$(date -u +%Y%m%d%H%M%S)
+            BRANCH="rae/${RAE_NAMESPACE}/rae_${RUNNER}_${TIMESTAMP}"
+            if ! git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then break; fi
+            sleep 1
+          done
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            echo 'Could not allocate unique RAE branch'; exit 1
+          fi
+          git checkout -b "$BRANCH"
+          YAML="rae/${RAE_NAMESPACE}/rae_${RUNNER}_${TIMESTAMP}.yaml"
+          PYTHONPATH=../generator-source/tools/rae-generator python -m rae_generator generate \
+            --reports /tmp/rae-test-artifacts \
+            --history rae \
+            --namespace "$RAE_NAMESPACE" \
+            --suite "$RUNNER" \
+            --environment "$ENVIRONMENT" \
+            --executor "$GITHUB_ACTOR_NAME" \
+            --source-branch "$BRANCH_NAME" \
+            --run-url "$GITHUB_RUN_LINK" \
+            --metadata "$METADATA" \
+            --output "$YAML"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- "$YAML"
+          git commit -m "chore(rae): [QA-18253] create analysis for $RUNNER ($TIMESTAMP)"
+          git push origin "HEAD:refs/heads/$BRANCH"
+          gh pr create --draft --base develop --label "rae" --label "interop" --head "$BRANCH" \
+            --title "RAE: ${RUNNER} (${TIMESTAMP})" \
+            --body "RAE YAML to complete. NRT run: ${GITHUB_RUN_LINK}. Fill release, issue_jira, procedure and result; the RAE validation action will generate the Markdown."

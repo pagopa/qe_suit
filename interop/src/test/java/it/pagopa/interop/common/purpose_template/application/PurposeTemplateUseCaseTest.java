@@ -1,5 +1,6 @@
 package it.pagopa.interop.common.purpose_template.application;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -20,6 +21,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 class PurposeTemplateUseCaseTest {
+    @Test
+    void createsAMinimalRiskAnalysisForPublicAdministrationsWithoutPersonalData() {
+        var gateway = mock(PurposeTemplateGateway.class);
+        var configs = mock(RiskAnalysisGateway.class);
+        var data = new RiskAnalysisDataFactory(new ObjectMapper());
+        data.init();
+        var config = RiskAnalysisFormConfig.builder().version("2.1").questions(List.of()).build();
+        when(configs.getLatestRiskAnalysisConfig(Tenant.AGID)).thenReturn(config);
+
+        new PurposeTemplateUseCase(gateway, configs, data).createPurposeTemplate(Tenant.AGID);
+
+        var form = ArgumentCaptor.forClass(RiskAnalysisForm.class);
+        verify(gateway).createPurposeTemplate(eq(Tenant.AGID), form.capture(), same(config));
+        assertThat(form.getValue().getVersion()).isEqualTo("2.1");
+        assertThat(form.getValue().getAnswers()).containsExactlyInAnyOrderEntriesOf(Map.of(
+                "institutionalPurpose", List.of("prova prova prova"),
+                "isRequestOnBehalfOfThirdParties", List.of("NO"),
+                "purpose", List.of("INSTITUTIONAL"),
+                "usesPersonalData", List.of("NO"),
+                "usesThirdPartyPersonalData", List.of("NO")));
+        verifyNoMoreInteractions(gateway);
+    }
+
     @Test
     void linksTheOriginTemplateForAnInstanceInsteadOfTheEService() {
         var gateway = mock(PurposeTemplateGateway.class);

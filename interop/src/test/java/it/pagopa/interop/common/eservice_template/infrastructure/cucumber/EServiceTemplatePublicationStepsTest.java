@@ -14,7 +14,6 @@ import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.ES
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateConfigurationMapper;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
-import it.pagopa.interop.common.kernel.domain.UserRole;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 import org.mockito.ArgumentCaptor;
@@ -53,9 +52,9 @@ class EServiceTemplatePublicationStepsTest {
         assertThat(entities.getByAliasOrThrow("TPL-1", EServiceTemplate.class).getName()).contains("Template Stampo Alfa");
         assertThat(entities.getByAliasOrThrow("TPL-2", EServiceTemplate.class).getName()).contains("Template Stampo Beta");
         var order = inOrder(journey);
-        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
+        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO);
         order.verify(journey).createEServiceTemplate(any(EServiceTemplateCreationCommand.class), eq(EServiceTemplateVersionState.PUBLISHED));
-        order.verify(journey).withProducer(Tenant.SOGECAP, UserRole.ADMIN);
+        order.verify(journey).withProducer(Tenant.SOGECAP);
         order.verify(journey).createEServiceTemplate(any(EServiceTemplateCreationCommand.class), eq(EServiceTemplateVersionState.PUBLISHED));
     }
 
@@ -73,7 +72,7 @@ class EServiceTemplatePublicationStepsTest {
 
         var command = ArgumentCaptor.forClass(EServiceTemplateInstanceCreationCommand.class);
         var order = inOrder(journey);
-        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO, UserRole.ADMIN);
+        order.verify(journey).withProducer(Tenant.COMUNE_DI_MILANO);
         order.verify(journey).createPublishedEServiceTemplateInstance(eq(template), command.capture(), eq("ES-1"));
         assertThat(((BffEServiceTemplateInstanceCreationCommand) command.getValue()).getBffPayload().getInstanceLabel())
                 .contains("eservice-1");
