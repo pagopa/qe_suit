@@ -52,13 +52,36 @@ public interface PtInstitutionsPage extends Page {
     @XPath("//*[@data-testid=\"searchButton\"]")
     Button searchButton();
 
+    // X che svuota il campo: compare solo se il campo ha il focus e non è vuoto
+    @XPath("//*[@data-testid=\"institutionsSearch\"]//button[not(@data-testid=\"searchButton\")]")
+    Button clearSearchButton();
+
+    @XPath("//*[@data-testid=\"institutionsSearch\"]//*[contains(@class, 'MuiFormHelperText-root')]")
+    Readable<String> searchError();
+
+    // titolo mostrato al posto della tabella quando la ricerca non trova enti
+    @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[contains(@class, 'MuiTypography-subtitle2')]")
+    Readable<String> noResultsTitle();
+
+    // prima colonna della tabella, a caricamento concluso
+    @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"institutionsTableDesktop\"]//tbody//tr/td[1]")
+    Readable<String> institutionNames();
+
+    // seconda colonna della tabella (codice fiscale), a caricamento concluso
+    @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"institutionsTableDesktop\"]//tbody//tr/td[2]")
+    Readable<String> institutionTaxCodes();
+
+    // pulsanti di pagina del paginatore (numeri e frecce): ci sono solo se i risultati stanno su più pagine
+    @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"pageSelector\"]//button")
+    Readable<String> pageButtons();
+
     // enti deleganti: nome, codice fiscale e stato della delega. Solo a caricamento concluso, prima le righe sono scheletri vuoti
     @XPath("//*[@data-testid=\"institutionsList\" and not(@aria-busy)]//*[@data-testid=\"institutionsTableDesktop\"]")
     Table institutionsTable();
 
-    // numero di righe per pagina, sotto la tabella
+    // numero di righe per pagina, sotto la tabella: nascosto quando i risultati stanno nella pagina più piccola (10)
     @XPath("//*[@data-testid=\"itemsPerPageSelector\"]//button")
-    Button rowsPerPage();
+    Readable<String> rowsPerPage();
 
     PtHeader header();
 
