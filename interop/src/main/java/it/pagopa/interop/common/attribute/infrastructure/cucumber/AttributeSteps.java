@@ -66,12 +66,19 @@ public class AttributeSteps {
         tenantUseCase.attemptCertifiedAttributeAssignment(TenantRef.of(tenant.getOrganizationId()), attribute);
     }
 
-    @When("l'erogatore tenta di verificare l'{attributeByAlias} di {tenant} con scadenza ieri")
+    @When("l'erogatore tenta di assegnare come attributo verificato l'{attributeByAlias} di {tenant} con scadenza ieri")
     public void attemptVerifiedAttributeVerificationWithPastExpiration(Attribute attribute, Tenant tenant) {
         Agreement agreement = entityStore.getLastOrThrow(Agreement.class);
-        tenantUseCase.attemptVerifiedAttributeVerification(
+        tenantUseCase.attemptVerifiedAttributeAssignment(
                 TenantRef.of(tenant.getOrganizationId()), attribute, agreement.getRef(),
                 OffsetDateTime.now(ZoneOffset.UTC).minusDays(1)
         );
+    }
+
+    @Given("l'attributo verificato {string} assegnato a {tenant} per la richiesta di fruizione")
+    public void assignVerifiedAttribute(String alias, Tenant tenant) {
+        Attribute attribute = entityStore.getByAliasOrThrow(alias, Attribute.class);
+        Agreement agreement = entityStore.getLastOrThrow(Agreement.class);
+        tenantUseCase.assignVerifiedAttribute(TenantRef.of(tenant.getOrganizationId()), attribute.getRef(), agreement.getRef());
     }
 }

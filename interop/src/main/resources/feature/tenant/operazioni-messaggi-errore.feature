@@ -71,7 +71,7 @@ Feature: Messaggi di errore durante la gestione dei dati e degli attributi dell'
     And la versione 1 dell'e-service "ES-1" del Comune di Milano pubblicata
     And l'e-service "ES-1" del Comune di Milano sottoscritto da PagoPA con una richiesta di fruizione in attesa di approvazione
     And un admin appartenente all'erogatore Comune di Milano
-    When l'erogatore tenta di verificare l'attributo "VER-1" di PagoPA con scadenza ieri
+    When l'erogatore tenta di assegnare come attributo verificato l'attributo "VER-1" di PagoPA con scadenza ieri
     Then il messaggio di errore corrisponde al caso "TENANT_EXPIRATION_DATE_CANNOT_BE_IN_THE_PAST__POST_TENANTS_TENANT_ID_ATTRIBUTES_VERIFIED" in lingua "it"
 
   # NON REPLICABILE A FRONTEND

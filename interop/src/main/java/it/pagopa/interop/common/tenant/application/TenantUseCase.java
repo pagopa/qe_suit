@@ -80,13 +80,13 @@ public class TenantUseCase {
         tenantGateway.attemptContactEmailSaveWithHyperlinkInNotes(tenantRef);
     }
 
-    public void attemptVerifiedAttributeVerification(
+    public void attemptVerifiedAttributeAssignment(
             TenantRef tenantRef, Attribute attribute, AgreementRef agreementRef, OffsetDateTime expirationDate
     ) {
         if (attribute.getKind() != AttributeKind.VERIFIED) {
-            throw new IllegalArgumentException("Attribute verification attempt requires kind VERIFIED, but was "
+            throw new IllegalArgumentException("Attribute assignment attempt requires kind VERIFIED, but was "
                     + attribute.getKind());
         }
-        tenantGateway.attemptVerifiedAttributeVerification(tenantRef, attribute.getRef(), agreementRef, expirationDate);
+        tenantGateway.attemptVerifiedAttributeAssignment(tenantRef, attribute.getRef(), agreementRef, expirationDate);
     }
 }

@@ -6,6 +6,8 @@ import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.AgreementsApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.interop.m2m.eservice_template.infrastructure.FileDownloadMultipart;
+import it.pagopa.interop.m2m.eservice_template.infrastructure.FileDownloadMultipartUtils;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import org.springframework.stereotype.Component;
@@ -86,7 +88,7 @@ public class BffAgreementRestClient extends RestClient {
         );
     }
 
-    public TestChain<File> addConsumerDocument(
+    public TestChain<byte[]> addConsumerDocument(
             @Nonnull UUID agreementId, @Nonnull String name, @Nonnull String prettyName, @Nonnull File document
     ) {
         return execute(
@@ -94,7 +96,7 @@ public class BffAgreementRestClient extends RestClient {
                         .nameForm(name).prettyNameForm(prettyName)
                         .reqSpec(reqSpec -> reqSpec.addMultiPart("doc", document, "application/octet-stream"))
                         .execute(Function.identity()),
-                File.class
+            byte[].class
         );
     }
 

@@ -220,7 +220,7 @@ public class BffTenantGateway implements TenantGateway {
     }
 
     @Override
-    public void attemptVerifiedAttributeVerification(
+    public void attemptVerifiedAttributeAssignment(
             @NonNull TenantRef tenantRef, @NonNull AttributeRef attributeRef,
             @NonNull AgreementRef agreementRef, @NonNull OffsetDateTime expirationDate
     ) {
