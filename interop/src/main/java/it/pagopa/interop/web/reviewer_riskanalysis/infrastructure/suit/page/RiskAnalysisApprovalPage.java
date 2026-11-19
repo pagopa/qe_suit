@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.riskanalysis.infrastructure.suit.page;
+package it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
@@ -8,8 +8,8 @@ import it.pagopa.infrastructure.suit.component.Alert;
 import it.pagopa.infrastructure.suit.component.Dialog;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
-import it.pagopa.interop.web.riskanalysis.infrastructure.component.GeneralInfoCard;
-import it.pagopa.interop.web.riskanalysis.infrastructure.component.RiskAnalysisCard;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.RiskAnalysisCompleteCard;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.RiskAnalysisGeneralInfoCard;
 import it.pagopa.utils.async.PollingUtils;
 
 /**
@@ -51,10 +51,10 @@ public interface RiskAnalysisApprovalPage extends Page {
     Button backToHomeBtn();
 
     @XPath(".//div[contains(@class, 'MuiAccordion-root')][.//h6[text()='Informazioni generali']]")
-    GeneralInfoCard generalInfoCard();
+    RiskAnalysisGeneralInfoCard generalInfoCard();
 
     @XPath(".//div[contains(@class, 'MuiAccordion-root')][.//h6[text()='Analisi del rischio']]")
-    RiskAnalysisCard riskAnalysisCard();
+    RiskAnalysisCompleteCard riskAnalysisCard();
 
     /**
      * Waits for a non-blank page heading; does not verify the accordion contents.

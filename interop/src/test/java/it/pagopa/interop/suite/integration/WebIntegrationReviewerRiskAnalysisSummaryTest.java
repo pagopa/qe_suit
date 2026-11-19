@@ -17,8 +17,8 @@ import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactor
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisCompilationPage;
-import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisSummaryPage;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisCompilationPage;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisSummaryPage;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -50,7 +50,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 @DisplayName("Risk Analysis Summary Web Integration Tests")
-class WebIntegrationRiskAnalysisSummaryTest {
+class WebIntegrationReviewerRiskAnalysisSummaryTest {
 
     private static final String ALTERNATIVE_ALERT = "L’analisi del rischio richiede l’approvazione di un solo valutatore, anche se è assegnata a più valutatori. Dopo l’approvazione, non sarà più modificabile e l’amministratore potrà pubblicare la finalità.";
     private static final String ALREADY_MODIFIED_ERROR = "Un altro valutatore ha modificato questa analisi del rischio. Ricarica la pagina per vedere la versione aggiornata e decidi se approvarla.";

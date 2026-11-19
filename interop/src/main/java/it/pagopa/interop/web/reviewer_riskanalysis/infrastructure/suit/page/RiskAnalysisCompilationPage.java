@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.riskanalysis.infrastructure.suit.page;
+package it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
@@ -23,9 +23,6 @@ import java.util.List;
  */
 @Url("${interop.web.base-url}/analisi-del-rischio/${riskAnalysisId}/compilazione")
 public interface RiskAnalysisCompilationPage extends Page {
-
-    @XPath("//div[@role='alert' and (contains(concat(' ', normalize-space(@class), ' '), ' MuiAlert-outlinedError ') or contains(concat(' ', normalize-space(@class), ' '), ' MuiAlert-standardError '))]")
-    Alert saveErrorAlert();
 
     @XPath(".//h1[normalize-space()='Compilazione analisi del rischio']")
     Label title();

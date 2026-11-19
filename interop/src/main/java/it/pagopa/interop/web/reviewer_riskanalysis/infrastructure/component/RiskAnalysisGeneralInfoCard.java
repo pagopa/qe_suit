@@ -1,11 +1,11 @@
-package it.pagopa.interop.web.riskanalysis.infrastructure.component;
+package it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.frontend.e2e.framework.web.domain.Component;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.infrastructure.suit.component.Link;
 
-public interface GeneralInfoCard extends Component{
+public interface RiskAnalysisGeneralInfoCard extends Component{
     @XPath(".//div[contains(@class, 'MuiAccordionSummary-content')]//h6[contains(@class, 'MuiTypography-h6')]")
     Label accordionTitle();
 

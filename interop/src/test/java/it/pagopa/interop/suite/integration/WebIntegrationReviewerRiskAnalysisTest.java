@@ -12,7 +12,7 @@ import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisPage;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisPage;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 @DisplayName("Risk Analysis Web Integration Tests")
-class WebIntegrationRiskAnalysisTest {
+class WebIntegrationReviewerRiskAnalysisTest {
 
     private static final int INITIAL_RISK_ANALYSIS_METADATA_VERSION = 2;
     private static final String RISK_ANALYSIS_REJECTION_REASON = "Risk analysis rejected by contract test";

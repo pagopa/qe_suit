@@ -14,7 +14,7 @@ import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisApprovalPage;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisApprovalPage;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +49,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 @DisplayName("Risk Analysis Approval Web Integration Tests")
-public class WebIntegrationRiskAnalysisApprovalTest {
+public class WebIntegrationReviewerRiskAnalysisApprovalTest {
 
     private final WebBrowserContractValidator webContractValidator;
     private final InteropJourney interopJourney;

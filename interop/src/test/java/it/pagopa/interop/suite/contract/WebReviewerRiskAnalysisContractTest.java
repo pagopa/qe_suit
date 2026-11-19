@@ -9,7 +9,7 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisPage;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisPage;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
@@ -36,7 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
 @DisplayName("Risk Analysis Web Contract Tests")
-class WebRiskAnalysisContractTest {
+class WebReviewerRiskAnalysisContractTest {
 
     private static final String PAGE_SUBTITLE = "Qui trovi le analisi del rischio assegnate a te. Se una finalità sarà eliminata, non la vedrai più in questa sezione.";
     private static final String NO_ASSIGNED_RISK_ANALYSIS_MESSAGE = "Per ora non hai analisi del rischio assegnate";
@@ -50,7 +50,7 @@ class WebRiskAnalysisContractTest {
      */
     @TestFactory
     @DisplayName("Risk analysis page shows the appropriate empty or populated state")
-    Stream<DynamicTest> contractPageTests() {
+    Stream<DynamicTest> testVerifyRiskAnalysisPageContent() {
         User reviewer = User.getTenantUser(Tenant.SOGECAP, UserRole.REVIEWER);
         return webContractValidator.as(reviewer, Tenant.SOGECAP)
                 .on(RiskAnalysisPage.class)

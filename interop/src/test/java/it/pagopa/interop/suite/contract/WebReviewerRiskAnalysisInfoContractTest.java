@@ -11,7 +11,10 @@ import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisInfoPage;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.APIEstimateCard;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.AssignmentCard;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.PurposeRiskAnalysisGeneralInfoCard;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisInfoPage;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
@@ -41,7 +44,7 @@ import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 @TestConstructor(autowireMode = ALL)
 @RequiredArgsConstructor
 @DisplayName("Contract Test per pagina Informazioni finalità in Analisi del Rischio")
-class WebRiskAnalysisInfoContractTest {
+class WebReviewerRiskAnalysisInfoContractTest {
 
     private static final Iterable<String> EXPECTED_BREADCRUMB_LABELS = List.of("Analisi del rischio", "Informazioni finalità");
     private static final String EXPECTED_RA_BREADCRUMB_HREF = "/ui/it/analisi-del-rischio";
@@ -69,7 +72,7 @@ class WebRiskAnalysisInfoContractTest {
      * @return dynamic UI contract tests for the assigned reviewer
      */
     @TestFactory
-    Stream<DynamicTest> testPurposeInfoPage() {
+    Stream<DynamicTest> testVerifyRiskAnalysisInfoPageContent() {
         String eServiceName = RandomUtils.randomAlphanumericName("e-service_RA_to_compile");
         User reviewer = User.getTenantUser(Tenant.SOGECAP, UserRole.REVIEWER);
         String riskAnalysisId = interopJourney
@@ -115,7 +118,7 @@ class WebRiskAnalysisInfoContractTest {
                 .isEqualTo(EXPECTED_RA_BREADCRUMB_HREF);
     }
 
-    private void verifyGeneralInfoCard(RiskAnalysisInfoPage.GeneralInfoCard card) {
+    private void verifyGeneralInfoCard(PurposeRiskAnalysisGeneralInfoCard card) {
         card.title().readAndAssert("Informazioni generali");
 
         card.eserviceLabel().readAndAssert(LABEL_ESERVICE);
@@ -142,14 +145,14 @@ class WebRiskAnalysisInfoContractTest {
         assertNotBlank(card.freeReasonValue().read(), LABEL_FREE_REASON);
     }
 
-    private void verifyApiEstimateCard(RiskAnalysisInfoPage.APIEstimateCard card) {
+    private void verifyApiEstimateCard(APIEstimateCard card) {
         card.title().readAndAssert("Stima chiamate API");
 
         card.apiEstimateLabel().readAndAssert(LABEL_API_ESTIMATE);
         assertNotBlank(card.apiEstimateValue().read(), LABEL_API_ESTIMATE);
     }
 
-    private void verifyAssignmentCard(RiskAnalysisInfoPage.AssignmentCard card) {
+    private void verifyAssignmentCard(AssignmentCard card) {
         card.title().readAndAssert("Assegnazione");
 
         card.assignmentDateLabel().readAndAssert(LABEL_ASSIGNMENT_DATE);

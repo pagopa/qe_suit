@@ -16,10 +16,10 @@ import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactor
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.riskanalysis.infrastructure.component.GeneralInfoCard;
-import it.pagopa.interop.web.riskanalysis.infrastructure.component.RiskAnalysisCard;
-import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisCompilationPage;
-import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisSummaryPage;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.RiskAnalysisCompleteCard;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.RiskAnalysisGeneralInfoCard;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisCompilationPage;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisSummaryPage;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,7 @@ import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 @TestConstructor(autowireMode = ALL)
 @RequiredArgsConstructor
 @DisplayName("UI Contract Test - Risk Analysis Summary Page")
-class WebRiskAnalysisSummaryContractTest {
+class WebReviewerRiskAnalysisSummaryContractTest {
 
     private static final String PAGE_TITLE = "Riepilogo";
     private static final String INSTITUTIONAL_PURPOSE = "Fine istituzionale compilato correttamente";
@@ -78,7 +78,7 @@ class WebRiskAnalysisSummaryContractTest {
 
 
     @TestFactory
-    Stream<DynamicTest> riskAnalysisSummaryContractTests() {
+    Stream<DynamicTest> testVerifyRiskAnalysisSummaryPageContent() {
         String eServiceName = RandomUtils.randomAlphanumericName("e-service_RA_to_compile");
         List<User> reviewers = User.getTenantUsers(consumer, UserRole.REVIEWER);
 
@@ -141,7 +141,7 @@ class WebRiskAnalysisSummaryContractTest {
                 .isFalse();
     }
 
-    private void assertGeneralInfoCard(GeneralInfoCard card) {
+    private void assertGeneralInfoCard(RiskAnalysisGeneralInfoCard card) {
         card.accordionTitle().readAndAssert("Informazioni generali");
 
         assertThat(card.get().isPresent()).as("Card Informazioni Generali not found").isTrue();
@@ -181,7 +181,7 @@ class WebRiskAnalysisSummaryContractTest {
         assertNotBlank(card.assignedToValue().read(), INFO_ASSIGNED_TO);
     }
 
-    private void assertRiskAnalysisCard(RiskAnalysisCard card) {
+    private void assertRiskAnalysisCard(RiskAnalysisCompleteCard card) {
         if (card.header().get(Gettable.FindPolicy.PRESENT).isPresent()) {
             card.header().click();
             PollingUtils.pollUntil(

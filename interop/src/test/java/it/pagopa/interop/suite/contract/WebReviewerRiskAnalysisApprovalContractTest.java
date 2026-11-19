@@ -11,9 +11,9 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.riskanalysis.infrastructure.component.GeneralInfoCard;
-import it.pagopa.interop.web.riskanalysis.infrastructure.component.RiskAnalysisCard;
-import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisApprovalPage;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.RiskAnalysisGeneralInfoCard;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.RiskAnalysisCompleteCard;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisApprovalPage;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
@@ -44,7 +44,7 @@ import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 @TestConstructor(autowireMode = ALL)
 @RequiredArgsConstructor
 @DisplayName("Risk Analysis Approval Contract Tests")
-class WebRiskAnalysisApprovalContractTest {
+class WebReviewerRiskAnalysisApprovalContractTest {
 
     private static final Iterable<String> EXPECTED_BREADCRUMB_LABELS = List.of("Analisi del rischio", "Approvazione analisi del rischio");
     private static final String EXPECTED_RA_BREADCRUMB_HREF = "/ui/it/analisi-del-rischio";
@@ -77,7 +77,7 @@ class WebRiskAnalysisApprovalContractTest {
      * @return dynamic UI contract tests for an analysis awaiting approval
      */
     @TestFactory
-    Stream<DynamicTest> verifyRiskAnalysisApprovalPageContent() {
+    Stream<DynamicTest> testVerifyRiskAnalysisApprovalPageContent() {
         String eServiceName = RandomUtils.randomAlphanumericName("e-service_RA_to_approve");
         String riskAnalysisId = interopJourney
                 .withConsumer(Tenant.SOGECAP, UserRole.ADMIN)
@@ -142,7 +142,7 @@ class WebRiskAnalysisApprovalContractTest {
                 .isEqualTo(EXPECTED_RA_BREADCRUMB_HREF);
     }
 
-    private void assertGeneralInfo(GeneralInfoCard card) {
+    private void assertGeneralInfo(RiskAnalysisGeneralInfoCard card) {
         card.accordionTitle().readAndAssert("Informazioni generali");
 
         assertThat(card.get().isPresent()).as("Card Informazioni Generali not found").isTrue();
@@ -182,7 +182,7 @@ class WebRiskAnalysisApprovalContractTest {
         assertNotBlank(card.assignedToValue().read(), INFO_ASSIGNED_TO);
     }
 
-    private void assertRiskAnalysis(RiskAnalysisCard card) {
+    private void assertRiskAnalysis(RiskAnalysisCompleteCard card) {
         card.accordionTitle().readAndAssert(RISK_TITLE);
 
         assertThat(card.get().isPresent()).as("Card Analisi del Rischio not found").isTrue();

@@ -17,8 +17,8 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisCompilationPage;
-import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.RiskAnalysisCompilationPage.LabelledCheckbox;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisCompilationPage;
+import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisCompilationPage.LabelledCheckbox;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +44,7 @@ import static org.springframework.test.context.TestConstructor.AutowireMode.ALL;
 @TestConstructor(autowireMode = ALL)
 @RequiredArgsConstructor
 @DisplayName("Risk Analysis Compilation Contract Tests")
-class WebRiskAnalysisCompilationContractTest {
+class WebReviewerRiskAnalysisCompilationContractTest {
 
     private static final String INSTITUTIONAL_PURPOSE =
             "Per fini istituzionali che non richiedano prestazioni di elaborazioni aggiuntive";
@@ -59,7 +59,7 @@ class WebRiskAnalysisCompilationContractTest {
     private final WebBrowserContractValidator webContractValidator;
 
     @TestFactory
-    Stream<DynamicTest> verifyRiskAnalysisCompilationPageContent() {
+    Stream<DynamicTest> testVerifyRiskAnalysisCompilationPageContent() {
         Tenant consumer = Tenant.PAGO_PA;
         User reviewer = User.getTenantUser(consumer, UserRole.REVIEWER);
         String purposeId = interopJourney.withConsumer(consumer, UserRole.ADMIN)
@@ -142,7 +142,7 @@ class WebRiskAnalysisCompilationContractTest {
                 "Dati giudiziari ex art. 10 del GDPR",
                 "Altro"
         );
-        personalDataTypes.forEach(WebRiskAnalysisCompilationContractTest::assertCheckbox);
+        personalDataTypes.forEach(WebReviewerRiskAnalysisCompilationContractTest::assertCheckbox);
         LabelledCheckbox other = checkboxStartingWith(personalDataTypes, "Altro");
         other.check();
         assertTextField(page.otherPersonalDataTypesCard().field(), "Altre tipologie di dati personali");
@@ -160,7 +160,7 @@ class WebRiskAnalysisCompilationContractTest {
                 PUBLIC_INTEREST,
                 LEGITIMATE_INTEREST
         );
-        legalBases.forEach(WebRiskAnalysisCompilationContractTest::assertCheckbox);
+        legalBases.forEach(WebReviewerRiskAnalysisCompilationContractTest::assertCheckbox);
         LabelledCheckbox legalObligation = checkboxStartingWith(legalBases, LEGAL_OBLIGATION);
         legalObligation.check();
         assertTextField(page.legalObligationReferenceCard().field(), "Riferimento all'obbligo legale");
