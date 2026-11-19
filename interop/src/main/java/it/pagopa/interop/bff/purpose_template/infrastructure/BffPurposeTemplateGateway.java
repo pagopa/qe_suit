@@ -196,4 +196,9 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
     public void attemptPurposeTemplateReactivation(PurposeTemplate purposeTemplate) {
         restClient.unsuspendPurposeTemplate(purposeTemplate.getId()).withoutPolling();
     }
+
+    @Override
+    public void attemptPurposeTemplatePublication(PurposeTemplate purposeTemplate) {
+        restClient.publishPurposeTemplate(purposeTemplate.getId()).withoutPolling();
+    }
 }

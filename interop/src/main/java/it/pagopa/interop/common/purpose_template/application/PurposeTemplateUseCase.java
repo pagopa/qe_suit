@@ -51,4 +51,8 @@ public class PurposeTemplateUseCase {
     public void attemptPurposeTemplateReactivation(PurposeTemplate purposeTemplate) {
         purposeTemplateGateway.attemptPurposeTemplateReactivation(purposeTemplate);
     }
+
+    public void attemptPurposeTemplatePublication(PurposeTemplate purposeTemplate) {
+        purposeTemplateGateway.attemptPurposeTemplatePublication(purposeTemplate);
+    }
 }

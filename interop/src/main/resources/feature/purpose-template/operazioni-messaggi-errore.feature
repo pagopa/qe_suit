@@ -73,8 +73,7 @@ Feature: Messaggi di errore durante la gestione dei template finalità e delle a
     And l'e-service "ES-1" collegato a un template di finalità in bozza
     And la versione 1 dell'e-service "ES-1" del Comune di Milano sospesa
     And un admin appartenente al fruitore PagoPA
-    # Binding BFF negativo mancante; riusare publishPurposeTemplate senza attendere il successo.
-    When l'operatore tenta di pubblicare il template finalità
+    When l'operatore tenta di pubblicare il purpose template
     Then il messaggio di errore corrisponde al caso "PURPOSE_TEMPLATE_INVALID_ASSOCIATED_ESERVICE_FOR_PUBLICATION_ERROR__POST_PURPOSE_TEMPLATES_PURPOSE_TEMPLATE_ID_PUBLISH" in lingua "it"
 
   # Endpoint: POST /purposeTemplates/:purposeTemplateId/riskAnalysis/answers/:answerId/annotation/documents

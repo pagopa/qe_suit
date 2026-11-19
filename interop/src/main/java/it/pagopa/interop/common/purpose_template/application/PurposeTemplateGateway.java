@@ -30,4 +30,6 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
 
     void attemptPurposeTemplateReactivation(PurposeTemplate purposeTemplate);
 
+    void attemptPurposeTemplatePublication(PurposeTemplate purposeTemplate);
+
 }

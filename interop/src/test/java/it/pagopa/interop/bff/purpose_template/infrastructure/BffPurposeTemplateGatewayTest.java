@@ -146,4 +146,23 @@ class BffPurposeTemplateGatewayTest {
     private static RiskAnalysisFormConfig.Question question(String id, String type) {
         return RiskAnalysisFormConfig.Question.builder().id(id).dataType(type).build();
     }
+
+    @Test
+    void attemptsPublicationOnceWithoutPollingOrReadingBackTheTemplate() {
+        var restClient = mock(BffPurposeTemplateRestClient.class);
+        var store = mock(EntityStore.class);
+        var mapper = mock(BffPurposeTemplateMapper.class);
+        var requests = mock(BffPurposeTemplateRequestFactory.class);
+        var adapter = new BffPurposeTemplateGateway(restClient, mapper, requests, store);
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        TestChain<Void> chain = mock(TestChain.class);
+        when(restClient.publishPurposeTemplate(template.getId())).thenReturn(chain);
+
+        adapter.attemptPurposeTemplatePublication(template);
+
+        verify(restClient).publishPurposeTemplate(template.getId());
+        verify(chain).withoutPolling();
+        verifyNoMoreInteractions(restClient, chain);
+        verifyNoInteractions(store, mapper, requests);
+    }
 }

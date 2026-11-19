@@ -49,4 +49,9 @@ public class PurposeTemplateSteps {
     public void attemptPurposeTemplateReactivation(PurposeTemplate purposeTemplate) {
         purposeTemplateUseCase.attemptPurposeTemplateReactivation(purposeTemplate);
     }
+
+    @When("l'operatore tenta di pubblicare il {currentPurposeTemplate}")
+    public void attemptPurposeTemplatePublication(PurposeTemplate purposeTemplate) {
+        purposeTemplateUseCase.attemptPurposeTemplatePublication(purposeTemplate);
+    }
 }

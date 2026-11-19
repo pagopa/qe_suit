@@ -41,4 +41,17 @@ class PurposeTemplateStepsTest {
         verifyNoMoreInteractions(useCase);
         verifyNoInteractions(journey);
     }
+
+    @Test
+    void delegatesPublicationWithoutChangingTheActorOrChannel() {
+        var journey = mock(InteropJourney.class);
+        var useCase = mock(PurposeTemplateUseCase.class);
+        var template = PurposeTemplate.builder().build();
+
+        new PurposeTemplateSteps(journey, useCase).attemptPurposeTemplatePublication(template);
+
+        verify(useCase).attemptPurposeTemplatePublication(template);
+        verifyNoMoreInteractions(useCase);
+        verifyNoInteractions(journey);
+    }
 }
