@@ -214,4 +214,8 @@ public class BffEServiceRequestFactory implements EServiceRequestFactory {
                 .set(field(EServiceArchivingSeed::getArchivingReason), RandomUtils.randomAlphanumericName("archiving-reason"))
                 .create();
     }
+
+    public PatchUpdateEServiceSeed partialNameUpdateRequest(String name) {
+        return new PatchUpdateEServiceSeed().name(name);
+    }
 }

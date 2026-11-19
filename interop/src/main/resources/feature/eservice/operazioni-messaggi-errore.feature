@@ -815,7 +815,6 @@ Feature: Messaggi di errore durante la gestione degli e-service
     And l'e-service "ES-1" delegato in erogazione dal Comune di Milano al Comune di Pozzallo con delega attiva
     And la versione 1 dell'e-service "ES-1" predisposta dal delegato Comune di Pozzallo in attesa di approvazione
     And un admin appartenente all'erogatore Comune di Milano
-    # Binding BFF negativo mancante; riusare rejectDescriptor senza attendere un rifiuto riuscito.
     When l'erogatore tenta di rifiutare la pubblicazione della versione 1 dell'e-service con motivazione "Rifiuto con https://example.org"
     Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES_E_SERVICE_ID_DESCRIPTORS_DESCRIPTOR_ID_REJECT" in lingua "it"
 

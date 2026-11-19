@@ -47,4 +47,8 @@ public interface EServiceGateway extends Plugin<Channel> {
     void attemptNameUpdate(EServiceRef eServiceRef, String name);
 
     void attemptDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays);
+
+    void attemptDescriptionUpdate(EServiceRef eServiceRef, String description);
+
+    void attemptPartialNameUpdate(EServiceRef eServiceRef, String name);
 }

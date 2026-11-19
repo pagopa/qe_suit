@@ -223,4 +223,15 @@ public class BffEServiceGateway implements EServiceGateway {
         restClient.submitDelegatedEServiceArchiving(eServiceRef.id(), requestFactory.archivingRequest(gracePeriodDays))
                 .withoutPolling();
     }
+
+    @Override
+    public void attemptDescriptionUpdate(EServiceRef eServiceRef, String description) {
+        restClient.updateDescription(eServiceRef.id(), requestFactory.updateDescriptionRequest().description(description))
+                .withoutPolling();
+    }
+
+    @Override
+    public void attemptPartialNameUpdate(EServiceRef eServiceRef, String name) {
+        restClient.partialUpdateEService(eServiceRef.id(), requestFactory.partialNameUpdateRequest(name)).withoutPolling();
+    }
 }
