@@ -48,4 +48,6 @@ public interface PurposeGateway extends Plugin<Channel> {
     void attemptNameUpdate(PurposeRef purposeRef, String name);
 
     void attemptPurposeCloning(PurposeRef purposeRef, PurposeCloneCommand cloneCommand);
+
+    void attemptRiskAnalysisSigning(PurposeRef purposeRef, SignRiskAnalysisCommand signCommand);
 }

@@ -129,10 +129,9 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Allora il sistema rifiuta la firma e segnala che l'analisi è già stata approvata.
 
     # Il Markdown del branch a8095d9 documenta reviewerWorkflowNotInSignableState, non riskAnalysisAlreadyApproved.
-    # Mantenere il mapping atteso e verificare il codice sul contratto di rilascio; setup e binding valutatore mancanti.
+    # Mantenere il mapping atteso e verificare il codice sul contratto di rilascio.
     Given un'analisi del rischio della finalità in stato "approvata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
-    # Operazione BFF e binding negativo comuni mancanti per la firma dell'analisi.
     When il valutatore tenta di firmare l'analisi del rischio della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_APPROVED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_SIGN" in lingua "it"
 
@@ -143,10 +142,9 @@ Feature: Messaggi di errore durante la gestione delle finalità e la valutazione
   Allora il sistema rifiuta la firma e segnala che l'analisi è già stata rifiutata.
 
     # Il Markdown del branch a8095d9 documenta reviewerWorkflowNotInSignableState, non riskAnalysisAlreadyRejected.
-    # Mantenere il mapping atteso e verificare il codice sul contratto di rilascio; setup e binding valutatore mancanti.
+    # Mantenere il mapping atteso e verificare il codice sul contratto di rilascio.
     Given un'analisi del rischio della finalità in stato "rifiutata" assegnata al valutatore di PagoPA
     And un reviewer appartenente al fruitore PagoPA
-    # Operazione BFF e binding negativo comuni mancanti per la firma dell'analisi.
     When il valutatore tenta di firmare l'analisi del rischio della finalità
     Then il messaggio di errore corrisponde al caso "PURPOSE_RISK_ANALYSIS_ALREADY_REJECTED__POST_PURPOSES_PURPOSE_ID_RISK_ANALYSIS_SIGN" in lingua "it"
 

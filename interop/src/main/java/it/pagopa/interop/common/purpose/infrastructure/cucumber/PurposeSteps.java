@@ -247,4 +247,9 @@ public class PurposeSteps {
     public void attemptPurposeCloning(Purpose purpose) {
         purposeUseCase.attemptPurposeCloning(purpose);
     }
+
+    @When("il valutatore tenta di firmare l'analisi del rischio della {currentPurpose}")
+    public void attemptRiskAnalysisSigning(Purpose purpose) {
+        purposeUseCase.attemptRiskAnalysisSigning(purpose);
+    }
 }

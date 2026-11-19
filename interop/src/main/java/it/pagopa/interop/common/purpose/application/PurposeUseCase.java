@@ -92,17 +92,7 @@ public class PurposeUseCase {
     }
 
     public Purpose signRiskAnalysis(Purpose purpose) {
-        Integer metadataVersion = purpose.getMetadataVersion();
-        if (metadataVersion == null) {
-            Purpose refreshed = purposeGateway.getPurpose(purpose.getRef());
-            metadataVersion = refreshed.getMetadataVersion();
-        }
-        if (metadataVersion == null) {
-            throw new IllegalStateException(
-                    "Missing metadataVersion (x-metadata-version header) for purpose " + purpose.getId()
-            );
-        }
-        return signRiskAnalysis(purpose, metadataVersion);
+        return signRiskAnalysis(purpose, resolveMetadataVersion(purpose));
     }
 
     public Purpose signRiskAnalysis(Purpose purpose, int metadataVersionToSign) {
@@ -140,5 +130,24 @@ public class PurposeUseCase {
     public void attemptPurposeCloning(Purpose purpose) {
         PurposeCloneCommand command = purposeCommandFactory.cloneCommand(EServiceRef.of(purpose.getEserviceId()));
         purposeGateway.attemptPurposeCloning(purpose.getRef(), command);
+    }
+
+    public void attemptRiskAnalysisSigning(Purpose purpose) {
+        SignRiskAnalysisCommand command = purposeCommandFactory.signRiskAnalysisCommand(resolveMetadataVersion(purpose));
+        purposeGateway.attemptRiskAnalysisSigning(purpose.getRef(), command);
+    }
+
+    private int resolveMetadataVersion(Purpose purpose) {
+        Integer metadataVersion = purpose.getMetadataVersion();
+        if (metadataVersion == null) {
+            Purpose refreshed = purposeGateway.getPurpose(purpose.getRef());
+            metadataVersion = refreshed.getMetadataVersion();
+        }
+        if (metadataVersion == null) {
+            throw new IllegalStateException(
+                    "Missing metadataVersion (x-metadata-version header) for purpose " + purpose.getId()
+            );
+        }
+        return metadataVersion;
     }
 }

@@ -83,4 +83,62 @@ class PurposeUseCaseTest {
         verify(gateway).attemptPurposeCloning(purpose.getRef(), command);
         verifyNoMoreInteractions(gateway, commands);
     }
+
+    @Test
+    void attemptsSigningWithTheKnownMetadataVersionWithoutUsingThePositiveOperation() {
+        var commands = mock(PurposeCommandFactory.class);
+        var command = mock(SignRiskAnalysisCommand.class);
+        var current = purpose.toBuilder().metadataVersion(7).build();
+        when(commands.signRiskAnalysisCommand(7)).thenReturn(command);
+
+        new PurposeUseCase(gateway, commands).attemptRiskAnalysisSigning(current);
+
+        verify(commands).signRiskAnalysisCommand(7);
+        verify(gateway).attemptRiskAnalysisSigning(current.getRef(), command);
+        verifyNoMoreInteractions(gateway, commands);
+    }
+
+    @Test
+    void refreshesMissingMetadataBeforeAttemptingSigning() {
+        var commands = mock(PurposeCommandFactory.class);
+        var command = mock(SignRiskAnalysisCommand.class);
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(purpose.toBuilder().metadataVersion(8).build());
+        when(commands.signRiskAnalysisCommand(8)).thenReturn(command);
+
+        new PurposeUseCase(gateway, commands).attemptRiskAnalysisSigning(purpose);
+
+        var order = inOrder(gateway, commands);
+        order.verify(gateway).getPurpose(purpose.getRef());
+        order.verify(commands).signRiskAnalysisCommand(8);
+        order.verify(gateway).attemptRiskAnalysisSigning(purpose.getRef(), command);
+        verifyNoMoreInteractions(gateway, commands);
+    }
+
+    @Test
+    void failsBeforeSigningIfMetadataRemainsUnavailable() {
+        var commands = mock(PurposeCommandFactory.class);
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(purpose);
+
+        assertThatThrownBy(() -> new PurposeUseCase(gateway, commands).attemptRiskAnalysisSigning(purpose))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("Missing metadataVersion");
+
+        verify(gateway).getPurpose(purpose.getRef());
+        verifyNoMoreInteractions(gateway);
+        verifyNoInteractions(commands);
+    }
+
+    @Test
+    void positiveSigningStillUsesThePositiveGatewayWithRefreshedMetadata() {
+        var commands = mock(PurposeCommandFactory.class);
+        var command = mock(SignRiskAnalysisCommand.class);
+        when(gateway.getPurpose(purpose.getRef())).thenReturn(purpose.toBuilder().metadataVersion(9).build());
+        when(commands.signRiskAnalysisCommand(9)).thenReturn(command);
+        when(gateway.signRiskAnalysis(purpose.getRef(), command)).thenReturn(purpose);
+
+        assertThat(new PurposeUseCase(gateway, commands).signRiskAnalysis(purpose)).isSameAs(purpose);
+
+        verify(gateway).getPurpose(purpose.getRef());
+        verify(gateway).signRiskAnalysis(purpose.getRef(), command);
+        verifyNoMoreInteractions(gateway);
+    }
 }

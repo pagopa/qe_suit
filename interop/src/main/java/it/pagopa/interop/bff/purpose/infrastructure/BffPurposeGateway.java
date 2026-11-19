@@ -326,4 +326,14 @@ public class BffPurposeGateway implements PurposeGateway {
         }
         restClient.clonePurpose(purposeRef.id(), bffCommand.getBffClonePayload()).withoutPolling();
     }
+
+    @Override
+    public void attemptRiskAnalysisSigning(PurposeRef purposeRef, SignRiskAnalysisCommand signCommand) {
+        if (!(signCommand instanceof BffSignRiskAnalysisCommand bffCommand)) {
+            throw new IllegalArgumentException(
+                    "Command must be an instance of " + BffSignRiskAnalysisCommand.class.getSimpleName()
+            );
+        }
+        restClient.signRiskAnalysis(purposeRef.id(), bffCommand.getBffSignPayload()).withoutPolling();
+    }
 }

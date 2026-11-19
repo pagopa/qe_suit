@@ -171,4 +171,9 @@ public class M2MPurposeGateway implements PurposeGateway {
     public void attemptPurposeCloning(PurposeRef purposeRef, PurposeCloneCommand cloneCommand) {
         throw unsupportedOperation();
     }
+
+    @Override
+    public void attemptRiskAnalysisSigning(PurposeRef purposeRef, SignRiskAnalysisCommand signCommand) {
+        throw unsupportedOperation();
+    }
 }
