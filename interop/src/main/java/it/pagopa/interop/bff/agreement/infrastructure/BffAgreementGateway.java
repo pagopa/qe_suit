@@ -104,7 +104,7 @@ public class BffAgreementGateway implements AgreementGateway {
     public Agreement activateAgreement(Agreement agreement, @Nullable Delegation delegation) {
         return restClient.activate(agreement.getId(), Optional.ofNullable(delegation).map(Delegation::getId).orElse(null))
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .assertThat( a -> a.getState().getValue().equals(AgreementState.ACTIVE.getValue()))
+                .assertThat(a -> a.getState().getValue().equals(AgreementState.ACTIVE.getValue()))
                 .map(mapper::toAgreement)
                 .updateContext()
                 .get();
@@ -210,5 +210,10 @@ public class BffAgreementGateway implements AgreementGateway {
         var document = FileUtils.loadClasspathResourceAsTempFile("assets/agreement/esempio.csv");
         restClient.addConsumerDocument(agreement.getId(), "openapi3-riferimenti.json", "Allegato di test", document)
                 .withoutPolling();
+    }
+
+    @Override
+    public void attemptAgreementDocumentDownload(Agreement agreement) {
+        restClient.getAgreementConsumerDocument(agreement.getId(), agreement.getDocuments().get(0).getId()).withoutPolling();
     }
 }

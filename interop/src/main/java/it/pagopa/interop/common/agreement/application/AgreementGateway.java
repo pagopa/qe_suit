@@ -70,4 +70,6 @@ public interface AgreementGateway extends Plugin<Channel> {
     void attemptAgreementSignedDocumentDownload(Agreement agreement);
 
     void attemptInvalidFormatConsumerDocumentUpload(Agreement agreement);
+
+    void attemptAgreementDocumentDownload(Agreement agreement);
 }

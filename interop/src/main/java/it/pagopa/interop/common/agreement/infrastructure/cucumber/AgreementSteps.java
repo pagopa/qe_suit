@@ -142,4 +142,10 @@ public class AgreementSteps {
     public void attemptInvalidFormatConsumerDocumentUpload(Agreement agreement) {
         agreementUseCase.attemptInvalidFormatConsumerDocumentUpload(agreement);
     }
+
+    @When("l'utente tenta di scaricare il documento dalla {currentAgreement}")
+    public void attemptAgreementDocumentDownload(Agreement agreement) {
+        agreementUseCase.attemptAgreementDocumentDownload(agreement);
+    }
+
 }
