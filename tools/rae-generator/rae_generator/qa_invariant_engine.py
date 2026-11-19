@@ -215,7 +215,71 @@ class Group:
     def frames(self) -> list[tuple[Frame, ...]]:
         return [split_error(a.observation.error)[1] for a in self.approvals]
 
+    @staticmethod
+    def _variant_key(error: str) -> tuple[int, str]:
+        """Separate incompatible stack families without knowing any product schema.
+
+        Only used when QA history contains DIFFERENT stack lengths. The
+        exception marker is taken as a literal diagnostic token, never as a
+        reason to generalize unseen exception classes. A family retains the
+        full existing message, method, source and line checks.
+        """
+        head, frames = split_error(error)
+        exception = re.search(r'(?m)(?:^|\s)([A-Za-z_$][\w.$]*):(?:\s|$)', head)
+        return len(frames), (exception.group(1) if exception else '')
+
     def evaluate(self, candidate: Observation) -> tuple[bool, list[Reason], float]:
+        """Evaluate approved stack variants independently, never cross-combine.
+
+        A QA group can include different *approved* stack families. A matching
+        family is sufficient, but the entire group never gains permission to
+        invent a new combination. T7 conflict checking remains in classify().
+        """
+        lengths = {len(fs) for fs in self.frames()}
+        if len(lengths) <= 1:
+            return self._evaluate_flat(candidate)
+
+        # A repeat of any exact QA-approved observation remains a match even
+        # when there is no second example of that particular stack variant.
+        if any(candidate.error == a.observation.error for a in self.approvals):
+            return True, [], 1.0
+
+        buckets: dict[tuple[int, str], list[Approval]] = {}
+        for approval in self.approvals:
+            buckets.setdefault(self._variant_key(approval.observation.error), []).append(approval)
+        key = self._variant_key(candidate.error)
+        matching = buckets.get(key)
+        if matching is not None and len(matching) >= 2:
+            # Reuse all existing T8 invariant / variant checks, trained only
+            # from QA-approved observations within the compatible family.
+            subgroup = Group(self.suite, self.test_id, self.ticket,
+                             self.group_id, approvals=matching)
+            return subgroup._evaluate_flat(candidate)
+
+        # No compatible family with sufficient QA training: no auto-known.
+        # Generate reviewer feedback from the closest approved family, while
+        # preserving an explicit signal that the structural variant is unseen.
+        reference = [a for a in self.approvals
+                     if len(split_error(a.observation.error)[1]) == key[0]]
+        if not reference:
+            reference = self.approvals
+        best = max(reference, key=lambda a: SequenceMatcher(
+            None, split_error(a.observation.error)[0],
+            split_error(candidate.error)[0]).ratio())
+        comparison = Group(self.suite, self.test_id, self.ticket,
+                           self.group_id, approvals=[best])
+        _, reasons, score = comparison._evaluate_flat(candidate)
+        # Even an exact-looking message with a new structural family must be
+        # reviewed. Singletons never train generalization.
+        reason = Reason('UNAPPROVED_STACK_VARIANT',
+                        ', '.join(f'{k[0]} frame / {k[1] or "diagnostic unknown"}'
+                                  for k in sorted(buckets)),
+                        f'{key[0]} frame / {key[1] or "diagnostic unknown"}',
+                        'Nessuna variante strutturale con almeno due conferme QA '
+                        'è compatibile; nuova combinazione da verificare')
+        return False, [reason, *reasons], max(score, 0.74 if matching else 0.0)
+
+    def _evaluate_flat(self, candidate: Observation) -> tuple[bool, list[Reason], float]:
         """Known is permitted only for a QA-approved, unambiguous diagnostic shape.
 
         A new line number is accepted at position i only after >=2 distinct
@@ -230,6 +294,13 @@ class Group:
         reasons: list[Reason] = []
         if not hist_heads:
             return False, [Reason('NO_APPROVAL', '', '', 'Firma priva di conferme QA')], 0
+
+        # A byte-for-byte repeated QA-approved log is a valid variant even if
+        # OTHER members of this group have different stack lengths or shapes.
+        # This does not authorize new variants: the minimum QA count and all
+        # competing QA groups are checked later by QALearningMatcher.classify.
+        if candidate.error in (a.observation.error for a in self.approvals):
+            return True, [], 1.0
 
         # QA-approved structural learning applies to every diagnostic token,
         # not just UUIDs. It does not use current KO as training evidence.
