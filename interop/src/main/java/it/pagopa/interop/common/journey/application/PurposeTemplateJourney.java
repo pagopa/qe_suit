@@ -15,5 +15,7 @@ public interface PurposeTemplateJourney<SELF extends PurposeTemplateJourney<SELF
      * Collega l'e-service all'ultimo purpose template creato.
      */
     SELF linkEServiceToPurposeTemplate(EService eService);
+
+    SELF addAnnotationToPurposeTemplateRiskAnalysisAnswer();
 }
 

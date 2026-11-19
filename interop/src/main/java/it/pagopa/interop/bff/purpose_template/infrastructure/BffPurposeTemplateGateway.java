@@ -12,11 +12,13 @@ import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
+import it.pagopa.utils.FileUtils;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -141,6 +143,62 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
                 .resourceKind(LinkableResourceRequest.ResourceKindEnum.ESERVICE_TEMPLATE)
                 .eserviceTemplateId(templateRef.id());
         return linkResource(purposeTemplate, payload, templateRef.id(), true);
+    }
+
+    @Override
+    public PurposeTemplate addRiskAnalysisAnswerAnnotation(PurposeTemplate purposeTemplate, UUID answerId) {
+        RiskAnalysisTemplateAnswerAnnotationSeed payload = requestFactory.addRiskAnalysisAnswerAnnotationRequest();
+        restClient.addRiskAnalysisAnswerAnnotation(purposeTemplate.getId(), answerId, payload)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        return getPurposeTemplate(purposeTemplate.getId());
+    }
+
+    @Override
+    public PurposeTemplate addRiskAnalysisAnswerAnnotationDocument(
+            PurposeTemplate purposeTemplate,
+            UUID answerId,
+            String prettyName,
+            String fixturePath
+    ) {
+        File documentFile = resolveFixtureFile(fixturePath);
+        var created = restClient.addRiskAnalysisAnswerAnnotationDocument(
+                        purposeTemplate.getId(),
+                        answerId,
+                        prettyName,
+                        documentFile
+                )
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        return PollingUtils.pollUntil(
+                () -> getPurposeTemplate(purposeTemplate.getId()),
+                pt -> pt.getAnnotationDocuments() != null
+                        && pt.getAnnotationDocuments().stream()
+                        .anyMatch(doc -> created.getId().equals(doc.getId()) || prettyName.equals(doc.getPrettyName()))
+        );
+    }
+
+    @Override
+    public void awaitSignedRiskAnalysisDocumentAvailable(PurposeTemplate purposeTemplate) {
+        restClient.getRiskAnalysisTemplateSignedDocument(purposeTemplate.getId())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+    }
+
+    private File resolveFixtureFile(String fixturePath) {
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if (classLoader == null) {
+            classLoader = BffPurposeTemplateGateway.class.getClassLoader();
+        }
+        for (String candidate : List.of(fixturePath, "assets/" + fixturePath, "assets/purpose-template/" + fixturePath)) {
+            String normalized = candidate.startsWith("/") ? candidate.substring(1) : candidate;
+            if (classLoader.getResource(normalized) != null) {
+                return FileUtils.loadClasspathResourceAsTempFile(normalized);
+            }
+        }
+        throw new IllegalStateException("Risorsa non trovata nel classpath: " + fixturePath);
     }
 
     private PurposeTemplate linkResource(

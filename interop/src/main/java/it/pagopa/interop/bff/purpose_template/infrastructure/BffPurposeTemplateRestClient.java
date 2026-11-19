@@ -11,9 +11,13 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResources;
 import it.pagopa.interop.generated.openapi.clients.bff.model.LinkedResource;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotation;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationDocument;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationSeed;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -81,6 +85,47 @@ public class BffPurposeTemplateRestClient extends RestClient {
                         .body(payload)
                         .execute(Function.identity()),
                 LinkedResource.class
+        );
+    }
+
+    public TestChain<RiskAnalysisTemplateAnswerAnnotation> addRiskAnalysisAnswerAnnotation(
+            @Nonnull UUID purposeTemplateId,
+            @Nonnull UUID answerId,
+            @Nonnull RiskAnalysisTemplateAnswerAnnotationSeed payload
+    ) {
+        return execute(
+                () -> purposeTemplatesApi.addPurposeTemplateRiskAnalysisAnswerAnnotation()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .answerIdPath(answerId)
+                        .body(payload)
+                        .execute(Function.identity()),
+                RiskAnalysisTemplateAnswerAnnotation.class
+        );
+    }
+
+    public TestChain<RiskAnalysisTemplateAnswerAnnotationDocument> addRiskAnalysisAnswerAnnotationDocument(
+            @Nonnull UUID purposeTemplateId,
+            @Nonnull UUID answerId,
+            @Nonnull String prettyName,
+            @Nonnull File doc
+    ) {
+        return execute(
+                () -> purposeTemplatesApi.addRiskAnalysisTemplateAnswerAnnotationDocument()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .answerIdPath(answerId)
+                        .prettyNameForm(prettyName)
+                        .reqSpec(reqSpec -> reqSpec.addMultiPart("doc", doc, "application/pdf"))
+                        .execute(Function.identity()),
+                RiskAnalysisTemplateAnswerAnnotationDocument.class
+        );
+    }
+
+    public TestChain<byte[]> getRiskAnalysisTemplateSignedDocument(@Nonnull UUID purposeTemplateId) {
+        return execute(
+                () -> purposeTemplatesApi.getRiskAnalysisTemplateSignedDocument()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .execute(Function.identity()),
+                byte[].class
         );
     }
 }

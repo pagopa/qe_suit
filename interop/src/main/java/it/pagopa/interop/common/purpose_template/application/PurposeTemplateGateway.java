@@ -28,4 +28,15 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
 
     PurposeTemplate linkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplateRef templateRef);
 
+    PurposeTemplate addRiskAnalysisAnswerAnnotation(PurposeTemplate purposeTemplate, UUID answerId);
+
+    PurposeTemplate addRiskAnalysisAnswerAnnotationDocument(
+            PurposeTemplate purposeTemplate,
+            UUID answerId,
+            String prettyName,
+            String fixturePath
+    );
+
+    void awaitSignedRiskAnalysisDocumentAvailable(PurposeTemplate purposeTemplate);
+
 }
