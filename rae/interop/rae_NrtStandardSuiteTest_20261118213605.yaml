@@ -5806,10 +5806,24 @@ ko:
       	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
       	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
       	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-    procedure: ''
-    result: ''
+    procedure: 'Analisi dei log ed esecuzione in locale del test. Oltre a questi esecuzione manuale del test sia in ambiente DEV, sia QA con ottenimento di mancato caricamento delle pagine richieste inerenti ambito "erogazione/richieste" per gli utenti API.'
+    result: 'Il risultato desunto dai test manuali è che gli utenti API non possono accedere alla pagina di dettaglio di richiesta fruizione con errore 403 Forbidden 
+    {
+    "type": "about:blank",
+    "title": "Unauthorized",
+    "status": 403,
+    "detail": "Invalid roles [\"api\"] for this operation",
+    "correlationId": "834b1173-ea4e-45e3-b25d-9a458f0d5e76",
+    "errors": [
+        {
+            "code": "008-9993",
+            "detail": "Invalid roles [\"api\"] for this operation"
+        }
+    ]
+    }
+    '
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-15512'
   - id_test: WebEServiceContractTest::shouldShowEServiceDetailToProducer::nome dell'e-service creato visibile all'utente
       API del Comune di Milano
     error_log: |
