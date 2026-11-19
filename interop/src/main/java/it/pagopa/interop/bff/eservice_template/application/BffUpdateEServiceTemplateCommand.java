@@ -6,10 +6,12 @@ import it.pagopa.interop.common.eservice_template.application.command.UpdateESer
 import it.pagopa.interop.generated.openapi.clients.bff.model.PatchUpdateEServiceTemplateSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.UpdateEServiceTemplateSeed;
 import lombok.Getter;
+import org.jspecify.annotations.Nullable;
 
 @Getter
 public class BffUpdateEServiceTemplateCommand implements UpdateEServiceTemplateCommand {
     private final UpdateEServiceTemplateSeed bffPayload;
+    private String alias;
 
     public static BffUpdateEServiceTemplateCommand from(UpdateEServiceTemplateSeed payload) {
         return new BffUpdateEServiceTemplateCommand(payload);
@@ -83,5 +85,10 @@ public class BffUpdateEServiceTemplateCommand implements UpdateEServiceTemplateC
         bffPayload.setAsyncExchange(isAsync);
         return this;
     }
-}
 
+    @Override
+    public UpdateEServiceTemplateCommand alias(@Nullable String alias) {
+        this.alias = alias;
+        return this;
+    }
+}
