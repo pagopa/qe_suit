@@ -30,7 +30,7 @@ def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment:
         'ko_know': [], 'ko': []
     }
     for failure in failures:
-        decision, previous = (matcher.classify(failure.id_test, failure.error_log)
+        decision, previous = (matcher.classify(failure.id_test, failure.error_log, suite=suite)
                               if matcher else ('new', None))
         entry = {'id_test': failure.id_test, 'error_log': failure.error_log}
         for field in FIELDS[2:]:
