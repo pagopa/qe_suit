@@ -29,6 +29,25 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class BffPurposeTemplateGatewayTest {
+    @Test
+    void attemptsReactivationOnceWithoutPollingOrReadingBackTheTemplate() {
+        var restClient = mock(BffPurposeTemplateRestClient.class);
+        var store = mock(EntityStore.class);
+        var mapper = mock(BffPurposeTemplateMapper.class);
+        var requests = mock(BffPurposeTemplateRequestFactory.class);
+        var adapter = new BffPurposeTemplateGateway(restClient, mapper, requests, store);
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+        TestChain<Void> chain = mock(TestChain.class);
+        when(restClient.unsuspendPurposeTemplate(template.getId())).thenReturn(chain);
+
+        adapter.attemptPurposeTemplateReactivation(template);
+
+        verify(restClient).unsuspendPurposeTemplate(template.getId());
+        verify(chain).withoutPolling();
+        verifyNoMoreInteractions(restClient, chain);
+        verifyNoInteractions(store, mapper, requests);
+    }
+
     private final BffPurposeTemplateRestClient rest = mock(BffPurposeTemplateRestClient.class);
     private final BffPurposeTemplateGateway gateway = new BffPurposeTemplateGateway(
             rest, mock(BffPurposeTemplateMapper.class), mock(BffPurposeTemplateRequestFactory.class),

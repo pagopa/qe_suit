@@ -47,4 +47,8 @@ public class PurposeTemplateUseCase {
         }
         return purposeTemplateGateway.linkEService(purposeTemplate, eService.getRef());
     }
+
+    public void attemptPurposeTemplateReactivation(PurposeTemplate purposeTemplate) {
+        purposeTemplateGateway.attemptPurposeTemplateReactivation(purposeTemplate);
+    }
 }

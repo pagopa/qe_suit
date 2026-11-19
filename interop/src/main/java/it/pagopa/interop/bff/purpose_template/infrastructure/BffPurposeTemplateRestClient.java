@@ -83,5 +83,14 @@ public class BffPurposeTemplateRestClient extends RestClient {
                 LinkedResource.class
         );
     }
-}
 
+    public TestChain<Void> unsuspendPurposeTemplate(@Nonnull UUID purposeTemplateId) {
+        return execute(
+                () -> purposeTemplatesApi.unsuspendPurposeTemplate()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+}

@@ -1,6 +1,9 @@
 package it.pagopa.interop.common.purpose_template.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
+import io.cucumber.java.en.When;
+import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantKind;
@@ -14,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public class PurposeTemplateSteps {
 
     private final InteropJourney journey;
+    private final PurposeTemplateUseCase purposeTemplateUseCase;
 
     @Given("un template finalità creato da/dal {tenant} e pubblicato")
     public void createPurposeTemplate(Tenant creator) {
@@ -39,5 +43,10 @@ public class PurposeTemplateSteps {
     @Given("il documento firmato di analisi del rischio del template finalità disponibile")
     public void signedRiskAnalysisDocumentForPurposeTemplateAvailable() {
         // TODO
+    }
+
+    @When("l'operatore tenta di riattivare il {currentPurposeTemplate}")
+    public void attemptPurposeTemplateReactivation(PurposeTemplate purposeTemplate) {
+        purposeTemplateUseCase.attemptPurposeTemplateReactivation(purposeTemplate);
     }
 }
