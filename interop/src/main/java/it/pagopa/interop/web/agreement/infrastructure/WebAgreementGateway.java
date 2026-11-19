@@ -196,4 +196,9 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     public void attemptAgreementRejection(Agreement agreement) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementRejection operation");
     }
+
+    @Override
+    public void attemptAgreementSignedDocumentDownload(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support attemptAgreementSignedDocumentDownload operation");
+    }
 }
