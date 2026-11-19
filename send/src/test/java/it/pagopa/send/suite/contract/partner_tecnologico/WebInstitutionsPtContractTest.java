@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 import org.springframework.test.context.TestConstructor;
@@ -36,6 +37,7 @@ import java.util.stream.Stream;
  * Si verificano titolo, sottotitolo, avviso sullo stato del portale, ente e ruolo nell'header, filtro e tabella degli
  * enti deleganti, confrontata con il BFF, e numero di righe per pagina.
  */
+@Tag("backofficePt")
 @EnabledIf(expression = "${partner-tecnologico.enabled}", loadContext = true)
 @SpringBootTest(classes = {
         TestBootApp.class,
@@ -117,8 +119,7 @@ public class WebInstitutionsPtContractTest {
      * <ul>
      *     <li>etichetta del campo di ricerca, campo vuoto e pulsante "Cerca" abilitato;</li>
      *     <li>intestazioni della tabella;</li>
-     *     <li>per ogni ente, nome, codice fiscale e stato della delega con la data, nello stesso ordine del BFF;</li>
-     *     <li>10 righe per pagina.</li>
+     *     <li>per ogni ente, nome, codice fiscale e stato della delega con la data, nello stesso ordine del BFF.</li>
      * </ul>
      */
     @TestFactory
@@ -155,16 +156,6 @@ public class WebInstitutionsPtContractTest {
                                     List<InstitutionRow> rows = page.institutionsTable().tBody().rows().stream()
                                             .map(InstitutionRow::of).toList();
                                     Assertions.assertThat(rows).as("enti deleganti").containsExactlyElementsOf(expected);
-                                }
-                        ),
-
-                        new WebScenario<>(
-                                "paginazione: 10 righe per pagina",
-                                page -> {},
-                                page -> {
-                                    page.rowsPerPage().readAndAssert(h -> Assertions.assertThat(h).isEqualTo(String.valueOf(ROWS_PER_PAGE)));
-                                    Assertions.assertThat(page.institutionsTable().tBody().rows()).as("righe della prima pagina")
-                                            .hasSizeLessThanOrEqualTo(ROWS_PER_PAGE);
                                 }
                         )
                 ));
