@@ -14,21 +14,21 @@ Feature: Modifica dei metadati dei client
     Given un client "CL-1" <tipoClient> creato dal Comune di Pozzallo in cui è presente un utente admin e una coppia di chiavi crittografiche
     And un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate dal Comune di Pozzallo
     And un admin del Comune di Pozzallo ha associato la finalità al client "CL-1"
-    And appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    And i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
     When un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
       | campo       | valore            |
-      | nome        | nuovo nome        |
+      | nome        | primo nome        |
     Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
-    When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    When i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
     And un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
       | campo       | valore            |
-      | descrizione | nuova descrizione |
+      | descrizione | prima descrizione |
     Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto la descrizione
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
-    When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    When i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
     And un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
       | campo       | valore            |
       | nome        | nuovo nome        |
@@ -52,21 +52,21 @@ Feature: Modifica dei metadati dei client
     Given un client "CL-1" CONSUMER creato dal Comune di Pozzallo in cui è presente un utente admin e una coppia di chiavi crittografiche
     And un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate dal Comune di Pozzallo
     And un admin del Comune di Pozzallo ha associato la finalità al client "CL-1"
-    And appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    And i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
     When un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
       | campo       | valore            |
       | nome        | nuovo nome        |
     Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto il nome
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
-    When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    When i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
     And un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
       | campo       | valore            |
       | descrizione | nuova descrizione |
     Then il client "CL-1" conserva le associazioni e i dati di riferimento eccetto la descrizione
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
-    When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    When i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
     And un admin del Comune di Pozzallo modifica i metadati del client "CL-1":
       | campo       | valore            |
       | nome        | nuovo nome        |
@@ -84,7 +84,7 @@ Feature: Modifica dei metadati dei client
     Given un client "CL-1" API creato dal Comune di Pozzallo in cui è presente un utente admin e una coppia di chiavi crittografiche
     And un EService creato dal Comune di Milano con una richiesta di fruizione e una finalità associate dal Comune di Pozzallo
     And un admin del Comune di Pozzallo ha associato la finalità al client "CL-1"
-    And appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    And i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
     When un admin del Comune di Pozzallo tenta di modificare i metadati del client "CL-1":
       | campo       | valore            |
       | nome        | nuovo nome        |
@@ -92,7 +92,7 @@ Feature: Modifica dei metadati dei client
     And il client "CL-1" conserva le associazioni e i dati di riferimento
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
-    When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    When i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
     And un admin del Comune di Pozzallo tenta di modificare i metadati del client "CL-1":
       | campo       | valore            |
       | descrizione | nuova descrizione |
@@ -100,7 +100,7 @@ Feature: Modifica dei metadati dei client
     And il client "CL-1" conserva le associazioni e i dati di riferimento
     And l'admin del Comune di Pozzallo richiede la generazione del voucher per il client e la finalità attiva
 
-    When appuntati i dati e le associazioni del client "CL-1" allo stato attuale come riferimento
+    When i dati e le associazioni del client "CL-1" allo stato attuale appuntati come riferimento
     And un admin del Comune di Pozzallo tenta di modificare i metadati del client "CL-1":
       | campo       | valore            |
       | nome        | nuovo nome        |
