@@ -1,6 +1,7 @@
 """Deterministic Markdown renderer; YAML is the only mutable source of truth."""
 from __future__ import annotations
 import re
+from .qa_confirmation import is_qa_confirmed, original_entries_by_id
 
 
 def _cell(value: object) -> str:
@@ -25,7 +26,8 @@ def _log_block(value: str) -> list[str]:
     return [f'{fence}text', value, fence]
 
 
-def render(data: dict) -> str:
+def render(data: dict, *, original_data: dict | None = None, qa_reviewed: bool = False) -> str:
+    originals = original_entries_by_id(original_data) if original_data is not None else {}
     m = data['rae']
     date = str(m['data_ora'])[:10].replace('-', '')
     lines = [
@@ -75,6 +77,28 @@ def render(data: dict) -> str:
                 '**RESULT**', '', _prose(item['result']), '',
                 '**PROCEDURE**', '', _prose(item['procedure']), '',
             ])
+            matching = item.get('matching')
+            initial = originals.get(str(item.get('id_test', '')))
+            if is_qa_confirmed(item, original=initial, qa_reviewed=qa_reviewed):
+                lines.extend([
+                    '> **ℹ️ Validazione finale prima dell’automazione**',
+                    '>',
+                    '> L’analisi di questo KO è stata precompilata automaticamente sulla base di un '
+                    'fallimento precedentemente analizzato e confermata dall’analista QA '
+                    'nell’ambito della presente RAE.',
+                    '>',
+                    '> Questa validazione rappresenta il passaggio conclusivo prima dell’automazione: '
+                    '**nelle prossime esecuzioni, il KO potrà essere riconosciuto e classificato '
+                    'automaticamente**, qualora si ripresenti con le medesime caratteristiche.', '',
+                ])
+            elif isinstance(matching, dict) and matching.get('status') == 'pending_confirmation':
+                lines.extend([
+                    '**MATCH PROPOSTO — CONFERMA QA RICHIESTA**', '',
+                    'Analisi precompilata dalla RAE ' + _cell(matching.get('source_rae', '')) +
+                    '. Verificarne la correttezza prima dell’approvazione.', '',
+                ])
+            elif isinstance(matching, dict) and matching.get('status') == 'auto_matched':
+                lines.extend(['**MATCH AUTOMATICO CON PRECEDENTE CONFERMATO**', ''])
             for field, label in [('link_prod_bug', 'LINK PROD BUG'), ('link_suite_bug', 'LINK SUITE BUG')]:
                 if item[field]:
                     lines.extend([f'**{label}:** {item[field]}', ''])

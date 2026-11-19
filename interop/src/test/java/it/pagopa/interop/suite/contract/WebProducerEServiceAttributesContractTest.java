@@ -15,7 +15,7 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
-import it.pagopa.interop.web.eservice_template.infrastructure.page.ProducerEServiceTemplateDetailPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceTemplateDetailsPage;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
@@ -95,7 +95,7 @@ public class WebProducerEServiceAttributesContractTest {
         return webContractValidator
                 .as(User.getTenantAdmin(TENANT), TENANT)
                 .on(
-                        ProducerEServiceTemplateDetailPage.class,
+                        ProducerEServiceTemplateDetailsPage.class,
                         eServiceTemplate.getId().toString(),
                         eServiceTemplate.getLatestVersion().getId().toString()
                 )
