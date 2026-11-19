@@ -44,7 +44,6 @@ Feature: Messaggi di errore durante la gestione degli e-service
     Given i seguenti template e-service pubblicati:
       | alias | erogatore        | nome               | tecnologia |
       | T-1   | Comune di Milano | Catalogo duplicato | REST       |
-    # Binding esistente; shouldFailToCreateEService non è implementato sul BFF.
     When l'utente tenta di creare un e-service con il nome del template e gli altri dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_ESERVICE_TEMPLATE_NAME_CONFLICT__POST_ESERVICES" in lingua "it"
 
@@ -712,7 +711,6 @@ Feature: Messaggi di errore durante la gestione degli e-service
   Quando l'erogatore tenta di creare un e-service con un link nel nome e gli altri dati validi
   Allora il sistema rifiuta la creazione e invita a rimuovere il link dal nome.
 
-    # Binding esistente; shouldFailToCreateEService non è implementato sul BFF.
     When l'utente tenta di creare un e-service con un link nel nome e gli altri dati validi
     Then il messaggio di errore corrisponde al caso "CATALOG_HYPERLINK_DETECTION_ERROR__POST_ESERVICES" in lingua "it"
 

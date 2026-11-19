@@ -198,7 +198,9 @@ public class BffEServiceGateway implements EServiceGateway {
 
     @Override
     public void shouldFailToCreateEService(EServiceCreationCommand command, EServiceCreationFailureReason reason) {
-        throw new UnsupportedOperationException("Attempting duplicate EService creation is not supported on the BFF channel");
+        if (!(command instanceof BffEServiceCreationCommand bffCommand))
+            throw new IllegalArgumentException("Command must be an instance of BffEServiceCreationCommand");
+        restClient.createEService(bffCommand.getBffCreationPayload()).withoutPolling();
     }
 
     @Override
