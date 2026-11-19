@@ -15,12 +15,16 @@ import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,6 +42,85 @@ class PurposeStepsTest {
             .id(UUID.randomUUID()).createdAt(Instant.EPOCH)
             .purposeVersionState(PurposeVersionState.WAITING_FOR_APPROVAL).build();
     private final Purpose purpose = Purpose.builder().id(UUID.randomUUID()).version(waiting).build();
+
+    @ParameterizedTest
+    @CsvSource({
+            "COMUNE_DI_COMUN_NUOVO, ACTIVE",
+            "COMUNE_DI_MILANO, ACTIVE",
+            "COMUNE_DI_COMUN_NUOVO, DRAFT",
+            "COMUNE_DI_MILANO, DRAFT"
+    })
+    void createsPurposeFromLastPublishedTemplateAndLastEService(Tenant consumer, PurposeVersionState state) {
+        PurposeTemplate firstPublished = PurposeTemplate.builder().id(UUID.randomUUID())
+                .state(PurposeTemplateState.PUBLISHED).build();
+        PurposeTemplate lastPublished = PurposeTemplate.builder().id(UUID.randomUUID())
+                .state(PurposeTemplateState.PUBLISHED).build();
+        PurposeTemplate draft = PurposeTemplate.builder().id(UUID.randomUUID())
+                .state(PurposeTemplateState.DRAFT).build();
+        EService eService = EService.builder().id(UUID.randomUUID()).build();
+        when(entities.getAll(PurposeTemplate.class)).thenReturn(List.of(firstPublished, lastPublished, draft));
+        when(entities.getLastOrThrow(EService.class)).thenReturn(eService);
+        when(interopJourney.withConsumer(consumer)).thenReturn(interopJourney);
+
+        if (state == PurposeVersionState.DRAFT) {
+            steps.createDraftPurposeFromTemplate(consumer);
+        } else {
+            steps.createPublishedPurposeFromTemplate(consumer);
+        }
+
+        var order = inOrder(interopJourney);
+        order.verify(interopJourney).withConsumer(consumer);
+        order.verify(interopJourney).createPurposeFromTemplateAndLinkToEService(
+                lastPublished, eService, state);
+        verifyNoMoreInteractions(interopJourney);
+        verifyNoInteractions(useCase, userSession, currentChannel);
+    }
+
+    @Test
+    void failsBeforeCreatingDraftPurposeWhenNoPublishedTemplateExists() {
+        when(entities.getAll(PurposeTemplate.class)).thenReturn(List.of(
+                PurposeTemplate.builder().id(UUID.randomUUID()).state(PurposeTemplateState.DRAFT).build()));
+
+        assertThatThrownBy(() -> steps.createDraftPurposeFromTemplate(Tenant.COMUNE_DI_COMUN_NUOVO))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("template finalita pubblicato");
+
+        verifyNoInteractions(interopJourney, useCase, userSession, currentChannel);
+    }
+
+    @Test
+    void failsBeforeCreatingPurposeWhenNoTemplateExists() {
+        when(entities.getAll(PurposeTemplate.class)).thenReturn(List.of());
+
+        assertThatThrownBy(() -> steps.createPublishedPurposeFromTemplate(Tenant.COMUNE_DI_COMUN_NUOVO))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("template finalita pubblicato");
+
+        verifyNoInteractions(interopJourney, useCase, userSession, currentChannel);
+    }
+
+    @ParameterizedTest
+    @EnumSource(value = PurposeTemplateState.class, mode = EnumSource.Mode.EXCLUDE, names = "PUBLISHED")
+    void failsBeforeCreatingPurposeWhenNoPublishedTemplateExists(PurposeTemplateState state) {
+        when(entities.getAll(PurposeTemplate.class)).thenReturn(List.of(
+                PurposeTemplate.builder().id(UUID.randomUUID()).state(state).build()));
+
+        assertThatThrownBy(() -> steps.createPublishedPurposeFromTemplate(Tenant.COMUNE_DI_COMUN_NUOVO))
+                .isInstanceOf(IllegalStateException.class).hasMessageContaining("template finalita pubblicato");
+
+        verifyNoInteractions(interopJourney, useCase, userSession, currentChannel);
+    }
+
+    @Test
+    void failsBeforeCreatingPurposeWhenEServiceIsMissing() {
+        when(entities.getAll(PurposeTemplate.class)).thenReturn(List.of(
+                PurposeTemplate.builder().id(UUID.randomUUID()).state(PurposeTemplateState.PUBLISHED).build()));
+        when(entities.getLastOrThrow(EService.class))
+                .thenThrow(new NoSuchElementException("EService not found"));
+
+        assertThatThrownBy(() -> steps.createPublishedPurposeFromTemplate(Tenant.COMUNE_DI_COMUN_NUOVO))
+                .isInstanceOf(NoSuchElementException.class).hasMessage("EService not found");
+
+        verifyNoInteractions(interopJourney, useCase, userSession, currentChannel);
+    }
 
     @ParameterizedTest
     @EnumSource(PurposeVersionState.class)

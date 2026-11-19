@@ -23,6 +23,7 @@ import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.purpose.domain.PurposeVersion;
 import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import lombok.RequiredArgsConstructor;
 
 import java.util.HashSet;
@@ -191,6 +192,29 @@ public class PurposeSteps {
         interopJourney
                 .withConsumer(consumer)
                 .createPurposeFromTemplateAndLinkToEService(purposeTemplate, eService, purposeState);
+    }
+
+    @Given("una finalità pubblicata da/dal {tenant} dal template finalità")
+    public void createPublishedPurposeFromTemplate(Tenant consumer) {
+        createPurposeFromLastPublishedTemplate(consumer, PurposeVersionState.ACTIVE);
+    }
+
+    @Given("una finalità in bozza creata da/dal {tenant} dal template finalità")
+    public void createDraftPurposeFromTemplate(Tenant consumer) {
+        createPurposeFromLastPublishedTemplate(consumer, PurposeVersionState.DRAFT);
+    }
+
+    private void createPurposeFromLastPublishedTemplate(Tenant consumer, PurposeVersionState state) {
+        PurposeTemplate purposeTemplate = entityStore.getAll(PurposeTemplate.class).stream()
+                .filter(template -> template.getState() == PurposeTemplateState.PUBLISHED)
+                .reduce((previous, current) -> current)
+                .orElseThrow(() -> new IllegalStateException(
+                        "Nessun template finalita pubblicato presente nell'entity store"));
+        EService eService = entityStore.getLastOrThrow(EService.class);
+
+        interopJourney
+                .withConsumer(consumer)
+                .createPurposeFromTemplateAndLinkToEService(purposeTemplate, eService, state);
     }
 
     @When("il fruitore aggiorna la stima di chiamate giornaliere oltre la sua soglia per la finalità")
