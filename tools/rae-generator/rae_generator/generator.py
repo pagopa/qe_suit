@@ -1,12 +1,12 @@
-"""Build a single YAML per NRT execution using approved history."""
+"""Build a single YAML per execution using approved develop history."""
 from __future__ import annotations
-from datetime import datetime, timezone
 from pathlib import Path
 import logging
 import re
 import yaml
+from yaml.emitter import ScalarAnalysis
 from .history import load_history
-from .matching import find_match
+from .progressive import ProgressiveMatcher, analysis_digest
 from .parsers import collect_reports
 
 FIELDS = ('id_test', 'error_log', 'procedure', 'result', 'link_prod_bug', 'link_suite_bug')
@@ -21,6 +21,7 @@ def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment:
         raise ValueError('Ambiente non valido')
     failures = collect_reports(report_root)
     history = load_history(history_dir, suite)
+    matcher = ProgressiveMatcher(history) if history and failures else None
     data = {
         'rae': {'release': '', 'scope': 'NIGHTLY', 'issue_jira': '', 'data_ora': data_ora,
                 'durata': durata, 'numero_ko': len(failures), 'run': run_url,
@@ -29,22 +30,55 @@ def create_rae(report_root: Path, history_dir: Path, *, suite: str, environment:
         'ko_know': [], 'ko': []
     }
     for failure in failures:
-        match = find_match(failure.id_test, failure.error_log, history)
-        previous = match.candidate if match else None
-        if previous:
-            logging.info('Match %s per %s: storico=%s ambiente=%s suite=%s', match.method, failure.id_test,
-                         previous.get('_source_file'), previous.get('_source_environment'),
-                         previous.get('_source_suite'))
+        decision, previous = (matcher.classify(failure.id_test, failure.error_log)
+                              if matcher else ('new', None))
         entry = {'id_test': failure.id_test, 'error_log': failure.error_log}
         for field in FIELDS[2:]:
             entry[field] = str(previous.get(field, '') or '') if previous else ''
-        # The YAML is the source of truth: any accepted match with an attached
-        # bug is known, independently of fingerprint versus similarity.
-        known_bug = bool(previous and (entry['link_prod_bug'] or entry['link_suite_bug']))
-        data['ko_know' if known_bug else 'ko'].append(entry)
+        if previous is not None:
+            matching = {
+                'status': 'auto_matched' if decision == 'known' else 'pending_confirmation',
+                'source_rae': previous['_source_file'],
+                'source_id_test': previous['id_test'],
+            }
+            if decision == 'proposed':
+                matching['proposed_digest'] = analysis_digest(entry)
+            entry['matching'] = matching
+            logging.info('RAE %s per %s da %s', decision, failure.id_test, previous['_source_file'])
+        # The ticket alone can never promote a suggestion to a known KO.
+        is_known = (decision == 'known' and bool(entry['link_prod_bug'] or entry['link_suite_bug']))
+        data['ko_know' if is_known else 'ko'].append(entry)
     return data
+
+
+class RaeDumper(yaml.SafeDumper):
+    """Prefer readable literal blocks while preserving Java stack-trace tabs."""
+
+    def analyze_scalar(self, scalar):
+        analysis = super().analyze_scalar(scalar)
+        # PyYAML disables the literal style when a scalar contains tabs.
+        # Tabs *inside* the block content are valid YAML. Permit them only
+        # for multiline strings without other control characters.
+        if ('\n' in scalar and '\t' in scalar
+                and all(ord(ch) >= 32 or ch in '\t\n' for ch in scalar)):
+            return ScalarAnalysis(
+                analysis.scalar, analysis.empty, analysis.multiline,
+                analysis.allow_flow_plain, analysis.allow_block_plain,
+                analysis.allow_single_quoted, analysis.allow_double_quoted,
+                True,
+            )
+        return analysis
+
+
+def _represent_string(dumper, value):
+    return dumper.represent_scalar(
+        'tag:yaml.org,2002:str', value, style='|' if '\n' in value else None,
+    )
+
+
+RaeDumper.add_representer(str, _represent_string)
 
 
 def write_yaml(data: dict, output: Path) -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(yaml.safe_dump(data, allow_unicode=True, sort_keys=False, width=110), encoding='utf-8')
+    output.write_text(yaml.dump(data, Dumper=RaeDumper, allow_unicode=True, sort_keys=False, width=110), encoding='utf-8')
