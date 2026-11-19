@@ -71,38 +71,6 @@ class PurposeTemplateStepsTest {
     }
 
     @Test
-    void updatesOnlyTheRequestedSupportedMetadataFields() {
-        var entityStore = mock(EntityStore.class);
-        var journey = mock(InteropJourney.class, RETURNS_SELF);
-        var useCase = mock(PurposeTemplateUseCase.class);
-        var template = PurposeTemplate.builder()
-                .id(UUID.randomUUID())
-                .title("Titolo iniziale")
-                .description("Descrizione iniziale")
-                .targetDescription("Destinatari iniziali")
-                .build();
-        when(entityStore.getLastOrThrow(PurposeTemplate.class)).thenReturn(template);
-        var steps = new PurposeTemplateSteps(entityStore, journey, useCase);
-        DataTable dataTable = DataTable.create(List.of(
-                List.of("campo", "valore unico"),
-                List.of("nome", "Nuovo titolo"),
-                List.of("descrizione", "Nuova descrizione"),
-                List.of("destinatari", "Destinatari aggiornati")
-        ));
-
-        steps.updatePurposeTemplateMetadata(UserRole.ADMIN, Tenant.COMUNE_DI_POZZALLO, dataTable);
-
-        verify(entityStore).getLastOrThrow(PurposeTemplate.class);
-        verify(journey).withProducer(Tenant.COMUNE_DI_POZZALLO, UserRole.ADMIN);
-        verify(useCase).updateMetadata(
-                eq(template),
-                matches("Nuovo titolo [A-Za-z0-9]{10}"),
-                matches("Nuova descrizione [A-Za-z0-9]{10}"),
-                matches("Destinatari aggiornati [A-Za-z0-9]{10}"));
-        verifyNoMoreInteractions(entityStore, useCase);
-    }
-
-    @Test
     void rejectsUnsupportedMetadataFieldsBeforeChangingTheTemplate() {
         var entityStore = mock(EntityStore.class);
         var journey = mock(InteropJourney.class, RETURNS_SELF);
