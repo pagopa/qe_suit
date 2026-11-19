@@ -1,6 +1,7 @@
 package it.pagopa.send.common.journey.application;
 
 import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 
@@ -11,6 +12,7 @@ public interface LegalNotificationJourney<SELF extends LegalNotificationJourney<
     SELF withRecipient(RecipientSpec recipient);
     SELF prepareNotification(Map<String, String> data);
     SELF sendNotification(User sender, NotificationStatus targetStatus);
+    SELF createNotification(LegalNotificationCreationCommand command);
     SELF waitForNotificationStatus(NotificationStatus targetStatus);
     SELF deleteNotification();
     SELF readNotification();

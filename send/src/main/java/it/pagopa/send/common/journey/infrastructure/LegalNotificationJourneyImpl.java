@@ -4,6 +4,7 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.send.common.user.domain.User;
 import it.pagopa.send.common.journey.application.LegalNotificationJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
@@ -22,9 +23,8 @@ import java.util.Map;
  * {@link CurrentUserSession}, {@link EntityStore}), che sono loro a essere scoped in modo diverso
  * per Cucumber (scenario) o JUnit (singleton in-memory) — lo stesso identico pattern dei Journey di
  * interop. Grazie a questo, la stessa istanza funziona sia dentro uno scenario Cucumber sia in un
- * test JUnit puro (es. un contract test). Quando un flusso richiede più step Cucumber distinti (es.
- * il flusso multi-destinatario) gli step chiamano {@link LegalNotificationUseCase} direttamente,
- * senza passare da qui.
+ * test JUnit puro (es. un contract test). Anche gli step configurabili, separati in più step Cucumber
+ * (es. il flusso multi-destinatario), passano da qui un metodo alla volta.
  */
 @Slf4j
 @Component
@@ -58,6 +58,16 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
         currentUserSession.setUser(sender);
         legalNotificationUseCase.sendNotification(sender, targetStatus);
         log.info("Notifica legale inviata, stato raggiunto: {}", targetStatus);
+        return this;
+    }
+
+    /** Predispone la notifica, aggiunge i destinatari del command e la invia per il mittente, fino ad ACCEPTED. */
+    @Override
+    public LegalNotificationJourneyImpl createNotification(LegalNotificationCreationCommand command) {
+        currentUserSession.setUser(command.sender());
+        legalNotificationUseCase.prepareNotification(command.notificationData());
+        command.recipients().forEach(legalNotificationUseCase::addRecipient);
+        legalNotificationUseCase.sendNotification(command.sender(), NotificationStatus.ACCEPTED);
         return this;
     }
 
