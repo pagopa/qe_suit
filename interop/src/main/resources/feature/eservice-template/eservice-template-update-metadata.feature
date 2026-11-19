@@ -146,55 +146,31 @@ Feature: Modifica dei metadati dei template e-service
       | descrizione | Descrizione aggiornata dell'istanza |
     Then la modifica dei metadati dell'e-service "ES-1" viene rifiutata per NOT_ALLOWED
 
-
-
-
-
-
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_TEMPLATE_METADATA_UNIQUENESS_1] - Rifiuto della rinomina in conflitto per un template e-service
-  Dato due risorse nello stesso ambito di unicità con nomi distinti,
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_UNIQUENESS] - Rifiuto della rinomina in conflitto per un template e-service
+  Dato due risorse con nomi distinti,
   quando l’attore rinomina una risorsa usando il nome dell’altra e una descrizione valida,
   allora la modifica è respinta integralmente lasciando intatte entrambe le risorse.
 
-    Given i seguenti template e-service con versioni predisposte:
-      | alias | erogatore        | nome                | tecnologia | versioni |
-      | TE-1  | Comune di Milano | Template anagrafico | REST       | bozza    |
-      | TE-2  | Comune di Milano | Template anagrafico | REST       | bozza    |
-    When un admin del Comune di Milano richiede di assegnare alla risorsa "TE-1" il nome di "TE-2" e una nuova descrizione
-    Then la modifica della risorsa "TE-1" viene rifiutata
-    And le risorse "TE-1" e "TE-2" conservano tutti i dati iniziali
+    Given i seguenti template e-service pubblicati:
+      | alias | erogatore        | nome                  | tecnologia |
+      | TPL-1 | Comune di Milano | Template Modello Alfa | REST       |
+      | TPL-2 | <erogatore>      | Template Modello Beta | REST       |
+    When un admin del Comune di Milano richiede di assegnare al template e-service "TPL-1" il nome del template e-service "TPL-2" cambiandone soltanto le maiuscole e una nuova descrizione
+    Then la modifica dei metadati del template e-service viene rifiutata per CONFLICT
 
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_TEMPLATE_METADATA_UNIQUENESS_2] - Unicità non aggirabile con differenze di maiuscole e minuscole per un template e-service
-  Dato due risorse nello stesso ambito di unicità,
-  quando l’attore richiede un nome che coincide con quello dell’altra salvo le maiuscole,
-  allora la rinomina viene rifiutata senza applicare anche la descrizione valida.
+    Examples:
+      | erogatore          |
+      | Comune di Milano   |
+      | Comune di Pozzallo |
 
-    Given i seguenti template e-service con versioni predisposte:
-      | alias | erogatore        | nome                | tecnologia | versioni |
-      | TE-1  | Comune di Milano | Template anagrafico | REST       | bozza    |
-      | TE-2  | Comune di Milano | Template anagrafico | REST       | bozza    |
-    When un admin del Comune di Milano richiede per "TE-1" il nome di "TE-2" cambiandone soltanto le maiuscole e una nuova descrizione
-    Then la modifica della risorsa "TE-1" viene rifiutata
-    And le risorse "TE-1" e "TE-2" conservano tutti i dati iniziali
 
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_TEMPLATE_METADATA_UNIQUENESS_3] - Omonimia consentita tra template e-service in ambiti distinti
-  Dato due risorse in ambiti di unicità distinti,
-  quando l’attore assegna alla prima il nome della seconda,
-  allora il sistema consente la rinomina e non modifica l’altra risorsa.
 
-    Given i seguenti template e-service con versioni predisposte:
-      | alias | erogatore          | nome                | tecnologia | versioni |
-      | TE-1  | Comune di Milano   | Template anagrafico | REST       | bozza    |
-      | TE-2  | Comune di Pozzallo | Template anagrafico | REST       | bozza    |
-    When un admin del Comune di Milano richiede di assegnare alla risorsa "TE-1" il nome di "TE-2"
-    Then la rinomina della risorsa "TE-1" viene accettata
-    And la risorsa "TE-2" conserva tutti i dati iniziali
+
+
+
+
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF

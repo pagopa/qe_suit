@@ -64,14 +64,20 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
 
     @Override
     public EServiceTemplateJourneyImpl updateEServiceTemplateMetadata(UpdateEServiceTemplateCommand command) {
-        EServiceTemplate eServiceTemplate = entityStore.getLastOrThrow(EServiceTemplate.class);
+        String alias = command.getAlias();
+        EServiceTemplate eServiceTemplate = alias != null
+                ? entityStore.getByAliasOrThrow(alias, EServiceTemplate.class)
+                : entityStore.getLastOrThrow(EServiceTemplate.class);
         eServiceTemplateUseCase.updateEServiceTemplateMetadata(eServiceTemplate, command);
         return this;
     }
 
     @Override
     public EServiceTemplateJourneyImpl tryUpdateEServiceTemplateMetadata(UpdateEServiceTemplateCommand command) {
-        EServiceTemplate eServiceTemplate = entityStore.getLastOrThrow(EServiceTemplate.class);
+        String alias = command.getAlias();
+        EServiceTemplate eServiceTemplate = alias != null
+                ? entityStore.getByAliasOrThrow(alias, EServiceTemplate.class)
+                : entityStore.getLastOrThrow(EServiceTemplate.class);
         eServiceTemplateUseCase.tryUpdateEServiceTemplateMetadata(eServiceTemplate, command);
         return this;
     }
