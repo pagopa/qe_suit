@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 @Getter
@@ -24,6 +25,7 @@ public class WebEServiceConfig {
     }
 
     @Bean
+    @Primary
     @ScenarioScope
     public EServiceCreatePage eServiceCreationPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(EServiceCreatePage.class);
