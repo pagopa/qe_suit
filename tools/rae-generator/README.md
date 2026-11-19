@@ -3,12 +3,22 @@
 Il modulo Python crea il file YAML della RAE dopo l'esecuzione NRT, recupera le analisi precedentemente approvate da `develop`, valida lo YAML completato dal QA e genera il Markdown in modo deterministico.
 
 ## Setup locale
+Partire dalla directory radice di __qe_suit__ da terminale
 
+### Linux/Mac
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r tools/rae-generator/requirements-dev.txt
 PYTHONPATH=tools/rae-generator pytest -q tools/rae-generator/tests
+```
+
+### Windows
+```bash
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r tools/rae-generator/requirements-dev.txt
+$env:PYTHONPATH = "tools/rae-generator"; pytest -q tools/rae-generator/tests
 ```
 
 ## Comandi
