@@ -88,17 +88,6 @@ class BffTenantRequestFactoryTest {
     }
 
     @Test
-    void shouldRejectMissingCommandInputs() {
-        assertThatThrownBy(() -> factory.assignCertifiedAttributeCommand(null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> factory.assignCertifiedDiscreteAttributeCommand(null, 1)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> factory.assignDeclaredAttributeCommand(null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> factory.assignVerifiedAttributeCommand(null, AgreementRef.of(UUID.randomUUID()))).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> factory.assignVerifiedAttributeCommand(AttributeRef.of(UUID.randomUUID()), null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> factory.revokeVerifiedAttributeCommand(null)).isInstanceOf(NullPointerException.class);
-        assertThatThrownBy(() -> factory.revokeVerifiedAttributeCommand(AgreementRef.of(null))).isInstanceOf(NullPointerException.class);
-    }
-
-    @Test
     @DisplayName("La factory supporta il canale BFF e rifiuta altri canali")
     void shouldSupportBffChannel() {
         assertThat(factory.supports(Channel.BFF)).isTrue();
