@@ -45,7 +45,7 @@ class PurposeTemplateStepsTest {
         var useCase = mock(PurposeTemplateUseCase.class);
         var template = PurposeTemplate.builder().build();
 
-        new PurposeTemplateSteps(journey, useCase).attemptPurposeTemplateReactivation(template);
+        new PurposeTemplateSteps(journey, useCase, entityStore).attemptPurposeTemplateReactivation(template);
 
         verify(useCase).attemptPurposeTemplateReactivation(template);
         verifyNoMoreInteractions(useCase);
@@ -58,7 +58,7 @@ class PurposeTemplateStepsTest {
         var useCase = mock(PurposeTemplateUseCase.class);
         var template = PurposeTemplate.builder().build();
 
-        new PurposeTemplateSteps(journey, useCase).attemptPurposeTemplatePublication(template);
+        new PurposeTemplateSteps(journey, useCase, entityStore).attemptPurposeTemplatePublication(template);
 
         verify(useCase).attemptPurposeTemplatePublication(template);
         verifyNoMoreInteractions(useCase);
