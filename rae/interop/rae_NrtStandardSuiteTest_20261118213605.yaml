@@ -5842,10 +5842,10 @@ ko:
       	at it.frontend.e2e.framework.core.binder.DefaultBinderInvocationHandler.invoke(DefaultBinderInvocationHandler.java:55)
       	at jdk.proxy2/jdk.proxy2.$Proxy263.assertLoaded(Unknown Source)
       	at it.pagopa.interop.suite.contract.WebEServiceContractTest.lambda$shouldShowEServiceDetailToProducer$5(WebEServiceContractTest.java:96)
-    procedure: ''
-    result: ''
+    procedure: 'Analisi del log e riesecuzione in locale del test. Il problema non viene riscontrato con la esecuzione in locale. Classificato come problema di flakiness'
+    result: 'Dato un esito positivo nella esecuzione in locale il problema viene imputato ad un mancato caricamento tempestivo dei componenti che non sono stati trovati'
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19705'
   - id_test: WebProducerPurposeContractTest::shouldShowPurposeDetailToProducer::finalità ricevuta visibile all'utente
       API del Comune di Milano
     error_log: |
