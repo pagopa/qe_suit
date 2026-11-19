@@ -6,11 +6,12 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.send.common.login.application.LoginUseCase;
 import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.user.domain.UserType;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Step di accesso ai portali SEND e di sessione: dopo l'accesso il tipo di utente (PT, PA o PG) è quello della sessione
- * dello scenario, il canale quello indicato nel Gherkin.
+ * Step di accesso ai portali SEND e di sessione: l'utente si indica solo nell'accesso, gli step successivi si riferiscono
+ * all'utente della sessione dello scenario (PT, PA o PG); il canale è quello indicato nel Gherkin.
  */
 @RequiredArgsConstructor
 public class LoginSteps {
@@ -21,7 +22,7 @@ public class LoginSteps {
         loginUseCase.loginAsTenant(tenant);
     }
 
-    @Given("il partner tecnologico: {user} (ha )effettua(to) l'accesso a SelfCare con autenticazione SPID")
+    @Given("il partner tecnologico: {user} (ha )effettua(to) (nuovamente )l'accesso a SelfCare con autenticazione SPID")
     public void spidAuthPt(User partner) {
         // il PT entra da SEND come una PA: dopo la scelta dell'ente il portale mittente lo reindirizza al BackOffice PT
         loginUseCase.loginAsTenant(partner);
@@ -47,24 +48,30 @@ public class LoginSteps {
         loginUseCase.skipSendConfiguration();
     }
 
-    @And("il partner tecnologico ha accesso alle funzionalità del BackOffice PT")
-    @And("la PA ha accesso alle funzionalità del portale ente mittente")
-    @And("la PG ha accesso alle funzionalità del portale imprese")
+    @And("ha accesso alle funzionalità del BackOffice PT")
+    @And("ha accesso alle funzionalità del portale ente mittente")
+    @And("ha accesso alle funzionalità del portale imprese")
     public void verifyPortalAccess() {
         loginUseCase.verifyPortalAccess();
     }
 
-    @When("il partner tecnologico richiede la disconnessione dal portale")
-    @When("la PA richiede la disconnessione dal portale")
-    @When("la PG richiede la disconnessione dal portale")
+    @When("richiede la disconnessione dal portale")
     public void logout() {
         loginUseCase.logout();
     }
 
-    @Then("la sessione del partner tecnologico risulta terminata")
-    @Then("la sessione della PA risulta terminata")
-    @Then("la sessione della PG risulta terminata")
-    public void verifySessionEnded() {
-        loginUseCase.verifySessionEnded();
+    @Then("la sessione risulta terminata sul BackOffice PT")
+    public void verifyPtSessionEnded() {
+        loginUseCase.verifySessionEnded(UserType.PT);
+    }
+
+    @Then("la sessione risulta terminata sul portale ente mittente")
+    public void verifyPaSessionEnded() {
+        loginUseCase.verifySessionEnded(UserType.PA);
+    }
+
+    @Then("la sessione risulta terminata sul portale imprese")
+    public void verifyPgSessionEnded() {
+        loginUseCase.verifySessionEnded(UserType.PG);
     }
 }

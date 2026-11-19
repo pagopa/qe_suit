@@ -66,21 +66,23 @@ public class WebLoginGateway implements LoginGateway {
             case PT -> browser.bind(PtInstitutionsPage.class).assertLoaded();
             case PA -> browser.bind(DashboardPage.class).assertLoaded();
             case PG -> browser.bind(NotificationPage.class).assertLoaded();
-            default -> throw unsupportedUserType();
+            default -> throw unsupportedUserType(currentUserType());
         }
     }
 
     @Override
     public void logout() {
         browser.bind(PortalLogout.class).logout();
+        // la sessione è chiusa: senza utente le navigazioni successive (es. un nuovo accesso) non ne riscrivono il token
+        currentUserSession.clear();
     }
 
     @Override
-    public void verifySessionEnded() {
-        switch (currentUserType()) {
+    public void verifySessionEnded(UserType portalUserType) {
+        switch (portalUserType) {
             case PT, PA -> browser.bind(OneIdPage.class).assertLoaded();
             case PG -> browser.bind(PgLoginPage.class).assertLoaded();
-            default -> throw unsupportedUserType();
+            default -> throw unsupportedUserType(portalUserType);
         }
     }
 
@@ -93,7 +95,7 @@ public class WebLoginGateway implements LoginGateway {
         return currentUserSession.getUser().getType();
     }
 
-    private UnsupportedOperationException unsupportedUserType() {
-        return new UnsupportedOperationException("Sessione non gestita sul canale Web per il tipo di utente " + currentUserType());
+    private UnsupportedOperationException unsupportedUserType(UserType userType) {
+        return new UnsupportedOperationException("Sessione non gestita sul canale Web per il tipo di utente " + userType);
     }
 }
