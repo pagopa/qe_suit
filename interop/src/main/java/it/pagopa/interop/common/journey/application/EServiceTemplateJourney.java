@@ -32,15 +32,11 @@ public interface EServiceTemplateJourney<SELF extends EServiceTemplateJourney<SE
             EServiceTemplateVersionState state
     );
 
-    // SELF patchEServiceTemplate(Consumer<UpdateEServiceTemplateCommand> commandConfig);
+    SELF updateEServiceTemplateMetadata(UpdateEServiceTemplateCommand command);
 
-    SELF patchEServiceTemplate(UpdateEServiceTemplateCommand command);
+    SELF tryUpdateEServiceTemplateMetadata(UpdateEServiceTemplateCommand command);
 
-    SELF tryPatchEServiceTemplate(UpdateEServiceTemplateCommand command);
-
-    // SELF tryPatchServiceTemplate(Consumer<UpdateEServiceTemplateCommand> command);
-
-    SELF shouldFailToPatchEServiceTemplate(EServiceTemplateUpdateFailureReason reason);
+    SELF shouldFailToUpdateEServiceTemplateMetadata(EServiceTemplateUpdateFailureReason reason);
 
     SELF publishVersion(EServiceTemplateVersionState state);
 

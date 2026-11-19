@@ -9,7 +9,6 @@ import it.pagopa.interop.common.eservice.application.command.EServiceTemplateIns
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
-import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceUseCase;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateUseCase;
@@ -64,22 +63,22 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     }
 
     @Override
-    public EServiceTemplateJourneyImpl patchEServiceTemplate(UpdateEServiceTemplateCommand command) {
+    public EServiceTemplateJourneyImpl updateEServiceTemplateMetadata(UpdateEServiceTemplateCommand command) {
         EServiceTemplate eServiceTemplate = entityStore.getLastOrThrow(EServiceTemplate.class);
-        eServiceTemplateUseCase.patchEServiceTemplate(eServiceTemplate, command);
+        eServiceTemplateUseCase.updateEServiceTemplateMetadata(eServiceTemplate, command);
         return this;
     }
 
     @Override
-    public EServiceTemplateJourneyImpl tryPatchEServiceTemplate(UpdateEServiceTemplateCommand command) {
+    public EServiceTemplateJourneyImpl tryUpdateEServiceTemplateMetadata(UpdateEServiceTemplateCommand command) {
         EServiceTemplate eServiceTemplate = entityStore.getLastOrThrow(EServiceTemplate.class);
-        eServiceTemplateUseCase.tryPatchEServiceTemplate(eServiceTemplate, command);
+        eServiceTemplateUseCase.tryUpdateEServiceTemplateMetadata(eServiceTemplate, command);
         return this;
     }
 
     @Override
-    public EServiceTemplateJourneyImpl shouldFailToPatchEServiceTemplate(EServiceTemplateUpdateFailureReason reason) {
-        eServiceTemplateUseCase.shouldFailToPatchEServiceTemplate(reason);
+    public EServiceTemplateJourneyImpl shouldFailToUpdateEServiceTemplateMetadata(EServiceTemplateUpdateFailureReason reason) {
+        eServiceTemplateUseCase.shouldFailToUpdateEServiceTemplateMetadata(reason);
         return this;
     }
 

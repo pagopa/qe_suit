@@ -70,7 +70,7 @@ public class EServiceTemplateMetadataUpdatesSteps {
         requestedMetadata = configurationMapper.apply(metadata, command);
         interopJourney
                 .withProducer(producer, role)
-                .patchEServiceTemplate(command);
+                .updateEServiceTemplateMetadata(command);
     }
 
     @Given("un {userRole} di/del {tenant} tenta la modifica dei metadati dell'{currentEServiceTemplate}:")
@@ -83,7 +83,7 @@ public class EServiceTemplateMetadataUpdatesSteps {
         requestedMetadata = configurationMapper.apply(metadata, command);
         interopJourney
                 .withProducer(producer, role)
-                .tryPatchEServiceTemplate(command);
+                .tryUpdateEServiceTemplateMetadata(command);
     }
 
     @Then("il {currentEServiceTemplate} presenta i metadati richiesti e conserva quelli non modificati")
@@ -106,7 +106,7 @@ public class EServiceTemplateMetadataUpdatesSteps {
 
     @Then("la modifica dei metadati del {currentEServiceTemplate} viene rifiutata per {eServiceTemplateUpdateFailureReason}")
     public void shouldFailToUpdateMetadata(EServiceTemplate eServiceTemplate, EServiceTemplateUpdateFailureReason reason) {
-        interopJourney.shouldFailToPatchEServiceTemplate(reason);
+        interopJourney.shouldFailToUpdateEServiceTemplateMetadata(reason);
     }
 
     private Boolean requestedBoolean(String field, Boolean initialValue) {

@@ -14,11 +14,11 @@ public interface EServiceTemplateGateway extends Plugin<Channel> {
 
     EServiceTemplate updateEServiceTemplate(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command);
 
-    EServiceTemplate patchEServiceTemplate(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command);
+    EServiceTemplate updateEServiceTemplateMetadata(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command);
 
-    EServiceTemplate tryPatchEServiceTemplate(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command);
+    EServiceTemplate tryUpdateEServiceTemplateMetadata(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command);
 
-    void shouldFailToPatchEServiceTemplate(EServiceTemplateUpdateFailureReason reason);
+    void shouldFailToUpdateEServiceTemplateMetadata(EServiceTemplateUpdateFailureReason reason);
 
     EServiceTemplate updateTemplateName(EServiceTemplateRef templateRef, UpdateEServiceTemplateNameCommand command);
 

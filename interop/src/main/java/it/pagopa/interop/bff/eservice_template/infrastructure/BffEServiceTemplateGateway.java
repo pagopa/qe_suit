@@ -69,7 +69,7 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
     }
 
     @Override
-    public EServiceTemplate patchEServiceTemplate(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command) {
+    public EServiceTemplate updateEServiceTemplateMetadata(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command) {
         if (!(command instanceof BffUpdateEServiceTemplateCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateCommand.class.getSimpleName());
 
@@ -86,7 +86,7 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
     }
 
     @Override
-    public EServiceTemplate tryPatchEServiceTemplate(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command) {
+    public EServiceTemplate tryUpdateEServiceTemplateMetadata(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command) {
         if (!(command instanceof BffUpdateEServiceTemplateCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateCommand.class.getSimpleName());
 
@@ -101,7 +101,7 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
     }
 
     @Override
-    public void shouldFailToPatchEServiceTemplate(EServiceTemplateUpdateFailureReason reason) {
+    public void shouldFailToUpdateEServiceTemplateMetadata(EServiceTemplateUpdateFailureReason reason) {
         var expected = switch (reason) {
             case INVALID_DATA -> 400;
             case CONFLICT, OUT_OF_DRAFT_OPERATION_FIELD -> 409;

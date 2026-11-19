@@ -40,16 +40,16 @@ public class EServiceTemplateUseCase {
         return eServiceTemplateGateway.updateEServiceTemplate(eServiceTemplate.getRef(), command);
     }
 
-    public EServiceTemplate patchEServiceTemplate(EServiceTemplate eServiceTemplate, UpdateEServiceTemplateCommand command) {
-        return eServiceTemplateGateway.patchEServiceTemplate(eServiceTemplate.getRef(), command);
+    public EServiceTemplate updateEServiceTemplateMetadata(EServiceTemplate eServiceTemplate, UpdateEServiceTemplateCommand command) {
+        return eServiceTemplateGateway.updateEServiceTemplateMetadata(eServiceTemplate.getRef(), command);
     }
 
-    public EServiceTemplate tryPatchEServiceTemplate(EServiceTemplate eServiceTemplate, UpdateEServiceTemplateCommand command) {
-        return eServiceTemplateGateway.tryPatchEServiceTemplate(eServiceTemplate.getRef(), command);
+    public EServiceTemplate tryUpdateEServiceTemplateMetadata(EServiceTemplate eServiceTemplate, UpdateEServiceTemplateCommand command) {
+        return eServiceTemplateGateway.tryUpdateEServiceTemplateMetadata(eServiceTemplate.getRef(), command);
     }
 
-    public void shouldFailToPatchEServiceTemplate(EServiceTemplateUpdateFailureReason reason) {
-        eServiceTemplateGateway.shouldFailToPatchEServiceTemplate(reason);
+    public void shouldFailToUpdateEServiceTemplateMetadata(EServiceTemplateUpdateFailureReason reason) {
+        eServiceTemplateGateway.shouldFailToUpdateEServiceTemplateMetadata(reason);
     }
 
     public EServiceTemplate updateTemplateName(EServiceTemplate eServiceTemplate, Consumer<UpdateEServiceTemplateNameCommand> config) {
