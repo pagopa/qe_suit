@@ -6,6 +6,7 @@ import it.pagopa.interop.common.eservice_template.application.command.EServiceTe
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateCommand;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 
 import java.util.function.Consumer;
@@ -31,15 +32,11 @@ public interface EServiceTemplateJourney<SELF extends EServiceTemplateJourney<SE
             EServiceTemplateVersionState state
     );
 
-    // SELF patchEServiceTemplate(Consumer<UpdateEServiceTemplateCommand> commandConfig);
+    SELF updateEServiceTemplateMetadata(UpdateEServiceTemplateCommand command);
 
-    SELF patchEServiceTemplate(UpdateEServiceTemplateCommand command);
+    SELF tryUpdateEServiceTemplateMetadata(UpdateEServiceTemplateCommand command);
 
-    // SELF tryPatchEServiceTemplate(UpdateEServiceTemplateCommand command);
-
-    // SELF tryPatchServiceTemplate(Consumer<UpdateEServiceTemplateCommand> command);
-
-    // SELF shouldFailToPactchEServiceTemplate(EServiceTemplateUpdateFailureReason reason);
+    SELF shouldFailToUpdateEServiceTemplateMetadata(EServiceTemplateUpdateFailureReason reason);
 
     SELF publishVersion(EServiceTemplateVersionState state);
 

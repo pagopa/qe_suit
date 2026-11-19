@@ -15,11 +15,11 @@ import org.springframework.plugin.core.Plugin;
 public interface EServiceGateway extends Plugin<Channel> {
     EService createEService(EServiceCreationCommand command);
 
-    void tryUpdateEService(EServiceRef eServiceRef, EServiceUpdateCommand command);
+    void tryUpdateEServiceMetadata(EServiceRef eServiceRef, EServiceUpdateCommand command);
 
-    void updateEService(EServiceRef eServiceRef, EServiceUpdateCommand command);
+    void updateEServiceMetadata(EServiceRef eServiceRef, EServiceUpdateCommand command);
 
-    void shouldFailToUpdateEService(EServiceUpdateFailureReason reason);
+    void shouldFailToUpdateEServiceMetadata(EServiceUpdateFailureReason reason);
 
     void deleteEService(EService eService);
 

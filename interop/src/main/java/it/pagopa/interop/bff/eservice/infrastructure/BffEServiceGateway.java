@@ -3,8 +3,6 @@ package it.pagopa.interop.bff.eservice.infrastructure;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
-import it.pagopa.infrastructure.response.ApiResponse;
-import it.pagopa.infrastructure.response.RawResponse;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.bff.eservice.application.BffEServiceCreationCommand;
 import it.pagopa.interop.bff.eservice.application.BffEServiceUpdateCommand;
@@ -81,16 +79,16 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
-    public void tryUpdateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+    public void tryUpdateEServiceMetadata(EServiceRef eServiceRef, EServiceUpdateCommand command) {
         if (!(command instanceof BffEServiceUpdateCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
         restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
                 .withoutPolling()
-                .getRaw();
+                .get();
     }
 
     @Override
-    public void updateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+    public void updateEServiceMetadata(EServiceRef eServiceRef, EServiceUpdateCommand command) {
         if (!(command instanceof BffEServiceUpdateCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
 
@@ -106,7 +104,7 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
-    public void shouldFailToUpdateEService(EServiceUpdateFailureReason reason) {
+    public void shouldFailToUpdateEServiceMetadata(EServiceUpdateFailureReason reason) {
         var expected = switch (reason) {
             case INVALID_DATA -> 400;
             case CONFLICT, OUT_OF_DRAFT_OPERATION_FIELD -> 409;
