@@ -1,6 +1,8 @@
 package it.pagopa.interop.suite.contract;
 
+import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.bff.infrastructure.config.BffApiContractConfig;
 import it.pagopa.interop.bff.purpose_template.infrastructure.BffPurposeTemplateRequestFactory;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
@@ -16,13 +18,18 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static org.hamcrest.Matchers.is;
+
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(classes = {TestBootApp.class, JunitContextConfig.class, BffApiContractConfig.class})
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 public class BffPurposeTemplateContractTest {
@@ -52,11 +59,16 @@ public class BffPurposeTemplateContractTest {
                 .apiCall(() -> apiClient.purposeTemplates().createPurposeTemplate())
                 .payload(asProducer(() -> requestFactory.creationRequest(PRODUCER)))
                 .targets(
-                        java.util.List.of(
-                                it.pagopa.infrastructure.fuzzing.FuzzScenario.REMOVED,
-                                it.pagopa.infrastructure.fuzzing.FuzzScenario.REPLACED_WITH_NULL),
-                        response -> response.then().statusCode(400),
-                        java.util.List.of(PurposeTemplateSeed::getPurposeFreeOfChargeReason))
+                        List.of(FuzzScenario.REMOVED, FuzzScenario.REPLACED_WITH_NULL),
+                        response -> response.then().statusCode(is(400)),
+                        List.of(PurposeTemplateSeed::getPurposeFreeOfChargeReason)
+                )
+                .targets(
+                        FuzzScenario.REPLACED_WITH_BLANK_STRING,
+                        response -> response.then()
+                                .statusCode(is(400)),
+                        List.of(seed -> seed.getPurposeRiskAnalysisForm().getVersion())
+                )
                 .tests();
     }
 
@@ -67,6 +79,17 @@ public class BffPurposeTemplateContractTest {
                 .apiCall(() -> apiClient.purposeTemplates().updatePurposeTemplate())
                 .pathParams(() -> Map.of("purposeTemplateId", createPurposeTemplate(PurposeTemplateState.DRAFT).getId()))
                 .payload(asProducer(() -> requestFactory.updateRequest(PRODUCER)))
+                .targets(
+                        List.of(FuzzScenario.REMOVED),
+                        response -> response.then().statusCode(is(400)),
+                        List.of(PurposeTemplateSeed::getPurposeFreeOfChargeReason)
+                )
+                .targets(
+                        FuzzScenario.REPLACED_WITH_BLANK_STRING,
+                        response -> response.then()
+                                .statusCode(is(400)),
+                        List.of(seed -> seed.getPurposeRiskAnalysisForm().getVersion())
+                )
                 .tests();
     }
 

@@ -9,9 +9,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class MockitoObjectGraphQueryResolverTest {
     private final MockitoObjectGraphQueryResolver resolver = new MockitoObjectGraphQueryResolver();
@@ -46,12 +44,27 @@ class MockitoObjectGraphQueryResolverTest {
     }
 
     @Test
-    void mapNavigationFailsFastWithExplicitMessage() {
+    void resolvesMapKeyAndNestedListNavigation() {
+        ObjectGraphQuery query = resolver.resolve(
+                PayloadWithMap.class,
+                p -> p.getAnswers().get("purpose").get(0)
+        );
+        assertEquals(
+                ObjectGraphQuery.root()
+                        .property(method(PayloadWithMap.class, "getAnswers"))
+                        .key("purpose")
+                        .index(0),
+                query
+        );
+    }
+
+    @Test
+    void mapKeyNavigationRequiresStringKeys() {
         ContractHttpException exception = assertThrows(
                 ContractHttpException.class,
-                () -> resolver.resolve(PayloadWithMap.class, p -> p.getMetadata().get("x"))
+                () -> resolver.resolve(PayloadWithMap.class, p -> p.getAnswers().get(1))
         );
-        assertEquals("Map key navigation is not supported by ObjectGraphQuery", exception.getMessage());
+        assertEquals("Map key navigation requires a string key", exception.getMessage());
     }
 
     @Test
@@ -127,7 +140,7 @@ class MockitoObjectGraphQueryResolverTest {
     }
 
     static class PayloadWithMap {
-        public Map<String, String> getMetadata() {
+        public Map<String, List<String>> getAnswers() {
             return Map.of();
         }
     }
