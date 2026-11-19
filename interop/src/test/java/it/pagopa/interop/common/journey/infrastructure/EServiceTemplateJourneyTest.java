@@ -7,6 +7,7 @@ import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice_template.application.*;
 import it.pagopa.interop.common.eservice_template.domain.*;
+import it.pagopa.interop.common.kernel.context.AuthSession;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -23,9 +24,10 @@ class EServiceTemplateJourneyTest {
     private final BffEServiceTemplateRequestFactory factory = new BffEServiceTemplateRequestFactory();
     private final EServiceTemplateVersionUseCase versions = new EServiceTemplateVersionUseCase(gateway, factory);
     private final InMemoryEntityStore store = new InMemoryEntityStore();
+    private final AuthSession authSession = mock(AuthSession.class);
     private final EServiceTemplateJourneyImpl journey = new EServiceTemplateJourneyImpl(
             templates, versions, mock(EServiceTemplateInstanceUseCase.class),
-            mock(EServiceDescriptorUseCase.class), factory, mock(EServiceRequestFactory.class), store);
+            mock(EServiceDescriptorUseCase.class), factory, mock(EServiceRequestFactory.class), store, authSession);
     private final EServiceTemplateVersion draft = EServiceTemplateVersion.builder()
             .id(UUID.randomUUID()).version("1").state(DRAFT).build();
     private final EServiceTemplate template = EServiceTemplate.builder().id(UUID.randomUUID())
