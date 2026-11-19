@@ -1,5 +1,6 @@
 package it.pagopa.interop.bff.eservice.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.eservice.application.EServiceRiskAnalysisGateway;
 import it.pagopa.interop.common.kernel.domain.Channel;
@@ -10,6 +11,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.EServiceRiskAnalysi
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormSeed;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
 
     private final BffEServiceRestClient restClient;
     private final BffEServiceRiskAnalysisMapper mapper;
+    private final EntityStore entityStore;
 
     /**
      * Recupera la prima {@link EServiceRiskAnalysis} associata all'e-service.
@@ -45,8 +48,20 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
 
     @Override
     public EServiceRiskAnalysis addRiskAnalysis(EServiceRef eServiceRef, RiskAnalysisForm riskAnalysisForm) {
+        return addRiskAnalysis(eServiceRef, riskAnalysisForm, null);
+    }
+
+    @Override
+    public EServiceRiskAnalysis addRiskAnalysis(
+            EServiceRef eServiceRef,
+            RiskAnalysisForm riskAnalysisForm,
+            @jakarta.annotation.Nullable String name
+    ) {
+        String effectiveName = name != null && !name.isBlank()
+                ? RandomUtils.randomAlphanumericName(name)
+                : RandomUtils.randomAlphanumericName("risk-analysis");
         EServiceRiskAnalysisSeed payload = new EServiceRiskAnalysisSeed()
-                .name(RandomUtils.randomAlphanumericName("risk-analysis"))
+                .name(effectiveName)
                 .riskAnalysisForm(new RiskAnalysisFormSeed()
                         .version(riskAnalysisForm.getVersion())
                         .answers(new HashMap<>(riskAnalysisForm.getAnswers())));
@@ -55,16 +70,18 @@ public class BffEServiceRiskAnalysisGateway implements EServiceRiskAnalysisGatew
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .get();
 
-        return PollingUtils.pollUntil(
-                () -> restClient.readEService(eServiceRef.id())
-                        .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                        .map(details -> details.getRiskAnalysis().stream()
-                                .filter(analysis -> payload.getName().equals(analysis.getName()))
-                                .findFirst()
-                                .map(mapper::toDomain))
-                        .get(),
-                java.util.Optional::isPresent
+        EServiceRiskAnalysis eServiceRiskAnalysis = PollingUtils.pollUntil(
+            () -> restClient.readEService(eServiceRef.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(details -> details.getRiskAnalysis().stream()
+                    .filter(analysis -> payload.getName().equals(analysis.getName()))
+                    .findFirst()
+                    .map(mapper::toDomain))
+                .get(),
+            Optional::isPresent
         ).orElseThrow();
+        entityStore.upsert(eServiceRiskAnalysis);
+        return eServiceRiskAnalysis;
     }
 
 

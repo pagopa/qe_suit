@@ -44,6 +44,8 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
 
     SELF addRiskAnalysis();
 
+    SELF addRiskAnalysis(String name, String alias);
+
     SELF archiveEService(GracePeriodDays gracePeriodDays);
 
     SELF waitUntilEService(Predicate<EService> predicate);

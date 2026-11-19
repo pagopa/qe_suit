@@ -34,7 +34,11 @@ public class EServiceUseCase {
     }
 
     public EService getEService(EService eService) {
-        return eServiceGateway.getEService(eService.getRef());
+        return getEService(eService.getRef());
+    }
+
+    public EService getEService(it.pagopa.interop.common.kernel.domain.EServiceRef eServiceRef) {
+        return eServiceGateway.getEService(eServiceRef);
     }
 
     public void archiveEService(EService eService, GracePeriodDays gracePeriodDays) {

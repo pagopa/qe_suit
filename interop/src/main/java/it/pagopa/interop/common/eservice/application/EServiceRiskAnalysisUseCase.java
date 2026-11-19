@@ -31,16 +31,31 @@ public class EServiceRiskAnalysisUseCase {
     }
 
     public EServiceRiskAnalysis addLatestRiskAnalysis(Tenant tenant, EService eService, boolean completed) {
+        RiskAnalysisForm form = buildRiskAnalysisForm(tenant, completed);
+        return eServiceRiskAnalysisGateway.addRiskAnalysis(eService.getRef(), form);
+    }
+
+    public EServiceRiskAnalysis addLatestRiskAnalysis(
+            Tenant tenant,
+            EService eService,
+            boolean completed,
+            @jakarta.annotation.Nullable String name
+    ) {
+        RiskAnalysisForm form = buildRiskAnalysisForm(tenant, completed);
+        return name == null || name.isBlank()
+                ? eServiceRiskAnalysisGateway.addRiskAnalysis(eService.getRef(), form)
+                : eServiceRiskAnalysisGateway.addRiskAnalysis(eService.getRef(), form, name);
+    }
+
+    private RiskAnalysisForm buildRiskAnalysisForm(Tenant tenant, boolean completed) {
         RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(tenant);
         Map<String, List<String>> answers =
                 riskAnalysisDataFactory.getTemplateForTenant(tenant, completed);
 
-        RiskAnalysisForm form = RiskAnalysisForm.builder()
+        return RiskAnalysisForm.builder()
                 .version(latestConfig.getVersion())
                 .answers(answers)
                 .build();
-
-        return eServiceRiskAnalysisGateway.addRiskAnalysis(eService.getRef(), form);
     }
 
     public EServiceRiskAnalysis getRiskAnalysis(EService eService) {
