@@ -285,11 +285,11 @@ public class BffAgreementGateway implements AgreementGateway {
 
     @Override
     public void attemptAgreementDocumentDownload(Agreement agreement) {
-        restClient.getAgreementConsumerDocument(agreement.getId(), agreement.getDocuments().get(0).getId()).withoutPolling();
+        restClient.getAgreementConsumerDocument(agreement.getId(), agreement.getConsumerDocuments().get(0).getId()).withoutPolling();
     }
 
     @Override
     public void attemptAgreementDocumentDeletion(Agreement agreement) {
-        restClient.deleteAgreementConsumerDocument(agreement.getId(), agreement.getDocuments().get(0).getId()).withoutPolling();
+        restClient.deleteAgreementConsumerDocument(agreement.getId(), agreement.getConsumerDocuments().get(0).getId()).withoutPolling();
     }
 }
