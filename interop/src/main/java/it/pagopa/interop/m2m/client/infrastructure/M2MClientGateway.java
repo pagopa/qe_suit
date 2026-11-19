@@ -13,10 +13,13 @@ import it.pagopa.interop.common.kernel.domain.ClientRef;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
+import it.pagopa.interop.generated.openapi.clients.m2m.v3.model.ClientUpdateSeed;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,7 +67,20 @@ public class M2MClientGateway implements ClientGateway {
 
     @Override
     public Client updateMetadata(Client client, String name, String description) {
-        throw unsupportedOperation();
+        ClientUpdateSeed updateSeed = new ClientUpdateSeed()
+                .name(name)
+                .description(description);
+
+        restClient.updateClient(client.getId(), updateSeed)
+                .withPolling(PollingStrategy.UNTIL_SUCCESS);
+
+        return PollingUtils.pollUntil(
+                () -> getClient(ClientRef.of(client.getId())),
+                updatedClient -> (name == null || Objects.equals(name, updatedClient.getName()))
+                        && (description == null || Objects.equals(description, updatedClient.getDescription())),
+                "Metadati attesi non ancora visibili per il client %s (nome: %s, descrizione: %s)"
+                        .formatted(client.getId(), name, description)
+        );
     }
 
     @Override
