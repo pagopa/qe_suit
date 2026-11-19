@@ -2,12 +2,14 @@ package it.pagopa.interop.suite.contract;
 
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.interop.TestBootApp;
+import it.pagopa.interop.common.infrastructure.config.JunitEnvironmentProfiles;
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
 import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.interop.common.infrastructure.config.JunitContextConfig;
 import it.pagopa.interop.common.journey.application.InteropJourney;
+import it.pagopa.interop.common.kernel.domain.ApiInterface;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
@@ -21,17 +23,18 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestConstructor;
 
 import java.util.stream.Stream;
 
+@ActiveProfiles(resolver = JunitEnvironmentProfiles.class)
 @SpringBootTest(
         classes = {
                 TestBootApp.class,
                 JunitContextConfig.class,
                 WebJUnitSuitConfig.class
-        },
-        properties = "spring.profiles.include=junit"
+        }
 )
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 @RequiredArgsConstructor
@@ -158,8 +161,9 @@ public class WebEServiceContractTest {
         EService eService = interopJourney
                 .withProducer(tenant, UserRole.ADMIN)
                 .createEService(cmd -> cmd.technology(EServiceTechnology.REST))
-                .updateDescriptor(cmd -> {}, EServiceDescriptorState.DRAFT)
-                .linkOpenApiInterface()
+                .updateDescriptor(cmd -> cmd.apiInterface(ApiInterface.builder()
+                        .name("interface").path("assets/origin-interface.yaml").build()),
+                        EServiceDescriptorState.DRAFT)
                 .get(EService.class);
 
         return webContractValidator

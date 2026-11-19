@@ -3,7 +3,10 @@ package it.pagopa.interop.web.eservice.infrastructure;
 import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.interop.web.agreement.infrastructure.page.ProducerAgreementDetailPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerAgreementDetailsPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreateFromTemplatePage;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceEditPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.EServiceRiskAnalysisAssociatedPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceViewPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.ProducerEServiceDetailPage;
 import it.pagopa.interop.web.eservice.infrastructure.suit.page.EServiceCatalogPage;
@@ -29,6 +32,12 @@ public class WebEServiceConfig {
     @ScenarioScope
     public EServiceCreatePage eServiceCreationPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(EServiceCreatePage.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public EServiceCreateFromTemplatePage eServiceCreateFromTemplatePage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(EServiceCreateFromTemplatePage.class);
     }
 
     @Bean
@@ -59,5 +68,17 @@ public class WebEServiceConfig {
     @ScenarioScope
     public ProducerAgreementDetailPage producerAgreementDetailPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(ProducerAgreementDetailPage.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public ConsumerAgreementDetailsPage consumerAgreementDetailsPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(ConsumerAgreementDetailsPage.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public EServiceRiskAnalysisAssociatedPage eServiceRiskAnalysisAssociatedPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(EServiceRiskAnalysisAssociatedPage.class);
     }
 }

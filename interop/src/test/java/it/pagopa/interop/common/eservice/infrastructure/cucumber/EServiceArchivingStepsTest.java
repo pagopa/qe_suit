@@ -1,0 +1,28 @@
+package it.pagopa.interop.common.eservice.infrastructure.cucumber;
+
+import it.pagopa.interop.common.eservice.application.EServiceArchivingUseCase;
+import it.pagopa.interop.common.eservice.domain.EService;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
+
+import static org.mockito.Mockito.*;
+
+class EServiceArchivingStepsTest {
+    @Test
+    void selectsTheExplicitProducerAndDelegatesWholeServiceArchiving() {
+        var archiving = mock(EServiceArchivingUseCase.class);
+        var session = mock(AuthSession.class);
+        var service = EService.builder().id(UUID.randomUUID()).build();
+        var steps = new EServiceArchivingSteps(archiving, session);
+
+        steps.archiveEntireEService(service, Tenant.COMUNE_DI_MILANO);
+
+        var order = inOrder(session, archiving);
+        order.verify(session).set(Tenant.COMUNE_DI_MILANO);
+        order.verify(archiving).archiveEntireEService(service);
+        order.verifyNoMoreInteractions();
+    }
+}

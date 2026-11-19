@@ -38,3 +38,20 @@ flowchart TB
 * `send` must contain SEND-specific behavior and test implementation.
 * Product-specific modules may depend on common and suit.
 * Shared modules must not depend on product-specific modules.
+
+## Shared module versus product-common package
+
+The Maven module `common/` and the package `it.pagopa.interop.common` have different scopes:
+
+| Scope | Purpose | Must not contain |
+|---|---|---|
+| Repository module `common/` | Infrastructure/utilities reusable across products | Dependencies on `interop` or `send`, Interop business rules |
+| `interop` package `it.pagopa.interop.common` | Interop domain and application contracts independent of execution channel | Dependencies from common application/domain to BFF/WEB technical implementations or generated clients |
+| `interop` channel packages such as `bff` and `web` | Concrete adaptations of Interop capabilities | Business rules duplicated solely to select endpoints or selectors |
+
+Being shared between BFF and WEB does not make an Interop concept cross-product infrastructure.
+Likewise, moving a class into `kernel` does not make an otherwise invalid dependency acceptable.
+
+See [Product module architecture](product-module-architecture.md) for package boundaries,
+[Component responsibilities](component-responsibilities.md) for ownership rules, and the
+[Architecture health checklist](architecture-health-checklist.md) for review criteria.
