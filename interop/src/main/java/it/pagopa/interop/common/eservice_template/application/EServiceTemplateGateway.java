@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice_template.application;
 
 import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import org.springframework.plugin.core.Plugin;
@@ -14,6 +15,10 @@ public interface EServiceTemplateGateway extends Plugin<Channel> {
     EServiceTemplate updateEServiceTemplate(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command);
 
     EServiceTemplate patchEServiceTemplate(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command);
+
+    EServiceTemplate tryPatchEServiceTemplate(EServiceTemplateRef templateRef, UpdateEServiceTemplateCommand command);
+
+    void shouldFailToPatchEServiceTemplate(EServiceTemplateUpdateFailureReason reason);
 
     EServiceTemplate updateTemplateName(EServiceTemplateRef templateRef, UpdateEServiceTemplateNameCommand command);
 

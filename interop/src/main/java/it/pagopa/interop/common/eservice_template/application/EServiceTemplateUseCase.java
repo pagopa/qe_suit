@@ -2,6 +2,7 @@ package it.pagopa.interop.common.eservice_template.application;
 
 import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,14 @@ public class EServiceTemplateUseCase {
 
     public EServiceTemplate patchEServiceTemplate(EServiceTemplate eServiceTemplate, UpdateEServiceTemplateCommand command) {
         return eServiceTemplateGateway.patchEServiceTemplate(eServiceTemplate.getRef(), command);
+    }
+
+    public EServiceTemplate tryPatchEServiceTemplate(EServiceTemplate eServiceTemplate, UpdateEServiceTemplateCommand command) {
+        return eServiceTemplateGateway.tryPatchEServiceTemplate(eServiceTemplate.getRef(), command);
+    }
+
+    public void shouldFailToPatchEServiceTemplate(EServiceTemplateUpdateFailureReason reason) {
+        eServiceTemplateGateway.shouldFailToPatchEServiceTemplate(reason);
     }
 
     public EServiceTemplate updateTemplateName(EServiceTemplate eServiceTemplate, Consumer<UpdateEServiceTemplateNameCommand> config) {

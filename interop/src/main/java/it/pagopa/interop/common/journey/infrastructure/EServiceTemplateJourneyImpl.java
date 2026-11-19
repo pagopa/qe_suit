@@ -9,6 +9,7 @@ import it.pagopa.interop.common.eservice.application.command.EServiceTemplateIns
 import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptorState;
+import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateInstanceUseCase;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateUseCase;
@@ -17,6 +18,7 @@ import it.pagopa.interop.common.eservice_template.application.command.EServiceTe
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateCommand;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateVersionCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.journey.application.EServiceTemplateJourney;
@@ -27,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Component
 @RequiredArgsConstructor
@@ -63,6 +67,19 @@ public class EServiceTemplateJourneyImpl implements EServiceTemplateJourney<ESer
     public EServiceTemplateJourneyImpl patchEServiceTemplate(UpdateEServiceTemplateCommand command) {
         EServiceTemplate eServiceTemplate = entityStore.getLastOrThrow(EServiceTemplate.class);
         eServiceTemplateUseCase.patchEServiceTemplate(eServiceTemplate, command);
+        return this;
+    }
+
+    @Override
+    public EServiceTemplateJourneyImpl tryPatchEServiceTemplate(UpdateEServiceTemplateCommand command) {
+        EServiceTemplate eServiceTemplate = entityStore.getLastOrThrow(EServiceTemplate.class);
+        eServiceTemplateUseCase.tryPatchEServiceTemplate(eServiceTemplate, command);
+        return this;
+    }
+
+    @Override
+    public EServiceTemplateJourneyImpl shouldFailToPatchEServiceTemplate(EServiceTemplateUpdateFailureReason reason) {
+        eServiceTemplateUseCase.shouldFailToPatchEServiceTemplate(reason);
         return this;
     }
 
