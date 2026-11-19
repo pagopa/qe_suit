@@ -41,11 +41,17 @@ public class EServiceTemplateMetadataUpdatesSteps {
             // case "assenti" -> {}
             case "in bozza" -> interopJourney.publishVersion(EServiceTemplateVersionState.DRAFT);
             case "pubblicata" -> interopJourney.publishVersion(EServiceTemplateVersionState.PUBLISHED);
-            case "sospesa" -> interopJourney.publishVersion(EServiceTemplateVersionState.SUSPENDED);
+            case "sospesa" -> {
+                interopJourney
+                        .publishVersion(EServiceTemplateVersionState.SUSPENDED)
+                        .waitUntilEServiceTemplate(template -> template.getLatestVersion().getState() == EServiceTemplateVersionState.SUSPENDED);
+            }
             // case "soltanto deprecate" -> {}
             case "pubblicata e nuova bozza" -> {
-                interopJourney.publishVersion(EServiceTemplateVersionState.PUBLISHED);
-                interopJourney.addVersion(EServiceTemplateVersionState.DRAFT);
+                interopJourney
+                        .publishVersion(EServiceTemplateVersionState.PUBLISHED)
+                        .waitUntilEServiceTemplate(template -> template.getLatestVersion().getState() == EServiceTemplateVersionState.PUBLISHED)
+                        .addVersion(EServiceTemplateVersionState.DRAFT);
             }
             default -> {
                 throw new IllegalArgumentException("Unsupported version: " + version);
@@ -57,9 +63,9 @@ public class EServiceTemplateMetadataUpdatesSteps {
     @Given("un {userRole} di/del {tenant} richiede la modifica dei metadati del {currentEServiceTemplate}:")
     public void updateMetadata(UserRole role, Tenant producer, EServiceTemplate eServiceTemplate, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
         initialEServiceTemplate = eServiceTemplate.toBuilder()
-                .versions(eServiceTemplate.getVersions())
+                // .versions(eServiceTemplate.getVersions())
                 .build();
-        UpdateEServiceTemplateCommand command = requestFactory.defaultUpdateEServiceTemplateCommand();
+        UpdateEServiceTemplateCommand command = requestFactory.defaultUpdateEServiceTemplateCommand(true);
         requestedMetadata = configurationMapper.apply(metadata, command);
         interopJourney
                 .withProducer(producer, role)

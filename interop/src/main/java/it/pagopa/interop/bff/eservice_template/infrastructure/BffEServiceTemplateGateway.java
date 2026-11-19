@@ -10,10 +10,13 @@ import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PatchUpdateEServiceTemplateSeed;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -65,10 +68,37 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
         if (!(command instanceof BffUpdateEServiceTemplateCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of " + BffUpdateEServiceTemplateCommand.class.getSimpleName());
 
-        return restClient.patchEServiceTemplate(templateRef.id(), bffCommand.asPatchEServiceTemplateSeed())
+        var payload = bffCommand.asPatchEServiceTemplateSeed();
+        restClient.patchEServiceTemplate(templateRef.id(), payload)
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
-                .map(ignored -> getEServiceTemplate(templateRef))
                 .get();
+
+        return PollingUtils.pollUntil(
+            () -> getEServiceTemplate(templateRef),
+            eServiceTemplate -> matchesUpdate(eServiceTemplate, payload),
+            "I metadati aggiornati dell'e-service template " + templateRef.id() + " non sono diventati visibili"
+        );
+    }
+
+    private static boolean matchesUpdate(EServiceTemplate actual, PatchUpdateEServiceTemplateSeed requested) {
+        return isApplied(actual.getName(), requested.getName())
+                && isApplied(actual.getIntendedTarget(), requested.getIntendedTarget())
+                && isApplied(actual.getDescription(), requested.getDescription())
+                && isApplied(
+                        actual.getTechnology() == null ? null : actual.getTechnology().getValue(),
+                        requested.getTechnology() == null ? null : requested.getTechnology().getValue()
+                )
+                && isApplied(
+                        actual.getMode() == null ? null : actual.getMode().getValue(),
+                        requested.getMode() == null ? null : requested.getMode().getValue()
+                )
+                && isApplied(actual.getIsSignalHubEnabled(), requested.getIsSignalHubEnabled())
+                && isApplied(actual.getPersonalData(), requested.getPersonalData())
+                && isApplied(actual.getAsyncExchange(), requested.getAsyncExchange());
+    }
+
+    private static <T> boolean isApplied(T actual, T requested) {
+        return requested == null || Objects.equals(actual, requested);
     }
 
     @Override

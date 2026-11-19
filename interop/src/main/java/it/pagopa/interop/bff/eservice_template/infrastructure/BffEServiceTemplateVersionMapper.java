@@ -45,7 +45,9 @@ public interface BffEServiceTemplateVersionMapper {
     @Mapping(target = "technology", source = "eserviceTemplate.technology")
     @Mapping(target = "mode", source = "eserviceTemplate.mode")
     @Mapping(target = "state", source = "eserviceTemplate", qualifiedByName = "resolveTemplateState")
+    @Mapping(target = "isSignalHubEnabled", source = "eserviceTemplate.isSignalHubEnabled")
     @Mapping(target = "personalData", source = "eserviceTemplate.personalData")
+    @Mapping(target = "asyncExchange", source = "eserviceTemplate.asyncExchange")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "versions", ignore = true)
@@ -105,9 +107,21 @@ public interface BffEServiceTemplateVersionMapper {
                         : new ArrayList<>();
 
         return updatedBase.toBuilder()
+                .isSignalHubEnabled(firstNonNull(
+                        updatedBase.getIsSignalHubEnabled(),
+                        existingTemplate == null ? null : existingTemplate.getIsSignalHubEnabled()
+                ))
+                .asyncExchange(firstNonNull(
+                        updatedBase.getAsyncExchange(),
+                        existingTemplate == null ? null : existingTemplate.getAsyncExchange()
+                ))
                 .versions(new ArrayList<>(finalVersions))
                 .riskAnalyses(riskAnalyses)
                 .build();
+    }
+
+    private static <T> T firstNonNull(T value, T fallback) {
+        return value != null ? value : fallback;
     }
 
     @Named("resolveTemplateState")
@@ -174,4 +188,3 @@ public interface BffEServiceTemplateVersionMapper {
         versions.add(incoming);
     }
 }
-

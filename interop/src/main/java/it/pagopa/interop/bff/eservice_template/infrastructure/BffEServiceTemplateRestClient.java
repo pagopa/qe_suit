@@ -118,6 +118,7 @@ public class BffEServiceTemplateRestClient extends RestClient {
                 () -> eServiceTemplatesApi
                         .createEServiceTemplateVersion()
                         .eServiceTemplateIdPath(templateId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
                         .execute(Function.identity()),
                 CreatedResource.class
         );

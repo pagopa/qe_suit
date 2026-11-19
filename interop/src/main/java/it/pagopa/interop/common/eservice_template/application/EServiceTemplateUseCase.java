@@ -29,7 +29,7 @@ public class EServiceTemplateUseCase {
     }
 
     public EServiceTemplate updateEServiceTemplate(EServiceTemplate eServiceTemplate, Consumer<UpdateEServiceTemplateCommand> config) {
-        UpdateEServiceTemplateCommand updateCommand = requestFactory.defaultUpdateEServiceTemplateCommand();
+        UpdateEServiceTemplateCommand updateCommand = requestFactory.defaultUpdateEServiceTemplateCommand(false);
         config.accept(updateCommand);
 
         return updateEServiceTemplate(eServiceTemplate, updateCommand);
