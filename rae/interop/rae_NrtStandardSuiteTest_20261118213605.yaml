@@ -5731,10 +5731,10 @@ ko:
       	at it.pagopa.infrastructure.contract.http.DefaultHttpContractPolicy$BuilderImpl.lambda$scenarioStatus$2(DefaultHttpContractPolicy.java:94)
       	at it.pagopa.infrastructure.contract.http.HttpContractRuntimeCaseExecutor.execute(HttpContractRuntimeCaseExecutor.java:59)
       	... 13 more
-    procedure: ''
-    result: ''
+    procedure: 'Log analizzato. Test ripetuto in locale e il problema si riscontra anche in locale nella medesima forma ottenendo un responseBody: {"type":"about:blank","title":"Key already exists","status":409,"detail":"Key with kid vKsqTFUc3iYp033uYUYMLDJW8fecdV5ZGZUvYVsCxXI already exists","correlationId":"30f14697-2a8b-4b93-940d-1f4af85c42fb","errors":[{"code":"006-0017","detail":"Key with kid vKsqTFUc3iYp033uYUYMLDJW8fecdV5ZGZUvYVsCxXI already exists"}],"userMessage":"Hai inserito una chiave già registrata su PDND. Se te ne serve una nuova, genera una coppia RSA da almeno 2048 bit e inserisci la chiave pubblica in formato PEM."}.'
+    result: 'Il problema è legato al fatto che per un atto di creazione della chiave, questa risulta già essere stata creata prima, facendo scaturire un errore 409 di CONFLICT per "Key with kid X already exists"'
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-19681'
   - id_test: WebConsumerPurposeDetailsPageContractTest::consumerPurposeDetailsPageContract::Consumer purpose details
       page shows the expected content and filters
     error_log: |
