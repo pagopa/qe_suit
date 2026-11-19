@@ -19,7 +19,6 @@ Feature: Modifica dei metadati dei template e-service
 
     Examples:
       | versioni                 | campo          | valore                              |
-   #TODO | assenti                  | nome        | Template anagrafico aggiornato       |
       | in bozza                 | descrizione    | Descrizione aggiornata del template |
       | pubblicata               | intendedTarget | Nuovo testo dei destinatari         |
       | sospesa                  | nome           | Template anagrafico aggiornato      |
@@ -90,7 +89,7 @@ Feature: Modifica dei metadati dei template e-service
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_TEMPLATE_METADATA_PROTECTION_1] - Rifiuto atomico di un metadato valido insieme a un valore non ammesso
+  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_PROTECTION_1] - Rifiuto della richiesta di modifica in presenza di metadati non ammessi
   Dato un template non in stato bozza e modificabile da un attore autorizzato,
   quando l'attore invia una modifica con un metadato valido e un altro non valido,
   allora il sistema rifiuta tutta la modifica e mantiene invariata la risorsa.
@@ -98,64 +97,44 @@ Feature: Modifica dei metadati dei template e-service
     Given un admin appartenente all'erogatore Comune di Milano
     And un template e-service con versione pubblicata
     When un admin del Comune di Milano tenta la modifica dei metadati del template e-service:
-      | campo        | valore                              |
-      | nome         | Template anagrafico aggiornato      |
-      | descrizione  | Descrizione aggiornata del template |
-      | personalData | true                                |
-    Then la modifica dei metadati del template e-service viene rifiutata per OUT_OF_DRAFT_OPERATION_FIELD
-
-
-
-
-
-
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario Outline: [ESERVICE_TEMPLATE_METADATA_PROTECTION_2] - Rifiuto atomico di campi operativi non modificabili
-  Dato una risorsa fuori bozza con configurazione operativa,
-  quando l’attore invia un metadato valido insieme a un campo operativo vietato,
-  allora il sistema rifiuta l’aggiornamento anche quando il campo operativo conserva il valore precedente.
-
-    Given i seguenti template e-service con versioni predisposte:
-      | alias | erogatore        | nome                | tecnologia | versioni   |
-      | TE-1  | Comune di Milano | Template anagrafico | REST       | pubblicata |
-    When un admin del Comune di Milano richiede la modifica dei metadati della risorsa "TE-1" insieme a un campo operativo vietato <variazione>
-    Then la modifica della risorsa "TE-1" viene rifiutata
-    And la risorsa "TE-1" conserva metadati, stati, versioni e relazioni iniziali
+      | campo    | valore               |
+      | <campo1> | <valore_ammesso>     |
+      | <campo2> | <valore_non_ammesso> |
+    Then la modifica dei metadati del template e-service viene rifiutata per <errore>
 
     Examples:
-      | variazione           |
-      | con valore nuovo     |
-      | con valore invariato |
+      | campo1 | valore_ammesso                 | campo2      | valore_non_ammesso | errore                       |
+      | nome   | Servizio anagrafico aggiornato | descrizione | desc               | INVALID_DATA                 |
+      | nome   | Servizio anagrafico aggiornato | technology  | REST               | OUT_OF_DRAFT_OPERATION_FIELD |
+      | nome   | Servizio anagrafico aggiornato | technology  | %last-used%        | OUT_OF_DRAFT_OPERATION_FIELD |
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_TEMPLATE_METADATA_PROTECTION_3] - Ripetizione dei metadati correnti senza effetti operativi
-  Dato una risorsa i cui metadati sono modificabili,
+  Scenario: [ESERVICE_TEMPLATE_METADATA_PROTECTION_2] - Ripetizione dei metadati correnti senza effetti operativi
+  Dato un template i cui metadati sono modificabili,
   quando l’attore ripete una modifica già applicata,
   allora la ripetizione ha successo senza modificare versioni stati o relazioni.
 
-    Given i seguenti template e-service con versioni predisposte:
-      | alias | erogatore        | nome                | tecnologia | versioni |
-      | TE-1  | Comune di Milano | Template anagrafico | REST       | bozza    |
-    When un admin del Comune di Milano aggiorna i metadati della risorsa "TE-1" con nuovi valori validi
-    And un admin del Comune di Milano ripete gli stessi valori per la risorsa "TE-1"
-    Then la ripetizione della modifica della risorsa "TE-1" viene accettata
-    And la risorsa "TE-1" conserva stati, versioni e relazioni
+    Given un admin appartenente all'erogatore Comune di Milano
+    And un template e-service con versione pubblicata
+    When un admin del Comune di Milano richiede la modifica dei metadati del template e-service:
+      | campo       | valore            |
+      | nome        | Nuovo nome        |
+      | descrizione | Nuova descrizione |
+    When un admin del Comune di Milano richiede la modifica dei metadati del template e-service:
+      | campo       | valore      |
+      | nome        | %last-used% |
+      | descrizione | %last-used% |
+    Then il template e-service presenta i metadati richiesti e conserva quelli non modificati
 
-  @work-item:QA-19036
-  @channel:Given=BFF,When=BFF,Then=BFF
-  Scenario: [ESERVICE_TEMPLATE_METADATA_PROTECTION_4] - Valori modificati e invariati nella stessa richiesta
-  Dato una risorsa con metadati già valorizzati,
-  quando l’attore modifica un campo e conferma esplicitamente il valore di un altro,
-  allora il sistema applica solo il valore modificato senza alterare dati operativi.
 
-    Given i seguenti template e-service con versioni predisposte:
-      | alias | erogatore        | nome                | tecnologia | versioni |
-      | TE-1  | Comune di Milano | Template anagrafico | REST       | bozza    |
-    When un admin del Comune di Milano richiede la modifica di un metadato della risorsa "TE-1" confermando gli altri valori correnti
-    Then la risorsa "TE-1" presenta il metadato aggiornato
-    And la risorsa "TE-1" conserva stati, versioni, relazioni e metadati invariati
+
+
+
+
+
+
+
 
   @work-item:QA-19036
   @channel:Given=BFF,When=BFF,Then=BFF
