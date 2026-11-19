@@ -46,6 +46,9 @@ class Reason:
     historical: str
     current: str
     detail: str
+    historical_context: str = ''
+    current_context: str = ''
+    location: str = ''
 
 
 @dataclass(frozen=True)
@@ -67,6 +70,121 @@ def split_error(error: str) -> tuple[str, tuple[Frame, ...]]:
         elif not frames:
             heads.append(line.strip())
     return ' '.join(' '.join(heads).split()), tuple(frames)
+
+
+def _trailing_log_lines(error: str) -> tuple[str, ...]:
+    """Preserve all text after stack frames (including skipped-looking text).
+
+    Intentionally does NOT interpret Cucumber, Java, or any product language.
+    The existing head check handles the prefix; this handles the portion that
+    split_error() historically discarded after the first stack frame.
+    """
+    encountered_frame = False
+    trailing: list[str] = []
+    for line in error.splitlines():
+        if FRAME.match(line):
+            encountered_frame = True
+        elif encountered_frame and line.strip():
+            trailing.append(' '.join(line.split()))
+    return tuple(trailing)
+
+
+def _trailing_invariant_reasons(history: list[str], current: str) -> list[Reason]:
+    """QA-only full-log invariants, with exact values and stable alignment.
+
+    Invariants in *any* trailing position are checked, including log lines
+    which happen to follow a Java stack. Unknown text is never ignored based
+    on a status word (such as 'skipped').
+    """
+    historical = [_trailing_log_lines(error) for error in history]
+    incoming = _trailing_log_lines(current)
+    if not historical or not any(historical) and not incoming:
+        return []
+    if incoming in historical:
+        return []
+    lengths = {len(lines) for lines in historical}
+    if len(lengths) != 1 or len(incoming) != next(iter(lengths)):
+        # A line insertion/removal is not safely generalizable. Give QA
+        # aligned, localized changes rather than silently dropping suffixes.
+        best = max(historical, key=lambda lines: SequenceMatcher(None, lines, incoming).ratio())
+        changes = []
+        for op, i, j, k, l in SequenceMatcher(None, best, incoming, autojunk=False).get_opcodes():
+            if op != 'equal':
+                changes.append(Reason('FULL_LOG_STRUCTURE_CHANGED',
+                                      ' | '.join(best[i:j]) or '<nessuna riga>',
+                                      ' | '.join(incoming[k:l]) or '<riga assente>',
+                                      'Righe del log inserite, eliminate o modificate rispetto alla struttura approvata'))
+        return changes or [Reason('FULL_LOG_STRUCTURE_CHANGED', str(best), str(incoming),
+                                  'Struttura delle righe non allineabile')]
+
+    reasons: list[Reason] = []
+    for line_no, actual in enumerate(incoming):
+        approved_lines = [lines[line_no] for lines in historical]
+        if actual in approved_lines:
+            continue
+        approved_tokens = [HEAD_TOKENS.findall(line) for line in approved_lines]
+        current_tokens = HEAD_TOKENS.findall(actual)
+        token_lengths = {len(tokens) for tokens in approved_tokens}
+        if len(token_lengths) != 1 or len(current_tokens) != next(iter(token_lengths)):
+            best = max(approved_lines, key=lambda line: SequenceMatcher(None, line, actual).ratio())
+            reasons.append(Reason('FULL_LOG_STRUCTURE_CHANGED', best, actual,
+                                  f'Riga {line_no + 1} del suffisso: token non allineabili'))
+            continue
+        for pos, token in enumerate(current_tokens):
+            observed = [tokens[pos] for tokens in approved_tokens]
+            if token in observed:
+                continue
+            structural = _structural_token_reasons(observed, token, pos)
+            if structural is not None:
+                reasons.extend(structural)
+            else:
+                place = f'Riga {line_no + 1} dopo lo stack, token {pos + 1}'
+                old_ctx, new_ctx, ctx_location = _token_context(
+                    approved_lines, actual, pos, location=place)
+                reasons.append(Reason(
+                    'INVARIANT_CHANGED' if len(set(observed)) == 1 else 'UNAPPROVED_VARIANT',
+                    ', '.join(sorted(set(observed))), token,
+                    f'{place}: differenza rispetto ai valori approvati dal QA',
+                    old_ctx, new_ctx, ctx_location))
+    return reasons
+
+
+def _token_context(approved: list[str], actual: str, token_position: int,
+                   *, location: str = '') -> tuple[str, str, str]:
+    """Optional, evidence-backed context around an aligned token difference.
+
+    A useful context needs stable neighbors on BOTH sides, a unique occurrence
+    of the original token in the compared line, and unambiguous alignment.
+    Otherwise return only the exact singular values via the Reason fields.
+    No domain keywords or assumed semantics are involved.
+    """
+    current_tokens = HEAD_TOKENS.findall(actual)
+    if token_position >= len(current_tokens) or not approved:
+        return '', '', ''
+    rows = [HEAD_TOKENS.findall(text) for text in approved]
+    if any(len(row) != len(current_tokens) for row in rows):
+        return '', '', ''
+    if token_position < 2 or len(current_tokens) - token_position - 1 < 2:
+        return '', '', ''
+    # Require at least two adjacent approved anchors on each side.
+    before = current_tokens[token_position - 2:token_position]
+    after = current_tokens[token_position + 1:token_position + 3]
+    if any(row[token_position - 2:token_position] != before or
+           row[token_position + 1:token_position + 3] != after for row in rows):
+        return '', '', ''
+    # Do not claim a position within repeated equal windows.
+    def count_window(tokens):
+        return sum(tokens[i - 2:i] == before and tokens[i + 1:i + 3] == after
+                   for i in range(2, len(tokens) - 2))
+    if count_window(current_tokens) != 1 or any(count_window(row) != 1 for row in rows):
+        return '', '', ''
+    old = rows[0][token_position]
+    # Different historical values at this position: no single original phrase.
+    if any(row[token_position] != old for row in rows):
+        return '', '', ''
+    old_text = ' '.join([*before, old, *after])
+    current_text = ' '.join([*before, current_tokens[token_position], *after])
+    return old_text, current_text, location
 
 
 def structural_method(method: str) -> str:
@@ -196,8 +314,11 @@ def _message_reasons(historical: list[str], current: str) -> list[Reason]:
         if structural is not None:
             reasons.extend(structural)
         else:
+            old_ctx, new_ctx, ctx_location = _token_context(
+                historical, current, pos, location=f'Token {pos + 1} del testo iniziale')
             reasons.append(Reason('MESSAGE_CHANGED', ', '.join(sorted(set(approved))), token,
-                                  'Valore non approvato o senza struttura sufficientemente distintiva'))
+                                  'Valore non approvato o senza struttura sufficientemente distintiva',
+                                  old_ctx, new_ctx, ctx_location))
     return reasons
 
 
@@ -271,12 +392,20 @@ class Group:
         _, reasons, score = comparison._evaluate_flat(candidate)
         # Even an exact-looking message with a new structural family must be
         # reviewed. Singletons never train generalization.
+        if matching:
+            evidence = f'{len(matching)} conferma QA per questa famiglia'
+            detail = ('La forma dello stack corrente è già osservata e riconosciuta. '
+                      'Tuttavia non esistono due conferme in questa famiglia '
+                      'che permettano di generalizzare i valori cambiati; '
+                      'le differenze puntuali sono elencate separatamente.')
+        else:
+            evidence = 'nessuna conferma QA per questa famiglia'
+            detail = ('La combinazione di numero di frame e classe diagnostica '
+                      'non compare fra le famiglie approvate; verifica QA richiesta.')
         reason = Reason('UNAPPROVED_STACK_VARIANT',
-                        ', '.join(f'{k[0]} frame / {k[1] or "diagnostic unknown"}'
-                                  for k in sorted(buckets)),
+                        evidence,
                         f'{key[0]} frame / {key[1] or "diagnostic unknown"}',
-                        'Nessuna variante strutturale con almeno due conferme QA '
-                        'è compatibile; nuova combinazione da verificare')
+                        detail)
         return False, [reason, *reasons], max(score, 0.74 if matching else 0.0)
 
     def _evaluate_flat(self, candidate: Observation) -> tuple[bool, list[Reason], float]:
@@ -305,6 +434,12 @@ class Group:
         # QA-approved structural learning applies to every diagnostic token,
         # not just UUIDs. It does not use current KO as training evidence.
         reasons.extend(_message_reasons(hist_heads, head))
+        # The former split_error() only returned the diagnostic prefix and
+        # stack; everything after the stack was absent from known/proposed
+        # evaluation. Check the entire trailing log against QA-approved
+        # observations in this SAME stack family.
+        reasons.extend(_trailing_invariant_reasons(
+            [a.observation.error for a in self.approvals], candidate.error))
 
         # Determine frame position semantics only when all approved shapes align.
         frame_lengths = {len(fs) for fs in hist_frames}
