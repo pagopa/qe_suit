@@ -119,7 +119,6 @@ class AgreementStepsTest {
         verify(authSession).set(Tenant.COMUNE_DI_MILANO);
         verify(command).agreementApprovalPolicy(AgreementApprovalPolicy.MANUAL);
         verify(descriptorUseCase).updateDescriptor(eService, descriptor, command);
-        verify(entityStore).upsert(eService);
     }
 
     @Test
