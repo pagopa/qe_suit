@@ -29,16 +29,16 @@ public class EServiceUseCase {
         return eServiceGateway.createEService(creationCommand);
     }
 
-    public void tryUpdateEService(EService eService, EServiceUpdateCommand command) {
-        eServiceGateway.tryUpdateEService(eService.getRef(), command);
+    public void tryUpdateEServiceMetadata(EService eService, EServiceUpdateCommand command) {
+        eServiceGateway.tryUpdateEServiceMetadata(eService.getRef(), command);
     }
 
-    public void updateEService(EService eService, EServiceUpdateCommand command) {
-        eServiceGateway.updateEService(eService.getRef(), command);
+    public void updateEServiceMetadata(EService eService, EServiceUpdateCommand command) {
+        eServiceGateway.updateEServiceMetadata(eService.getRef(), command);
     }
 
-    public void shouldFailToUpdateEService(EServiceUpdateFailureReason reason) {
-        eServiceGateway.shouldFailToUpdateEService(reason);
+    public void shouldFailToUpdateEServiceMetadata(EServiceUpdateFailureReason reason) {
+        eServiceGateway.shouldFailToUpdateEServiceMetadata(reason);
     }
 
     public void deleteEService(EService eService) {

@@ -45,7 +45,7 @@ public class EServiceMetadataUpdatesSteps {
         requestedMetadata = configurationMapper.apply(configurations, updateCommand);
         interopJourney
                 .withProducer(producer, role)
-                .updateEService(updateCommand);
+                .updateEServiceMetadata(updateCommand);
     }
 
     @When("un {userRole} di/del {tenant} tenta la modifica dei metadati dell'e-service {string}:")
@@ -58,7 +58,7 @@ public class EServiceMetadataUpdatesSteps {
         requestedMetadata = configurationMapper.apply(configurations, updateCommand);
         interopJourney
                 .withProducer(producer, role)
-                .tryUpdateEService(updateCommand);
+                .tryUpdateEServiceMetadata(updateCommand);
     }
 
     @When("un {userRole} di/del {tenant} richiede per l'e-service {string} il nome di {string} cambiandone soltanto le maiuscole e una nuova descrizione")
@@ -94,11 +94,11 @@ public class EServiceMetadataUpdatesSteps {
         if (tryUpdate) {
             interopJourney
                     .withProducer(producer, role)
-                    .tryUpdateEService(updateCommand);
+                    .tryUpdateEServiceMetadata(updateCommand);
         } else {
             interopJourney
                     .withProducer(producer, role)
-                    .updateEService(updateCommand)
+                    .updateEServiceMetadata(updateCommand)
                     .waitUntilEService(targetAlias, eService -> eService.getName().equals(requestedName));
         }
     }
@@ -137,9 +137,9 @@ public class EServiceMetadataUpdatesSteps {
 
         InteropJourney journey = interopJourney.withProducer(producer, role);
         if (onlyTry) {
-            journey.tryUpdateEService(updateCommand);
+            journey.tryUpdateEServiceMetadata(updateCommand);
         } else {
-            journey.updateEService(updateCommand);
+            journey.updateEServiceMetadata(updateCommand);
         }
     }
 
@@ -153,7 +153,7 @@ public class EServiceMetadataUpdatesSteps {
 
         interopJourney
                 .withProducer(producer, role)
-                .tryUpdateEService(command -> command.alias(alias));
+                .tryUpdateEServiceMetadata(command -> command.alias(alias));
     }
 
     @Then("la rinomina della risorsa {string} viene accettata e ha lo stesso nome di {string}")
@@ -171,7 +171,7 @@ public class EServiceMetadataUpdatesSteps {
 
     @Then("la modifica dei metadati dell'e-service {string} viene rifiutata per {eServiceUpdateFailureReason}")
     public void shouldFailToUpdateMetadata(String alias, EServiceUpdateFailureReason reason) {
-        interopJourney.shouldFailToUpdateEService(reason);
+        interopJourney.shouldFailToUpdateEServiceMetadata(reason);
     }
 
     @Then("l'e-service {string} presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori")

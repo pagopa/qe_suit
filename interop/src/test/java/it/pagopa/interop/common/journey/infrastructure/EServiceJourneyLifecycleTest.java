@@ -130,7 +130,7 @@ class EServiceJourneyLifecycleTest {
         when(command.name("updated name")).thenReturn(command);
         when(store.getLastOrThrow(EService.class)).thenReturn(eService);
 
-        assertThat(journey.tryUpdateEService(updateCommand -> updateCommand.name("updated name")))
+        assertThat(journey.tryUpdateEServiceMetadata(updateCommand -> updateCommand.name("updated name")))
                 .isSameAs(journey);
 
         var order = inOrder(requestFactory, command, store, services);
@@ -138,7 +138,7 @@ class EServiceJourneyLifecycleTest {
         order.verify(command).name("updated name");
         order.verify(command).getAlias();
         order.verify(store).getLastOrThrow(EService.class);
-        order.verify(services).tryUpdateEService(eService, command);
-        verify(services, never()).updateEService(any(), any());
+        order.verify(services).tryUpdateEServiceMetadata(eService, command);
+        verify(services, never()).updateEServiceMetadata(any(), any());
     }
 }

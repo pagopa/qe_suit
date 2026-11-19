@@ -79,7 +79,7 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
-    public void tryUpdateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+    public void tryUpdateEServiceMetadata(EServiceRef eServiceRef, EServiceUpdateCommand command) {
         if (!(command instanceof BffEServiceUpdateCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
         restClient.updateEService(eServiceRef.id(), bffCommand.getBffUpdatePayload())
@@ -88,7 +88,7 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
-    public void updateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+    public void updateEServiceMetadata(EServiceRef eServiceRef, EServiceUpdateCommand command) {
         if (!(command instanceof BffEServiceUpdateCommand bffCommand))
             throw new IllegalArgumentException("Command must be an instance of BffEServiceUpdateCommand");
 
@@ -104,7 +104,7 @@ public class BffEServiceGateway implements EServiceGateway {
     }
 
     @Override
-    public void shouldFailToUpdateEService(EServiceUpdateFailureReason reason) {
+    public void shouldFailToUpdateEServiceMetadata(EServiceUpdateFailureReason reason) {
         var expected = switch (reason) {
             case INVALID_DATA -> 400;
             case CONFLICT, OUT_OF_DRAFT_OPERATION_FIELD -> 409;

@@ -41,15 +41,15 @@ public interface EServiceJourney<SELF extends EServiceJourney<SELF>> extends Jou
         return createEService(EServiceDescriptorState.DRAFT);
     }
 
-    SELF updateEService(Consumer<EServiceUpdateCommand> commandConfig);
+    SELF updateEServiceMetadata(Consumer<EServiceUpdateCommand> commandConfig);
 
-    SELF updateEService(EServiceUpdateCommand command);
+    SELF updateEServiceMetadata(EServiceUpdateCommand command);
 
-    SELF tryUpdateEService(EServiceUpdateCommand command);
+    SELF tryUpdateEServiceMetadata(EServiceUpdateCommand command);
 
-    SELF tryUpdateEService(Consumer<EServiceUpdateCommand> command);
+    SELF tryUpdateEServiceMetadata(Consumer<EServiceUpdateCommand> command);
 
-    SELF shouldFailToUpdateEService(EServiceUpdateFailureReason reason);
+    SELF shouldFailToUpdateEServiceMetadata(EServiceUpdateFailureReason reason);
 
     SELF addRiskAnalysis();
 

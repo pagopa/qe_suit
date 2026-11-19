@@ -51,17 +51,17 @@ public class WebEServiceGateway implements EServiceGateway {
     }
 
     @Override
-    public void tryUpdateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+    public void tryUpdateEServiceMetadata(EServiceRef eServiceRef, EServiceUpdateCommand command) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void updateEService(EServiceRef eServiceRef, EServiceUpdateCommand command) {
+    public void updateEServiceMetadata(EServiceRef eServiceRef, EServiceUpdateCommand command) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void shouldFailToUpdateEService(EServiceUpdateFailureReason reason) {
+    public void shouldFailToUpdateEServiceMetadata(EServiceUpdateFailureReason reason) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

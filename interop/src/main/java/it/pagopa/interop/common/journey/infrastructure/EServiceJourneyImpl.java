@@ -52,42 +52,42 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
     }
 
     @Override
-    public EServiceJourneyImpl updateEService(Consumer<EServiceUpdateCommand> commandConfig) {
+    public EServiceJourneyImpl updateEServiceMetadata(Consumer<EServiceUpdateCommand> commandConfig) {
         EServiceUpdateCommand command = requestFactory.defaultUpdateEServiceCommand();
         commandConfig.accept(command);
-        return updateEService(command);
+        return updateEServiceMetadata(command);
     }
 
     @Override
-    public EServiceJourneyImpl updateEService(EServiceUpdateCommand command) {
+    public EServiceJourneyImpl updateEServiceMetadata(EServiceUpdateCommand command) {
         String alias = command.getAlias();
         EService eService = alias != null
                 ? entityStore.getByAliasOrThrow(alias, EService.class)
                 : entityStore.getLastOrThrow(EService.class);
-        eServiceUseCase.updateEService(eService, command);
+        eServiceUseCase.updateEServiceMetadata(eService, command);
         return this;
     }
 
     @Override
-    public EServiceJourneyImpl tryUpdateEService(EServiceUpdateCommand command) {
+    public EServiceJourneyImpl tryUpdateEServiceMetadata(EServiceUpdateCommand command) {
         String alias = command.getAlias();
         EService eService = alias != null
                 ? entityStore.getByAliasOrThrow(alias, EService.class)
                 : entityStore.getLastOrThrow(EService.class);
-        eServiceUseCase.tryUpdateEService(eService, command);
+        eServiceUseCase.tryUpdateEServiceMetadata(eService, command);
         return this;
     }
 
     @Override
-    public EServiceJourneyImpl tryUpdateEService(Consumer<EServiceUpdateCommand> command) {
+    public EServiceJourneyImpl tryUpdateEServiceMetadata(Consumer<EServiceUpdateCommand> command) {
         EServiceUpdateCommand defaultCommand = requestFactory.defaultUpdateEServiceCommand();
         command.accept(defaultCommand);
-        return tryUpdateEService(defaultCommand);
+        return tryUpdateEServiceMetadata(defaultCommand);
     }
 
     @Override
-    public EServiceJourneyImpl shouldFailToUpdateEService(EServiceUpdateFailureReason reason) {
-        eServiceUseCase.shouldFailToUpdateEService(reason);
+    public EServiceJourneyImpl shouldFailToUpdateEServiceMetadata(EServiceUpdateFailureReason reason) {
+        eServiceUseCase.shouldFailToUpdateEServiceMetadata(reason);
         return this;
     }
 
