@@ -44,9 +44,10 @@ public class ClientSteps {
         clientUseCase.generateVoucher(client, purpose);
     }
 
-    @Given("appuntati i dati e le associazioni del client {string} allo stato attuale come riferimento")
+    @Given("i dati e le associazioni del client {string} allo stato attuale appuntati come riferimento")
     public void saveClientReference(String clientAlias) {
         Client client = entityStore.getByAliasOrThrow(clientAlias, Client.class);
+        client = clientUseCase.getClient(client);
         clientReference = client.toBuilder()
                 .keys(new LinkedHashSet<>(client.getKeys()))
                 .purposes(List.copyOf(client.getPurposes()))
@@ -80,6 +81,7 @@ public class ClientSteps {
                 .as("Riferimento del client salvato prima della modifica")
                 .isNotNull();
         Client client = entityStore.getByAliasOrThrow(clientAlias, Client.class);
+        client = clientUseCase.getClient(client);
 
         if (excludedFields.contains("name")) {
             assertThat(client.getName())

@@ -1,7 +1,9 @@
 package it.pagopa.interop.m2m.client.infrastructure;
 
+import it.pagopa.application.context.EntityStore;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.response.ApiResponse;
+import it.pagopa.infrastructure.template.action.strategy.PollingStrategy;
 import it.pagopa.interop.common.client.application.ClientGateway;
 import it.pagopa.interop.common.client.application.command.ClientCreationCommand;
 import it.pagopa.interop.common.client.application.command.ClientKeyCreationCommand;
@@ -22,11 +24,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RequiredArgsConstructor
 public class M2MClientGateway implements ClientGateway {
 
+    private final M2MClientRestClient restClient;
+    private final EntityStore entityStore;
     private final LastApiResponseStore lastApiResponseStore;
 
     @Override
     public Client getClient(ClientRef ref) {
-        throw unsupportedOperation();
+        return restClient.getClient(ref.id())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .map(client -> toDomain(client, entityStore.getById(ref.id(), Client.class).orElse(null)))
+                .updateContext()
+                .get();
     }
 
     @Override
@@ -90,5 +98,21 @@ public class M2MClientGateway implements ClientGateway {
 
     private static UnsupportedOperationException unsupportedOperation() {
         return new UnsupportedOperationException("This client operation is not supported on M2M v3");
+    }
+
+    private static Client toDomain(
+            it.pagopa.interop.generated.openapi.clients.m2m.v3.model.Client source,
+            Client existingClient
+    ) {
+        Client.ClientBuilder client = existingClient == null
+                ? Client.builder()
+                : existingClient.toBuilder();
+
+        return client
+                .id(source.getId())
+                .consumerId(source.getConsumerId())
+                .name(source.getName())
+                .description(source.getDescription())
+                .build();
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import it.pagopa.interop.common.client.application.command.ClientCreationCommand;
 import it.pagopa.interop.common.client.domain.Client;
 import it.pagopa.interop.common.client.domain.ClientKind;
+import it.pagopa.interop.common.kernel.domain.ClientRef;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.kernel.security.AccessToken;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,10 @@ public class ClientUseCase {
         ClientCreationCommand command = clientCommandFactory.creationCommand();
         creationCommand.accept(command);
         return clientGateway.createClient(command);
+    }
+
+    public Client getClient(Client client) {
+        return clientGateway.getClient(ClientRef.of(client.getId()));
     }
 
     public Client linkPurpose(Client client, Purpose purpose) {
