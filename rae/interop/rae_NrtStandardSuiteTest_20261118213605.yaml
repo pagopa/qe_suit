@@ -5912,10 +5912,24 @@ ko:
       	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1655)
       	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1622)
       	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:165)
-    procedure: ''
-    result: ''
+    procedure: 'Analisi del log e riesecuzione in locale con fallimento. Eseguendo il test manualmente sia in DEV, sia in QA, si manifesta un problema di accesso (403 Forbidden) per gli operatori API a questa pagina.'
+    result: 'Problema di accesso per gli operatori API a questa pagina. Di seguito si riporta errore riscontrato da browser.
+    {
+    "type": "about:blank",
+    "title": "Unauthorized",
+    "status": 403,
+    "detail": "Invalid roles [\"api\"] for this operation",
+    "correlationId": "0f952e03-84f8-422a-aba1-20ad4c90f54c",
+    "errors": [
+        {
+            "code": "008-9993",
+            "detail": "Invalid roles [\"api\"] for this operation"
+        }
+    ]
+}
+    '
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-15512'
   - id_test: WebProducerPurposeContractTest::shouldShowReceivedPurposeListToProducer::finalità ricevute visibili all'utente
       API del Comune di Milano
     error_log: |
@@ -5934,7 +5948,21 @@ ko:
       	at it.frontend.e2e.framework.core.binder.DefaultBinderInvocationHandler.invoke(DefaultBinderInvocationHandler.java:55)
       	at jdk.proxy2/jdk.proxy2.$Proxy349.assertLoaded(Unknown Source)
       	at it.pagopa.interop.suite.contract.WebProducerPurposeContractTest.lambda$shouldShowReceivedPurposeListToProducer$1(WebProducerPurposeContractTest.java:54)
-    procedure: ''
-    result: ''
+    procedure: 'Analisi del log e riesecuzione in locale con fallimento. Eseguendo il test manualmente sia in DEV, sia in QA, si manifesta un problema di accesso (403 Forbidden) per gli operatori API a questa pagina.'
+    result: 'Problema di accesso per gli operatori API a questa pagina. Di seguito si riporta errore riscontrato da browser.
+    {
+    "type": "about:blank",
+    "title": "Unauthorized",
+    "status": 403,
+    "detail": "Invalid roles [\"api\"] for this operation",
+    "correlationId": "ffa80c07-b1f2-4ddd-85cf-b839216dddd6",
+    "errors": [
+        {
+            "code": "008-9993",
+            "detail": "Invalid roles [\"api\"] for this operation"
+        }
+    ]
+}
+    '
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-15512'
