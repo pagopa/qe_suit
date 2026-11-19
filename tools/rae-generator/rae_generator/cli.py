@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import sys
 from .generator import create_rae, write_yaml
+from .namespace import namespace_dir, validate_output_path
 from .renderer import render
 from .validator import read_yaml, validate, ValidationError
 import yaml
@@ -18,6 +19,7 @@ def main(argv: list[str] | None = None) -> int:
     generate = sub.add_parser('generate', help='Generate initial YAML after NRT')
     for flag in ('reports', 'history', 'suite', 'environment', 'executor', 'source-branch', 'run-url', 'metadata', 'output'):
         generate.add_argument('--' + flag, required=True)
+    generate.add_argument('--namespace', required=True, help='RAE storage namespace (e.g. interop, send)')
     finalize = sub.add_parser('finalize', help='Validate YAML and generate Markdown')
     finalize.add_argument('yaml_file', type=Path)
     finalize.add_argument('--write', action='store_true', help='Write MD next to YAML')
@@ -31,12 +33,13 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == 'generate':
             metadata = json.loads(Path(args.metadata).read_text(encoding='utf-8'))
-            data = create_rae(Path(args.reports), Path(args.history),
+            output = validate_output_path(Path(args.history), args.namespace, Path(args.output))
+            data = create_rae(Path(args.reports), namespace_dir(Path(args.history), args.namespace),
                               suite=args.suite, environment=args.environment,
                               executor=args.executor, source_branch=args.source_branch,
                               run_url=args.run_url, data_ora=metadata['data_ora'],
                               durata=metadata['durata'])
-            write_yaml(data, Path(args.output))
+            write_yaml(data, output)
             print(f'Generated {args.output}: {data["rae"]["numero_ko"]} KO')
         else:
             data = read_yaml(args.yaml_file)

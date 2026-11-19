@@ -17,18 +17,18 @@ Generazione iniziale (YAML incompleto ammesso; non produce Markdown):
 
 ```bash
 PYTHONPATH=tools/rae-generator python -m rae_generator generate \
-  --reports /path/to/interop/target --history rae \
+  --reports /path/to/interop/target --history rae --namespace interop \
   --suite NrtStandardSuiteTest --environment qa --executor USER \
   --source-branch develop --run-url https://github.com/pagopa/qe_suit/actions/runs/123 \
   --metadata /path/to/interop/target/rae/run_metadata.json \
-  --output rae/rae_NrtStandardSuiteTest_20261116190000.yaml
+  --output rae/interop/rae_NrtStandardSuiteTest_20261116190000.yaml
 ```
 
 Validazione e generazione Markdown (richiede che release, issue_jira, procedure e result siano compilati):
 
 ```bash
-PYTHONPATH=tools/rae-generator python -m rae_generator finalize rae/rae_NrtStandardSuiteTest_20261116190000.yaml --write
-PYTHONPATH=tools/rae-generator python -m rae_generator check rae/rae_NrtStandardSuiteTest_20261116190000.yaml
+PYTHONPATH=tools/rae-generator python -m rae_generator finalize rae/interop/rae_NrtStandardSuiteTest_20261116190000.yaml --write
+PYTHONPATH=tools/rae-generator python -m rae_generator check rae/interop/rae_NrtStandardSuiteTest_20261116190000.yaml
 ```
 
 ## GitHub Actions
@@ -63,3 +63,21 @@ Il workflow `pull_request` esegue un checkout in sola lettura e concede il PAT s
 - La RAE legge solo `cucumber-reports/report.json` e `contract-test/report.json`; non usa più XML JUnit.
 - Se manca uno dei due JSON o i totali Java non sono coerenti, la generazione fallisce.
 - JUnit XML può rimanere nell'artifact per debugging; non è un input RAE.
+
+## Namespace delle RAE (pipeline multiple)
+
+Ogni pipeline configura un namespace distinto: `interop` per Interop, `send` per
+la futura pipeline SEND. `--history rae` indica la **radice**; la CLI legge
+esclusivamente `rae/<namespace>/` e scrive esclusivamente lì. Non esiste
+fallback implicito a `rae/` né lettura degli altri namespace.
+
+Esempio: `--history rae --namespace send --output rae/send/rae_Suite_20261119000000.yaml`.
+La pipeline Interop imposta `RAE_NAMESPACE: interop` in `generate_rae.env`.
+Le nuove PR usano branch `rae/interop/rae_<suite>_<timestamp>`; il workflow
+di validazione ricava da lì il percorso YAML/MD. Branch preesistenti senza
+namespace restano gestiti per non rompere PR già aperte.
+
+**Migrazione iniziale**: prima di generare nuove RAE Interop, eseguire lo
+script `migrate_legacy.py --namespace interop` incluso nel pacchetto della
+patch, verificare `git diff --cached --stat` e committare i `git mv` su un
+branch dedicato. Solo lo storico migrato e approvato in develop verrà usato.
