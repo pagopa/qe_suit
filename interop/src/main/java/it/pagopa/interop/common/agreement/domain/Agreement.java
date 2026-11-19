@@ -4,6 +4,7 @@ import it.pagopa.domain.Identifiable;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Document;
 import lombok.Builder;
+import lombok.Singular;
 import lombok.Value;
 import lombok.extern.jackson.Jacksonized;
 
@@ -24,7 +25,11 @@ public class Agreement implements Identifiable {
     Boolean suspendedByConsumer;
     Boolean suspendedByProducer;
     String rejectionReason;
-    List<Document> documents;
+    Boolean isContractPresent;
+    Boolean isDocumentReady;
+
+    @Singular("consumerDocument")
+    List<Document> consumerDocuments;
 
     public AgreementRef getRef(){
         return new AgreementRef(id);

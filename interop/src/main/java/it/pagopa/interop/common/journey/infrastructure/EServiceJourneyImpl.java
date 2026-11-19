@@ -65,10 +65,19 @@ public class EServiceJourneyImpl implements EServiceJourney<EServiceJourneyImpl>
 
     @Override
     public EServiceJourneyImpl addRiskAnalysis() {
+        return addRiskAnalysis(null, null);
+    }
+
+    @Override
+    public EServiceJourneyImpl addRiskAnalysis(String name, String alias) {
         EService eService = entityStore.getLastOrThrow(EService.class);
         EServiceRiskAnalysis riskAnalysis =
-                eServiceRiskAnalysisUseCase.addLatestRiskAnalysis(authSession.getTenant(), eService, true);
-        entityStore.upsert(riskAnalysis);
+                eServiceRiskAnalysisUseCase.addLatestRiskAnalysis(authSession.getTenant(), eService, true, name);
+        if (alias != null && !alias.isBlank()) {
+            // L'upsert della entity a meno dell'alias, come da linee guida architetturali,
+            // è riservato al gateway; qui si gestisce solo il caso in cui ci sia un alias.
+            entityStore.upsert(alias, riskAnalysis);
+        }
         return this;
     }
 

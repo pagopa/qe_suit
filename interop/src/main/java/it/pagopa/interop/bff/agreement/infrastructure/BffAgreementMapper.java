@@ -23,6 +23,11 @@ public interface BffAgreementMapper {
             it.pagopa.interop.generated.openapi.clients.bff.model.Agreement source
     );
 
+    @Mapping(target = "checksum", ignore = true)
+    it.pagopa.interop.common.kernel.domain.Document toDocument(
+            it.pagopa.interop.generated.openapi.clients.bff.model.Document source
+    );
+
     default UUID map(CompactOrganization source) {
         return source == null ? null : source.getId();
     }

@@ -5,10 +5,13 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.TenantKind;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.generated.openapi.clients.bff.model.*;
 import org.instancio.Instancio;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static it.pagopa.utils.RandomUtils.randomAlphanumericName;
@@ -51,6 +54,20 @@ public class BffEServiceTemplateRequestFactory implements EServiceTemplateReques
     @Override
     public UpdateEServiceTemplateVersionCommand defaultUpdateTemplateVersionCommand() {
         return BffUpdateEServiceTemplateVersionCommand.from(updateDraftVersionRequest());
+    }
+
+    @Override
+    public CreateEServiceTemplateRiskAnalysisCommand createRiskAnalysisCommand(
+            TenantKind tenantKind,
+            RiskAnalysisForm riskAnalysisForm
+    ) {
+        EServiceTemplateRiskAnalysisSeed payload = new EServiceTemplateRiskAnalysisSeed()
+                .name(randomAlphanumericName("template-risk-analysis", 15))
+                .tenantKind(it.pagopa.interop.generated.openapi.clients.bff.model.TenantKind.fromValue(tenantKind.name()))
+                .riskAnalysisForm(new RiskAnalysisFormSeed()
+                        .version(riskAnalysisForm.getVersion())
+                        .answers(new HashMap<>(riskAnalysisForm.getAnswers())));
+        return new BffCreateEServiceTemplateRiskAnalysisCommand(payload);
     }
 
     public EServiceTemplateSeed creationRequest() {

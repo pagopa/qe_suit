@@ -2,9 +2,17 @@ package it.pagopa.interop.common.eservice_template.application;
 
 import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
+import it.pagopa.interop.common.kernel.domain.Tenant;
+import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactory;
+import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
+import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 @Service
@@ -12,6 +20,8 @@ import java.util.function.Consumer;
 public class EServiceTemplateUseCase {
     private final EServiceTemplateGateway eServiceTemplateGateway;
     private final EServiceTemplateRequestFactory requestFactory;
+    private final RiskAnalysisGateway riskAnalysisGateway;
+    private final RiskAnalysisDataFactory riskAnalysisDataFactory;
 
     public EServiceTemplate createEServiceTemplate(Consumer<EServiceTemplateCreationCommand> config) {
         EServiceTemplateCreationCommand creationCommand = requestFactory.defaultCreationEServiceTemplateCommand();
@@ -70,6 +80,21 @@ public class EServiceTemplateUseCase {
 
     public EServiceTemplate updateTemplateDescription(EServiceTemplate eServiceTemplate, UpdateEServiceTemplateDescriptionCommand command) {
         return eServiceTemplateGateway.updateTemplateDescription(eServiceTemplate.getRef(), command);
+    }
+
+    public EServiceRiskAnalysis addLatestRiskAnalysis(Tenant tenant, EServiceTemplate eServiceTemplate, boolean completed) {
+        RiskAnalysisFormConfig latestConfig = riskAnalysisGateway.getLatestRiskAnalysisConfig(tenant);
+        Map<String, List<String>> answers =
+                riskAnalysisDataFactory.getTemplateForTenant(tenant, completed);
+
+        RiskAnalysisForm form = RiskAnalysisForm.builder()
+                .version(latestConfig.getVersion())
+                .answers(answers)
+                .build();
+
+        CreateEServiceTemplateRiskAnalysisCommand command =
+                requestFactory.createRiskAnalysisCommand(tenant.getTenantType(), form);
+        return eServiceTemplateGateway.addRiskAnalysis(eServiceTemplate.getRef(), command);
     }
 
     public void attemptTemplateNameUpdate(EServiceTemplate template, String name) {

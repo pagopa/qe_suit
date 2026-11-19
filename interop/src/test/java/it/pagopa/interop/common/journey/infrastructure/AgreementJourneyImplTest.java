@@ -118,6 +118,24 @@ class AgreementJourneyImplTest {
     }
 
     @Test
+    void rejectsPendingAsProducerAndRegistersAliasWhenRequested() {
+        Agreement pending = agreement(PENDING);
+        Agreement rejected = agreement(REJECTED);
+        stubSubmission(pending);
+        when(entityStore.getById(draft.getId(), Agreement.class)).thenReturn(java.util.Optional.of(draft));
+        when(session.getActor()).thenReturn(User.getTenantAdmin(Tenant.PAGO_PA));
+        when(session.getTenant()).thenReturn(Tenant.PAGO_PA);
+        when(channel.getCurrentChannel()).thenReturn(Channel.BFF);
+        when(agreements.rejectAgreement(pending)).thenReturn(rejected);
+        when(agreements.getAgreement(rejected)).thenReturn(rejected);
+
+        assertThat(journey.linkAgreement(eService, REJECTED, null, "RF-1")).isSameAs(journey);
+
+        verify(entityStore).upsert("RF-1", draft);
+        verify(agreements).rejectAgreement(pending);
+    }
+
+    @Test
     void reportsAnAutomaticallyActivatedAgreementWhenPendingWasRequested() {
         stubSubmission(agreement(ACTIVE));
 

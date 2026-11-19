@@ -10,6 +10,8 @@ import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class PurposeTemplateUseCase {
@@ -54,5 +56,31 @@ public class PurposeTemplateUseCase {
 
     public void attemptPurposeTemplatePublication(PurposeTemplate purposeTemplate) {
         purposeTemplateGateway.attemptPurposeTemplatePublication(purposeTemplate);
+    }
+
+    public PurposeTemplate addRiskAnalysisAnswerAnnotation(PurposeTemplate purposeTemplate) {
+        UUID answerId = purposeTemplate.getFirstRiskAnalysisAnswerId();
+        return purposeTemplateGateway.addRiskAnalysisAnswerAnnotation(purposeTemplate, answerId);
+    }
+
+    public PurposeTemplate addRiskAnalysisAnswerAnnotationDocument(
+            PurposeTemplate purposeTemplate,
+            String prettyName,
+            String fixturePath
+    ) {
+        if (prettyName == null || prettyName.isBlank() || fixturePath == null || fixturePath.isBlank()) {
+            throw new IllegalArgumentException("Annotation document name and fixture path must not be blank");
+        }
+        UUID answerId = purposeTemplate.getFirstRiskAnalysisAnswerId();
+        return purposeTemplateGateway.addRiskAnalysisAnswerAnnotationDocument(
+                purposeTemplate,
+                answerId,
+                prettyName,
+                fixturePath
+        );
+    }
+
+    public void awaitSignedRiskAnalysisDocumentAvailable(PurposeTemplate purposeTemplate) {
+        purposeTemplateGateway.awaitSignedRiskAnalysisDocumentAvailable(purposeTemplate);
     }
 }

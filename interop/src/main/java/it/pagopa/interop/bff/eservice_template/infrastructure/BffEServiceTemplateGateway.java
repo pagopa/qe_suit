@@ -8,8 +8,10 @@ import it.pagopa.interop.common.eservice_template.application.command.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersion;
 import it.pagopa.interop.common.kernel.domain.Channel;
+import it.pagopa.interop.common.kernel.domain.EServiceRiskAnalysis;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateRef;
 import it.pagopa.interop.common.kernel.domain.EServiceTemplateVersionRef;
+import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
@@ -91,6 +93,31 @@ public class BffEServiceTemplateGateway implements EServiceTemplateGateway {
                 .withPolling(PollingStrategy.UNTIL_SUCCESS)
                 .map(ignored -> getEServiceTemplate(templateRef))
                 .get();
+    }
+
+    @Override
+    public EServiceRiskAnalysis addRiskAnalysis(
+            EServiceTemplateRef templateRef,
+            CreateEServiceTemplateRiskAnalysisCommand command
+    ) {
+        if (!(command instanceof BffCreateEServiceTemplateRiskAnalysisCommand bffCommand)) {
+            throw new IllegalArgumentException(
+                    "Command must be an instance of " + BffCreateEServiceTemplateRiskAnalysisCommand.class.getSimpleName()
+            );
+        }
+
+        restClient.addRiskAnalysis(templateRef.id(), bffCommand.getBffPayload())
+                .withPolling(PollingStrategy.UNTIL_SUCCESS)
+                .get();
+
+        EServiceRiskAnalysis eServiceRiskAnalysis = PollingUtils.pollUntil(
+            () -> getEServiceTemplate(templateRef).getRiskAnalyses().stream()
+                .filter(analysis -> bffCommand.getName().equals(analysis.getName()))
+                .findFirst(),
+            Optional::isPresent
+        ).orElseThrow();
+        entityStore.upsert(eServiceRiskAnalysis);
+        return eServiceRiskAnalysis;
     }
 
     private EServiceTemplate refresh(EServiceTemplateRef templateRef, EServiceTemplateVersionRef versionRef) {

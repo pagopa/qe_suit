@@ -10,6 +10,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.kernel.domain.AgreementRef;
 import it.pagopa.interop.common.kernel.domain.Channel;
 import it.pagopa.interop.common.kernel.domain.Delegation;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.web.agreement.application.WebAgreementSecurityGateway;
 import it.pagopa.interop.web.agreement.infrastructure.page.ProducerAgreementDetailPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerAgreementDetailsPage;
@@ -115,6 +116,11 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     }
 
     @Override
+    public Agreement rejectAgreement(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support rejectAgreement operation");
+    }
+
+    @Override
     public Agreement archiveAgreement(Agreement agreement) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support archiveAgreement operation");
     }
@@ -122,6 +128,21 @@ public class WebAgreementGateway implements AgreementGateway, WebAgreementSecuri
     @Override
     public Agreement awaitState(Agreement agreement, Set<AgreementState> expectedStates) {
         throw new UnsupportedOperationException("WebAgreementGateway does not support awaitState operation");
+    }
+
+    @Override
+    public Agreement awaitContractAvailable(Agreement agreement) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support awaitContractAvailable operation");
+    }
+
+    @Override
+    public Agreement addConsumerDocument(Agreement agreement, @Nullable String fileName) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support addConsumerDocument operation");
+    }
+
+    @Override
+    public Agreement removeConsumerDocument(Agreement agreement, Document document) {
+        throw new UnsupportedOperationException("WebAgreementGateway does not support removeLastConsumerDocument operation");
     }
 
     @Override

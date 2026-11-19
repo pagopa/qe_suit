@@ -36,9 +36,6 @@ Feature: Messaggi di errore durante la gestione dei client, dei portachiavi e de
   Quando l'erogatore tenta di associare il portachiavi all'e-service
   Allora il sistema rifiuta l'associazione e segnala che l'e-service è archiviato.
 
-    Given i seguenti e-service pubblicati:
-      | alias | erogatore        |
-      | ES-1  | Comune di Milano |
     # Setup e binding mancanti per l'archiviazione conclusa dell'intero e-service.
     # La sola richiesta di archiviazione con preavviso non soddisfa questo prerequisito.
     And l'e-service "ES-1" del Comune di Milano interamente archiviato

@@ -3,6 +3,7 @@ package it.pagopa.interop.bff.purpose_template.infrastructure;
 import it.pagopa.interop.bff.infrastructure.mapping.BffCommonMapper;
 import it.pagopa.interop.common.infrastructure.SharedMapper;
 import it.pagopa.interop.common.infrastructure.config.TestMapperConfig;
+import it.pagopa.interop.common.kernel.domain.Document;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisAnswerTemplate;
@@ -11,6 +12,7 @@ import it.pagopa.interop.generated.openapi.clients.bff.model.LinkableResources;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeTemplateWithCompactCreator;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisFormTemplate;
 import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswer;
+import it.pagopa.interop.generated.openapi.clients.bff.model.RiskAnalysisTemplateAnswerAnnotationDocument;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -40,6 +42,8 @@ public interface BffPurposeTemplateMapper {
     @Mapping(target = "riskAnalysisAnswerIds", source = "purposeRiskAnalysisForm", qualifiedByName = "mapRiskAnalysisAnswerIds")
     @Mapping(target = "riskAnalysisFormTemplate", source = "purposeRiskAnalysisForm", qualifiedByName = "mapRiskAnalysisFormTemplate")
     PurposeTemplate toPurposeTemplate(PurposeTemplateWithCompactCreator source);
+
+    Document toDocument(RiskAnalysisTemplateAnswerAnnotationDocument source);
 
     @Named("mapRiskAnalysisFormTemplate")
     default it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisFormTemplate mapRiskAnalysisFormTemplate(
@@ -111,6 +115,10 @@ public interface BffPurposeTemplateMapper {
                 existing.getRiskAnalysisFormTemplate()
         );
 
+        List<Document> annotationDocuments = (mapped.getAnnotationDocuments() != null && !mapped.getAnnotationDocuments().isEmpty())
+                ? mapped.getAnnotationDocuments()
+                : (existing.getAnnotationDocuments() != null ? existing.getAnnotationDocuments() : List.of());
+
         return mapped.toBuilder()
                 .clearLinkedEServiceIds()
                 .linkedEServiceIds(existing.getLinkedEServiceIds() != null ? existing.getLinkedEServiceIds() : List.of())
@@ -118,6 +126,8 @@ public interface BffPurposeTemplateMapper {
                 .linkedResourceIds(existing.getLinkedResourceIds() != null ? existing.getLinkedResourceIds() : List.of())
                 .clearRiskAnalysisAnswerIds()
                 .riskAnalysisAnswerIds(answerIds)
+                .clearAnnotationDocuments()
+                .annotationDocuments(annotationDocuments)
                 .riskAnalysisFormTemplate(riskAnalysisFormTemplate)
                 .build();
     }
