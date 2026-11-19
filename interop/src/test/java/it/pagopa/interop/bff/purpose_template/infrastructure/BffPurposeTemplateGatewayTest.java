@@ -89,6 +89,7 @@ class BffPurposeTemplateGatewayTest {
         var payload = seed.getValue();
         assertThat(payload.getTargetTenantKind()).isEqualTo(
                 tenant == Tenant.COMUNE_DI_MILANO ? TargetTenantKind.PA : TargetTenantKind.PRIVATE);
+        assertThat(payload.getHandlesPersonalData()).isFalse();
         assertThat(payload.getPurposeRiskAnalysisForm().getVersion()).isEqualTo("2.1");
         var answers = payload.getPurposeRiskAnalysisForm().getAnswers();
         assertThat(answers).containsOnlyKeys("institutionalPurpose", "purpose", "legalBasis");

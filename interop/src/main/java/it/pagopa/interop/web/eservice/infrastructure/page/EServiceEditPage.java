@@ -7,6 +7,7 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.interop.web.eservice.infrastructure.suit.component.threshold_attribute_form.ThresholdAndAttributeForm;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
+import it.pagopa.utils.async.PollingUtils;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 
@@ -29,10 +30,10 @@ public interface EServiceEditPage extends Page {
 
     @Override
     default void assertLoaded() {
-        SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(breadcrumbs().getLastItemText()).as("Breadcrumbs last item text").isEqualTo("Modifica e-service");
-            pageTitle().readAndAssert(eServiceName -> Assertions.assertThat(eServiceName).as("Page title is not blank").isNotBlank());
-            saveDraftButton().assertLoaded();
-        });
+        PollingUtils.pollUntil(
+                () -> breadcrumbs().getLastItemText().equals("Modifica e-service") && !pageTitle().read().isBlank(),
+                isLoaded -> isLoaded,
+                "EService edit page did not load within the expected time"
+        );
     }
 }

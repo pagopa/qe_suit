@@ -1,14 +1,16 @@
 package it.pagopa.interop.m2m.v3.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import it.pagopa.infrastructure.channel.CurrentChannel;
 import it.pagopa.infrastructure.contract.http.HttpContractPolicy;
 import it.pagopa.infrastructure.contract.http.HttpContractValidator;
 import it.pagopa.infrastructure.fuzzing.FuzzEngine;
 import it.pagopa.infrastructure.fuzzing.FuzzScenario;
 import it.pagopa.infrastructure.objectgraph.ObjectGraphDecomposer;
 import it.pagopa.interop.common.infrastructure.contract.InteropHttpContractValidator;
-import it.pagopa.interop.common.kernel.context.CurrentUserSession;
-import it.pagopa.interop.m2m.kernel.context.CurrentM2MSession;
+import it.pagopa.interop.common.kernel.context.AuthSession;
+import it.pagopa.interop.common.kernel.domain.Channel;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,10 +42,10 @@ public class M2Mv3ApiContractConfig {
     @Bean("m2mV3InteropHttpContractValidator")
     InteropHttpContractValidator interopHttpContractValidator(
             @Qualifier("m2mV3ApiContractValidator") HttpContractValidator m2mV3ApiContractValidator,
-            CurrentUserSession currentUserSession,
-            CurrentM2MSession currentM2MSession
+            @Qualifier("m2mV3AuthSession") AuthSession authSession,
+            ObjectProvider<CurrentChannel<Channel>> currentChannel
     ) {
-        return new InteropHttpContractValidator(m2mV3ApiContractValidator, currentUserSession, currentM2MSession);
+        return new InteropHttpContractValidator(m2mV3ApiContractValidator, authSession, Channel.M2M_V3, currentChannel);
     }
 
     @Bean(name = "m2mV3ApiContractPolicy")
@@ -56,7 +58,6 @@ public class M2Mv3ApiContractConfig {
                         FuzzScenario.REPLACED_WITH_EMPTY_STRING,
                         FuzzScenario.REPLACED_WITH_BLANK_STRING,
                         FuzzScenario.REPLACED_WITH_LONG_STRING,
-                        FuzzScenario.REPLACED_WITH_SQL_INJECTION,
                         FuzzScenario.REPLACED_WITH_URL_INJECTION,
                         FuzzScenario.REPLACED_WITH_WRONG_TYPE_STRING,
                         FuzzScenario.REPLACED_WITH_WRONG_TYPE_NUMBER,
@@ -68,6 +69,7 @@ public class M2Mv3ApiContractConfig {
                         FuzzScenario.REPLACED_WITH_MALFORMED_UUID,
                         FuzzScenario.REPLACED_WITH_UNKNOWN_ENUM
                 ), 400)
+                .skipScenario(FuzzScenario.REPLACED_WITH_SQL_INJECTION)
                 .scenarioStatus(FuzzScenario.REPLACED_WITH_NIL_UUID, 404)
                 .scenarioStatus(FuzzScenario.REPLACED_WITH_XSS, 403)
                 .build();

@@ -17,4 +17,7 @@ public interface CurrentUserSession {
      * valorizzato usati dal portale di supporto.
      */
     boolean hasUser();
+
+    /** Toglie l'utente: la sessione precedente è chiusa, es. prima di un nuovo accesso con autenticazione SPID. */
+    void clear();
 }
