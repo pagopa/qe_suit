@@ -9,6 +9,7 @@ import it.pagopa.interop.common.eservice.domain.EServiceTechnology;
 import it.pagopa.interop.common.eservice_template.application.EServiceTemplateRequestFactory;
 import it.pagopa.interop.common.eservice_template.application.command.UpdateEServiceTemplateCommand;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateVersionState;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.EServiceTemplateMetadataUpdateConfiguration;
 import it.pagopa.interop.common.eservice_template.infrastructure.cucumber.dto.mapper.EServiceTemplateMetadataUpdateConfigurationMapper;
@@ -72,6 +73,19 @@ public class EServiceTemplateMetadataUpdatesSteps {
                 .patchEServiceTemplate(command);
     }
 
+    @Given("un {userRole} di/del {tenant} tenta la modifica dei metadati dell'{currentEServiceTemplate}:")
+    @Given("un {userRole} di/del {tenant} tenta la modifica dei metadati del {currentEServiceTemplate}:")
+    public void tryUpdateMetadata(UserRole role, Tenant producer, EServiceTemplate eServiceTemplate, List<EServiceTemplateMetadataUpdateConfiguration> metadata) {
+        initialEServiceTemplate = eServiceTemplate.toBuilder()
+                // .versions(eServiceTemplate.getVersions())
+                .build();
+        UpdateEServiceTemplateCommand command = requestFactory.defaultUpdateEServiceTemplateCommand(true);
+        requestedMetadata = configurationMapper.apply(metadata, command);
+        interopJourney
+                .withProducer(producer, role)
+                .tryPatchEServiceTemplate(command);
+    }
+
     @Then("il {currentEServiceTemplate} presenta i metadati richiesti e conserva quelli non modificati")
     public void checkMetadata(EServiceTemplate actualEServiceTemplate) {
         EServiceTemplate expectedEServiceTemplate = initialEServiceTemplate.toBuilder()
@@ -88,6 +102,11 @@ public class EServiceTemplateMetadataUpdatesSteps {
         assertThat(actualEServiceTemplate)
                 .as("E-service %s dopo la modifica dei metadati")
                 .isEqualTo(expectedEServiceTemplate);
+    }
+
+    @Then("la modifica dei metadati del {currentEServiceTemplate} viene rifiutata per {eServiceTemplateUpdateFailureReason}")
+    public void shouldFailToUpdateMetadata(EServiceTemplate eServiceTemplate, EServiceTemplateUpdateFailureReason reason) {
+        interopJourney.shouldFailToPatchEServiceTemplate(reason);
     }
 
     private Boolean requestedBoolean(String field, Boolean initialValue) {

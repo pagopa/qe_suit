@@ -9,6 +9,7 @@ import it.pagopa.interop.common.eservice.domain.EService;
 import it.pagopa.interop.common.eservice.domain.EServiceDescriptor;
 import it.pagopa.interop.common.eservice.domain.EServiceUpdateFailureReason;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
+import it.pagopa.interop.common.eservice_template.domain.EServiceTemplateUpdateFailureReason;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.kernel.security.DPoPProof;
 import lombok.RequiredArgsConstructor;
@@ -70,5 +71,10 @@ public class ScenarioParameterTypes {
     @ParameterType("CONFLICT|OUT_OF_DRAFT_OPERATION_FIELD|INVALID_DATA|UNAUTHORIZED")
     public EServiceUpdateFailureReason eServiceUpdateFailureReason(String reason) {
         return EServiceUpdateFailureReason.valueOf(reason);
+    }
+
+    @ParameterType("CONFLICT|OUT_OF_DRAFT_OPERATION_FIELD|INVALID_DATA|UNAUTHORIZED")
+    public EServiceTemplateUpdateFailureReason eServiceTemplateUpdateFailureReason(String reason) {
+        return EServiceTemplateUpdateFailureReason.valueOf(reason);
     }
 }

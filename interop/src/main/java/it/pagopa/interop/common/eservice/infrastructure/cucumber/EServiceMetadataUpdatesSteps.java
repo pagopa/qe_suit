@@ -172,7 +172,6 @@ public class EServiceMetadataUpdatesSteps {
     @Then("la modifica dei metadati dell'e-service {string} viene rifiutata per {eServiceUpdateFailureReason}")
     public void shouldFailToUpdateMetadata(String alias, EServiceUpdateFailureReason reason) {
         interopJourney.shouldFailToUpdateEService(reason);
-
     }
 
     @Then("l'e-service {string} presenta i metadati richiesti e conserva quelli non modificati, le versioni, gli stati e le configurazioni dei descrittori")
