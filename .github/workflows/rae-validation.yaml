@@ -53,6 +53,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           path: rae_pr
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Install Python
         if: steps.eligibility.outputs.eligible == 'true'
@@ -85,11 +86,27 @@ jobs:
             exit 1
           }
 
-          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae-generator" \
-            python -m rae_generator finalize "$YAML" --write
+          # Retrieve the originally generated proposal from immutable Git history.
+          # GitHub Actions MUST NOT rewrite pending_confirmation in the YAML.
+          FIRST_COMMIT="$(git log --diff-filter=A --format=%H --reverse -- "$YAML" | head -1)"
+          if [[ -n "$FIRST_COMMIT" ]] && git show "$FIRST_COMMIT:$YAML" > /tmp/rae_original.yaml; then
+            # Require an actual non-automation YAML commit after generation.
+            # A bot-only push cannot certify that QA reviewed the proposal.
+            if git log --format='%ae' "${FIRST_COMMIT}..HEAD" -- "$YAML" \
+                | grep -Eiv '(^$|\[bot\]|noreply\.github\.com|rae-automation)' >/dev/null; then
+              QA_ARGS=(--qa-reviewed --original-yaml /tmp/rae_original.yaml)
+            else
+              QA_ARGS=()
+            fi
+          else
+            QA_ARGS=()
+          fi
 
           PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae-generator" \
-            python -m rae_generator check "$YAML"
+            python -m rae_generator finalize "$YAML" --write "${QA_ARGS[@]}"
+
+          PYTHONPATH="$GITHUB_WORKSPACE/trusted/tools/rae-generator" \
+            python -m rae_generator check "$YAML" "${QA_ARGS[@]}"
 
           echo "rae_yaml=$YAML" >> "$GITHUB_ENV"
           echo "rae_md=${YAML%.yaml}.md" >> "$GITHUB_ENV"

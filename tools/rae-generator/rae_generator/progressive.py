@@ -18,6 +18,7 @@ from drain3.masking import MaskingInstruction
 from drain3.template_miner_config import TemplateMinerConfig
 
 from .matching import find_match
+from .qa_confirmation import is_qa_confirmed, analysis_digest
 
 _FRAME = re.compile(r'(?m)^\s*at\s+\S+\([^\n]*\)\s*$')
 _UUID = r'\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b'
@@ -33,12 +34,6 @@ def error_head(error: str) -> str:
     return re.sub(r'\s+', ' ', source).strip()
 
 
-def analysis_digest(entry: dict) -> str:
-    """Records precisely what was prefilled, without treating ticket as bug ID."""
-    data = {name: str(entry.get(name, '') or '') for name in _ANALYSIS_FIELDS}
-    payload = json.dumps(data, sort_keys=True, ensure_ascii=False, separators=(',', ':'))
-    return hashlib.sha256(payload.encode('utf-8')).hexdigest()
-
 
 def _miner() -> TemplateMiner:
     cfg = TemplateMinerConfig()
@@ -53,17 +48,6 @@ def _miner() -> TemplateMiner:
 def _identity(item: dict) -> tuple[str, str]:
     return (str(item.get('_source_file', '')), str(item.get('id_test', '')).strip().casefold())
 
-
-def _approved_equivalence(item: dict) -> bool:
-    """History comes ONLY from develop, never the current draft RAE."""
-    metadata = item.get('matching')
-    if not isinstance(metadata, dict):
-        return False
-    status = metadata.get('status')
-    if status == 'confirmed':
-        return True
-    return (status == 'pending_confirmation'
-            and metadata.get('proposed_digest') == analysis_digest(item))
 
 
 def _pattern_regex(template: str) -> tuple[re.Pattern[str], list[str]]:
@@ -129,7 +113,7 @@ def _signatures(history: list[dict]) -> list[Signature]:
             parent[pa] = pb
 
     for item in history:
-        if not _approved_equivalence(item):
+        if not is_qa_confirmed(item, approved_history=True):
             continue
         m = item['matching']
         source = (str(m.get('source_rae', '')), str(m.get('source_id_test', '')).strip().casefold())
@@ -201,7 +185,7 @@ class ProgressiveMatcher:
             eligible = [r for r in candidates if sig.matches(r['error_log'])
                         and not (isinstance(r.get('matching'), dict)
                                  and r['matching'].get('status') == 'pending_confirmation'
-                                 and not _approved_equivalence(r))]
+                                 and not is_qa_confirmed(r, approved_history=True))]
             known = next((r for r in eligible if r.get('link_prod_bug') or r.get('link_suite_bug')), None)
             if known is not None:
                 return 'known', known
