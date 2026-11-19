@@ -22,4 +22,9 @@ public class InMemoryCurrentUserSession implements CurrentUserSession {
     public boolean hasUser() {
         return currentUser.get() != null;
     }
+
+    @Override
+    public void clear() {
+        currentUser.remove();
+    }
 }
