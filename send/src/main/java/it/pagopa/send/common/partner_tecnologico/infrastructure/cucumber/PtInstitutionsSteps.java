@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 public class PtInstitutionsSteps {
     private final PtInstitutionsUseCase ptInstitutionsUseCase;
 
-    @And("il partner tecnologico cerca gli enti per {string}")
+    @And("cerca gli enti per {string}")
     public void searchInstitutions(String text) {
         ptInstitutionsUseCase.searchInstitutions(text);
     }
