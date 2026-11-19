@@ -3,7 +3,6 @@ package it.pagopa.interop.common.eservice.infrastructure.cucumber;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
-import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceRequestFactory;
 import it.pagopa.interop.common.eservice.application.command.EServiceUpdateCommand;
 import it.pagopa.interop.common.eservice.domain.EService;
@@ -34,7 +33,6 @@ public class EServiceMetadataUpdatesSteps {
     private final EntityStore entityStore;
     private final EServiceMetadataUpdateConfigurationMapper configurationMapper;
     private EService initialEService;
-    private EService initialExistingEService;
     private Map<String, String> requestedMetadata = Map.of();
 
     @When("un {userRole} di/del {tenant} richiede la modifica dei metadati dell'e-service {string}:")
@@ -83,7 +81,7 @@ public class EServiceMetadataUpdatesSteps {
             boolean changeCase
     ) {
         var existing = entityStore.getByAliasOrThrow(existingAlias, EService.class);
-        initialExistingEService = existing.toBuilder()
+        initialEService = existing.toBuilder()
                 .descriptors(new ArrayList<>(existing.getDescriptors()))
                 .build();
         String requestedName = changeCase ? existing.getName().toUpperCase(Locale.ROOT) : existing.getName();
@@ -168,7 +166,7 @@ public class EServiceMetadataUpdatesSteps {
                 .isEqualTo(eService2.getName());
         assertThat(eService2)
                 .as("L'e-service %s non deve essere modificato dalla rinomina di %s", aliasEService2, aliasEService1)
-                .isEqualTo(initialExistingEService);
+                .isEqualTo(initialEService);
     }
 
     @Then("la modifica dei metadati dell'e-service {string} viene rifiutata per {eServiceUpdateFailureReason}")
