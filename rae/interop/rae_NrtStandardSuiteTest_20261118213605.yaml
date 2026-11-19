@@ -5864,10 +5864,24 @@ ko:
       	at it.frontend.e2e.framework.core.binder.DefaultBinderInvocationHandler.invoke(DefaultBinderInvocationHandler.java:55)
       	at jdk.proxy2/jdk.proxy2.$Proxy351.assertLoaded(Unknown Source)
       	at it.pagopa.interop.suite.contract.WebProducerPurposeContractTest.lambda$shouldShowPurposeDetailToProducer$4(WebProducerPurposeContractTest.java:86)
-    procedure: ''
-    result: ''
+    procedure: 'Analisi dei log e riesecuzione in locale. Il problema viene riscontrato anche con una esecuzione in locale solo per utenti API. Facendo test manuali in DEV e QA si riscontrano problemi di accesso per il ruolo API alla pagina suddetta con errore di 403 forbidden.'
+    result: 'Problema di accesso per il ruolo API alla pagina suddetta con errore di 403 forbidden.
+    {
+    "type": "about:blank",
+    "title": "Unauthorized",
+    "status": 403,
+    "detail": "Invalid roles [\"api\"] for this operation",
+    "correlationId": "381dac17-a676-47d2-b197-2597a9cb4941",
+    "errors": [
+        {
+            "code": "008-9993",
+            "detail": "Invalid roles [\"api\"] for this operation"
+        }
+    ]
+}
+    '
     link_prod_bug: ''
-    link_suite_bug: ''
+    link_suite_bug: 'https://pagopa.atlassian.net/browse/QA-15512'
   - id_test: WebProducerAgreementContractTest::shouldShowReceivedAgreementListToProducer::richieste di fruizione ricevute
       accessibili all'utente API del Comune di Milano
     error_log: |
