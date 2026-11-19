@@ -242,4 +242,19 @@ public class PurposeSteps {
     public void attemptNameUpdate(Purpose purpose, String name) {
         purposeUseCase.attemptNameUpdate(purpose, name);
     }
+
+    @When("il fruitore tenta di duplicare la {purposeByAlias}")
+    public void attemptPurposeCloning(Purpose purpose) {
+        purposeUseCase.attemptPurposeCloning(purpose);
+    }
+
+    @When("il valutatore tenta di firmare l'analisi del rischio della {currentPurpose}")
+    public void attemptRiskAnalysisSigning(Purpose purpose) {
+        purposeUseCase.attemptRiskAnalysisSigning(purpose);
+    }
+
+    @When("il valutatore tenta di rifiutare l'analisi del rischio della {currentPurpose} con la motivazione {string}")
+    public void attemptRiskAnalysisRejection(Purpose purpose, String rejectionReason) {
+        purposeUseCase.attemptRiskAnalysisRejection(purpose, rejectionReason);
+    }
 }

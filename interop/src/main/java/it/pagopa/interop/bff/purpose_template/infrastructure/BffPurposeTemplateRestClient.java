@@ -88,6 +88,16 @@ public class BffPurposeTemplateRestClient extends RestClient {
         );
     }
 
+    public TestChain<Void> unsuspendPurposeTemplate(@Nonnull UUID purposeTemplateId) {
+        return execute(
+                () -> purposeTemplatesApi.unsuspendPurposeTemplate()
+                        .purposeTemplateIdPath(purposeTemplateId)
+                        .reqSpec(reqSpec -> reqSpec.setContentType("application/json"))
+                        .execute(Function.identity()),
+                Void.class
+        );
+    }
+
     public TestChain<RiskAnalysisTemplateAnswerAnnotation> addRiskAnalysisAnswerAnnotation(
             @Nonnull UUID purposeTemplateId,
             @Nonnull UUID answerId,
@@ -129,4 +139,3 @@ public class BffPurposeTemplateRestClient extends RestClient {
         );
     }
 }
-

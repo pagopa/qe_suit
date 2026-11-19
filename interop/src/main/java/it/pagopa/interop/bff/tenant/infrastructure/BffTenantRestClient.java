@@ -131,13 +131,13 @@ public class BffTenantRestClient extends RestClient {
     public TestChain<Void> revokeVerifiedAttribute(
             @Nonnull UUID tenantId,
             @Nonnull UUID attributeId,
-            @Nonnull RevokeVerifiedAttributeRequest request
+            @Nonnull UUID agreementId
     ) {
         return execute(
                 () -> tenantsApi.revokeVerifiedAttribute()
                         .tenantIdPath(tenantId)
                         .attributeIdPath(attributeId)
-                        .body(request)
+                        .agreementIdQuery(agreementId)
                         .execute(Function.identity()),
                 Void.class
         );

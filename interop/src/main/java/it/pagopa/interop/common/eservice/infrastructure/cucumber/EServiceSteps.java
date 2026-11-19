@@ -4,6 +4,7 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.interop.common.eservice.application.EServiceDescriptorUseCase;
+import it.pagopa.interop.common.eservice.application.EServiceDescriptorApprovalUseCase;
 import it.pagopa.interop.common.eservice.application.EServiceUseCase;
 import it.pagopa.interop.common.eservice.domain.*;
 import it.pagopa.interop.common.eservice_template.domain.EServiceTemplate;
@@ -18,6 +19,7 @@ public class EServiceSteps {
     private final EServiceDescriptorUseCase descriptorUseCase;
     private final InteropJourney interopJourney;
     private final EServiceUseCase eServiceUseCase;
+    private final EServiceDescriptorApprovalUseCase approvalUseCase;
     private String lastImportedEServiceName;
 
     @Given("un e-service SOAP in bozza creato dall'erogatore")
@@ -160,5 +162,25 @@ public class EServiceSteps {
     @When("l'erogatore tenta di modificare il nome del{eServiceByAlias} in {string}")
     public void attemptNameUpdate(EService eService, String name) {
         eServiceUseCase.attemptNameUpdate(eService, name);
+    }
+
+    @When("il delegato richiede al delegante l'archiviazione dell'{currentEService} con un periodo di preavviso di {gracePeriodDays} giorni e una motivazione valida")
+    public void attemptDelegatedArchivingRequest(EService eService, GracePeriodDays gracePeriodDays) {
+        eServiceUseCase.attemptDelegatedArchivingRequest(eService, gracePeriodDays);
+    }
+
+    @When("l'erogatore tenta di modificare la descrizione dell'{currentEService} in {string}")
+    public void attemptDescriptionUpdate(EService eService, String description) {
+        eServiceUseCase.attemptDescriptionUpdate(eService, description);
+    }
+
+    @When("l'erogatore tenta di aggiornare parzialmente i dati dell'{currentEService} impostando il nome {string}")
+    public void attemptPartialNameUpdate(EService eService, String name) {
+        eServiceUseCase.attemptPartialNameUpdate(eService, name);
+    }
+
+    @When("l'erogatore tenta di rifiutare la pubblicazione della versione {int} dell'{currentEService} con motivazione {string}")
+    public void attemptDescriptorRejection(int version, EService eService, String reason) {
+        approvalUseCase.attemptDescriptorRejection(eService, eService.getDescriptorOrThrow(version), reason);
     }
 }

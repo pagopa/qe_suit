@@ -28,6 +28,10 @@ public interface PurposeTemplateGateway extends Plugin<Channel> {
 
     PurposeTemplate linkEServiceTemplate(PurposeTemplate purposeTemplate, EServiceTemplateRef templateRef);
 
+    void attemptPurposeTemplateReactivation(PurposeTemplate purposeTemplate);
+
+    void attemptPurposeTemplatePublication(PurposeTemplate purposeTemplate);
+
     PurposeTemplate addRiskAnalysisAnswerAnnotation(PurposeTemplate purposeTemplate, UUID answerId);
 
     PurposeTemplate addRiskAnalysisAnswerAnnotationDocument(

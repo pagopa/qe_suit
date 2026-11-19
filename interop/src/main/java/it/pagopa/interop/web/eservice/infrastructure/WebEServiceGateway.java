@@ -186,4 +186,19 @@ public class WebEServiceGateway implements EServiceGateway {
     public void attemptNameUpdate(EServiceRef eServiceRef, String name) {
         throw new UnsupportedOperationException("WebEServiceGateway does not support attemptNameUpdate operation");
     }
+
+    @Override
+    public void attemptDelegatedArchivingRequest(EServiceRef eServiceRef, GracePeriodDays gracePeriodDays) {
+        throw new UnsupportedOperationException("attemptDelegatedArchivingRequest is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptDescriptionUpdate(EServiceRef eServiceRef, String description) {
+        throw new UnsupportedOperationException("attemptDescriptionUpdate is not supported on the WEB channel");
+    }
+
+    @Override
+    public void attemptPartialNameUpdate(EServiceRef eServiceRef, String name) {
+        throw new UnsupportedOperationException("attemptPartialNameUpdate is not supported on the WEB channel");
+    }
 }

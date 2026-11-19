@@ -7,6 +7,9 @@ import it.pagopa.interop.common.kernel.domain.TenantKind;
 import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.purpose_template.domain.PurposeTemplateState;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
+import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
+import org.junit.jupiter.api.Test;
 import it.pagopa.interop.common.purpose_template.infrastructure.cucumber.dto.PurposeTemplateDocumentConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -34,6 +37,32 @@ class PurposeTemplateStepsTest {
         order.verify(journey).createPurposeTemplate(
                 Tenant.fromTenantType(TenantKind.PA), PurposeTemplateState.PUBLISHED);
         verifyNoMoreInteractions(journey);
+    }
+
+    @Test
+    void delegatesReactivationWithoutChangingTheActorOrChannel() {
+        var journey = mock(InteropJourney.class);
+        var useCase = mock(PurposeTemplateUseCase.class);
+        var template = PurposeTemplate.builder().build();
+
+        new PurposeTemplateSteps(journey, useCase).attemptPurposeTemplateReactivation(template);
+
+        verify(useCase).attemptPurposeTemplateReactivation(template);
+        verifyNoMoreInteractions(useCase);
+        verifyNoInteractions(journey);
+    }
+
+    @Test
+    void delegatesPublicationWithoutChangingTheActorOrChannel() {
+        var journey = mock(InteropJourney.class);
+        var useCase = mock(PurposeTemplateUseCase.class);
+        var template = PurposeTemplate.builder().build();
+
+        new PurposeTemplateSteps(journey, useCase).attemptPurposeTemplatePublication(template);
+
+        verify(useCase).attemptPurposeTemplatePublication(template);
+        verifyNoMoreInteractions(useCase);
+        verifyNoInteractions(journey);
     }
 
     @Test

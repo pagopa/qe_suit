@@ -2,6 +2,9 @@ package it.pagopa.interop.common.purpose_template.infrastructure.cucumber;
 
 import io.cucumber.java.en.Given;
 import it.pagopa.application.context.EntityStore;
+import io.cucumber.java.en.When;
+import it.pagopa.interop.common.purpose_template.application.PurposeTemplateUseCase;
+import it.pagopa.interop.common.purpose_template.domain.PurposeTemplate;
 import it.pagopa.interop.common.journey.application.InteropJourney;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.TenantKind;
@@ -55,5 +58,15 @@ public class PurposeTemplateSteps {
     public void signedRiskAnalysisDocumentForPurposeTemplateAvailable() {
         PurposeTemplate purposeTemplate = entityStore.getLastOrThrow(PurposeTemplate.class);
         purposeTemplateUseCase.awaitSignedRiskAnalysisDocumentAvailable(purposeTemplate);
+    }
+
+    @When("l'operatore tenta di riattivare il {currentPurposeTemplate}")
+    public void attemptPurposeTemplateReactivation(PurposeTemplate purposeTemplate) {
+        purposeTemplateUseCase.attemptPurposeTemplateReactivation(purposeTemplate);
+    }
+
+    @When("l'operatore tenta di pubblicare il {currentPurposeTemplate}")
+    public void attemptPurposeTemplatePublication(PurposeTemplate purposeTemplate) {
+        purposeTemplateUseCase.attemptPurposeTemplatePublication(purposeTemplate);
     }
 }

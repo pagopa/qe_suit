@@ -22,6 +22,19 @@ import static org.mockito.Mockito.*;
 
 class PurposeTemplateUseCaseTest {
     @Test
+    void delegatesTheReactivationAttemptToTheExistingGateway() {
+        var gateway = mock(PurposeTemplateGateway.class);
+        var useCase = new PurposeTemplateUseCase(
+                gateway, mock(RiskAnalysisGateway.class), mock(RiskAnalysisDataFactory.class));
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+
+        useCase.attemptPurposeTemplateReactivation(template);
+
+        verify(gateway).attemptPurposeTemplateReactivation(template);
+        verifyNoMoreInteractions(gateway);
+    }
+
+    @Test
     void createsAMinimalRiskAnalysisForPublicAdministrationsWithoutPersonalData() {
         var gateway = mock(PurposeTemplateGateway.class);
         var configs = mock(RiskAnalysisGateway.class);
@@ -97,5 +110,18 @@ class PurposeTemplateUseCaseTest {
         verify(gateway).createPurposeTemplate(eq(Tenant.PAGO_PA), form.capture(), same(config));
         assertThat(form.getValue().getVersion()).isEqualTo("2.1");
         assertThat(form.getValue().getAnswers()).isEqualTo(answers);
+    }
+
+    @Test
+    void delegatesThePublicationAttemptToTheExistingGateway() {
+        var gateway = mock(PurposeTemplateGateway.class);
+        var useCase = new PurposeTemplateUseCase(
+                gateway, mock(RiskAnalysisGateway.class), mock(RiskAnalysisDataFactory.class));
+        var template = PurposeTemplate.builder().id(UUID.randomUUID()).build();
+
+        useCase.attemptPurposeTemplatePublication(template);
+
+        verify(gateway).attemptPurposeTemplatePublication(template);
+        verifyNoMoreInteractions(gateway);
     }
 }

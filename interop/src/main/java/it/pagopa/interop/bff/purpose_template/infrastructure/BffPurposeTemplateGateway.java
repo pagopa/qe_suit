@@ -246,9 +246,17 @@ public class BffPurposeTemplateGateway implements PurposeTemplateGateway {
             }
         }
     }
-
     @Override
     public boolean supports(Channel delimiter) {
         return delimiter == Channel.BFF;
+    }
+    @Override
+    public void attemptPurposeTemplateReactivation(PurposeTemplate purposeTemplate) {
+        restClient.unsuspendPurposeTemplate(purposeTemplate.getId()).withoutPolling();
+    }
+
+    @Override
+    public void attemptPurposeTemplatePublication(PurposeTemplate purposeTemplate) {
+        restClient.publishPurposeTemplate(purposeTemplate.getId()).withoutPolling();
     }
 }

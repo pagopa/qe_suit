@@ -10,4 +10,6 @@ public interface EServiceDescriptorApprovalGateway extends Plugin<Channel> {
     EServiceDescriptor rejectDescriptor(
             EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String reason
     );
+
+    void attemptDescriptorRejection(EServiceRef serviceRef, EServiceDescriptorRef descriptorRef, String reason);
 }

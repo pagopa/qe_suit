@@ -20,4 +20,8 @@ public class EServiceDescriptorApprovalUseCase {
         }
         return gateway.rejectDescriptor(service.getRef(), descriptor.getRef(), reason);
     }
+
+    public void attemptDescriptorRejection(EService service, EServiceDescriptor descriptor, String reason) {
+        gateway.attemptDescriptorRejection(service.getRef(), descriptor.getRef(), reason);
+    }
 }

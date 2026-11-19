@@ -5,6 +5,8 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import it.pagopa.application.context.LastApiResponseStore;
 import it.pagopa.infrastructure.context.InMemoryEntityStore;
+import it.pagopa.infrastructure.context.InMemoryLastApiResponseStore;
+import it.pagopa.interop.bff.purpose.application.BffPurposeCloneCommand;
 import it.pagopa.infrastructure.template.action.TestChainFactory;
 import it.pagopa.interop.common.kernel.domain.PurposeTemplateRef;
 import it.pagopa.interop.common.purpose.application.PurposeCreateCommand;
@@ -14,6 +16,7 @@ import it.pagopa.interop.common.purpose.domain.PurposeVersionState;
 import it.pagopa.interop.generated.openapi.clients.bff.ApiClient;
 import it.pagopa.interop.generated.openapi.clients.bff.api.PurposesApi;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeFromTemplateSeed;
+import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeCloneSeed;
 import it.pagopa.interop.generated.openapi.clients.bff.model.PurposeVersionSeed;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -118,5 +121,34 @@ class BffPurposeGatewayTest {
 
     private Response response(int status, String body) {
         return new ResponseBuilder().setStatusCode(status).setContentType(ContentType.JSON).setBody(body).build();
+    }
+
+    @Test
+    void attemptsCloningOnceAndPreservesTheErrorResponseAndExistingContext() {
+        var clone = mock(PurposesApi.ClonePurposeOper.class, RETURNS_SELF);
+        var responses = new InMemoryLastApiResponseStore();
+        var payload = new PurposeCloneSeed()
+                .eserviceId(UUID.randomUUID());
+        var command = new BffPurposeCloneCommand(payload);
+        var adapter = new BffPurposeGateway(
+                new BffPurposeRestClient(new TestChainFactory(responses, store), apiClient),
+                mapper, commandFactory);
+        when(api.clonePurpose()).thenReturn(clone);
+        when(clone.execute(any())).thenAnswer(invocation -> {
+            Function<Response, Response> handler = invocation.getArgument(0);
+            return handler.apply(response(409, "{\"userMessage\":\"Duplicate title\"}"));
+        });
+
+        adapter.attemptPurposeCloning(original.getRef(), command);
+
+        verify(api).clonePurpose();
+        verify(clone).purposeIdPath(original.getId());
+        verify(clone).body(payload);
+        verify(clone).execute(any());
+        verify(api, never()).getPurpose();
+        verifyNoInteractions(mapper);
+        assertThat(responses.getLastResponse().getStatusCode()).isEqualTo(409);
+        assertThat(responses.getLastResponse().getRawContent()).contains("Duplicate title");
+        assertThat(store.getByAliasOrThrow("purpose", Purpose.class)).isSameAs(original);
     }
 }

@@ -98,4 +98,16 @@ public class EServiceUseCase {
     public void attemptNameUpdate(EService eService, String name) {
         eServiceGateway.attemptNameUpdate(eService.getRef(), name);
     }
+
+    public void attemptDelegatedArchivingRequest(EService eService, GracePeriodDays gracePeriodDays) {
+        eServiceGateway.attemptDelegatedArchivingRequest(eService.getRef(), gracePeriodDays);
+    }
+
+    public void attemptDescriptionUpdate(EService eService, String description) {
+        eServiceGateway.attemptDescriptionUpdate(eService.getRef(), description);
+    }
+
+    public void attemptPartialNameUpdate(EService eService, String name) {
+        eServiceGateway.attemptPartialNameUpdate(eService.getRef(), name);
+    }
 }

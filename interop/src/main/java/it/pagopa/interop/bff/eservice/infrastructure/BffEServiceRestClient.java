@@ -206,4 +206,19 @@ public class BffEServiceRestClient extends RestClient {
         return execute(() -> eservicesApi.updateEServiceName().eServiceIdPath(eserviceId)
                 .body(payload).execute(Function.identity()), Void.class);
     }
+
+    public TestChain<Void> submitDelegatedEServiceArchiving(@Nonnull UUID eserviceId, @Nonnull EServiceArchivingSeed payload) {
+        return execute(() -> eservicesApi.submitDelegatedEServiceArchiving().eServiceIdPath(eserviceId)
+                .body(payload).execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<Void> updateDescription(@Nonnull UUID eserviceId, @Nonnull EServiceDescriptionUpdateSeed payload) {
+        return execute(() -> eservicesApi.updateEServiceDescription().eServiceIdPath(eserviceId)
+                .body(payload).execute(Function.identity()), Void.class);
+    }
+
+    public TestChain<CreatedResource> partialUpdateEService(@Nonnull UUID eserviceId, @Nonnull PatchUpdateEServiceSeed payload) {
+        return execute(() -> eservicesApi.patchUpdateEServiceById().eServiceIdPath(eserviceId)
+                .body(payload).execute(Function.identity()), CreatedResource.class);
+    }
 }

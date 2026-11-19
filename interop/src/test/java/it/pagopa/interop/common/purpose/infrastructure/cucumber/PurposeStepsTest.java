@@ -235,4 +235,13 @@ class PurposeStepsTest {
         config.setAlias(alias);
         return config;
     }
+
+    @Test
+    void delegatesCloningOfTheSelectedPurposeWithoutChangingSessionOrChannel() {
+        steps.attemptPurposeCloning(purpose);
+
+        verify(useCase).attemptPurposeCloning(purpose);
+        verifyNoMoreInteractions(useCase);
+        verifyNoInteractions(entities, interopJourney, userSession, currentChannel);
+    }
 }

@@ -50,6 +50,14 @@ public class PurposeTemplateUseCase {
         return purposeTemplateGateway.linkEService(purposeTemplate, eService.getRef());
     }
 
+    public void attemptPurposeTemplateReactivation(PurposeTemplate purposeTemplate) {
+        purposeTemplateGateway.attemptPurposeTemplateReactivation(purposeTemplate);
+    }
+
+    public void attemptPurposeTemplatePublication(PurposeTemplate purposeTemplate) {
+        purposeTemplateGateway.attemptPurposeTemplatePublication(purposeTemplate);
+    }
+
     public PurposeTemplate addRiskAnalysisAnswerAnnotation(PurposeTemplate purposeTemplate) {
         UUID answerId = purposeTemplate.getFirstRiskAnalysisAnswerId();
         return purposeTemplateGateway.addRiskAnalysisAnswerAnnotation(purposeTemplate, answerId);

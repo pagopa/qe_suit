@@ -316,4 +316,34 @@ public class BffPurposeGateway implements PurposeGateway {
     public void attemptNameUpdate(PurposeRef purposeRef, String name) {
         restClient.updatePurpose(purposeRef.id(), commandFactory.updateRequest().title(name)).withoutPolling();
     }
+
+    @Override
+    public void attemptPurposeCloning(PurposeRef purposeRef, PurposeCloneCommand cloneCommand) {
+        if (!(cloneCommand instanceof BffPurposeCloneCommand bffCommand)) {
+            throw new IllegalArgumentException(
+                    "Command must be an instance of " + BffPurposeCloneCommand.class.getSimpleName()
+            );
+        }
+        restClient.clonePurpose(purposeRef.id(), bffCommand.getBffClonePayload()).withoutPolling();
+    }
+
+    @Override
+    public void attemptRiskAnalysisSigning(PurposeRef purposeRef, SignRiskAnalysisCommand signCommand) {
+        if (!(signCommand instanceof BffSignRiskAnalysisCommand bffCommand)) {
+            throw new IllegalArgumentException(
+                    "Command must be an instance of " + BffSignRiskAnalysisCommand.class.getSimpleName()
+            );
+        }
+        restClient.signRiskAnalysis(purposeRef.id(), bffCommand.getBffSignPayload()).withoutPolling();
+    }
+
+    @Override
+    public void attemptRiskAnalysisRejection(PurposeRef purposeRef, RejectRiskAnalysisCommand rejectCommand) {
+        if (!(rejectCommand instanceof BffRejectRiskAnalysisCommand bffCommand)) {
+            throw new IllegalArgumentException(
+                    "Command must be an instance of " + BffRejectRiskAnalysisCommand.class.getSimpleName()
+            );
+        }
+        restClient.rejectRiskAnalysis(purposeRef.id(), bffCommand.getBffRejectionPayload()).withoutPolling();
+    }
 }
