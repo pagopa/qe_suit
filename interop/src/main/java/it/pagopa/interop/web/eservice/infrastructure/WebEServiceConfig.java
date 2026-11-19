@@ -4,6 +4,7 @@ import io.cucumber.spring.ScenarioScope;
 import it.frontend.e2e.framework.web.WebPresentationGateway;
 import it.pagopa.interop.web.agreement.infrastructure.page.ProducerAgreementDetailPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.ConsumerAgreementDetailsPage;
+import it.pagopa.interop.web.eservice.infrastructure.page.EServiceCreateFromTemplatePage;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceEditPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceDraftEditPage;
 import it.pagopa.interop.web.eservice.infrastructure.page.EServiceViewPage;
@@ -15,7 +16,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 
 @Configuration
 @Getter
@@ -29,7 +29,6 @@ public class WebEServiceConfig {
     }
 
     @Bean
-    @Primary
     @ScenarioScope
     public EServiceCreatePage eServiceCreationPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(EServiceCreatePage.class);
@@ -39,6 +38,12 @@ public class WebEServiceConfig {
     @ScenarioScope
     public EServiceDraftEditPage eServiceDraftEditPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(EServiceDraftEditPage.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public EServiceCreateFromTemplatePage eServiceCreateFromTemplatePage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(EServiceCreateFromTemplatePage.class);
     }
 
     @Bean
@@ -75,5 +80,11 @@ public class WebEServiceConfig {
     @ScenarioScope
     public ConsumerAgreementDetailsPage consumerAgreementDetailsPage(WebPresentationGateway webPresentationGateway) {
         return webPresentationGateway.bind(ConsumerAgreementDetailsPage.class);
+    }
+
+    @Bean
+    @ScenarioScope
+    public EServiceRiskAnalysisAssociatedPage eServiceRiskAnalysisAssociatedPage(WebPresentationGateway webPresentationGateway) {
+        return webPresentationGateway.bind(EServiceRiskAnalysisAssociatedPage.class);
     }
 }

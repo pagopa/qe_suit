@@ -10054,7 +10054,7 @@ ko:
       Il caricamento della pagina di creazione del template supera il timeout
       e il titolo rimane vuoto. Il test non raggiunge la verifica del
       trattamento dei dati personali. Il caso è classificato come flaky legato
-      al carico, senza associazione a un bug di prodotto o di suite.
+      al carico.
     link_prod_bug: ''
     link_suite_bug: https://pagopa.atlassian.net/browse/QA-19652
 
