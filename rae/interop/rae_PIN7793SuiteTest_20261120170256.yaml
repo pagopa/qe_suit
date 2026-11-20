@@ -1,0 +1,14 @@
+rae:
+  release: ''
+  scope: NIGHTLY
+  issue_jira: ''
+  data_ora: '2026-11-20T17:01:20Z'
+  durata: 00:01:07
+  numero_ko: 0
+  run: https://github.com/pagopa/qe_suit/actions/runs/44778970762/attempts/1
+  suite: PIN7793SuiteTest
+  environment: qa
+  executor: luigi-gjoni-alten-p
+  source_branch: feature/exec-PIN-7793
+ko_know: []
+ko: []
