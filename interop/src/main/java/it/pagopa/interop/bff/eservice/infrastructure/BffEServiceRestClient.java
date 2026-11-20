@@ -30,7 +30,7 @@ public class BffEServiceRestClient extends RestClient {
         return execute(() -> eservicesApi.createEService().body(payload).execute(Function.identity()), CreatedEServiceDescriptor.class);
     }
 
-    public TestChain<CreatedResource> updateEService(@Nonnull UUID eServiceId, @Nonnull PatchUpdateEServiceSeed payload) {
+    public TestChain<CreatedResource> updateEServiceMetadata(@Nonnull UUID eServiceId, @Nonnull PatchUpdateEServiceSeed payload) {
         return execute(
                 () -> eservicesApi.patchUpdateEServiceById()
                         .eServiceIdPath(eServiceId)
