@@ -49,6 +49,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     When l'erogatore allega il file "openapi-versione-non-supportata.yaml" come "interfaccia" sulla versione del template con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_OPENAPI_VERSION_NOT_RECOGNIZED" in lingua "it"
 
+    # Ticket aperto https://pagopa.atlassian.net/browse/PIN-11646
   @work-item:QA-18430
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
   Scenario: [ERROR_190] - Rifiuto di un documento il cui formato non è verificabile
@@ -86,6 +87,7 @@ Feature: Messaggi di errore durante il caricamento di file nei template e-servic
     When l'erogatore allega il file "openapi-server-non-valido.yaml" come "interfaccia" sulla versione del template con il nome "Allegato di test"
     Then il messaggio di errore corrisponde al caso "ESERVICE_TEMPLATE_INVALID_SERVER_URL" in lingua "it"
 
+    # Ticket aperto https://pagopa.atlassian.net/browse/PIN-11647
   @work-item:QA-18430
   # Endpoint: POST /eservices/templates/:eServiceTemplateId/versions/:eServiceTemplateVersionId/documents
   Scenario: [ERROR_193] - Rifiuto di un documento che supera la dimensione massima
