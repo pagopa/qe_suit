@@ -7,6 +7,7 @@ import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
 import it.pagopa.send.common.infrastructure.config.JunitContextConfig;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.web.mittente.infrastructure.page.DashboardPage;
@@ -24,6 +25,7 @@ import org.junit.jupiter.api.TestFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestConstructor;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -63,14 +65,11 @@ public class WebNotificationTimelineContractTest {
         ));
 
         LegalNotificationDomain createdNotification = sendJourney
-                .withSender(sender)
-                .prepareNotification(Map.of(
+                .prepareNotification(new LegalNotificationCreationCommand(sender, Map.of(
                         "subject", "Comunicazione di test multi-destinatario",
                         "physicalCommunication", "REGISTERED_LETTER_890",
                         "feePolicy", "FLAT_RATE"
-                ))
-                .withRecipient(lucrezia)
-                .withRecipient(recipient)
+                ), List.of(lucrezia, recipient)))
                 .sendNotification(sender, NotificationStatus.ACCEPTED)
                 .waitForNotificationStatus(NotificationStatus.EFFECTIVE_DATE)
                 .get(LegalNotificationDomain.class);

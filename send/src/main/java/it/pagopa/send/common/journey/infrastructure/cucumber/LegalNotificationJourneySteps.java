@@ -7,12 +7,14 @@ import it.pagopa.send.common.user.domain.UserAlias;
 import it.pagopa.send.common.user.domain.UserProvider;
 import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationType;
 import it.pagopa.send.common.legal_notification.domain.RecipientSpec;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.RecipientSpecFactory;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -27,8 +29,7 @@ public class LegalNotificationJourneySteps {
     public void createLegalNotification(LegalNotificationType type, User sender, User recipient, String targetStatus) {
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, type.recipientOverrides());
         sendJourney
-                .prepareNotification(Map.of())
-                .withRecipient(recipientSpec)
+                .prepareNotification(new LegalNotificationCreationCommand(sender, List.of(recipientSpec)))
                 .sendNotification(sender, NotificationStatus.fromValue(targetStatus));
     }
 
@@ -36,8 +37,7 @@ public class LegalNotificationJourneySteps {
     public void createAndCancelLegalNotification(User sender, LegalNotificationType type, User recipient) {
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, type.recipientOverrides());
         sendJourney
-                .prepareNotification(Map.of())
-                .withRecipient(recipientSpec)
+                .prepareNotification(new LegalNotificationCreationCommand(sender, List.of(recipientSpec)))
                 .sendNotification(sender, NotificationStatus.ACCEPTED)
                 .deleteNotification();
     }
@@ -67,23 +67,14 @@ public class LegalNotificationJourneySteps {
                 "F24_number", "0"
         ));
 
+        Map<String, String> data = Map.of(
+                "subject", "Comunicazione di test multi-destinatario",
+                "physicalCommunication", "REGISTERED_LETTER_890",
+                "feePolicy", "FLAT_RATE"
+        );
         sendJourney
-                .withSender(sender)
-                .prepareNotification(Map.of(
-                        "subject", "Comunicazione di test multi-destinatario",
-                        "physicalCommunication", "REGISTERED_LETTER_890",
-                        "feePolicy", "FLAT_RATE"
-                ))
-                .withRecipient(lucrezia)
-                .withRecipient(petrarca)
+                .prepareNotification(new LegalNotificationCreationCommand(sender, data, List.of(lucrezia, petrarca)))
                 .sendNotification(sender, NotificationStatus.ACCEPTED);
-    }
-
-    @When("viene ricercata e aperta una notifica che rispetta i seguenti criteri:")
-    public void searchAndReadLegalNotification(Map<String, String> criteria) {
-        sendJourney
-                .prepareNotification(criteria)
-                .readNotification();
     }
 
     /**
@@ -95,7 +86,7 @@ public class LegalNotificationJourneySteps {
      */
     @Given("la PA {user} predispone una nuova notifica con i seguenti dati:")
     public void prepareNotification(User tenant, Map<String, String> data) {
-        sendJourney.withSender(tenant).prepareNotification(data);
+        sendJourney.prepareNotification(new LegalNotificationCreationCommand(tenant, data));
     }
 
     /**

@@ -5,6 +5,7 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import it.pagopa.application.context.EntityStore;
 import it.pagopa.send.common.user.domain.User;
+import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.journey.infrastructure.LegalNotificationJourneyImpl;
@@ -19,6 +20,7 @@ import org.assertj.core.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -51,8 +53,7 @@ public class WebLegalNotificationSteps {
         overrides.putAll(recipientOverrides);
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, overrides);
 
-        journey.prepareNotification(Map.of())
-                .withRecipient(recipientSpec)
+        journey.prepareNotification(new LegalNotificationCreationCommand(sender, List.of(recipientSpec)))
                 .sendNotification(sender, NotificationStatus.ACCEPTED);
 
         log.info("Notifica legale generata: {}", entityStore.getLastOrThrow(LegalNotificationDomain.class));
