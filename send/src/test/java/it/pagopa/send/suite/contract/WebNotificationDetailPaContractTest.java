@@ -1,5 +1,7 @@
 package it.pagopa.send.suite.contract;
 
+import it.pagopa.send.common.legal_notification.domain.FeePolicy;
+import it.pagopa.send.common.legal_notification.domain.PhysicalCommunicationType;
 import it.pagopa.infrastructure.contract.browser.WebScenario;
 import it.pagopa.send.TestBootApp;
 import it.pagopa.send.common.infrastructure.WebBrowserContractValidator;
@@ -82,11 +84,12 @@ public class WebNotificationDetailPaContractTest {
         ));
 
         LegalNotificationDomain notification = sendJourney
-                .prepareNotification(new LegalNotificationCreationCommand(sender, Map.of(
-                        "subject", NOTIFICATION_SUBJECT,
-                        "physicalCommunication", "REGISTERED_LETTER_890",
-                        "feePolicy", "FLAT_RATE"
-                ), List.of(recipient)))
+                .prepareNotification(new LegalNotificationCreationCommand()
+                        .sender(sender)
+                        .subject(NOTIFICATION_SUBJECT)
+                        .physicalCommunication(PhysicalCommunicationType.REGISTERED_LETTER_890)
+                        .feePolicy(FeePolicy.FLAT_RATE)
+                        .recipient(recipient))
                 .sendNotification(sender, NotificationStatus.ACCEPTED)
                 .get(LegalNotificationDomain.class);
         String iun = notification.getIun();

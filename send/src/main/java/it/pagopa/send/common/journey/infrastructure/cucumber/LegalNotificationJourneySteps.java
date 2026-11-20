@@ -1,5 +1,7 @@
 package it.pagopa.send.common.journey.infrastructure.cucumber;
 
+import it.pagopa.send.common.legal_notification.domain.FeePolicy;
+import it.pagopa.send.common.legal_notification.domain.PhysicalCommunicationType;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
@@ -19,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -36,7 +37,7 @@ public class LegalNotificationJourneySteps {
     public void createLegalNotification(LegalNotificationType type, User sender, User recipient, String targetStatus) {
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, type.recipientOverrides());
         sendJourney
-                .prepareNotification(new LegalNotificationCreationCommand(sender, List.of(recipientSpec)))
+                .prepareNotification(new LegalNotificationCreationCommand().sender(sender).recipient(recipientSpec))
                 .sendNotification(sender, NotificationStatus.fromValue(targetStatus));
     }
 
@@ -44,7 +45,7 @@ public class LegalNotificationJourneySteps {
     public void createAndCancelLegalNotification(User sender, LegalNotificationType type, User recipient) {
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, type.recipientOverrides());
         sendJourney
-                .prepareNotification(new LegalNotificationCreationCommand(sender, List.of(recipientSpec)))
+                .prepareNotification(new LegalNotificationCreationCommand().sender(sender).recipient(recipientSpec))
                 .sendNotification(sender, NotificationStatus.ACCEPTED)
                 .deleteNotification();
     }
@@ -73,13 +74,14 @@ public class LegalNotificationJourneySteps {
                 "F24_number", "0"
         ));
 
-        Map<String, String> data = Map.of(
-                "subject", "Comunicazione di test multi-destinatario",
-                "physicalCommunication", "REGISTERED_LETTER_890",
-                "feePolicy", "FLAT_RATE"
-        );
         sendJourney
-                .prepareNotification(new LegalNotificationCreationCommand(sender, data, List.of(lucrezia, petrarca)))
+                .prepareNotification(new LegalNotificationCreationCommand()
+                        .sender(sender)
+                        .subject("Comunicazione di test multi-destinatario")
+                        .physicalCommunication(PhysicalCommunicationType.REGISTERED_LETTER_890)
+                        .feePolicy(FeePolicy.FLAT_RATE)
+                        .recipient(lucrezia)
+                        .recipient(petrarca))
                 .sendNotification(sender, NotificationStatus.ACCEPTED);
     }
 
@@ -103,7 +105,7 @@ public class LegalNotificationJourneySteps {
         overrides.putAll(recipientOverrides);
         RecipientSpec recipientSpec = recipientSpecFactory.build(recipient, overrides);
         sendJourney
-                .prepareNotification(new LegalNotificationCreationCommand(sender, List.of(recipientSpec)))
+                .prepareNotification(new LegalNotificationCreationCommand().sender(sender).recipient(recipientSpec))
                 .sendNotification(sender, NotificationStatus.ACCEPTED);
 
         log.info("Notifica legale generata: {}", entityStore.getLastOrThrow(LegalNotificationDomain.class));

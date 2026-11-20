@@ -1,5 +1,6 @@
 package it.pagopa.send.common.legal_notification.infrastructure.cucumber;
 
+import it.pagopa.send.common.legal_notification.infrastructure.factory.LegalNotificationCreationCommandFactory;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -8,7 +9,6 @@ import it.pagopa.application.context.EntityStore;
 import it.pagopa.send.common.journey.application.SendJourney;
 import it.pagopa.send.common.kernel.context.CurrentUserSession;
 import it.pagopa.send.common.legal_notification.application.LegalNotificationUseCase;
-import it.pagopa.send.common.legal_notification.domain.LegalNotificationCreationCommand;
 import it.pagopa.send.common.legal_notification.domain.LegalNotificationDomain;
 import it.pagopa.send.common.legal_notification.domain.NotificationStatus;
 import it.pagopa.send.common.legal_notification.infrastructure.factory.RecipientSpecFactory;
@@ -29,6 +29,7 @@ public class LegalNotificationSteps {
 
     private final SendJourney sendJourney;
     private final RecipientSpecFactory recipientSpecFactory;
+    private final LegalNotificationCreationCommandFactory commandFactory;
     private final CurrentUserSession currentUserSession;
     private final LegalNotificationUseCase legalNotificationUseCase;
     private final EntityStore entityStore;
@@ -36,7 +37,7 @@ public class LegalNotificationSteps {
     /** Predispone i dati base della notifica e imposta la PA indicata come mittente. */
     @Given("la PA {user} predispone una nuova notifica con i seguenti dati:")
     public void prepareNotification(User sender, Map<String, String> data) {
-        sendJourney.prepareNotification(new LegalNotificationCreationCommand(sender, data));
+        sendJourney.prepareNotification(commandFactory.fromNotificationData(sender, data));
     }
 
     /**
