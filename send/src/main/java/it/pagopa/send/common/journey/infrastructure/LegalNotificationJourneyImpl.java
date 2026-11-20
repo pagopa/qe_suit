@@ -61,13 +61,14 @@ public class LegalNotificationJourneyImpl implements LegalNotificationJourney<Le
         return this;
     }
 
-    /** Predispone la notifica, aggiunge i destinatari del command e la invia per il mittente, fino ad ACCEPTED. */
+    /**
+     * Predispone la notifica dal command: mittente, dati e destinatari. Non la invia: lo stato da attendere si sceglie
+     * con {@link #sendNotification}, per esempio ACCEPTED oppure REFUSED.
+     */
     @Override
-    public LegalNotificationJourneyImpl createNotification(LegalNotificationCreationCommand command) {
-        currentUserSession.setUser(command.sender());
-        legalNotificationUseCase.prepareNotification(command.notificationData());
-        command.recipients().forEach(legalNotificationUseCase::addRecipient);
-        legalNotificationUseCase.sendNotification(command.sender(), NotificationStatus.ACCEPTED);
+    public LegalNotificationJourneyImpl prepareNotification(LegalNotificationCreationCommand command) {
+        withSender(command.sender()).prepareNotification(command.notificationData());
+        command.recipients().forEach(this::withRecipient);
         return this;
     }
 

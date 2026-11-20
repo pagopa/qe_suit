@@ -11,8 +11,8 @@ public interface LegalNotificationJourney<SELF extends LegalNotificationJourney<
     SELF withSender(User tenant);
     SELF withRecipient(RecipientSpec recipient);
     SELF prepareNotification(Map<String, String> data);
+    SELF prepareNotification(LegalNotificationCreationCommand command);
     SELF sendNotification(User sender, NotificationStatus targetStatus);
-    SELF createNotification(LegalNotificationCreationCommand command);
     SELF waitForNotificationStatus(NotificationStatus targetStatus);
     SELF deleteNotification();
     SELF readNotification();

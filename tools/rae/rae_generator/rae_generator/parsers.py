@@ -240,25 +240,35 @@ def _idkey(s: str) -> str:
     return re.sub(r'\W+', '', s.casefold())
 
 
-def collect_reports(root: Path) -> list[Failure]:
-    """Use Cucumber JSON and the Java ContractReport JSON; JUnit XML is not an input.
+def collect_reports(root: Path, *, cucumber_only: bool = False) -> list[Failure]:
+    """Read every available supported report; require at least one valid source.
 
-    Both sources are required: missing contract export must fail closed rather
-    than silently undercounting contract failures.
+    Either Cucumber JSON or the Java ContractReport JSON may be absent. Missing
+    sources are NOT treated as empty reports when no other source is present.
+    All discovered sources are parsed and validated, even when the other source
+    contains enough data. JUnit XML and the HTML contract report are not inputs.
+
+    `cucumber_only` is accepted solely for compatibility with older callers:
+    it no longer filters contract reports or changes required inputs.
     """
     from .contract_json import collect_contract_failures
+
     cucumber_dir = root / 'cucumber-reports'
     cucumber_files = sorted(cucumber_dir.glob('*.json'))
     contract = root / 'contract-test' / 'report.json'
-    if not cucumber_files:
-        raise ReportError(f'Nessun report Cucumber JSON in: {cucumber_dir}')
-    if not contract.is_file():
-        raise ReportError(f'Contract JSON mancante: {contract}')
-    cucumber_failures = []
+
+    if not cucumber_files and not contract.is_file():
+        raise ReportError(
+            f'Nessun report supportato trovato in {root}: atteso almeno un '
+            f'Cucumber JSON ({cucumber_dir}/*.json) oppure un Contract JSON ({contract})'
+        )
+
+    result: list[Failure] = []
     for cucumber in cucumber_files:
-        cucumber_failures.extend(_parse_cucumber(cucumber))
-    contract_failures = collect_contract_failures(contract)
-    result = cucumber_failures + contract_failures
+        result.extend(_parse_cucumber(cucumber))
+    if contract.is_file():
+        result.extend(collect_contract_failures(contract))
+
     ids: set[str] = set()
     for failure in result:
         if failure.id_test in ids:
