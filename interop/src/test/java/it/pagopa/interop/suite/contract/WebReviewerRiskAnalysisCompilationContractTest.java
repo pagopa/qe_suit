@@ -17,8 +17,8 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisCompilationPage;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisCompilationPage.LabelledCheckbox;
+import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskAnalysisCompilationPage;
+import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskAnalysisCompilationPage.LabelledCheckbox;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +70,7 @@ class WebReviewerRiskAnalysisCompilationContractTest {
                 .get(Purpose.class).getId().toString();
 
         return webContractValidator.as(reviewer, consumer)
-                .on(RiskAnalysisCompilationPage.class, purposeId)
+                .on(ReviewerRiskAnalysisCompilationPage.class, purposeId)
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "Compilation layout, visible answers and conditional controls",
@@ -86,7 +86,7 @@ class WebReviewerRiskAnalysisCompilationContractTest {
                 ));
     }
 
-    private static void assertNavigationAndLayout(RiskAnalysisCompilationPage page, String purposeId) {
+    private static void assertNavigationAndLayout(ReviewerRiskAnalysisCompilationPage page, String purposeId) {
         page.title().readAndAssert("Compilazione analisi del rischio");
         page.requiredFieldsNotice().readAndAssert("*Campi obbligatori");
         var introduction = page.introductionCard();
@@ -115,7 +115,7 @@ class WebReviewerRiskAnalysisCompilationContractTest {
         assertThat(page.saveDraftAndContinueButton().get(FindPolicy.CLICKABLE)).isPresent();
     }
 
-    private static void assertPurposeQuestions(RiskAnalysisCompilationPage page) {
+    private static void assertPurposeQuestions(ReviewerRiskAnalysisCompilationPage page) {
         // Purpose question and conditional text field
         var purpose = page.purposeCard();
         assertThat(purpose.question().read()).startsWith("Indicare per quale finalità");
@@ -129,7 +129,7 @@ class WebReviewerRiskAnalysisCompilationContractTest {
 
     }
 
-    private static void assertPersonalDataTypes(RiskAnalysisCompilationPage page) {
+    private static void assertPersonalDataTypes(ReviewerRiskAnalysisCompilationPage page) {
         assertYesNoOptions(page.usesPersonalDataCard().answers());
         selectAndAssert(page.usesPersonalDataCard().answers(), "Sì");
 
@@ -150,7 +150,7 @@ class WebReviewerRiskAnalysisCompilationContractTest {
         assertHidden(page.otherPersonalDataTypesCard().field());
     }
 
-    private static void assertLegalBases(RiskAnalysisCompilationPage page) {
+    private static void assertLegalBases(ReviewerRiskAnalysisCompilationPage page) {
         List<LabelledCheckbox> legalBases = page.legalBasesCard().answers();
         assertCheckboxLabels(legalBases,
                 "Consenso dell’interessato",
@@ -189,7 +189,7 @@ class WebReviewerRiskAnalysisCompilationContractTest {
         );
     }
 
-    private static void assertDataHandlingQuestions(RiskAnalysisCompilationPage page) {
+    private static void assertDataHandlingQuestions(ReviewerRiskAnalysisCompilationPage page) {
         assertYesNoOptions(page.dataQuantityCard().answers());
         assertDeliveryMethodOptions(page);
         var policy = page.policyProvidedCard();
@@ -239,7 +239,7 @@ class WebReviewerRiskAnalysisCompilationContractTest {
         }
     }
 
-    private static void assertDeliveryMethodOptions(RiskAnalysisCompilationPage page) {
+    private static void assertDeliveryMethodOptions(ReviewerRiskAnalysisCompilationPage page) {
         var deliveryMethod = page.deliveryMethodCard();
         deliveryMethod.select().click();
         List<String> options = deliveryMethod.options().stream().map(Button::read).toList();
@@ -257,7 +257,7 @@ class WebReviewerRiskAnalysisCompilationContractTest {
         }
     }
 
-    private static void selectDeliveryMethodOption(RiskAnalysisCompilationPage page, String label) {
+    private static void selectDeliveryMethodOption(ReviewerRiskAnalysisCompilationPage page, String label) {
         page.deliveryMethodCard().options().stream()
                 .filter(option -> label.equals(option.read()))
                 .findFirst()

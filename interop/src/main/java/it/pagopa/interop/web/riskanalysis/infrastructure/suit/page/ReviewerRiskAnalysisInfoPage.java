@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page;
+package it.pagopa.interop.web.riskanalysis.infrastructure.suit.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
@@ -6,9 +6,9 @@ import it.frontend.e2e.framework.web.domain.Page;
 import it.pagopa.infrastructure.suit.component.Button;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.APIEstimateCard;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.AssignmentCard;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.PurposeRiskAnalysisGeneralInfoCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.APIEstimateCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.AssignmentCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.PurposeRiskAnalysisGeneralInfoCard;
 import it.pagopa.utils.async.PollingUtils;
 
 /**
@@ -16,7 +16,7 @@ import it.pagopa.utils.async.PollingUtils;
  * risk-analysis compilation.
  */
 @Url("${interop.web.base-url}/analisi-del-rischio/${riskAnalysisId}")
-public interface RiskAnalysisInfoPage extends Page {
+public interface ReviewerRiskAnalysisInfoPage extends Page {
 
     @XPath(".//a[contains(normalize-space(), 'Torna alle analisi del rischio')]")
     Button backToEServicesButton();

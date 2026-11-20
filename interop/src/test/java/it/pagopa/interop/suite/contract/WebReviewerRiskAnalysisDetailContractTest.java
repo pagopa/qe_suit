@@ -12,10 +12,10 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.APIEstimateCard;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.PurposeRiskAnalysisGeneralInfoCard;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.RiskAnalysisCard;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisDetailPage;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.APIEstimateCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.PurposeRiskAnalysisGeneralInfoCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.RiskAnalysisCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskAnalysisDetailPage;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
@@ -97,7 +97,7 @@ public class WebReviewerRiskAnalysisDetailContractTest {
 
         return webContractValidator
                 .as(reviewer, Tenant.SOGECAP)
-                .on(RiskAnalysisDetailPage.class, approvedRiskAnalysisId)
+                .on(ReviewerRiskAnalysisDetailPage.class, approvedRiskAnalysisId)
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "Verify the correct rendering of the Purpose Information UI by a REVIEWER",
@@ -132,7 +132,7 @@ public class WebReviewerRiskAnalysisDetailContractTest {
 
         return webContractValidator
                 .as(reviewer, Tenant.SOGECAP)
-                .on(RiskAnalysisDetailPage.class, rejectedRiskAnalysisId)
+                .on(ReviewerRiskAnalysisDetailPage.class, rejectedRiskAnalysisId)
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "Verify the correct rendering of the Purpose Information UI by a REVIEWER",
@@ -159,7 +159,7 @@ public class WebReviewerRiskAnalysisDetailContractTest {
                 ));
     }
 
-    private void verifyAlertAndDrawer(RiskAnalysisDetailPage page) {
+    private void verifyAlertAndDrawer(ReviewerRiskAnalysisDetailPage page) {
         assertThat(page.rejectionAlert().get().isPresent())
                 .as("Rejection alert should be present").isTrue();
         page.rejectionAlert().message().readAndAssert("L’analisi del rischio di questa finalità è stata rifiutata.");
@@ -178,7 +178,7 @@ public class WebReviewerRiskAnalysisDetailContractTest {
         page.rejectionReasonDrawer().closeButton().click();
     }
 
-    private static void verifyTabs(RiskAnalysisDetailPage page) {
+    private static void verifyTabs(ReviewerRiskAnalysisDetailPage page) {
         assertThat(page.tabs().get().isPresent())
                 .as("The Tabs component must be present").isTrue();
         assertThat(page.purposeDetailsTab().isDisabled())
@@ -187,7 +187,7 @@ public class WebReviewerRiskAnalysisDetailContractTest {
                 .as("The 'Analisi del rischio' tab must be enabled").isFalse();
     }
 
-    private void verifyRiskAnalysisTab(RiskAnalysisDetailPage page) {
+    private void verifyRiskAnalysisTab(ReviewerRiskAnalysisDetailPage page) {
         assertThat(page.riskAnalysisInfoCard().get().isPresent())
                 .as("The risk analysis info card must be present").isTrue();
         page.riskAnalysisInfoCard().sectionTitle().readAndAssert(EXPECTED_SECTION_TITLE);
@@ -213,7 +213,7 @@ public class WebReviewerRiskAnalysisDetailContractTest {
         assertNotBlank(card.thirdPartyDataAnswerLabel().read(), "Third Party Data Answer");
     }
 
-    private void verifyHeaderAndBreadcrumb(RiskAnalysisDetailPage page) {
+    private void verifyHeaderAndBreadcrumb(ReviewerRiskAnalysisDetailPage page) {
         assertThat(page.backButton().isDisabled())
                 .as("Back button must be enabled").isFalse();
 
@@ -231,7 +231,7 @@ public class WebReviewerRiskAnalysisDetailContractTest {
                 .isEqualTo(EXPECTED_RA_BREADCRUMB_HREF);
     }
 
-    private void verifyChip(RiskAnalysisDetailPage page, String expectedStatus) {
+    private void verifyChip(ReviewerRiskAnalysisDetailPage page, String expectedStatus) {
         page.statusChip().readAndAssert(expectedStatus);
     }
 
@@ -268,7 +268,7 @@ public class WebReviewerRiskAnalysisDetailContractTest {
         assertNotBlank(card.apiEstimateValue().read(), LABEL_API_ESTIMATE);
     }
 
-    private void verifyExtendedAssignmentCard(RiskAnalysisDetailPage.AssignmentExtendedCard card) {
+    private void verifyExtendedAssignmentCard(ReviewerRiskAnalysisDetailPage.AssignmentExtendedCard card) {
         assertTitleAndDateForAssignmentCard(card);
 
         card.approvedDateLabel().readAndAssert(LABEL_APPROVED_DATE);
@@ -278,14 +278,14 @@ public class WebReviewerRiskAnalysisDetailContractTest {
         assertNotBlank(card.approvedByValue().read(), LABEL_APPROVED_BY);
     }
 
-    private static void assertTitleAndDateForAssignmentCard(RiskAnalysisDetailPage.AssignmentExtendedCard card) {
+    private static void assertTitleAndDateForAssignmentCard(ReviewerRiskAnalysisDetailPage.AssignmentExtendedCard card) {
         card.title().readAndAssert("Assegnazione");
 
         card.assignmentDateLabel().readAndAssert(LABEL_ASSIGNMENT_DATE);
         assertNotBlank(card.assignmentDateValue().read(), LABEL_ASSIGNMENT_DATE);
     }
 
-    private void verifyAssignmentCard(RiskAnalysisDetailPage.AssignmentExtendedCard card) {
+    private void verifyAssignmentCard(ReviewerRiskAnalysisDetailPage.AssignmentExtendedCard card) {
         assertTitleAndDateForAssignmentCard(card);
 
         card.assignedToLabel().readAndAssert(LABEL_ASSIGNED_TO);

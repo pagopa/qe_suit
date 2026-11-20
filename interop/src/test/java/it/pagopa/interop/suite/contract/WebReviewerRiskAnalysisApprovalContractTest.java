@@ -11,9 +11,9 @@ import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.RiskAnalysisGeneralInfoCard;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.RiskAnalysisCompleteCard;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisApprovalPage;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.RiskAnalysisGeneralInfoCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.RiskAnalysisCompleteCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskAnalysisApprovalPage;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
@@ -87,7 +87,7 @@ class WebReviewerRiskAnalysisApprovalContractTest {
 
         return webContractValidator
                 .as(User.getTenantUser(Tenant.SOGECAP, UserRole.REVIEWER), Tenant.SOGECAP)
-                .on(RiskAnalysisApprovalPage.class, riskAnalysisId)
+                .on(ReviewerRiskAnalysisApprovalPage.class, riskAnalysisId)
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "Tests layout, breadcrumb, cards and buttons for RiskAnalysis Approval Page",
@@ -119,7 +119,7 @@ class WebReviewerRiskAnalysisApprovalContractTest {
                 ));
     }
 
-    private static void assertFooterAction(RiskAnalysisApprovalPage page) {
+    private static void assertFooterAction(ReviewerRiskAnalysisApprovalPage page) {
         assertThat(page.rejectButton().isDisabled()).as("Reject button must be enabled").isFalse();
         page.approveButton().readAndAssert(BTN_APPROVE);
 
@@ -127,7 +127,7 @@ class WebReviewerRiskAnalysisApprovalContractTest {
         page.rejectButton().readAndAssert(BTN_REJECT);
     }
 
-    private static void assertHeaderAndBreadcrumbs(RiskAnalysisApprovalPage page) {
+    private static void assertHeaderAndBreadcrumbs(ReviewerRiskAnalysisApprovalPage page) {
         assertThat(page.backToEServicesButton().isDisabled())
                 .as("Button enabled").isFalse();
         page.backToEServicesButton().readAndAssert("Torna alle analisi del rischio");

@@ -17,8 +17,8 @@ import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactor
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisCompilationPage;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisSummaryPage;
+import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskAnalysisCompilationPage;
+import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskAnalysisSummaryPage;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -80,7 +80,7 @@ class WebIntegrationReviewerRiskAnalysisSummaryTest {
 
         return webContractValidator
                 .as(firstReviewer, consumer)
-                .on(RiskAnalysisCompilationPage.class, purpose.getId().toString())
+                .on(ReviewerRiskAnalysisCompilationPage.class, purpose.getId().toString())
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "Reject approval after another reviewer updates the saved draft",
@@ -89,7 +89,7 @@ class WebIntegrationReviewerRiskAnalysisSummaryTest {
                                     page.saveDraftAndContinueButton().click();
                                 },
                                 ignored -> {
-                                    var summaryPage = new WebBinder().bind(RiskAnalysisSummaryPage.class);
+                                    var summaryPage = new WebBinder().bind(ReviewerRiskAnalysisSummaryPage.class);
                                     summaryPage.assertLoaded();
                                     summaryPage.infoAlert().message().readAndAssert(ALTERNATIVE_ALERT);
                                     verifyConflictUpdate(summaryPage, purpose, firstReviewer, secondReviewer);
@@ -99,7 +99,7 @@ class WebIntegrationReviewerRiskAnalysisSummaryTest {
     }
 
     private void verifyConflictUpdate(
-            RiskAnalysisSummaryPage page, Purpose purpose, User firstReviewer, User secondReviewer
+            ReviewerRiskAnalysisSummaryPage page, Purpose purpose, User firstReviewer, User secondReviewer
     ) {
         RiskAnalysisForm savedDraft = PollingUtils.pollUntil(
                 () -> purposeUseCase.getRiskAnalysisForm(purpose),

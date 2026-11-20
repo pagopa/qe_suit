@@ -14,7 +14,7 @@ import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisApprovalPage;
+import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskAnalysisApprovalPage;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -90,7 +90,7 @@ public class WebIntegrationReviewerRiskAnalysisApprovalTest {
         LocalDate expectedDate = LocalDate.now(ZoneId.of("Europe/Rome"));
 
         return webContractValidator.as(reviewers.get(0), consumer)
-                .on(RiskAnalysisApprovalPage.class, riskAnalysisId)
+                .on(ReviewerRiskAnalysisApprovalPage.class, riskAnalysisId)
                 .tests(Stream.of(
                         new WebScenario<>("Verify RA approval page content for one of the assigned reviewer",
                                 page -> {
@@ -134,7 +134,7 @@ public class WebIntegrationReviewerRiskAnalysisApprovalTest {
         );
 
         return webContractValidator.as(User.getTenantAdmin(producer), producer)
-                .on(RiskAnalysisApprovalPage.class, purpose.getId().toString())
+                .on(ReviewerRiskAnalysisApprovalPage.class, purpose.getId().toString())
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "An ADMIN user visualizes 'Unauthorized'",
@@ -163,7 +163,7 @@ public class WebIntegrationReviewerRiskAnalysisApprovalTest {
         }
     }
 
-    private void verifyApprovalConflict(RiskAnalysisApprovalPage page, Purpose purpose, User currentReviewer, User otherReviewer) {
+    private void verifyApprovalConflict(ReviewerRiskAnalysisApprovalPage page, Purpose purpose, User currentReviewer, User otherReviewer) {
         try {
             interopJourney.withConsumer(consumer, otherReviewer);
             purposeUseCase.signRiskAnalysis(purpose);
@@ -187,7 +187,7 @@ public class WebIntegrationReviewerRiskAnalysisApprovalTest {
                 .startsWith(ALREADY_APPROVED_ERROR);
     }
 
-    private void verifyAssignment(RiskAnalysisApprovalPage page, LocalDate expectedDate, String expectedAssignedTo) {
+    private void verifyAssignment(ReviewerRiskAnalysisApprovalPage page, LocalDate expectedDate, String expectedAssignedTo) {
 
         String actualAssignedTo = page.generalInfoCard().assignedToValue().read();
 
@@ -198,7 +198,7 @@ public class WebIntegrationReviewerRiskAnalysisApprovalTest {
         verifyAssignmentDateValue(page, expectedDate);
     }
 
-    private static void verifyAssignmentDateValue(RiskAnalysisApprovalPage page, LocalDate expectedDate) {
+    private static void verifyAssignmentDateValue(ReviewerRiskAnalysisApprovalPage page, LocalDate expectedDate) {
         String formattedDate = expectedDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         assertThat(page.generalInfoCard().assignmentDateValue().read())
                 .as("The assignment date must match the current date")

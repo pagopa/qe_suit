@@ -9,7 +9,7 @@ import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisPage;
+import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskAnalysisPage;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.DynamicTest;
@@ -53,14 +53,14 @@ class WebReviewerRiskAnalysisContractTest {
     Stream<DynamicTest> testVerifyRiskAnalysisPageContent() {
         User reviewer = User.getTenantUser(Tenant.SOGECAP, UserRole.REVIEWER);
         return webContractValidator.as(reviewer, Tenant.SOGECAP)
-                .on(RiskAnalysisPage.class)
+                .on(ReviewerRiskAnalysisPage.class)
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "Reviewer visualize its risk analysis",
                                 page -> {
                                 },
                                 page -> {
-                                    page.title().readAndAssert(RiskAnalysisPage.PAGE_TITLE);
+                                    page.title().readAndAssert(ReviewerRiskAnalysisPage.PAGE_TITLE);
                                     page.subtitle().readAndAssert(PAGE_SUBTITLE);
 
                                     if (page.noAssignedRiskAnalysisMessage().exists(Gettable.FindPolicy.PRESENT)) {

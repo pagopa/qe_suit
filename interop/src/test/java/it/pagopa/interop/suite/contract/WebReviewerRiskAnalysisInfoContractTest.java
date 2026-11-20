@@ -11,10 +11,10 @@ import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
 import it.pagopa.interop.common.kernel.domain.Tenant;
 import it.pagopa.interop.common.kernel.domain.User;
 import it.pagopa.interop.common.kernel.domain.UserRole;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.APIEstimateCard;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.AssignmentCard;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.PurposeRiskAnalysisGeneralInfoCard;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisInfoPage;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.APIEstimateCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.AssignmentCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.PurposeRiskAnalysisGeneralInfoCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskAnalysisInfoPage;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
@@ -82,7 +82,7 @@ class WebReviewerRiskAnalysisInfoContractTest {
 
         return webContractValidator
                 .as(reviewer, Tenant.SOGECAP)
-                .on(RiskAnalysisInfoPage.class, riskAnalysisId)
+                .on(ReviewerRiskAnalysisInfoPage.class, riskAnalysisId)
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "Verify the correct rendering of the Purpose Information UI by a REVIEWER",
@@ -103,7 +103,7 @@ class WebReviewerRiskAnalysisInfoContractTest {
                 ));
     }
 
-    private void verifyHeaderAndBreadcrumb(RiskAnalysisInfoPage page) {
+    private void verifyHeaderAndBreadcrumb(ReviewerRiskAnalysisInfoPage page) {
         assertThat(page.backToEServicesButton().isDisabled())
                 .as("Button enabled").isFalse();
         page.backToEServicesButton().readAndAssert("Torna alle analisi del rischio");

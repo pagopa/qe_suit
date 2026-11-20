@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page;
+package it.pagopa.interop.web.riskanalysis.infrastructure.suit.page;
 
 import it.frontend.e2e.framework.annotation.location.web.Url;
 import it.frontend.e2e.framework.annotation.selector.XPath;
@@ -8,15 +8,15 @@ import it.pagopa.infrastructure.suit.component.Alert;
 import it.pagopa.infrastructure.suit.component.Dialog;
 import it.pagopa.infrastructure.suit.component.Label;
 import it.pagopa.interop.web.infrastructure.config.suit.component.Breadcrumbs;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.RiskAnalysisCompleteCard;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.RiskAnalysisGeneralInfoCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.RiskAnalysisCompleteCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.RiskAnalysisGeneralInfoCard;
 import it.pagopa.utils.async.PollingUtils;
 
 /**
  * Page object for reviewing a submitted risk analysis before approval or rejection.
  */
 @Url("${interop.web.base-url}/analisi-del-rischio/${riskAnalysisId}/approvazione")
-public interface RiskAnalysisApprovalPage extends Page {
+public interface ReviewerRiskAnalysisApprovalPage extends Page {
 
     @XPath(".//a[contains(., 'Torna alle analisi del rischio')]")
     Button backToEServicesButton();

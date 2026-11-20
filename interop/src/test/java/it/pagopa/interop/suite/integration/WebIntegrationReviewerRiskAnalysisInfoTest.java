@@ -12,7 +12,7 @@ import it.pagopa.interop.common.purpose.application.PurposeUseCase;
 import it.pagopa.interop.common.purpose.domain.Purpose;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisReviewMode;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisInfoPage;
+import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskAnalysisInfoPage;
 import it.pagopa.utils.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
@@ -84,7 +84,7 @@ public class WebIntegrationReviewerRiskAnalysisInfoTest {
         LocalDate expectedDate = LocalDate.now(ZoneId.of("Europe/Rome"));
 
         return webContractValidator.as(reviewers.get(0), consumer)
-                .on(RiskAnalysisInfoPage.class, riskAnalysisId)
+                .on(ReviewerRiskAnalysisInfoPage.class, riskAnalysisId)
                 .tests(Stream.of(
                         new WebScenario<>("Verify RA information page content for assigned reviewer",
                                 page -> {
@@ -126,7 +126,7 @@ public class WebIntegrationReviewerRiskAnalysisInfoTest {
         );
 
         return webContractValidator.as(User.getTenantAdmin(producer), producer)
-                .on(RiskAnalysisInfoPage.class, purpose.getId().toString())
+                .on(ReviewerRiskAnalysisInfoPage.class, purpose.getId().toString())
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "An ADMIN user visualizes 'Unauthorized'",
@@ -142,7 +142,7 @@ public class WebIntegrationReviewerRiskAnalysisInfoTest {
                 ));
     }
 
-    private void verifyAssignment(RiskAnalysisInfoPage page, LocalDate expectedDate, String expectedAssignedTo) {
+    private void verifyAssignment(ReviewerRiskAnalysisInfoPage page, LocalDate expectedDate, String expectedAssignedTo) {
         String actualAssignedTo = page.assignmentCard().assignedToValue().read();
 
         assertThat(actualAssignedTo).as("Assigned reviewers").isNotBlank();
@@ -166,7 +166,7 @@ public class WebIntegrationReviewerRiskAnalysisInfoTest {
         }
     }
 
-    private static void verifyAssignmentDateValue(RiskAnalysisInfoPage page, LocalDate expectedDate) {
+    private static void verifyAssignmentDateValue(ReviewerRiskAnalysisInfoPage page, LocalDate expectedDate) {
         String formattedDate = expectedDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         assertThat(page.assignmentCard().assignmentDateValue().readAndAssert(formattedDate))
                 .as("The assignment date must match the current date");

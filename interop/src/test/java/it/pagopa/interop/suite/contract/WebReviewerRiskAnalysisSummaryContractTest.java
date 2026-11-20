@@ -16,10 +16,10 @@ import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisDataFactor
 import it.pagopa.interop.common.risk_analysis.application.RiskAnalysisGateway;
 import it.pagopa.interop.common.risk_analysis.domain.RiskAnalysisForm;
 import it.pagopa.interop.web.infrastructure.config.WebJUnitSuitConfig;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.RiskAnalysisCompleteCard;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component.RiskAnalysisGeneralInfoCard;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisCompilationPage;
-import it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.suit.page.RiskAnalysisSummaryPage;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.RiskAnalysisCompleteCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.component.RiskAnalysisGeneralInfoCard;
+import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskAnalysisCompilationPage;
+import it.pagopa.interop.web.riskanalysis.infrastructure.suit.page.ReviewerRiskAnalysisSummaryPage;
 import it.pagopa.utils.RandomUtils;
 import it.pagopa.utils.async.PollingUtils;
 import lombok.RequiredArgsConstructor;
@@ -88,13 +88,13 @@ class WebReviewerRiskAnalysisSummaryContractTest {
 
         return webContractValidator
                 .as(reviewer, consumer)
-                .on(RiskAnalysisCompilationPage.class, purpose.getId().toString())
+                .on(ReviewerRiskAnalysisCompilationPage.class, purpose.getId().toString())
                 .tests(Stream.of(
                         new WebScenario<>(
                                 "Save draft and continue to the Risk Analysis Summary Page",
                                 page -> page.saveDraftAndContinueButton().click(),
                                 ignored -> {
-                                    var summaryPage = new WebBinder().bind(RiskAnalysisSummaryPage.class);
+                                    var summaryPage = new WebBinder().bind(ReviewerRiskAnalysisSummaryPage.class);
                                     summaryPage.assertLoaded();
                                     assertPageData(summaryPage);
                                 }
@@ -113,13 +113,13 @@ class WebReviewerRiskAnalysisSummaryContractTest {
         purposeUseCase.saveRiskAnalysisForm(purpose, form);
     }
 
-    private void assertPageData(RiskAnalysisSummaryPage page) {
+    private void assertPageData(ReviewerRiskAnalysisSummaryPage page) {
         assertHeaderAndActions(page);
         assertGeneralInfoCard(page.generalInfoCard());
         assertRiskAnalysisCard(page.riskAnalysisCard());
     }
 
-    private void assertHeaderAndActions(RiskAnalysisSummaryPage page) {
+    private void assertHeaderAndActions(ReviewerRiskAnalysisSummaryPage page) {
         assertThat(page.breadcrumbs().get().isPresent())
                 .as("Breadcrumbs must be present on the page")
                 .isTrue();

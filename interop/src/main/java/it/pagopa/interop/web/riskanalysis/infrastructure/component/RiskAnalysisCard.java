@@ -1,4 +1,4 @@
-package it.pagopa.interop.web.reviewer_riskanalysis.infrastructure.component;
+package it.pagopa.interop.web.riskanalysis.infrastructure.component;
 
 import it.frontend.e2e.framework.annotation.selector.XPath;
 import it.pagopa.infrastructure.suit.component.Label;
