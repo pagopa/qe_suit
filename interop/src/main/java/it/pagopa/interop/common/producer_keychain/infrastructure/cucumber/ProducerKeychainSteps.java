@@ -22,6 +22,7 @@ public class ProducerKeychainSteps {
     @Given("i dati e le associazioni del portachiavi {string} allo stato attuale appuntati come riferimento")
     public void saveKeychainReference(String keychainAlias) {
         ProducerKeychain keychain = entityStore.getByAliasOrThrow(keychainAlias, ProducerKeychain.class);
+        keychain = useCase.getProducerKeychain(keychain.getRef());
         keychainReference = keychain.toBuilder()
                 .keys(keychain.getKeys() != null ? List.copyOf(keychain.getKeys()) : null)
                 .publicKeys(keychain.getPublicKeys() != null ? List.copyOf(keychain.getPublicKeys()) : null)
@@ -55,7 +56,6 @@ public class ProducerKeychainSteps {
         assertThat(keychainReference)
                 .as("Riferimento del portachiavi salvato prima della modifica")
                 .isNotNull();
-        // Rilegge il portachiavi dal server: dopo un tentativo fallito la copia locale non viene aggiornata.
         ProducerKeychain keychain = useCase.getProducerKeychain(
                 entityStore.getByAliasOrThrow(keychainAlias, ProducerKeychain.class).getRef());
 
