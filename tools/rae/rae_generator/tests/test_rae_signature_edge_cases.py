@@ -1,7 +1,7 @@
 """Adversarial regression tests for conservative Drain3-based RAE matching.
 
 Run on repository checkout:
-  PYTHONPATH=tools/rae-generator python -m pytest -q tools/rae-generator/tests/test_rae_signature_edge_cases.py
+  PYTHONPATH=tools/rae/rae_generator python -m pytest -q tools/rae/rae_generator/tests/test_rae_signature_edge_cases.py
 These tests must not change the source code or any historical RAE.
 """
 from __future__ import annotations

@@ -14,9 +14,9 @@ Dalla root di `qe_suit`:
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install -r tools/rae-generator/requirements-dev.txt
-export PYTHONPATH="$PWD/tools/rae-generator${PYTHONPATH:+:$PYTHONPATH}"
-python -m pytest -q tools/rae-generator/tests
+python -m pip install -r tools/rae/rae_generator/requirements-dev.txt
+export PYTHONPATH="$PWD/tools/rae/rae_generator${PYTHONPATH:+:$PYTHONPATH}"
+python -m pytest -q tools/rae/rae_generator/tests
 python -m rae_generator --help
 ```
 
@@ -51,7 +51,7 @@ Prendere a riferimento i job `run_tests` e `generate_rae` di `interop-pipeline.y
 1. Eseguire test e salvare i report nella cartella `target` del progetto.
 2. Registrare `data_ora` e `durata` (formato `HH:MM:SS`) **della reale esecuzione**, anche in caso di test KO. Interop utilizza `trap ... EXIT` per scrivere `target/rae/run_metadata.json`.
 3. Usare `actions/upload-artifact` con `if: always()` per pubblicare i due report JSON e il metadata; la pipeline Interop usa il nome artifact `qa-test-artifacts` e retention di **10 giorni**.
-4. Aggiungere un job generatore con `needs: run_tests` e condizione che consenta i fallimenti dei test ma non i report mancanti; usare Python e `tools/rae-generator/requirements.txt`.
+4. Aggiungere un job generatore con `needs: run_tests` e condizione che consenta i fallimenti dei test ma non i report mancanti; usare Python e `tools/rae/rae_generator/requirements.txt`.
 5. Scaricare gli artifact, effettuare il checkout **di `develop` per lo storico e la creazione del branch**, chiamare `rae_generator generate` con `--namespace <namespace>` e scrivere lo YAML dentro `rae/<namespace>/`.
 6. Creare il branch `rae/<namespace>/rae_<suite>_<YYYYMMDDHHMMSS>`, effettuare commit/push e aprire una Draft PR verso `develop` con `gh pr create --draft`.
 7. Assicurarsi che le label richieste esistano: Interop usa `rae` e `interop`; una pipeline nuova può richiedere la label del proprio namespace.
@@ -93,7 +93,7 @@ Il percorso passato a `--reports` deve contenere le sottocartelle `cucumber-repo
 ```bash
 cd ~/qe_suit
 source .venv/bin/activate
-export PYTHONPATH="$PWD/tools/rae-generator${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONPATH="$PWD/tools/rae/rae_generator${PYTHONPATH:+:$PYTHONPATH}"
 
 python -m rae_generator generate \
   --reports /percorso/report-estratti \
