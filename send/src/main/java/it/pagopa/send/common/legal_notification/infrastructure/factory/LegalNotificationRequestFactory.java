@@ -138,7 +138,6 @@ public class LegalNotificationRequestFactory {
         return new ResolvedPagoPaPayment(noticeCode, PAGOPA_TEST_CREDITOR_TAX_ID, buildAttachment());
     }
 
-    // l'allegato di un F24 sono i suoi metadati in JSON, non il PDF di test
     private ResolvedF24Payment buildF24Payment(F24PaymentSpec spec) {
         return new ResolvedF24Payment(spec.title(),
                 toDocumentRef(documentPreloadService.preloadF24Metadata("f24-" + UUID.randomUUID()), F24_METADATA_CONTENT_TYPE));
